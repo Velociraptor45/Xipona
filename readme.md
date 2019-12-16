@@ -1,3 +1,4 @@
 # Project Hermes
 
-For first concepts, see Concepts folder.
+First concepts:
+![Concept_draft](/Concept/communication_draft.jpg)
