@@ -4,7 +4,7 @@ Project Hermes is a personal project that attempts to create a save VPN communic
 If you need assistance reproducing my setup, feel free to open an issue or contact me.
 
 ## Network Communication
-The connection between outside networks and the internal home network is working. To see how it's done, check issue #8.
+The connection between outside networks and the internal home network is working. To see how it's done, check issue [#8](/../../issues/8).
 
 ![Network_communication](/Concept/Network_communication.jpg)
 
