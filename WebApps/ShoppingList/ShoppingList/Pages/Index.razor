@@ -1,0 +1,26 @@
+﻿@page "/"
+
+<h1>Shopping List</h1>
+
+<div>
+    <input @bind="newShoppingItem" />
+    <button @onclick="AddItemToList">Add</button>
+</div>
+<div>
+    <ul id="shoppingList">
+        @foreach(string shoppingItem in shoppingItems)
+        {
+            <li>@shoppingItem</li>
+        }
+    </ul>
+</div>
+
+@code {
+    private List<string> shoppingItems = new List<string>();
+    private string newShoppingItem;
+
+    private void AddItemToList()
+    {
+        shoppingItems.Add(newShoppingItem);
+    }
+}
