@@ -2,25 +2,51 @@
 
 <h1>Shopping List</h1>
 
-<div>
-    <input @bind="newShoppingItem" />
-    <button @onclick="AddItemToList">Add</button>
+<div class="row">
+    <BSBasicInput Class="col-11" T="string" @bind-Value="newShoppingItemName"></BSBasicInput>
+    <BSButton Class="col-1" @onclick="AddItemToList">Add</BSButton>
 </div>
 <div>
     <ul id="shoppingList">
-        @foreach(string shoppingItem in shoppingItems)
+        @foreach (var shoppingItem in shoppingItems)
         {
-            <li>@shoppingItem</li>
+            <ShoppingListItem Item="shoppingItem" ItemChangedCallback="UpdateItem"></ShoppingListItem>
         }
     </ul>
 </div>
 
 @code {
-    private List<string> shoppingItems = new List<string>();
-    private string newShoppingItem;
+    private List<ShoppingItem> shoppingItems = new List<ShoppingItem>();
+    private int nextId = 0;
+    private string newShoppingItemName;
 
     private void AddItemToList()
     {
-        shoppingItems.Add(newShoppingItem);
+        shoppingItems.Add(GenerateNewShoppingItem(newShoppingItemName));
+        nextId++;
+    }
+
+    private ShoppingItem GenerateNewShoppingItem(string itemName)
+    {
+        return new ShoppingItem()
+        {
+            Name = itemName,
+            Amount = 0,
+            Id = nextId
+        };
+    }
+
+    private void UpdateItem(ShoppingItem item)
+    {
+        ShoppingItem listItem = shoppingItems.First(si => si.Id == item.Id);
+        shoppingItems[shoppingItems.IndexOf(listItem)] = item;
+
+        foreach (var it in shoppingItems)
+        {
+            Console.WriteLine("______________________");
+            Console.WriteLine($"Id: {it.Id}");
+            Console.WriteLine($"Name: {it.Name}");
+            Console.WriteLine($"Amount: {it.Amount}");
+        }
     }
 }

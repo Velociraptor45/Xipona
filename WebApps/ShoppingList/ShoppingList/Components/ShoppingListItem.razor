@@ -1,0 +1,36 @@
+﻿<li>
+    <div class="row">
+        <div class="col-8">
+            <BSBasicInput T="string" Value="@Item.Name" ValueChanged="OnItemNameChanged"></BSBasicInput>
+        </div>
+        <div class="col-4">
+            <BSBasicInput T="int" @bind-Value="Item.Amount"></BSBasicInput>
+            <BSButton type="button" @onclick="DecrementAmount">-</BSButton>
+            <BSButton type="button" @onclick="IncrementAmount">+</BSButton>
+        </div>
+    </div>
+</li>
+
+@code {
+    [Parameter]
+    public ShoppingItem Item { get; set; }
+
+    [Parameter]
+    public EventCallback<ShoppingItem> ItemChangedCallback { get; set; }
+
+    private void IncrementAmount()
+    {
+        Item.Amount++;
+    }
+
+    private void DecrementAmount()
+    {
+        Item.Amount--;
+    }
+
+    private void OnItemNameChanged(string newValue)
+    {
+        Item.Name = newValue;
+        ItemChangedCallback.InvokeAsync(Item);
+    }
+}
