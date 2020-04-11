@@ -32,7 +32,7 @@ namespace ShoppingList
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddDbContext<ShoppingContext>(options =>
-                options.UseMySql("server=192.168.178.92;port=15908;user id=root;pwd=5NiSgRpY2R6KLlA5uJIOJ4IZZ;database=shoppinglist-productive", opt =>
+                options.UseMySql(Configuration.GetConnectionString("Shopping-Productive"), opt =>
                     opt.EnableRetryOnFailure(3)));
         }
 
