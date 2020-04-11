@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using ShoppingList.Database.Entities;
 
 namespace ShoppingList.Database
@@ -52,26 +51,26 @@ namespace ShoppingList.Database
 
             modelBuilder.Entity<ItemOnShoppingList>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.HasIndex(e => e.ItemId)
                     .HasName("ItemId");
 
                 entity.HasIndex(e => e.ShoppingListId)
                     .HasName("ShoppingListId");
 
+                entity.Property(e => e.ItemOnShoppingListId).HasColumnType("int(10) unsigned");
+
                 entity.Property(e => e.ItemId).HasColumnType("int(10) unsigned");
 
                 entity.Property(e => e.ShoppingListId).HasColumnType("int(10) unsigned");
 
                 entity.HasOne(d => d.Item)
-                    .WithMany()
+                    .WithMany(p => p.ItemOnShoppingList)
                     .HasForeignKey(d => d.ItemId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("ItemOnShoppingList_ibfk_2");
 
                 entity.HasOne(d => d.ShoppingList)
-                    .WithMany()
+                    .WithMany(p => p.ItemOnShoppingList)
                     .HasForeignKey(d => d.ShoppingListId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("ItemOnShoppingList_ibfk_1");

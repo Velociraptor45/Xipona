@@ -5,6 +5,7 @@ namespace ShoppingList.Database.Entities
 {
     public partial class ItemOnShoppingList
     {
+        public uint ItemOnShoppingListId { get; set; }
         public uint ShoppingListId { get; set; }
         public uint ItemId { get; set; }
 

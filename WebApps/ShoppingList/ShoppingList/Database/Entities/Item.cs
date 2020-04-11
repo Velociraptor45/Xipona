@@ -5,6 +5,11 @@ namespace ShoppingList.Database.Entities
 {
     public partial class Item
     {
+        public Item()
+        {
+            ItemOnShoppingList = new HashSet<ItemOnShoppingList>();
+        }
+
         public uint ItemId { get; set; }
         public string Name { get; set; }
         public uint QuantityTypeId { get; set; }
@@ -12,5 +17,6 @@ namespace ShoppingList.Database.Entities
         public decimal? PricePerQuantity { get; set; }
 
         public virtual QuantityType QuantityType { get; set; }
+        public virtual ICollection<ItemOnShoppingList> ItemOnShoppingList { get; set; }
     }
 }
