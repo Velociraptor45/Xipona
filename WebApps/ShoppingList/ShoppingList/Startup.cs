@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
 using ShoppingList.Data;
+using ShoppingList.Database;
 
 namespace ShoppingList
 {
@@ -29,6 +31,9 @@ namespace ShoppingList
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+            services.AddDbContext<ShoppingContext>(options =>
+                options.UseMySql("server=192.168.178.92;port=15908;user id=root;pwd=5NiSgRpY2R6KLlA5uJIOJ4IZZ;database=shoppinglist-productive", opt =>
+                    opt.EnableRetryOnFailure(3)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
