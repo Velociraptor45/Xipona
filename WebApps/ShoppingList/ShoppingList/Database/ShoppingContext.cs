@@ -59,7 +59,7 @@ namespace ShoppingList.Database
 
                 entity.Property(e => e.ItemId).HasColumnType("int(10) unsigned");
 
-                entity.Property(e => e.Quantity).HasColumnType("decimal(10,0)");
+                entity.Property(e => e.Quantity).HasColumnType("int(10) unsigned");
 
                 entity.Property(e => e.ShoppingListId).HasColumnType("int(10) unsigned");
 
