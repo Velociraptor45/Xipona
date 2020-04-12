@@ -57,7 +57,7 @@
     private string newShoppingItemName = "";
     private IShoppingRepository shoppingRepository;
 
-    private System.Timers.Timer hideSuggestionsTimer = new System.Timers.Timer(50);
+    private System.Timers.Timer hideSuggestionsTimer = new System.Timers.Timer(100);
 
     protected async override void OnInitialized()
     {
@@ -93,16 +93,6 @@
         {
             activeShoppingItems = shoppingRepository.GetAllItemsOnShoppingList(activeShoppingList.ShoppingListId);
         }
-    }
-
-    private Database.Entities.Item GenerateNewShoppingItem(string itemName)
-    {
-        return new Database.Entities.Item
-        {
-            Name = "testitem",
-            QuantityType = new Database.Entities.QuantityType(),
-            PricePerQuantity = 3.4m
-        };
     }
 
     private void UpdateItem(EntityModels.ItemDto itemDto)
