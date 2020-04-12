@@ -10,7 +10,7 @@
             @foreach (Database.Entities.Store store in stores)
             {
                 <BSDropdownItem>
-                    <CustomDropdownItem T="ShoppingList.Database.Entities.Store"
+                    <CustomDropdownItem T="Database.Entities.Store"
                                         Item="@store" 
                                         DropdownText="@store.Name" 
                                         OnClickCallback="OnChangeStore">
@@ -26,6 +26,12 @@
     <BSButton Class="col-1" @onclick="AddItemToList">Add</BSButton>
 </div>
 <div>
+    @foreach(var item in itemSuggestions)
+    {
+        <ItemSearchSuggestion Item="@item"></ItemSearchSuggestion>
+    }
+</div>
+<div>
     <ul id="shoppingList">
         @foreach (var shoppingItem in shoppingItems)
         {
@@ -34,8 +40,11 @@
     </ul>
 </div>
 
+
+
 @code {
     private List<Database.Entities.Item> shoppingItems = new List<Database.Entities.Item>();
+    private List<Database.Entities.Item> itemSuggestions = new List<Database.Entities.Item>();
     private List<Database.Entities.Store> stores = new List<Database.Entities.Store>();
     private Database.Entities.Store activeStore;
     private int nextId = 0;
@@ -47,6 +56,7 @@
         shoppingRepository = new ShoppingRepository(dbContextOptions);
 
         stores = await shoppingRepository.GetAllStoresAsync();
+        itemSuggestions = shoppingRepository.SearchItems("e");
         activeStore = stores.Count > 0 ? stores.First() : null;
     }
 
@@ -55,11 +65,16 @@
         activeStore = store;
     }
 
+    private void OnSearchItemSelected(Database.Entities.Item item)
+    {
+        //todo
+    }
+
     private void AddItemToList()
     {
         //replace this when item preview is implemented
-        shoppingItems.Add(GenerateNewShoppingItem(newShoppingItemName));
-        nextId++;
+        //shoppingItems.Add(GenerateNewShoppingItem(newShoppingItemName));
+        //nextId++;
     }
 
     private Database.Entities.Item GenerateNewShoppingItem(string itemName)

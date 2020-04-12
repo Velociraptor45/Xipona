@@ -14,5 +14,6 @@ namespace ShoppingList.Database
         public void CompleteShoppingList(Entities.ShoppingList shoppingList);
         public void AddItemToShoppingList(Item item, Entities.ShoppingList shoppingList);
         public void RemoveItemFromShoppingList(Item item, Entities.ShoppingList shoppingList);
+        public List<Item> SearchItems(string search);
     }
 }

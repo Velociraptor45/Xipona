@@ -54,7 +54,7 @@ namespace ShoppingList.Database
 
         public void RemoveItemFromShoppingList(Item item, Entities.ShoppingList shoppingList)
         {
-            var relationToRemove = context.ItemOnShoppingList.First(
+            var relationToRemove = context.ItemOnShoppingList.AsNoTracking().First(
                 iosl => iosl.ItemId == item.ItemId
                 && iosl.ShoppingListId == shoppingList.ShoppingListId);
             if(relationToRemove != null)
@@ -64,6 +64,12 @@ namespace ShoppingList.Database
         public void RemoveStore(Store store)
         {
             context.Remove(store);
+        }
+
+        public List<Item> SearchItems(string search)
+        {
+            //return context.Item.AsNoTracking().Where(item => item.Name.Contains(search)).ToList();
+            return context.Item.AsNoTracking().ToList();
         }
     }
 }
