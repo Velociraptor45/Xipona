@@ -22,7 +22,11 @@
     </BSDropdown>
 </div>
 <div class="row">
-    <BSBasicInput Class="col-11" T="string" @bind-Value="newShoppingItemName" @oninput="OnSearchInput"></BSBasicInput>
+    <BSBasicInput Class="col-11"
+                  T="string"
+                  @bind-Value="newShoppingItemName"
+                  @onfocusout="OnInputFocusLost"
+                  @oninput="OnSearchInput"></BSBasicInput>
     <BSButton Class="col-1">Add</BSButton>
 </div>
 <div>
@@ -51,9 +55,14 @@
     private string newShoppingItemName = "";
     private IShoppingRepository shoppingRepository;
 
+    private System.Timers.Timer hideSuggestionsTimer = new System.Timers.Timer(50);
+
     protected async override void OnInitialized()
     {
         shoppingRepository = new ShoppingRepository(dbContextOptions);
+
+        hideSuggestionsTimer.AutoReset = false;
+        hideSuggestionsTimer.Elapsed += OnHideSuggestionsTimerElapsed;
 
         stores = await shoppingRepository.GetAllStoresAsync();
         activeStore = stores.Count > 0 ? stores.First() : null;
@@ -73,6 +82,17 @@
     private void UpdateItem(Database.Entities.Item item)
     {
         //save
+    }
+
+    private void OnInputFocusLost()
+    {
+        hideSuggestionsTimer.Start();
+    }
+
+    private void OnHideSuggestionsTimerElapsed(Object source, System.Timers.ElapsedEventArgs args)
+    {
+        itemSuggestions.Clear();
+        InvokeAsync(() => StateHasChanged());
     }
 
     private void OnChangeStore(Database.Entities.Store store)
