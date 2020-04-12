@@ -1,10 +1,10 @@
 ﻿<li>
     <div class="row">
         <div class="col-8">
-            <BSBasicInput T="string" Value="@Item.Name" ValueChanged="OnItemNameChanged"></BSBasicInput>
+            <BSBasicInput T="string" Value="@ItemDto.Name" ValueChanged="OnItemNameChanged"></BSBasicInput>
         </div>
         <div class="col-4">
-            <BSBasicInput T="decimal"></BSBasicInput>
+            <BSBasicInput T="int" @bind-Value="@Quantity" @onfocusout="OnQuantityChanged"></BSBasicInput>
             <BSButton type="button" @onclick="DecrementAmount">-</BSButton>
             <BSButton type="button" @onclick="IncrementAmount">+</BSButton>
         </div>
@@ -13,24 +13,72 @@
 
 @code {
     [Parameter]
-    public ShoppingList.Database.Entities.Item Item { get; set; }
+    public EntityModels.ItemDto ItemDto { get; set; }
 
     [Parameter]
-    public EventCallback<ShoppingList.Database.Entities.Item> ItemChangedCallback { get; set; }
+    public EventCallback<EntityModels.ItemDto> ItemChangedCallback { get; set; }
+
+    // BlazorStrap currently doesn't support uint as a Type in BSBasicInput,
+    // so the ItemDto.Quantity must be converted to int until this is fixed
+    private int Quantity;
+
+    private uint SingleQuantityUnit;
+
+    protected override void OnInitialized()
+    {
+        SingleQuantityUnit = GetSingleQuantityUnit();
+        UpdateQuantity();
+    }
 
     private void IncrementAmount()
     {
-        
+        ItemDto.Quantity += SingleQuantityUnit;
+        UpdateQuantity();
     }
 
     private void DecrementAmount()
     {
-        
+        if(ItemDto.Quantity - SingleQuantityUnit > ItemDto.Quantity)
+        {
+            ItemDto.Quantity = 0;
+        }
+        else
+        {
+            ItemDto.Quantity -= SingleQuantityUnit;
+        }
+        UpdateQuantity();
+    }
+
+    private void UpdateQuantity()
+    {
+        Quantity = (int)ItemDto.Quantity;
+    }
+
+    private uint GetSingleQuantityUnit()
+    {
+        switch (ItemDto.QuantityType)
+        {
+            case EntityModels.QuantityType.Unit:
+                return 1;
+            case EntityModels.QuantityType.Weight:
+                return 100;
+            default:
+                throw new Exception($"Unknown type {ItemDto.QuantityType} encountered");
+        }
+    }
+
+    private void OnQuantityChanged()
+    {
+        if (Quantity < 0)
+            Quantity = 0;
+
+        ItemDto.Quantity = (uint)Quantity;
+        //ItemChangedCallback.InvokeAsync(ItemDto);
     }
 
     private void OnItemNameChanged(string newValue)
     {
-        Item.Name = newValue;
-        ItemChangedCallback.InvokeAsync(Item);
+        ItemDto.Name = newValue;
+        ItemChangedCallback.InvokeAsync(ItemDto);
     }
 }

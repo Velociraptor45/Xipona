@@ -122,10 +122,13 @@ namespace ShoppingList.Database
             context.SaveChanges();
         }
 
-        public List<Item> SearchItems(string search)
+        public List<EntityModels.ItemDto> SearchItems(string search)
         {
             search = search.ToLower();
-            return context.Item.AsNoTracking().Where(item => item.Name.ToLower().Contains(search)).ToList();
+            return context.Item.AsNoTracking()
+                .Where(item => item.Name.ToLower().Contains(search))
+                .Select(item => mapper.ToItemDto(item, null))
+                .ToList();
         }
     }
 }

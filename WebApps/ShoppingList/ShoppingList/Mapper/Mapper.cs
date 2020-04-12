@@ -11,12 +11,12 @@ namespace ShoppingList.Mapper
             {
                 Id = item.ItemId,
                 Name = item.Name,
-                QuantityType = ToQuantityType(item.QuantityType),
+                QuantityType = ToQuantityType(item.QuantityTypeId),
                 PricePerQuantity = item.PricePerQuantity,
-                Quantity = relation.Quantity ?? 0
+                Quantity = relation?.Quantity ?? 0
             };
 
-            if (relation.Quantity == null)
+            if (relation?.Quantity == null)
             {
                 SetDefaultQuantity(itemDto);
             }
@@ -36,11 +36,11 @@ namespace ShoppingList.Mapper
             }
         }
 
-        public EntityModels.QuantityType ToQuantityType(Database.Entities.QuantityType quantityType)
+        public EntityModels.QuantityType ToQuantityType(uint quantityTypeId)
         {
             // there aren't so many quantity types that the conversion
             // uint -> int would be a problem
-            return (EntityModels.QuantityType)(int)quantityType.QuantityTypeId;
+            return (EntityModels.QuantityType)(int)quantityTypeId;
         }
     }
 }

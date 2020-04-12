@@ -37,9 +37,9 @@
 </div>
 <div>
     <ul id="shoppingList">
-        @foreach (var shoppingItem in shoppingItems)
+        @foreach (var shoppingItem in activeShoppingItems)
         {
-            <ShoppingListItem Item="shoppingItem" ItemChangedCallback="UpdateItem"></ShoppingListItem>
+            <ShoppingListItem ItemDto="@shoppingItem" ItemChangedCallback="UpdateItem"></ShoppingListItem>
         }
     </ul>
 </div>
@@ -47,11 +47,13 @@
 
 
 @code {
-    private List<Database.Entities.Item> shoppingItems = new List<Database.Entities.Item>();
-    private List<Database.Entities.Item> itemSuggestions = new List<Database.Entities.Item>();
+    private List<EntityModels.ItemDto> itemSuggestions = new List<EntityModels.ItemDto>();
+
     private List<Database.Entities.Store> stores = new List<Database.Entities.Store>();
     private Database.Entities.Store activeStore;
-    private int nextId = 0;
+    private Database.Entities.ShoppingList activeShoppingList;
+    private List<EntityModels.ItemDto> activeShoppingItems = new List<EntityModels.ItemDto>();
+
     private string newShoppingItemName = "";
     private IShoppingRepository shoppingRepository;
 
@@ -59,31 +61,57 @@
 
     protected async override void OnInitialized()
     {
-        shoppingRepository = new ShoppingRepository(dbContextOptions);
+        if (activeStore == null)
+        {
+            shoppingRepository = new ShoppingRepository(dbContextOptions);
 
-        hideSuggestionsTimer.AutoReset = false;
-        hideSuggestionsTimer.Elapsed += OnHideSuggestionsTimerElapsed;
+            hideSuggestionsTimer.AutoReset = false;
+            hideSuggestionsTimer.Elapsed += OnHideSuggestionsTimerElapsed;
 
-        stores = await shoppingRepository.GetAllStoresAsync();
-        activeStore = stores.Count > 0 ? stores.First() : null;
+            stores = await shoppingRepository.GetAllStoresAsync();
+            activeStore = stores.Count > 0 ? stores.First() : null;
+
+            if (activeStore == null)
+            {
+                //TODO: send notification to user
+            }
+            else
+            {
+                LoadShoppingListForActiveStore();
+            }
+        }
+    }
+
+    private void LoadShoppingListForActiveStore()
+    {
+        activeShoppingList = shoppingRepository.GetActiveShoppingListByStoreId(activeStore.StoreId);
+        if (activeShoppingList == null)
+        {
+            activeShoppingList = shoppingRepository.CreateNewShoppingList(activeStore.StoreId);
+        }
+        else
+        {
+            activeShoppingItems = shoppingRepository.GetAllItemsOnShoppingList(activeShoppingList.ShoppingListId);
+        }
     }
 
     private Database.Entities.Item GenerateNewShoppingItem(string itemName)
     {
         return new Database.Entities.Item
         {
-            ItemId = (uint)nextId,
             Name = "testitem",
             QuantityType = new Database.Entities.QuantityType(),
             PricePerQuantity = 3.4m
         };
     }
 
-    private void UpdateItem(Database.Entities.Item item)
+    private void UpdateItem(EntityModels.ItemDto itemDto)
     {
+        Console.WriteLine($"callback: {itemDto.Quantity}");
         //save
     }
 
+    #region callbacks
     private void OnInputFocusLost()
     {
         hideSuggestionsTimer.Start();
@@ -98,12 +126,12 @@
     private void OnChangeStore(Database.Entities.Store store)
     {
         activeStore = store;
-        //reload shopping list
+        LoadShoppingListForActiveStore();
     }
 
-    private void OnSearchItemSelected(Database.Entities.Item item)
+    private void OnSearchItemSelected(EntityModels.ItemDto itemDto)
     {
-        shoppingItems.Add(item);
+        activeShoppingItems.Add(itemDto);
         //save to database
         newShoppingItemName = String.Empty;
         itemSuggestions.Clear();
@@ -121,4 +149,5 @@
             itemSuggestions.Clear();
         }
     }
+    #endregion
 }

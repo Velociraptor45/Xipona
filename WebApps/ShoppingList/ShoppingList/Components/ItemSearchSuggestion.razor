@@ -5,10 +5,10 @@
 
 @code {
     [Parameter]
-    public Database.Entities.Item Item { get; set; }
+    public EntityModels.ItemDto Item { get; set; }
 
     [Parameter]
-    public EventCallback<Database.Entities.Item> ItemSelectedCallback { get; set; }
+    public EventCallback<EntityModels.ItemDto> ItemSelectedCallback { get; set; }
 
     private void OnItemClicked()
     {

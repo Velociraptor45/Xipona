@@ -17,6 +17,6 @@ namespace ShoppingList.Database
         public List<EntityModels.ItemDto> GetAllItemsOnShoppingList(uint shoppingListId);
         public void AddItemToShoppingList(Item item, Entities.ShoppingList shoppingList);
         public void RemoveItemFromShoppingList(Item item, Entities.ShoppingList shoppingList);
-        public List<Item> SearchItems(string search);
+        public List<EntityModels.ItemDto> SearchItems(string search);
     }
 }
