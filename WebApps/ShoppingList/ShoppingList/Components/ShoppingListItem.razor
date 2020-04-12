@@ -4,7 +4,7 @@
             <BSBasicInput T="string" Value="@Item.Name" ValueChanged="OnItemNameChanged"></BSBasicInput>
         </div>
         <div class="col-4">
-            <BSBasicInput T="int" @bind-Value="Item.Amount"></BSBasicInput>
+            <BSBasicInput T="decimal" @bind-Value="Item.Quantity"></BSBasicInput>
             <BSButton type="button" @onclick="DecrementAmount">-</BSButton>
             <BSButton type="button" @onclick="IncrementAmount">+</BSButton>
         </div>
@@ -13,19 +13,19 @@
 
 @code {
     [Parameter]
-    public ShoppingItem Item { get; set; }
+    public ShoppingList.Database.Entities.Item Item { get; set; }
 
     [Parameter]
-    public EventCallback<ShoppingItem> ItemChangedCallback { get; set; }
+    public EventCallback<ShoppingList.Database.Entities.Item> ItemChangedCallback { get; set; }
 
     private void IncrementAmount()
     {
-        Item.Amount++;
+        Item.Quantity++;
     }
 
     private void DecrementAmount()
     {
-        Item.Amount--;
+        Item.Quantity--;
     }
 
     private void OnItemNameChanged(string newValue)

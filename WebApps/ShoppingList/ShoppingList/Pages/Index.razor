@@ -1,7 +1,21 @@
 ﻿@page "/"
+@inject DbContextOptions<ShoppingContext> dbContextOptions
 
 <h1>Shopping List</h1>
 
+<div>
+    <BSDropdown @onselectionchange="OnSelectStore">
+        <BSDropdownToggle Color="Color.Primary">&lt;select store&gt;</BSDropdownToggle>
+        <BSDropdownMenu>
+            @foreach (ShoppingList.Database.Entities.Store store in stores)
+            {
+                <BSDropdownItem @onclick="OnSelectStore">
+                        @store.Name
+                </BSDropdownItem>
+            }
+        </BSDropdownMenu>
+    </BSDropdown>
+</div>
 <div class="row">
     <BSBasicInput Class="col-11" T="string" @bind-Value="newShoppingItemName"></BSBasicInput>
     <BSButton Class="col-1" @onclick="AddItemToList">Add</BSButton>
@@ -16,9 +30,24 @@
 </div>
 
 @code {
-    private List<ShoppingItem> shoppingItems = new List<ShoppingItem>();
+    private List<ShoppingList.Database.Entities.Item> shoppingItems = new List<ShoppingList.Database.Entities.Item>();
+    private List<ShoppingList.Database.Entities.Store> stores = new List<ShoppingList.Database.Entities.Store>();
     private int nextId = 0;
     private string newShoppingItemName;
+    private IShoppingRepository shoppingRepository;
+
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        shoppingRepository = new ShoppingRepository(dbContextOptions);
+
+        stores = await shoppingRepository.GetAllStoresAsync();
+    }
+
+    private void OnSelectStore(EventArgs args)
+    {
+        int a = 0;
+    }
 
     private void AddItemToList()
     {
@@ -26,27 +55,15 @@
         nextId++;
     }
 
-    private ShoppingItem GenerateNewShoppingItem(string itemName)
+    private ShoppingList.Database.Entities.Item GenerateNewShoppingItem(string itemName)
     {
-        return new ShoppingItem()
-        {
-            Name = itemName,
-            Amount = 0,
-            Id = nextId
-        };
+        return null;
     }
 
-    private void UpdateItem(ShoppingItem item)
+    private void UpdateItem(ShoppingList.Database.Entities.Item item)
     {
-        ShoppingItem listItem = shoppingItems.First(si => si.Id == item.Id);
-        shoppingItems[shoppingItems.IndexOf(listItem)] = item;
-
-        foreach (var it in shoppingItems)
-        {
-            Console.WriteLine("______________________");
-            Console.WriteLine($"Id: {it.Id}");
-            Console.WriteLine($"Name: {it.Name}");
-            Console.WriteLine($"Amount: {it.Amount}");
-        }
+        //save
     }
+
+
 }
