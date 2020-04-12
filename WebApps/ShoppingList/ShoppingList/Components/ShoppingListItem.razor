@@ -4,7 +4,13 @@
             <BSBasicInput T="string" Value="@ItemDto.Name" ValueChanged="OnItemNameChanged"></BSBasicInput>
         </div>
         <div class="col-4">
-            <BSBasicInput T="int" @bind-Value="@Quantity" @onfocusout="OnQuantityChanged"></BSBasicInput>
+            <!-- The input will be disabled until I can prevent
+                the user from inputting letters - without using an InputType-->
+            <BSBasicInput T="int"
+                          Value="@Quantity"
+                          @onfocusout="OnQuantityChanged"
+                          IsDisabled="true"></BSBasicInput>
+
             <BSButton type="button" @onclick="DecrementAmount">-</BSButton>
             <BSButton type="button" @onclick="IncrementAmount">+</BSButton>
         </div>
@@ -73,12 +79,17 @@
             Quantity = 0;
 
         ItemDto.Quantity = (uint)Quantity;
-        //ItemChangedCallback.InvokeAsync(ItemDto);
+        UpdateItem();
     }
 
     private void OnItemNameChanged(string newValue)
     {
         ItemDto.Name = newValue;
+        UpdateItem();
+    }
+
+    private void UpdateItem()
+    {
         ItemChangedCallback.InvokeAsync(ItemDto);
     }
 }
