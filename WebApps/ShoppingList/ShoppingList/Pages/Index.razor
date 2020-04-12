@@ -93,6 +93,7 @@
         {
             activeShoppingItems = shoppingRepository.GetAllItemsOnShoppingList(activeShoppingList.ShoppingListId);
         }
+        StateHasChanged();
     }
 
     private void UpdateItem(EntityModels.ItemDto itemDto)
@@ -121,8 +122,15 @@
 
     private void OnSearchItemSelected(EntityModels.ItemDto itemDto)
     {
+        try
+        {
+            shoppingRepository.AddNewItemToShoppingList(itemDto, activeShoppingList.ShoppingListId);
+        }
+        catch (Exception e)
+        {
+            //TODO tell user that item already exists
+        }
         activeShoppingItems.Add(itemDto);
-        //save to database
         newShoppingItemName = String.Empty;
         itemSuggestions.Clear();
     }
@@ -132,7 +140,12 @@
         string search = ((string)args.Value).Trim();
         if (search != String.Empty)
         {
-            itemSuggestions = shoppingRepository.SearchItems(search);
+            //TODO refactor this
+            var activeItemIds = activeShoppingItems.Select(item => item.Id);
+            itemSuggestions = shoppingRepository
+                .SearchItems(search)
+                .Where(item => !activeItemIds.Contains(item.Id))
+                .ToList();
         }
         else if (itemSuggestions.Count > 0)
         {

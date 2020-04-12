@@ -87,6 +87,7 @@ namespace ShoppingList.Database
 
         public List<EntityModels.ItemDto> GetAllItemsOnShoppingList(uint shoppingListId)
         {
+            //TODO refactor
             List<EntityModels.ItemDto> itemDtos = new List<EntityModels.ItemDto>();
             List<ItemOnShoppingList> relations = GetAllShoppingListToItemRelations(shoppingListId);
             var itemIdsToLoad = relations.Select(rel => rel.ItemId);
@@ -104,7 +105,9 @@ namespace ShoppingList.Database
 
         private List<Entities.ItemOnShoppingList> GetAllShoppingListToItemRelations(uint shoppingListId)
         {
-            return context.ItemOnShoppingList.Where(rel => rel.ShoppingListId == shoppingListId).ToList();
+            return context.ItemOnShoppingList.AsNoTracking()
+                .Where(rel => rel.ShoppingListId == shoppingListId)
+                .ToList();
         }
 
         public void RemoveItemFromShoppingList(Item item, Entities.ShoppingList shoppingList)
@@ -112,8 +115,11 @@ namespace ShoppingList.Database
             var relationToRemove = context.ItemOnShoppingList.AsNoTracking().First(
                 iosl => iosl.ItemId == item.ItemId
                 && iosl.ShoppingListId == shoppingList.ShoppingListId);
-            if(relationToRemove != null)
+            if (relationToRemove != null)
+            {
                 context.ItemOnShoppingList.Remove(relationToRemove);
+                context.SaveChanges();
+            }
         }
 
         public void RemoveStore(Store store)
@@ -129,6 +135,28 @@ namespace ShoppingList.Database
                 .Where(item => item.Name.ToLower().Contains(search))
                 .Select(item => mapper.ToItemDto(item, null))
                 .ToList();
+        }
+
+        public void AddNewItemToShoppingList(EntityModels.ItemDto itemDto, uint shoppingListId)
+        {
+            var existingReference = context.ItemOnShoppingList.AsNoTracking()
+                .FirstOrDefault(r => r.ShoppingListId == shoppingListId
+                    && r.ItemId == itemDto.Id);
+            if (existingReference == null)
+            {
+                ItemOnShoppingList reference = new ItemOnShoppingList
+                {
+                    ShoppingListId = shoppingListId,
+                    ItemId = itemDto.Id,
+                    Quantity = itemDto.Quantity
+                };
+                context.ItemOnShoppingList.Add(reference);
+                context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("Item already on shopping list");
+            }
         }
     }
 }
