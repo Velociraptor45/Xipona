@@ -4,7 +4,7 @@
             <BSBasicInput T="string" Value="@Item.Name" ValueChanged="OnItemNameChanged"></BSBasicInput>
         </div>
         <div class="col-4">
-            <BSBasicInput T="decimal" @bind-Value="Item.Quantity"></BSBasicInput>
+            <BSBasicInput T="decimal"></BSBasicInput>
             <BSButton type="button" @onclick="DecrementAmount">-</BSButton>
             <BSButton type="button" @onclick="IncrementAmount">+</BSButton>
         </div>
@@ -20,12 +20,12 @@
 
     private void IncrementAmount()
     {
-        Item.Quantity++;
+        
     }
 
     private void DecrementAmount()
     {
-        Item.Quantity--;
+        
     }
 
     private void OnItemNameChanged(string newValue)

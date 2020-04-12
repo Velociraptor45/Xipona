@@ -18,7 +18,7 @@ namespace ShoppingList.Database
         public virtual DbSet<Item> Item { get; set; }
         public virtual DbSet<ItemOnShoppingList> ItemOnShoppingList { get; set; }
         public virtual DbSet<QuantityType> QuantityType { get; set; }
-        public virtual DbSet<ShoppingList.Database.Entities.ShoppingList> ShoppingList { get; set; }
+        public virtual DbSet<Entities.ShoppingList> ShoppingList { get; set; }
         public virtual DbSet<Store> Store { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,8 +37,6 @@ namespace ShoppingList.Database
                     .HasCollation("latin1_swedish_ci");
 
                 entity.Property(e => e.PricePerQuantity).HasColumnType("decimal(10,0)");
-
-                entity.Property(e => e.Quantity).HasColumnType("decimal(10,0)");
 
                 entity.Property(e => e.QuantityTypeId).HasColumnType("int(10) unsigned");
 
@@ -60,6 +58,8 @@ namespace ShoppingList.Database
                 entity.Property(e => e.ItemOnShoppingListId).HasColumnType("int(10) unsigned");
 
                 entity.Property(e => e.ItemId).HasColumnType("int(10) unsigned");
+
+                entity.Property(e => e.Quantity).HasColumnType("decimal(10,0)");
 
                 entity.Property(e => e.ShoppingListId).HasColumnType("int(10) unsigned");
 
@@ -87,7 +87,7 @@ namespace ShoppingList.Database
                     .HasCollation("latin1_swedish_ci");
             });
 
-            modelBuilder.Entity<ShoppingList.Database.Entities.ShoppingList>(entity =>
+            modelBuilder.Entity<Entities.ShoppingList>(entity =>
             {
                 entity.HasIndex(e => e.StoreId)
                     .HasName("StoreId");
