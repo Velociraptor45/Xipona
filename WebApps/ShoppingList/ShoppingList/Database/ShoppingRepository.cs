@@ -68,8 +68,8 @@ namespace ShoppingList.Database
 
         public List<Item> SearchItems(string search)
         {
-            //return context.Item.AsNoTracking().Where(item => item.Name.Contains(search)).ToList();
-            return context.Item.AsNoTracking().ToList();
+            search = search.ToLower();
+            return context.Item.AsNoTracking().Where(item => item.Name.ToLower().Contains(search)).ToList();
         }
     }
 }

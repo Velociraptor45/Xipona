@@ -1,4 +1,4 @@
-﻿<div class="outer-container">
+﻿<div class="outer-container" @onclick="OnItemClicked">
     <div>@Item.Name</div>
     <div>@Item.PricePerQuantity</div>
 </div>
@@ -6,4 +6,12 @@
 @code {
     [Parameter]
     public Database.Entities.Item Item { get; set; }
+
+    [Parameter]
+    public EventCallback<Database.Entities.Item> ItemSelectedCallback { get; set; }
+
+    private void OnItemClicked()
+    {
+        ItemSelectedCallback.InvokeAsync(Item);
+    }
 }

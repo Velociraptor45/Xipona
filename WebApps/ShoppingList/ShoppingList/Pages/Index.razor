@@ -22,13 +22,13 @@
     </BSDropdown>
 </div>
 <div class="row">
-    <BSBasicInput Class="col-11" T="string" @bind-Value="newShoppingItemName"></BSBasicInput>
-    <BSButton Class="col-1" @onclick="AddItemToList">Add</BSButton>
+    <BSBasicInput Class="col-11" T="string" @bind-Value="newShoppingItemName" @oninput="OnSearchInput"></BSBasicInput>
+    <BSButton Class="col-1">Add</BSButton>
 </div>
 <div>
     @foreach(var item in itemSuggestions)
     {
-        <ItemSearchSuggestion Item="@item"></ItemSearchSuggestion>
+        <ItemSearchSuggestion Item="@item" ItemSelectedCallback="OnSearchItemSelected"></ItemSearchSuggestion>
     }
 </div>
 <div>
@@ -48,7 +48,7 @@
     private List<Database.Entities.Store> stores = new List<Database.Entities.Store>();
     private Database.Entities.Store activeStore;
     private int nextId = 0;
-    private string newShoppingItemName;
+    private string newShoppingItemName = "";
     private IShoppingRepository shoppingRepository;
 
     protected async override void OnInitialized()
@@ -56,25 +56,7 @@
         shoppingRepository = new ShoppingRepository(dbContextOptions);
 
         stores = await shoppingRepository.GetAllStoresAsync();
-        itemSuggestions = shoppingRepository.SearchItems("e");
         activeStore = stores.Count > 0 ? stores.First() : null;
-    }
-
-    private void OnChangeStore(Database.Entities.Store store)
-    {
-        activeStore = store;
-    }
-
-    private void OnSearchItemSelected(Database.Entities.Item item)
-    {
-        //todo
-    }
-
-    private void AddItemToList()
-    {
-        //replace this when item preview is implemented
-        //shoppingItems.Add(GenerateNewShoppingItem(newShoppingItemName));
-        //nextId++;
     }
 
     private Database.Entities.Item GenerateNewShoppingItem(string itemName)
@@ -84,7 +66,6 @@
             ItemId = (uint)nextId,
             Name = "testitem",
             QuantityType = new Database.Entities.QuantityType(),
-            Quantity = 2m,
             PricePerQuantity = 3.4m
         };
     }
@@ -92,5 +73,32 @@
     private void UpdateItem(Database.Entities.Item item)
     {
         //save
+    }
+
+    private void OnChangeStore(Database.Entities.Store store)
+    {
+        activeStore = store;
+        //reload shopping list
+    }
+
+    private void OnSearchItemSelected(Database.Entities.Item item)
+    {
+        shoppingItems.Add(item);
+        //save to database
+        newShoppingItemName = String.Empty;
+        itemSuggestions.Clear();
+    }
+
+    private void OnSearchInput(ChangeEventArgs args)
+    {
+        string search = ((string)args.Value).Trim();
+        if (search != String.Empty)
+        {
+            itemSuggestions = shoppingRepository.SearchItems(search);
+        }
+        else if (itemSuggestions.Count > 0)
+        {
+            itemSuggestions.Clear();
+        }
     }
 }
