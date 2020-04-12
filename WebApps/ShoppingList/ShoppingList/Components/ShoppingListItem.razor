@@ -40,6 +40,7 @@
     {
         ItemDto.Quantity += SingleQuantityUnit;
         UpdateQuantity();
+        UpdateItem();
     }
 
     private void DecrementAmount()
@@ -53,6 +54,7 @@
             ItemDto.Quantity -= SingleQuantityUnit;
         }
         UpdateQuantity();
+        UpdateItem();
     }
 
     private void UpdateQuantity()

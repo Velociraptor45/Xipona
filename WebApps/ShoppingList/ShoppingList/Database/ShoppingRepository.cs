@@ -17,22 +17,22 @@ namespace ShoppingList.Database
             context = new ShoppingContext(dbContextOptions);
         }
 
-        public void AddItemToShoppingList(Item item, Entities.ShoppingList shoppingList)
+        public void UpdateItemQuantity(EntityModels.ItemDto itemDto, uint shoppingListId)
         {
-            ItemOnShoppingList itemOnShoppingList = new ItemOnShoppingList
-            {
-                ItemId = item.ItemId,
-                ShoppingListId = shoppingList.ShoppingListId
-            };
-            context.ItemOnShoppingList.Add(itemOnShoppingList);
-            context.SaveChanges();
-        }
+            var relation = context.ItemOnShoppingList.AsNoTracking()
+                .FirstOrDefault(item => item.ItemId == itemDto.Id
+                && item.ShoppingListId == shoppingListId);
 
-        public Item AddNewItem(Item item)
-        {
-            context.Item.Add(item);
+            if(relation == null)
+            {
+                throw new Exception("No relation for this item to the given shoppingListId found");
+            }
+
+            relation.Quantity = itemDto.Quantity;
+
+            context.ItemOnShoppingList.Update(relation);
+            context.Entry(relation).State = EntityState.Detached;
             context.SaveChanges();
-            return item;
         }
 
         public Entities.ShoppingList AddNewShoppingList(Entities.ShoppingList shoppingList)

@@ -98,8 +98,8 @@
 
     private void UpdateItem(EntityModels.ItemDto itemDto)
     {
-        Console.WriteLine($"callback: {itemDto.Quantity}");
-        //save
+        shoppingRepository.UpdateItemQuantity(itemDto, activeShoppingList.ShoppingListId);
+        Console.WriteLine("saved");
     }
 
     #region callbacks

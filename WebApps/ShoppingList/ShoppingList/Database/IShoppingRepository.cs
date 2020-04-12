@@ -8,14 +8,13 @@ namespace ShoppingList.Database
     {
         public Store AddNewStore(Store store);
         public void RemoveStore(Store store);
-        public Item AddNewItem(Item item);
+        public void UpdateItemQuantity(EntityModels.ItemDto itemDto, uint shoppingListId);
         public Entities.ShoppingList AddNewShoppingList(Entities.ShoppingList shoppingList);
         public Task<List<Store>> GetAllStoresAsync();
         public void CompleteShoppingList(Entities.ShoppingList shoppingList);
         public Entities.ShoppingList GetActiveShoppingListByStoreId(uint storeId);
         public Entities.ShoppingList CreateNewShoppingList(uint storeId);
         public List<EntityModels.ItemDto> GetAllItemsOnShoppingList(uint shoppingListId);
-        public void AddItemToShoppingList(Item item, Entities.ShoppingList shoppingList);
         public void RemoveItemFromShoppingList(Item item, Entities.ShoppingList shoppingList);
         public List<EntityModels.ItemDto> SearchItems(string search);
         public void AddNewItemToShoppingList(EntityModels.ItemDto itemDto, uint shoppingListId);
