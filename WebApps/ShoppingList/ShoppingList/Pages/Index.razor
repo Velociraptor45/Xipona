@@ -4,13 +4,18 @@
 <h1>Shopping List</h1>
 
 <div>
-    <BSDropdown @onselectionchange="OnSelectStore">
-        <BSDropdownToggle Color="Color.Primary">&lt;select store&gt;</BSDropdownToggle>
+    <BSDropdown>
+        <BSDropdownToggle Color="Color.Primary">@activeStore?.Name</BSDropdownToggle>
         <BSDropdownMenu>
-            @foreach (ShoppingList.Database.Entities.Store store in stores)
+            @foreach (Database.Entities.Store store in stores)
             {
-                <BSDropdownItem @onclick="OnSelectStore">
-                        @store.Name
+                <BSDropdownItem>
+                    <CustomDropdownItem T="ShoppingList.Database.Entities.Store"
+                                        Item="@store" 
+                                        DropdownText="@store.Name" 
+                                        OnClickCallback="OnChangeStore">
+
+                    </CustomDropdownItem>
                 </BSDropdownItem>
             }
         </BSDropdownMenu>
@@ -30,40 +35,47 @@
 </div>
 
 @code {
-    private List<ShoppingList.Database.Entities.Item> shoppingItems = new List<ShoppingList.Database.Entities.Item>();
-    private List<ShoppingList.Database.Entities.Store> stores = new List<ShoppingList.Database.Entities.Store>();
+    private List<Database.Entities.Item> shoppingItems = new List<Database.Entities.Item>();
+    private List<Database.Entities.Store> stores = new List<Database.Entities.Store>();
+    private Database.Entities.Store activeStore;
     private int nextId = 0;
     private string newShoppingItemName;
     private IShoppingRepository shoppingRepository;
 
     protected async override void OnInitialized()
     {
-        base.OnInitialized();
         shoppingRepository = new ShoppingRepository(dbContextOptions);
 
         stores = await shoppingRepository.GetAllStoresAsync();
+        activeStore = stores.Count > 0 ? stores.First() : null;
     }
 
-    private void OnSelectStore(EventArgs args)
+    private void OnChangeStore(Database.Entities.Store store)
     {
-        int a = 0;
+        activeStore = store;
     }
 
     private void AddItemToList()
     {
+        //replace this when item preview is implemented
         shoppingItems.Add(GenerateNewShoppingItem(newShoppingItemName));
         nextId++;
     }
 
-    private ShoppingList.Database.Entities.Item GenerateNewShoppingItem(string itemName)
+    private Database.Entities.Item GenerateNewShoppingItem(string itemName)
     {
-        return null;
+        return new Database.Entities.Item
+        {
+            ItemId = (uint)nextId,
+            Name = "testitem",
+            QuantityType = new Database.Entities.QuantityType(),
+            Quantity = 2m,
+            PricePerQuantity = 3.4m
+        };
     }
 
-    private void UpdateItem(ShoppingList.Database.Entities.Item item)
+    private void UpdateItem(Database.Entities.Item item)
     {
         //save
     }
-
-
 }
