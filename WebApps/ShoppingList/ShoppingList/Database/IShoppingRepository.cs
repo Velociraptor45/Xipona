@@ -12,6 +12,9 @@ namespace ShoppingList.Database
         public Entities.ShoppingList AddNewShoppingList(Entities.ShoppingList shoppingList);
         public Task<List<Store>> GetAllStoresAsync();
         public void CompleteShoppingList(Entities.ShoppingList shoppingList);
+        public Entities.ShoppingList GetActiveShoppingListByStoreId(uint storeId);
+        public Entities.ShoppingList CreateNewShoppingList(uint storeId);
+        public List<EntityModels.ItemDto> GetAllItemsOnShoppingList(uint shoppingListId);
         public void AddItemToShoppingList(Item item, Entities.ShoppingList shoppingList);
         public void RemoveItemFromShoppingList(Item item, Entities.ShoppingList shoppingList);
         public List<Item> SearchItems(string search);
