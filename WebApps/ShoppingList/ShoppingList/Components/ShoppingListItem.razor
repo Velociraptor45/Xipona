@@ -1,21 +1,32 @@
-﻿<li>
-    <div class="row">
-        <div class="col-7">
-            <BSBasicInput T="string" Value="@ItemDto.Name" ValueChanged="OnItemNameChanged"></BSBasicInput>
+﻿<li class="shopping-item">
+    <div class="row p-1">
+        <div class="row col-xl-10 col-lg-10 col-md-11 col-11">
+            <div class="col-xl-3 col-lg-3 col-md-12 sol-12">
+                @ItemDto.Name
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12 col-12 row">
+                <div class="col-xl-8 col-lg-8 col-md-7 col-7 pr-0">
+                    <!-- The input will be disabled until I can prevent
+                    the user from inputting letters - without using an InputType-->
+                    <BSBasicInput T="int"
+                                  Value="@Quantity"
+                                  @onfocusout="OnQuantityChanged"
+                                  IsDisabled="true"></BSBasicInput>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-5 col-5">
+                    <BSButtonGroup>
+                        <BSButton Color="Color.Danger" type="button" @onclick="DecrementAmount">
+                            <span class="oi oi-minus"></span>
+                        </BSButton>
+                        <BSButton Color="Color.Success" type="button" @onclick="IncrementAmount">
+                            <span class="oi oi-plus"></span>
+                        </BSButton>
+                    </BSButtonGroup>
+                </div>
+            </div>
         </div>
-        <div class="col-4">
-            <!-- The input will be disabled until I can prevent
-                the user from inputting letters - without using an InputType-->
-            <BSBasicInput T="int"
-                          Value="@Quantity"
-                          @onfocusout="OnQuantityChanged"
-                          IsDisabled="true"></BSBasicInput>
-
-            <BSButton type="button" @onclick="DecrementAmount">-</BSButton>
-            <BSButton type="button" @onclick="IncrementAmount">+</BSButton>
-        </div>
-        <div class="col-1">
-            <BSButton type="button" @onclick="OnRemoveButtonClicked">
+        <div class="ml-auto col-xl-2 col-lg-2 col-md-1 col-1 remove-button">
+            <BSButton Color="Color.Danger" Class="float-right" type="button" @onclick="OnRemoveButtonClicked">
                 <span class="oi oi-x"></span>
             </BSButton>
         </div>

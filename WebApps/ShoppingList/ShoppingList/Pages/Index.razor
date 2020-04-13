@@ -22,29 +22,33 @@
     </BSDropdown>
 </div>
 <div class="row">
-    <BSBasicInput Class="col-11"
-                  T="string"
-                  @bind-Value="newShoppingItemName"
-                  @onfocusout="OnInputFocusLost"
-                  @oninput="OnSearchInput"></BSBasicInput>
-    <BSButton Class="col-1">Add</BSButton>
-</div>
-<div>
-    @foreach(var item in itemSuggestions)
-    {
-        <ItemSearchSuggestion Item="@item" ItemSelectedCallback="OnSearchItemSelected"></ItemSearchSuggestion>
-    }
-</div>
-<div>
-    <ul id="shoppingList">
-        @foreach (var shoppingItem in activeShoppingItems)
-        {
-            <ShoppingListItem @key="@shoppingItem"
-                              ItemDto="@shoppingItem"
-                              ItemChangedCallback="UpdateItem"
-                              RemoveItemCallback="OnRemoveItemFromShoppingList"></ShoppingListItem>
-        }
-    </ul>
+    <div class="col-xl-5 col-sm-12">
+        <div class="row">
+            <BSBasicInput Class="col-11"
+                          T="string"
+                          @bind-Value="newShoppingItemName"
+                          @onfocusout="OnInputFocusLost"
+                          @oninput="OnSearchInput"></BSBasicInput>
+            <BSButton Class="col-1">Add</BSButton>
+        </div>
+        <div>
+            @foreach (var item in itemSuggestions)
+            {
+                <ItemSearchSuggestion Item="@item" ItemSelectedCallback="OnSearchItemSelected"></ItemSearchSuggestion>
+            }
+        </div>
+    </div>
+    <div class="col-xl-7 col-sm-12 p-0">
+        <ul id="shoppingList" class="p-0">
+            @foreach (var shoppingItem in activeShoppingItems)
+            {
+                <ShoppingListItem @key="@shoppingItem"
+                                  ItemDto="@shoppingItem"
+                                  ItemChangedCallback="UpdateItem"
+                                  RemoveItemCallback="OnRemoveItemFromShoppingList"></ShoppingListItem>
+            }
+        </ul>
+    </div>
 </div>
 
 
