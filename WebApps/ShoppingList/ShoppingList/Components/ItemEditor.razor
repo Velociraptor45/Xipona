@@ -1,0 +1,107 @@
+﻿<div>
+    <BSBasicInput T="string"
+                  @bind-Value="@ItemDto.Name"></BSBasicInput>
+
+    <div hidden="@(EditMode != EntityModels.ItemEditMode.Create)">
+        <BSDropdown>
+            <BSDropdownToggle Color="Color.Primary">@(selectedStore?.Name ?? "Choose store")</BSDropdownToggle>
+            <BSDropdownMenu>
+                @foreach (Database.Entities.Store store in AvailableStores)
+                {
+                    <BSDropdownItem>
+                        <CustomDropdownItem T="Database.Entities.Store"
+                                            Item="@store"
+                                            DropdownText="@store.Name"
+                                            OnClickCallback="OnStoreChanged">
+
+                        </CustomDropdownItem>
+                    </BSDropdownItem>
+                }
+            </BSDropdownMenu>
+        </BSDropdown>
+    </div>
+
+    <BSBasicInput T="decimal"
+                  @bind-Value="@((decimal)ItemDto.PricePerQuantity)"></BSBasicInput>
+
+    <div>
+        <BSDropdown>
+            <BSDropdownToggle Color="Color.Primary">@ItemDto.QuantityType.ToString()</BSDropdownToggle>
+            <BSDropdownMenu>
+                @foreach (EntityModels.QuantityType quantityType in availableQuantityTypes)
+                {
+                    <BSDropdownItem>
+                        <CustomDropdownItem T="EntityModels.QuantityType"
+                                            Item="@quantityType"
+                                            DropdownText="@quantityType.ToString()"
+                                            OnClickCallback="OnQuantityTypeChanged">
+
+                        </CustomDropdownItem>
+                    </BSDropdownItem>
+                }
+            </BSDropdownMenu>
+        </BSDropdown>
+    </div>
+
+    <div>
+        <BSButtonGroup>
+            <BSButton Color="Color.Success" @onclick="OnSaveClicked">Save</BSButton>
+            <BSButton Color="Color.Warning" @onclick="OnCancleClicked">Cancle</BSButton>
+            <BSButton Color="Color.Danger" @onclick="OnDeactivateClicked">Deactivate</BSButton>
+        </BSButtonGroup>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EntityModels.ItemDto ItemDto { get; set; }
+    [Parameter]
+    public EntityModels.ItemEditMode EditMode { get; set; }
+    [Parameter]
+    public List<Database.Entities.Store> AvailableStores { get; set; } = new List<Database.Entities.Store>();
+    [Parameter]
+    public Action<EntityModels.ItemDto, EntityModels.ItemEditMode, Database.Entities.Store> OnSaveCallback { get; set; }
+    [Parameter]
+    public Action<int> OnCancleCallback { get; set; }
+    [Parameter]
+    public Action<EntityModels.ItemDto> OnDeactivateCallback { get; set; }
+
+    private List<EntityModels.QuantityType> availableQuantityTypes =
+        Enum.GetValues(typeof(EntityModels.QuantityType)).Cast<EntityModels.QuantityType>().ToList();
+
+    private Database.Entities.Store selectedStore { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        if (EditMode == EntityModels.ItemEditMode.Create)
+        {
+            ItemDto.QuantityType = EntityModels.QuantityType.Unit;
+        }
+    }
+
+    private void OnSaveClicked()
+    {
+        OnSaveCallback.Invoke(ItemDto, EditMode, selectedStore);
+    }
+
+    private void OnDeactivateClicked()
+    {
+        OnDeactivateCallback?.Invoke(ItemDto);
+    }
+
+    private void OnCancleClicked()
+    {
+        OnCancleCallback?.Invoke(0);
+    }
+
+    private void OnQuantityTypeChanged(EntityModels.QuantityType quantityType)
+    {
+        ItemDto.QuantityType = quantityType;
+    }
+
+    private void OnStoreChanged(Database.Entities.Store store)
+    {
+        selectedStore = store;
+    }
+}
