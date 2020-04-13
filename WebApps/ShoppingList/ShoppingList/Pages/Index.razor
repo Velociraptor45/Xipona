@@ -29,7 +29,9 @@
                           @bind-Value="newShoppingItemName"
                           @onfocusout="OnInputFocusLost"
                           @oninput="OnSearchInput"></BSBasicInput>
-            <BSButton Class="col-1">Add</BSButton>
+            <BSButton Color="Color.Success" Class="col-1" @onclick="OnAddNewItemClicked">
+                <span class="oi oi-plus"></span>
+            </BSButton>
         </div>
         <div>
             @foreach (var item in itemSuggestions)
@@ -51,6 +53,14 @@
     </div>
 </div>
 
+<div class="@(hideItemEditor ? "hidden" : "")">
+    <ItemEditor ItemDto="@newItem"
+                EditMode="@EntityModels.ItemEditMode.Create"
+                AvailableStores="@stores"
+                OnSaveCallback="OnSaveNewItem"
+                OnCancleCallback="OnCancleNewItem"></ItemEditor>
+</div>
+
 
 
 @code {
@@ -65,6 +75,9 @@
     private IShoppingRepository shoppingRepository;
 
     private System.Timers.Timer hideSuggestionsTimer = new System.Timers.Timer(100);
+
+    private bool hideItemEditor = true;
+    private EntityModels.ItemDto newItem = new EntityModels.ItemDto();
 
     protected async override void OnInitialized()
     {
@@ -171,5 +184,32 @@
             itemSuggestions.Clear();
         }
     }
+
+    #region item editor
+    private void OnAddNewItemClicked()
+    {
+        newItem = new EntityModels.ItemDto
+        {
+            Name = newShoppingItemName,
+            PricePerQuantity = 1
+        };
+        hideItemEditor = false;
+        StateHasChanged();
+    }
+
+    private void OnSaveNewItem(EntityModels.ItemDto itemDto, EntityModels.ItemEditMode editMode, Database.Entities.Store store)
+    {
+        //shoppingRepository
+        Console.WriteLine("save new item");
+        hideItemEditor = true;
+        StateHasChanged();
+    }
+
+    private void OnCancleNewItem(int i)
+    {
+        hideItemEditor = true;
+        StateHasChanged();
+    }
+    #endregion
     #endregion
 }

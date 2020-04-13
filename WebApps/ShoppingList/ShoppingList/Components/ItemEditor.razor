@@ -1,8 +1,8 @@
-﻿<div>
+﻿<div class="item-editor">
     <BSBasicInput T="string"
                   @bind-Value="@ItemDto.Name"></BSBasicInput>
 
-    <div hidden="@(EditMode != EntityModels.ItemEditMode.Create)">
+    <div class="@(hideStoreDropdown ? "hidden" : "")">
         <BSDropdown>
             <BSDropdownToggle Color="Color.Primary">@(selectedStore?.Name ?? "Choose store")</BSDropdownToggle>
             <BSDropdownMenu>
@@ -21,8 +21,7 @@
         </BSDropdown>
     </div>
 
-    <BSBasicInput T="decimal"
-                  @bind-Value="@((decimal)ItemDto.PricePerQuantity)"></BSBasicInput>
+    <BSBasicInput T="decimal" @bind-Value="@pricePerQuantity"></BSBasicInput>
 
     <div>
         <BSDropdown>
@@ -47,7 +46,9 @@
         <BSButtonGroup>
             <BSButton Color="Color.Success" @onclick="OnSaveClicked">Save</BSButton>
             <BSButton Color="Color.Warning" @onclick="OnCancleClicked">Cancle</BSButton>
-            <BSButton Color="Color.Danger" @onclick="OnDeactivateClicked">Deactivate</BSButton>
+            <BSButton Color="Color.Danger"
+                      @onclick="OnDeactivateClicked"
+                      IsDisabled="@(EditMode == EntityModels.ItemEditMode.Create)">Deactivate</BSButton>
         </BSButtonGroup>
     </div>
 </div>
@@ -70,13 +71,22 @@
         Enum.GetValues(typeof(EntityModels.QuantityType)).Cast<EntityModels.QuantityType>().ToList();
 
     private Database.Entities.Store selectedStore { get; set; }
+    private bool hideStoreDropdown = false;
 
+    private decimal pricePerQuantity;
 
     protected override void OnInitialized()
     {
-        if (EditMode == EntityModels.ItemEditMode.Create)
+        pricePerQuantity = ItemDto?.PricePerQuantity ?? 1;
+
+        if(EditMode == EntityModels.ItemEditMode.Create)
         {
-            ItemDto.QuantityType = EntityModels.QuantityType.Unit;
+            if(ItemDto != null)
+                ItemDto.QuantityType = EntityModels.QuantityType.Unit;
+        }
+        else
+        {
+            hideStoreDropdown = true;
         }
     }
 
