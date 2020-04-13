@@ -1,11 +1,11 @@
 ﻿<li class="shopping-item @backgroundColorClassName">
     <div class="row p-1">
-        <div class="row col-xl-10 col-lg-10 col-md-11 col-11">
+        <div class="row col-xl-11 col-lg-11 col-md-11 col-11">
             <div class="col-xl-3 col-lg-3 col-md-12 sol-12" @onclick="OnItemClicked">
                 @ItemDto.Name
             </div>
-            <div class="col-xl-6 col-lg-6 col-md-12 col-12 row">
-                <div class="col-xl-8 col-lg-8 col-md-7 col-7 pr-0">
+            <div class="ml-auto col-xl-4 col-lg-4 col-md-12 col-12 row px-0">
+                <div class="col-xl-8 col-lg-8 col-md-7 col-7 px-0">
                     <!-- The input will be disabled until I can prevent
                     the user from inputting letters - without using an InputType-->
                     <BSBasicInput T="int"
@@ -24,8 +24,11 @@
                     </BSButtonGroup>
                 </div>
             </div>
+            <div class="ml-auto col-xl-2 col-lg-2 col-md-12 col-12">
+                <span>@currentPrice</span><span>€ / </span><span>@ItemDto.PricePerQuantity</span><span>€</span>
+            </div>
         </div>
-        <div class="ml-auto col-xl-2 col-lg-2 col-md-1 col-1 remove-button">
+        <div class="align-middle ml-auto col-xl-1 col-lg-1 col-md-1 col-1 remove-button">
             <BSButton Color="Color.Danger" Class="float-right" type="button" @onclick="OnRemoveButtonClicked">
                 <span class="oi oi-x"></span>
             </BSButton>
@@ -47,24 +50,29 @@
 
     private const string ItemInBasketColor = "green";
     private const string ItemNotInBasketColor = "red";
+    private const int UnitStandardQuantity = 1;
+    private const int WeightStandardQuantity = 100;
 
     // BlazorStrap currently doesn't support uint as a Type in BSBasicInput,
     // so the ItemDto.Quantity must be converted to int until this is fixed
     private int Quantity;
 
     private uint SingleQuantityUnit;
+    private decimal currentPrice;
 
     protected override void OnInitialized()
     {
         SingleQuantityUnit = GetSingleQuantityUnit();
         UpdateBackgroundColor();
         UpdateQuantity();
+        RecalculatePrice();
     }
 
     private void IncrementAmount()
     {
         ItemDto.Quantity += SingleQuantityUnit;
         UpdateQuantity();
+        RecalculatePrice();
         UpdateItem();
     }
 
@@ -79,7 +87,15 @@
             ItemDto.Quantity -= SingleQuantityUnit;
         }
         UpdateQuantity();
+        RecalculatePrice();
         UpdateItem();
+    }
+
+    private void RecalculatePrice()
+    {
+        currentPrice = ItemDto.Quantity * (decimal)ItemDto.PricePerQuantity;
+        if (ItemDto.QuantityType == EntityModels.QuantityType.Weight)
+            currentPrice /= 1000; //g to kg conversion
     }
 
     private void UpdateBackgroundColor()
@@ -100,9 +116,9 @@
         switch (ItemDto.QuantityType)
         {
             case EntityModels.QuantityType.Unit:
-                return 1;
+                return UnitStandardQuantity;
             case EntityModels.QuantityType.Weight:
-                return 100;
+                return WeightStandardQuantity;
             default:
                 throw new Exception($"Unknown type {ItemDto.QuantityType} encountered");
         }
