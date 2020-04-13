@@ -25,14 +25,15 @@ namespace ShoppingList.Database
 
             if(relation == null)
             {
+                //TODO replace with fitting exception
                 throw new Exception("No relation for this item to the given shoppingListId found");
             }
 
             relation.Quantity = itemDto.Quantity;
 
             context.ItemOnShoppingList.Update(relation);
-            context.Entry(relation).State = EntityState.Detached;
             context.SaveChanges();
+            context.Entry(relation).State = EntityState.Detached;
         }
 
         public Entities.ShoppingList AddNewShoppingList(Entities.ShoppingList shoppingList)
@@ -72,6 +73,7 @@ namespace ShoppingList.Database
         {
             if(GetActiveShoppingListByStoreId(storeId) != null)
             {
+                //TODO replace with fitting exception
                 throw new Exception("Uncompleted shopping list for this store");
             }
 
@@ -137,6 +139,10 @@ namespace ShoppingList.Database
                 .ToList();
         }
 
+        /// <summary>
+        /// Adds an item to the shopping list with the given id
+        /// </summary>
+        /// <exception cref="Exception">Item's already on the given shopping list</exception>
         public void AddNewItemToShoppingList(EntityModels.ItemDto itemDto, uint shoppingListId)
         {
             var existingReference = context.ItemOnShoppingList.AsNoTracking()
@@ -155,7 +161,31 @@ namespace ShoppingList.Database
             }
             else
             {
+                //TODO replace with fitting exception
                 throw new Exception("Item already on shopping list");
+            }
+        }
+
+        /// <summary>
+        /// Removes an item from the shopping list with the given id
+        /// </summary>
+        /// <exception cref="Exception">Item's not on the given shopping list</exception>
+        public void RemoveItemFromShoppingList(EntityModels.ItemDto itemDto, uint shoppingListId)
+        {
+            var reference = context.ItemOnShoppingList.AsNoTracking()
+                .FirstOrDefault(r => r.ShoppingListId == shoppingListId
+                    && r.ItemId == itemDto.Id);
+            
+            if(reference == null)
+            {
+                //TODO replace with fitting exception
+                throw new Exception("Item not on shopping list");
+            }
+            else
+            {
+                context.ItemOnShoppingList.Remove(reference);
+                context.SaveChanges();
+                context.Entry(reference).State = EntityState.Detached;
             }
         }
     }

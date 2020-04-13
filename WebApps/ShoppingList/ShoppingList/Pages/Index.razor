@@ -39,7 +39,10 @@
     <ul id="shoppingList">
         @foreach (var shoppingItem in activeShoppingItems)
         {
-            <ShoppingListItem ItemDto="@shoppingItem" ItemChangedCallback="UpdateItem"></ShoppingListItem>
+            <ShoppingListItem @key="@shoppingItem"
+                              ItemDto="@shoppingItem"
+                              ItemChangedCallback="UpdateItem"
+                              RemoveItemCallback="OnRemoveItemFromShoppingList"></ShoppingListItem>
         }
     </ul>
 </div>
@@ -103,6 +106,19 @@
     }
 
     #region callbacks
+    private void OnRemoveItemFromShoppingList(EntityModels.ItemDto itemDto)
+    {
+        try
+        {
+            shoppingRepository.RemoveItemFromShoppingList(itemDto, activeShoppingList.ShoppingListId);
+            activeShoppingItems.Remove(itemDto);
+        }
+        catch(Exception e)
+        {
+            //TODO notify user
+        }
+    }
+
     private void OnInputFocusLost()
     {
         hideSuggestionsTimer.Start();

@@ -1,6 +1,6 @@
 ﻿<li>
     <div class="row">
-        <div class="col-8">
+        <div class="col-7">
             <BSBasicInput T="string" Value="@ItemDto.Name" ValueChanged="OnItemNameChanged"></BSBasicInput>
         </div>
         <div class="col-4">
@@ -14,6 +14,11 @@
             <BSButton type="button" @onclick="DecrementAmount">-</BSButton>
             <BSButton type="button" @onclick="IncrementAmount">+</BSButton>
         </div>
+        <div class="col-1">
+            <BSButton type="button" @onclick="OnRemoveButtonClicked">
+                <span class="oi oi-x"></span>
+            </BSButton>
+        </div>
     </div>
 </li>
 
@@ -23,6 +28,9 @@
 
     [Parameter]
     public EventCallback<EntityModels.ItemDto> ItemChangedCallback { get; set; }
+
+    [Parameter]
+    public EventCallback<EntityModels.ItemDto> RemoveItemCallback { get; set; }
 
     // BlazorStrap currently doesn't support uint as a Type in BSBasicInput,
     // so the ItemDto.Quantity must be converted to int until this is fixed
@@ -88,6 +96,11 @@
     {
         ItemDto.Name = newValue;
         UpdateItem();
+    }
+
+    private void OnRemoveButtonClicked()
+    {
+        RemoveItemCallback.InvokeAsync(ItemDto);
     }
 
     private void UpdateItem()
