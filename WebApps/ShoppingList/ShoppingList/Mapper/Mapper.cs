@@ -12,6 +12,7 @@ namespace ShoppingList.Mapper
                 Id = item.ItemId,
                 Name = item.Name,
                 QuantityType = ToQuantityType(item.QuantityTypeId),
+                IsInShoppingBasket = relation?.IsInShoppingBasket ?? false,
                 PricePerQuantity = item.PricePerQuantity,
                 Quantity = relation?.Quantity ?? 0
             };
