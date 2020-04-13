@@ -40,6 +40,7 @@ namespace ShoppingList.Database
         {
             context.ShoppingList.Add(shoppingList);
             context.SaveChanges();
+            context.Entry(shoppingList).State = EntityState.Detached;
             return shoppingList;
         }
 
@@ -47,6 +48,7 @@ namespace ShoppingList.Database
         {
             context.Store.Add(store);
             context.SaveChanges();
+            context.Entry(store).State = EntityState.Detached;
             return store;
         }
 
@@ -60,6 +62,7 @@ namespace ShoppingList.Database
             shoppingList.CompletionDate = DateTime.Now;
             context.ShoppingList.Update(shoppingList);
             context.SaveChanges();
+            context.Entry(shoppingList).State = EntityState.Detached;
         }
 
         public Entities.ShoppingList GetActiveShoppingListByStoreId(uint storeId)
@@ -84,6 +87,7 @@ namespace ShoppingList.Database
 
             context.ShoppingList.Add(shoppingList);
             context.SaveChanges();
+            context.Entry(shoppingList).State = EntityState.Detached;
             return shoppingList;
         }
 
@@ -121,6 +125,7 @@ namespace ShoppingList.Database
             {
                 context.ItemOnShoppingList.Remove(relationToRemove);
                 context.SaveChanges();
+                context.Entry(relationToRemove).State = EntityState.Detached;
             }
         }
 
@@ -128,6 +133,7 @@ namespace ShoppingList.Database
         {
             context.Remove(store);
             context.SaveChanges();
+            context.Entry(store).State = EntityState.Detached;
         }
 
         public List<EntityModels.ItemDto> SearchItems(string search)
@@ -158,6 +164,7 @@ namespace ShoppingList.Database
                 };
                 context.ItemOnShoppingList.Add(reference);
                 context.SaveChanges();
+                context.Entry(reference).State = EntityState.Detached;
             }
             else
             {
