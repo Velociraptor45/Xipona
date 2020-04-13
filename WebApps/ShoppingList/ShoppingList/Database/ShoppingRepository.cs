@@ -17,7 +17,7 @@ namespace ShoppingList.Database
             context = new ShoppingContext(dbContextOptions);
         }
 
-        public void UpdateItemQuantity(EntityModels.ItemDto itemDto, uint shoppingListId)
+        public void UpdateItemRelation(EntityModels.ItemDto itemDto, uint shoppingListId)
         {
             var relation = context.ItemOnShoppingList.AsNoTracking()
                 .FirstOrDefault(item => item.ItemId == itemDto.Id
@@ -30,6 +30,7 @@ namespace ShoppingList.Database
             }
 
             relation.Quantity = itemDto.Quantity;
+            relation.IsInShoppingBasket = itemDto.IsInShoppingBasket;
 
             context.ItemOnShoppingList.Update(relation);
             context.SaveChanges();
@@ -160,7 +161,8 @@ namespace ShoppingList.Database
                 {
                     ShoppingListId = shoppingListId,
                     ItemId = itemDto.Id,
-                    Quantity = itemDto.Quantity
+                    Quantity = itemDto.Quantity,
+                    IsInShoppingBasket = false
                 };
                 context.ItemOnShoppingList.Add(reference);
                 context.SaveChanges();

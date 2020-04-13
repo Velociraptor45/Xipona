@@ -1,7 +1,7 @@
-﻿<li class="shopping-item">
+﻿<li class="shopping-item @backgroundColorClassName">
     <div class="row p-1">
         <div class="row col-xl-10 col-lg-10 col-md-11 col-11">
-            <div class="col-xl-3 col-lg-3 col-md-12 sol-12">
+            <div class="col-xl-3 col-lg-3 col-md-12 sol-12" @onclick="OnItemClicked">
                 @ItemDto.Name
             </div>
             <div class="col-xl-6 col-lg-6 col-md-12 col-12 row">
@@ -43,6 +43,11 @@
     [Parameter]
     public EventCallback<EntityModels.ItemDto> RemoveItemCallback { get; set; }
 
+    private string backgroundColorClassName = ItemNotInBasketColor;
+
+    private const string ItemInBasketColor = "green";
+    private const string ItemNotInBasketColor = "red";
+
     // BlazorStrap currently doesn't support uint as a Type in BSBasicInput,
     // so the ItemDto.Quantity must be converted to int until this is fixed
     private int Quantity;
@@ -52,6 +57,7 @@
     protected override void OnInitialized()
     {
         SingleQuantityUnit = GetSingleQuantityUnit();
+        UpdateBackgroundColor();
         UpdateQuantity();
     }
 
@@ -74,6 +80,14 @@
         }
         UpdateQuantity();
         UpdateItem();
+    }
+
+    private void UpdateBackgroundColor()
+    {
+        if (ItemDto.IsInShoppingBasket)
+            backgroundColorClassName = ItemInBasketColor;
+        else
+            backgroundColorClassName = ItemNotInBasketColor;
     }
 
     private void UpdateQuantity()
@@ -103,9 +117,10 @@
         UpdateItem();
     }
 
-    private void OnItemNameChanged(string newValue)
+    private void OnItemClicked()
     {
-        ItemDto.Name = newValue;
+        ItemDto.IsInShoppingBasket = !ItemDto.IsInShoppingBasket;
+        UpdateBackgroundColor();
         UpdateItem();
     }
 

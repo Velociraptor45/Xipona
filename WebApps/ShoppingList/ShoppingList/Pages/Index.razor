@@ -105,8 +105,7 @@
 
     private void UpdateItem(EntityModels.ItemDto itemDto)
     {
-        shoppingRepository.UpdateItemQuantity(itemDto, activeShoppingList.ShoppingListId);
-        Console.WriteLine("saved");
+        shoppingRepository.UpdateItemRelation(itemDto, activeShoppingList.ShoppingListId);
     }
 
     #region callbacks

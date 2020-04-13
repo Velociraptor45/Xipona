@@ -1,7 +1,14 @@
 ﻿.shopping-item{
     /*border: 0.5px solid grey;*/
-    background-color: lawngreen;
     margin-bottom: 5px;
+}
+
+.green {
+    background-color: lawngreen;
+}
+
+.red{
+    background-color: indianred;
 }
 
 li{
