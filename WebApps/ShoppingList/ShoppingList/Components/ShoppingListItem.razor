@@ -1,7 +1,7 @@
 ﻿<li class="shopping-item @backgroundColorClassName">
-    <div class="row p-1">
-        <div class="row col-xl-11 col-lg-11 col-md-11 col-11">
-            <div class="col-xl-3 col-lg-3 col-md-12 sol-12" @onclick="OnItemClicked">
+    <div class="row p-1 mr-2">
+        <div class="row col-xl-11 col-lg-11 col-md-11 col-11 pl-0 ml-1">
+            <div class="col-xl-3 col-lg-3 col-md-12 sol-12 pl-0 ml-3 h2" @onclick="OnItemClicked">
                 @ItemDto.Name
             </div>
             <div class="ml-auto col-xl-4 col-lg-4 col-md-12 col-12 row px-0">
@@ -13,12 +13,12 @@
                                   @onfocusout="OnQuantityChanged"
                                   IsDisabled="true"></BSBasicInput>
                 </div>
-                <div class="col-xl-4 col-lg-4 col-md-5 col-5">
+                <div class="col-xl-4 col-lg-4 col-md-5 col-5 amount-changer-group">
                     <BSButtonGroup>
-                        <BSButton Color="Color.Danger" type="button" @onclick="DecrementAmount">
+                        <BSButton Color="Color.Danger" type="button" Class="decrement-amount" @onclick="DecrementAmount">
                             <span class="oi oi-minus"></span>
                         </BSButton>
-                        <BSButton Color="Color.Success" type="button" @onclick="IncrementAmount">
+                        <BSButton Color="Color.Success" type="button" Class="increment-amount" @onclick="IncrementAmount">
                             <span class="oi oi-plus"></span>
                         </BSButton>
                     </BSButtonGroup>
@@ -28,8 +28,9 @@
                 <span>@currentPrice</span><span>€ / </span><span>@ItemDto.PricePerQuantity</span><span>€</span>
             </div>
         </div>
-        <div class="align-middle ml-auto col-xl-1 col-lg-1 col-md-1 col-1 remove-button">
-            <BSButton Color="Color.Danger" Class="float-right" type="button" @onclick="OnRemoveButtonClicked">
+        <div class="align-middle ml-auto col-xl-1 col-lg-1 col-md-1 col-1 px-0 remove-button">
+            <BSButton Color="Color.Danger" Class="@(ItemDto.IsInShoppingBasket ? "float-right" : "border-black float-right")"
+                      type="button" @onclick="OnRemoveButtonClicked">
                 <span class="oi oi-x"></span>
             </BSButton>
         </div>
