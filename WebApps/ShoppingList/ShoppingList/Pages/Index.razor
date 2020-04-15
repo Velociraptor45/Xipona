@@ -1,66 +1,70 @@
 ﻿@page "/"
 @inject DbContextOptions<ShoppingContext> dbContextOptions
 
-<div class="row">
-    <h1 class="h3 col-7 col-sm-5 col-md-5 col-lg-4 col-xl-3 mb-0 pr-0">Shopping List</h1>
-
-    <div class="col-5 col-sm-7 col-md-7 col-lg-8 col-xl-9">
-        <BSDropdown>
-            <BSDropdownToggle Color="Color.Primary">@activeStore?.Name</BSDropdownToggle>
-            <BSDropdownMenu>
-                @foreach (Database.Entities.Store store in stores)
-                {
-                    <BSDropdownItem>
-                        <CustomDropdownItem T="Database.Entities.Store"
-                                            Item="@store"
-                                            DropdownText="@store.Name"
-                                            OnClickCallback="OnChangeStore">
-
-                        </CustomDropdownItem>
-                    </BSDropdownItem>
-                }
-            </BSDropdownMenu>
-        </BSDropdown>
-    </div>
-</div>
-<div class="row mt-2">
-    <div class="col-xl-5 col-sm-12 mb-2">
+<div class="main-page">
+    <div>
         <div class="row">
-            <BSBasicInput Class="col-10 col-md-11"
-                          T="string"
-                          @bind-Value="newShoppingItemName"
-                          @onfocusout="OnInputFocusLost"
-                          @oninput="OnSearchInput"></BSBasicInput>
-            <BSButton Color="Color.Success" Class="col-2 col-md-1" @onclick="OnAddNewItemClicked">
-                <span class="oi oi-plus"></span>
-            </BSButton>
-        </div>
-        <div>
-            @foreach (var item in itemSuggestions)
-            {
-                <ItemSearchSuggestion Item="@item" ItemSelectedCallback="OnSearchItemSelected"></ItemSearchSuggestion>
-            }
-        </div>
-    </div>
-    <div class="col-xl-7 col-sm-12 p-0">
-        <ul id="shoppingList" class="p-0">
-            @foreach (var shoppingItem in activeShoppingItems)
-            {
-                <ShoppingListItem @key="@shoppingItem"
-                                  ItemDto="@shoppingItem"
-                                  ItemChangedCallback="UpdateItem"
-                                  RemoveItemCallback="OnRemoveItemFromShoppingList"></ShoppingListItem>
-            }
-        </ul>
-    </div>
-</div>
+            <h1 class="h3 col-7 col-sm-5 col-md-5 col-lg-4 col-xl-3 mb-0 pr-0">Shopping List</h1>
 
-<div class="@(hideItemEditor ? "hidden" : "") item-editor-container">
-    <ItemEditor ItemDto="@newItem"
-                EditMode="@EntityModels.ItemEditMode.Create"
-                AvailableStores="@stores"
-                OnSaveCallback="OnSaveNewItem"
-                OnCancleCallback="OnCancleNewItem"></ItemEditor>
+            <div class="col-5 col-sm-7 col-md-7 col-lg-8 col-xl-9">
+                <BSDropdown>
+                    <BSDropdownToggle Color="Color.Primary">@activeStore?.Name</BSDropdownToggle>
+                    <BSDropdownMenu>
+                        @foreach (Database.Entities.Store store in stores)
+                        {
+                            <BSDropdownItem>
+                                <CustomDropdownItem T="Database.Entities.Store"
+                                                    Item="@store"
+                                                    DropdownText="@store.Name"
+                                                    OnClickCallback="OnChangeStore">
+
+                                </CustomDropdownItem>
+                            </BSDropdownItem>
+                        }
+                    </BSDropdownMenu>
+                </BSDropdown>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-xl-5 col-sm-12 mb-2">
+                <div class="row">
+                    <BSBasicInput Class="col-10 col-md-11"
+                                  T="string"
+                                  @bind-Value="newShoppingItemName"
+                                  @onfocusout="OnInputFocusLost"
+                                  @oninput="OnSearchInput"></BSBasicInput>
+                    <BSButton Color="Color.Success" Class="col-2 col-md-1" @onclick="OnAddNewItemClicked">
+                        <span class="oi oi-plus"></span>
+                    </BSButton>
+                </div>
+                <div>
+                    @foreach (var item in itemSuggestions)
+                    {
+                        <ItemSearchSuggestion Item="@item" ItemSelectedCallback="OnSearchItemSelected"></ItemSearchSuggestion>
+                    }
+                </div>
+            </div>
+            <div class="col-xl-7 col-sm-12 p-0">
+                <ul id="shoppingList" class="p-0">
+                    @foreach (var shoppingItem in activeShoppingItems)
+                    {
+                        <ShoppingListItem @key="@shoppingItem"
+                                          ItemDto="@shoppingItem"
+                                          ItemChangedCallback="UpdateItem"
+                                          RemoveItemCallback="OnRemoveItemFromShoppingList"></ShoppingListItem>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="@(hideItemEditor ? "hidden" : "") item-editor-container">
+        <ItemEditor ItemDto="@newItem"
+                    EditMode="@EntityModels.ItemEditMode.Create"
+                    AvailableStores="@stores"
+                    OnSaveCallback="OnSaveNewItem"
+                    OnCancleCallback="OnCancleNewItem"></ItemEditor>
+    </div>
 </div>
 
 
