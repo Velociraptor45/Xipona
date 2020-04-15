@@ -1,7 +1,19 @@
 ﻿<div class="item-editor col">
-    <div class="form-container">
-        <BSBasicInput T="string"
-                      @bind-Value="@ItemDto.Name"></BSBasicInput>
+    <div class="form-container p-2">
+        <div class="row">
+            <div class="input-group col-10">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Article</span>
+                </div>
+                <BSBasicInput T="string"
+                              @bind-Value="@ItemDto.Name"></BSBasicInput>
+            </div>
+            <div class="closing-button col-2">
+                <BSButton Color="Color.Danger" @onclick="OnCancleClicked">
+                    <span class="oi oi-x"></span>
+                </BSButton>
+            </div>
+        </div>
 
         <div class="@(hideStoreDropdown ? "hidden" : "")">
             <BSDropdown>
@@ -32,7 +44,7 @@
         </div>
         <div>
             <BSDropdown>
-                <BSDropdownToggle Color="Color.Primary">@ItemDto.QuantityType.ToString()</BSDropdownToggle>
+                <BSDropdownToggle Color="Color.Primary">@selectedQuantityName</BSDropdownToggle>
                 <BSDropdownMenu>
                     @foreach (EntityModels.QuantityType quantityType in availableQuantityTypes)
                     {
@@ -52,10 +64,10 @@
         <div>
             <BSButtonGroup>
                 <BSButton Color="Color.Success" @onclick="OnSaveClicked">Save</BSButton>
-                <BSButton Color="Color.Warning" @onclick="OnCancleClicked">Cancle</BSButton>
+                
                 <BSButton Color="Color.Danger"
-                          @onclick="OnDeactivateClicked"
-                          IsDisabled="@(EditMode == EntityModels.ItemEditMode.Create)">Deactivate</BSButton>
+                            @onclick="OnDeactivateClicked"
+                            IsDisabled="@(EditMode == EntityModels.ItemEditMode.Create)">Deactivate</BSButton>
             </BSButtonGroup>
         </div>
     </div>
@@ -78,6 +90,7 @@
     private List<EntityModels.QuantityType> availableQuantityTypes =
         Enum.GetValues(typeof(EntityModels.QuantityType)).Cast<EntityModels.QuantityType>().ToList();
 
+    private string selectedQuantityName { get; set; }
     private Database.Entities.Store selectedStore { get; set; }
     private bool hideStoreDropdown = false;
 
@@ -89,13 +102,17 @@
 
         if(EditMode == EntityModels.ItemEditMode.Create)
         {
-            if(ItemDto != null)
-                ItemDto.QuantityType = EntityModels.QuantityType.Unit;
+            ItemDto.QuantityType = EntityModels.QuantityType.Unit;
         }
         else
         {
             hideStoreDropdown = true;
         }
+    }
+
+    protected override void OnParametersSet()
+    {
+        selectedQuantityName = ItemDto.QuantityType.ToString();
     }
 
     private void OnSaveClicked()
