@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ShoppingList.Database.Entities;
+using ShoppingList.EntityModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -196,6 +197,39 @@ namespace ShoppingList.Database
                 context.SaveChanges();
                 context.Entry(reference).State = EntityState.Detached;
             }
+        }
+
+        public void CreateNewItem(ItemDto itemDto)
+        {
+            Item item = mapper.ToItem(itemDto);
+            context.Item.Add(item);
+            context.SaveChanges();
+            context.Entry(item).State = EntityState.Detached;
+        }
+
+        public void UpdateItem(ItemDto itemDto)
+        {
+            Item oldItem = context.Item.AsNoTracking().FirstOrDefault(i => i.ItemId == itemDto.Id);
+            if(oldItem != null)
+            {
+                oldItem.Active = false;
+                context.Item.Update(oldItem);
+                context.Entry(oldItem).State = EntityState.Detached;
+            }
+            Item item = mapper.ToItem(itemDto);
+            item.ItemId = default;
+
+            context.Item.Add(item);
+            context.SaveChanges();
+            context.Entry(item).State = EntityState.Detached;
+        }
+
+        public void ChangeItem(ItemDto itemDto)
+        {
+            Item item = mapper.ToItem(itemDto);
+            context.Item.Update(item);
+            context.SaveChanges();
+            context.Entry(item).State = EntityState.Detached;
         }
     }
 }

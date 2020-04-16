@@ -14,7 +14,8 @@ namespace ShoppingList.Mapper
                 QuantityType = ToQuantityType(item.QuantityTypeId),
                 IsInShoppingBasket = relation?.IsInShoppingBasket ?? false,
                 PricePerQuantity = item.PricePerQuantity,
-                Quantity = relation?.Quantity ?? 0
+                Quantity = relation?.Quantity ?? 0,
+                Active = item.Active
             };
 
             if (relation?.Quantity == null)
@@ -22,6 +23,17 @@ namespace ShoppingList.Mapper
                 SetDefaultQuantity(itemDto);
             }
             return itemDto;
+        }
+
+        public Item ToItem(ItemDto itemDto)
+        {
+            return new Item
+            {
+                Name = itemDto.Name,
+                QuantityTypeId = (uint)itemDto.QuantityType,
+                PricePerQuantity = itemDto.PricePerQuantity,
+                Active = itemDto.Active
+            };
         }
 
         private void SetDefaultQuantity(EntityModels.ItemDto itemDto)
