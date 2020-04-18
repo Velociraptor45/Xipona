@@ -17,7 +17,7 @@
 
         <div class="@(hideStoreDropdown ? "hidden" : "")">
             <BSDropdown>
-                <BSDropdownToggle Color="Color.Primary">@(selectedStore?.Name ?? "Choose store")</BSDropdownToggle>
+                <BSDropdownToggle Color="Color.Primary">@(SelectedStore?.Name ?? "Choose store")</BSDropdownToggle>
                 <BSDropdownMenu>
                     @foreach (Database.Entities.Store store in AvailableStores)
                     {
@@ -81,7 +81,7 @@
     [Parameter]
     public List<Database.Entities.Store> AvailableStores { get; set; } = new List<Database.Entities.Store>();
     [Parameter]
-    public Database.Entities.Store selectedStore { get; set; }
+    public Database.Entities.Store SelectedStore { get; set; }
     [Parameter]
     public Action<EntityModels.ItemDto, EntityModels.ItemEditMode, Database.Entities.Store> OnSaveCallback { get; set; }
     [Parameter]
@@ -104,7 +104,7 @@
 
     private void OnSaveClicked()
     {
-        OnSaveCallback.Invoke(ItemDto, EditMode, selectedStore);
+        OnSaveCallback.Invoke(ItemDto, EditMode, SelectedStore);
     }
 
     private void OnDeactivateClicked()
@@ -124,6 +124,6 @@
 
     private void OnStoreChanged(Database.Entities.Store store)
     {
-        selectedStore = store;
+        SelectedStore = store;
     }
 }

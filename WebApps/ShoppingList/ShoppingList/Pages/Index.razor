@@ -62,6 +62,7 @@
         <ItemEditor ItemDto="@newItem"
                     EditMode="@EntityModels.ItemEditMode.Create"
                     AvailableStores="@stores"
+                    selectedStore="@activeStore"
                     OnSaveCallback="OnSaveNewItem"
                     OnCancleCallback="OnCancleNewItem"></ItemEditor>
     </div>
@@ -205,8 +206,7 @@
 
     private void OnSaveNewItem(EntityModels.ItemDto itemDto, EntityModels.ItemEditMode editMode, Database.Entities.Store store)
     {
-        //shoppingRepository
-        Console.WriteLine("save new item");
+        shoppingRepository.CreateNewItem(itemDto);
         hideItemEditor = true;
         StateHasChanged();
     }
