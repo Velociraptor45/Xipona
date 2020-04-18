@@ -1,77 +1,86 @@
 ﻿<div class="item-editor col">
     <div class="form-container p-2">
         <div class="row">
-            <div class="input-group col-10">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Article</span>
-                </div>
-                <BSBasicInput T="string"
-                              @bind-Value="@ItemDto.Name"></BSBasicInput>
-            </div>
-            <div class="closing-button col-2">
-                <BSButton Color="Color.Danger" @onclick="OnCancleClicked">
+            <div class="closing-button col-12 pb-2">
+                <BSButton Class="float-right" Color="Color.Danger" @onclick="OnCancleClicked">
                     <span class="oi oi-x"></span>
                 </BSButton>
             </div>
-        </div>
-
-        <div class="@(CanChangeStore ? "" : "hidden")">
-            <BSDropdown>
-                <BSDropdownToggle Color="Color.Primary">
-                    @(AvailableStores.FirstOrDefault(s => s.StoreId == ItemDto.StoreId)?.Name ?? "Choose store")
-                </BSDropdownToggle>
-                <BSDropdownMenu>
-                    @foreach (Database.Entities.Store store in AvailableStores)
-                    {
-                        <BSDropdownItem>
-                            <CustomDropdownItem T="Database.Entities.Store"
-                                                Item="@store"
-                                                DropdownText="@store.Name"
-                                                OnClickCallback="OnStoreChanged">
-
-                            </CustomDropdownItem>
-                        </BSDropdownItem>
-                    }
-                </BSDropdownMenu>
-            </BSDropdown>
-            <div class="font-red">No store selected</div>
-        </div>
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text">Price per Quantity</span>
+            <div class="col-8">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Article</span>
+                    </div>
+                    <BSBasicInput T="string"
+                                  @bind-Value="@ItemDto.Name"></BSBasicInput>
+                </div>
             </div>
-            <BSBasicInput T="decimal" @bind-Value="@ItemDto.PricePerQuantity"></BSBasicInput>
-            <div class="input-group-append">
-                <span class="input-group-text">€</span>
+            <div class="col-4 pl-0">
+                <div class="@(CanChangeStore ? "" : "@*hidden*@")">
+                    <BSDropdown>
+                        <BSDropdownToggle Color="Color.Primary">
+                            @(AvailableStores.FirstOrDefault(s => s.StoreId == ItemDto.StoreId)?.Name ?? "Choose store")
+                        </BSDropdownToggle>
+                        <BSDropdownMenu>
+                            @foreach (Database.Entities.Store store in AvailableStores)
+                            {
+                                <BSDropdownItem>
+                                    <CustomDropdownItem T="Database.Entities.Store"
+                                                        Item="@store"
+                                                        DropdownText="@store.Name"
+                                                        OnClickCallback="OnStoreChanged">
+
+                                    </CustomDropdownItem>
+                                </BSDropdownItem>
+                            }
+                        </BSDropdownMenu>
+                    </BSDropdown>
+                    <div class="font-red">No store selected</div>
+                </div>
             </div>
         </div>
-        <div>
-            <BSDropdown>
-                <BSDropdownToggle Color="Color.Primary">@ItemDto.QuantityType.ToString()</BSDropdownToggle>
-                <BSDropdownMenu>
-                    @foreach (EntityModels.QuantityType quantityType in availableQuantityTypes)
-                    {
-                        <BSDropdownItem>
-                            <CustomDropdownItem T="EntityModels.QuantityType"
-                                                Item="@quantityType"
-                                                DropdownText="@quantityType.ToString()"
-                                                OnClickCallback="OnQuantityTypeChanged">
 
-                            </CustomDropdownItem>
-                        </BSDropdownItem>
-                    }
-                </BSDropdownMenu>
-            </BSDropdown>
+        <div class="row pb-4">
+            <div class="input-group col-8">
+                <BSBasicInput T="decimal" @bind-Value="@ItemDto.PricePerQuantity"></BSBasicInput>
+                <div class="input-group-append">
+                    <span class="input-group-text">
+                        €@(ItemDto.QuantityType == EntityModels.QuantityType.Unit ? "" : "/kg")
+                    </span>
+                </div>
+            </div>
+            <div class="col-4 pl-0">
+                <BSDropdown>
+                    <BSDropdownToggle Color="Color.Primary">@ItemDto.QuantityType.ToString()</BSDropdownToggle>
+                    <BSDropdownMenu>
+                        @foreach (EntityModels.QuantityType quantityType in availableQuantityTypes)
+                        {
+                            <BSDropdownItem>
+                                <CustomDropdownItem T="EntityModels.QuantityType"
+                                                    Item="@quantityType"
+                                                    DropdownText="@quantityType.ToString()"
+                                                    OnClickCallback="OnQuantityTypeChanged">
+
+                                </CustomDropdownItem>
+                            </BSDropdownItem>
+                        }
+                    </BSDropdownMenu>
+                </BSDropdown>
+            </div>
         </div>
 
-        <div>
-            <BSButtonGroup>
-                <BSButton Color="Color.Success" @onclick="OnSaveClicked">Save</BSButton>
-                
-                <BSButton Color="Color.Danger"
-                            @onclick="OnDeactivateClicked"
-                            IsDisabled="@(EditMode == EntityModels.ItemEditMode.Create)">Deactivate</BSButton>
-            </BSButtonGroup>
+        <div class="row">
+            <div class="col-6">
+                <BSButton Class="@(EditMode == EntityModels.ItemEditMode.Create ? "float-left hidden" : "float-left")"
+                          Color="Color.Danger"
+                          @onclick="OnDeactivateClicked"
+                          IsDisabled="false">Deactivate</BSButton>
+            </div>
+            <div class="col-6">
+                <BSButton Class="float-right"
+                          Color="Color.Success"
+                          @onclick="OnSaveClicked">Save</BSButton>
+            </div>
         </div>
     </div>
 </div>
