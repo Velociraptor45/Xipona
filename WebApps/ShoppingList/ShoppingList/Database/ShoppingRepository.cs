@@ -199,6 +199,9 @@ namespace ShoppingList.Database
             }
         }
 
+        /// <summary>
+        /// Create a new item
+        /// </summary>
         public void CreateNewItem(ItemDto itemDto)
         {
             Item item = mapper.ToItem(itemDto);
@@ -207,6 +210,11 @@ namespace ShoppingList.Database
             context.Entry(item).State = EntityState.Detached;
         }
 
+        /// <summary>
+        /// Update an existig item's data, e.g. when the store changes the price
+        /// -> a new databse entry will be created to be able to calculate
+        /// old shopping lists with the old price
+        /// </summary>
         public void UpdateItem(ItemDto itemDto)
         {
             Item oldItem = context.Item.AsNoTracking().FirstOrDefault(i => i.ItemId == itemDto.Id);
@@ -224,6 +232,10 @@ namespace ShoppingList.Database
             context.Entry(item).State = EntityState.Detached;
         }
 
+        /// <summary>
+        /// Change an existing item' data, e.g. typo in the item name
+        /// -> no new database entry will be created
+        /// </summary>
         public void ChangeItem(ItemDto itemDto)
         {
             Item item = mapper.ToItem(itemDto);
