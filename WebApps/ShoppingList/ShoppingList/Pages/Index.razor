@@ -205,7 +205,7 @@
         StateHasChanged();
     }
 
-    private void OnSaveNewItem(EntityModels.ItemDto itemDto, EntityModels.ItemEditMode editMode, Database.Entities.Store store)
+    private void OnSaveNewItem(EntityModels.ItemDto itemDto, EntityModels.ItemEditMode editMode)
     {
         shoppingRepository.CreateNewItem(itemDto);
         hideItemEditor = true;

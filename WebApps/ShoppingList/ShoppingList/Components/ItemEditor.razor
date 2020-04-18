@@ -17,7 +17,9 @@
 
         <div class="@(CanChangeStore ? "" : "hidden")">
             <BSDropdown>
-                <BSDropdownToggle Color="Color.Primary">@(selectedStore?.Name ?? "Choose store")</BSDropdownToggle>
+                <BSDropdownToggle Color="Color.Primary">
+                    @(AvailableStores.FirstOrDefault(s => s.StoreId == ItemDto.StoreId)?.Name ?? "Choose store")
+                </BSDropdownToggle>
                 <BSDropdownMenu>
                     @foreach (Database.Entities.Store store in AvailableStores)
                     {
@@ -85,7 +87,7 @@
     public bool CanChangeStore { get; set; } = true;
 
     [Parameter]
-    public Action<EntityModels.ItemDto, EntityModels.ItemEditMode, Database.Entities.Store> OnSaveCallback { get; set; }
+    public Action<EntityModels.ItemDto, EntityModels.ItemEditMode> OnSaveCallback { get; set; }
     [Parameter]
     public Action<int> OnCancleCallback { get; set; }
     [Parameter]
@@ -93,7 +95,6 @@
 
     private List<EntityModels.QuantityType> availableQuantityTypes =
         Enum.GetValues(typeof(EntityModels.QuantityType)).Cast<EntityModels.QuantityType>().ToList();
-    private Database.Entities.Store selectedStore = null;
 
     protected override void OnParametersSet()
     {
@@ -107,7 +108,7 @@
 
     private void OnSaveClicked()
     {
-        OnSaveCallback.Invoke(ItemDto, EditMode, selectedStore);
+        OnSaveCallback.Invoke(ItemDto, EditMode);
     }
 
     private void OnDeactivateClicked()
@@ -127,7 +128,6 @@
 
     private void OnStoreChanged(Database.Entities.Store store)
     {
-        selectedStore = store;
         ItemDto.StoreId = store.StoreId;
     }
 }
