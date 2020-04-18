@@ -36,7 +36,9 @@ namespace ShoppingList.Database
                     .HasCharSet("latin1")
                     .HasCollation("latin1_swedish_ci");
 
-                entity.Property(e => e.PricePerQuantity).HasColumnType("decimal(10,0)");
+                entity.Property(e => e.PricePerQuantity)
+                    .HasColumnType("decimal(10,2)")
+                    .HasDefaultValueSql("'1.00'");
 
                 entity.Property(e => e.QuantityTypeId).HasColumnType("int(10) unsigned");
 
