@@ -44,7 +44,7 @@
         </div>
         <div>
             <BSDropdown>
-                <BSDropdownToggle Color="Color.Primary">@selectedQuantityName</BSDropdownToggle>
+                <BSDropdownToggle Color="Color.Primary">@ItemDto.QuantityType.ToString()</BSDropdownToggle>
                 <BSDropdownMenu>
                     @foreach (EntityModels.QuantityType quantityType in availableQuantityTypes)
                     {
@@ -81,6 +81,8 @@
     [Parameter]
     public List<Database.Entities.Store> AvailableStores { get; set; } = new List<Database.Entities.Store>();
     [Parameter]
+    public Database.Entities.Store selectedStore { get; set; }
+    [Parameter]
     public Action<EntityModels.ItemDto, EntityModels.ItemEditMode, Database.Entities.Store> OnSaveCallback { get; set; }
     [Parameter]
     public Action<int> OnCancleCallback { get; set; }
@@ -90,8 +92,6 @@
     private List<EntityModels.QuantityType> availableQuantityTypes =
         Enum.GetValues(typeof(EntityModels.QuantityType)).Cast<EntityModels.QuantityType>().ToList();
 
-    private string selectedQuantityName { get; set; }
-    private Database.Entities.Store selectedStore { get; set; }
     private bool hideStoreDropdown = false;
 
     protected override void OnInitialized()
@@ -100,10 +100,6 @@
         {
             hideStoreDropdown = true;
         }
-
-
-
-        selectedQuantityName = ItemDto.QuantityType.ToString();
     }
 
     private void OnSaveClicked()
@@ -124,7 +120,6 @@
     private void OnQuantityTypeChanged(EntityModels.QuantityType quantityType)
     {
         ItemDto.QuantityType = quantityType;
-        selectedQuantityName = ItemDto.QuantityType.ToString();
     }
 
     private void OnStoreChanged(Database.Entities.Store store)
