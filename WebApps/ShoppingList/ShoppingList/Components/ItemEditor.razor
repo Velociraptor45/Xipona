@@ -37,7 +37,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">Price per Quantity</span>
             </div>
-            <BSBasicInput T="decimal" @bind-Value="@pricePerQuantity"></BSBasicInput>
+            <BSBasicInput T="decimal" @bind-Value="@ItemDto.PricePerQuantity"></BSBasicInput>
             <div class="input-group-append">
                 <span class="input-group-text">€</span>
             </div>
@@ -94,24 +94,15 @@
     private Database.Entities.Store selectedStore { get; set; }
     private bool hideStoreDropdown = false;
 
-    private decimal pricePerQuantity;
-
     protected override void OnInitialized()
     {
-        pricePerQuantity = ItemDto?.PricePerQuantity ?? 1;
-
-        if(EditMode == EntityModels.ItemEditMode.Create)
-        {
-            ItemDto.QuantityType = EntityModels.QuantityType.Unit;
-        }
-        else
+        if(EditMode != EntityModels.ItemEditMode.Create)
         {
             hideStoreDropdown = true;
         }
-    }
 
-    protected override void OnParametersSet()
-    {
+
+
         selectedQuantityName = ItemDto.QuantityType.ToString();
     }
 
@@ -133,6 +124,7 @@
     private void OnQuantityTypeChanged(EntityModels.QuantityType quantityType)
     {
         ItemDto.QuantityType = quantityType;
+        selectedQuantityName = ItemDto.QuantityType.ToString();
     }
 
     private void OnStoreChanged(Database.Entities.Store store)
