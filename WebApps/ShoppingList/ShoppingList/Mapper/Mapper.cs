@@ -15,6 +15,7 @@ namespace ShoppingList.Mapper
                 IsInShoppingBasket = relation?.IsInShoppingBasket ?? false,
                 PricePerQuantity = item.PricePerQuantity,
                 Quantity = relation?.Quantity ?? 0,
+                StoreId = item.StoreId,
                 Active = item.Active
             };
 
@@ -32,6 +33,7 @@ namespace ShoppingList.Mapper
                 Name = itemDto.Name,
                 QuantityTypeId = (uint)itemDto.QuantityType,
                 PricePerQuantity = itemDto.PricePerQuantity,
+                StoreId = itemDto.StoreId,
                 Active = itemDto.Active
             };
         }

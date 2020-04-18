@@ -62,7 +62,7 @@
         <ItemEditor ItemDto="@newItem"
                     EditMode="@EntityModels.ItemEditMode.Create"
                     AvailableStores="@stores"
-                    selectedStore="@activeStore"
+                    CanChangeStore="false"
                     OnSaveCallback="OnSaveNewItem"
                     OnCancleCallback="OnCancleNewItem"></ItemEditor>
     </div>
@@ -198,7 +198,8 @@
         newItem = new EntityModels.ItemDto
         {
             Name = newShoppingItemName,
-            PricePerQuantity = 1
+            PricePerQuantity = 1,
+            StoreId = activeStore.StoreId
         };
         hideItemEditor = false;
         StateHasChanged();

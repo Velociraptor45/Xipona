@@ -205,6 +205,7 @@ namespace ShoppingList.Database
         public void CreateNewItem(ItemDto itemDto)
         {
             Item item = mapper.ToItem(itemDto);
+            item.Active = true;
             context.Item.Add(item);
             context.SaveChanges();
             context.Entry(item).State = EntityState.Detached;

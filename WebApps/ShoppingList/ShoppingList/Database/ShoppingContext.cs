@@ -28,6 +28,9 @@ namespace ShoppingList.Database
                 entity.HasIndex(e => e.QuantityTypeId)
                     .HasName("QuantityTypeId");
 
+                entity.HasIndex(e => e.StoreId)
+                    .HasName("Store");
+
                 entity.Property(e => e.ItemId).HasColumnType("int(10) unsigned");
 
                 entity.Property(e => e.Name)
@@ -42,11 +45,21 @@ namespace ShoppingList.Database
 
                 entity.Property(e => e.QuantityTypeId).HasColumnType("int(10) unsigned");
 
+                entity.Property(e => e.StoreId)
+                    .HasColumnType("int(10) unsigned")
+                    .HasDefaultValueSql("'2'");
+
                 entity.HasOne(d => d.QuantityType)
                     .WithMany(p => p.Item)
                     .HasForeignKey(d => d.QuantityTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Item_ibfk_1");
+                    .HasConstraintName("QuantityType");
+
+                entity.HasOne(d => d.Store)
+                    .WithMany(p => p.Item)
+                    .HasForeignKey(d => d.StoreId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Store");
             });
 
             modelBuilder.Entity<ItemOnShoppingList>(entity =>

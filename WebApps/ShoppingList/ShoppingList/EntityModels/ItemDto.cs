@@ -8,6 +8,7 @@
         public bool IsInShoppingBasket { get; set; }
         public decimal PricePerQuantity { get; set; }
         public bool Active { get; set; }
+        public uint StoreId { get; set; }
         public QuantityType QuantityType { get; set; }
     }
 }
