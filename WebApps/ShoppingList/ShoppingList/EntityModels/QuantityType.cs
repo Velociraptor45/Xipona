@@ -2,7 +2,7 @@
 {
     public enum QuantityType
     {
-        Unit = 1,
-        Weight = 2
+        Unit = 0,
+        Weight = 1
     }
 }
