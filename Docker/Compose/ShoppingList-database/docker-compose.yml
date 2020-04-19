@@ -5,12 +5,25 @@ services:
   productive:
     image: jsurf/rpi-mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: 
+      MYSQL_ROOT_PASSWORD: 5NiSgRpY2R6KLlA5uJIOJ4IZZ
       MYSQL_DATABASE: shoppinglist-productive
     ports:
       - "15908:3306"
     volumes:
       - shoppinglist-data-productive:/var/lib/mysql
 
+  development:
+    image: jsurf/rpi-mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: FTutIS4AcpBanTfFWv2dPRzj7
+      MYSQL_DATABASE: shoppinglist-development
+    ports:
+      - "15909:3306"
+    volumes:
+      - shoppinglist-data-development:/var/lib/mysql
+
 volumes:
   shoppinglist-data-productive:
+    external: true
+  shoppinglist-data-development:
+    external: true
