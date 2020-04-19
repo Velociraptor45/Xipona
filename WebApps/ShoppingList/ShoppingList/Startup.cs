@@ -31,9 +31,15 @@ namespace ShoppingList
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+#if RELEASE
             services.AddDbContext<ShoppingContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("Shopping-Productive"), opt =>
                     opt.EnableRetryOnFailure(3)));
+#elif DEBUG
+            services.AddDbContext<ShoppingContext>(options =>
+                options.UseMySql(Configuration.GetConnectionString("Shopping-Development"), opt =>
+                    opt.EnableRetryOnFailure(3)));
+#endif
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
