@@ -12,8 +12,9 @@
                         <span class="input-group-text">Article</span>
                     </div>
                     <BSBasicInput T="string"
-                                  @bind-Value="@ItemDto.Name"></BSBasicInput>
+                                    @bind-Value="@ItemDto.Name"></BSBasicInput>
                 </div>
+                <div class="font-red">No item name specified</div>
             </div>
             <div class="col-4 pl-0">
                 <div class="@(CanChangeStore ? "" : "@*hidden*@")">
@@ -41,13 +42,16 @@
         </div>
 
         <div class="row pb-4">
-            <div class="input-group col-8">
-                <BSBasicInput T="decimal" @bind-Value="@ItemDto.PricePerQuantity"></BSBasicInput>
-                <div class="input-group-append">
-                    <span class="input-group-text">
-                        €@(ItemDto.QuantityType == EntityModels.QuantityType.Unit ? "" : "/kg")
-                    </span>
+            <div class="col-8">
+                <div class="input-group">
+                    <BSBasicInput T="decimal" @bind-Value="@ItemDto.PricePerQuantity"></BSBasicInput>
+                    <div class="input-group-append">
+                        <span class="input-group-text">
+                            €@(ItemDto.QuantityType == EntityModels.QuantityType.Unit ? "" : "/kg")
+                        </span>
+                    </div>
                 </div>
+                <div class="font-red">No price specified</div>
             </div>
             <div class="col-4 pl-0">
                 <BSDropdown>
@@ -72,14 +76,14 @@
         <div class="row">
             <div class="col-6">
                 <BSButton Class="@(EditMode == EntityModels.ItemEditMode.Create ? "float-left hidden" : "float-left")"
-                          Color="Color.Danger"
-                          @onclick="OnDeactivateClicked"
-                          IsDisabled="false">Deactivate</BSButton>
+                            Color="Color.Danger"
+                            @onclick="OnDeactivateClicked"
+                            IsDisabled="false">Deactivate</BSButton>
             </div>
             <div class="col-6">
                 <BSButton Class="float-right"
-                          Color="Color.Success"
-                          @onclick="OnSaveClicked">Save</BSButton>
+                            Color="Color.Success"
+                            @onclick="OnSaveClicked">Save</BSButton>
             </div>
         </div>
     </div>
@@ -104,6 +108,10 @@
 
     private List<EntityModels.QuantityType> availableQuantityTypes =
         Enum.GetValues(typeof(EntityModels.QuantityType)).Cast<EntityModels.QuantityType>().ToList();
+
+    private bool showNoStoreSelectedLabel = false;
+    private bool showMissingArticleNameLabel = false;
+    private bool showMissingPriceLabel = false;
 
     protected override void OnParametersSet()
     {
