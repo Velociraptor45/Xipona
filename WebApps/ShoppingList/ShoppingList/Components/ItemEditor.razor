@@ -1,6 +1,6 @@
 ﻿<div class="item-editor col">
     <div class="form-container p-2">
-        <div class="row">
+        <div class="row pb-2">
             <div class="closing-button col-12 pb-2">
                 <BSButton Class="float-right" Color="Color.Danger" @onclick="OnCancleClicked">
                     <span class="oi oi-x"></span>
@@ -14,7 +14,7 @@
                     <BSBasicInput T="string"
                                     @bind-Value="@ItemDto.Name"></BSBasicInput>
                 </div>
-                <div class="font-red">No item name specified</div>
+                <div class="font-red @(showMissingArticleNameLabel ? "" : "hidden")">No item name specified</div>
             </div>
             <div class="col-4 pl-0">
                 <div class="@(CanChangeStore ? "" : "@*hidden*@")">
@@ -36,7 +36,7 @@
                             }
                         </BSDropdownMenu>
                     </BSDropdown>
-                    <div class="font-red">No store selected</div>
+                    <div class="font-red @(showNoStoreSelectedLabel ? "" : "hidden")">No store selected</div>
                 </div>
             </div>
         </div>
@@ -44,14 +44,14 @@
         <div class="row pb-4">
             <div class="col-8">
                 <div class="input-group">
-                    <BSBasicInput T="decimal" @bind-Value="@ItemDto.PricePerQuantity"></BSBasicInput>
+                    <BSBasicInput InputType="InputType.Number" T="decimal" @bind-Value="@ItemDto.PricePerQuantity"></BSBasicInput>
                     <div class="input-group-append">
                         <span class="input-group-text">
                             €@(ItemDto.QuantityType == EntityModels.QuantityType.Unit ? "" : "/kg")
                         </span>
                     </div>
                 </div>
-                <div class="font-red">No price specified</div>
+                <div class="font-red @(showMissingPriceLabel ? "" : "hidden")">No price specified</div>
             </div>
             <div class="col-4 pl-0">
                 <BSDropdown>
@@ -125,7 +125,14 @@
 
     private void OnSaveClicked()
     {
-        OnSaveCallback.Invoke(ItemDto, EditMode);
+        showMissingArticleNameLabel = String.IsNullOrEmpty(ItemDto.Name.Trim());
+        showMissingPriceLabel = ItemDto.PricePerQuantity == 0;
+        showNoStoreSelectedLabel = AvailableStores.FirstOrDefault(s => s.StoreId == ItemDto.StoreId) == null;
+
+        if (!showNoStoreSelectedLabel && !showMissingPriceLabel && !showMissingArticleNameLabel)
+        {
+            OnSaveCallback.Invoke(ItemDto, EditMode);
+        }
     }
 
     private void OnDeactivateClicked()
