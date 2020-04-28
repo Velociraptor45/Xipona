@@ -199,7 +199,8 @@
         {
             Name = newShoppingItemName,
             PricePerQuantity = 1,
-            StoreId = activeStore.StoreId
+            StoreId = activeStore.StoreId,
+            QuantityType = EntityModels.QuantityType.Unit
         };
         hideItemEditor = false;
         StateHasChanged();
