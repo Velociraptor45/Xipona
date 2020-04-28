@@ -19,8 +19,10 @@ namespace ShoppingList.Database
         public List<EntityModels.ItemDto> SearchItems(string search);
         public void AddNewItemToShoppingList(EntityModels.ItemDto itemDto, uint shoppingListId);
         public void RemoveItemFromShoppingList(EntityModels.ItemDto itemDto, uint shoppingListId);
+        public void RemoveItemsFromShoppingList(IEnumerable<EntityModels.ItemDto> itemDtos, uint shoppingListId);
         public void CreateNewItem(EntityModels.ItemDto itemDto);
         public void UpdateItem(EntityModels.ItemDto itemDto);
         public void ChangeItem(EntityModels.ItemDto itemDto);
+        public void AddItemsToNewShoppingList(IEnumerable<EntityModels.ItemDto> itemDtos, uint storeId);
     }
 }

@@ -18,6 +18,14 @@ namespace ShoppingList.Database
             context = new ShoppingContext(dbContextOptions);
         }
 
+        private void DetachAllEntries()
+        {
+            foreach (var entry in context.ChangeTracker.Entries())
+            {
+                entry.State = EntityState.Detached;
+            }
+        }
+
         public void UpdateItemRelation(EntityModels.ItemDto itemDto, uint shoppingListId)
         {
             var relation = context.ItemOnShoppingList.AsNoTracking()
@@ -176,27 +184,59 @@ namespace ShoppingList.Database
             }
         }
 
+        public void AddItemsToNewShoppingList(IEnumerable<EntityModels.ItemDto> itemDtos, uint storeId)
+        {
+            Entities.ShoppingList shoppingList = new Entities.ShoppingList()
+            {
+                StoreId = storeId
+            };
+            shoppingList = AddNewShoppingList(shoppingList);
+
+            foreach (var itemDto in itemDtos)
+            {
+                ItemOnShoppingList reference = new ItemOnShoppingList
+                {
+                    ShoppingListId = shoppingList.ShoppingListId,
+                    ItemId = itemDto.Id,
+                    Quantity = itemDto.Quantity,
+                    IsInShoppingBasket = false
+                };
+                context.ItemOnShoppingList.Add(reference);
+            }
+            context.SaveChanges();
+            DetachAllEntries();
+        }
+
         /// <summary>
         /// Removes an item from the shopping list with the given id
         /// </summary>
-        /// <exception cref="Exception">Item's not on the given shopping list</exception>
-        public void RemoveItemFromShoppingList(EntityModels.ItemDto itemDto, uint shoppingListId)
+        public void RemoveItemFromShoppingList(ItemDto itemDto, uint shoppingListId)
         {
-            var reference = context.ItemOnShoppingList.AsNoTracking()
-                .FirstOrDefault(r => r.ShoppingListId == shoppingListId
-                    && r.ItemId == itemDto.Id);
-            
-            if(reference == null)
+            RemoveItemsFromShoppingList(new List<ItemDto> { itemDto }, shoppingListId);
+        }
+
+        /// <summary>
+        /// Removes given items from the shopping list with the given id
+        /// </summary>
+        public void RemoveItemsFromShoppingList(IEnumerable<ItemDto> itemDtos, uint shoppingListId)
+        {
+            var itemIds = itemDtos.Select(item => item.Id);
+            var references = context.ItemOnShoppingList.AsNoTracking()
+                    .Where(r => r.ShoppingListId == shoppingListId
+                        && itemIds.Contains(r.ItemId))
+                    .ToList();
+
+            foreach (var itemDto in itemDtos)
             {
-                //TODO replace with fitting exception
-                throw new Exception("Item not on shopping list");
+                var reference = references.FirstOrDefault(r => r.ItemId == itemDto.Id);
+
+                if (reference != null)
+                {
+                    context.ItemOnShoppingList.Remove(reference);
+                }
             }
-            else
-            {
-                context.ItemOnShoppingList.Remove(reference);
-                context.SaveChanges();
-                context.Entry(reference).State = EntityState.Detached;
-            }
+            context.SaveChanges();
+            DetachAllEntries();
         }
 
         /// <summary>

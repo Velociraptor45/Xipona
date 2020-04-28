@@ -66,6 +66,10 @@
                     OnSaveCallback="OnSaveNewItem"
                     OnCancleCallback="OnCancleNewItem"></ItemEditor>
     </div>
+
+    <div>
+        <BSButton @onclick="OnShoppingFinished">Finish shopping</BSButton>
+    </div>
 </div>
 
 
@@ -191,6 +195,17 @@
             itemSuggestions.Clear();
         }
     }
+
+    private void OnShoppingFinished()
+    {
+        var notBoughtItems = activeShoppingItems.Where(item => !item.IsInShoppingBasket);
+        shoppingRepository.AddItemsToNewShoppingList(notBoughtItems, activeStore.StoreId);
+        shoppingRepository.RemoveItemsFromShoppingList(notBoughtItems, activeShoppingList.ShoppingListId);
+        shoppingRepository.CompleteShoppingList(activeShoppingList);
+        LoadShoppingListForActiveStore();
+    }
+
+
 
     #region item editor
     private void OnAddNewItemClicked()
