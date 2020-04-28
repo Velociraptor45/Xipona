@@ -6,12 +6,10 @@
             </div>
             <div class="ml-auto col-xl-4 col-lg-4 col-md-12 col-12 row px-0">
                 <div class="col-xl-8 col-lg-8 col-md-7 col-7 px-0">
-                    <!-- The input will be disabled until I can prevent
-                    the user from inputting letters - without using an InputType-->
                     <BSBasicInput T="int"
-                                  Value="@Quantity"
-                                  @onfocusout="OnQuantityChanged"
-                                  IsDisabled="true"></BSBasicInput>
+                                  InputType="InputType.Number"
+                                  @bind-Value="@Quantity"
+                                  @onfocusout="OnQuantityChanged"></BSBasicInput>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-5 col-5 amount-changer-group">
                     <BSButtonGroup>
@@ -132,6 +130,7 @@
 
         ItemDto.Quantity = (uint)Quantity;
         UpdateItem();
+        RecalculatePrice();
     }
 
     private void OnItemClicked()
