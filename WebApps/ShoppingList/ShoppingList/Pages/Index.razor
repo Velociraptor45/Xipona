@@ -6,8 +6,8 @@
         <div class="row">
             <h1 class="h3 col-7 col-sm-5 col-md-5 col-lg-4 col-xl-3 mb-0 pr-0">Shopping List</h1>
 
-            <div class="col-5 col-sm-7 col-md-7 col-lg-8 col-xl-9">
-                <BSDropdown>
+            <div class="col-5 col-sm-7 col-md-7 col-lg-8 col-xl-9 pr-0">
+                <BSDropdown Class="float-right">
                     <BSDropdownToggle Color="Color.Primary">@activeStore?.Name</BSDropdownToggle>
                     <BSDropdownMenu>
                         @foreach (Database.Entities.Store store in stores)
