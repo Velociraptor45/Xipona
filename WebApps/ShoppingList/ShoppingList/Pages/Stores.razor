@@ -7,7 +7,7 @@
 
     <div class="row">
         <div class="left-part col-12 col-md-4 col-xl-4">
-            <div class="new-store w-100">
+            <div class="new-store w-100 mb-2">
                 <BSButton Color="Color.Success" Class="w-100" @onclick="OnNewStoreButtonClicked">
                     <span class="oi oi-plus"></span>
                 </BSButton>
@@ -15,16 +15,17 @@
             <div class="store-selection">
                 <ol class="p-0">
                     <li>
-                        <div>Test</div>
+                        <div class="store-small-summary d-flex flex-column p-1">
+                            <div class="h4">Testname</div>
+                            <div>23 items available</div>
+                        </div>
                     </li>
                 </ol>
             </div>
         </div>
         <div class="right-part col-12 col-md-8 col-xl-8 d-flex flex-column">
             <div class="d-flex flex-row">
-                <div class="store-name h2">
-                    Testname
-                </div>
+                <div class="store-name h2">Testname</div>
                 <div class="edit-store-name ml-2">
                     <BSButton Color="Color.Info" @onclick="OnEditShopNameClicked">
                         <span class="oi oi-pencil"></span>
