@@ -1,4 +1,5 @@
 ﻿@page "/stores"
+@inject IShoppingRepositoryFactory shoppingRepositoryFactory
 
 <div class="stores-page">
     <h1 class="heading h1 mb-4">
@@ -15,7 +16,12 @@
             <div class="store-selection">
                 <ol class="p-0">
                     <li>
-                        
+                        @foreach (StoreDto store in stores)
+                        {
+                            <StoreListItem StoreDto="@store"
+                                           AvailableItemsCount="@repository.GetItemCountInStore(store.StoreId)"
+                                           OnStoreListItemClicked="OnSelectedStoreChanged"></StoreListItem>
+                        }
                     </li>
                 </ol>
             </div>
@@ -39,7 +45,16 @@
 </div>
 
 @code {
+    private IEnumerable<StoreDto> stores = new List<StoreDto>();
+    private IShoppingRepository repository;
 
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        repository = shoppingRepositoryFactory.Create();
+        stores = await repository.GetAllStoresAsync();
+        StateHasChanged();
+    }
 
     private void OnEditShopNameClicked()
     {
@@ -52,6 +67,11 @@
     }
 
     private void OnNewStoreButtonClicked()
+    {
+
+    }
+
+    private void OnSelectedStoreChanged()
     {
 
     }

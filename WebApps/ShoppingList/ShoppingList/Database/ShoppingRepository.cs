@@ -297,5 +297,10 @@ namespace ShoppingList.Database
             context.SaveChanges();
             context.Entry(item).State = EntityState.Detached;
         }
+
+        public int GetItemCountInStore(uint storeId)
+        {
+            return context.Item.AsNoTracking().Where(item => item.StoreId == storeId).Count();
+        }
     }
 }

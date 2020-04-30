@@ -26,5 +26,6 @@ namespace ShoppingList.Database
         public void UpdateItem(ItemDto itemDto);
         public void ChangeItem(ItemDto itemDto);
         public void AddItemsToNewShoppingList(IEnumerable<ItemDto> itemDtos, uint storeId);
+        public int GetItemCountInStore(uint storeId);
     }
 }
