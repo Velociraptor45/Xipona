@@ -1,17 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using ShoppingList.Data;
 using ShoppingList.Database;
+using AutoMapper;
+using ShoppingList.Mapping.Profiles;
 
 namespace ShoppingList
 {
@@ -31,6 +27,7 @@ namespace ShoppingList
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+
 #if RELEASE
             services.AddDbContext<ShoppingContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("Shopping-Productive"), opt =>
@@ -40,6 +37,17 @@ namespace ShoppingList
                 options.UseMySql(Configuration.GetConnectionString("Shopping-Development"), opt =>
                     opt.EnableRetryOnFailure(3)));
 #endif
+
+            services.AddSingleton(GetMapper());
+        }
+
+        private IMapper GetMapper()
+        {
+            MapperConfiguration mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(typeof(ShoppingEntitiesProfile));
+            });
+            return mapperConfiguration.CreateMapper();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
