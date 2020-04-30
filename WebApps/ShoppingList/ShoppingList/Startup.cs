@@ -39,6 +39,7 @@ namespace ShoppingList
 #endif
 
             services.AddSingleton(GetMapper());
+            services.AddTransient<IShoppingRepositoryFactory, ShoppingRepositoryFactory>();
         }
 
         private IMapper GetMapper()

@@ -23,10 +23,10 @@
                             @(AvailableStores.FirstOrDefault(s => s.StoreId == ItemDto.StoreId)?.Name ?? "Choose store")
                         </BSDropdownToggle>
                         <BSDropdownMenu>
-                            @foreach (Database.Entities.Store store in AvailableStores)
+                            @foreach (StoreDto store in AvailableStores)
                             {
                                 <BSDropdownItem>
-                                    <CustomDropdownItem T="Database.Entities.Store"
+                                    <CustomDropdownItem T="StoreDto"
                                                         Item="@store"
                                                         DropdownText="@store.Name"
                                                         OnClickCallback="OnStoreChanged">
@@ -95,7 +95,7 @@
     [Parameter]
     public EntityModels.ItemEditMode EditMode { get; set; }
     [Parameter]
-    public List<Database.Entities.Store> AvailableStores { get; set; } = new List<Database.Entities.Store>();
+    public List<StoreDto> AvailableStores { get; set; } = new List<StoreDto>();
     [Parameter]
     public bool CanChangeStore { get; set; } = true;
 
@@ -150,7 +150,7 @@
         ItemDto.QuantityType = quantityType;
     }
 
-    private void OnStoreChanged(Database.Entities.Store store)
+    private void OnStoreChanged(StoreDto store)
     {
         ItemDto.StoreId = store.StoreId;
     }

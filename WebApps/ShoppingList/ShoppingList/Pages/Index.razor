@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inject DbContextOptions<ShoppingContext> dbContextOptions
+@inject IShoppingRepositoryFactory shoppingRepositoryFactory
 
 <div class="main-page">
     <div>
@@ -10,10 +10,10 @@
                 <BSDropdown Class="float-right">
                     <BSDropdownToggle Color="Color.Primary">@activeStore?.Name</BSDropdownToggle>
                     <BSDropdownMenu>
-                        @foreach (Database.Entities.Store store in stores)
+                        @foreach (StoreDto store in stores)
                         {
                             <BSDropdownItem>
-                                <CustomDropdownItem T="Database.Entities.Store"
+                                <CustomDropdownItem T="StoreDto"
                                                     Item="@store"
                                                     DropdownText="@store.Name"
                                                     OnClickCallback="OnChangeStore">
@@ -77,8 +77,8 @@
 @code {
     private List<EntityModels.ItemDto> itemSuggestions = new List<EntityModels.ItemDto>();
 
-    private List<Database.Entities.Store> stores = new List<Database.Entities.Store>();
-    private Database.Entities.Store activeStore;
+    private List<StoreDto> stores = new List<StoreDto>();
+    private StoreDto activeStore;
     private Database.Entities.ShoppingList activeShoppingList;
     private List<EntityModels.ItemDto> activeShoppingItems = new List<EntityModels.ItemDto>();
 
@@ -94,7 +94,7 @@
     {
         if (activeStore == null)
         {
-            shoppingRepository = new ShoppingRepository(dbContextOptions);
+            shoppingRepository = shoppingRepositoryFactory.Create();
 
             hideSuggestionsTimer.AutoReset = false;
             hideSuggestionsTimer.Elapsed += OnHideSuggestionsTimerElapsed;
@@ -157,7 +157,7 @@
         InvokeAsync(() => StateHasChanged());
     }
 
-    private void OnChangeStore(Database.Entities.Store store)
+    private void OnChangeStore(StoreDto store)
     {
         activeStore = store;
         LoadShoppingListForActiveStore();

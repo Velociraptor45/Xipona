@@ -9,6 +9,7 @@ namespace ShoppingList.Mapping.Profiles
         public ShoppingEntitiesProfile()
         {
             CreateMap(typeof(Store), typeof(StoreDto));
+            CreateMap(typeof(StoreDto), typeof(Store));
         }
     }
 }

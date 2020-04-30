@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using ShoppingList.Database.Entities;
 using ShoppingList.EntityModels;
+using ShoppingList.EntityModels.DataTransfer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +13,13 @@ namespace ShoppingList.Database
     public class ShoppingRepository : IShoppingRepository
     {
         private ShoppingContext context;
-        private Mapper.Mapper mapper = new Mapper.Mapper();
+        private Mapper.Mapper customMapper = new Mapper.Mapper();
+        private IMapper mapper;
 
-        public ShoppingRepository(DbContextOptions<ShoppingContext> dbContextOptions)
+        public ShoppingRepository(DbContextOptions<ShoppingContext> dbContextOptions, IMapper mapper)
         {
             context = new ShoppingContext(dbContextOptions);
+            this.mapper = mapper;
         }
 
         private void DetachAllEntries()
@@ -26,7 +30,7 @@ namespace ShoppingList.Database
             }
         }
 
-        public void UpdateItemRelation(EntityModels.ItemDto itemDto, uint shoppingListId)
+        public void UpdateItemRelation(ItemDto itemDto, uint shoppingListId)
         {
             var relation = context.ItemOnShoppingList.AsNoTracking()
                 .FirstOrDefault(item => item.ItemId == itemDto.Id
@@ -54,17 +58,22 @@ namespace ShoppingList.Database
             return shoppingList;
         }
 
-        public Store AddNewStore(Store store)
+        public StoreDto AddNewStore(StoreDto storeDto)
         {
+            Store store = mapper.Map<Store>(storeDto);
+            
             context.Store.Add(store);
             context.SaveChanges();
             context.Entry(store).State = EntityState.Detached;
-            return store;
+
+            storeDto.StoreId = store.StoreId;
+            return storeDto;
         }
 
-        public async Task<List<Store>> GetAllStoresAsync()
+        public async Task<List<StoreDto>> GetAllStoresAsync()
         {
-            return await context.Store.ToListAsync();
+            var stores = await context.Store.ToListAsync();
+            return mapper.Map<List<StoreDto>>(stores);
         }
 
         public void CompleteShoppingList(Entities.ShoppingList shoppingList)
@@ -101,10 +110,10 @@ namespace ShoppingList.Database
             return shoppingList;
         }
 
-        public List<EntityModels.ItemDto> GetAllItemsOnShoppingList(uint shoppingListId)
+        public List<ItemDto> GetAllItemsOnShoppingList(uint shoppingListId)
         {
             //TODO refactor
-            List<EntityModels.ItemDto> itemDtos = new List<EntityModels.ItemDto>();
+            List<ItemDto> itemDtos = new List<ItemDto>();
             List<ItemOnShoppingList> relations = GetAllShoppingListToItemRelations(shoppingListId);
             var itemIdsToLoad = relations.Select(rel => rel.ItemId);
             List<Item> allShoppingListItems = context.Item.AsNoTracking()
@@ -112,14 +121,14 @@ namespace ShoppingList.Database
                 .ToList();
             foreach (var relation in relations)
             {
-                Entities.Item item = allShoppingListItems.First(it => it.ItemId == relation.ItemId);
-                itemDtos.Add(mapper.ToItemDto(item, relation));
+                Item item = allShoppingListItems.First(it => it.ItemId == relation.ItemId);
+                itemDtos.Add(customMapper.ToItemDto(item, relation));
             }
             return itemDtos;
             
         }
 
-        private List<Entities.ItemOnShoppingList> GetAllShoppingListToItemRelations(uint shoppingListId)
+        private List<ItemOnShoppingList> GetAllShoppingListToItemRelations(uint shoppingListId)
         {
             return context.ItemOnShoppingList.AsNoTracking()
                 .Where(rel => rel.ShoppingListId == shoppingListId)
@@ -139,19 +148,23 @@ namespace ShoppingList.Database
             }
         }
 
-        public void RemoveStore(Store store)
+        public void RemoveStore(uint storeId)
         {
-            context.Remove(store);
-            context.SaveChanges();
-            context.Entry(store).State = EntityState.Detached;
+            Store store = context.Store.FirstOrDefault(s => s.StoreId == storeId);
+            if (store != null)
+            {
+                context.Remove(store);
+                context.SaveChanges();
+                context.Entry(store).State = EntityState.Detached;
+            }
         }
 
-        public List<EntityModels.ItemDto> SearchItems(string search)
+        public List<ItemDto> SearchItems(string search)
         {
             search = search.ToLower();
             return context.Item.AsNoTracking()
                 .Where(item => item.Name.ToLower().Contains(search))
-                .Select(item => mapper.ToItemDto(item, null))
+                .Select(item => customMapper.ToItemDto(item, null))
                 .ToList();
         }
 
@@ -159,7 +172,7 @@ namespace ShoppingList.Database
         /// Adds an item to the shopping list with the given id
         /// </summary>
         /// <exception cref="Exception">Item's already on the given shopping list</exception>
-        public void AddNewItemToShoppingList(EntityModels.ItemDto itemDto, uint shoppingListId)
+        public void AddNewItemToShoppingList(ItemDto itemDto, uint shoppingListId)
         {
             var existingReference = context.ItemOnShoppingList.AsNoTracking()
                 .FirstOrDefault(r => r.ShoppingListId == shoppingListId
@@ -184,7 +197,7 @@ namespace ShoppingList.Database
             }
         }
 
-        public void AddItemsToNewShoppingList(IEnumerable<EntityModels.ItemDto> itemDtos, uint storeId)
+        public void AddItemsToNewShoppingList(IEnumerable<ItemDto> itemDtos, uint storeId)
         {
             Entities.ShoppingList shoppingList = new Entities.ShoppingList()
             {
@@ -244,7 +257,7 @@ namespace ShoppingList.Database
         /// </summary>
         public void CreateNewItem(ItemDto itemDto)
         {
-            Item item = mapper.ToItem(itemDto);
+            Item item = customMapper.ToItem(itemDto);
             item.Active = true;
             context.Item.Add(item);
             context.SaveChanges();
@@ -265,7 +278,7 @@ namespace ShoppingList.Database
                 context.Item.Update(oldItem);
                 context.Entry(oldItem).State = EntityState.Detached;
             }
-            Item item = mapper.ToItem(itemDto);
+            Item item = customMapper.ToItem(itemDto);
             item.ItemId = default;
 
             context.Item.Add(item);
@@ -279,7 +292,7 @@ namespace ShoppingList.Database
         /// </summary>
         public void ChangeItem(ItemDto itemDto)
         {
-            Item item = mapper.ToItem(itemDto);
+            Item item = customMapper.ToItem(itemDto);
             context.Item.Update(item);
             context.SaveChanges();
             context.Entry(item).State = EntityState.Detached;

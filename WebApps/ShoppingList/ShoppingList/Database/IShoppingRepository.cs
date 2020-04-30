@@ -1,28 +1,30 @@
 ﻿using ShoppingList.Database.Entities;
+using ShoppingList.EntityModels.DataTransfer;
+using ShoppingList.EntityModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ShoppingList.Database
 {
-    interface IShoppingRepository
+    public interface IShoppingRepository
     {
-        public Store AddNewStore(Store store);
-        public void RemoveStore(Store store);
-        public void UpdateItemRelation(EntityModels.ItemDto itemDto, uint shoppingListId);
+        public StoreDto AddNewStore(StoreDto storeDto);
+        public void RemoveStore(uint storeId);
+        public void UpdateItemRelation(ItemDto itemDto, uint shoppingListId);
         public Entities.ShoppingList AddNewShoppingList(Entities.ShoppingList shoppingList);
-        public Task<List<Store>> GetAllStoresAsync();
+        public Task<List<StoreDto>> GetAllStoresAsync();
         public void CompleteShoppingList(Entities.ShoppingList shoppingList);
         public Entities.ShoppingList GetActiveShoppingListByStoreId(uint storeId);
         public Entities.ShoppingList CreateNewShoppingList(uint storeId);
-        public List<EntityModels.ItemDto> GetAllItemsOnShoppingList(uint shoppingListId);
+        public List<ItemDto> GetAllItemsOnShoppingList(uint shoppingListId);
         public void RemoveItemFromShoppingList(Item item, Entities.ShoppingList shoppingList);
-        public List<EntityModels.ItemDto> SearchItems(string search);
-        public void AddNewItemToShoppingList(EntityModels.ItemDto itemDto, uint shoppingListId);
-        public void RemoveItemFromShoppingList(EntityModels.ItemDto itemDto, uint shoppingListId);
-        public void RemoveItemsFromShoppingList(IEnumerable<EntityModels.ItemDto> itemDtos, uint shoppingListId);
-        public void CreateNewItem(EntityModels.ItemDto itemDto);
-        public void UpdateItem(EntityModels.ItemDto itemDto);
-        public void ChangeItem(EntityModels.ItemDto itemDto);
-        public void AddItemsToNewShoppingList(IEnumerable<EntityModels.ItemDto> itemDtos, uint storeId);
+        public List<ItemDto> SearchItems(string search);
+        public void AddNewItemToShoppingList(ItemDto itemDto, uint shoppingListId);
+        public void RemoveItemFromShoppingList(ItemDto itemDto, uint shoppingListId);
+        public void RemoveItemsFromShoppingList(IEnumerable<ItemDto> itemDtos, uint shoppingListId);
+        public void CreateNewItem(ItemDto itemDto);
+        public void UpdateItem(ItemDto itemDto);
+        public void ChangeItem(ItemDto itemDto);
+        public void AddItemsToNewShoppingList(IEnumerable<ItemDto> itemDtos, uint storeId);
     }
 }
