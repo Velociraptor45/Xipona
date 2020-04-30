@@ -1,0 +1,44 @@
+﻿@page "/stores"
+
+<div class="stores-page">
+    <h1 class="heading h3 mb-4">
+        Stores
+    </h1>
+
+    <div class="row">
+        <div class="left-part col-12 col-xl-3">
+            <div class="new-store w-100">
+                <BSButton Color="Color.Success" Class="w-100" @onclick="OnNewStoreButtonClicked">
+                    <span class="oi oi-plus"></span>
+                </BSButton>
+            </div>
+            <div class="store-selection">
+
+            </div>
+        </div>
+        <div class="right-part col-12 col-xl-9">
+            <div class="store-top-row justify-content-center">
+                <div class="store-name">
+                    Testname
+                </div>
+                <BSButton Color="Color.Info" @onclick="OnEditShopNameClicked">
+                    <span class="oi oi-pencil"></span>
+                </BSButton>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+
+    private void OnEditShopNameClicked()
+    {
+
+    }
+
+    private void OnNewStoreButtonClicked()
+    {
+
+    }
+}

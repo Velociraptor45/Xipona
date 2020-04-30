@@ -8,3 +8,7 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield; /* Firefox */
 }
+
+.left-side{
+    border-right: 0.5px solid grey;
+}
