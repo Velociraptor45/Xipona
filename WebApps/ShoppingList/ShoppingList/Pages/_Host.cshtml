@@ -1,7 +1,6 @@
 ﻿@page "/"
 @namespace ShoppingList.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnvironment
 @{
     Layout = null;
 }
@@ -26,7 +25,9 @@
 </head>
 <body>
     <environment include="Development">
-        <div class="bg-dark text-white">DEBUG</div>
+        <div class="d-flex justify-content-center bg-dark sticky-top">
+            <div class="text-white">DEBUG</div>
+        </div>
     </environment>
     <app>
         <component type="typeof(App)" render-mode="ServerPrerendered" />
