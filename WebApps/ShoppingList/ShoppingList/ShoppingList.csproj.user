@@ -4,6 +4,6 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>ShoppingList</ActiveDebugProfile>
+    <ActiveDebugProfile>ShoppingList Prod</ActiveDebugProfile>
   </PropertyGroup>
 </Project>

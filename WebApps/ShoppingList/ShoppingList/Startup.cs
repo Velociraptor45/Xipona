@@ -32,7 +32,7 @@ namespace ShoppingList
                     opt.EnableRetryOnFailure(3)));
 #elif DEBUG
             services.AddDbContext<ShoppingContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("Shopping-Development"), opt =>
+                options.UseMySql(Configuration.GetConnectionString("Shopping-Database"), opt =>
                     opt.EnableRetryOnFailure(3)));
 #endif
 
