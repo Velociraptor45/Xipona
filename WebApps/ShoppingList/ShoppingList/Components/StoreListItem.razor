@@ -1,9 +1,10 @@
 ﻿@using ShoppingList.EntityModels.DataTransfer;
-
-<div class="store-list-item d-flex flex-column p-1" @onclick="OnItemClicked">
-    <div class="h4">@StoreDto.Name</div>
-    <div>@AvailableItemsCount items available</div>
-</div>
+<li>
+    <div class="store-list-item d-flex flex-column p-1" @onclick="OnItemClicked">
+        <div class="h4">@StoreDto.Name</div>
+        <div>@AvailableItemsCount items available</div>
+    </div>
+</li>
 
 @code
 {

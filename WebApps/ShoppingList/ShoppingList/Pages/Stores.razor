@@ -15,14 +15,12 @@
             </div>
             <div class="store-selection">
                 <ol class="p-0">
-                    <li>
-                        @foreach (StoreDto store in stores)
-                        {
-                            <StoreListItem StoreDto="@store"
-                                           AvailableItemsCount="@itemCountsInStore[store.StoreId]"
-                                           OnStoreListItemClicked="OnSelectedStoreChanged"></StoreListItem>
-                        }
-                    </li>
+                    @foreach (StoreDto store in stores)
+                    {
+                        <StoreListItem StoreDto="@store"
+                                        AvailableItemsCount="@GetItemCountInStoreById(store.StoreId)"
+                                        OnStoreListItemClicked="OnSelectedStoreChanged"></StoreListItem>
+                    }
                 </ol>
             </div>
         </div>
@@ -57,7 +55,7 @@
         {
             repository = shoppingRepositoryFactory.Create();
             stores = await repository.GetAllStoresAsync();
-
+            LoadItemCountsInStores();
             StateHasChanged();
         }
     }
@@ -69,6 +67,11 @@
             int itemCount = repository.GetItemCountInStore(store.StoreId);
             itemCountsInStore.Add(store.StoreId, itemCount);
         }
+    }
+
+    private int GetItemCountInStoreById(uint storeId)
+    {
+        return itemCountsInStore.ContainsKey(storeId) ? itemCountsInStore[storeId] : 0;
     }
 
     private void OnEditShopNameClicked()
