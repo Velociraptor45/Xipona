@@ -26,15 +26,9 @@ namespace ShoppingList
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-#if RELEASE
-            services.AddDbContext<ShoppingContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("Shopping-Productive"), opt =>
-                    opt.EnableRetryOnFailure(3)));
-#elif DEBUG
             services.AddDbContext<ShoppingContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("Shopping-Database"), opt =>
                     opt.EnableRetryOnFailure(3)));
-#endif
 
             services.AddSingleton(GetMapper());
             services.AddTransient<IShoppingRepositoryFactory, ShoppingRepositoryFactory>();
