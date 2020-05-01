@@ -29,17 +29,30 @@
         {
             <div class="right-part col-12 col-md-8 col-xl-8 d-flex flex-column">
                 <div class="d-flex flex-row">
-                    <div class="store-name h2">@selectedStore.Name</div>
-                    <div class="edit-store-name ml-2">
-                        <BSButton IsOutline="true"
-                                  Size="Size.Small"
-                                  Color="Color.Info"
-                                  @onclick="OnEditShopNameClicked">
-                            <span class="oi oi-pencil"></span>
-                        </BSButton>
-                    </div>
+                    @if (isEditingStoreName)
+                    {
+                        <BSButtonGroup Class="mr-2">
+                            <BSButton Color="Color.Warning"
+                                      @onclick="OnCancleEditingStoreNameClicked"><span class="oi oi-x"></span></BSButton>
+                            <BSButton Color="Color.Success"
+                                      @onclick="OnSaveNewStoreNameClicked"><span class="oi oi-check"></span></BSButton>
+                        </BSButtonGroup>
+                        <BSBasicInput T="string" @bind-Value="@newStoreName"></BSBasicInput>
+                    }
+                    else
+                    {
+                        <div class="store-name h2">@selectedStore.Name</div>
+                        <div class="edit-store-name ml-2">
+                            <BSButton IsOutline="true"
+                                      Size="Size.Small"
+                                      Color="Color.Info"
+                                      @onclick="OnEditShopNameClicked">
+                                <span class="oi oi-pencil"></span>
+                            </BSButton>
+                        </div>
+                    }
                 </div>
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end pt-2">
                     <BSButton Color="Color.Danger" @onclick="OnDeleteStoreButtonClicked">
                         Delete
                     </BSButton>
@@ -55,6 +68,9 @@
     private StoreDto selectedStore;
 
     private IShoppingRepository repository;
+
+    private bool isEditingStoreName = false;
+    private string newStoreName;
 
     protected async override void OnInitialized()
     {
@@ -84,7 +100,8 @@
 
     private void OnEditShopNameClicked()
     {
-
+        newStoreName = selectedStore.Name;
+        isEditingStoreName = true;
     }
 
     private void OnDeleteStoreButtonClicked()
@@ -100,5 +117,18 @@
     private void OnSelectedStoreChanged(StoreDto store)
     {
         selectedStore = store;
+        isEditingStoreName = false;
+    }
+
+    private void OnSaveNewStoreNameClicked()
+    {
+        isEditingStoreName = false;
+        selectedStore.Name = newStoreName;
+        repository.UpdateStore(selectedStore);
+    }
+
+    private void OnCancleEditingStoreNameClicked()
+    {
+        isEditingStoreName = false;
     }
 }

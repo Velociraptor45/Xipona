@@ -72,7 +72,7 @@ namespace ShoppingList.Database
 
         public async Task<List<StoreDto>> GetAllStoresAsync()
         {
-            var stores = await context.Store.ToListAsync();
+            var stores = await context.Store.AsNoTracking().ToListAsync();
             return mapper.Map<List<StoreDto>>(stores);
         }
 
@@ -301,6 +301,14 @@ namespace ShoppingList.Database
         public int GetItemCountInStore(uint storeId)
         {
             return context.Item.AsNoTracking().Where(item => item.StoreId == storeId).Count();
+        }
+
+        public void UpdateStore(StoreDto storeDto)
+        {
+            Store store = mapper.Map<Store>(storeDto);
+            context.Store.Update(store);
+            context.SaveChanges();
+            context.Entry(store).State = EntityState.Detached;
         }
     }
 }
