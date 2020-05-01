@@ -19,17 +19,17 @@
                     {
                         <StoreListItem StoreDto="@store"
                                        AvailableItemsCount="@GetItemCountInStoreById(store.StoreId)"
-                                       IsSelected="@(selectedStoreId.HasValue && store.StoreId == selectedStoreId)"
+                                       IsSelected="@(selectedStore != null && store.StoreId == selectedStore.StoreId)"
                                        OnStoreListItemClicked="OnSelectedStoreChanged"></StoreListItem>
                     }
                 </ol>
             </div>
         </div>
-        @if (selectedStoreId != null)
+        @if (selectedStore != null)
         {
             <div class="right-part col-12 col-md-8 col-xl-8 d-flex flex-column">
                 <div class="d-flex flex-row">
-                    <div class="store-name h2">Testname</div>
+                    <div class="store-name h2">@selectedStore.Name</div>
                     <div class="edit-store-name ml-2">
                         <BSButton IsOutline="true"
                                   Size="Size.Small"
@@ -52,7 +52,7 @@
 @code {
     private IEnumerable<StoreDto> stores = new List<StoreDto>();
     private Dictionary<uint, int> itemCountsInStore = new Dictionary<uint, int>();
-    private uint? selectedStoreId;
+    private StoreDto selectedStore;
 
     private IShoppingRepository repository;
 
@@ -99,6 +99,6 @@
 
     private void OnSelectedStoreChanged(StoreDto store)
     {
-        selectedStoreId = store.StoreId;
+        selectedStore = store;
     }
 }
