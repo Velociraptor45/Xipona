@@ -1,6 +1,6 @@
 ﻿@using ShoppingList.EntityModels.DataTransfer;
-<li>
-    <div class="store-list-item d-flex flex-column p-1" @onclick="OnItemClicked">
+<li class="store-list-item @(IsSelected ? "selected" : "")">
+    <div class="d-flex flex-column p-1" @onclick="OnItemClicked">
         <div class="h4">@StoreDto.Name</div>
         <div>@AvailableItemsCount items available</div>
     </div>
@@ -12,6 +12,8 @@
     public StoreDto StoreDto { get; set; }
     [Parameter]
     public int AvailableItemsCount { get; set; }
+    [Parameter]
+    public bool IsSelected { get; set; }
     [Parameter]
     public EventCallback<StoreDto> OnStoreListItemClicked { get; set; }
 

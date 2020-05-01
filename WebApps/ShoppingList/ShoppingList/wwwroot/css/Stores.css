@@ -1,3 +1,12 @@
 ﻿.store-list-item {
     border: 0.5px solid grey;
 }
+
+.store-list-item:hover{
+    background-color: #12CBC4;
+    cursor: pointer;
+}
+
+.store-list-item.selected{
+    background-color: #12CBC4;
+}

@@ -18,33 +18,41 @@
                     @foreach (StoreDto store in stores)
                     {
                         <StoreListItem StoreDto="@store"
-                                        AvailableItemsCount="@GetItemCountInStoreById(store.StoreId)"
-                                        OnStoreListItemClicked="OnSelectedStoreChanged"></StoreListItem>
+                                       AvailableItemsCount="@GetItemCountInStoreById(store.StoreId)"
+                                       IsSelected="@(selectedStoreId.HasValue && store.StoreId == selectedStoreId)"
+                                       OnStoreListItemClicked="OnSelectedStoreChanged"></StoreListItem>
                     }
                 </ol>
             </div>
         </div>
-        <div class="right-part col-12 col-md-8 col-xl-8 d-flex flex-column">
-            <div class="d-flex flex-row">
-                <div class="store-name h2">Testname</div>
-                <div class="edit-store-name ml-2">
-                    <BSButton Color="Color.Info" @onclick="OnEditShopNameClicked">
-                        <span class="oi oi-pencil"></span>
+        @if (selectedStoreId != null)
+        {
+            <div class="right-part col-12 col-md-8 col-xl-8 d-flex flex-column">
+                <div class="d-flex flex-row">
+                    <div class="store-name h2">Testname</div>
+                    <div class="edit-store-name ml-2">
+                        <BSButton IsOutline="true"
+                                  Size="Size.Small"
+                                  Color="Color.Info"
+                                  @onclick="OnEditShopNameClicked">
+                            <span class="oi oi-pencil"></span>
+                        </BSButton>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <BSButton Color="Color.Danger" @onclick="OnDeleteStoreButtonClicked">
+                        Delete
                     </BSButton>
                 </div>
             </div>
-            <div class="d-flex justify-content-end">
-                <BSButton Color="Color.Danger" @onclick="OnDeleteStoreButtonClicked">
-                    Delete
-                </BSButton>
-            </div>
-        </div>
+        }
     </div>
 </div>
 
 @code {
     private IEnumerable<StoreDto> stores = new List<StoreDto>();
     private Dictionary<uint, int> itemCountsInStore = new Dictionary<uint, int>();
+    private uint? selectedStoreId;
 
     private IShoppingRepository repository;
 
@@ -89,8 +97,8 @@
 
     }
 
-    private void OnSelectedStoreChanged()
+    private void OnSelectedStoreChanged(StoreDto store)
     {
-
+        selectedStoreId = store.StoreId;
     }
 }
