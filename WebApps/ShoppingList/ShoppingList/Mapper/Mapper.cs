@@ -16,7 +16,8 @@ namespace ShoppingList.Mapper
                 PricePerQuantity = item.PricePerQuantity,
                 Quantity = relation?.Quantity ?? 0,
                 StoreId = item.StoreId,
-                Active = item.Active
+                Active = item.Active,
+                Comment = item.Comment
             };
 
             if (relation?.Quantity == null)
@@ -34,7 +35,8 @@ namespace ShoppingList.Mapper
                 QuantityTypeId = (uint)itemDto.QuantityType,
                 PricePerQuantity = itemDto.PricePerQuantity,
                 StoreId = itemDto.StoreId,
-                Active = itemDto.Active
+                Active = itemDto.Active,
+                Comment = itemDto.Comment
             };
         }
 

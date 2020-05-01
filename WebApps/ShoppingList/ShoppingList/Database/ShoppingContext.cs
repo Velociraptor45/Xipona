@@ -26,12 +26,17 @@ namespace ShoppingList.Database
             modelBuilder.Entity<Item>(entity =>
             {
                 entity.HasIndex(e => e.QuantityTypeId)
-                    .HasName("QuantityTypeId");
+                    .HasName("QuantityType");
 
                 entity.HasIndex(e => e.StoreId)
                     .HasName("Store");
 
                 entity.Property(e => e.ItemId).HasColumnType("int(10) unsigned");
+
+                entity.Property(e => e.Comment)
+                    .HasColumnType("tinytext")
+                    .HasCharSet("latin1")
+                    .HasCollation("latin1_swedish_ci");
 
                 entity.Property(e => e.Name)
                     .IsRequired()

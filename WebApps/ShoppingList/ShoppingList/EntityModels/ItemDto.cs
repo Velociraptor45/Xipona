@@ -10,5 +10,6 @@
         public bool Active { get; set; }
         public uint StoreId { get; set; }
         public QuantityType QuantityType { get; set; }
+        public string Comment { get; set; }
     }
 }

@@ -16,6 +16,7 @@ namespace ShoppingList.Database.Entities
         public decimal PricePerQuantity { get; set; }
         public bool Active { get; set; }
         public uint StoreId { get; set; }
+        public string Comment { get; set; }
 
         public virtual QuantityType QuantityType { get; set; }
         public virtual Store Store { get; set; }
