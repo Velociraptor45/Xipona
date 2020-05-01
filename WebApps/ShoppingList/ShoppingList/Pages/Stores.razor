@@ -28,15 +28,22 @@
         @if (selectedStore != null)
         {
             <div class="right-part col-12 col-md-8 col-xl-8 d-flex flex-column">
-                <div class="d-flex flex-row">
-                    @if (isEditingStoreName)
+                <div class="d-flex flex-row @(isCreatingNewStore ? "align-items-center" : "")">
+                    @if (isEditingStoreName || isCreatingNewStore)
                     {
-                        <BSButtonGroup Class="mr-2">
-                            <BSButton Color="Color.Warning"
-                                      @onclick="OnCancleEditingStoreNameClicked"><span class="oi oi-x"></span></BSButton>
-                            <BSButton Color="Color.Success"
-                                      @onclick="OnSaveNewStoreNameClicked"><span class="oi oi-check"></span></BSButton>
-                        </BSButtonGroup>
+                        if (!isCreatingNewStore)
+                        {
+                            <BSButtonGroup Class="mr-2">
+                                <BSButton Color="Color.Warning"
+                                          @onclick="OnCancleEditingStoreNameClicked"><span class="oi oi-x"></span></BSButton>
+                                <BSButton Color="Color.Success"
+                                          @onclick="OnSaveNewStoreNameClicked"><span class="oi oi-check"></span></BSButton>
+                            </BSButtonGroup>
+                        }
+                        else
+                        {
+                            <div class="pr-2 mb-0 h5 font-weight-bold">Name</div>
+                        }
                         <BSBasicInput T="string" @bind-Value="@newStoreName"></BSBasicInput>
                     }
                     else
@@ -52,10 +59,18 @@
                         </div>
                     }
                 </div>
-                <div class="d-flex justify-content-end pt-2">
-                    <BSButton Color="Color.Danger" @onclick="OnDeleteStoreButtonClicked">
-                        Delete
-                    </BSButton>
+                <div class="d-flex justify-content-end flex-row pt-2">
+                    @if (isCreatingNewStore)
+                    {
+                        <BSButton Color="Color.Warning" @onclick="OnCancleNewStore">Cancle</BSButton>
+                        <BSButton Color="Color.Success" @onclick="OnSaveNewStore">Save</BSButton>
+                    }
+                    else
+                    {
+                        <BSButton Color="Color.Danger" @onclick="OnDeleteStoreButtonClicked">
+                            Delete
+                        </BSButton>
+                    }
                 </div>
             </div>
         }
@@ -70,6 +85,7 @@
     private IShoppingRepository repository;
 
     private bool isEditingStoreName = false;
+    private bool isCreatingNewStore = false;
     private string newStoreName;
 
     protected async override void OnInitialized()
@@ -78,10 +94,21 @@
         if (repository == null)
         {
             repository = shoppingRepositoryFactory.Create();
-            stores = await repository.GetAllStoresAsync();
+            await LoadStores();
+            OrderStores();
             LoadItemCountsInStores();
             StateHasChanged();
         }
+    }
+
+    private async Task LoadStores()
+    {
+        stores = await repository.GetAllStoresAsync();
+    }
+
+    private void OrderStores()
+    {
+        stores = stores.OrderBy(store => store.Name);
     }
 
     private void LoadItemCountsInStores()
@@ -98,6 +125,12 @@
         return itemCountsInStore.ContainsKey(storeId) ? itemCountsInStore[storeId] : 0;
     }
 
+    private void CancleStoreCreation()
+    {
+        isCreatingNewStore = false;
+        selectedStore = null;
+    }
+
     private void OnEditShopNameClicked()
     {
         newStoreName = selectedStore.Name;
@@ -111,13 +144,32 @@
 
     private void OnNewStoreButtonClicked()
     {
-
+        isCreatingNewStore = true;
+        isEditingStoreName = false;
+        selectedStore = new StoreDto();
+        newStoreName = "";
     }
 
     private void OnSelectedStoreChanged(StoreDto store)
     {
+        CancleStoreCreation();
         selectedStore = store;
         isEditingStoreName = false;
+    }
+
+    private async void OnSaveNewStore()
+    {
+        isCreatingNewStore = false;
+        selectedStore.Name = newStoreName;
+        repository.AddNewStore(selectedStore);
+        await LoadStores();
+        OrderStores();
+        StateHasChanged();
+    }
+
+    private void OnCancleNewStore()
+    {
+        CancleStoreCreation();
     }
 
     private void OnSaveNewStoreNameClicked()
@@ -125,6 +177,7 @@
         isEditingStoreName = false;
         selectedStore.Name = newStoreName;
         repository.UpdateStore(selectedStore);
+        OrderStores();
     }
 
     private void OnCancleEditingStoreNameClicked()
