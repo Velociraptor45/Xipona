@@ -19,7 +19,7 @@
                         @foreach (StoreDto store in stores)
                         {
                             <StoreListItem StoreDto="@store"
-                                           AvailableItemsCount="@repository.GetItemCountInStore(store.StoreId)"
+                                           AvailableItemsCount="@itemCountsInStore[store.StoreId]"
                                            OnStoreListItemClicked="OnSelectedStoreChanged"></StoreListItem>
                         }
                     </li>
@@ -46,14 +46,29 @@
 
 @code {
     private IEnumerable<StoreDto> stores = new List<StoreDto>();
+    private Dictionary<uint, int> itemCountsInStore = new Dictionary<uint, int>();
+
     private IShoppingRepository repository;
 
     protected async override void OnInitialized()
     {
         base.OnInitialized();
-        repository = shoppingRepositoryFactory.Create();
-        stores = await repository.GetAllStoresAsync();
-        StateHasChanged();
+        if (repository == null)
+        {
+            repository = shoppingRepositoryFactory.Create();
+            stores = await repository.GetAllStoresAsync();
+
+            StateHasChanged();
+        }
+    }
+
+    private void LoadItemCountsInStores()
+    {
+        foreach(StoreDto store in stores)
+        {
+            int itemCount = repository.GetItemCountInStore(store.StoreId);
+            itemCountsInStore.Add(store.StoreId, itemCount);
+        }
     }
 
     private void OnEditShopNameClicked()
