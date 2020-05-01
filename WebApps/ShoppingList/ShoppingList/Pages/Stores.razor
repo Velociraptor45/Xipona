@@ -103,7 +103,8 @@
 
     private async Task LoadStores()
     {
-        stores = await repository.GetAllStoresAsync();
+        stores = (await repository.GetAllStoresAsync())
+            .Where(s => !s.IsDeleted);
     }
 
     private void OrderStores()
@@ -137,9 +138,13 @@
         isEditingStoreName = true;
     }
 
-    private void OnDeleteStoreButtonClicked()
+    private async void OnDeleteStoreButtonClicked()
     {
-
+        repository.MarkStoreAsDeleted(selectedStore.StoreId);
+        await LoadStores();
+        OrderStores();
+        selectedStore = null;
+        StateHasChanged();
     }
 
     private void OnNewStoreButtonClicked()

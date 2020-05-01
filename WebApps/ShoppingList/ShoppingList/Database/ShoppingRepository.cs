@@ -310,5 +310,17 @@ namespace ShoppingList.Database
             context.SaveChanges();
             context.Entry(store).State = EntityState.Detached;
         }
+
+        public void MarkStoreAsDeleted(uint storeId)
+        {
+            Store store = context.Store.AsNoTracking().FirstOrDefault(s => s.StoreId == storeId);
+            if (store != null)
+            {
+                store.IsDeleted = true;
+                context.Store.Update(store);
+                context.SaveChanges();
+                context.Entry(store).State = EntityState.Detached;
+            }
+        }
     }
 }
