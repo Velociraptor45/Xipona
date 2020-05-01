@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using ShoppingList.Data;
 using ShoppingList.Database;
 using AutoMapper;
 using ShoppingList.Mapping.Profiles;
@@ -26,7 +25,6 @@ namespace ShoppingList
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
 
 #if RELEASE
             services.AddDbContext<ShoppingContext>(options =>
