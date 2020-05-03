@@ -1,5 +1,5 @@
 ﻿@using ShoppingList.EntityModels.DataTransfer;
-<li class="store-list-item @(IsSelected ? "selected" : "")">
+<li class="list-item @(IsSelected ? "selected" : "")">
     <div class="d-flex flex-column p-1" @onclick="OnItemClicked">
         <div class="h4">@StoreDto.Name</div>
         <div>@AvailableItemsCount items available</div>

@@ -76,6 +76,17 @@ namespace ShoppingList.Database
             return mapper.Map<List<StoreDto>>(stores);
         }
 
+        public List<ItemDto> GetAllItems()
+        {
+            var itemDtos = new List<ItemDto>();
+            var items = context.Item.AsNoTracking().ToList();
+            foreach(var item in items)
+            {
+                itemDtos.Add(customMapper.ToItemDto(item, null));
+            }
+            return itemDtos;
+        }
+
         public void CompleteShoppingList(Entities.ShoppingList shoppingList)
         {
             shoppingList.CompletionDate = DateTime.Now;

@@ -13,6 +13,7 @@ namespace ShoppingList.Database
         public void UpdateItemRelation(ItemDto itemDto, uint shoppingListId);
         public Entities.ShoppingList AddNewShoppingList(Entities.ShoppingList shoppingList);
         public Task<List<StoreDto>> GetAllStoresAsync();
+        public List<ItemDto> GetAllItems();
         public void CompleteShoppingList(Entities.ShoppingList shoppingList);
         public Entities.ShoppingList GetActiveShoppingListByStoreId(uint storeId);
         public Entities.ShoppingList CreateNewShoppingList(uint storeId);

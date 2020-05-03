@@ -1,0 +1,64 @@
+﻿@page "/items"
+@inject IShoppingRepositoryFactory shoppingRepositoryFactory
+@using EntityModels;
+
+<div class="items-page">
+    <h1 class="heading h1 mb-4">
+        Items
+    </h1>
+
+    <div class="row">
+        <div class="left-part col-12 col-md-4 col-xl-4">
+            <div class="new-store w-100 mb-2">
+                <BSButton Color="Color.Success" Class="w-100" @onclick="OnNewItemButtonClicked">
+                    <span class="oi oi-plus"></span>
+                </BSButton>
+            </div>
+            <div class="store-selection">
+                <ol class="p-0">
+                    @foreach (EntityModels.ItemDto item in items)
+                    {
+                        <ItemListItem ItemDto="@item"
+                                      StoreName="test"
+                                      IsSelected="@(selectedItem != null && item.Id == selectedItem.Id)"
+                                      OnItemListItemClicked="OnSelectedItemChanged"></ItemListItem>
+                    }
+                </ol>
+            </div>
+        </div>
+        @if(selectedItem != null)
+        {
+            <div class="class="right-part col-12 col-md-8 col-xl-8 d-flex flex-column">
+
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<EntityModels.ItemDto> items;
+
+    private ItemDto selectedItem;
+
+    private IShoppingRepository repository;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (repository == null)
+        {
+            repository = shoppingRepositoryFactory.Create();
+            items = repository.GetAllItems();
+        }
+    }
+
+    private void OnNewItemButtonClicked()
+    {
+
+    }
+
+    private void OnSelectedItemChanged(ItemDto itemDto)
+    {
+        selectedItem = itemDto;
+    }
+}
