@@ -4,7 +4,7 @@
     <div class="d-flex flex-column p-1" @onclick="OnItemClicked">
         <div class="h4">@ItemDto.Name</div>
         <div></div>
-        <div>@ItemDto.PricePerQuantity€/@priceUnit</div>
+        <div>@ItemDto.PricePerQuantity€@(ItemDto.QuantityType == QuantityType.Weight ? "/kg" : "")</div>
     </div>
 </li>
 
@@ -19,20 +19,9 @@
     [Parameter]
     public EventCallback<ItemDto> OnItemListItemClicked { get; set; }
 
-    private string priceUnit;
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
-
-        if(ItemDto.QuantityType == QuantityType.Unit)
-        {
-            priceUnit = "kg";
-        }
-        else
-        {
-            priceUnit = "unit";
-        }
     }
 
     private void OnItemClicked()

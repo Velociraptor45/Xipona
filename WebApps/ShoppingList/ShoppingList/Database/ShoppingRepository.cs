@@ -333,5 +333,10 @@ namespace ShoppingList.Database
                 context.Entry(store).State = EntityState.Detached;
             }
         }
+
+        public Store GetStoreById(uint storeId)
+        {
+            return context.Store.AsNoTracking().FirstOrDefault(s => s.StoreId == storeId);
+        }
     }
 }

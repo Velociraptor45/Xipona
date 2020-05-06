@@ -28,8 +28,30 @@
         </div>
         @if(selectedItem != null)
         {
-            <div class="class="right-part col-12 col-md-8 col-xl-8 d-flex flex-column">
-
+            <div class="right-part col-12 col-md-8 col-xl-8">
+                <div class="">
+                    <div class="d-flex align-items-center">
+                        <div class="h2 border-right mb-0 pr-2">@selectedItem.Name</div>
+                        <div class="h4 mb-0 pl-2">@(repository.GetStoreById(selectedItem.StoreId)?.Name ?? "")</div>
+                        <BSButton Class="ml-auto" Color="Color.Info" Size="Size.Small">
+                            <span class="oi oi-pencil"></span>
+                        </BSButton>
+                    </div>
+                    <hr class="mt-1 mb-2" />
+                    <div class="d-flex justify-content-start">
+                        <div>@selectedItem.PricePerQuantity€@(selectedItem.QuantityType == QuantityType.Weight ? "/kg" : "")</div>
+                    </div>
+                    <div class="pt-4">
+                        <BSFormGroup>
+                            <BSLabel>Comment</BSLabel>
+                            <BSBasicInput InputType="InputType.TextArea"
+                                          T="string"
+                                          Rows="2"
+                                          IsDisabled="true"
+                                          @bind-Value="selectedItem.Comment"></BSBasicInput>
+                        </BSFormGroup>
+                    </div>
+                </div>
             </div>
         }
     </div>

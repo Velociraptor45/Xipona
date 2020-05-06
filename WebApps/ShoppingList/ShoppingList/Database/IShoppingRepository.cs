@@ -30,5 +30,6 @@ namespace ShoppingList.Database
         public int GetItemCountInStore(uint storeId);
         public void UpdateStore(StoreDto storeDto);
         public void MarkStoreAsDeleted(uint storeId);
+        public Store GetStoreById(uint storeId);
     }
 }
