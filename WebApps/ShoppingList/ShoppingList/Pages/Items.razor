@@ -29,29 +29,92 @@
         @if(selectedItem != null)
         {
             <div class="right-part col-12 col-md-8 col-xl-8">
-                <div class="">
-                    <div class="d-flex align-items-center">
-                        <div class="h2 border-right mb-0 pr-2">@selectedItem.Name</div>
-                        <div class="h4 mb-0 pl-2">@(repository.GetStoreById(selectedItem.StoreId)?.Name ?? "")</div>
-                        <BSButton Class="ml-auto" Color="Color.Info" Size="Size.Small">
-                            <span class="oi oi-pencil"></span>
-                        </BSButton>
+                @if (isInEditMode)
+                {
+                    <div>
+                        <div class="d-flex align-items-center">
+                            <BSBasicInput InputType="InputType.Text" T="string"
+                                          @bind-Value="selectedItem.Name"
+                                          Class="border-right"></BSBasicInput>
+                            <BSDropdown>
+                                <BSDropdownToggle Color="Color.Primary">
+                                    @(availableStores.FirstOrDefault(s => s.StoreId == selectedItem.StoreId)?.Name ?? "Choose store")
+                                </BSDropdownToggle>
+                                <BSDropdownMenu>
+                                    @foreach (StoreDto store in availableStores)
+                                    {
+                                        <BSDropdownItem>
+                                            <CustomDropdownItem T="StoreDto"
+                                                                Item="@store"
+                                                                DropdownText="@store.Name"
+                                                                OnClickCallback="OnSelectedStoreChanged">
+
+                                            </CustomDropdownItem>
+                                        </BSDropdownItem>
+                                    }
+                                </BSDropdownMenu>
+                            </BSDropdown>
+                        </div>
+                        <div>
+                            <BSBasicInput T="decimal" InputType="InputType.Number"
+                                          @bind-Value="selectedItem.PricePerQuantity"></BSBasicInput>
+                        </div>
+                        <div>
+                            <BSFormGroup>
+                                <BSLabel>Comment</BSLabel>
+                                <BSBasicInput InputType="InputType.TextArea"
+                                              T="string"
+                                              Rows="2"
+                                              @bind-Value="selectedItem.Comment"></BSBasicInput>
+                            </BSFormGroup>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <BSButton Color="Color.Danger">Cancle</BSButton>
+                            @switch (editMode)
+                            {
+                                case ItemEditMode.Change:
+                                    <BSButton Color="Color.Success" @onclick="OnSaveItemButtonClicked">Change Item</BSButton>
+                                    break;
+                                case ItemEditMode.Create:
+                                    <BSButton Color="Color.Success" @onclick="OnSaveItemButtonClicked">Create Item</BSButton>
+                                    break;
+                                case ItemEditMode.Update:
+                                    <BSButton Color="Color.Success" @onclick="OnSaveItemButtonClicked">Update Item</BSButton>
+                                    break;
+                            }
+                        </div>
                     </div>
-                    <hr class="mt-1 mb-2" />
-                    <div class="d-flex justify-content-start">
-                        <div>@selectedItem.PricePerQuantity€@(selectedItem.QuantityType == QuantityType.Weight ? "/kg" : "")</div>
+                }
+                else
+                {
+                    <div>
+                        <div class="d-flex align-items-center">
+                            <div class="h2 border-right mb-0 pr-2">@selectedItem.Name</div>
+                            <div class="h4 mb-0 pl-2">@(repository.GetStoreById(selectedItem.StoreId)?.Name ?? "")</div>
+                            <BSButton Class="ml-auto" Color="Color.Info" Size="Size.Small">
+                                <span class="oi oi-pencil"></span>
+                            </BSButton>
+                        </div>
+                        <hr class="mt-1 mb-2" />
+                        <div class="d-flex justify-content-start">
+                            <div>@selectedItem.PricePerQuantity€@(selectedItem.QuantityType == QuantityType.Weight ? "/kg" : "")</div>
+                        </div>
+                        <div class="pt-4">
+                            <BSFormGroup>
+                                <BSLabel>Comment</BSLabel>
+                                <BSBasicInput InputType="InputType.TextArea"
+                                              T="string"
+                                              Rows="2"
+                                              IsDisabled="true"
+                                              @bind-Value="selectedItem.Comment"></BSBasicInput>
+                            </BSFormGroup>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <BSButton Color="Color.Info" @onclick="OnUpdateItemButtonClicked">Update Item</BSButton>
+                            <BSButton Color="Color.Danger" @onclick="OnDeleteItemButtonClicked">Delete Item</BSButton>
+                        </div>
                     </div>
-                    <div class="pt-4">
-                        <BSFormGroup>
-                            <BSLabel>Comment</BSLabel>
-                            <BSBasicInput InputType="InputType.TextArea"
-                                          T="string"
-                                          Rows="2"
-                                          IsDisabled="true"
-                                          @bind-Value="selectedItem.Comment"></BSBasicInput>
-                        </BSFormGroup>
-                    </div>
-                </div>
+                }
             </div>
         }
     </div>
@@ -59,28 +122,100 @@
 
 @code {
     private List<EntityModels.ItemDto> items;
+    private List<StoreDto> availableStores;
 
     private ItemDto selectedItem;
 
     private IShoppingRepository repository;
 
-    protected override void OnInitialized()
+    private bool isInEditMode = false;
+    private ItemEditMode editMode;
+
+    protected async override void OnInitialized()
     {
         base.OnInitialized();
         if (repository == null)
         {
             repository = shoppingRepositoryFactory.Create();
             items = repository.GetAllItems();
+            availableStores = await repository.GetAllStoresAsync();
         }
+    }
+
+    private ItemDto GetNewItem()
+    {
+        return new ItemDto()
+        {
+            Name = "",
+            QuantityType = QuantityType.Unit,
+            PricePerQuantity = 1m,
+            Comment = ""
+        };
+    }
+
+    private void ChangeItem()
+    {
+
+    }
+
+    private void UpdateItem()
+    {
+
+    }
+
+    private void CreateItem()
+    {
+
+    }
+
+    private void OnSaveItemButtonClicked()
+    {
+        isInEditMode = false;
+        switch (editMode)
+        {
+            case ItemEditMode.Change:
+                ChangeItem();
+                break;
+            case ItemEditMode.Create:
+                CreateItem();
+                break;
+            case ItemEditMode.Update:
+                UpdateItem();
+                break;
+        }
+    }
+
+    private void OnChangeItemButtonClicked()
+    {
+        isInEditMode = true;
+        editMode = ItemEditMode.Change;
+    }
+
+    private void OnUpdateItemButtonClicked()
+    {
+        isInEditMode = true;
+        editMode = ItemEditMode.Update;
     }
 
     private void OnNewItemButtonClicked()
     {
+        selectedItem = GetNewItem();
+        isInEditMode = true;
+        editMode = ItemEditMode.Create;
+    }
 
+    private void OnSelectedStoreChanged(StoreDto store)
+    {
+        selectedItem.StoreId = store.StoreId;
     }
 
     private void OnSelectedItemChanged(ItemDto itemDto)
     {
         selectedItem = itemDto;
+    }
+
+    private void OnDeleteItemButtonClicked()
+    {
+
     }
 }
