@@ -287,13 +287,13 @@ namespace ShoppingList.Database
             {
                 oldItem.Active = false;
                 context.Item.Update(oldItem);
-                context.Entry(oldItem).State = EntityState.Detached;
             }
             Item item = customMapper.ToItem(itemDto);
             item.ItemId = default;
 
             context.Item.Add(item);
             context.SaveChanges();
+            context.Entry(oldItem).State = EntityState.Detached;
             context.Entry(item).State = EntityState.Detached;
         }
 
@@ -306,6 +306,17 @@ namespace ShoppingList.Database
             Item item = customMapper.ToItem(itemDto);
             context.Item.Update(item);
             context.SaveChanges();
+            context.Entry(item).State = EntityState.Detached;
+        }
+
+        public async Task DeactivateItemAsync(uint itemId)
+        {
+            Item item = await context.Item.FirstOrDefaultAsync(i => i.ItemId == itemId);
+            if (item != null)
+            {
+                item.Active = false;
+            }
+            await context.SaveChangesAsync();
             context.Entry(item).State = EntityState.Detached;
         }
 

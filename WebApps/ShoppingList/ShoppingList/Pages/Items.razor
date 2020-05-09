@@ -1,6 +1,7 @@
 ﻿@page "/items"
 @inject IShoppingRepositoryFactory shoppingRepositoryFactory
 @using EntityModels;
+@using Extension;
 
 <div class="items-page">
     <h1 class="heading h1 mb-4">
@@ -83,13 +84,11 @@
                             <BSLabel Class="mb-0 pl-1">€@(selectedItem.QuantityType == QuantityType.Unit ? "" : "/kg")</BSLabel>
                         </div>
                         <div>
-                            <BSFormGroup>
-                                <BSLabel>Comment</BSLabel>
-                                <BSBasicInput InputType="InputType.TextArea"
-                                              T="string"
-                                              Rows="2"
-                                              @bind-Value="selectedItem.Comment"></BSBasicInput>
-                            </BSFormGroup>
+                            <BSLabel Class="mb-0">Comment</BSLabel>
+                            <BSBasicInput InputType="InputType.TextArea"
+                                            T="string"
+                                            Rows="2"
+                                            @bind-Value="selectedItem.Comment"></BSBasicInput>
                         </div>
                         <div class="d-flex justify-content-end">
                             <BSButton Color="Color.Danger">Cancle</BSButton>
@@ -113,7 +112,7 @@
                     <div>
                         <div class="d-flex align-items-center">
                             <div class="h2 border-right mb-0 pr-2">@selectedItem.Name</div>
-                            <div class="h4 mb-0 pl-2">@(repository.GetStoreById(selectedItem.StoreId)?.Name ?? "")</div>
+                            <div class="h4 mb-0 pl-2">@(availableStores.FirstOrDefault(s => s.StoreId == selectedItem.StoreId)?.Name ?? "")</div>
                             <BSButton Class="ml-auto" Color="Color.Info" Size="Size.Small">
                                 <span class="oi oi-pencil"></span>
                             </BSButton>
@@ -149,6 +148,7 @@
     private List<QuantityType> availableQuantityTypes;
 
     private ItemDto selectedItem;
+    private ItemDto selectedItemBeforeEditModeActivated;
 
     private IShoppingRepository repository;
 
@@ -161,11 +161,16 @@
         if (repository == null)
         {
             repository = shoppingRepositoryFactory.Create();
-            items = repository.GetAllItems();
+            ReloadItems();
             availableStores = await repository.GetAllStoresAsync();
             availableQuantityTypes =
                 Enum.GetValues(typeof(QuantityType)).Cast<QuantityType>().ToList();
         }
+    }
+
+    private void ReloadItems()
+    {
+        items = repository.GetAllItems().Where(i => i.Active).ToList();
     }
 
     private ItemDto GetNewItem()
@@ -184,9 +189,12 @@
 
     }
 
-    private void UpdateItem()
+    private async Task UpdateItem()
     {
-
+        repository.UpdateItem(selectedItem);
+        await repository.DeactivateItemAsync(selectedItemBeforeEditModeActivated.Id);
+        ReloadItems();
+        selectedItem = items.Last();
     }
 
     private void CreateItem()
@@ -194,9 +202,8 @@
 
     }
 
-    private void OnSaveItemButtonClicked()
+    private async void OnSaveItemButtonClicked()
     {
-        isInEditMode = false;
         switch (editMode)
         {
             case ItemEditMode.Change:
@@ -206,28 +213,41 @@
                 CreateItem();
                 break;
             case ItemEditMode.Update:
-                UpdateItem();
+                await UpdateItem();
                 break;
         }
+        EndEditMode();
+        StateHasChanged();
     }
 
     private void OnChangeItemButtonClicked()
     {
-        isInEditMode = true;
-        editMode = ItemEditMode.Change;
+        StartEditMode(ItemEditMode.Change);
     }
 
     private void OnUpdateItemButtonClicked()
     {
-        isInEditMode = true;
-        editMode = ItemEditMode.Update;
+        selectedItem = selectedItem.Clone();
+        StartEditMode(ItemEditMode.Update);
     }
 
     private void OnNewItemButtonClicked()
     {
         selectedItem = GetNewItem();
+        StartEditMode(ItemEditMode.Create);
+    }
+
+    private void EndEditMode()
+    {
+        isInEditMode = false;
+        selectedItemBeforeEditModeActivated = null;
+    }
+
+    private void StartEditMode(ItemEditMode editMode)
+    {
         isInEditMode = true;
-        editMode = ItemEditMode.Create;
+        selectedItemBeforeEditModeActivated = selectedItem;
+        this.editMode = editMode;
     }
 
     private void OnSelectedStoreChanged(StoreDto store)
@@ -237,7 +257,10 @@
 
     private void OnSelectedItemChanged(ItemDto itemDto)
     {
-        selectedItem = itemDto;
+        if (!isInEditMode)
+        {
+            selectedItem = itemDto;
+        }
     }
 
     private void OnQuantityTypeChanged(QuantityType quantityType)

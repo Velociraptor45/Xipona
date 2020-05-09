@@ -1,4 +1,7 @@
-﻿namespace ShoppingList.EntityModels
+﻿using ShoppingList.Database.Entities;
+using System.Runtime.CompilerServices;
+
+namespace ShoppingList.EntityModels
 {
     public class ItemDto
     {

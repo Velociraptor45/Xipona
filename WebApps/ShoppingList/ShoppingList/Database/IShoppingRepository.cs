@@ -31,5 +31,6 @@ namespace ShoppingList.Database
         public void UpdateStore(StoreDto storeDto);
         public void MarkStoreAsDeleted(uint storeId);
         public Store GetStoreById(uint storeId);
+        public Task DeactivateItemAsync(uint itemId);
     }
 }
