@@ -231,6 +231,7 @@
     private void OnChangeItemButtonClicked()
     {
         StartEditMode(ItemEditMode.Change);
+        selectedItem = selectedItem.Clone();
     }
 
     private void OnUpdateItemButtonClicked()
