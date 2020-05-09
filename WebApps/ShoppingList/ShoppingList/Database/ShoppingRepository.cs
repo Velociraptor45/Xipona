@@ -266,13 +266,14 @@ namespace ShoppingList.Database
         /// <summary>
         /// Create a new item
         /// </summary>
-        public void CreateNewItem(ItemDto itemDto)
+        public async Task<ItemDto> CreateNewItemAsync(ItemDto itemDto)
         {
             Item item = customMapper.ToItem(itemDto);
             item.Active = true;
             context.Item.Add(item);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
             context.Entry(item).State = EntityState.Detached;
+            return customMapper.ToItemDto(item, null);
         }
 
         /// <summary>
@@ -280,7 +281,7 @@ namespace ShoppingList.Database
         /// -> a new databse entry will be created to be able to calculate
         /// old shopping lists with the old price
         /// </summary>
-        public void UpdateItem(ItemDto itemDto)
+        public async Task UpdateItemAsync(ItemDto itemDto)
         {
             Item oldItem = context.Item.AsNoTracking().FirstOrDefault(i => i.ItemId == itemDto.Id);
             if(oldItem != null)
@@ -288,13 +289,25 @@ namespace ShoppingList.Database
                 oldItem.Active = false;
                 context.Item.Update(oldItem);
             }
-            Item item = customMapper.ToItem(itemDto);
-            item.ItemId = default;
+            ItemDto newItemDto = await CreateNewItemAsync(itemDto);
 
-            context.Item.Add(item);
+            var activeReferences = context.ItemOnShoppingList
+                .Join(
+                    context.ShoppingList.Where(list => list.CompletionDate == null),
+                    r => r.ShoppingListId,
+                    list => list.ShoppingListId,
+                    (r, list) => r)
+                .Where(r => r.ItemId == itemDto.Id)
+                .ToList();
+
+            activeReferences.ForEach(r => r.ItemId = newItemDto.Id);
+
             context.SaveChanges();
             context.Entry(oldItem).State = EntityState.Detached;
-            context.Entry(item).State = EntityState.Detached;
+            foreach(var activeReference in activeReferences)
+            {
+                context.Entry(activeReference).State = EntityState.Detached;
+            }
         }
 
         /// <summary>

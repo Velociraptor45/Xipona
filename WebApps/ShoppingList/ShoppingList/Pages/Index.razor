@@ -221,9 +221,9 @@
         StateHasChanged();
     }
 
-    private void OnSaveNewItem(EntityModels.ItemDto itemDto, EntityModels.ItemEditMode editMode)
+    private async void OnSaveNewItem(EntityModels.ItemDto itemDto, EntityModels.ItemEditMode editMode)
     {
-        shoppingRepository.CreateNewItem(itemDto);
+        await shoppingRepository.CreateNewItemAsync(itemDto);
         hideItemEditor = true;
         StateHasChanged();
     }

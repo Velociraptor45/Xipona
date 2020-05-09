@@ -193,7 +193,7 @@
 
     private async Task UpdateItem()
     {
-        repository.UpdateItem(selectedItem);
+        await repository.UpdateItemAsync(selectedItem);
         await repository.DeactivateItemAsync(selectedItemBeforeEditModeActivated.Id);
         ReloadItems();
         selectedItem = items.Last();
