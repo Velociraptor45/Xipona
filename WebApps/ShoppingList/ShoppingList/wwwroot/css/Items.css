@@ -1,1 +1,19 @@
-﻿
+﻿.w-max-100{
+    max-width: 100px;
+}
+
+.w-max-70 {
+    max-width: 70px;
+}
+
+.w-max-60 {
+    max-width: 60px;
+}
+
+.w-max-55 {
+    max-width: 55px;
+}
+
+.w-max-50 {
+    max-width: 50px;
+}
