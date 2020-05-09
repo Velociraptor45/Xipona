@@ -184,6 +184,11 @@
         };
     }
 
+    private ItemDto GetItemWithBiggestId()
+    {
+        return items.Aggregate((i1, i2) => i1.Id > i2.Id ? i1 : i2)
+    }
+
     private async Task ChangeItem()
     {
         await repository.ChangeItemAsync(selectedItem);
@@ -196,12 +201,14 @@
         await repository.UpdateItemAsync(selectedItem);
         await repository.DeactivateItemAsync(selectedItemBeforeEditModeActivated.Id);
         ReloadItems();
-        selectedItem = items.Last();
+        selectedItem = GetItemWithBiggestId();
     }
 
     private async Task CreateItem()
     {
-
+        await repository.CreateNewItemAsync(selectedItem);
+        ReloadItems();
+        selectedItem = GetItemWithBiggestId();
     }
 
     private async void OnSaveItemButtonClicked()
