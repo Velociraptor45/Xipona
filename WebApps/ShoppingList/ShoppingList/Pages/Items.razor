@@ -91,7 +91,7 @@
                                             @bind-Value="selectedItem.Comment"></BSBasicInput>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <BSButton Color="Color.Danger">Cancle</BSButton>
+                            <BSButton Color="Color.Danger" @onclick="OnCancleEditingItem">Cancle</BSButton>
                             @switch (editMode)
                             {
                                 case ItemEditMode.Change:
@@ -222,6 +222,12 @@
         StateHasChanged();
     }
 
+    private void OnCancleEditingItem()
+    {
+        selectedItem = selectedItemBeforeEditModeActivated;
+        EndEditMode();
+    }
+
     private void OnChangeItemButtonClicked()
     {
         StartEditMode(ItemEditMode.Change);
@@ -229,14 +235,14 @@
 
     private void OnUpdateItemButtonClicked()
     {
-        selectedItem = selectedItem.Clone();
         StartEditMode(ItemEditMode.Update);
+        selectedItem = selectedItem.Clone();
     }
 
     private void OnNewItemButtonClicked()
     {
-        selectedItem = GetNewItem();
         StartEditMode(ItemEditMode.Create);
+        selectedItem = GetNewItem();
     }
 
     private void EndEditMode()
@@ -270,8 +276,8 @@
         selectedItem.QuantityType = quantityType;
     }
 
-    private void OnDeleteItemButtonClicked()
+    private async void OnDeleteItemButtonClicked()
     {
-
+        await repository.DeactivateItemAsync(selectedItem.Id);
     }
 }
