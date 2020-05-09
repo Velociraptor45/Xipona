@@ -301,11 +301,13 @@ namespace ShoppingList.Database
         /// Change an existing item' data, e.g. typo in the item name
         /// -> no new database entry will be created
         /// </summary>
-        public void ChangeItem(ItemDto itemDto)
+        public async Task ChangeItemAsync(ItemDto itemDto)
         {
             Item item = customMapper.ToItem(itemDto);
+            item.ItemId = itemDto.Id;
+
             context.Item.Update(item);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
             context.Entry(item).State = EntityState.Detached;
         }
 

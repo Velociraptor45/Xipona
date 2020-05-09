@@ -25,7 +25,7 @@ namespace ShoppingList.Database
         public void RemoveItemsFromShoppingList(IEnumerable<ItemDto> itemDtos, uint shoppingListId);
         public void CreateNewItem(ItemDto itemDto);
         public void UpdateItem(ItemDto itemDto);
-        public void ChangeItem(ItemDto itemDto);
+        public Task ChangeItemAsync(ItemDto itemDto);
         public void AddItemsToNewShoppingList(IEnumerable<ItemDto> itemDtos, uint storeId);
         public int GetItemCountInStore(uint storeId);
         public void UpdateStore(StoreDto storeDto);

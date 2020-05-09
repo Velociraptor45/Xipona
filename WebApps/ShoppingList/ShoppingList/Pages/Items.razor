@@ -83,7 +83,7 @@
                                           Class="w-max-55"></BSBasicInput>
                             <BSLabel Class="mb-0 pl-1">€@(selectedItem.QuantityType == QuantityType.Unit ? "" : "/kg")</BSLabel>
                         </div>
-                        <div>
+                        <div class="mb-3">
                             <BSLabel Class="mb-0">Comment</BSLabel>
                             <BSBasicInput InputType="InputType.TextArea"
                                             T="string"
@@ -113,7 +113,7 @@
                         <div class="d-flex align-items-center">
                             <div class="h2 border-right mb-0 pr-2">@selectedItem.Name</div>
                             <div class="h4 mb-0 pl-2">@(availableStores.FirstOrDefault(s => s.StoreId == selectedItem.StoreId)?.Name ?? "")</div>
-                            <BSButton Class="ml-auto" Color="Color.Info" Size="Size.Small">
+                            <BSButton Class="ml-auto" Color="Color.Info" Size="Size.Small" @onclick="OnChangeItemButtonClicked">
                                 <span class="oi oi-pencil"></span>
                             </BSButton>
                         </div>
@@ -184,9 +184,11 @@
         };
     }
 
-    private void ChangeItem()
+    private async Task ChangeItem()
     {
-
+        await repository.ChangeItemAsync(selectedItem);
+        ReloadItems();
+        selectedItem = items.FirstOrDefault(i => i.Id == selectedItem.Id);
     }
 
     private async Task UpdateItem()
@@ -197,7 +199,7 @@
         selectedItem = items.Last();
     }
 
-    private void CreateItem()
+    private async Task CreateItem()
     {
 
     }
@@ -207,10 +209,10 @@
         switch (editMode)
         {
             case ItemEditMode.Change:
-                ChangeItem();
+                await ChangeItem();
                 break;
             case ItemEditMode.Create:
-                CreateItem();
+                await CreateItem();
                 break;
             case ItemEditMode.Update:
                 await UpdateItem();
