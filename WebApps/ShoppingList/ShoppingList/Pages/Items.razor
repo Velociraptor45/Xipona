@@ -186,7 +186,7 @@
 
     private ItemDto GetItemWithBiggestId()
     {
-        return items.Aggregate((i1, i2) => i1.Id > i2.Id ? i1 : i2)
+        return items.Aggregate((i1, i2) => i1.Id > i2.Id ? i1 : i2);
     }
 
     private async Task ChangeItem()

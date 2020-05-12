@@ -11,8 +11,11 @@ namespace ShoppingList.Database.Entities
         }
 
         public uint ItemId { get; set; }
+        public uint? ItemCategoryId { get; set; }
+        public uint? ManufacturerId { get; set; }
         public string Name { get; set; }
         public uint QuantityTypeId { get; set; }
+        public float QuantityInPacket { get; set; }
         public decimal PricePerQuantity { get; set; }
         public bool Active { get; set; }
         public uint StoreId { get; set; }
