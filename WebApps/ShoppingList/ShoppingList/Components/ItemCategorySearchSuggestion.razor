@@ -1,0 +1,16 @@
+﻿<div @onclick="OnItemCategoryClicked">
+    <div>@ItemCategory.Name</div>
+</div>
+
+@code {
+    [Parameter]
+    public ItemCategoryDto ItemCategory { get; set; }
+
+    [Parameter]
+    public EventCallback<ItemCategoryDto> ItemCategorySelectedCallback { get; set; }
+
+    private void OnItemCategoryClicked()
+    {
+        ItemCategorySelectedCallback.InvokeAsync(ItemCategory);
+    }
+}

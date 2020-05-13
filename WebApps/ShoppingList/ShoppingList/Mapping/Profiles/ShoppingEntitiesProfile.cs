@@ -10,6 +10,12 @@ namespace ShoppingList.Mapping.Profiles
         {
             CreateMap(typeof(Store), typeof(StoreDto));
             CreateMap(typeof(StoreDto), typeof(Store));
+
+            CreateMap(typeof(ItemCategoryDto), typeof(ItemCategory));
+            CreateMap(typeof(ItemCategory), typeof(ItemCategoryDto));
+
+            CreateMap(typeof(Manufacturer), typeof(ManufacturerDto));
+            CreateMap(typeof(ManufacturerDto), typeof(Manufacturer));
         }
     }
 }

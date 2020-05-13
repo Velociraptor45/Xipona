@@ -83,12 +83,48 @@
                                           Class="w-max-55"></BSBasicInput>
                             <BSLabel Class="mb-0 pl-1">€@(selectedItem.QuantityType == QuantityType.Unit ? "" : "/kg")</BSLabel>
                         </div>
+                        <div>
+                            <!-- ItemType -->
+                            <BSLabel For="">Type</BSLabel>
+                            @if (itemCategory == null)
+                            {
+                                <BSBasicInput T="string" InputType="InputType.Text"
+                                              @oninput="OnSearchItemTypeInput"></BSBasicInput>
+                                @foreach (var itemCategory in itemCategorySuggestions)
+                                {
+                                    <ItemCategorySearchSuggestion ItemCategory="@itemCategory"
+                                                                  ItemCategorySelectedCallback="OnItemCategorySelected"></ItemCategorySearchSuggestion>
+                                }
+                            }
+                            else
+                            {
+                                <div>@itemCategory.Name</div>
+                            }
+                        </div>
+                        <div>
+                            <!-- Manufacturer -->
+                            <BSLabel For="">Manufacturer</BSLabel>
+                            @if (manufacturer == null)
+                            {
+                                <BSBasicInput T="string" InputType="InputType.Text"
+                                              @oninput="OnSearchManufacturerInput"></BSBasicInput>
+                                @foreach (var manufacturer in manufacturerSuggestions)
+                                {
+                                    <ManufacturerSearchSuggestion Manufacturer="@manufacturer"
+                                                                  ManufacturerSelectedCallback="OnManufacturerSelected"></ManufacturerSearchSuggestion>
+                                }
+                            }
+                            else
+                            {
+                                <div>@manufacturer.Name</div>
+                            }
+                        </div>
                         <div class="mb-3">
                             <BSLabel Class="mb-0">Comment</BSLabel>
                             <BSBasicInput InputType="InputType.TextArea"
-                                            T="string"
-                                            Rows="2"
-                                            @bind-Value="selectedItem.Comment"></BSBasicInput>
+                                          T="string"
+                                          Rows="2"
+                                          @bind-Value="selectedItem.Comment"></BSBasicInput>
                         </div>
                         <div class="d-flex justify-content-end">
                             <BSButton Color="Color.Danger" @onclick="OnCancleEditingItem">Cancle</BSButton>
@@ -149,6 +185,12 @@
 
     private ItemDto selectedItem;
     private ItemDto selectedItemBeforeEditModeActivated;
+
+    private ManufacturerDto manufacturer;
+    private ItemCategoryDto itemCategory;
+
+    private List<ManufacturerDto> manufacturerSuggestions = new List<ManufacturerDto>();
+    private List<ItemCategoryDto> itemCategorySuggestions = new List<ItemCategoryDto>();
 
     private IShoppingRepository repository;
 
@@ -287,5 +329,41 @@
     private async void OnDeleteItemButtonClicked()
     {
         await repository.DeactivateItemAsync(selectedItem.Id);
+    }
+
+    private async void OnSearchManufacturerInput(ChangeEventArgs args)
+    {
+        string searchInput = ((string)args.Value).Trim();
+        if(String.IsNullOrEmpty(searchInput))
+        {
+            manufacturerSuggestions.Clear();
+        }
+        else
+        {
+            manufacturerSuggestions = await repository.SearchManufacturersAsync(searchInput);
+        }
+    }
+
+    private async void OnSearchItemTypeInput(ChangeEventArgs args)
+    {
+        string searchInput = ((string)args.Value).Trim();
+        if (String.IsNullOrEmpty(searchInput))
+        {
+            itemCategorySuggestions.Clear();
+        }
+        else
+        {
+            itemCategorySuggestions = await repository.SearchItemCategoryAsync(searchInput);
+        }
+    }
+
+    private void OnItemCategorySelected(ItemCategoryDto itemCategory)
+    {
+        this.itemCategory = itemCategory;
+    }
+
+    private void OnManufacturerSelected(ManufacturerDto manufacturer)
+    {
+        this.manufacturer = manufacturer;
     }
 }

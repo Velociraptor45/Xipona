@@ -32,5 +32,7 @@ namespace ShoppingList.Database
         public void MarkStoreAsDeleted(uint storeId);
         public Store GetStoreById(uint storeId);
         public Task DeactivateItemAsync(uint itemId);
+        Task<List<ManufacturerDto>> SearchManufacturersAsync(string searchInput);
+        Task<List<ItemCategoryDto>> SearchItemCategoryAsync(string searchInput);
     }
 }

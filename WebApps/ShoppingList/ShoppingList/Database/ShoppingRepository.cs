@@ -6,6 +6,7 @@ using ShoppingList.EntityModels.DataTransfer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ShoppingList.Database
@@ -363,6 +364,22 @@ namespace ShoppingList.Database
         public Store GetStoreById(uint storeId)
         {
             return context.Store.AsNoTracking().FirstOrDefault(s => s.StoreId == storeId);
+        }
+
+        public async Task<List<ManufacturerDto>> SearchManufacturersAsync(string searchInput)
+        {
+            var manufacturers = await context.Manufacturer.AsNoTracking()
+                .Where(m => m.Name.Contains(searchInput))
+                .ToListAsync();
+            return mapper.Map<List<ManufacturerDto>>(manufacturers);
+        }
+
+        public async Task<List<ItemCategoryDto>> SearchItemCategoryAsync(string searchInput)
+        {
+            var itemCategory = await context.ItemCategory.AsNoTracking()
+                .Where(ic => ic.Name.Contains(searchInput))
+                .ToListAsync();
+            return mapper.Map<List<ItemCategoryDto>>(itemCategory);
         }
     }
 }
