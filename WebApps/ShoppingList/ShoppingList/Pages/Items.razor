@@ -98,7 +98,12 @@
                             }
                             else
                             {
-                                <div>@itemCategory.Name</div>
+                                <div class="d-flex">
+                                    <div class="bg-gray-hover d-flex border-round-25 px-2">
+                                        <div class="default-hover">@itemCategory.Name</div>
+                                        <div class="oi oi-x white-hover pointer-hover ml-2" @onclick="OnRemoveItemCategory"></div>
+                                    </div>
+                                </div>
                             }
                         </div>
                         <div>
@@ -116,7 +121,12 @@
                             }
                             else
                             {
-                                <div>@manufacturer.Name</div>
+                                <div class="d-flex">
+                                    <div class="bg-gray-hover d-flex border-round-25 px-2">
+                                        <div class="default-hover">@manufacturer.Name</div>
+                                        <div class="oi oi-x white-hover pointer-hover ml-2" @onclick="OnRemoveManufacturer"></div>
+                                    </div>
+                                </div>
                             }
                         </div>
                         <div class="mb-3">
@@ -277,21 +287,21 @@
         EndEditMode();
     }
 
-    private void OnChangeItemButtonClicked()
+    private async void OnChangeItemButtonClicked()
     {
-        StartEditMode(ItemEditMode.Change);
+        await StartEditModeAsync(ItemEditMode.Change);
         selectedItem = selectedItem.Clone();
     }
 
-    private void OnUpdateItemButtonClicked()
+    private async void OnUpdateItemButtonClicked()
     {
-        StartEditMode(ItemEditMode.Update);
+        await StartEditModeAsync(ItemEditMode.Update);
         selectedItem = selectedItem.Clone();
     }
 
-    private void OnNewItemButtonClicked()
+    private async void OnNewItemButtonClicked()
     {
-        StartEditMode(ItemEditMode.Create);
+        await StartEditModeAsync(ItemEditMode.Create);
         selectedItem = GetNewItem();
     }
 
@@ -299,13 +309,24 @@
     {
         isInEditMode = false;
         selectedItemBeforeEditModeActivated = null;
+        manufacturer = null;
+        itemCategory = null;
     }
 
-    private void StartEditMode(ItemEditMode editMode)
+    private async Task StartEditModeAsync(ItemEditMode editMode)
     {
         isInEditMode = true;
         selectedItemBeforeEditModeActivated = selectedItem;
+        if (selectedItem.ManufacturerId != null)
+        {
+            manufacturer = await repository.GetManufacturerByIdAsync(selectedItem.ManufacturerId.Value);
+        }
+        if(selectedItem.ItemCategoryId != null)
+        {
+            itemCategory = await repository.GetItemCategoryByIdAsync(selectedItem.ItemCategoryId.Value);
+        }
         this.editMode = editMode;
+        StateHasChanged();
     }
 
     private void OnSelectedStoreChanged(StoreDto store)
@@ -360,10 +381,24 @@
     private void OnItemCategorySelected(ItemCategoryDto itemCategory)
     {
         this.itemCategory = itemCategory;
+        selectedItem.ItemCategoryId = itemCategory.ItemCategoryId;
     }
 
     private void OnManufacturerSelected(ManufacturerDto manufacturer)
     {
         this.manufacturer = manufacturer;
+        selectedItem.ManufacturerId = manufacturer.ManufacturerId;
+    }
+
+    private void OnRemoveItemCategory()
+    {
+        itemCategory = null;
+        selectedItem.ItemCategoryId = null;
+    }
+
+    private void OnRemoveManufacturer()
+    {
+        manufacturer = null;
+        selectedItem.ManufacturerId = null;
     }
 }

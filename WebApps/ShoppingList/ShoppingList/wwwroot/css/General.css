@@ -12,3 +12,15 @@ input[type=number] {
 .left-part{
     border-right: 0.5px solid grey;
 }
+
+.pointer-hover:hover {
+    cursor: pointer;
+}
+
+.default-hover:hover{
+    cursor: default
+}
+
+.border-round-25{
+    border-radius: 25px;
+}

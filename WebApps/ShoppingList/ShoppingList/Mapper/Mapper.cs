@@ -10,6 +10,8 @@ namespace ShoppingList.Mapper
             var itemDto = new ItemDto()
             {
                 Id = item.ItemId,
+                ManufacturerId = item.ManufacturerId,
+                ItemCategoryId = item.ItemCategoryId,
                 Name = item.Name,
                 QuantityType = ToQuantityType(item.QuantityTypeId),
                 IsInShoppingBasket = relation?.IsInShoppingBasket ?? false,
@@ -32,6 +34,8 @@ namespace ShoppingList.Mapper
             return new Item
             {
                 Name = itemDto.Name,
+                ManufacturerId = itemDto.ManufacturerId,
+                ItemCategoryId = itemDto.ItemCategoryId,
                 QuantityTypeId = (uint)itemDto.QuantityType,
                 PricePerQuantity = itemDto.PricePerQuantity,
                 StoreId = itemDto.StoreId,

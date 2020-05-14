@@ -34,5 +34,7 @@ namespace ShoppingList.Database
         public Task DeactivateItemAsync(uint itemId);
         Task<List<ManufacturerDto>> SearchManufacturersAsync(string searchInput);
         Task<List<ItemCategoryDto>> SearchItemCategoryAsync(string searchInput);
+        Task<ManufacturerDto> GetManufacturerByIdAsync(uint manufacturerId);
+        Task<ItemCategoryDto> GetItemCategoryByIdAsync(uint itemCategoryId);
     }
 }

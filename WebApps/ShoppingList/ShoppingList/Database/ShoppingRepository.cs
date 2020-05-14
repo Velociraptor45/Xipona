@@ -381,5 +381,19 @@ namespace ShoppingList.Database
                 .ToListAsync();
             return mapper.Map<List<ItemCategoryDto>>(itemCategory);
         }
+
+        public async Task<ManufacturerDto> GetManufacturerByIdAsync(uint manufacturerId)
+        {
+            var manufacturer = await context.Manufacturer.AsNoTracking()
+                .FirstOrDefaultAsync(m => m.ManufacturerId == manufacturerId);
+            return mapper.Map<ManufacturerDto>(manufacturer);
+        }
+
+        public async Task<ItemCategoryDto> GetItemCategoryByIdAsync(uint itemCategoryId)
+        {
+            var itemCategory = await context.ItemCategory.AsNoTracking()
+                .FirstOrDefaultAsync(ic => ic.ItemCategoryId == itemCategoryId);
+            return mapper.Map<ItemCategoryDto>(itemCategory);
+        }
     }
 }

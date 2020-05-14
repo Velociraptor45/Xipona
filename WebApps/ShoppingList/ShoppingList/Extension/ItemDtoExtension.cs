@@ -9,6 +9,8 @@ namespace ShoppingList.Extension
             return new ItemDto()
             {
                 Id = itemDto.Id,
+                ManufacturerId = itemDto.ManufacturerId,
+                ItemCategoryId = itemDto.ItemCategoryId,
                 Name = itemDto.Name,
                 Quantity = itemDto.Quantity,
                 IsInShoppingBasket = itemDto.IsInShoppingBasket,

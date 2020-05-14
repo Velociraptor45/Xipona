@@ -1,11 +1,10 @@
-﻿using ShoppingList.Database.Entities;
-using System.Runtime.CompilerServices;
-
-namespace ShoppingList.EntityModels
+﻿namespace ShoppingList.EntityModels
 {
     public class ItemDto
     {
         public uint Id { get; set; }
+        public uint? ItemCategoryId { get; set; }
+        public uint? ManufacturerId { get; set; }
         public string Name { get; set; }
         public uint Quantity { get; set; }
         public bool IsInShoppingBasket { get; set; }
