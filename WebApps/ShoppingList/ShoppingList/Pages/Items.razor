@@ -83,41 +83,22 @@
                                           Class="w-max-55"></BSBasicInput>
                             <BSLabel Class="mb-0 pl-1">€@(selectedItem.QuantityType == QuantityType.Unit ? "" : "/kg")</BSLabel>
                         </div>
-                        <div>
-                            <!-- ItemType -->
-                            <BSLabel For="">Type</BSLabel>
-                            @if (itemCategory == null)
-                            {
-                                <BSBasicInput T="string" InputType="InputType.Text"
-                                              @oninput="OnSearchItemTypeInput"></BSBasicInput>
-                                @foreach (var itemCategory in itemCategorySuggestions)
-                                {
-                                    <ItemCategorySearchSuggestion ItemCategory="@itemCategory"
-                                                                  ItemCategorySelectedCallback="OnItemCategorySelected"></ItemCategorySearchSuggestion>
-                                }
-                            }
-                            else
-                            {
-                                <div class="d-flex">
-                                    <div class="bg-gray-hover d-flex border-round-25 px-2">
-                                        <div class="default-hover">@itemCategory.Name</div>
-                                        <div class="oi oi-x white-hover pointer-hover ml-2" @onclick="OnRemoveItemCategory"></div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                        <div>
+                        <div class="d-flex mb-2 align-items-center">
                             <!-- Manufacturer -->
-                            <BSLabel For="">Manufacturer</BSLabel>
+                            <BSLabel For="" Class="mb-0 pr-2">Manufacturer</BSLabel>
                             @if (manufacturer == null)
                             {
-                                <BSBasicInput T="string" InputType="InputType.Text"
-                                              @oninput="OnSearchManufacturerInput"></BSBasicInput>
-                                @foreach (var manufacturer in manufacturerSuggestions)
-                                {
-                                    <ManufacturerSearchSuggestion Manufacturer="@manufacturer"
-                                                                  ManufacturerSelectedCallback="OnManufacturerSelected"></ManufacturerSearchSuggestion>
-                                }
+                                <div>
+                                    <BSBasicInput T="string" InputType="InputType.Text"
+                                                    @oninput="OnSearchManufacturerInput"></BSBasicInput>
+                                    <div>
+                                        @foreach (var manufacturer in manufacturerSuggestions)
+                                        {
+                                            <ManufacturerSearchSuggestion Manufacturer="@manufacturer"
+                                                                            ManufacturerSelectedCallback="OnManufacturerSelected"></ManufacturerSearchSuggestion>
+                                        }
+                                    </div>
+                                </div>
                             }
                             else
                             {
@@ -125,6 +106,33 @@
                                     <div class="bg-gray-hover d-flex border-round-25 px-2">
                                         <div class="default-hover">@manufacturer.Name</div>
                                         <div class="oi oi-x white-hover pointer-hover ml-2" @onclick="OnRemoveManufacturer"></div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="d-flex mb-2 align-items-center">
+                            <!-- ItemType -->
+                            <BSLabel For="" Class="mb-0 pr-2">Type</BSLabel>
+                            @if (itemCategory == null)
+                            {
+                                <div>
+                                    <BSBasicInput T="string" InputType="InputType.Text"
+                                                  @oninput="OnSearchItemTypeInput"></BSBasicInput>
+                                    <div>
+                                        @foreach (var itemCategory in itemCategorySuggestions)
+                                        {
+                                            <ItemCategorySearchSuggestion ItemCategory="@itemCategory"
+                                                                          ItemCategorySelectedCallback="OnItemCategorySelected"></ItemCategorySearchSuggestion>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="d-flex">
+                                    <div class="bg-gray-hover d-flex border-round-25 px-2">
+                                        <div class="default-hover">@itemCategory.Name</div>
+                                        <div class="oi oi-x white-hover pointer-hover ml-2" @onclick="OnRemoveItemCategory"></div>
                                     </div>
                                 </div>
                             }
@@ -164,12 +172,26 @@
                             </BSButton>
                         </div>
                         <hr class="mt-1 mb-2" />
-                        <div class="d-flex justify-content-start">
+                        <div class="d-flex justify-content-start mb-2">
                             <div>@selectedItem.PricePerQuantity€@(selectedItem.QuantityType == QuantityType.Weight ? "/kg" : "")</div>
                         </div>
-                        <div class="pt-4">
+                        <div class="d-flex">
+                            <BSLabel Class="pr-3 font-weight-bold">Manufacturer</BSLabel>
+                            @if (manufacturer != null)
+                            {
+                                <div>@manufacturer.Name</div>
+                            }
+                        </div>
+                        <div class="d-flex">
+                            <BSLabel Class="pr-3 font-weight-bold">Type</BSLabel>
+                            @if (itemCategory != null)
+                            {
+                                <div>@itemCategory.Name</div>
+                            }
+                        </div>
+                        <div class="">
                             <BSFormGroup>
-                                <BSLabel>Comment</BSLabel>
+                                <BSLabel Class="font-weight-bold">Comment</BSLabel>
                                 <BSBasicInput InputType="InputType.TextArea"
                                               T="string"
                                               Rows="2"
@@ -277,14 +299,14 @@
                 await UpdateItem();
                 break;
         }
-        EndEditMode();
+        await EndEditMode();
         StateHasChanged();
     }
 
-    private void OnCancleEditingItem()
+    private async void OnCancleEditingItem()
     {
         selectedItem = selectedItemBeforeEditModeActivated;
-        EndEditMode();
+        await EndEditMode();
     }
 
     private async void OnChangeItemButtonClicked()
@@ -305,12 +327,32 @@
         selectedItem = GetNewItem();
     }
 
-    private void EndEditMode()
+    private async Task EndEditMode()
     {
         isInEditMode = false;
         selectedItemBeforeEditModeActivated = null;
-        manufacturer = null;
-        itemCategory = null;
+        if (selectedItem != null)
+        {
+            await UpdateManufacturer();
+            await UpdateItemCategory();
+        }
+        StateHasChanged();
+    }
+
+    private async Task UpdateManufacturer()
+    {
+        if (selectedItem.ManufacturerId == null)
+            manufacturer = null;
+        else
+            manufacturer = await repository.GetManufacturerByIdAsync(selectedItem.ManufacturerId.Value);
+    }
+
+    private async Task UpdateItemCategory()
+    {
+        if (selectedItem.ItemCategoryId == null)
+            itemCategory = null;
+        else
+            itemCategory = await repository.GetItemCategoryByIdAsync(selectedItem.ItemCategoryId.Value);
     }
 
     private async Task StartEditModeAsync(ItemEditMode editMode)
@@ -334,11 +376,14 @@
         selectedItem.StoreId = store.StoreId;
     }
 
-    private void OnSelectedItemChanged(ItemDto itemDto)
+    private async void OnSelectedItemChanged(ItemDto itemDto)
     {
         if (!isInEditMode)
         {
             selectedItem = itemDto;
+            await UpdateManufacturer();
+            await UpdateItemCategory();
+            StateHasChanged();
         }
     }
 
