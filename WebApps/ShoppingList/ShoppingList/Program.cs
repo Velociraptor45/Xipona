@@ -17,7 +17,7 @@ namespace ShoppingList
                 .UseKestrel()
                 .UseStartup<Startup>()
 #if RELEASE
-                .UseUrls("https://*:80")
+                .UseUrls("http://*:80")
 #endif
                 .ConfigureAppConfiguration((context, config) =>
                 {
