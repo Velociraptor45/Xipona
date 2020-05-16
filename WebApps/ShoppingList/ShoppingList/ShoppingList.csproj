@@ -7,6 +7,8 @@
     <Authors>David Krammer</Authors>
     <Copyright>David Krammer</Copyright>
     <RepositoryUrl>https://github.com/Velociraptor45/ProjectHermes</RepositoryUrl>
+    <UserSecretsId>d8b80f04-0a19-4495-bf5b-ce590e9c7eb5</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -26,6 +28,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1" />
   </ItemGroup>
 
