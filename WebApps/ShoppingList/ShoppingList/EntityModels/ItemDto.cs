@@ -8,6 +8,7 @@
         public string Name { get; set; }
         public uint Quantity { get; set; }
         public bool IsInShoppingBasket { get; set; }
+        public float QuantityInPacket { get; set; }
         public decimal PricePerQuantity { get; set; }
         public bool Active { get; set; }
         public uint StoreId { get; set; }

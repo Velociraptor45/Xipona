@@ -1,7 +1,18 @@
 ﻿<li class="shopping-item @backgroundColorClassName">
     <div class="row p-1 mr-2">
         <div class="row col-xl-11 col-lg-11 col-md-11 col-11 pl-0 ml-1">
-            <div class="col-xl-3 col-lg-3 col-md-12 sol-12 pl-0 ml-3 h2" @onclick="OnItemClicked">
+            <div class="col-xl-3 col-lg-3 col-md-12 sol-12 pl-0 ml-3 h2 pointer-hover" @onclick="OnItemClicked">
+                @if(ItemDto.QuantityInPacket > 1)
+                {
+                    @if(ItemDto.QuantityType == EntityModels.QuantityType.Weight)
+                    {
+                        <span>@(ItemDto.QuantityInPacket)g </span>
+                    }
+                    else
+                    {
+                        <span>@(ItemDto.QuantityInPacket)x </span>
+                    }
+                }
                 @ItemDto.Name
             </div>
             <div class="ml-auto col-xl-4 col-lg-4 col-md-12 col-12 row px-0">
