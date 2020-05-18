@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using ShoppingList.Database.Entities;
 
 namespace ShoppingList.Database
@@ -59,6 +60,10 @@ namespace ShoppingList.Database
 
                 entity.Property(e => e.QuantityInPacket)
                     .HasColumnType("float unsigned")
+                    .HasDefaultValueSql("'1'");
+
+                entity.Property(e => e.QuantityInPacketTypeId)
+                    .HasColumnType("int(10) unsigned")
                     .HasDefaultValueSql("'1'");
 
                 entity.Property(e => e.QuantityTypeId).HasColumnType("int(10) unsigned");

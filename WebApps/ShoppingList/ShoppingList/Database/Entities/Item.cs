@@ -20,6 +20,7 @@ namespace ShoppingList.Database.Entities
         public bool Active { get; set; }
         public uint StoreId { get; set; }
         public string Comment { get; set; }
+        public uint QuantityInPacketTypeId { get; set; }
 
         public virtual QuantityType QuantityType { get; set; }
         public virtual Store Store { get; set; }

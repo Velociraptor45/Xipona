@@ -14,5 +14,6 @@
         public uint StoreId { get; set; }
         public QuantityType QuantityType { get; set; }
         public string Comment { get; set; }
+        public QuantityType QuantityInPacketTypeId { get; set; }
     }
 }
