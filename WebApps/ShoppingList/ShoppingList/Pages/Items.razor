@@ -165,28 +165,45 @@
                 {
                     <div>
                         <div class="d-flex align-items-center">
-                            <div class="h2 border-right mb-0 pr-2">@selectedItem.Name</div>
+                            <div class="h2 border-right mb-0 pr-2">
+                                @if (ShouldDisplayUnitQuantityInPacket())
+                                {
+                                    <span>@(selectedItem.QuantityInPacket)x </span>
+                                }
+                                <span>@selectedItem.Name</span>
+                            </div>
                             <div class="h4 mb-0 pl-2">@(availableStores.FirstOrDefault(s => s.StoreId == selectedItem.StoreId)?.Name ?? "")</div>
-                            <BSButton Class="ml-auto" Color="Color.Info" Size="Size.Small" @onclick="OnChangeItemButtonClicked">
-                                <span class="oi oi-pencil"></span>
-                            </BSButton>
+                            <div class="ml-auto d-flex">
+                                <div class="pr-3 h4 mb-0 align-items-baseline">
+                                    <span>@selectedItem.PricePerQuantity€</span>
+                                    @if (selectedItem.QuantityType == QuantityType.Weight)
+                                    {
+                                        <span class="h6 mb-0">/kg</span>
+                                    }
+                                </div>
+                                <BSButton Class="" Color="Color.Info" Size="Size.Small" @onclick="OnChangeItemButtonClicked">
+                                    <span class="oi oi-pencil"></span>
+                                </BSButton>
+                            </div>
                         </div>
-                        <hr class="mt-1 mb-2" />
-                        <div class="d-flex justify-content-start mb-2">
-                            <div>@selectedItem.PricePerQuantity€@(selectedItem.QuantityType == QuantityType.Weight ? "/kg" : "")</div>
+                        <hr class="my-1" />
+                        <div class="d-flex justify-content-start @(itemCategory == null ? "mb-2" : "mb-4")">
+                            <div>@(itemCategory?.Name ?? "")</div>
                         </div>
-                        <div class="d-flex">
-                            <BSLabel Class="pr-3 font-weight-bold">Manufacturer</BSLabel>
+                        <div class="d-flex align-items-baseline mb-2">
                             @if (manufacturer != null)
                             {
-                                <div>@manufacturer.Name</div>
+                                <div class="h4 font-weight-bold mb-0 d-flex">
+                                    <div>@manufacturer.Name</div>
+                                    @if (ShouldDisplayWeightQuantityInPacket())
+                                    {
+                                        <span class="font-weight-normal">, </span>
+                                    }
+                                </div>
                             }
-                        </div>
-                        <div class="d-flex">
-                            <BSLabel Class="pr-3 font-weight-bold">Type</BSLabel>
-                            @if (itemCategory != null)
+                            @if (ShouldDisplayWeightQuantityInPacket())
                             {
-                                <div>@itemCategory.Name</div>
+                                <div class="h4 mb-0 pl-1">@(selectedItem.QuantityInPacket)g</div>
                             }
                         </div>
                         <div class="">
@@ -283,6 +300,24 @@
         await repository.CreateNewItemAsync(selectedItem);
         ReloadItems();
         selectedItem = GetItemWithBiggestId();
+    }
+
+    private bool ShouldDisplayUnitQuantityInPacket()
+    {
+        return ShouldDisplayQuantityInPacket()
+            && selectedItem.QuantityInPacketTypeId == QuantityType.Unit;
+    }
+
+    private bool ShouldDisplayWeightQuantityInPacket()
+    {
+        return ShouldDisplayQuantityInPacket()
+            && selectedItem.QuantityInPacketTypeId == QuantityType.Weight;
+    }
+
+    private bool ShouldDisplayQuantityInPacket()
+    {
+        return selectedItem.QuantityType == QuantityType.Unit
+            && selectedItem.QuantityInPacket > 1;
     }
 
     private async void OnSaveItemButtonClicked()
