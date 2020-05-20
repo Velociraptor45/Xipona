@@ -4,7 +4,7 @@
             <div class="col-xl-3 col-lg-3 col-md-12 sol-12 pl-0 ml-3 h2 pointer-hover" @onclick="OnItemClicked">
                 @if(ItemDto.QuantityInPacket > 1)
                 {
-                    @if(ItemDto.QuantityInPacketTypeId == EntityModels.QuantityType.Weight)
+                    @if(ItemDto.QuantityInPacketType == EntityModels.QuantityType.Weight)
                     {
                         <span>@(ItemDto.QuantityInPacket)g </span>
                     }

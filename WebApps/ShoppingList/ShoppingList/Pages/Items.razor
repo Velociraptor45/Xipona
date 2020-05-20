@@ -32,57 +32,74 @@
             <div class="right-part col-12 col-md-8 col-xl-8">
                 @if (isInEditMode)
                 {
-                    <div>
+                    <BSBasicForm>
                         <div class="d-flex align-items-center mb-2">
-                            <BSLabel Class="mb-0 pr-2">Name</BSLabel>
                             <BSBasicInput InputType="InputType.Text" T="string"
                                           @bind-Value="selectedItem.Name"
+                                          Placeholder="test"
                                           Class="border-right"></BSBasicInput>
+                            <div class="ml-auto">
+                                <BSBasicInput T="string" InputType="InputType.Select">
+                                    @foreach (var store in availableStores)
+                                    {
+                                        <CustomSelectOption T="StoreDto"
+                                                            Item="@store"
+                                                            OptionText="@store.Name"
+                                                            OnClickCallback="OnSelectedStoreChanged"></CustomSelectOption>
+                                    }
+                                </BSBasicInput>
+                                <div class="d-flex">
+                                    <BSBasicInput T="decimal" InputType="InputType.Text"
+                                                  @bind-Value="@selectedItem.PricePerQuantity"
+                                                  Class="w-max-55"
+                                                  Id="priceEditInput"></BSBasicInput>
+                                    <BSLabel For="priceEditInput" Class="mb-0 pl-1">
+                                        <span>€</span>
+                                        <span>@(selectedItem.QuantityType == QuantityType.Unit ? "" : "/kg")</span>
+                                    </BSLabel>
+                                </div>
+                            </div>
                         </div>
-                        <div class="d-flex mb-2">
-                            <!--QuantityType dropdown-->
-                            <BSDropdown Class="mr-4">
-                                <BSDropdownToggle Color="Color.Primary">@selectedItem.QuantityType.ToString()</BSDropdownToggle>
-                                <BSDropdownMenu>
+                        <hr class="my-1" />
+                        <BSFormGroup class="mb-2 row">
+                            <!--QuantityType select-->
+                            <BSLabel Class="col-form-label mb-0 pr-2 col-md-4 col-xl-5 text-right" For="QuantityTypeEditSelect">Quantity Type</BSLabel>
+                            <BSBasicInput T="string" InputType="InputType.Select" Class="mr-4 col-md-6 col-sm-8" Id="QuantityTypeEditSelect">
+                                @foreach (EntityModels.QuantityType quantityType in availableQuantityTypes)
+                                {
+                                    <CustomSelectOption T="EntityModels.QuantityType"
+                                                        Item="@quantityType"
+                                                        OptionText="@quantityType.ToString()"
+                                                        OnClickCallback="OnQuantityTypeChanged">
+
+                                    </CustomSelectOption>
+                                }
+                            </BSBasicInput>
+                        </BSFormGroup>
+                        @if (selectedItem.QuantityType == QuantityType.Unit)
+                        {
+                            <div class="mb-2 d-flex align-items-center">
+                                <BSLabel>In Packet</BSLabel>
+                                <BSBasicInput T="string" InputType="InputType.Select" Class="mr-4" Id="QuantityInPacketTypeEditSelect">
                                     @foreach (EntityModels.QuantityType quantityType in availableQuantityTypes)
                                     {
-                                        <BSDropdownItem>
-                                            <CustomDropdownItem T="EntityModels.QuantityType"
-                                                                Item="@quantityType"
-                                                                DropdownText="@quantityType.ToString()"
-                                                                OnClickCallback="OnQuantityTypeChanged">
+                                        <CustomSelectOption T="EntityModels.QuantityType"
+                                                            Item="@quantityType"
+                                                            OptionText="@quantityType.ToString()"
+                                                            OnClickCallback="OnQuantityInPacketTypeChanged">
 
-                                            </CustomDropdownItem>
-                                        </BSDropdownItem>
+                                        </CustomSelectOption>
                                     }
-                                </BSDropdownMenu>
-                            </BSDropdown>
-                            <!-- Store dropdown -->
-                            <BSDropdown>
-                                <BSDropdownToggle Color="Color.Primary">
-                                    @(availableStores.FirstOrDefault(s => s.StoreId == selectedItem.StoreId)?.Name ?? "Choose store")
-                                </BSDropdownToggle>
-                                <BSDropdownMenu>
-                                    @foreach (StoreDto store in availableStores)
-                                    {
-                                        <BSDropdownItem>
-                                            <CustomDropdownItem T="StoreDto"
-                                                                Item="@store"
-                                                                DropdownText="@store.Name"
-                                                                OnClickCallback="OnSelectedStoreChanged">
-
-                                            </CustomDropdownItem>
-                                        </BSDropdownItem>
-                                    }
-                                </BSDropdownMenu>
-                            </BSDropdown>
-                        </div>
-                        <div class="mb-2 d-flex align-items-center">
-                            <BSBasicInput T="decimal" InputType="InputType.Text"
-                                          @bind-Value="@selectedItem.PricePerQuantity"
-                                          Class="w-max-55"></BSBasicInput>
-                            <BSLabel Class="mb-0 pl-1">€@(selectedItem.QuantityType == QuantityType.Unit ? "" : "/kg")</BSLabel>
-                        </div>
+                                </BSBasicInput>
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <BSBasicInput T="float" InputType="InputType.Number" Placeholder="Content"
+                                              @bind-Value="@selectedItem.QuantityInPacket"></BSBasicInput>
+                                <div>
+                                    @(selectedItem.QuantityInPacketType == QuantityType.Unit ? "Units" : "g")
+                                </div>
+                            </div>
+                        }
                         <div class="d-flex mb-2 align-items-center">
                             <!-- Manufacturer -->
                             <BSLabel For="" Class="mb-0 pr-2">Manufacturer</BSLabel>
@@ -90,12 +107,12 @@
                             {
                                 <div>
                                     <BSBasicInput T="string" InputType="InputType.Text"
-                                                    @oninput="OnSearchManufacturerInput"></BSBasicInput>
+                                                  @oninput="OnSearchManufacturerInput"></BSBasicInput>
                                     <div>
                                         @foreach (var manufacturer in manufacturerSuggestions)
                                         {
                                             <ManufacturerSearchSuggestion Manufacturer="@manufacturer"
-                                                                            ManufacturerSelectedCallback="OnManufacturerSelected"></ManufacturerSearchSuggestion>
+                                                                          ManufacturerSelectedCallback="OnManufacturerSelected"></ManufacturerSearchSuggestion>
                                         }
                                     </div>
                                 </div>
@@ -159,7 +176,7 @@
                                     break;
                             }
                         </div>
-                    </div>
+                    </BSBasicForm>
                 }
                 else
                 {
@@ -305,13 +322,13 @@
     private bool ShouldDisplayUnitQuantityInPacket()
     {
         return ShouldDisplayQuantityInPacket()
-            && selectedItem.QuantityInPacketTypeId == QuantityType.Unit;
+            && selectedItem.QuantityInPacketType == QuantityType.Unit;
     }
 
     private bool ShouldDisplayWeightQuantityInPacket()
     {
         return ShouldDisplayQuantityInPacket()
-            && selectedItem.QuantityInPacketTypeId == QuantityType.Weight;
+            && selectedItem.QuantityInPacketType == QuantityType.Weight;
     }
 
     private bool ShouldDisplayQuantityInPacket()
@@ -425,6 +442,11 @@
     private void OnQuantityTypeChanged(QuantityType quantityType)
     {
         selectedItem.QuantityType = quantityType;
+    }
+
+    private void OnQuantityInPacketTypeChanged(QuantityType quantityType)
+    {
+        selectedItem.QuantityInPacketType = quantityType;
     }
 
     private async void OnDeleteItemButtonClicked()
