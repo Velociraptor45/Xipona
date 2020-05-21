@@ -407,24 +407,27 @@
 
     private async void OnChangeItemButtonClicked()
     {
-        await StartEditModeAsync(ItemEditMode.Change);
-        selectedItem = selectedItem.Clone();
+        await StartEditModeAsync(ItemEditMode.Change, selectedItem.Clone());
         SetInitStrings();
         StateHasChanged();
     }
 
     private async void OnUpdateItemButtonClicked()
     {
-        await StartEditModeAsync(ItemEditMode.Update);
-        selectedItem = selectedItem.Clone();
+        await StartEditModeAsync(ItemEditMode.Update, selectedItem.Clone());
         SetInitStrings();
         StateHasChanged();
     }
 
     private async void OnNewItemButtonClicked()
     {
-        await StartEditModeAsync(ItemEditMode.Create);
-        selectedItem = GetNewItem();
+        if (isInEditMode)
+        {
+            selectedItem = selectedItemBeforeEditModeActivated;
+            await EndEditMode();
+        }
+
+        await StartEditModeAsync(ItemEditMode.Create, GetNewItem());
         SetInitStrings();
         StateHasChanged();
     }
@@ -458,18 +461,15 @@
             itemCategory = await repository.GetItemCategoryByIdAsync(selectedItem.ItemCategoryId.Value);
     }
 
-    private async Task StartEditModeAsync(ItemEditMode editMode)
+    private async Task StartEditModeAsync(ItemEditMode editMode, ItemDto newSelectedItem)
     {
         isInEditMode = true;
         selectedItemBeforeEditModeActivated = selectedItem;
-        if (selectedItem.ManufacturerId != null)
-        {
-            manufacturer = await repository.GetManufacturerByIdAsync(selectedItem.ManufacturerId.Value);
-        }
-        if(selectedItem.ItemCategoryId != null)
-        {
-            itemCategory = await repository.GetItemCategoryByIdAsync(selectedItem.ItemCategoryId.Value);
-        }
+        selectedItem = newSelectedItem;
+        
+        manufacturer = selectedItem.ManufacturerId == null ? null : await repository.GetManufacturerByIdAsync(selectedItem.ManufacturerId.Value);
+        itemCategory = selectedItem.ItemCategoryId == null ? null : await repository.GetItemCategoryByIdAsync(selectedItem.ItemCategoryId.Value);
+        
         this.editMode = editMode;
         StateHasChanged();
     }
