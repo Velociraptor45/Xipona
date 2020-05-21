@@ -481,13 +481,15 @@
 
     private async void OnSelectedItemChanged(ItemDto itemDto)
     {
-        if (!isInEditMode)
+        if(isInEditMode)
         {
-            selectedItem = itemDto;
-            await UpdateManufacturer();
-            await UpdateItemCategory();
-            StateHasChanged();
+            await EndEditMode();
         }
+
+        selectedItem = itemDto;
+        await UpdateManufacturer();
+        await UpdateItemCategory();
+        StateHasChanged();
     }
 
     private void OnQuantityTypeChanged(QuantityType quantityType)
