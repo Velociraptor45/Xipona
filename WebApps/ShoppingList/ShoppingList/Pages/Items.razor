@@ -39,7 +39,7 @@
                                           Placeholder="Name"
                                           Class="border-right w-max-300"></BSBasicInput>
                             <div class="d-flex ml-auto align-items-center mr-3">
-                                <BSBasicInput T="string" InputType="InputType.Select" Class="mr-3">
+                                <BSBasicInput T="string" InputType="InputType.Select" Class="mr-3" Value="storeInit">
                                     @foreach (var store in availableStores)
                                     {
                                         <CustomSelectOption T="StoreDto"
@@ -67,15 +67,15 @@
                             <BSFormGroup class="mb-2 row">
                                 <!--QuantityType select-->
                                 <BSLabel Class="col-form-label mb-0 pr-2 col-md-4 col-xl-5 text-sm-left text-md-right" For="QuantityTypeEditSelect">Quantity Type</BSLabel>
-                                <BSBasicInput T="string" InputType="InputType.Select" Class="mr-4 col-md-6 col-sm-8" Id="QuantityTypeEditSelect">
+                                <BSBasicInput T="string" InputType="InputType.Select"
+                                              Class="mr-4 col-md-6 col-sm-8" Id="QuantityTypeEditSelect"
+                                              Value="quantityTypeInit">
                                     @foreach (EntityModels.QuantityType quantityType in availableQuantityTypes)
                                     {
                                         <CustomSelectOption T="EntityModels.QuantityType"
                                                             Item="@quantityType"
                                                             OptionText="@quantityType.ToString()"
-                                                            OnClickCallback="OnQuantityTypeChanged">
-
-                                        </CustomSelectOption>
+                                                            OnClickCallback="OnQuantityTypeChanged"></CustomSelectOption>
                                     }
                                 </BSBasicInput>
                             </BSFormGroup>
@@ -83,7 +83,10 @@
                             {
                                 <BSFormGroup class="mb-2 d-flex align-items-center row">
                                     <BSLabel Class="col-form-label mb-0 pr-2 col-md-4 col-xl-5 text-sm-left text-md-right" For="QuantityInPacketTypeEditSelect">In Packet</BSLabel>
-                                    <BSBasicInput T="string" InputType="InputType.Select" Class="mr-4 col-md-6 col-sm-8" Id="QuantityInPacketTypeEditSelect">
+                                    <BSBasicInput T="string" InputType="InputType.Select"
+                                                  Class="mr-4 col-md-6 col-sm-8"
+                                                  Id="QuantityInPacketTypeEditSelect"
+                                                  Value="quantityInPacketTypeInit">
                                         @foreach (EntityModels.QuantityType quantityType in availableQuantityTypes)
                                         {
                                             <CustomSelectOption T="EntityModels.QuantityType"
@@ -266,6 +269,10 @@
 
     private IShoppingRepository repository;
 
+    private string quantityInPacketTypeInit;
+    private string quantityTypeInit;
+    private string storeInit;
+
     private bool isInEditMode = false;
     private ItemEditMode editMode;
 
@@ -289,10 +296,14 @@
 
     private ItemDto GetNewItem()
     {
+        var firstStore = availableStores.FirstOrDefault();
+
         return new ItemDto()
         {
             Name = "",
+            StoreId = firstStore?.StoreId ?? 0,
             QuantityType = QuantityType.Unit,
+            QuantityInPacketType = QuantityType.Unit,
             PricePerQuantity = 1m,
             Comment = ""
         };
@@ -343,6 +354,24 @@
             && selectedItem.QuantityInPacket > 1;
     }
 
+    private void SetInitStrings()
+    {
+        quantityInPacketTypeInit = selectedItem.QuantityInPacketType.ToString();
+        quantityTypeInit = selectedItem.QuantityType.ToString();
+        storeInit = availableStores.FirstOrDefault(s => s.StoreId == selectedItem.StoreId)?.Name;
+        if (storeInit == null)
+        {
+            storeInit = string.Empty;
+        }
+    }
+
+    private void ResetInitStrings()
+    {
+        quantityInPacketTypeInit = string.Empty;
+        quantityTypeInit = string.Empty;
+        storeInit = string.Empty;
+    }
+
     private async void OnSaveItemButtonClicked()
     {
         switch (editMode)
@@ -371,18 +400,24 @@
     {
         await StartEditModeAsync(ItemEditMode.Change);
         selectedItem = selectedItem.Clone();
+        SetInitStrings();
+        StateHasChanged();
     }
 
     private async void OnUpdateItemButtonClicked()
     {
         await StartEditModeAsync(ItemEditMode.Update);
         selectedItem = selectedItem.Clone();
+        SetInitStrings();
+        StateHasChanged();
     }
 
     private async void OnNewItemButtonClicked()
     {
         await StartEditModeAsync(ItemEditMode.Create);
         selectedItem = GetNewItem();
+        SetInitStrings();
+        StateHasChanged();
     }
 
     private async Task EndEditMode()
@@ -394,6 +429,7 @@
             await UpdateManufacturer();
             await UpdateItemCategory();
         }
+        ResetInitStrings();
         StateHasChanged();
     }
 
