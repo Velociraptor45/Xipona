@@ -1,4 +1,24 @@
-﻿.w-max-100{
+﻿.w-max-800 {
+    max-width: 800px;
+}
+
+.w-max-500{
+    max-width: 500px;
+}
+
+.w-max-400 {
+    max-width: 400px;
+}
+
+.w-max-300 {
+    max-width: 300px;
+}
+
+.w-max-200 {
+    max-width: 200px;
+}
+
+.w-max-100{
     max-width: 100px;
 }
 
@@ -16,12 +36,4 @@
 
 .w-max-50 {
     max-width: 50px;
-}
-
-.bg-gray-hover:hover{
-    background-color: rgba(128, 128, 128, 0.30);
-}
-
-.white-hover:hover{
-    color: white;
 }
