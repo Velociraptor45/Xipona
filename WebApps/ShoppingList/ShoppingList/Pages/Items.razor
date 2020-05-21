@@ -115,7 +115,10 @@
                                 {
                                     <div class="col-md-6 col-sm-8 px-0">
                                         <BSBasicInput T="string" InputType="InputType.Text"
-                                                      @oninput="OnSearchManufacturerInput"></BSBasicInput>
+                                                      @oninput="OnSearchManufacturerInput"
+                                                      @onfocusin="OnFocusInManufacturerSearch"
+                                                      @onfocusout="OnFocusOutManufacturerSearch"
+                                                      @bind-Value="manufacturerSearchInput"></BSBasicInput>
                                         <div class="position-absolute bg-white z-10 w-100 @(manufacturerSuggestions.Any() ? "border-black": "")">
                                             @foreach (var manufacturer in manufacturerSuggestions)
                                             {
@@ -142,7 +145,10 @@
                                 {
                                     <div class="col-md-6 col-sm-8 px-0">
                                         <BSBasicInput T="string" InputType="InputType.Text"
-                                                      @oninput="OnSearchItemTypeInput"></BSBasicInput>
+                                                      @oninput="OnSearchItemTypeInput"
+                                                      @onfocusin="OnFocusInItemCategorySearch"
+                                                      @onfocusout="OnFocusOutItemCategorySearch"
+                                                      @bind-Value="itemCategorySearchInput"></BSBasicInput>
                                         <div class="position-absolute bg-white z-10 w-100 @(itemCategorySuggestions.Any() ? "border-black": "")">
                                             @foreach (var itemCategory in itemCategorySuggestions)
                                             {
@@ -272,6 +278,9 @@
     private string quantityInPacketTypeInit;
     private string quantityTypeInit;
     private string storeInit;
+
+    private string manufacturerSearchInput = string.Empty;
+    private string itemCategorySearchInput = string.Empty;
 
     private bool isInEditMode = false;
     private ItemEditMode editMode;
@@ -496,7 +505,7 @@
         await repository.DeactivateItemAsync(selectedItem.Id);
     }
 
-    private async void OnSearchManufacturerInput(ChangeEventArgs args)
+    private async Task OnSearchManufacturerInput(ChangeEventArgs args)
     {
         string searchInput = ((string)args.Value).Trim();
         if(String.IsNullOrEmpty(searchInput))
@@ -509,7 +518,7 @@
         }
     }
 
-    private async void OnSearchItemTypeInput(ChangeEventArgs args)
+    private async Task OnSearchItemTypeInput(ChangeEventArgs args)
     {
         string searchInput = ((string)args.Value).Trim();
         if (String.IsNullOrEmpty(searchInput))
@@ -544,5 +553,27 @@
     {
         manufacturer = null;
         selectedItem.ManufacturerId = null;
+    }
+
+    private async void OnFocusInManufacturerSearch()
+    {
+        await OnSearchManufacturerInput(new ChangeEventArgs() { Value = manufacturerSearchInput });
+        StateHasChanged();
+    }
+
+    private void OnFocusOutManufacturerSearch()
+    {
+        manufacturerSuggestions.Clear();
+    }
+
+    private async void OnFocusInItemCategorySearch()
+    {
+        await OnSearchItemTypeInput(new ChangeEventArgs() { Value = itemCategorySearchInput });
+        StateHasChanged();
+    }
+
+    private void OnFocusOutItemCategorySearch()
+    {
+        itemCategorySuggestions.Clear();
     }
 }
