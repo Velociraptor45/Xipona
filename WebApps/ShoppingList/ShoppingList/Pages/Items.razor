@@ -32,14 +32,21 @@
             <div class="right-part col-12 col-md-8 col-xl-8">
                 @if (isInEditMode)
                 {
-                    <BSBasicForm>
+                    <BSForm Model="@selectedItem" ValidateOnInit="true">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
                         <div class="d-flex align-items-center mb-2">
-                            <BSBasicInput InputType="InputType.Text" T="string"
-                                          @bind-Value="selectedItem.Name"
-                                          Placeholder="Name"
-                                          Class="border-right w-max-300"></BSBasicInput>
+                            <BSFormGroup Class="position-relative">
+                                <BSInput InputType="InputType.Text" T="string"
+                                         @bind-Value="selectedItem.Name"
+                                         Placeholder="Name"
+                                         Class="border-right w-max-300"
+                                         @onfocusout="OnItemNameFocusOut"></BSInput>
+                                <BSFormFeedback Class="position-absolute"
+                                                For="@(() => selectedItem.Name)"
+                                                IsTooltip="false"></BSFormFeedback>
+                            </BSFormGroup>
                             <div class="d-flex ml-auto align-items-center mr-3">
-                                <BSBasicInput T="string" InputType="InputType.Select" Class="mr-3" Value="storeInit">
+                                <BSInput T="string" InputType="InputType.Select" Class="mr-3" @bind-Value="storeInit">
                                     @foreach (var store in availableStores)
                                     {
                                         <CustomSelectOption T="StoreDto"
@@ -47,13 +54,21 @@
                                                             OptionText="@store.Name"
                                                             OnClickCallback="OnSelectedStoreChanged"></CustomSelectOption>
                                     }
-                                </BSBasicInput>
+                                </BSInput>
                                 <div class="mr-3">
                                     <BSFormGroup class="d-flex align-items-center mb-0">
-                                        <BSBasicInput T="decimal" InputType="InputType.Text"
-                                                      @bind-Value="@selectedItem.PricePerQuantity"
-                                                      Class="w-max-100"
-                                                      Id="priceEditInput"></BSBasicInput>
+                                        <div class="position-relative">
+                                            <BSInput T="decimal" InputType="InputType.Number"
+                                                     @bind-Value="@selectedItem.PricePerQuantity"
+                                                     Class="w-max-200"
+                                                     Id="priceEditInput"
+                                                     step="0.01"
+                                                     ValidateOnChange="true"
+                                                     @onfocusout="OnItemPriceFocusOut"></BSInput>
+                                            <BSFormFeedback Class="position-absolute"
+                                                            For="@(() => selectedItem.PricePerQuantity)"
+                                                            IsTooltip="false"></BSFormFeedback>
+                                        </div>
                                         <BSLabel For="priceEditInput" Class="mb-0 pl-1 d-flex">
                                             <span>€</span>
                                             <span>@(selectedItem.QuantityType == QuantityType.Unit ? "" : "/kg")</span>
@@ -67,9 +82,9 @@
                             <BSFormGroup class="mb-2 row">
                                 <!--QuantityType select-->
                                 <BSLabel Class="col-form-label mb-0 pr-2 col-md-4 col-xl-5 text-sm-left text-md-right" For="QuantityTypeEditSelect">Quantity Type</BSLabel>
-                                <BSBasicInput T="string" InputType="InputType.Select"
-                                              Class="mr-4 col-md-6 col-sm-8" Id="QuantityTypeEditSelect"
-                                              Value="quantityTypeInit">
+                                <BSInput T="string" InputType="InputType.Select"
+                                         Class="mr-4 col-md-6 col-sm-8" Id="QuantityTypeEditSelect"
+                                         @bind-Value="quantityTypeInit">
                                     @foreach (EntityModels.QuantityType quantityType in availableQuantityTypes)
                                     {
                                         <CustomSelectOption T="EntityModels.QuantityType"
@@ -77,16 +92,16 @@
                                                             OptionText="@quantityType.ToString()"
                                                             OnClickCallback="OnQuantityTypeChanged"></CustomSelectOption>
                                     }
-                                </BSBasicInput>
+                                </BSInput>
                             </BSFormGroup>
                             @if (selectedItem.QuantityType == QuantityType.Unit)
                             {
                                 <BSFormGroup class="mb-2 d-flex align-items-center row">
                                     <BSLabel Class="col-form-label mb-0 pr-2 col-md-4 col-xl-5 text-sm-left text-md-right" For="QuantityInPacketTypeEditSelect">In Packet</BSLabel>
-                                    <BSBasicInput T="string" InputType="InputType.Select"
-                                                  Class="mr-4 col-md-6 col-sm-8"
-                                                  Id="QuantityInPacketTypeEditSelect"
-                                                  Value="quantityInPacketTypeInit">
+                                    <BSInput T="string" InputType="InputType.Select"
+                                             Class="mr-4 col-md-6 col-sm-8"
+                                             Id="QuantityInPacketTypeEditSelect"
+                                             @bind-Value="quantityInPacketTypeInit">
                                         @foreach (EntityModels.QuantityType quantityType in availableQuantityTypes)
                                         {
                                             <CustomSelectOption T="EntityModels.QuantityType"
@@ -96,13 +111,13 @@
 
                                             </CustomSelectOption>
                                         }
-                                    </BSBasicInput>
+                                    </BSInput>
                                 </BSFormGroup>
                                 <BSFormGroup class="mb-2 d-flex align-items-center row">
                                     <div class="col-form-label mb-0 pr-2 col-md-4 col-xl-5"></div>
-                                    <BSBasicInput T="float" InputType="InputType.Number" Placeholder="Content"
-                                                  @bind-Value="@selectedItem.QuantityInPacket"
-                                                  Class="mr-2 col-md-6 col-sm-8"></BSBasicInput>
+                                    <BSInput T="float" InputType="InputType.Number" Placeholder="Content"
+                                             @bind-Value="@selectedItem.QuantityInPacket"
+                                             Class="mr-2 col-md-6 col-sm-8"></BSInput>
                                     <div>
                                         @(selectedItem.QuantityInPacketType == QuantityType.Unit ? "Units" : "g")
                                     </div>
@@ -114,11 +129,11 @@
                                 @if (manufacturer == null)
                                 {
                                     <div class="col-md-6 col-sm-8 px-0">
-                                        <BSBasicInput T="string" InputType="InputType.Text"
-                                                      @oninput="OnSearchManufacturerInput"
-                                                      @onfocusin="OnFocusInManufacturerSearch"
-                                                      @onfocusout="OnFocusOutManufacturerSearch"
-                                                      @bind-Value="manufacturerSearchInput"></BSBasicInput>
+                                        <BSInput T="string" InputType="InputType.Text"
+                                                 @oninput="OnSearchManufacturerInput"
+                                                 @onfocusin="OnFocusInManufacturerSearch"
+                                                 @onfocusout="OnFocusOutManufacturerSearch"
+                                                 @bind-Value="manufacturerSearchInput"></BSInput>
                                         <div class="position-absolute bg-white z-10 w-100 @(manufacturerSuggestions.Any() ? "border-black": "")">
                                             @foreach (var manufacturer in manufacturerSuggestions)
                                             {
@@ -144,11 +159,11 @@
                                 @if (itemCategory == null)
                                 {
                                     <div class="col-md-6 col-sm-8 px-0">
-                                        <BSBasicInput T="string" InputType="InputType.Text"
-                                                      @oninput="OnSearchItemTypeInput"
-                                                      @onfocusin="OnFocusInItemCategorySearch"
-                                                      @onfocusout="OnFocusOutItemCategorySearch"
-                                                      @bind-Value="itemCategorySearchInput"></BSBasicInput>
+                                        <BSInput T="string" InputType="InputType.Text"
+                                                 @oninput="OnSearchItemTypeInput"
+                                                 @onfocusin="OnFocusInItemCategorySearch"
+                                                 @onfocusout="OnFocusOutItemCategorySearch"
+                                                 @bind-Value="itemCategorySearchInput"></BSInput>
                                         <div class="position-absolute bg-white z-10 w-100 @(itemCategorySuggestions.Any() ? "border-black": "")">
                                             @foreach (var itemCategory in itemCategorySuggestions)
                                             {
@@ -168,34 +183,38 @@
                                     </div>
                                 }
                             </div>
-                            <div class="mb-3">
+                            <BSFormGroup Class="mb-3 position-relative">
                                 <BSLabel Class="mb-0">Comment</BSLabel>
-                                <BSBasicInput InputType="InputType.TextArea"
-                                              T="string"
-                                              Rows="2"
-                                              @bind-Value="selectedItem.Comment"></BSBasicInput>
-                            </div>
+                                <BSInput InputType="InputType.TextArea"
+                                         T="string"
+                                         Rows="2"
+                                         @bind-Value="selectedItem.Comment"
+                                         @onfocusout="OnItemCommentFocusOut"></BSInput>
+                                <BSFormFeedback Class="position-absolute"
+                                                For="@(() => selectedItem.Comment)"
+                                                IsTooltip="false"></BSFormFeedback>
+                            </BSFormGroup>
                             <div class="d-flex justify-content-end">
                                 <BSButton Color="Color.Danger" @onclick="OnCancleEditingItem">Cancle</BSButton>
                                 @switch (editMode)
                                 {
                                     case ItemEditMode.Change:
-                                        <BSButton Color="Color.Success" @onclick="OnSaveItemButtonClicked">Change Item</BSButton>
+                                        <BSButton Color="Color.Success" @onclick="OnSaveItemButtonClicked" IsDisabled="!canUserSave">Change Item</BSButton>
                                         break;
                                     case ItemEditMode.Create:
-                                        <BSButton Color="Color.Success" @onclick="OnSaveItemButtonClicked">Create Item</BSButton>
+                                        <BSButton Color="Color.Success" @onclick="OnSaveItemButtonClicked" IsDisabled="!canUserSave">Create Item</BSButton>
                                         break;
                                     case ItemEditMode.Update:
-                                        <BSButton Color="Color.Success" @onclick="OnSaveItemButtonClicked">Update Item</BSButton>
+                                        <BSButton Color="Color.Success" @onclick="OnSaveItemButtonClicked" IsDisabled="!canUserSave">Update Item</BSButton>
                                         break;
                                 }
                             </div>
                         </div>
-                    </BSBasicForm>
+                    </BSForm>
                 }
                 else
                 {
-                    <div>
+                    <BSForm Model="selectedItem">
                         <div class="d-flex align-items-center">
                             <div class="h2 border-right mb-0 pr-2">
                                 @if (ShouldDisplayUnitQuantityInPacket())
@@ -241,18 +260,18 @@
                         <div class="">
                             <BSFormGroup>
                                 <BSLabel Class="font-weight-bold">Comment</BSLabel>
-                                <BSBasicInput InputType="InputType.TextArea"
-                                              T="string"
-                                              Rows="2"
-                                              IsDisabled="true"
-                                              @bind-Value="selectedItem.Comment"></BSBasicInput>
+                                <BSInput InputType="InputType.TextArea"
+                                         T="string"
+                                         Rows="2"
+                                         IsDisabled="true"
+                                         @bind-Value="selectedItem.Comment"></BSInput>
                             </BSFormGroup>
                         </div>
                         <div class="d-flex justify-content-end">
                             <BSButton Color="Color.Info" @onclick="OnUpdateItemButtonClicked">Update Item</BSButton>
                             <BSButton Color="Color.Danger" @onclick="OnDeleteItemButtonClicked">Delete Item</BSButton>
                         </div>
-                    </div>
+                    </BSForm>
                 }
             </div>
         }
@@ -284,6 +303,10 @@
 
     private bool isInEditMode = false;
     private ItemEditMode editMode;
+    private bool canUserSave = true;
+
+    private const int MaxItemNameLength = 255;
+    private const int MaxItemCommentLength = 255;
 
     protected async override void OnInitialized()
     {
@@ -316,6 +339,11 @@
             PricePerQuantity = 1m,
             Comment = ""
         };
+    }
+
+    private bool IsPriceValid()
+    {
+        return selectedItem.PricePerQuantity >= 0m;
     }
 
     private ItemDto GetItemWithBiggestId()
@@ -379,6 +407,16 @@
         quantityInPacketTypeInit = string.Empty;
         quantityTypeInit = string.Empty;
         storeInit = string.Empty;
+    }
+
+    private void ValidateInput()
+    {
+        canUserSave =
+            selectedItem.PricePerQuantity >= 0
+            && selectedItem.Name.Length <= MaxItemNameLength
+            && (selectedItem.Comment == null
+                || selectedItem.Comment.Length <= MaxItemCommentLength);
+        StateHasChanged();
     }
 
     private async void OnSaveItemButtonClicked()
@@ -466,10 +504,10 @@
         isInEditMode = true;
         selectedItemBeforeEditModeActivated = selectedItem;
         selectedItem = newSelectedItem;
-        
+
         manufacturer = selectedItem.ManufacturerId == null ? null : await repository.GetManufacturerByIdAsync(selectedItem.ManufacturerId.Value);
         itemCategory = selectedItem.ItemCategoryId == null ? null : await repository.GetItemCategoryByIdAsync(selectedItem.ItemCategoryId.Value);
-        
+
         this.editMode = editMode;
         StateHasChanged();
     }
@@ -577,5 +615,20 @@
     private void OnFocusOutItemCategorySearch()
     {
         itemCategorySuggestions.Clear();
+    }
+
+    private void OnItemNameFocusOut()
+    {
+        ValidateInput();
+    }
+
+    private void OnItemCommentFocusOut()
+    {
+        ValidateInput();
+    }
+
+    private void OnItemPriceFocusOut()
+    {
+        ValidateInput();
     }
 }
