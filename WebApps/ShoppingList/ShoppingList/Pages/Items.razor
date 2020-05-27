@@ -594,12 +594,14 @@
     {
         this.itemCategory = itemCategory;
         selectedItem.ItemCategoryId = itemCategory.ItemCategoryId;
+        itemCategorySearchInput = String.Empty;
     }
 
     private void OnManufacturerSelected(ManufacturerDto manufacturer)
     {
         this.manufacturer = manufacturer;
         selectedItem.ManufacturerId = manufacturer.ManufacturerId;
+        manufacturerSearchInput = String.Empty;
     }
 
     private void OnRemoveItemCategory()
