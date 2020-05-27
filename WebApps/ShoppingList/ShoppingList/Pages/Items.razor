@@ -308,6 +308,9 @@
     private const int MaxItemNameLength = 255;
     private const int MaxItemCommentLength = 255;
 
+    private System.Timers.Timer hideManufacturerSuggestionsTimer = new System.Timers.Timer(100);
+    private System.Timers.Timer hideItemCategorySuggestionsTimer = new System.Timers.Timer(100);
+
     protected async override void OnInitialized()
     {
         base.OnInitialized();
@@ -318,7 +321,23 @@
             availableStores = await repository.GetAllStoresAsync();
             availableQuantityTypes =
                 Enum.GetValues(typeof(QuantityType)).Cast<QuantityType>().ToList();
+            hideManufacturerSuggestionsTimer.AutoReset = false;
+            hideItemCategorySuggestionsTimer.AutoReset = false;
+            hideManufacturerSuggestionsTimer.Elapsed += OnHideManufacturerSuggestionsTimerElapsed;
+            hideItemCategorySuggestionsTimer.Elapsed += OnHideItemCategorySuggestionsTimerElapsed;
         }
+    }
+
+    private void OnHideManufacturerSuggestionsTimerElapsed(Object source, System.Timers.ElapsedEventArgs args)
+    {
+        manufacturerSuggestions.Clear();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnHideItemCategorySuggestionsTimerElapsed(Object source, System.Timers.ElapsedEventArgs args)
+    {
+        itemCategorySuggestions.Clear();
+        InvokeAsync(StateHasChanged);
     }
 
     private void ReloadItems()
@@ -603,7 +622,7 @@
 
     private void OnFocusOutManufacturerSearch()
     {
-        manufacturerSuggestions.Clear();
+        hideManufacturerSuggestionsTimer.Start();
     }
 
     private async void OnFocusInItemCategorySearch()
@@ -614,7 +633,7 @@
 
     private void OnFocusOutItemCategorySearch()
     {
-        itemCategorySuggestions.Clear();
+        hideItemCategorySuggestionsTimer.Start();
     }
 
     private void OnItemNameFocusOut()
