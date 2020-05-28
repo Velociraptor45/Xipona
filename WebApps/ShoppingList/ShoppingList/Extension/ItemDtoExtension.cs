@@ -19,6 +19,7 @@ namespace ShoppingList.Extension
                 StoreId = itemDto.StoreId,
                 QuantityType = itemDto.QuantityType,
                 QuantityInPacketType = itemDto.QuantityInPacketType,
+                QuantityInPacket = itemDto.QuantityInPacket,
                 Comment = itemDto.Comment
             };
         }

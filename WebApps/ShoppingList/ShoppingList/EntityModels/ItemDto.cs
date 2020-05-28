@@ -12,7 +12,7 @@ namespace ShoppingList.EntityModels
         public string Name { get; set; }
         public uint Quantity { get; set; }
         public bool IsInShoppingBasket { get; set; }
-        public float QuantityInPacket { get; set; }
+        public int QuantityInPacket { get; set; }
 
         [Range(typeof(decimal), "0", "79228162514264337593543950335", ConvertValueInInvariantCulture = true, ErrorMessage = "Price mustn't be negative")]
         public decimal PricePerQuantity { get; set; }

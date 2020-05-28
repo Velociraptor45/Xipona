@@ -62,6 +62,7 @@
     private const string ItemNotInBasketColor = "bg-red";
     private const int UnitStandardQuantity = 1;
     private const int WeightStandardQuantity = 100;
+    private const int FluidStandardQuantity = 100;
 
     // BlazorStrap currently doesn't support uint as a Type in BSBasicInput,
     // so the ItemDto.Quantity must be converted to int until this is fixed
@@ -129,6 +130,8 @@
                 return UnitStandardQuantity;
             case EntityModels.QuantityType.Weight:
                 return WeightStandardQuantity;
+            case EntityModels.QuantityType.Fluid:
+                return FluidStandardQuantity;
             default:
                 throw new Exception($"Unknown type {ItemDto.QuantityType} encountered");
         }

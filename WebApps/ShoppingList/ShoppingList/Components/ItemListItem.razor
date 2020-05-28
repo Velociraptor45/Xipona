@@ -1,10 +1,11 @@
 ﻿@using EntityModels;
+@using ShoppingList.Util;
 
 <li class="list-item @(IsSelected ? "selected" : "")">
     <div class="d-flex flex-column p-1" @onclick="OnItemClicked">
         <div class="h4">@ItemDto.Name</div>
         <div></div>
-        <div>@ItemDto.PricePerQuantity€@(ItemDto.QuantityType == QuantityType.Weight ? "/kg" : "")</div>
+        <div>@ItemDto.PricePerQuantity€@(LabelTranslator.GetQuantityLabel(ItemDto.QuantityType))</div>
     </div>
 </li>
 

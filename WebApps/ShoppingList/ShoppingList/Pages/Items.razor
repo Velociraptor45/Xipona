@@ -2,6 +2,7 @@
 @inject IShoppingRepositoryFactory shoppingRepositoryFactory
 @using EntityModels;
 @using Extension;
+@using ShoppingList.Util; 
 
 <div class="items-page">
     <h1 class="heading h1 mb-4">
@@ -22,7 +23,7 @@
                         <ItemListItem ItemDto="@item"
                                       StoreName="test"
                                       IsSelected="@(selectedItem != null && item.Id == selectedItem.Id)"
-                                      OnItemListItemClicked="OnSelectedItemChanged"></ItemListItem>
+                                      OnItemListItemClicked="OnListItemClicked"></ItemListItem>
                     }
                 </ol>
             </div>
@@ -71,7 +72,7 @@
                                         </div>
                                         <BSLabel For="priceEditInput" Class="mb-0 pl-1 d-flex">
                                             <span>€</span>
-                                            <span>@(selectedItem.QuantityType == QuantityType.Unit ? "" : "/kg")</span>
+                                            <span>@(LabelTranslator.GetQuantityPriceLabel(selectedItem.QuantityType))</span>
                                         </BSLabel>
                                     </BSFormGroup>
                                 </div>
@@ -115,11 +116,11 @@
                                 </BSFormGroup>
                                 <BSFormGroup class="mb-2 d-flex align-items-center row">
                                     <div class="col-form-label mb-0 pr-2 col-md-4 col-xl-5"></div>
-                                    <BSInput T="float" InputType="InputType.Number" Placeholder="Content"
-                                             @bind-Value="@selectedItem.QuantityInPacket"
+                                    <BSInput T="int" InputType="InputType.Number" Placeholder="Content"
+                                             @bind-Value="selectedItem.QuantityInPacket"
                                              Class="mr-2 col-md-6 col-sm-8"></BSInput>
                                     <div>
-                                        @(selectedItem.QuantityInPacketType == QuantityType.Unit ? "Units" : "g")
+                                        @(LabelTranslator.GetQuantityLabel(selectedItem.QuantityInPacketType))
                                     </div>
                                 </BSFormGroup>
                             }
@@ -310,6 +311,8 @@
 
     private System.Timers.Timer hideManufacturerSuggestionsTimer = new System.Timers.Timer(100);
     private System.Timers.Timer hideItemCategorySuggestionsTimer = new System.Timers.Timer(100);
+
+    private int quantityInPacket;
 
     protected async override void OnInitialized()
     {
@@ -536,7 +539,7 @@
         selectedItem.StoreId = store.StoreId;
     }
 
-    private async void OnSelectedItemChanged(ItemDto itemDto)
+    private async void OnListItemClicked(ItemDto itemDto)
     {
         if(isInEditMode)
         {

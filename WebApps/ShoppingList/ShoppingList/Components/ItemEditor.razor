@@ -1,4 +1,6 @@
-﻿<div class="item-editor col">
+﻿@using ShoppingList.Util;
+
+<div class="item-editor col">
     <div class="form-container p-2">
         <div class="row pb-2">
             <div class="closing-button col-12 pb-2">
@@ -47,7 +49,7 @@
                     <BSBasicInput InputType="InputType.Number" T="decimal" @bind-Value="@ItemDto.PricePerQuantity"></BSBasicInput>
                     <div class="input-group-append">
                         <span class="input-group-text">
-                            €@(ItemDto.QuantityType == EntityModels.QuantityType.Unit ? "" : "/kg")
+                            €@(LabelTranslator.GetQuantityPriceLabel(ItemDto.QuantityType))
                         </span>
                     </div>
                 </div>
