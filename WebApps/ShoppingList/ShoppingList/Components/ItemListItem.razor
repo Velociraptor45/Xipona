@@ -5,7 +5,7 @@
     <div class="d-flex flex-column p-1" @onclick="OnItemClicked">
         <div class="h4">@ItemDto.Name</div>
         <div></div>
-        <div>@ItemDto.PricePerQuantity€@(LabelTranslator.GetQuantityLabel(ItemDto.QuantityType))</div>
+        <div>@ItemDto.PricePerQuantity€@(LabelTranslator.GetQuantityPriceLabel(ItemDto.QuantityType))</div>
     </div>
 </li>
 
