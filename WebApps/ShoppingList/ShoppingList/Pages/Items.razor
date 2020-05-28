@@ -119,6 +119,9 @@
                                     <BSInput T="int" InputType="InputType.Number" Placeholder="Content"
                                              @bind-Value="selectedItem.QuantityInPacket"
                                              Class="mr-2 col-md-6 col-sm-8"></BSInput>
+                                    <BSFormFeedback Class="position-absolute"
+                                                    For="@(() => selectedItem.QuantityInPacket)"
+                                                    IsTooltip="false"></BSFormFeedback>
                                     <div>
                                         @(LabelTranslator.GetQuantityLabel(selectedItem.QuantityInPacketType))
                                     </div>
@@ -311,8 +314,6 @@
 
     private System.Timers.Timer hideManufacturerSuggestionsTimer = new System.Timers.Timer(100);
     private System.Timers.Timer hideItemCategorySuggestionsTimer = new System.Timers.Timer(100);
-
-    private int quantityInPacket;
 
     protected async override void OnInitialized()
     {

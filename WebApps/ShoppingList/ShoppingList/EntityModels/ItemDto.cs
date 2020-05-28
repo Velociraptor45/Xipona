@@ -12,6 +12,10 @@ namespace ShoppingList.EntityModels
         public string Name { get; set; }
         public uint Quantity { get; set; }
         public bool IsInShoppingBasket { get; set; }
+
+        // this variable is of type float in the database. But BlazorStrap has a bug where you can't
+        // input a number in a BSInput of type float 
+        [RegularExpression(@"\d+", ErrorMessage = "Number must be an integer")]
         public int QuantityInPacket { get; set; }
 
         [Range(typeof(decimal), "0", "79228162514264337593543950335", ConvertValueInInvariantCulture = true, ErrorMessage = "Price mustn't be negative")]
