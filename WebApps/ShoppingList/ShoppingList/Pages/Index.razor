@@ -3,27 +3,20 @@
 
 <div class="main-page">
     <div>
-        <div class="row">
+        <div class="d-flex">
             <h1 class="h1 col-7 col-sm-5 col-md-5 col-lg-4 col-xl-3 mb-0 pr-0">Shopping List</h1>
 
-            <div class="col-5 col-sm-7 col-md-7 col-lg-8 col-xl-9 pr-0">
-                <BSDropdown Class="float-right" DropdownDirection="DropdownDirection.Left">
-                    <BSDropdownToggle Color="Color.Primary">@activeStore?.Name</BSDropdownToggle>
-                    <BSDropdownMenu>
-                        @foreach (StoreDto store in stores)
-                        {
-                            <BSDropdownItem>
-                                <CustomDropdownItem T="StoreDto"
-                                                    Item="@store"
-                                                    DropdownText="@store.Name"
-                                                    OnClickCallback="OnChangeStore">
-
-                                </CustomDropdownItem>
-                            </BSDropdownItem>
-                        }
-                    </BSDropdownMenu>
-                </BSDropdown>
-            </div>
+            <BSForm Model="@activeStore" Class="col-5 col-sm-7 col-md-7 col-lg-8 col-xl-9 pr-0 w-max-200 ml-auto">
+                <BSInput T="string" InputType="InputType.Select" Class="" @bind-Value="storeInit">
+                    @foreach (StoreDto store in stores)
+                    {
+                        <CustomSelectOption T="StoreDto"
+                                            Item="@store"
+                                            OptionText="@store.Name"
+                                            OnClickCallback="OnChangeStore"></CustomSelectOption>
+                    }
+                </BSInput>
+            </BSForm>
         </div>
         <div class="row mt-2">
             <div class="col-xl-5 col-sm-12 mb-2">
@@ -59,12 +52,12 @@
     </div>
 
     <div class="@(hideItemEditor ? "hidden" : "") item-editor-container">
-        <ItemEditor ItemDto="@newItem"
+        @*<ItemEditor ItemDto="@newItem"
                     EditMode="@EntityModels.ItemEditMode.Create"
                     AvailableStores="@stores"
                     CanChangeStore="false"
                     OnSaveCallback="OnSaveNewItem"
-                    OnCancleCallback="OnCancleNewItem"></ItemEditor>
+                    OnCancleCallback="OnCancleNewItem"></ItemEditor>*@
     </div>
 
     <div>
@@ -78,7 +71,7 @@
     private List<EntityModels.ItemDto> itemSuggestions = new List<EntityModels.ItemDto>();
 
     private List<StoreDto> stores = new List<StoreDto>();
-    private StoreDto activeStore;
+    private StoreDto activeStore = new StoreDto();
     private Database.Entities.ShoppingList activeShoppingList;
     private List<EntityModels.ItemDto> activeShoppingItems = new List<EntityModels.ItemDto>();
 
@@ -90,9 +83,11 @@
     private bool hideItemEditor = true;
     private EntityModels.ItemDto newItem = new EntityModels.ItemDto();
 
+    private string storeInit = string.Empty;
+
     protected async override void OnInitialized()
     {
-        if (activeStore == null)
+        if (shoppingRepository == null)
         {
             shoppingRepository = shoppingRepositoryFactory.Create();
 
@@ -109,8 +104,15 @@
             else
             {
                 LoadShoppingListForActiveStore();
+                SetInitStrings();
             }
+            StateHasChanged();
         }
+    }
+
+    private void SetInitStrings()
+    {
+        storeInit = activeStore.Name;
     }
 
     private void LoadShoppingListForActiveStore()
@@ -161,6 +163,7 @@
     {
         activeStore = store;
         LoadShoppingListForActiveStore();
+        StateHasChanged();
     }
 
     private void OnSearchItemSelected(EntityModels.ItemDto itemDto)
