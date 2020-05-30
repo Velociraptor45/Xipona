@@ -1,0 +1,19 @@
+﻿@typeparam T
+
+<option @onclick="OnOptionClicked">@OptionText</option>
+
+@code {
+    [Parameter]
+    public T Item { get; set; }
+
+    [Parameter]
+    public string OptionText { get; set; }
+
+    [Parameter]
+    public EventCallback<T> OnClickCallback { get; set; }
+
+    private void OnOptionClicked()
+    {
+        OnClickCallback.InvokeAsync(Item);
+    }
+}

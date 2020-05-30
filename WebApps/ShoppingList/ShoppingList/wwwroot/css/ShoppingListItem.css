@@ -1,0 +1,12 @@
+﻿.shopping-item{
+    margin-bottom: 5px;
+    color: white;
+}
+
+li {
+    list-style-type: none;
+}
+
+.border-black {
+    border: 0.5px solid black;
+}
