@@ -191,7 +191,8 @@
             var activeItemIds = activeShoppingItems.Select(item => item.Id);
             itemSuggestions = shoppingRepository
                 .SearchItems(search)
-                .Where(item => !activeItemIds.Contains(item.Id))
+                .Where(item => !activeItemIds.Contains(item.Id)
+                    && item.StoreId == activeStore.StoreId)
                 .ToList();
         }
         else if (itemSuggestions.Count > 0)
