@@ -1,0 +1,19 @@
+﻿@typeparam T
+
+<div @onclick="OnItemClicked">@DropdownText</div>
+
+@code {
+    [Parameter]
+    public T Item { get; set; }
+
+    [Parameter]
+    public string DropdownText { get; set; }
+
+    [Parameter]
+    public EventCallback<T> OnClickCallback { get; set; }
+
+    private void OnItemClicked()
+    {
+        OnClickCallback.InvokeAsync(Item);
+    }
+}

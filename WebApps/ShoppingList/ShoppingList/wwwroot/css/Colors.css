@@ -1,0 +1,27 @@
+﻿.font-red {
+    color: red;
+}
+
+.bg-green {
+    background-color: #009432;
+}
+
+.bg-red {
+    background-color: #eb4d4b;
+}
+
+bg-white {
+    background-color: white
+}
+
+.white-hover:hover {
+    color: white;
+}
+
+.bg-gray-hover:hover {
+    background-color: rgba(128, 128, 128, 0.30);
+}
+
+.light-blue-hover:hover {
+    background-color: #12CBC4;
+}

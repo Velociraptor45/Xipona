@@ -1,0 +1,659 @@
+﻿@page "/items"
+@inject IShoppingRepositoryFactory shoppingRepositoryFactory
+@using EntityModels;
+@using Extension;
+@using ShoppingList.Util; 
+
+<div class="items-page">
+    <h1 class="heading h1 mb-4">
+        Items
+    </h1>
+
+    <div class="row">
+        <div class="left-part col-12 col-md-4 col-xl-4">
+            <div class="new-store w-100 mb-2">
+                <BSButton Color="Color.Success" Class="w-100" @onclick="OnNewItemButtonClicked">
+                    <span class="oi oi-plus"></span>
+                </BSButton>
+            </div>
+            <div class="store-selection">
+                <ol class="p-0">
+                    @foreach (EntityModels.ItemDto item in items)
+                    {
+                        <ItemListItem ItemDto="@item"
+                                      StoreName="test"
+                                      IsSelected="@(selectedItem != null && item.Id == selectedItem.Id)"
+                                      OnItemListItemClicked="OnListItemClicked"></ItemListItem>
+                    }
+                </ol>
+            </div>
+        </div>
+        @if(selectedItem != null)
+        {
+            <div class="right-part col-12 col-md-8 col-xl-8">
+                @if (isInEditMode)
+                {
+                    <BSForm Model="@selectedItem" ValidateOnInit="true">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+                        <div class="d-flex align-items-center mb-2">
+                            <BSFormGroup Class="position-relative">
+                                <BSInput InputType="InputType.Text" T="string"
+                                         @bind-Value="selectedItem.Name"
+                                         Placeholder="Name"
+                                         Class="border-right w-max-300"
+                                         @onfocusout="OnItemNameFocusOut"></BSInput>
+                                <BSFormFeedback Class="position-absolute"
+                                                For="@(() => selectedItem.Name)"
+                                                IsTooltip="false"></BSFormFeedback>
+                            </BSFormGroup>
+                            <div class="d-flex ml-auto align-items-center mr-3">
+                                <BSInput T="string" InputType="InputType.Select" Class="mr-3" @bind-Value="storeInit">
+                                    @foreach (var store in availableStores)
+                                    {
+                                        <CustomSelectOption T="StoreDto"
+                                                            Item="@store"
+                                                            OptionText="@store.Name"
+                                                            OnClickCallback="OnSelectedStoreChanged"></CustomSelectOption>
+                                    }
+                                </BSInput>
+                                <div class="mr-3">
+                                    <BSFormGroup class="d-flex align-items-center mb-0">
+                                        <div class="position-relative">
+                                            <BSInput T="decimal" InputType="InputType.Number"
+                                                     @bind-Value="@selectedItem.PricePerQuantity"
+                                                     Class="w-max-200"
+                                                     Id="priceEditInput"
+                                                     step="0.01"
+                                                     ValidateOnChange="true"
+                                                     @onfocusout="OnItemPriceFocusOut"></BSInput>
+                                            <BSFormFeedback Class="position-absolute"
+                                                            For="@(() => selectedItem.PricePerQuantity)"
+                                                            IsTooltip="false"></BSFormFeedback>
+                                        </div>
+                                        <BSLabel For="priceEditInput" Class="mb-0 pl-1 d-flex">
+                                            <span>€</span>
+                                            <span>@(LabelTranslator.GetQuantityPriceLabel(selectedItem.QuantityType))</span>
+                                        </BSLabel>
+                                    </BSFormGroup>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-1" />
+                        <div class="center-x w-max-800">
+                            <BSFormGroup class="mb-2 row">
+                                <!--QuantityType select-->
+                                <BSLabel Class="col-form-label mb-0 pr-2 col-md-4 col-xl-5 text-sm-left text-md-right" For="QuantityTypeEditSelect">Quantity Type</BSLabel>
+                                <BSInput T="string" InputType="InputType.Select"
+                                         Class="mr-4 col-md-6 col-sm-8" Id="QuantityTypeEditSelect"
+                                         @bind-Value="quantityTypeInit">
+                                    @foreach (EntityModels.QuantityType quantityType in availableQuantityTypes)
+                                    {
+                                        <CustomSelectOption T="EntityModels.QuantityType"
+                                                            Item="@quantityType"
+                                                            OptionText="@quantityType.ToString()"
+                                                            OnClickCallback="OnQuantityTypeChanged"></CustomSelectOption>
+                                    }
+                                </BSInput>
+                            </BSFormGroup>
+                            @if (selectedItem.QuantityType == QuantityType.Unit)
+                            {
+                                <BSFormGroup class="mb-2 d-flex align-items-center row">
+                                    <BSLabel Class="col-form-label mb-0 pr-2 col-md-4 col-xl-5 text-sm-left text-md-right" For="QuantityInPacketTypeEditSelect">In Packet</BSLabel>
+                                    <BSInput T="string" InputType="InputType.Select"
+                                             Class="mr-4 col-md-6 col-sm-8"
+                                             Id="QuantityInPacketTypeEditSelect"
+                                             @bind-Value="quantityInPacketTypeInit">
+                                        @foreach (EntityModels.QuantityType quantityType in availableQuantityTypes)
+                                        {
+                                            <CustomSelectOption T="EntityModels.QuantityType"
+                                                                Item="@quantityType"
+                                                                OptionText="@quantityType.ToString()"
+                                                                OnClickCallback="OnQuantityInPacketTypeChanged">
+
+                                            </CustomSelectOption>
+                                        }
+                                    </BSInput>
+                                </BSFormGroup>
+                                <BSFormGroup class="mb-2 d-flex align-items-center row">
+                                    <div class="col-form-label mb-0 pr-2 col-md-4 col-xl-5"></div>
+                                    <BSInput T="int" InputType="InputType.Number" Placeholder="Content"
+                                             @bind-Value="selectedItem.QuantityInPacket"
+                                             Class="mr-2 col-md-6 col-sm-8"></BSInput>
+                                    <BSFormFeedback Class="position-absolute"
+                                                    For="@(() => selectedItem.QuantityInPacket)"
+                                                    IsTooltip="false"></BSFormFeedback>
+                                    <div>
+                                        @(LabelTranslator.GetQuantityLabel(selectedItem.QuantityInPacketType))
+                                    </div>
+                                </BSFormGroup>
+                            }
+                            <BSFormGroup class="d-flex mb-2 align-items-center row">
+                                <!-- Manufacturer -->
+                                <BSLabel For="" Class="mb-0 pr-2 col-form-label mb-0 pr-2 col-md-4 col-xl-5 text-sm-left text-md-right">Manufacturer</BSLabel>
+                                @if (manufacturer == null)
+                                {
+                                    <div class="col-md-6 col-sm-8 px-0">
+                                        <BSInput T="string" InputType="InputType.Text"
+                                                 @oninput="OnSearchManufacturerInput"
+                                                 @onfocusin="OnFocusInManufacturerSearch"
+                                                 @onfocusout="OnFocusOutManufacturerSearch"
+                                                 @bind-Value="manufacturerSearchInput"></BSInput>
+                                        <div class="position-absolute bg-white z-10 w-100 @(manufacturerSuggestions.Any() ? "border-black": "")">
+                                            @foreach (var manufacturer in manufacturerSuggestions)
+                                            {
+                                                <ManufacturerSearchSuggestion Manufacturer="@manufacturer"
+                                                                              ManufacturerSelectedCallback="OnManufacturerSelected"></ManufacturerSearchSuggestion>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex col-md-6 col-sm-8 pl-0">
+                                        <div class="bg-gray-hover d-flex border-round-25 px-2">
+                                            <div class="default-hover">@manufacturer.Name</div>
+                                            <div class="oi oi-x white-hover pointer-hover ml-2" @onclick="OnRemoveManufacturer"></div>
+                                        </div>
+                                    </div>
+                                }
+                            </BSFormGroup>
+                            <div class="d-flex mb-2 align-items-center row">
+                                <!-- ItemType -->
+                                <BSLabel For="" Class="mb-0 pr-2 col-form-label mb-0 pr-2 col-md-4 col-xl-5 text-sm-left text-md-right">Type</BSLabel>
+                                @if (itemCategory == null)
+                                {
+                                    <div class="col-md-6 col-sm-8 px-0">
+                                        <BSInput T="string" InputType="InputType.Text"
+                                                 @oninput="OnSearchItemTypeInput"
+                                                 @onfocusin="OnFocusInItemCategorySearch"
+                                                 @onfocusout="OnFocusOutItemCategorySearch"
+                                                 @bind-Value="itemCategorySearchInput"></BSInput>
+                                        <div class="position-absolute bg-white z-10 w-100 @(itemCategorySuggestions.Any() ? "border-black": "")">
+                                            @foreach (var itemCategory in itemCategorySuggestions)
+                                            {
+                                                <ItemCategorySearchSuggestion ItemCategory="@itemCategory"
+                                                                              ItemCategorySelectedCallback="OnItemCategorySelected"></ItemCategorySearchSuggestion>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex col-md-6 col-sm-8 pl-0">
+                                        <div class="bg-gray-hover d-flex border-round-25 px-2">
+                                            <div class="default-hover">@itemCategory.Name</div>
+                                            <div class="oi oi-x white-hover pointer-hover ml-2" @onclick="OnRemoveItemCategory"></div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <BSFormGroup Class="mb-3 position-relative">
+                                <BSLabel Class="mb-0">Comment</BSLabel>
+                                <BSInput InputType="InputType.TextArea"
+                                         T="string"
+                                         Rows="2"
+                                         @bind-Value="selectedItem.Comment"
+                                         @onfocusout="OnItemCommentFocusOut"></BSInput>
+                                <BSFormFeedback Class="position-absolute"
+                                                For="@(() => selectedItem.Comment)"
+                                                IsTooltip="false"></BSFormFeedback>
+                            </BSFormGroup>
+                            <div class="d-flex justify-content-end">
+                                <BSButton Color="Color.Danger" @onclick="OnCancleEditingItem">Cancle</BSButton>
+                                @switch (editMode)
+                                {
+                                    case ItemEditMode.Change:
+                                        <BSButton Color="Color.Success" @onclick="OnSaveItemButtonClicked" IsDisabled="!canUserSave">Change Item</BSButton>
+                                        break;
+                                    case ItemEditMode.Create:
+                                        <BSButton Color="Color.Success" @onclick="OnSaveItemButtonClicked" IsDisabled="!canUserSave">Create Item</BSButton>
+                                        break;
+                                    case ItemEditMode.Update:
+                                        <BSButton Color="Color.Success" @onclick="OnSaveItemButtonClicked" IsDisabled="!canUserSave">Update Item</BSButton>
+                                        break;
+                                }
+                            </div>
+                        </div>
+                    </BSForm>
+                }
+                else
+                {
+                    <BSForm Model="selectedItem">
+                        <div class="d-flex align-items-center">
+                            <div class="h2 border-right mb-0 pr-2">
+                                @if (ShouldDisplayUnitQuantityInPacket())
+                                {
+                                    <span>@(selectedItem.QuantityInPacket)x </span>
+                                }
+                                <span>@selectedItem.Name</span>
+                            </div>
+                            <div class="h4 mb-0 pl-2">@(availableStores.FirstOrDefault(s => s.StoreId == selectedItem.StoreId)?.Name ?? "")</div>
+                            <div class="ml-auto d-flex">
+                                <div class="pr-3 h4 mb-0 align-items-baseline">
+                                    <span>@selectedItem.PricePerQuantity€</span>
+                                    @if (selectedItem.QuantityType == QuantityType.Weight)
+                                    {
+                                        <span class="h6 mb-0">/kg</span>
+                                    }
+                                </div>
+                                <BSButton Class="" Color="Color.Info" Size="Size.Small" @onclick="OnChangeItemButtonClicked">
+                                    <span class="oi oi-pencil"></span>
+                                </BSButton>
+                            </div>
+                        </div>
+                        <hr class="my-1" />
+                        <div class="d-flex justify-content-start @(itemCategory == null ? "mb-2" : "mb-4")">
+                            <div>@(itemCategory?.Name ?? "")</div>
+                        </div>
+                        <div class="d-flex align-items-baseline mb-2">
+                            @if (manufacturer != null)
+                            {
+                                <div class="h4 font-weight-bold mb-0 d-flex">
+                                    <div>@manufacturer.Name</div>
+                                    @if (ShouldDisplayWeightQuantityInPacket())
+                                    {
+                                        <span class="font-weight-normal">, </span>
+                                    }
+                                </div>
+                            }
+                            @if (ShouldDisplayWeightQuantityInPacket())
+                            {
+                                <div class="h4 mb-0 pl-1">@(selectedItem.QuantityInPacket)g</div>
+                            }
+                        </div>
+                        <div class="">
+                            <BSFormGroup>
+                                <BSLabel Class="font-weight-bold">Comment</BSLabel>
+                                <BSInput InputType="InputType.TextArea"
+                                         T="string"
+                                         Rows="2"
+                                         IsDisabled="true"
+                                         @bind-Value="selectedItem.Comment"></BSInput>
+                            </BSFormGroup>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <BSButton Color="Color.Info" @onclick="OnUpdateItemButtonClicked">Update Item</BSButton>
+                            <BSButton Color="Color.Danger" @onclick="OnDeleteItemButtonClicked">Delete Item</BSButton>
+                        </div>
+                    </BSForm>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<EntityModels.ItemDto> items;
+    private List<StoreDto> availableStores;
+    private List<QuantityType> availableQuantityTypes;
+
+    private ItemDto selectedItem;
+    private ItemDto selectedItemBeforeEditModeActivated;
+
+    private ManufacturerDto manufacturer;
+    private ItemCategoryDto itemCategory;
+
+    private List<ManufacturerDto> manufacturerSuggestions = new List<ManufacturerDto>();
+    private List<ItemCategoryDto> itemCategorySuggestions = new List<ItemCategoryDto>();
+
+    private IShoppingRepository repository;
+
+    private string quantityInPacketTypeInit;
+    private string quantityTypeInit;
+    private string storeInit;
+
+    private string manufacturerSearchInput = string.Empty;
+    private string itemCategorySearchInput = string.Empty;
+
+    private bool isInEditMode = false;
+    private ItemEditMode editMode;
+    private bool canUserSave = true;
+
+    private const int MaxItemNameLength = 255;
+    private const int MaxItemCommentLength = 255;
+
+    private System.Timers.Timer hideManufacturerSuggestionsTimer = new System.Timers.Timer(100);
+    private System.Timers.Timer hideItemCategorySuggestionsTimer = new System.Timers.Timer(100);
+
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (repository == null)
+        {
+            repository = shoppingRepositoryFactory.Create();
+            ReloadItems();
+            availableStores = await repository.GetAllStoresAsync();
+            availableQuantityTypes =
+                Enum.GetValues(typeof(QuantityType)).Cast<QuantityType>().ToList();
+            hideManufacturerSuggestionsTimer.AutoReset = false;
+            hideItemCategorySuggestionsTimer.AutoReset = false;
+            hideManufacturerSuggestionsTimer.Elapsed += OnHideManufacturerSuggestionsTimerElapsed;
+            hideItemCategorySuggestionsTimer.Elapsed += OnHideItemCategorySuggestionsTimerElapsed;
+        }
+    }
+
+    private void OnHideManufacturerSuggestionsTimerElapsed(Object source, System.Timers.ElapsedEventArgs args)
+    {
+        manufacturerSuggestions.Clear();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnHideItemCategorySuggestionsTimerElapsed(Object source, System.Timers.ElapsedEventArgs args)
+    {
+        itemCategorySuggestions.Clear();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void ReloadItems()
+    {
+        items = repository.GetAllItems().Where(i => i.Active).ToList();
+    }
+
+    private ItemDto GetNewItem()
+    {
+        var firstStore = availableStores.FirstOrDefault();
+
+        return new ItemDto()
+        {
+            Name = "",
+            StoreId = firstStore?.StoreId ?? 0,
+            QuantityType = QuantityType.Unit,
+            QuantityInPacketType = QuantityType.Unit,
+            PricePerQuantity = 1m,
+            Comment = ""
+        };
+    }
+
+    private bool IsPriceValid()
+    {
+        return selectedItem.PricePerQuantity >= 0m;
+    }
+
+    private ItemDto GetItemWithBiggestId()
+    {
+        return items.Aggregate((i1, i2) => i1.Id > i2.Id ? i1 : i2);
+    }
+
+    private async Task ChangeItem()
+    {
+        await repository.ChangeItemAsync(selectedItem);
+        ReloadItems();
+        selectedItem = items.FirstOrDefault(i => i.Id == selectedItem.Id);
+    }
+
+    private async Task UpdateItem()
+    {
+        await repository.UpdateItemAsync(selectedItem);
+        await repository.DeactivateItemAsync(selectedItemBeforeEditModeActivated.Id);
+        ReloadItems();
+        selectedItem = GetItemWithBiggestId();
+    }
+
+    private async Task CreateItem()
+    {
+        await repository.CreateNewItemAsync(selectedItem);
+        ReloadItems();
+        selectedItem = GetItemWithBiggestId();
+    }
+
+    private bool ShouldDisplayUnitQuantityInPacket()
+    {
+        return ShouldDisplayQuantityInPacket()
+            && selectedItem.QuantityInPacketType == QuantityType.Unit;
+    }
+
+    private bool ShouldDisplayWeightQuantityInPacket()
+    {
+        return ShouldDisplayQuantityInPacket()
+            && selectedItem.QuantityInPacketType == QuantityType.Weight;
+    }
+
+    private bool ShouldDisplayQuantityInPacket()
+    {
+        return selectedItem.QuantityType == QuantityType.Unit
+            && selectedItem.QuantityInPacket > 1;
+    }
+
+    private void SetInitStrings()
+    {
+        quantityInPacketTypeInit = selectedItem.QuantityInPacketType.ToString();
+        quantityTypeInit = selectedItem.QuantityType.ToString();
+        storeInit = availableStores.FirstOrDefault(s => s.StoreId == selectedItem.StoreId)?.Name;
+        if (storeInit == null)
+        {
+            storeInit = string.Empty;
+        }
+    }
+
+    private void ResetInitStrings()
+    {
+        quantityInPacketTypeInit = string.Empty;
+        quantityTypeInit = string.Empty;
+        storeInit = string.Empty;
+    }
+
+    private void ValidateInput()
+    {
+        canUserSave =
+            selectedItem.PricePerQuantity >= 0
+            && selectedItem.Name.Length <= MaxItemNameLength
+            && (selectedItem.Comment == null
+                || selectedItem.Comment.Length <= MaxItemCommentLength);
+        StateHasChanged();
+    }
+
+    private async void OnSaveItemButtonClicked()
+    {
+        switch (editMode)
+        {
+            case ItemEditMode.Change:
+                await ChangeItem();
+                break;
+            case ItemEditMode.Create:
+                await CreateItem();
+                break;
+            case ItemEditMode.Update:
+                await UpdateItem();
+                break;
+        }
+        await EndEditMode();
+        StateHasChanged();
+    }
+
+    private async void OnCancleEditingItem()
+    {
+        selectedItem = selectedItemBeforeEditModeActivated;
+        await EndEditMode();
+    }
+
+    private async void OnChangeItemButtonClicked()
+    {
+        await StartEditModeAsync(ItemEditMode.Change, selectedItem.Clone());
+        SetInitStrings();
+        StateHasChanged();
+    }
+
+    private async void OnUpdateItemButtonClicked()
+    {
+        await StartEditModeAsync(ItemEditMode.Update, selectedItem.Clone());
+        SetInitStrings();
+        StateHasChanged();
+    }
+
+    private async void OnNewItemButtonClicked()
+    {
+        if (isInEditMode)
+        {
+            selectedItem = selectedItemBeforeEditModeActivated;
+            await EndEditMode();
+        }
+
+        await StartEditModeAsync(ItemEditMode.Create, GetNewItem());
+        SetInitStrings();
+        StateHasChanged();
+    }
+
+    private async Task EndEditMode()
+    {
+        isInEditMode = false;
+        selectedItemBeforeEditModeActivated = null;
+        if (selectedItem != null)
+        {
+            await UpdateManufacturer();
+            await UpdateItemCategory();
+        }
+        ResetInitStrings();
+        StateHasChanged();
+    }
+
+    private async Task UpdateManufacturer()
+    {
+        if (selectedItem.ManufacturerId == null)
+            manufacturer = null;
+        else
+            manufacturer = await repository.GetManufacturerByIdAsync(selectedItem.ManufacturerId.Value);
+    }
+
+    private async Task UpdateItemCategory()
+    {
+        if (selectedItem.ItemCategoryId == null)
+            itemCategory = null;
+        else
+            itemCategory = await repository.GetItemCategoryByIdAsync(selectedItem.ItemCategoryId.Value);
+    }
+
+    private async Task StartEditModeAsync(ItemEditMode editMode, ItemDto newSelectedItem)
+    {
+        isInEditMode = true;
+        selectedItemBeforeEditModeActivated = selectedItem;
+        selectedItem = newSelectedItem;
+
+        manufacturer = selectedItem.ManufacturerId == null ? null : await repository.GetManufacturerByIdAsync(selectedItem.ManufacturerId.Value);
+        itemCategory = selectedItem.ItemCategoryId == null ? null : await repository.GetItemCategoryByIdAsync(selectedItem.ItemCategoryId.Value);
+
+        this.editMode = editMode;
+        StateHasChanged();
+    }
+
+    private void OnSelectedStoreChanged(StoreDto store)
+    {
+        selectedItem.StoreId = store.StoreId;
+    }
+
+    private async void OnListItemClicked(ItemDto itemDto)
+    {
+        if(isInEditMode)
+        {
+            await EndEditMode();
+        }
+
+        selectedItem = itemDto;
+        await UpdateManufacturer();
+        await UpdateItemCategory();
+        StateHasChanged();
+    }
+
+    private void OnQuantityTypeChanged(QuantityType quantityType)
+    {
+        selectedItem.QuantityType = quantityType;
+    }
+
+    private void OnQuantityInPacketTypeChanged(QuantityType quantityType)
+    {
+        selectedItem.QuantityInPacketType = quantityType;
+    }
+
+    private async void OnDeleteItemButtonClicked()
+    {
+        await repository.DeactivateItemAsync(selectedItem.Id);
+    }
+
+    private async Task OnSearchManufacturerInput(ChangeEventArgs args)
+    {
+        string searchInput = ((string)args.Value).Trim();
+        if(String.IsNullOrEmpty(searchInput))
+        {
+            manufacturerSuggestions.Clear();
+        }
+        else
+        {
+            manufacturerSuggestions = await repository.SearchManufacturersAsync(searchInput);
+        }
+    }
+
+    private async Task OnSearchItemTypeInput(ChangeEventArgs args)
+    {
+        string searchInput = ((string)args.Value).Trim();
+        if (String.IsNullOrEmpty(searchInput))
+        {
+            itemCategorySuggestions.Clear();
+        }
+        else
+        {
+            itemCategorySuggestions = await repository.SearchItemCategoryAsync(searchInput);
+        }
+    }
+
+    private void OnItemCategorySelected(ItemCategoryDto itemCategory)
+    {
+        this.itemCategory = itemCategory;
+        selectedItem.ItemCategoryId = itemCategory.ItemCategoryId;
+        itemCategorySearchInput = String.Empty;
+    }
+
+    private void OnManufacturerSelected(ManufacturerDto manufacturer)
+    {
+        this.manufacturer = manufacturer;
+        selectedItem.ManufacturerId = manufacturer.ManufacturerId;
+        manufacturerSearchInput = String.Empty;
+    }
+
+    private void OnRemoveItemCategory()
+    {
+        itemCategory = null;
+        selectedItem.ItemCategoryId = null;
+    }
+
+    private void OnRemoveManufacturer()
+    {
+        manufacturer = null;
+        selectedItem.ManufacturerId = null;
+    }
+
+    private async void OnFocusInManufacturerSearch()
+    {
+        await OnSearchManufacturerInput(new ChangeEventArgs() { Value = manufacturerSearchInput });
+        StateHasChanged();
+    }
+
+    private void OnFocusOutManufacturerSearch()
+    {
+        hideManufacturerSuggestionsTimer.Start();
+    }
+
+    private async void OnFocusInItemCategorySearch()
+    {
+        await OnSearchItemTypeInput(new ChangeEventArgs() { Value = itemCategorySearchInput });
+        StateHasChanged();
+    }
+
+    private void OnFocusOutItemCategorySearch()
+    {
+        hideItemCategorySuggestionsTimer.Start();
+    }
+
+    private void OnItemNameFocusOut()
+    {
+        ValidateInput();
+    }
+
+    private void OnItemCommentFocusOut()
+    {
+        ValidateInput();
+    }
+
+    private void OnItemPriceFocusOut()
+    {
+        ValidateInput();
+    }
+}

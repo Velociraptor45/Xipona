@@ -1,0 +1,169 @@
+﻿<li class="shopping-item @backgroundColorClassName">
+    <div class="row p-1 mr-2">
+        <div class="row col-xl-11 col-lg-11 col-md-11 col-11 pl-0 ml-1">
+            <div class="col-xl-3 col-lg-3 col-md-12 sol-12 pl-0 ml-3 h2 pointer-hover" @onclick="OnItemClicked">
+                @if(ItemDto.QuantityInPacket > 1)
+                {
+                    @if(ItemDto.QuantityInPacketType == EntityModels.QuantityType.Weight)
+                    {
+                        <span>@(ItemDto.QuantityInPacket)g </span>
+                    }
+                    else
+                    {
+                        <span>@(ItemDto.QuantityInPacket)x </span>
+                    }
+                }
+                @ItemDto.Name
+            </div>
+            <div class="ml-auto col-xl-4 col-lg-4 col-md-12 col-12 row px-0">
+                <div class="col-xl-8 col-lg-8 col-md-7 col-7 px-0">
+                    <BSBasicInput T="int"
+                                  InputType="InputType.Number"
+                                  @bind-Value="@Quantity"
+                                  @onfocusout="OnQuantityChanged"></BSBasicInput>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-5 col-5 amount-changer-group">
+                    <BSButtonGroup>
+                        <BSButton Color="Color.Danger" type="button" Class="decrement-amount" @onclick="DecrementAmount">
+                            <span class="oi oi-minus"></span>
+                        </BSButton>
+                        <BSButton Color="Color.Success" type="button" Class="increment-amount" @onclick="IncrementAmount">
+                            <span class="oi oi-plus"></span>
+                        </BSButton>
+                    </BSButtonGroup>
+                </div>
+            </div>
+            <div class="ml-auto col-xl-2 col-lg-2 col-md-12 col-12">
+                <span>@currentPrice</span><span>€ / </span><span>@ItemDto.PricePerQuantity</span><span>€</span>
+            </div>
+        </div>
+        <div class="align-middle ml-auto col-xl-1 col-lg-1 col-md-1 col-1 px-0 remove-button">
+            <BSButton Color="Color.Danger" Class="@(ItemDto.IsInShoppingBasket ? "float-right" : "border-black float-right")"
+                      type="button" @onclick="OnRemoveButtonClicked">
+                <span class="oi oi-x"></span>
+            </BSButton>
+        </div>
+    </div>
+</li>
+
+@code {
+    [Parameter]
+    public EntityModels.ItemDto ItemDto { get; set; }
+
+    [Parameter]
+    public EventCallback<EntityModels.ItemDto> ItemChangedCallback { get; set; }
+
+    [Parameter]
+    public EventCallback<EntityModels.ItemDto> RemoveItemCallback { get; set; }
+
+    private string backgroundColorClassName = ItemNotInBasketColor;
+
+    private const string ItemInBasketColor = "bg-green";
+    private const string ItemNotInBasketColor = "bg-red";
+    private const int UnitStandardQuantity = 1;
+    private const int WeightStandardQuantity = 100;
+    private const int FluidStandardQuantity = 100;
+
+    // BlazorStrap currently doesn't support uint as a Type in BSBasicInput,
+    // so the ItemDto.Quantity must be converted to int until this is fixed
+    private int Quantity;
+
+    private uint SingleQuantityUnit;
+    private decimal currentPrice;
+
+    protected override void OnInitialized()
+    {
+        SingleQuantityUnit = GetSingleQuantityUnit();
+        UpdateBackgroundColor();
+        UpdateQuantity();
+        RecalculatePrice();
+    }
+
+    private void IncrementAmount()
+    {
+        ItemDto.Quantity += SingleQuantityUnit;
+        UpdateQuantity();
+        RecalculatePrice();
+        UpdateItem();
+    }
+
+    private void DecrementAmount()
+    {
+        if(ItemDto.Quantity - SingleQuantityUnit > ItemDto.Quantity)
+        {
+            ItemDto.Quantity = 0;
+        }
+        else
+        {
+            ItemDto.Quantity -= SingleQuantityUnit;
+        }
+        UpdateQuantity();
+        RecalculatePrice();
+        UpdateItem();
+    }
+
+    private void RecalculatePrice()
+    {
+        currentPrice = ItemDto.Quantity * (decimal)ItemDto.PricePerQuantity;
+        if (ItemDto.QuantityType != EntityModels.QuantityType.Unit)
+        {
+            currentPrice /= 1000; //g to kg conversion
+        }
+        currentPrice = Math.Truncate(100 * currentPrice) / 100;
+    }
+
+    private void UpdateBackgroundColor()
+    {
+        if (ItemDto.IsInShoppingBasket)
+            backgroundColorClassName = ItemInBasketColor;
+        else
+            backgroundColorClassName = ItemNotInBasketColor;
+    }
+
+    private void UpdateQuantity()
+    {
+        Quantity = (int)ItemDto.Quantity;
+    }
+
+    private uint GetSingleQuantityUnit()
+    {
+        switch (ItemDto.QuantityType)
+        {
+            case EntityModels.QuantityType.Unit:
+                return UnitStandardQuantity;
+            case EntityModels.QuantityType.Weight:
+                return WeightStandardQuantity;
+            case EntityModels.QuantityType.Fluid:
+                return FluidStandardQuantity;
+            default:
+                throw new Exception($"Unknown type {ItemDto.QuantityType} encountered");
+        }
+    }
+
+    private void OnQuantityChanged()
+    {
+        if (Quantity < 0)
+            Quantity = 0;
+
+        ItemDto.Quantity = (uint)Quantity;
+        UpdateItem();
+        RecalculatePrice();
+    }
+
+    private void OnItemClicked()
+    {
+        ItemDto.IsInShoppingBasket = !ItemDto.IsInShoppingBasket;
+        UpdateBackgroundColor();
+        UpdateItem();
+    }
+
+    private void OnRemoveButtonClicked()
+    {
+        RemoveItemCallback.InvokeAsync(ItemDto);
+    }
+
+    private void UpdateItem()
+    {
+        ItemChangedCallback.InvokeAsync(ItemDto);
+    }
+}
