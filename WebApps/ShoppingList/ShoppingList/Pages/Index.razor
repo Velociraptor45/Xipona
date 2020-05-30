@@ -19,8 +19,8 @@
             </BSForm>
         </div>
         <div class="row mt-2">
-            <div class="col-xl-5 col-sm-12 mb-2">
-                <div class="row">
+            <div class="col-xl-5 col-sm-12 mb-2 pl-0">
+                <div class="row ml-0">
                     <BSBasicInput Class="col-10 col-md-11"
                                   T="string"
                                   @bind-Value="newShoppingItemName"
@@ -30,7 +30,7 @@
                         <span class="oi oi-plus"></span>
                     </BSButton>
                 </div>
-                <div>
+                <div class="position-absolute z-10 w-100 bg-white">
                     @foreach (var item in itemSuggestions)
                     {
                         <ItemSearchSuggestion Item="@item" ItemSelectedCallback="OnSearchItemSelected"></ItemSearchSuggestion>
