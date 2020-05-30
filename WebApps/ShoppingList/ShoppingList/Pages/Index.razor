@@ -26,9 +26,9 @@
                                   @bind-Value="newShoppingItemName"
                                   @onfocusout="OnInputFocusLost"
                                   @oninput="OnSearchInput"></BSBasicInput>
-                    <BSButton Color="Color.Success" Class="col-2 col-md-1" @onclick="OnAddNewItemClicked">
+                    @*<BSButton Color="Color.Success" Class="col-2 col-md-1" @onclick="OnAddNewItemClicked">
                         <span class="oi oi-plus"></span>
-                    </BSButton>
+                    </BSButton>*@
                 </div>
                 <div class="position-absolute z-10 w-100 bg-white">
                     @foreach (var item in itemSuggestions)
@@ -49,15 +49,6 @@
                 </ul>
             </div>
         </div>
-    </div>
-
-    <div class="@(hideItemEditor ? "hidden" : "") item-editor-container">
-        @*<ItemEditor ItemDto="@newItem"
-                    EditMode="@EntityModels.ItemEditMode.Create"
-                    AvailableStores="@stores"
-                    CanChangeStore="false"
-                    OnSaveCallback="OnSaveNewItem"
-                    OnCancleCallback="OnCancleNewItem"></ItemEditor>*@
     </div>
 
     <div>
@@ -207,35 +198,5 @@
         shoppingRepository.CompleteShoppingList(activeShoppingList);
         LoadShoppingListForActiveStore();
     }
-
-
-
-    #region item editor
-    private void OnAddNewItemClicked()
-    {
-        newItem = new EntityModels.ItemDto
-        {
-            Name = newShoppingItemName,
-            PricePerQuantity = 1,
-            StoreId = activeStore.StoreId,
-            QuantityType = EntityModels.QuantityType.Unit
-        };
-        hideItemEditor = false;
-        StateHasChanged();
-    }
-
-    private async void OnSaveNewItem(EntityModels.ItemDto itemDto, EntityModels.ItemEditMode editMode)
-    {
-        await shoppingRepository.CreateNewItemAsync(itemDto);
-        hideItemEditor = true;
-        StateHasChanged();
-    }
-
-    private void OnCancleNewItem(int i)
-    {
-        hideItemEditor = true;
-        StateHasChanged();
-    }
-    #endregion
     #endregion
 }
