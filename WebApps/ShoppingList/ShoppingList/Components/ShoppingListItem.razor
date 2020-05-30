@@ -105,8 +105,11 @@
     private void RecalculatePrice()
     {
         currentPrice = ItemDto.Quantity * (decimal)ItemDto.PricePerQuantity;
-        if (ItemDto.QuantityType == EntityModels.QuantityType.Weight)
+        if (ItemDto.QuantityType != EntityModels.QuantityType.Unit)
+        {
             currentPrice /= 1000; //g to kg conversion
+        }
+        currentPrice = Math.Truncate(100 * currentPrice) / 100;
     }
 
     private void UpdateBackgroundColor()
