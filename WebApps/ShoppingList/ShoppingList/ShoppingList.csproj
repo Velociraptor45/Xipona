@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>disable</Nullable>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>David Krammer</Authors>
     <Copyright>David Krammer</Copyright>
     <RepositoryUrl>https://github.com/Velociraptor45/ProjectHermes</RepositoryUrl>
