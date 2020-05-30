@@ -20,12 +20,13 @@
         </div>
         <div class="row mt-2">
             <div class="col-xl-5 col-sm-12 mb-2 pl-0">
-                <div class="row ml-0">
-                    <BSBasicInput Class="col-10 col-md-11"
+                <div class="ml-0">
+                    <BSBasicInput Class=""
                                   T="string"
-                                  @bind-Value="newShoppingItemName"
+                                  @bind-Value="itemSearchInput"
                                   @onfocusout="OnInputFocusLost"
-                                  @oninput="OnSearchInput"></BSBasicInput>
+                                  @oninput="OnSearchInput"
+                                  @onfocusin="OnInputFocusIn"></BSBasicInput>
                     @*<BSButton Color="Color.Success" Class="col-2 col-md-1" @onclick="OnAddNewItemClicked">
                         <span class="oi oi-plus"></span>
                     </BSButton>*@
@@ -66,7 +67,7 @@
     private Database.Entities.ShoppingList activeShoppingList;
     private List<EntityModels.ItemDto> activeShoppingItems = new List<EntityModels.ItemDto>();
 
-    private string newShoppingItemName = "";
+    private string itemSearchInput = "";
     private IShoppingRepository shoppingRepository;
 
     private System.Timers.Timer hideSuggestionsTimer = new System.Timers.Timer(100);
@@ -144,6 +145,15 @@
         hideSuggestionsTimer.Start();
     }
 
+    private void OnInputFocusIn()
+    {
+        ChangeEventArgs args = new ChangeEventArgs()
+        {
+            Value = itemSearchInput
+        };
+        OnSearchInput(args);
+    }
+
     private void OnHideSuggestionsTimerElapsed(Object source, System.Timers.ElapsedEventArgs args)
     {
         itemSuggestions.Clear();
@@ -168,7 +178,7 @@
             //TODO tell user that item already exists
         }
         activeShoppingItems.Add(itemDto);
-        newShoppingItemName = String.Empty;
+        itemSearchInput = String.Empty;
         itemSuggestions.Clear();
     }
 
