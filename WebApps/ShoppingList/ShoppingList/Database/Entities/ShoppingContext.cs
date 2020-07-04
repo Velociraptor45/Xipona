@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using ShoppingList.Database.Entities;
+using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace ShoppingList.Database
+namespace ShoppingList.Database.Entities
 {
     public partial class ShoppingContext : DbContext
     {
@@ -20,13 +20,22 @@ namespace ShoppingList.Database
         public virtual DbSet<ItemOnShoppingList> ItemOnShoppingList { get; set; }
         public virtual DbSet<Manufacturer> Manufacturer { get; set; }
         public virtual DbSet<QuantityType> QuantityType { get; set; }
-        public virtual DbSet<Entities.ShoppingList> ShoppingList { get; set; }
+        public virtual DbSet<ShoppingList> ShoppingList { get; set; }
         public virtual DbSet<Store> Store { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Item>(entity =>
             {
+                entity.HasIndex(e => e.ItemCategoryId)
+                    .HasName("ItemCategory");
+
+                entity.HasIndex(e => e.ManufacturerId)
+                    .HasName("Manufacturer");
+
+                entity.HasIndex(e => e.QuantityInPacketTypeId)
+                    .HasName("QuantityInPacketType");
+
                 entity.HasIndex(e => e.QuantityTypeId)
                     .HasName("QuantityType");
 
@@ -34,6 +43,10 @@ namespace ShoppingList.Database
                     .HasName("Store");
 
                 entity.Property(e => e.ItemId).HasColumnType("int(10) unsigned");
+
+                entity.Property(e => e.Active)
+                    .IsRequired()
+                    .HasDefaultValueSql("'1'");
 
                 entity.Property(e => e.Comment)
                     .HasColumnType("tinytext")
@@ -72,8 +85,24 @@ namespace ShoppingList.Database
                     .HasColumnType("int(10) unsigned")
                     .HasDefaultValueSql("'2'");
 
-                entity.HasOne(d => d.QuantityType)
+                entity.HasOne(d => d.ItemCategory)
                     .WithMany(p => p.Item)
+                    .HasForeignKey(d => d.ItemCategoryId)
+                    .HasConstraintName("ItemCategory");
+
+                entity.HasOne(d => d.Manufacturer)
+                    .WithMany(p => p.Item)
+                    .HasForeignKey(d => d.ManufacturerId)
+                    .HasConstraintName("Manufacturer");
+
+                entity.HasOne(d => d.QuantityInPacketType)
+                    .WithMany(p => p.ItemQuantityInPacketType)
+                    .HasForeignKey(d => d.QuantityInPacketTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("QuantityInPacketType");
+
+                entity.HasOne(d => d.QuantityType)
+                    .WithMany(p => p.ItemQuantityType)
                     .HasForeignKey(d => d.QuantityTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("QuantityType");
@@ -149,7 +178,7 @@ namespace ShoppingList.Database
                     .HasCollation("latin1_swedish_ci");
             });
 
-            modelBuilder.Entity<Entities.ShoppingList>(entity =>
+            modelBuilder.Entity<ShoppingList>(entity =>
             {
                 entity.HasIndex(e => e.StoreId)
                     .HasName("StoreId");

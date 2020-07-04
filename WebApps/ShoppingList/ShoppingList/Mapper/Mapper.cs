@@ -19,7 +19,7 @@ namespace ShoppingList.Mapper
                 PricePerQuantity = item.PricePerQuantity,
                 Quantity = relation?.Quantity ?? 0,
                 StoreId = item.StoreId,
-                Active = item.Active,
+                Active = item.Active.Value,
                 Comment = item.Comment,
                 QuantityInPacketType = ToQuantityType(item.QuantityInPacketTypeId)
             };
