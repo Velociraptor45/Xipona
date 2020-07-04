@@ -27,9 +27,9 @@
                                   @onfocusout="OnInputFocusLost"
                                   @oninput="OnSearchInput"
                                   @onfocusin="OnInputFocusIn"></BSBasicInput>
-                    @*<BSButton Color="Color.Success" Class="col-2 col-md-1" @onclick="OnAddNewItemClicked">
+                    <BSButton Color="Color.Success" Class="col-2 col-md-1" @onclick="OnAddNewTemporaryItem">
                         <span class="oi oi-plus"></span>
-                    </BSButton>*@
+                    </BSButton>
                 </div>
                 <div class="position-absolute z-10 w-100 bg-white">
                     @foreach (var item in itemSuggestions)
@@ -126,7 +126,39 @@
         shoppingRepository.UpdateItemRelation(itemDto, activeShoppingList.ShoppingListId);
     }
 
+    private void AddItemToShoppinList(EntityModels.ItemDto item)
+    {
+        try
+        {
+            shoppingRepository.AddNewItemToShoppingList(item, activeShoppingList.ShoppingListId);
+        }
+        catch (Exception e)
+        {
+            //TODO tell user that item already exists
+        }
+
+        activeShoppingItems.Add(item);
+        itemSearchInput = String.Empty;
+        itemSuggestions.Clear();
+        StateHasChanged();
+    }
+
     #region callbacks
+    private async void OnAddNewTemporaryItem()
+    {
+        EntityModels.ItemDto item = new EntityModels.ItemDto()
+        {
+            Name = itemSearchInput,
+            StoreId = activeStore.StoreId,
+            QuantityType = EntityModels.QuantityType.Unit,
+            QuantityInPacketType = EntityModels.QuantityType.Unit,
+            IsTemporary = true
+        };
+
+        item = await shoppingRepository.CreateNewItemAsync(item);
+        AddItemToShoppinList(item);
+    }
+
     private void OnRemoveItemFromShoppingList(EntityModels.ItemDto itemDto)
     {
         try
@@ -169,17 +201,7 @@
 
     private void OnSearchItemSelected(EntityModels.ItemDto itemDto)
     {
-        try
-        {
-            shoppingRepository.AddNewItemToShoppingList(itemDto, activeShoppingList.ShoppingListId);
-        }
-        catch (Exception e)
-        {
-            //TODO tell user that item already exists
-        }
-        activeShoppingItems.Add(itemDto);
-        itemSearchInput = String.Empty;
-        itemSuggestions.Clear();
+        AddItemToShoppinList(itemDto);
     }
 
     private void OnSearchInput(ChangeEventArgs args)
