@@ -17,7 +17,7 @@ namespace ShoppingList.Util
         public static string GetQuantityLabel(QuantityType quantityType) =>
             quantityType switch
             {
-                QuantityType.Unit => "Unit",
+                QuantityType.Unit => "x",
                 QuantityType.Weight => "g",
                 QuantityType.Fluid => "ml",
                 _ => ""

@@ -1,10 +1,31 @@
-﻿<li class="shopping-item @backgroundColorClassName">
+﻿@using ShoppingList.Util;
+
+<li class="shopping-item @backgroundColorClassName">
+    @if (ItemDto.IsTemporary)
+    {
+    <div class="d-flex py-1">
+        <!-- Amount -->
+        <div class="h2 px-2 m-0">
+            <span>@ItemDto.Quantity</span><span class="h4 m-0">@LabelTranslator.GetQuantityLabel(ItemDto.QuantityType)</span>
+        </div>
+        <!-- Name -->
+        <div class="h2 m-0">
+            @ItemDto.Name
+        </div>
+        <!-- Price -->
+        <div class="px-2 m-0 align-self-center ml-auto">
+            <span>@ItemDto.PricePerQuantity</span><span>€</span><span>@LabelTranslator.GetQuantityPriceLabel(ItemDto.QuantityType)</span>
+        </div>
+    </div>
+    }
+    else
+    {
     <div class="row p-1 mr-2">
         <div class="row col-xl-11 col-lg-11 col-md-11 col-11 pl-0 ml-1">
             <div class="col-xl-3 col-lg-3 col-md-12 sol-12 pl-0 ml-3 h2 pointer-hover" @onclick="OnItemClicked">
-                @if(ItemDto.QuantityInPacket > 1)
+                @if (ItemDto.QuantityInPacket > 1)
                 {
-                    @if(ItemDto.QuantityInPacketType == EntityModels.QuantityType.Weight)
+                    @if (ItemDto.QuantityInPacketType == EntityModels.QuantityType.Weight)
                     {
                         <span>@(ItemDto.QuantityInPacket)g </span>
                     }
@@ -44,6 +65,7 @@
             </BSButton>
         </div>
     </div>
+    }
 </li>
 
 @code {
