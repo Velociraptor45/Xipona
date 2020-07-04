@@ -214,7 +214,8 @@
             itemSuggestions = shoppingRepository
                 .SearchItems(search)
                 .Where(item => !activeItemIds.Contains(item.Id)
-                    && item.StoreId == activeStore.StoreId)
+                    && item.StoreId == activeStore.StoreId
+                    && !item.IsTemporary)
                 .ToList();
         }
         else if (itemSuggestions.Count > 0)
