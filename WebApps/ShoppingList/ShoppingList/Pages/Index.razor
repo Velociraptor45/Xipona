@@ -159,16 +159,21 @@
         AddItemToShoppinList(item);
     }
 
-    private void OnRemoveItemFromShoppingList(EntityModels.ItemDto itemDto)
+    private async void OnRemoveItemFromShoppingList(EntityModels.ItemDto itemDto)
     {
         try
         {
             shoppingRepository.RemoveItemFromShoppingList(itemDto, activeShoppingList.ShoppingListId);
             activeShoppingItems.Remove(itemDto);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             //TODO notify user
+        }
+
+        if (itemDto.IsTemporary)
+        {
+            await shoppingRepository.DeactivateItemAsync(itemDto.Id);
         }
     }
 
