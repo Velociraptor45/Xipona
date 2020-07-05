@@ -69,14 +69,14 @@
                         <span>@ItemDto.Quantity</span><span class="h4 m-0">@LabelTranslator.GetQuantityLabel(ItemDto.QuantityType)</span>
                     </div>
                     <!-- Name -->
-                    <div class="h2 m-0">
+                    <div class="h2 m-0 pl-2">
                         @ItemDto.Name
                     </div>
                     @if (!ItemDto.IsTemporary)
                     {
                         <!-- Price -->
                         <div class="px-2 m-0 align-self-center ml-auto">
-                            <span>@ItemDto.PricePerQuantity</span><span>€</span><span>@LabelTranslator.GetQuantityPriceLabel(ItemDto.QuantityType)</span>
+                            <span>@currentPrice</span><span>€</span>
                         </div>
                     }
                 </div>
