@@ -14,6 +14,7 @@ namespace ShoppingList.Database
         public Entities.ShoppingList AddNewShoppingList(Entities.ShoppingList shoppingList);
         public Task<List<StoreDto>> GetAllStoresAsync();
         public List<ItemDto> GetAllItems();
+        public Task<ItemDto> GetItemsByIdAsync(uint id);
         public void CompleteShoppingList(Entities.ShoppingList shoppingList);
         public Entities.ShoppingList GetActiveShoppingListByStoreId(uint storeId);
         public Entities.ShoppingList CreateNewShoppingList(uint storeId);

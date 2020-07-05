@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ShoppingList.Database;
 using AutoMapper;
 using ShoppingList.Mapping.Profiles;
+using ShoppingList.Database.Entities;
 
 namespace ShoppingList
 {

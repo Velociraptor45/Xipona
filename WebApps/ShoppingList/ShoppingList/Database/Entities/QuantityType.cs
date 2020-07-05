@@ -7,12 +7,14 @@ namespace ShoppingList.Database.Entities
     {
         public QuantityType()
         {
-            Item = new HashSet<Item>();
+            ItemQuantityInPacketType = new HashSet<Item>();
+            ItemQuantityType = new HashSet<Item>();
         }
 
         public uint QuantityTypeId { get; set; }
         public string Name { get; set; }
 
-        public virtual ICollection<Item> Item { get; set; }
+        public virtual ICollection<Item> ItemQuantityInPacketType { get; set; }
+        public virtual ICollection<Item> ItemQuantityType { get; set; }
     }
 }

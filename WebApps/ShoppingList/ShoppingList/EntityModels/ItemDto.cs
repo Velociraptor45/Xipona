@@ -27,5 +27,6 @@ namespace ShoppingList.EntityModels
         [MaxLength(255, ErrorMessage = "The comment mustn't be longer than 255 characters")]
         public string Comment { get; set; }
         public QuantityType QuantityInPacketType { get; set; }
+        public bool IsTemporary { get; set; }
     }
 }

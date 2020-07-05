@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using ShoppingList.Database.Entities;
 
 namespace ShoppingList.Database
 {

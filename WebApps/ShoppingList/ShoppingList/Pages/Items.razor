@@ -1,4 +1,4 @@
-﻿@page "/items"
+﻿@page "/items/{itemId}"
 @inject IShoppingRepositoryFactory shoppingRepositoryFactory
 @using EntityModels;
 @using Extension;
@@ -283,6 +283,8 @@
 </div>
 
 @code {
+    [Parameter]
+    public string itemId { get; set; }
     private List<EntityModels.ItemDto> items;
     private List<StoreDto> availableStores;
     private List<QuantityType> availableQuantityTypes;
@@ -329,7 +331,25 @@
             hideItemCategorySuggestionsTimer.AutoReset = false;
             hideManufacturerSuggestionsTimer.Elapsed += OnHideManufacturerSuggestionsTimerElapsed;
             hideItemCategorySuggestionsTimer.Elapsed += OnHideItemCategorySuggestionsTimerElapsed;
+
+            itemId = itemId.Trim();
+            if(TryParseItemIdParameter(out uint temporaryItemId))
+            {
+                ItemDto temporaryItem = await repository.GetItemsByIdAsync(temporaryItemId);
+                await StartEditModeAsync(ItemEditMode.Change, temporaryItem);
+            }
         }
+    }
+
+    private bool TryParseItemIdParameter(out uint id)
+    {
+        if (!string.IsNullOrEmpty(itemId))
+        {
+            return uint.TryParse(itemId, out id);
+        }
+
+        id = default;
+        return false;
     }
 
     private void OnHideManufacturerSuggestionsTimerElapsed(Object source, System.Timers.ElapsedEventArgs args)
@@ -346,7 +366,9 @@
 
     private void ReloadItems()
     {
-        items = repository.GetAllItems().Where(i => i.Active).ToList();
+        items = repository.GetAllItems()
+            .Where(i => i.Active && !i.IsTemporary)
+            .ToList();
     }
 
     private ItemDto GetNewItem()
@@ -376,6 +398,10 @@
 
     private async Task ChangeItem()
     {
+        if (selectedItem.IsTemporary)
+        {
+            selectedItem.IsTemporary = false;
+        }
         await repository.ChangeItemAsync(selectedItem);
         ReloadItems();
         selectedItem = items.FirstOrDefault(i => i.Id == selectedItem.Id);

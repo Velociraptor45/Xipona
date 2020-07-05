@@ -6,7 +6,6 @@ using ShoppingList.EntityModels.DataTransfer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace ShoppingList.Database
@@ -86,6 +85,17 @@ namespace ShoppingList.Database
                 itemDtos.Add(customMapper.ToItemDto(item, null));
             }
             return itemDtos;
+        }
+        public async Task<ItemDto> GetItemsByIdAsync(uint id)
+        {
+            var item = await context.Item.AsNoTracking()
+                .FirstOrDefaultAsync(i => i.ItemId == id);
+            if(item == null)
+            {
+                // todo change exception type
+                throw new Exception($"No item with given id {id} found");
+            }
+            return customMapper.ToItemDto(item, null);
         }
 
         public void CompleteShoppingList(Entities.ShoppingList shoppingList)

@@ -1,62 +1,108 @@
-﻿<li class="shopping-item @backgroundColorClassName">
-    <div class="row p-1 mr-2">
-        <div class="row col-xl-11 col-lg-11 col-md-11 col-11 pl-0 ml-1">
-            <div class="col-xl-3 col-lg-3 col-md-12 sol-12 pl-0 ml-3 h2 pointer-hover" @onclick="OnItemClicked">
-                @if(ItemDto.QuantityInPacket > 1)
-                {
-                    @if(ItemDto.QuantityInPacketType == EntityModels.QuantityType.Weight)
-                    {
-                        <span>@(ItemDto.QuantityInPacket)g </span>
-                    }
-                    else
-                    {
-                        <span>@(ItemDto.QuantityInPacket)x </span>
-                    }
-                }
-                @ItemDto.Name
-            </div>
-            <div class="ml-auto col-xl-4 col-lg-4 col-md-12 col-12 row px-0">
-                <div class="col-xl-8 col-lg-8 col-md-7 col-7 px-0">
-                    <BSBasicInput T="int"
-                                  InputType="InputType.Number"
-                                  @bind-Value="@Quantity"
-                                  @onfocusout="OnQuantityChanged"></BSBasicInput>
+﻿@using ShoppingList.Util;
+@using ShoppingList.EntityModels;
+
+    <li class="shopping-item @backgroundColorClassName">
+        <div class="py-1 px-2">
+            @if (IsInEditMode)
+            {
+                <!-- Name -->
+                <div class="h2 m-0">
+                    @ItemDto.Name
                 </div>
-                <div class="col-xl-4 col-lg-4 col-md-5 col-5 amount-changer-group">
-                    <BSButtonGroup>
-                        <BSButton Color="Color.Danger" type="button" Class="decrement-amount" @onclick="DecrementAmount">
-                            <span class="oi oi-minus"></span>
-                        </BSButton>
-                        <BSButton Color="Color.Success" type="button" Class="increment-amount" @onclick="IncrementAmount">
-                            <span class="oi oi-plus"></span>
-                        </BSButton>
-                    </BSButtonGroup>
+                <div class="d-flex">
+                    <!-- Quantity -->
+                    <div class="d-flex">
+                        <div class="d-flex">
+                            <span>
+                                <BSBasicInput Class="w-max-70"
+                                              Size="buttonSize"
+                                              T="int"
+                                              InputType="InputType.Number"
+                                              @bind-Value="@Quantity"
+                                              @onfocusout="OnQuantityChanged"></BSBasicInput>
+                            </span>
+                            <span class="align-self-center">@LabelTranslator.GetQuantityLabel(ItemDto.QuantityType)</span>
+                        </div>
+                        <div class="pl-3">
+                            <BSButtonGroup Size="buttonSize">
+                                <BSButton Color="Color.Danger" type="button"
+                                          Class="decrement-amount"
+                                          @onclick="DecrementQuantity">
+                                    <span class="oi oi-minus"></span>
+                                </BSButton>
+                                <BSButton Color="Color.Success"
+                                          Class="increment-amount"
+                                          @onclick="IncrementQuantity">
+                                    <span class="oi oi-plus"></span>
+                                </BSButton>
+                            </BSButtonGroup>
+                        </div>
+                    </div>
+                    <!-- Buttons -->
+                    <div class="ml-auto d-flex">
+                        @if (ItemDto.IsTemporary)
+                        {
+                            <div class="px-2">
+                                <BSButton Color="Color.Danger"
+                                          Class="@(ItemDto.IsInShoppingBasket ? "float-right" : "border-black float-right")"
+                                          @onclick="OnMakeTemporaryItemPermanentButtonClicked"
+                                          Size="buttonSize">
+                                    <span class="oi oi-data-transfer-download"></span>
+                                </BSButton>
+                            </div>
+                        }
+                        <div>
+                            <BSButton Color="Color.Danger"
+                                      Class="@(ItemDto.IsInShoppingBasket ? "float-right" : "border-black float-right")"
+                                      @onclick="OnRemoveButtonClicked"
+                                      Size="buttonSize">
+                                <span class="oi oi-x"></span>
+                            </BSButton>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="ml-auto col-xl-2 col-lg-2 col-md-12 col-12">
-                <span>@currentPrice</span><span>€ / </span><span>@ItemDto.PricePerQuantity</span><span>€</span>
-            </div>
+            }
+            else
+            {
+                <div class="d-flex pointer-hover" @onclick="OnItemClicked">
+                    <!-- Quantity -->
+                    <div class="h2 m-0">
+                        <span>@ItemDto.Quantity</span><span class="h4 m-0">@LabelTranslator.GetQuantityLabel(ItemDto.QuantityType)</span>
+                    </div>
+                    <!-- Name -->
+                    <div class="h2 m-0 pl-2">
+                        @ItemDto.Name
+                    </div>
+                    @if (!ItemDto.IsTemporary)
+                    {
+                        <!-- Price -->
+                        <div class="px-2 m-0 align-self-center ml-auto">
+                            <span>@currentPrice</span><span>€</span>
+                        </div>
+                    }
+                </div>
+            }
         </div>
-        <div class="align-middle ml-auto col-xl-1 col-lg-1 col-md-1 col-1 px-0 remove-button">
-            <BSButton Color="Color.Danger" Class="@(ItemDto.IsInShoppingBasket ? "float-right" : "border-black float-right")"
-                      type="button" @onclick="OnRemoveButtonClicked">
-                <span class="oi oi-x"></span>
-            </BSButton>
-        </div>
-    </div>
 </li>
 
 @code {
     [Parameter]
-    public EntityModels.ItemDto ItemDto { get; set; }
+    public ItemDto ItemDto { get; set; }
 
     [Parameter]
-    public EventCallback<EntityModels.ItemDto> ItemChangedCallback { get; set; }
+    public EventCallback<ItemDto> ItemChangedCallback { get; set; }
 
     [Parameter]
-    public EventCallback<EntityModels.ItemDto> RemoveItemCallback { get; set; }
+    public EventCallback<ItemDto> RemoveItemCallback { get; set; }
+
+    [Parameter]
+    public EventCallback<ItemDto> MakeItemPermanentCallback { get; set; }
+
+    [Parameter]
+    public bool IsInEditMode { get; set; }
 
     private string backgroundColorClassName = ItemNotInBasketColor;
+    private Size buttonSize = Size.Small;
 
     private const string ItemInBasketColor = "bg-green";
     private const string ItemNotInBasketColor = "bg-red";
@@ -79,7 +125,7 @@
         RecalculatePrice();
     }
 
-    private void IncrementAmount()
+    private void IncrementQuantity()
     {
         ItemDto.Quantity += SingleQuantityUnit;
         UpdateQuantity();
@@ -87,7 +133,7 @@
         UpdateItem();
     }
 
-    private void DecrementAmount()
+    private void DecrementQuantity()
     {
         if(ItemDto.Quantity - SingleQuantityUnit > ItemDto.Quantity)
         {
@@ -165,5 +211,10 @@
     private void UpdateItem()
     {
         ItemChangedCallback.InvokeAsync(ItemDto);
+    }
+
+    private void OnMakeTemporaryItemPermanentButtonClicked()
+    {
+        MakeItemPermanentCallback.InvokeAsync(ItemDto);
     }
 }

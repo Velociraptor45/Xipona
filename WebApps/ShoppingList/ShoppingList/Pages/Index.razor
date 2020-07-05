@@ -1,22 +1,27 @@
 ﻿@page "/"
 @inject IShoppingRepositoryFactory shoppingRepositoryFactory
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 
 <div class="main-page">
     <div>
         <div class="d-flex">
             <h1 class="h1 col-7 col-sm-5 col-md-5 col-lg-4 col-xl-3 mb-0 pr-0">Shopping List</h1>
-
-            <BSForm Model="@activeStore" Class="col-5 col-sm-7 col-md-7 col-lg-8 col-xl-9 pr-0 w-max-200 ml-auto">
-                <BSInput T="string" InputType="InputType.Select" Class="" @bind-Value="storeInit">
-                    @foreach (StoreDto store in stores)
-                    {
-                        <CustomSelectOption T="StoreDto"
-                                            Item="@store"
-                                            OptionText="@store.Name"
-                                            OnClickCallback="OnChangeStore"></CustomSelectOption>
-                    }
-                </BSInput>
-            </BSForm>
+            <div class="d-flex ml-auto col-5 col-sm-7 col-md-7 col-lg-8 col-xl-9 pr-0 align-items-center">
+                <BSButton Color="Color.Info" @onclick="OnToggleEditMode">
+                    <span class="oi oi-pencil"></span>
+                </BSButton>
+                <BSForm Model="@activeStore" Class="w-max-200">
+                    <BSInput T="string" InputType="InputType.Select" Class="" @bind-Value="storeInit">
+                        @foreach (StoreDto store in stores)
+                        {
+                            <CustomSelectOption T="StoreDto"
+                                                Item="@store"
+                                                OptionText="@store.Name"
+                                                OnClickCallback="OnChangeStore"></CustomSelectOption>
+                        }
+                    </BSInput>
+                </BSForm>
+            </div>
         </div>
         <div class="row mt-2">
             <div class="col-xl-5 col-sm-12 mb-2 pl-0">
@@ -27,9 +32,9 @@
                                   @onfocusout="OnInputFocusLost"
                                   @oninput="OnSearchInput"
                                   @onfocusin="OnInputFocusIn"></BSBasicInput>
-                    @*<BSButton Color="Color.Success" Class="col-2 col-md-1" @onclick="OnAddNewItemClicked">
+                    <BSButton Color="Color.Success" Class="col-2 col-md-1" @onclick="OnAddNewTemporaryItem">
                         <span class="oi oi-plus"></span>
-                    </BSButton>*@
+                    </BSButton>
                 </div>
                 <div class="position-absolute z-10 w-100 bg-white">
                     @foreach (var item in itemSuggestions)
@@ -45,7 +50,9 @@
                         <ShoppingListItem @key="@shoppingItem"
                                           ItemDto="@shoppingItem"
                                           ItemChangedCallback="UpdateItem"
-                                          RemoveItemCallback="OnRemoveItemFromShoppingList"></ShoppingListItem>
+                                          RemoveItemCallback="OnRemoveItemFromShoppingList"
+                                          IsInEditMode="isListInEditMode"
+                                          MakeItemPermanentCallback="OnMakeTemporaryItemPermanent"></ShoppingListItem>
                     }
                 </ul>
             </div>
@@ -76,6 +83,8 @@
     private EntityModels.ItemDto newItem = new EntityModels.ItemDto();
 
     private string storeInit = string.Empty;
+
+    private bool isListInEditMode = false;
 
     protected async override void OnInitialized()
     {
@@ -126,17 +135,60 @@
         shoppingRepository.UpdateItemRelation(itemDto, activeShoppingList.ShoppingListId);
     }
 
+    private void AddItemToShoppinList(EntityModels.ItemDto item)
+    {
+        try
+        {
+            shoppingRepository.AddNewItemToShoppingList(item, activeShoppingList.ShoppingListId);
+        }
+        catch (Exception e)
+        {
+            //TODO tell user that item already exists
+        }
+
+        activeShoppingItems.Add(item);
+        itemSearchInput = String.Empty;
+        itemSuggestions.Clear();
+        StateHasChanged();
+    }
+
     #region callbacks
-    private void OnRemoveItemFromShoppingList(EntityModels.ItemDto itemDto)
+    private void OnToggleEditMode()
+    {
+        isListInEditMode = !isListInEditMode;
+        StateHasChanged();
+    }
+
+    private async void OnAddNewTemporaryItem()
+    {
+        EntityModels.ItemDto item = new EntityModels.ItemDto()
+        {
+            Name = itemSearchInput,
+            StoreId = activeStore.StoreId,
+            QuantityType = EntityModels.QuantityType.Unit,
+            QuantityInPacketType = EntityModels.QuantityType.Unit,
+            IsTemporary = true
+        };
+
+        item = await shoppingRepository.CreateNewItemAsync(item);
+        AddItemToShoppinList(item);
+    }
+
+    private async void OnRemoveItemFromShoppingList(EntityModels.ItemDto itemDto)
     {
         try
         {
             shoppingRepository.RemoveItemFromShoppingList(itemDto, activeShoppingList.ShoppingListId);
             activeShoppingItems.Remove(itemDto);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             //TODO notify user
+        }
+
+        if (itemDto.IsTemporary)
+        {
+            await shoppingRepository.DeactivateItemAsync(itemDto.Id);
         }
     }
 
@@ -169,17 +221,7 @@
 
     private void OnSearchItemSelected(EntityModels.ItemDto itemDto)
     {
-        try
-        {
-            shoppingRepository.AddNewItemToShoppingList(itemDto, activeShoppingList.ShoppingListId);
-        }
-        catch (Exception e)
-        {
-            //TODO tell user that item already exists
-        }
-        activeShoppingItems.Add(itemDto);
-        itemSearchInput = String.Empty;
-        itemSuggestions.Clear();
+        AddItemToShoppinList(itemDto);
     }
 
     private void OnSearchInput(ChangeEventArgs args)
@@ -192,7 +234,8 @@
             itemSuggestions = shoppingRepository
                 .SearchItems(search)
                 .Where(item => !activeItemIds.Contains(item.Id)
-                    && item.StoreId == activeStore.StoreId)
+                    && item.StoreId == activeStore.StoreId
+                    && !item.IsTemporary)
                 .ToList();
         }
         else if (itemSuggestions.Count > 0)
@@ -208,6 +251,11 @@
         shoppingRepository.RemoveItemsFromShoppingList(notBoughtItems, activeShoppingList.ShoppingListId);
         shoppingRepository.CompleteShoppingList(activeShoppingList);
         LoadShoppingListForActiveStore();
+    }
+
+    private void OnMakeTemporaryItemPermanent(EntityModels.ItemDto item)
+    {
+        navigationManager.NavigateTo($"/Items/{item.Id}");
     }
     #endregion
 }

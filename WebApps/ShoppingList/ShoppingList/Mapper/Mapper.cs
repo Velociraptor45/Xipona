@@ -19,9 +19,10 @@ namespace ShoppingList.Mapper
                 PricePerQuantity = item.PricePerQuantity,
                 Quantity = relation?.Quantity ?? 0,
                 StoreId = item.StoreId,
-                Active = item.Active,
+                Active = item.Active.Value,
                 Comment = item.Comment,
-                QuantityInPacketType = ToQuantityType(item.QuantityInPacketTypeId)
+                QuantityInPacketType = ToQuantityType(item.QuantityInPacketTypeId),
+                IsTemporary = item.IsTemporary
             };
 
             if (relation?.Quantity == null)
@@ -44,7 +45,8 @@ namespace ShoppingList.Mapper
                 StoreId = itemDto.StoreId,
                 Active = itemDto.Active,
                 Comment = itemDto.Comment,
-                QuantityInPacketTypeId = (uint)itemDto.QuantityInPacketType
+                QuantityInPacketTypeId = (uint)itemDto.QuantityInPacketType,
+                IsTemporary = itemDto.IsTemporary
             };
         }
 
