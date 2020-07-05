@@ -63,7 +63,7 @@
             }
             else
             {
-                <div class="d-flex">
+                <div class="d-flex pointer-hover" @onclick="OnItemClicked">
                     <!-- Quantity -->
                     <div class="h2 m-0">
                         <span>@ItemDto.Quantity</span><span class="h4 m-0">@LabelTranslator.GetQuantityLabel(ItemDto.QuantityType)</span>
