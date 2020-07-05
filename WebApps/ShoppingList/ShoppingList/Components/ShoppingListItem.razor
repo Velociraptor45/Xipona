@@ -1,4 +1,5 @@
 ﻿@using ShoppingList.Util;
+@using ShoppingList.EntityModels;
 
     <li class="shopping-item @backgroundColorClassName">
         <div class="py-1 px-2">
@@ -86,13 +87,16 @@
 
 @code {
     [Parameter]
-    public EntityModels.ItemDto ItemDto { get; set; }
+    public ItemDto ItemDto { get; set; }
 
     [Parameter]
-    public EventCallback<EntityModels.ItemDto> ItemChangedCallback { get; set; }
+    public EventCallback<ItemDto> ItemChangedCallback { get; set; }
 
     [Parameter]
-    public EventCallback<EntityModels.ItemDto> RemoveItemCallback { get; set; }
+    public EventCallback<ItemDto> RemoveItemCallback { get; set; }
+
+    [Parameter]
+    public EventCallback<ItemDto> MakeItemPermanentCallback { get; set; }
 
     [Parameter]
     public bool IsInEditMode { get; set; }
@@ -211,6 +215,6 @@
 
     private void OnMakeTemporaryItemPermanentButtonClicked()
     {
-
+        MakeItemPermanentCallback.InvokeAsync(ItemDto);
     }
 }

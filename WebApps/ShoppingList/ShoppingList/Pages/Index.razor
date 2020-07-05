@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject IShoppingRepositoryFactory shoppingRepositoryFactory
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 
 <div class="main-page">
     <div>
@@ -50,7 +51,8 @@
                                           ItemDto="@shoppingItem"
                                           ItemChangedCallback="UpdateItem"
                                           RemoveItemCallback="OnRemoveItemFromShoppingList"
-                                          IsInEditMode="isListInEditMode"></ShoppingListItem>
+                                          IsInEditMode="isListInEditMode"
+                                          MakeItemPermanentCallback="OnMakeTemporaryItemPermanent"></ShoppingListItem>
                     }
                 </ul>
             </div>
@@ -249,6 +251,11 @@
         shoppingRepository.RemoveItemsFromShoppingList(notBoughtItems, activeShoppingList.ShoppingListId);
         shoppingRepository.CompleteShoppingList(activeShoppingList);
         LoadShoppingListForActiveStore();
+    }
+
+    private void OnMakeTemporaryItemPermanent(EntityModels.ItemDto item)
+    {
+        navigationManager.NavigateTo($"/Items/{item.Id}");
     }
     #endregion
 }
