@@ -10,7 +10,7 @@ namespace ShoppingList.Infrastructure.Entities
         public int Id { get; set; }
 
         public int ItemId { get; set; }
-        public int ShopId { get; set; }
+        public int StoreId { get; set; }
         public float Price { get; set; }
 
         public Item Item { get; set; }
