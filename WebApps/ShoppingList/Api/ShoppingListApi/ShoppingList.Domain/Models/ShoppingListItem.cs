@@ -4,7 +4,7 @@
     {
         public ShoppingListItem(ShoppingListItemId id, string name, bool isDeleted, string comment, bool isTemporary, float price,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            ItemCategory itemCategory, Manufacturer manufacturer)
+            ItemCategory itemCategory, Manufacturer manufacturer, bool isInBasket, float quantity)
         {
             Id = id;
             Name = name;
@@ -17,6 +17,8 @@
             QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
+            IsInBasket = isInBasket;
+            Quantity = quantity;
         }
 
         public ShoppingListItemId Id { get; }
@@ -30,5 +32,7 @@
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
         public ItemCategory ItemCategory { get; }
         public Manufacturer Manufacturer { get; }
+        public bool IsInBasket { get; }
+        public float Quantity { get; }
     }
 }

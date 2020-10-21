@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.WebApp", "ShoppingList.Api\ShoppingList.WebApp.csproj", "{C160F169-AE1C-4089-8A4B-F5C676A6B29B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.WebApp", "ShoppingList.Api\ShoppingList.WebApp.csproj", "{C160F169-AE1C-4089-8A4B-F5C676A6B29B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Client", "ShoppingList.Client\ShoppingList.Client.csproj", "{590B7C14-1403-40FC-A6BD-DFDA717F0201}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Client", "ShoppingList.Client\ShoppingList.Client.csproj", "{590B7C14-1403-40FC-A6BD-DFDA717F0201}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Domain", "ShoppingList.Domain\ShoppingList.Domain.csproj", "{B77952EB-6688-4E80-B61C-98695F18A95F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Domain", "ShoppingList.Domain\ShoppingList.Domain.csproj", "{B77952EB-6688-4E80-B61C-98695F18A95F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Core", "ShoppingList.Core\ShoppingList.Core.csproj", "{195133B2-FB1B-4838-8833-7D2C01B48F8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Core", "ShoppingList.Core\ShoppingList.Core.csproj", "{195133B2-FB1B-4838-8833-7D2C01B48F8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Infrastructure", "ShoppingList.Infrastructure\ShoppingList.Infrastructure.csproj", "{0F068356-700B-4F09-AB37-280F75D90C2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Infrastructure", "ShoppingList.Infrastructure\ShoppingList.Infrastructure.csproj", "{0F068356-700B-4F09-AB37-280F75D90C2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Enpoint", "ShoppingList.Enpoint\ShoppingList.Enpoint.csproj", "{D688492B-C268-4461-B29F-9CEB12470C58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Endpoint", "ShoppingList.Enpoint\ShoppingList.Endpoint.csproj", "{D688492B-C268-4461-B29F-9CEB12470C58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Contracts", "ShoppingList.Contracts\ShoppingList.Contracts.csproj", "{10F483A7-6DD0-4C84-96D5-6C45276E71A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Contracts", "ShoppingList.Contracts\ShoppingList.Contracts.csproj", "{10F483A7-6DD0-4C84-96D5-6C45276E71A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.ApplicationServices", "ShoppingList.ApplicationServices\ShoppingList.ApplicationServices.csproj", "{257DB5C3-444D-4ED0-81DE-A48F24EEFFED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.ApplicationServices", "ShoppingList.ApplicationServices\ShoppingList.ApplicationServices.csproj", "{257DB5C3-444D-4ED0-81DE-A48F24EEFFED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
