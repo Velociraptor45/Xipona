@@ -15,7 +15,7 @@ namespace ShoppingList.Core
 
         public static bool operator ==(GenericPrimitive<T> left, GenericPrimitive<T> right)
         {
-            return left.Value.Equals(right.Value);
+            return left.Value.Equals(right?.Value);
         }
 
         public static bool operator !=(GenericPrimitive<T> left, GenericPrimitive<T> right)

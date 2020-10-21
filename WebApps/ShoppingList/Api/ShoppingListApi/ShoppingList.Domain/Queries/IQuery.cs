@@ -1,6 +1,6 @@
 ﻿namespace ShoppingList.Domain.Queries
 {
-    public interface IQuery<T>
+    public interface IQuery<out T>
     {
     }
 }

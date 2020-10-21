@@ -4,5 +4,15 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ShoppingList.ApplicationServices\ShoppingList.ApplicationServices.csproj" />
+    <ProjectReference Include="..\ShoppingList.Endpoint\ShoppingList.Endpoint.csproj" />
+    <ProjectReference Include="..\ShoppingList.Infrastructure\ShoppingList.Infrastructure.csproj" />
+  </ItemGroup>
+
 
 </Project>

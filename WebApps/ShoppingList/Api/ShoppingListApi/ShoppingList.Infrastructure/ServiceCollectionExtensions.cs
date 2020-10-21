@@ -11,7 +11,8 @@ namespace ShoppingList.Infrastructure
         public static void AddInfrastructure(this IServiceCollection services, string connectionString)
         {
             services.AddDbContext<ShoppingContext>(
-                options => options.UseMySql(connectionString));
+                options => options.UseMySql(connectionString,
+                    mySqlOptions => mySqlOptions.EnableRetryOnFailure(3)));
 
             services.AddTransient<IShoppingListRepository, ShoppingListRepository>();
         }
