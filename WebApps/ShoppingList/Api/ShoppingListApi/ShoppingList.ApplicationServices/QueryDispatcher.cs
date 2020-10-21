@@ -15,7 +15,7 @@ namespace ShoppingList.ApplicationServices
             this.serviceProvider = serviceProvider;
         }
 
-        public Task<T> DispatchAsync<T>(T query, CancellationToken cancellationToken)
+        public Task<T> DispatchAsync<T>(IQuery<T> query, CancellationToken cancellationToken)
         {
             var valueType = query.GetType()
                 .GetInterfaces()
