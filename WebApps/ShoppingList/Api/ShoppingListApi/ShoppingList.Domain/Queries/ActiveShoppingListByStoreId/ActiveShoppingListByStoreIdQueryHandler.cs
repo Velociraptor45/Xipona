@@ -24,7 +24,7 @@ namespace ShoppingList.Domain.Queries.ActiveShoppingListByStoreId
             var listModel = await shoppingListRepository.FindActiveByStoreIdAsync(query.StoreId, cancellationToken);
 
             if (listModel == null)
-                throw new ArgumentException($"No shopping list for store {query.StoreId} found.");
+                throw new ArgumentException($"No shopping list for store {query.StoreId.Value} found.");
 
             return listModel.ToReadModel();
         }

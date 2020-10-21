@@ -26,8 +26,18 @@ namespace ShoppingList.Infrastructure.Adapters
                 throw new ArgumentNullException(nameof(storeId));
 
             var list = await dbContext.ShoppingLists.AsNoTracking()
-                    .FirstOrDefaultAsync(list => list.CompletionDate != null
-                        && list.StoreId == storeId.Value);
+                .Include(l => l.Store)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.Manufacturer)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.ItemCategory)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.AvailableAt)
+                .FirstOrDefaultAsync(list => list.CompletionDate == null
+                    && list.StoreId == storeId.Value);
 
             cancellationToken.ThrowIfCancellationRequested();
 
