@@ -19,12 +19,13 @@ namespace ShoppingList.ApplicationServices
         {
             var valueType = query.GetType()
                 .GetInterfaces()
-                .FirstOrDefault(interf => interf.IsGenericType && interf.GetGenericTypeDefinition() == typeof(IQuery<>)
-                .GetGenericArguments().First());
+                .FirstOrDefault(interf => interf.IsGenericType && interf.GetGenericTypeDefinition() == typeof(IQuery<>))
+                .GetGenericArguments()
+                .First();
 
             var serviceType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), valueType);
-            var service = serviceProvider.GetService(valueType);
-            var method = serviceType.GetMethod("HandlAsync");
+            var service = serviceProvider.GetService(serviceType);
+            var method = serviceType.GetMethod("HandleAsync");
 
             if (!(method.Invoke(service, new object[] { query, cancellationToken }) is Task<T> task))
             {
