@@ -2,9 +2,11 @@
 using ShoppingList.ApplicationServices;
 using ShoppingList.Domain.Models;
 using ShoppingList.Domain.Queries.ActiveShoppingListByStoreId;
+using ShoppingList.Domain.Queries.AllActiveStores;
 using ShoppingList.Domain.Queries.SharedModels;
 using ShoppingList.Endpoint.Converters;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ShoppingList.Endpoint.V1.Controllers
@@ -21,6 +23,8 @@ namespace ShoppingList.Endpoint.V1.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [Route("active-shopping-list/{storeId}")]
         public async Task<IActionResult> GetActiveShoppingListByStoreId([FromRoute(Name = "storeId")] int storeId)
         {
@@ -38,6 +42,18 @@ namespace ShoppingList.Endpoint.V1.Controllers
             var contract = readModel.ToContract();
 
             return Ok(contract);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [Route("stores/active")]
+        public async Task<IActionResult> GetAllActiveStores()
+        {
+            var query = new AllActiveStoresQuery();
+            var storeReadModels = await queryDispatcher.DispatchAsync(query, default);
+            var storeContracts = storeReadModels.Select(store => store.ToContract());
+
+            return Ok(storeContracts);
         }
     }
 }

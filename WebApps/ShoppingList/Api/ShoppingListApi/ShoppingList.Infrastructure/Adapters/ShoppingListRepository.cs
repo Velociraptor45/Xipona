@@ -4,6 +4,8 @@ using ShoppingList.Domain.Ports;
 using ShoppingList.Infrastructure.Converters;
 using ShoppingList.Infrastructure.Entities;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,6 +44,15 @@ namespace ShoppingList.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             return list?.ToDomain();
+        }
+
+        public async Task<IEnumerable<Models.Store>> FindActiveStoresAsync()
+        {
+            var storeEntities = await dbContext.Stores.AsNoTracking()
+                .Where(store => !store.Deleted)
+                .ToListAsync();
+
+            return storeEntities.Select(store => store.ToDomain());
         }
     }
 }
