@@ -3,6 +3,7 @@ using ShoppingList.ApplicationServices;
 using ShoppingList.Domain.Models;
 using ShoppingList.Domain.Queries.ActiveShoppingListByStoreId;
 using ShoppingList.Domain.Queries.AllActiveStores;
+using ShoppingList.Domain.Queries.ItemCategorySearch;
 using ShoppingList.Domain.Queries.SharedModels;
 using ShoppingList.Endpoint.Converters;
 using System;
@@ -54,6 +55,25 @@ namespace ShoppingList.Endpoint.V1.Controllers
             var storeContracts = storeReadModels.Select(store => store.ToContract());
 
             return Ok(storeContracts);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("item-categories/{search-input}")]
+        public async Task<IActionResult> GetItemCategorySearchResults([FromRoute(Name = "search-input")] string searchInput)
+        {
+            searchInput = searchInput.Trim();
+            if (string.IsNullOrEmpty(searchInput))
+            {
+                return BadRequest("Search input mustn't be null or empty");
+            }
+
+            var query = new ItemCategorySearchQuery(searchInput);
+            var itemCategoryReadModels = await queryDispatcher.DispatchAsync(query, default);
+            var itemCategoryContracts = itemCategoryReadModels.Select(category => category.ToContract());
+
+            return Ok(itemCategoryContracts);
         }
     }
 }

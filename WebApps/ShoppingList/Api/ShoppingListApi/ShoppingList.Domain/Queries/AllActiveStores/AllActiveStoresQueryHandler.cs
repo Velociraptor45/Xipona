@@ -19,7 +19,9 @@ namespace ShoppingList.Domain.Queries.AllActiveStores
 
         public async Task<IEnumerable<StoreReadModel>> HandleAsync(AllActiveStoresQuery query, CancellationToken cancellationToken)
         {
-            var activeStores = await shoppingListRepository.FindActiveStoresAsync();
+            var activeStores = await shoppingListRepository.FindActiveStoresAsync(cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             return activeStores.Select(store => store.ToReadModel());
         }

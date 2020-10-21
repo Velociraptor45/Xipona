@@ -8,6 +8,10 @@ namespace ShoppingList.Domain.Ports
     public interface IShoppingListRepository
     {
         Task<Models.ShoppingList> FindActiveByStoreIdAsync(StoreId storeId, CancellationToken cancellationToken);
-        Task<IEnumerable<Store>> FindActiveStoresAsync();
+
+        Task<IEnumerable<Store>> FindActiveStoresAsync(CancellationToken cancellationToken);
+
+        Task<IEnumerable<ItemCategory>> FindItemCategoriesByAsync(string searchInput,
+            CancellationToken cancellationToken);
     }
 }

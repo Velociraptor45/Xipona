@@ -46,13 +46,27 @@ namespace ShoppingList.Infrastructure.Adapters
             return list?.ToDomain();
         }
 
-        public async Task<IEnumerable<Models.Store>> FindActiveStoresAsync()
+        public async Task<IEnumerable<Models.Store>> FindActiveStoresAsync(CancellationToken cancellationToken)
         {
             var storeEntities = await dbContext.Stores.AsNoTracking()
                 .Where(store => !store.Deleted)
                 .ToListAsync();
 
+            cancellationToken.ThrowIfCancellationRequested();
+
             return storeEntities.Select(store => store.ToDomain());
+        }
+
+        public async Task<IEnumerable<Models.ItemCategory>> FindItemCategoriesByAsync(string searchInput,
+            CancellationToken cancellationToken)
+        {
+            var itemCategoryEntities = await dbContext.ItemCategories.AsNoTracking()
+                .Where(category => category.Name.Contains(searchInput))
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return itemCategoryEntities.Select(entity => entity.ToDomain());
         }
     }
 }
