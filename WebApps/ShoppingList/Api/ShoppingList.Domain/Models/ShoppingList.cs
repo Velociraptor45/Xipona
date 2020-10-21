@@ -6,7 +6,7 @@ namespace ShoppingList.Domain.Models
 {
     public class ShoppingList
     {
-        private readonly IEnumerable<ShoppingListItem> items;
+        private IEnumerable<ShoppingListItem> items;
 
         public ShoppingList(ShoppingListId id, Store store, IEnumerable<ShoppingListItem> items, DateTime? completionDate)
         {
@@ -20,5 +20,12 @@ namespace ShoppingList.Domain.Models
         public Store Store { get; }
         public IReadOnlyCollection<ShoppingListItem> Items { get => items.ToList().AsReadOnly(); }
         public DateTime? CompletionDate { get; }
+
+        public void AddItem(ShoppingListItem item)
+        {
+            var list = items.ToList();
+            list.Add(item);
+            items = list;
+        }
     }
 }
