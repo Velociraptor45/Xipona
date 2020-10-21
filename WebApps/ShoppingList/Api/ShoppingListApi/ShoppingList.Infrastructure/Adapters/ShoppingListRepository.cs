@@ -68,5 +68,17 @@ namespace ShoppingList.Infrastructure.Adapters
 
             return itemCategoryEntities.Select(entity => entity.ToDomain());
         }
+
+        public async Task<IEnumerable<Models.Manufacturer>> FindManufacturersByAsync(string searchInput,
+            CancellationToken cancellationToken)
+        {
+            var manufacturerEntities = await dbContext.Manufacturers.AsNoTracking()
+                .Where(category => category.Name.Contains(searchInput))
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return manufacturerEntities.Select(entity => entity.ToDomain());
+        }
     }
 }

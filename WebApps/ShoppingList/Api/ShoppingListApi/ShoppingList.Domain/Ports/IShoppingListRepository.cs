@@ -13,5 +13,6 @@ namespace ShoppingList.Domain.Ports
 
         Task<IEnumerable<ItemCategory>> FindItemCategoriesByAsync(string searchInput,
             CancellationToken cancellationToken);
+        Task<IEnumerable<Manufacturer>> FindManufacturersByAsync(string searchInput, CancellationToken cancellationToken);
     }
 }

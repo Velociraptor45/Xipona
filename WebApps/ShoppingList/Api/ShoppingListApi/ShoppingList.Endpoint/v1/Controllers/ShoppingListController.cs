@@ -4,6 +4,7 @@ using ShoppingList.Domain.Models;
 using ShoppingList.Domain.Queries.ActiveShoppingListByStoreId;
 using ShoppingList.Domain.Queries.AllActiveStores;
 using ShoppingList.Domain.Queries.ItemCategorySearch;
+using ShoppingList.Domain.Queries.ManufacturerSearch;
 using ShoppingList.Domain.Queries.SharedModels;
 using ShoppingList.Endpoint.Converters;
 using System;
@@ -74,6 +75,25 @@ namespace ShoppingList.Endpoint.V1.Controllers
             var itemCategoryContracts = itemCategoryReadModels.Select(category => category.ToContract());
 
             return Ok(itemCategoryContracts);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("manufacturer/{search-input}")]
+        public async Task<IActionResult> GetManufacturerSearchResults([FromRoute(Name = "search-input")] string searchInput)
+        {
+            searchInput = searchInput.Trim();
+            if (string.IsNullOrEmpty(searchInput))
+            {
+                return BadRequest("Search input mustn't be null or empty");
+            }
+
+            var query = new ManufacturerSearchQuery(searchInput);
+            var manufacturerReadModels = await queryDispatcher.DispatchAsync(query, default);
+            var manufacturerContracts = manufacturerReadModels.Select(category => category.ToContract());
+
+            return Ok(manufacturerContracts);
         }
     }
 }
