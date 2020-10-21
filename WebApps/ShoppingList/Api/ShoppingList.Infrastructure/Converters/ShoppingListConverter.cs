@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Models = ShoppingList.Domain.Models;
 
 namespace ShoppingList.Infrastructure.Converters
@@ -20,8 +21,22 @@ namespace ShoppingList.Infrastructure.Converters
             {
                 Id = model.Id.Value,
                 CompletionDate = model.CompletionDate,
-                StoreId = model.Store.Id.Value
+                StoreId = model.Store.Id.Value,
+                ItemsOnList = model.ToItemsOnListEntities().ToList(),
             };
+        }
+
+        public static IEnumerable<Entities.ItemsOnList> ToItemsOnListEntities(this Models.ShoppingList model)
+        {
+            return model.Items.Select(item =>
+                new Entities.ItemsOnList()
+                {
+                    ShoppingListId = model.Id.Value,
+                    ItemId = item.Id.Value,
+                    InBasket = item.IsInBasket,
+                    Quantity = item.Quantity,
+                    Item = item.ToEntity()
+                });
         }
     }
 }

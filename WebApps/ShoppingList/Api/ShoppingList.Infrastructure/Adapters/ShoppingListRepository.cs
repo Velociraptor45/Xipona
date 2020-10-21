@@ -22,6 +22,10 @@ namespace ShoppingList.Infrastructure.Adapters
             this.dbContext = dbContext;
         }
 
+        public async void StoreAsync(Models.ShoppingList shoppingList)
+        {
+        }
+
         public async Task<Models.ShoppingList> FindActiveByStoreIdAsync(StoreId storeId, CancellationToken cancellationToken)
         {
             if (storeId == null)
