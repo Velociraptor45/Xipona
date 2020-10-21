@@ -25,17 +25,9 @@ namespace ShoppingList.Infrastructure.Adapters
             if (storeId == null)
                 throw new ArgumentNullException(nameof(storeId));
 
-            Entities.ShoppingList list;
-            try
-            {
-                list = await dbContext.ShoppingLists.AsNoTracking()
-                        .FirstOrDefaultAsync(list => list.CompletionDate != null
-                            && list.StoreId == storeId.Value);
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
+            var list = await dbContext.ShoppingLists.AsNoTracking()
+                    .FirstOrDefaultAsync(list => list.CompletionDate != null
+                        && list.StoreId == storeId.Value);
 
             cancellationToken.ThrowIfCancellationRequested();
 

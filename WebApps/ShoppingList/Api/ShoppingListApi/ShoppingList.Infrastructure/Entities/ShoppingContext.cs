@@ -19,7 +19,7 @@ namespace ShoppingList.Infrastructure.Entities
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql(@"server=;port=15909;user id=root;pwd=;database=shoppinglist-development");
+            //optionsBuilder.UseMySql(@"server=;port=15909;user id=root;pwd=;database=shoppinglist-development");
         }
     }
 }

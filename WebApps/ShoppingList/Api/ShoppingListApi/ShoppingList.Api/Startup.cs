@@ -27,7 +27,6 @@ namespace ShoppingList.Api
             services.AddEndpointControllers();
             services.AddSwaggerGen();
 
-            services.AddCors();
             services.AddInfrastructure(Configuration.GetConnectionString("Shopping-Database"));
             services.AddApplicationServices();
         }
