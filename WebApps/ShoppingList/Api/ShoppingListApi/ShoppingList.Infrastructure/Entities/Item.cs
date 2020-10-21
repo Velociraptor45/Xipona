@@ -23,5 +23,6 @@ namespace ShoppingList.Infrastructure.Entities
         public Manufacturer Manufacturer { get; set; }
         public ItemCategory ItemCategory { get; set; }
         public ICollection<AvailableAt> AvailableAt { get; set; }
+        public ICollection<ItemsOnList> ItemsOnLists { get; set; }
     }
 }
