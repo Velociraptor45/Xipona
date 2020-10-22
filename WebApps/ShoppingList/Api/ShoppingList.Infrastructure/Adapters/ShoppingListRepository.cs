@@ -23,15 +23,19 @@ namespace ShoppingList.Infrastructure.Adapters
             this.dbContext = dbContext;
         }
 
-        public async Task StoreAsync(Models.ShoppingList shoppingList)
+        #region public methods
+
+        public async Task StoreAsync(Models.ShoppingList shoppingList, CancellationToken cancellationToken)
         {
             if (shoppingList == null)
                 throw new ArgumentNullException(nameof(shoppingList));
 
             if (shoppingList.Id.Value <= 0)
             {
-                await StoreAsNewListAsync(shoppingList);
+                await StoreAsNewListAsync(shoppingList, cancellationToken);
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             var listEntity = await FindEntityByIdAsync(shoppingList.Id);
             if (listEntity == null)
@@ -39,11 +43,16 @@ namespace ShoppingList.Infrastructure.Adapters
                 throw new ItemNotOnShoppingListException($"Shopping list with ID {shoppingList.Id.Value} not found.");
             }
 
-            await StoreModifiedListAsync(listEntity, shoppingList);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await StoreModifiedListAsync(listEntity, shoppingList, cancellationToken);
         }
 
-        public async Task<Models.ShoppingList> FindByAsync(ShoppingListId id)
+        public async Task<Models.ShoppingList> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)
         {
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
+
             var list = await dbContext.ShoppingLists.AsNoTracking()
                 .Include(l => l.Store)
                 .Include(l => l.ItemsOnList)
@@ -59,6 +68,8 @@ namespace ShoppingList.Infrastructure.Adapters
 
             if (list == null)
                 throw new ShoppingListNotFoundException($"Shopping list {id.Value} not found");
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             return list.ToDomain();
         }
@@ -122,10 +133,12 @@ namespace ShoppingList.Infrastructure.Adapters
             return manufacturerEntities.Select(entity => entity.ToDomain());
         }
 
+        #endregion public methods
+
         #region private methods
 
         private async Task StoreModifiedListAsync(Entities.ShoppingList existingShoppingListEntity,
-            Models.ShoppingList shoppingList)
+            Models.ShoppingList shoppingList, CancellationToken cancellationToken)
         {
             var shoppingListEntityToStore = shoppingList.ToEntity();
             var onListMappings = existingShoppingListEntity.ItemsOnList.ToDictionary(map => map.ItemId);
@@ -133,6 +146,7 @@ namespace ShoppingList.Infrastructure.Adapters
             dbContext.Entry(shoppingListEntityToStore).State = EntityState.Modified;
             foreach (var map in shoppingListEntityToStore.ItemsOnList)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (onListMappings.ContainsKey(map.ItemId))
                 {
                     // mapping was modified
@@ -152,10 +166,12 @@ namespace ShoppingList.Infrastructure.Adapters
                 dbContext.Entry(map).State = EntityState.Deleted;
             }
 
+            cancellationToken.ThrowIfCancellationRequested();
+
             await dbContext.SaveChangesAsync();
         }
 
-        private async Task StoreAsNewListAsync(Models.ShoppingList shoppingList)
+        private async Task StoreAsNewListAsync(Models.ShoppingList shoppingList, CancellationToken cancellationToken)
         {
             var entity = shoppingList.ToEntity();
 
@@ -164,6 +180,8 @@ namespace ShoppingList.Infrastructure.Adapters
             {
                 dbContext.Entry(onListMap).State = EntityState.Added;
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             await dbContext.SaveChangesAsync();
         }

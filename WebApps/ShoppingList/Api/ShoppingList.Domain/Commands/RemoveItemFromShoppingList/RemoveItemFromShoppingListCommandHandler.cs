@@ -20,11 +20,13 @@ namespace ShoppingList.Domain.Commands.RemoveItemFromShoppingList
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
 
-            var list = await shoppingListRepository.FindByAsync(query.ShoppingListId);
+            var list = await shoppingListRepository.FindByAsync(query.ShoppingListId, cancellationToken);
 
             list.RemoveItem(query.ShoppingListItemId);
 
-            await shoppingListRepository.StoreAsync(list);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await shoppingListRepository.StoreAsync(list, cancellationToken);
             return true;
         }
     }

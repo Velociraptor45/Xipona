@@ -23,7 +23,7 @@ namespace ShoppingList.Domain.Commands.AddItemToShoppingList
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
 
-            var list = await shoppingListRepository.FindByAsync(query.ShoppingListId);
+            var list = await shoppingListRepository.FindByAsync(query.ShoppingListId, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -34,7 +34,7 @@ namespace ShoppingList.Domain.Commands.AddItemToShoppingList
 
             list.AddItem(storeItem, false, query.Quantity);
 
-            await shoppingListRepository.StoreAsync(list);
+            await shoppingListRepository.StoreAsync(list, cancellationToken);
 
             return true;
         }
