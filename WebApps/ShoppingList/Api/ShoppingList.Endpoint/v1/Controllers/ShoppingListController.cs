@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.ApplicationServices;
+using ShoppingList.Domain.Commands.RemoveItemFromShoppingList;
+using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.Models;
 using ShoppingList.Domain.Queries.ActiveShoppingListByStoreId;
 using ShoppingList.Domain.Queries.AllActiveStores;
@@ -18,16 +20,18 @@ namespace ShoppingList.Endpoint.V1.Controllers
     public class ShoppingListController : ControllerBase
     {
         private readonly IQueryDispatcher queryDispatcher;
+        private readonly ICommandDispatcher commandDispatcher;
 
-        public ShoppingListController(IQueryDispatcher queryDispatcher)
+        public ShoppingListController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher)
         {
             this.queryDispatcher = queryDispatcher;
+            this.commandDispatcher = commandDispatcher;
         }
 
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("active-shopping-list/{storeId}")]
+        [Route("shopping-list/active/{storeId}")]
         public async Task<IActionResult> GetActiveShoppingListByStoreId([FromRoute(Name = "storeId")] int storeId)
         {
             var query = new ActiveShoppingListByStoreIdQuery(new StoreId(storeId));
@@ -44,6 +48,28 @@ namespace ShoppingList.Endpoint.V1.Controllers
             var contract = readModel.ToContract();
 
             return Ok(contract);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("shopping-list/items/remove/{shoppingListId}/{itemId}")]
+        public async Task<IActionResult> RemoveItemFromShoppingList(
+            [FromRoute(Name = "shoppingListId")] int shoppingListId, [FromRoute(Name = "itemId")] int itemId)
+        {
+            var command = new RemoveItemFromShoppingListCommand(
+                new ShoppingListId(shoppingListId), new ShoppingListItemId(itemId));
+
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (ItemNotOnShoppingListException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok();
         }
 
         [HttpGet]

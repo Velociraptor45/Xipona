@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.Models;
 using ShoppingList.Domain.Ports;
 using ShoppingList.Infrastructure.Converters;
@@ -35,59 +36,15 @@ namespace ShoppingList.Infrastructure.Adapters
             var listEntity = await FindEntityByIdAsync(shoppingList.Id);
             if (listEntity == null)
             {
-                throw new InvalidOperationException($"Shopping list with ID {shoppingList.Id.Value} not found.");
+                throw new ItemNotOnShoppingListException($"Shopping list with ID {shoppingList.Id.Value} not found.");
             }
 
             await StoreModifiedListAsync(listEntity, shoppingList);
         }
 
-        private async Task StoreModifiedListAsync(Entities.ShoppingList existingShoppingListEntity,
-            Models.ShoppingList shoppingList)
+        public async Task<Models.ShoppingList> FindByAsync(ShoppingListId id)
         {
-            var shoppingListEntityToStore = shoppingList.ToEntity();
-            var onListMappings = existingShoppingListEntity.ItemsOnList.ToDictionary(map => map.ItemId);
-
-            dbContext.Entry(shoppingListEntityToStore).State = EntityState.Modified;
-            foreach (var map in shoppingListEntityToStore.ItemsOnList)
-            {
-                if (onListMappings.ContainsKey(map.ItemId))
-                {
-                    // mapping was modified
-                    dbContext.Entry(map).State = EntityState.Modified;
-                    onListMappings.Remove(map.ItemId);
-                }
-                else
-                {
-                    // mapping was added
-                    dbContext.Entry(map).State = EntityState.Added;
-                }
-            }
-
-            // mapping was deleted
-            foreach (var map in onListMappings.Values)
-            {
-                dbContext.Entry(map).State = EntityState.Deleted;
-            }
-
-            await dbContext.SaveChangesAsync();
-        }
-
-        private async Task StoreAsNewListAsync(Models.ShoppingList shoppingList)
-        {
-            var entity = shoppingList.ToEntity();
-
-            dbContext.Entry(entity).State = EntityState.Added;
-            foreach (var onListMap in entity.ItemsOnList)
-            {
-                dbContext.Entry(onListMap).State = EntityState.Added;
-            }
-
-            await dbContext.SaveChangesAsync();
-        }
-
-        public async Task<Entities.ShoppingList> FindEntityByIdAsync(ShoppingListId id)
-        {
-            return await dbContext.ShoppingLists.AsNoTracking()
+            var list = await dbContext.ShoppingLists.AsNoTracking()
                 .Include(l => l.Store)
                 .Include(l => l.ItemsOnList)
                 .ThenInclude(map => map.Item)
@@ -99,6 +56,8 @@ namespace ShoppingList.Infrastructure.Adapters
                 .ThenInclude(map => map.Item)
                 .ThenInclude(item => item.AvailableAt)
                 .FirstOrDefaultAsync(list => list.Id == id.Value);
+
+            return list?.ToDomain();
         }
 
         public async Task<Models.ShoppingList> FindActiveByStoreIdAsync(StoreId storeId, CancellationToken cancellationToken)
@@ -159,5 +118,69 @@ namespace ShoppingList.Infrastructure.Adapters
 
             return manufacturerEntities.Select(entity => entity.ToDomain());
         }
+
+        #region private methods
+
+        private async Task StoreModifiedListAsync(Entities.ShoppingList existingShoppingListEntity,
+            Models.ShoppingList shoppingList)
+        {
+            var shoppingListEntityToStore = shoppingList.ToEntity();
+            var onListMappings = existingShoppingListEntity.ItemsOnList.ToDictionary(map => map.ItemId);
+
+            dbContext.Entry(shoppingListEntityToStore).State = EntityState.Modified;
+            foreach (var map in shoppingListEntityToStore.ItemsOnList)
+            {
+                if (onListMappings.ContainsKey(map.ItemId))
+                {
+                    // mapping was modified
+                    dbContext.Entry(map).State = EntityState.Modified;
+                    onListMappings.Remove(map.ItemId);
+                }
+                else
+                {
+                    // mapping was added
+                    dbContext.Entry(map).State = EntityState.Added;
+                }
+            }
+
+            // mapping was deleted
+            foreach (var map in onListMappings.Values)
+            {
+                dbContext.Entry(map).State = EntityState.Deleted;
+            }
+
+            await dbContext.SaveChangesAsync();
+        }
+
+        private async Task StoreAsNewListAsync(Models.ShoppingList shoppingList)
+        {
+            var entity = shoppingList.ToEntity();
+
+            dbContext.Entry(entity).State = EntityState.Added;
+            foreach (var onListMap in entity.ItemsOnList)
+            {
+                dbContext.Entry(onListMap).State = EntityState.Added;
+            }
+
+            await dbContext.SaveChangesAsync();
+        }
+
+        private async Task<Entities.ShoppingList> FindEntityByIdAsync(ShoppingListId id)
+        {
+            return await dbContext.ShoppingLists.AsNoTracking()
+                .Include(l => l.Store)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.Manufacturer)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.ItemCategory)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.AvailableAt)
+                .FirstOrDefaultAsync(list => list.Id == id.Value);
+        }
+
+        #endregion private methods
     }
 }

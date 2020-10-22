@@ -27,5 +27,19 @@ namespace ShoppingList.Domain.Models
             list.Add(item);
             items = list;
         }
+
+        public void RemoveItem(ShoppingListItemId id)
+        {
+            var itemList = items.ToList();
+
+            var itemListWithoutSpecifiedItem = itemList
+                .Where(item => item.Id != id)
+                .ToList();
+
+            if (itemList.Count == itemListWithoutSpecifiedItem.Count)
+                throw new InvalidOperationException("Item is not on shopping list");
+
+            items = itemListWithoutSpecifiedItem;
+        }
     }
 }

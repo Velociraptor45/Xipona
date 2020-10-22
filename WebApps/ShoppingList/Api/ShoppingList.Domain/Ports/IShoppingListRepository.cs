@@ -10,7 +10,7 @@ namespace ShoppingList.Domain.Ports
         Task<Models.ShoppingList> FindActiveByStoreIdAsync(StoreId storeId, CancellationToken cancellationToken);
 
         Task<IEnumerable<Store>> FindActiveStoresAsync(CancellationToken cancellationToken);
-
+        Task<Models.ShoppingList> FindByAsync(ShoppingListId id);
         Task<IEnumerable<ItemCategory>> FindItemCategoriesByAsync(string searchInput,
             CancellationToken cancellationToken);
         Task<IEnumerable<Manufacturer>> FindManufacturersByAsync(string searchInput, CancellationToken cancellationToken);
