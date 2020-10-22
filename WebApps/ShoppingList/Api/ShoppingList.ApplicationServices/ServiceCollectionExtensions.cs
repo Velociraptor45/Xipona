@@ -7,6 +7,7 @@ namespace ShoppingList.ApplicationServices
         public static void AddApplicationServices(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddTransient<IQueryDispatcher, QueryDispatcher>();
+            serviceCollection.AddTransient<ICommandDispatcher, CommandDispatcher>();
         }
     }
 }

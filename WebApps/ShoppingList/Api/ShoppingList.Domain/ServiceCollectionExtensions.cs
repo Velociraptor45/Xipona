@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using ShoppingList.Domain.Commands;
 using ShoppingList.Domain.Queries;
 using System;
 using System.Linq;
@@ -16,11 +17,18 @@ namespace ShoppingList.Domain
         public static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)
         {
             services.AddQueryHandlersForAssembly(assembly);
+            services.AddQueryHandlersForAssembly(assembly);
         }
 
         public static void AddQueryHandlersForAssembly(this IServiceCollection services, Assembly assembly)
         {
             var handlerType = typeof(IQueryHandler<,>);
+            services.AddHandlersForAssembly(assembly, handlerType);
+        }
+
+        public static void AddCommandHandlersForAssembly(this IServiceCollection services, Assembly assembly)
+        {
+            var handlerType = typeof(ICommandHandler<,>);
             services.AddHandlersForAssembly(assembly, handlerType);
         }
 
