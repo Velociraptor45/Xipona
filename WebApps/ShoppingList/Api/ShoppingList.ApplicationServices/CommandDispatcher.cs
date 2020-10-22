@@ -15,19 +15,19 @@ namespace ShoppingList.ApplicationServices
             this.serviceProvider = serviceProvider;
         }
 
-        public Task<T> DispatchAsync<T>(ICommand<T> query, CancellationToken cancellationToken)
+        public Task<T> DispatchAsync<T>(ICommand<T> command, CancellationToken cancellationToken)
         {
-            var valueType = query.GetType()
+            var valueType = command.GetType()
                 .GetInterfaces()
                 .FirstOrDefault(interf => interf.IsGenericType && interf.GetGenericTypeDefinition() == typeof(ICommand<>))
                 .GetGenericArguments()
                 .First();
 
-            var serviceType = typeof(ICommandHandler<,>).MakeGenericType(query.GetType(), valueType);
+            var serviceType = typeof(ICommandHandler<,>).MakeGenericType(command.GetType(), valueType);
             var service = serviceProvider.GetService(serviceType);
             var method = serviceType.GetMethod("HandleAsync");
 
-            if (!(method.Invoke(service, new object[] { query, cancellationToken }) is Task<T> task))
+            if (!(method.Invoke(service, new object[] { command, cancellationToken }) is Task<T> task))
             {
                 throw new InvalidOperationException();
             }

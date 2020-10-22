@@ -17,7 +17,7 @@ namespace ShoppingList.Domain
         public static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)
         {
             services.AddQueryHandlersForAssembly(assembly);
-            services.AddQueryHandlersForAssembly(assembly);
+            services.AddCommandHandlersForAssembly(assembly);
         }
 
         public static void AddQueryHandlersForAssembly(this IServiceCollection services, Assembly assembly)

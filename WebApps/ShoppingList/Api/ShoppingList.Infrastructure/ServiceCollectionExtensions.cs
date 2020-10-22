@@ -15,6 +15,7 @@ namespace ShoppingList.Infrastructure
                     mySqlOptions => mySqlOptions.EnableRetryOnFailure(3)));
 
             services.AddTransient<IShoppingListRepository, ShoppingListRepository>();
+            services.AddTransient<IItemRepository, ItemRepository>();
         }
     }
 }
