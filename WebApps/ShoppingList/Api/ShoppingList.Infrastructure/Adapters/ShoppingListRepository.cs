@@ -57,7 +57,10 @@ namespace ShoppingList.Infrastructure.Adapters
                 .ThenInclude(item => item.AvailableAt)
                 .FirstOrDefaultAsync(list => list.Id == id.Value);
 
-            return list?.ToDomain();
+            if (list == null)
+                throw new ShoppingListNotFoundException($"Shopping list {id.Value} not found");
+
+            return list.ToDomain();
         }
 
         public async Task<Models.ShoppingList> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)

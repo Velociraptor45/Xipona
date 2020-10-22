@@ -50,7 +50,7 @@ namespace ShoppingList.Domain.Models
                 .ToList();
 
             if (itemList.Count == itemListWithoutSpecifiedItem.Count)
-                throw new InvalidOperationException("Item is not on shopping list");
+                throw new ItemNotOnShoppingListException("Item is not on shopping list");
 
             items = itemListWithoutSpecifiedItem;
         }

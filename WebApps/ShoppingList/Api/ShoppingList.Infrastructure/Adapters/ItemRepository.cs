@@ -25,6 +25,7 @@ namespace ShoppingList.Infrastructure.Adapters
                 .Include(item => item.ItemCategory)
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Store)
                 .FirstOrDefaultAsync(item => item.Id == storeItemId.Value);
 
             cancellationToken.ThrowIfCancellationRequested();

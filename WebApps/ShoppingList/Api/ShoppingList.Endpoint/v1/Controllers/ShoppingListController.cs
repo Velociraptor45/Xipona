@@ -69,6 +69,10 @@ namespace ShoppingList.Endpoint.V1.Controllers
             {
                 return BadRequest(e.Message);
             }
+            catch (ShoppingListNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
 
             return Ok();
         }
@@ -78,17 +82,25 @@ namespace ShoppingList.Endpoint.V1.Controllers
         [ProducesResponseType(400)]
         [Route("shopping-list/{shoppingListId}/items/{itemId}/add/{quantity}")]
         public async Task<IActionResult> AddItemToShoppingList(
-            [FromRoute(Name = "shoppingListId")] int shoppingListId, [FromRoute(Name = "itemId")] ShoppingListItemId itemId,
+            [FromRoute(Name = "shoppingListId")] int shoppingListId, [FromRoute(Name = "itemId")] int itemId,
             [FromRoute(Name = "quantity")] float quantity)
         {
             var command = new AddItemToShoppingListCommand(
-                new ShoppingListId(shoppingListId), itemId, quantity);
+                new ShoppingListId(shoppingListId), new ShoppingListItemId(itemId), quantity);
 
             try
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
             catch (ItemAlreadyOnShoppingListException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (ItemNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (ShoppingListNotFoundException e)
             {
                 return BadRequest(e.Message);
             }
