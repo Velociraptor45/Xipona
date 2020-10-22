@@ -21,7 +21,7 @@ namespace ShoppingList.Domain.Queries.ActiveShoppingListByStoreId
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var listModel = await shoppingListRepository.FindActiveByStoreIdAsync(query.StoreId, cancellationToken);
+            var listModel = await shoppingListRepository.FindActiveByAsync(query.StoreId, cancellationToken);
 
             if (listModel == null)
                 throw new ArgumentException($"No shopping list for store {query.StoreId.Value} found.");

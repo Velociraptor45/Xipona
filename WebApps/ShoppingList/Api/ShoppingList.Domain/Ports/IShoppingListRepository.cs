@@ -7,7 +7,7 @@ namespace ShoppingList.Domain.Ports
 {
     public interface IShoppingListRepository
     {
-        Task<Models.ShoppingList> FindActiveByStoreIdAsync(StoreId storeId, CancellationToken cancellationToken);
+        Task<Models.ShoppingList> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken);
 
         Task<IEnumerable<Store>> FindActiveStoresAsync(CancellationToken cancellationToken);
         Task<Models.ShoppingList> FindByAsync(ShoppingListId id);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.ApplicationServices;
+using ShoppingList.Domain.Commands.AddItemToShoppingList;
 using ShoppingList.Domain.Commands.RemoveItemFromShoppingList;
 using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.Models;
@@ -53,7 +54,7 @@ namespace ShoppingList.Endpoint.V1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("shopping-list/items/remove/{shoppingListId}/{itemId}")]
+        [Route("shopping-list/{shoppingListId}/items/{itemId}/remove")]
         public async Task<IActionResult> RemoveItemFromShoppingList(
             [FromRoute(Name = "shoppingListId")] int shoppingListId, [FromRoute(Name = "itemId")] int itemId)
         {
@@ -65,6 +66,29 @@ namespace ShoppingList.Endpoint.V1.Controllers
                 await commandDispatcher.DispatchAsync(command, default);
             }
             catch (ItemNotOnShoppingListException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("shopping-list/{shoppingListId}/items/{itemId}/add/{quantity}")]
+        public async Task<IActionResult> AddItemToShoppingList(
+            [FromRoute(Name = "shoppingListId")] int shoppingListId, [FromRoute(Name = "itemId")] ShoppingListItemId itemId,
+            [FromRoute(Name = "quantity")] float quantity)
+        {
+            var command = new AddItemToShoppingListCommand(
+                new ShoppingListId(shoppingListId), itemId, quantity);
+
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (ItemAlreadyOnShoppingListException e)
             {
                 return BadRequest(e.Message);
             }

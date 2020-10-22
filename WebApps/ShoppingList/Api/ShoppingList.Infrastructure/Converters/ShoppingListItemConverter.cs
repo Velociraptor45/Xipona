@@ -7,7 +7,7 @@ namespace ShoppingList.Infrastructure.Converters
 {
     public static class ShoppingListItemConverter
     {
-        public static ShoppingListItem ToDomain(this Item entity, int storeId, int shoppingListId)
+        public static ShoppingListItem ToShoppingListItemDomain(this Item entity, int storeId, int shoppingListId)
         {
             AvailableAt priceMap = entity.AvailableAt.FirstOrDefault(map => map.StoreId == storeId);
             if (priceMap == null)

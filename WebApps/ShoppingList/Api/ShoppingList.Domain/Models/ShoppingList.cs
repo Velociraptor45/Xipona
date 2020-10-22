@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ShoppingList.Domain.Converters;
+using ShoppingList.Domain.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,15 +23,26 @@ namespace ShoppingList.Domain.Models
         public IReadOnlyCollection<ShoppingListItem> Items { get => items.ToList().AsReadOnly(); }
         public DateTime? CompletionDate { get; }
 
-        public void AddItem(ShoppingListItem item)
+        public void AddItem(StoreItem storeItem, bool isInBasket, float quantity)
         {
+            if (storeItem == null)
+                throw new ArgumentNullException(nameof(storeItem));
+
             var list = items.ToList();
-            list.Add(item);
+
+            var existingItem = list.FirstOrDefault(it => it.Id == storeItem.Id);
+            if (existingItem != null)
+                throw new ItemAlreadyOnShoppingListException($"Item {storeItem.Id.Value} already exists on shopping list {Id.Value}");
+
+            list.Add(storeItem.ToShoppingListItemDomain(Id, isInBasket, quantity));
             items = list;
         }
 
         public void RemoveItem(ShoppingListItemId id)
         {
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
+
             var itemList = items.ToList();
 
             var itemListWithoutSpecifiedItem = itemList

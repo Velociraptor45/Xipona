@@ -60,7 +60,7 @@ namespace ShoppingList.Infrastructure.Adapters
             return list?.ToDomain();
         }
 
-        public async Task<Models.ShoppingList> FindActiveByStoreIdAsync(StoreId storeId, CancellationToken cancellationToken)
+        public async Task<Models.ShoppingList> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
         {
             if (storeId == null)
                 throw new ArgumentNullException(nameof(storeId));

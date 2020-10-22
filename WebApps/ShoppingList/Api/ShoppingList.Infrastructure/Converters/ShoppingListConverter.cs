@@ -11,7 +11,7 @@ namespace ShoppingList.Infrastructure.Converters
             return new Models.ShoppingList(
                 new Models.ShoppingListId(entity.Id),
                 entity.Store.ToDomain(),
-                entity.ItemsOnList.Select(map => map.Item.ToDomain(entity.StoreId, entity.Id)),
+                entity.ItemsOnList.Select(map => map.Item.ToShoppingListItemDomain(entity.StoreId, entity.Id)),
                 entity.CompletionDate);
         }
 

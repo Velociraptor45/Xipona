@@ -23,6 +23,8 @@ namespace ShoppingList.Domain.Commands.RemoveItemFromShoppingList
             var list = await shoppingListRepository.FindByAsync(query.ShoppingListId);
 
             list.RemoveItem(query.ShoppingListItemId);
+
+            await shoppingListRepository.StoreAsync(list);
             return true;
         }
     }
