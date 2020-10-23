@@ -23,7 +23,8 @@ namespace ShoppingList.Domain.Models
         public IReadOnlyCollection<ShoppingListItem> Items { get => items.ToList().AsReadOnly(); }
         public DateTime? CompletionDate { get; }
 
-        public void AddItem(StoreItem storeItem, bool isInBasket, float quantity)
+        public void AddItem(StoreItem storeItem, ItemCategory itemCategory, Manufacturer manufacturer,
+            bool isInBasket, float quantity)
         {
             if (storeItem == null)
                 throw new ArgumentNullException(nameof(storeItem));
@@ -34,7 +35,7 @@ namespace ShoppingList.Domain.Models
             if (existingItem != null)
                 throw new ItemAlreadyOnShoppingListException($"Item {storeItem.Id.Value} already exists on shopping list {Id.Value}");
 
-            list.Add(storeItem.ToShoppingListItemDomain(Id, isInBasket, quantity));
+            list.Add(storeItem.ToShoppingListItemDomain(itemCategory, manufacturer, isInBasket, quantity));
             items = list;
         }
 

@@ -133,6 +133,36 @@ namespace ShoppingList.Infrastructure.Adapters
             return manufacturerEntities.Select(entity => entity.ToDomain());
         }
 
+        public async Task<Models.ItemCategory> FindItemCategoryByAsync(ItemCategoryId id,
+            CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
+
+            var entity = await dbContext.ItemCategories.AsNoTracking()
+                .FirstOrDefaultAsync(category => category.Id == id.Value);
+
+            if (entity == null)
+                throw new Exception(); // todo
+
+            return entity.ToDomain();
+        }
+
+        public async Task<Models.Manufacturer> FindManufacturerByAsync(ManufacturerId id,
+            CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
+
+            var entity = await dbContext.Manufacturers.AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == id.Value);
+
+            if (entity == null)
+                throw new Exception(); // todo
+
+            return entity.ToDomain();
+        }
+
         #endregion public methods
 
         #region private methods

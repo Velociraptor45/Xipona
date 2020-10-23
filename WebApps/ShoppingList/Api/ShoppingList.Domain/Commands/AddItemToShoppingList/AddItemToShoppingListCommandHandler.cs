@@ -27,12 +27,16 @@ namespace ShoppingList.Domain.Commands.AddItemToShoppingList
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var storeItem = await itemRepository.FindBy(query.ShoppingListItemId.ToStoreItemId(),
+            var storeItem = await itemRepository.FindByAsync(query.ShoppingListItemId.ToStoreItemId(),
                 list.Store.Id, cancellationToken);
+            var manufacturer = await shoppingListRepository
+                .FindManufacturerByAsync(storeItem.ManufacturerId, cancellationToken);
+            var itemCategory = await shoppingListRepository
+                .FindItemCategoryByAsync(storeItem.ItemCategoryId, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            list.AddItem(storeItem, false, query.Quantity);
+            list.AddItem(storeItem, itemCategory, manufacturer, false, query.Quantity);
 
             await shoppingListRepository.StoreAsync(list, cancellationToken);
 

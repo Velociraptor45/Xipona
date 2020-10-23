@@ -2,11 +2,13 @@
 {
     public class StoreItem
     {
+        private StoreItemId id;
+
         public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary, float price,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            ItemCategory itemCategory, Manufacturer manufacturer, Store store)
+            ItemCategoryId itemCategoryId, ManufacturerId manufacturerId, StoreId storeId)
         {
-            Id = id;
+            this.id = id;
             Name = name;
             IsDeleted = isDeleted;
             Comment = comment;
@@ -15,12 +17,12 @@
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
-            ItemCategory = itemCategory;
-            Manufacturer = manufacturer;
-            Store = store;
+            ItemCategoryId = itemCategoryId;
+            ManufacturerId = manufacturerId;
+            StoreId = storeId;
         }
 
-        public StoreItemId Id { get; }
+        public StoreItemId Id { get => id; }
         public string Name { get; }
         public bool IsDeleted { get; }
         public string Comment { get; }
@@ -29,8 +31,13 @@
         public QuantityType QuantityType { get; }
         public float QuantityInPacket { get; }
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
-        public ItemCategory ItemCategory { get; }
-        public Manufacturer Manufacturer { get; }
-        public Store Store { get; }
+        public ItemCategoryId ItemCategoryId { get; }
+        public ManufacturerId ManufacturerId { get; }
+        public StoreId StoreId { get; }
+
+        public void ChangeId(StoreItemId id)
+        {
+            this.id = id;
+        }
     }
 }
