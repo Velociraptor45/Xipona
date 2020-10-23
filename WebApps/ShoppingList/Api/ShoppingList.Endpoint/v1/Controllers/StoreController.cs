@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.ApplicationServices;
 using ShoppingList.Contracts.Commands.CreateStore;
+using ShoppingList.Contracts.Commands.UpdateStore;
 using ShoppingList.Domain.Commands.CreateStore;
+using ShoppingList.Domain.Commands.UpdateStore;
+using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.Queries.AllActiveStores;
 using ShoppingList.Endpoint.Converters;
+using ShoppingList.Endpoint.Converters.Store;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -43,6 +47,27 @@ namespace ShoppingList.Endpoint.v1.Controllers
             var command = new CreateStoreCommand(model);
 
             await commandDispatcher.DispatchAsync(command, default);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("update")]
+        public async Task<IActionResult> UpdateStore([FromBody] UpdateStoreContract contract)
+        {
+            var model = contract.ToDomain();
+            var command = new UpdateStoreCommand(model);
+
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (StoreNotFoundException)
+            {
+                return BadRequest("Store doesn't exist.");
+            }
 
             return Ok();
         }

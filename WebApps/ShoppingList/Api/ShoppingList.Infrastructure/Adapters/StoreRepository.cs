@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.Models;
 using ShoppingList.Domain.Ports;
 using ShoppingList.Infrastructure.Converters;
@@ -18,6 +19,39 @@ namespace ShoppingList.Infrastructure.Adapters
         public StoreRepository(ShoppingContext dbContext)
         {
             this.dbContext = dbContext;
+        }
+
+        public async Task<Models.Store> FindByAsync(StoreId id, CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var entity = await dbContext.Stores.AsNoTracking()
+                .FirstOrDefaultAsync(store => store.Id == id.Value);
+
+            if (entity == null)
+                throw new StoreNotFoundException(id);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return entity.ToDomain();
+        }
+
+        public async Task<bool> IsValidIdAsync(StoreId id, CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var entity = await dbContext.Stores.AsNoTracking()
+                .FirstOrDefaultAsync(store => store.Id == id.Value);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return entity != null;
         }
 
         public async Task<StoreId> StoreAsync(Models.Store store, CancellationToken cancellationToken)
