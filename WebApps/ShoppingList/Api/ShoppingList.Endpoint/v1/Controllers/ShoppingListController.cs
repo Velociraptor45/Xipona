@@ -1,19 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.ApplicationServices;
-using ShoppingList.Contracts.Commands.CreateItem;
 using ShoppingList.Domain.Commands.AddItemToShoppingList;
-using ShoppingList.Domain.Commands.CreateItem;
 using ShoppingList.Domain.Commands.RemoveItemFromShoppingList;
 using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.Models;
 using ShoppingList.Domain.Queries.ActiveShoppingListByStoreId;
-using ShoppingList.Domain.Queries.AllActiveStores;
-using ShoppingList.Domain.Queries.ItemCategorySearch;
-using ShoppingList.Domain.Queries.ManufacturerSearch;
 using ShoppingList.Domain.Queries.SharedModels;
 using ShoppingList.Endpoint.Converters;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ShoppingList.Endpoint.V1.Controllers
@@ -34,7 +28,7 @@ namespace ShoppingList.Endpoint.V1.Controllers
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("shopping-list/active/{storeId}")]
+        [Route("active/{storeId}")]
         public async Task<IActionResult> GetActiveShoppingListByStoreId([FromRoute(Name = "storeId")] int storeId)
         {
             var query = new ActiveShoppingListByStoreIdQuery(new StoreId(storeId));
@@ -56,7 +50,7 @@ namespace ShoppingList.Endpoint.V1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("shopping-list/{shoppingListId}/items/{itemId}/remove")]
+        [Route("{shoppingListId}/items/{itemId}/remove")]
         public async Task<IActionResult> RemoveItemFromShoppingList(
             [FromRoute(Name = "shoppingListId")] int shoppingListId, [FromRoute(Name = "itemId")] int itemId)
         {
@@ -82,7 +76,7 @@ namespace ShoppingList.Endpoint.V1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("shopping-list/{shoppingListId}/items/{itemId}/add/{quantity}")]
+        [Route("{shoppingListId}/items/{itemId}/add/{quantity}")]
         public async Task<IActionResult> AddItemToShoppingList(
             [FromRoute(Name = "shoppingListId")] int shoppingListId, [FromRoute(Name = "itemId")] int itemId,
             [FromRoute(Name = "quantity")] float quantity)
@@ -108,69 +102,6 @@ namespace ShoppingList.Endpoint.V1.Controllers
             }
 
             return Ok();
-        }
-
-        [HttpPost]
-        [ProducesResponseType(200)]
-        [Route("items/create")]
-        public async Task<IActionResult> CreateItem([FromBody] CreateItemContract createItemContract)
-        {
-            var models = createItemContract.ToDomain();
-            var command = new CreateItemCommand(models);
-
-            await commandDispatcher.DispatchAsync(command, default);
-
-            return Ok();
-        }
-
-        [HttpGet]
-        [ProducesResponseType(200)]
-        [Route("stores/active")]
-        public async Task<IActionResult> GetAllActiveStores()
-        {
-            var query = new AllActiveStoresQuery();
-            var storeReadModels = await queryDispatcher.DispatchAsync(query, default);
-            var storeContracts = storeReadModels.Select(store => store.ToContract());
-
-            return Ok(storeContracts);
-        }
-
-        [HttpGet]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [Route("item-categories/{search-input}")]
-        public async Task<IActionResult> GetItemCategorySearchResults([FromRoute(Name = "search-input")] string searchInput)
-        {
-            searchInput = searchInput.Trim();
-            if (string.IsNullOrEmpty(searchInput))
-            {
-                return BadRequest("Search input mustn't be null or empty");
-            }
-
-            var query = new ItemCategorySearchQuery(searchInput);
-            var itemCategoryReadModels = await queryDispatcher.DispatchAsync(query, default);
-            var itemCategoryContracts = itemCategoryReadModels.Select(category => category.ToContract());
-
-            return Ok(itemCategoryContracts);
-        }
-
-        [HttpGet]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [Route("manufacturer/{search-input}")]
-        public async Task<IActionResult> GetManufacturerSearchResults([FromRoute(Name = "search-input")] string searchInput)
-        {
-            searchInput = searchInput.Trim();
-            if (string.IsNullOrEmpty(searchInput))
-            {
-                return BadRequest("Search input mustn't be null or empty");
-            }
-
-            var query = new ManufacturerSearchQuery(searchInput);
-            var manufacturerReadModels = await queryDispatcher.DispatchAsync(query, default);
-            var manufacturerContracts = manufacturerReadModels.Select(category => category.ToContract());
-
-            return Ok(manufacturerContracts);
         }
     }
 }
