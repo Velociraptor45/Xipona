@@ -7,6 +7,9 @@ namespace ShoppingList.Domain.Ports
     public interface IItemRepository
     {
         Task<StoreItem> FindByAsync(StoreItemId storeItemId, StoreId storeId, CancellationToken cancellationToken);
-        Task<StoreItemId> StoreAsync(StoreItem storeItem);
+
+        Task<bool> IsValidIdAsync(StoreItemId id, CancellationToken cancellationToken);
+
+        Task<StoreItemId> StoreAsync(StoreItem storeItem, CancellationToken cancellationToken);
     }
 }

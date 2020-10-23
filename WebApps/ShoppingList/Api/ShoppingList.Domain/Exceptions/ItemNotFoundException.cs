@@ -1,10 +1,12 @@
-﻿using System;
+﻿using ShoppingList.Domain.Models;
+using System;
 
 namespace ShoppingList.Domain.Exceptions
 {
     public class ItemNotFoundException : Exception
     {
-        public ItemNotFoundException()
+        public ItemNotFoundException(StoreItemId id)
+            : base($"Item {id.Value} not found.")
         {
         }
 

@@ -21,7 +21,7 @@ namespace ShoppingList.Domain.Commands.CreateItem
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await itemRepository.StoreAsync(command.StoreItem);
+            await itemRepository.StoreAsync(command.StoreItem, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 

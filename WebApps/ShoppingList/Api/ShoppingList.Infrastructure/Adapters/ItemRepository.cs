@@ -23,8 +23,14 @@ namespace ShoppingList.Infrastructure.Adapters
 
         #region public methods
 
-        public async Task<StoreItem> FindByAsync(StoreItemId storeItemId, StoreId storeId, CancellationToken cancellationToken)
+        public async Task<StoreItem> FindByAsync(StoreItemId storeItemId, StoreId storeId,
+            CancellationToken cancellationToken)
         {
+            if (storeItemId == null)
+                throw new ArgumentNullException(nameof(storeItemId));
+            if (storeId == null)
+                throw new ArgumentNullException(nameof(storeId));
+
             var itemEntity = await dbContext.Items.AsNoTracking()
                 .Include(item => item.ItemCategory)
                 .Include(item => item.Manufacturer)
@@ -39,17 +45,33 @@ namespace ShoppingList.Infrastructure.Adapters
 
             var storeMap = itemEntity.AvailableAt.FirstOrDefault(map => map.StoreId == storeId.Value);
             if (storeMap == null)
-                throw new ItemAtStoreNotAvailableException($"Item {itemEntity.Id} not available at store {storeId.Value}");
+                throw new ItemAtStoreNotAvailableException(
+                    $"Item {itemEntity.Id} not available at store {storeId.Value}");
 
             cancellationToken.ThrowIfCancellationRequested();
 
             return itemEntity.ToStoreItemDomain(storeMap.Store, storeMap.Price);
         }
 
-        public async Task<StoreItemId> StoreAsync(StoreItem storeItem)
+        public async Task<bool> IsValidIdAsync(StoreItemId id, CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
+
+            var entity = await dbContext.Items.AsNoTracking()
+                .FirstOrDefaultAsync(item => item.Id == id.Value);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return entity != null;
+        }
+
+        public async Task<StoreItemId> StoreAsync(StoreItem storeItem, CancellationToken cancellationToken)
         {
             if (storeItem == null)
                 throw new ArgumentNullException(nameof(storeItem));
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             if (storeItem.Id.Value <= 0)
             {
@@ -72,11 +94,11 @@ namespace ShoppingList.Infrastructure.Adapters
 
             var existingAvailabilities = await dbContext.AvailableAts.AsNoTracking()
                 .Where(map => map.ItemId == storeItem.Id.Value)
-                .ToDictionaryAsync(av => av.ItemId);
+                .ToDictionaryAsync(av => av.StoreId);
 
             foreach (var availability in availabilities)
             {
-                if (existingAvailabilities.TryGetValue(availability.ItemId, out var existingAvailability))
+                if (existingAvailabilities.TryGetValue(availability.StoreId, out var existingAvailability))
                 {
                     availability.Id = existingAvailability.Id;
                     dbContext.Entry(availability).State = EntityState.Modified;
