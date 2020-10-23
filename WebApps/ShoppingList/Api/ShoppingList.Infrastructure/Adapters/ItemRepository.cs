@@ -6,6 +6,7 @@ using ShoppingList.Infrastructure.Converters;
 using ShoppingList.Infrastructure.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -50,7 +51,27 @@ namespace ShoppingList.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return itemEntity.ToStoreItemDomain(storeMap.Store, storeMap.Price);
+            return itemEntity.ToStoreItemDomain();
+        }
+
+        public async Task<IEnumerable<StoreItem>> FindByAsync(string searchInput, StoreId storeId,
+            CancellationToken cancellationToken)
+        {
+            if (storeId == null)
+                throw new ArgumentNullException(nameof(storeId));
+
+            var entities = await dbContext.Items.AsNoTracking()
+                .Include(item => item.ItemCategory)
+                .Include(item => item.Manufacturer)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Store)
+                .Where(item => item.Name.Contains(searchInput)
+                    && item.AvailableAt.FirstOrDefault(map => map.StoreId == storeId.Value) != null)
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return entities.Select(e => e.ToStoreItemDomain());
         }
 
         public async Task<bool> IsValidIdAsync(StoreItemId id, CancellationToken cancellationToken)

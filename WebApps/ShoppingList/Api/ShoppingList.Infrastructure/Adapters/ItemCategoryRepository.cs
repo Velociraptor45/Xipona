@@ -49,5 +49,24 @@ namespace ShoppingList.Infrastructure.Adapters
 
             return entity.ToDomain();
         }
+
+        public async Task<IEnumerable<Models.ItemCategory>> FindByAsync(IEnumerable<ItemCategoryId> ids,
+            CancellationToken cancellationToken)
+        {
+            if (ids == null)
+                throw new ArgumentNullException(nameof(ids));
+
+            var idHashSet = ids.Select(id => id.Value).ToHashSet();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var entities = await dbContext.ItemCategories.AsNoTracking()
+                .Where(m => idHashSet.Contains(m.Id))
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return entities.Select(e => e.ToDomain());
+        }
     }
 }

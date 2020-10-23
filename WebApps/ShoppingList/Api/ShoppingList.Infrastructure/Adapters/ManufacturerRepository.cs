@@ -45,9 +45,30 @@ namespace ShoppingList.Infrastructure.Adapters
                 .FirstOrDefaultAsync(m => m.Id == id.Value);
 
             if (entity == null)
-                throw new ManufacturerNotFoundException($"Manufacturer {id.Value} not found."); // todo
+                throw new ManufacturerNotFoundException($"Manufacturer {id.Value} not found.");
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             return entity.ToDomain();
+        }
+
+        public async Task<IEnumerable<Models.Manufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids,
+            CancellationToken cancellationToken)
+        {
+            if (ids == null)
+                throw new ArgumentNullException(nameof(ids));
+
+            var idHashSet = ids.Select(id => id.Value).ToHashSet();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var entities = await dbContext.Manufacturers.AsNoTracking()
+                .Where(m => idHashSet.Contains(m.Id))
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return entities.Select(e => e.ToDomain());
         }
     }
 }

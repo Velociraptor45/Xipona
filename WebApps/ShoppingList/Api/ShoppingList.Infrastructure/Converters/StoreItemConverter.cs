@@ -1,16 +1,13 @@
 ﻿using ShoppingList.Domain.Models;
 using ShoppingList.Infrastructure.Entities;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace ShoppingList.Infrastructure.Converters
 {
     public static class StoreItemConverter
     {
-        public static StoreItem ToStoreItemDomain(this Item entity, Entities.Store store, float price)
+        public static StoreItem ToStoreItemDomain(this Item entity)
         {
-            var availability = new StoreItemAvailability(
-                    new StoreId(store.Id), price);
-
             return new StoreItem(new StoreItemId(entity.Id),
                 entity.Name,
                 entity.Deleted,
@@ -21,7 +18,7 @@ namespace ShoppingList.Infrastructure.Converters
                 (QuantityTypeInPacket)entity.QuantityTypeInPacket,
                 new ItemCategoryId(entity.ItemCategory.Id),
                 new ManufacturerId(entity.Manufacturer.Id),
-                new List<StoreItemAvailability> { availability });
+                entity.AvailableAt.Select(map => new StoreItemAvailability(new StoreId(map.StoreId), map.Price)));
         }
 
         public static Item ToEntity(this StoreItem model)

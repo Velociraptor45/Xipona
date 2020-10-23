@@ -1,5 +1,6 @@
 ﻿using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.Models;
+using ShoppingList.Domain.Queries.ItemSearch;
 using System.Linq;
 
 namespace ShoppingList.Domain.Converters
@@ -27,6 +28,19 @@ namespace ShoppingList.Domain.Converters
                 manufacturer,
                 isInBasket,
                 quantity);
+        }
+
+        public static ItemSearchReadModel ToItemSearchReadModel(this StoreItem storeItem, StoreId storeId,
+            ItemCategory itemCategory, Manufacturer manufacturer)
+        {
+            var storeAvailability = storeItem.Availabilities
+                .FirstOrDefault(av => av.StoreId == storeId);
+
+            if (storeAvailability == null)
+                throw new ItemAtStoreNotAvailableException(storeItem.Id, storeId);
+
+            return new ItemSearchReadModel(storeItem.Id, storeItem.Name, storeAvailability.Price,
+                manufacturer, itemCategory);
         }
     }
 }

@@ -5,8 +5,13 @@ using ShoppingList.Contracts.Commands.UpdateItem;
 using ShoppingList.Domain.Commands.CreateItem;
 using ShoppingList.Domain.Commands.UpdateItem;
 using ShoppingList.Domain.Exceptions;
+using ShoppingList.Domain.Models;
+using ShoppingList.Domain.Queries.ItemSearch;
 using ShoppingList.Endpoint.Converters;
+using ShoppingList.Endpoint.Converters.Item;
 using ShoppingList.Endpoint.Converters.Store;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ShoppingList.Endpoint.v1.Controllers
@@ -56,6 +61,20 @@ namespace ShoppingList.Endpoint.v1.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [Route("search/{search-input}/{storeId}")]
+        public async Task<IActionResult> GetItemSearchResults([FromRoute(Name = "search-input")] string searchInput,
+            [FromRoute(Name = "storeId")] int storeId)
+        {
+            var query = new ItemSearchQuery(searchInput, new StoreId(storeId));
+            IEnumerable<ItemSearchReadModel> readModels = await queryDispatcher.DispatchAsync(query, default);
+
+            var contracts = readModels.Select(rm => rm.ToContract());
+
+            return Ok(contracts);
         }
     }
 }
