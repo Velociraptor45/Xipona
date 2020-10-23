@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Contracts.CreateItem
+﻿namespace ShoppingList.Contracts.Commands.CreateItem
 {
     public class ItemInStoreContract
     {

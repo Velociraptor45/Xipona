@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.ApplicationServices;
-using ShoppingList.Contracts.CreateItem;
+using ShoppingList.Contracts.Commands.CreateItem;
 using ShoppingList.Domain.Commands.AddItemToShoppingList;
 using ShoppingList.Domain.Commands.CreateItem;
 using ShoppingList.Domain.Commands.RemoveItemFromShoppingList;
@@ -118,14 +118,7 @@ namespace ShoppingList.Endpoint.V1.Controllers
             var models = createItemContract.ToDomain();
             var command = new CreateItemCommand(models);
 
-            try
-            {
-                await commandDispatcher.DispatchAsync(command, default);
-            }
-            catch (Exception)
-            {
-                throw; // todo
-            }
+            await commandDispatcher.DispatchAsync(command, default);
 
             return Ok();
         }

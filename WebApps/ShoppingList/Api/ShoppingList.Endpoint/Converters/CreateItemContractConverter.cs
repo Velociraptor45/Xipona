@@ -1,5 +1,5 @@
-﻿using ShoppingList.Contracts.CreateItem;
-using ShoppingList.Domain.Models;
+﻿using ShoppingList.Domain.Models;
+using ShoppingList.Contracts.Commands.CreateItem;
 using System.Collections.Generic;
 
 namespace ShoppingList.Endpoint.Converters

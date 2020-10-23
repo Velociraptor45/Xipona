@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ShoppingList.Contracts.CreateItem
+namespace ShoppingList.Contracts.Commands.CreateItem
 {
     public class CreateItemContract
     {
