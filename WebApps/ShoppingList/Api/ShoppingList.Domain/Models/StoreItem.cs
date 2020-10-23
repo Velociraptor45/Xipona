@@ -1,43 +1,40 @@
-﻿namespace ShoppingList.Domain.Models
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace ShoppingList.Domain.Models
 {
     public class StoreItem
     {
-        private StoreItemId id;
+        private readonly IEnumerable<StoreItemAvailability> availabilities;
 
-        public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary, float price,
+        public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            ItemCategoryId itemCategoryId, ManufacturerId manufacturerId, StoreId storeId)
+            ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
+            IEnumerable<StoreItemAvailability> availabilities)
         {
-            this.id = id;
+            Id = id;
             Name = name;
             IsDeleted = isDeleted;
             Comment = comment;
             IsTemporary = isTemporary;
-            Price = price;
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
-            StoreId = storeId;
+            this.availabilities = availabilities;
         }
 
-        public StoreItemId Id { get => id; }
+        public StoreItemId Id { get; }
         public string Name { get; }
         public bool IsDeleted { get; }
         public string Comment { get; }
         public bool IsTemporary { get; }
-        public float Price { get; }
         public QuantityType QuantityType { get; }
         public float QuantityInPacket { get; }
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
         public ItemCategoryId ItemCategoryId { get; }
         public ManufacturerId ManufacturerId { get; }
-        public StoreId StoreId { get; }
-
-        public void ChangeId(StoreItemId id)
-        {
-            this.id = id;
-        }
+        public IReadOnlyCollection<StoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
     }
 }

@@ -3,6 +3,7 @@ using ShoppingList.ApplicationServices;
 using ShoppingList.Contracts.Commands.CreateItem;
 using ShoppingList.Domain.Commands.CreateItem;
 using ShoppingList.Endpoint.Converters;
+using ShoppingList.Endpoint.Converters.Store;
 using System.Threading.Tasks;
 
 namespace ShoppingList.Endpoint.v1.Controllers
@@ -25,8 +26,8 @@ namespace ShoppingList.Endpoint.v1.Controllers
         [Route("create")]
         public async Task<IActionResult> CreateItem([FromBody] CreateItemContract createItemContract)
         {
-            var models = createItemContract.ToDomain();
-            var command = new CreateItemCommand(models);
+            var model = createItemContract.ToDomain();
+            var command = new CreateItemCommand(model);
 
             await commandDispatcher.DispatchAsync(command, default);
 

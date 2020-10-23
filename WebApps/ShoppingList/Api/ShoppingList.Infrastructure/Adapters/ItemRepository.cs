@@ -5,6 +5,7 @@ using ShoppingList.Domain.Ports;
 using ShoppingList.Infrastructure.Converters;
 using ShoppingList.Infrastructure.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -65,40 +66,56 @@ namespace ShoppingList.Infrastructure.Adapters
         private async Task<StoreItemId> StoreExistingAsync(StoreItem storeItem)
         {
             var entity = storeItem.ToEntity();
-            var itemToStoreMap = storeItem.ToItemMap();
-            var existingItemToStoreMap = await dbContext.AvailableAts.AsNoTracking()
-                .FirstOrDefaultAsync(map => map.ItemId == itemToStoreMap.ItemId
-                && map.StoreId == itemToStoreMap.StoreId);
+            List<AvailableAt> availabilities = storeItem.Availabilities
+                .Select(av => av.ToEntity(storeItem.Id))
+                .ToList();
+
+            var existingAvailabilities = await dbContext.AvailableAts.AsNoTracking()
+                .Where(map => map.ItemId == storeItem.Id.Value)
+                .ToDictionaryAsync(av => av.ItemId);
+
+            foreach (var availability in availabilities)
+            {
+                if (existingAvailabilities.TryGetValue(availability.ItemId, out var existingAvailability))
+                {
+                    availability.Id = existingAvailability.Id;
+                    dbContext.Entry(availability).State = EntityState.Modified;
+                    existingAvailabilities.Remove(availability.ItemId);
+                }
+                else
+                {
+                    dbContext.Entry(availability).State = EntityState.Added;
+                }
+            }
+
+            foreach (var existingAvailability in existingAvailabilities.Values)
+            {
+                dbContext.Entry(existingAvailability).State = EntityState.Deleted;
+            }
 
             dbContext.Entry(entity).State = EntityState.Modified;
-
-            if (existingItemToStoreMap == null)
-            {
-                dbContext.Entry(itemToStoreMap).State = EntityState.Added;
-            }
-            else
-            {
-                dbContext.Entry(itemToStoreMap).State = EntityState.Modified;
-            }
-
             await dbContext.SaveChangesAsync();
-            dbContext.Entry(entity).State = EntityState.Detached;
+
             return storeItem.Id;
         }
 
         private async Task<StoreItemId> AddNewAsync(StoreItem storeItem)
         {
             Item entity = storeItem.ToEntity();
-            AvailableAt itemToStoreMap = storeItem.ToItemMap();
-
             dbContext.Entry(entity).State = EntityState.Added;
             await dbContext.SaveChangesAsync();
-            var id = new StoreItemId(entity.Id);
-            itemToStoreMap.ItemId = id.Value;
 
-            dbContext.Entry(itemToStoreMap).State = EntityState.Added;
+            var id = new StoreItemId(entity.Id);
+            List<AvailableAt> availabilityMap = storeItem.Availabilities
+                .Select(av => av.ToEntity(id))
+                .ToList();
+
+            foreach (var availability in availabilityMap)
+            {
+                dbContext.Entry(availability).State = EntityState.Added;
+            }
+
             await dbContext.SaveChangesAsync();
-            dbContext.Entry(entity).State = EntityState.Detached;
 
             return id;
         }

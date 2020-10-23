@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ShoppingList.Contracts.Commands.SharedContracts.CreateItem;
+using System.Collections.Generic;
 
 namespace ShoppingList.Contracts.Commands.CreateItem
 {
@@ -12,6 +13,6 @@ namespace ShoppingList.Contracts.Commands.CreateItem
         public int QuantityTypeInPacket { get; set; }
         public int ItemCategoryId { get; set; }
         public int ManufacturerId { get; set; }
-        public IEnumerable<ItemInStoreContract> ItemInStores { get; set; }
+        public IEnumerable<ItemAvailabilityContract> Availabilities { get; set; }
     }
 }

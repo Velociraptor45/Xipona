@@ -1,18 +1,14 @@
 ﻿using ShoppingList.Domain.Models;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ShoppingList.Domain.Commands.CreateItem
 {
     public class CreateItemCommand : ICommand<bool>
     {
-        private readonly IEnumerable<StoreItem> storeItems;
-
-        public CreateItemCommand(IEnumerable<StoreItem> storeItems)
+        public CreateItemCommand(StoreItem storeItem)
         {
-            this.storeItems = storeItems;
+            StoreItem = storeItem;
         }
 
-        public IReadOnlyCollection<StoreItem> StoreItems => storeItems.ToList().AsReadOnly();
+        public StoreItem StoreItem { get; }
     }
 }

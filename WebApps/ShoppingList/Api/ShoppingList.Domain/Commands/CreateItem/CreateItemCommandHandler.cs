@@ -1,6 +1,5 @@
 ﻿using ShoppingList.Domain.Ports;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,16 +21,7 @@ namespace ShoppingList.Domain.Commands.CreateItem
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (!command.StoreItems.Any())
-                return true;
-
-            var id = await itemRepository.StoreAsync(command.StoreItems.First());
-
-            foreach (var storeItem in command.StoreItems.Skip(1))
-            {
-                storeItem.ChangeId(id);
-                await itemRepository.StoreAsync(storeItem);
-            }
+            await itemRepository.StoreAsync(command.StoreItem);
 
             cancellationToken.ThrowIfCancellationRequested();
 
