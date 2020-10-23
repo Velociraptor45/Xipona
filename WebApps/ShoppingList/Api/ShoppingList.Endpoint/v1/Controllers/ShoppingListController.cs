@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.ApplicationServices;
+using ShoppingList.Contracts.CreateItem;
 using ShoppingList.Domain.Commands.AddItemToShoppingList;
+using ShoppingList.Domain.Commands.CreateItem;
 using ShoppingList.Domain.Commands.RemoveItemFromShoppingList;
 using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.Models;
@@ -103,6 +105,26 @@ namespace ShoppingList.Endpoint.V1.Controllers
             catch (ShoppingListNotFoundException e)
             {
                 return BadRequest(e.Message);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [Route("items/create")]
+        public async Task<IActionResult> CreateItem([FromBody] CreateItemContract createItemContract)
+        {
+            var models = createItemContract.ToDomain();
+            var command = new CreateItemCommand(models);
+
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (Exception)
+            {
+                throw; // todo
             }
 
             return Ok();
