@@ -16,6 +16,9 @@ namespace ShoppingList.Infrastructure
 
             services.AddTransient<IShoppingListRepository, ShoppingListRepository>();
             services.AddTransient<IItemRepository, ItemRepository>();
+            services.AddTransient<IItemCategoryRepository, ItemCategoryRepository>();
+            services.AddTransient<IManufacturerRepository, ManufacturerRepository>();
+            services.AddTransient<IStoreRepository, StoreRepository>();
         }
     }
 }
