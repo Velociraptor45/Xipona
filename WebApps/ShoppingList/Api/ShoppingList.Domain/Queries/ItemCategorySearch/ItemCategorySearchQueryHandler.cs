@@ -10,17 +10,17 @@ namespace ShoppingList.Domain.Queries.ItemCategorySearch
 {
     public class ItemCategorySearchQueryHandler : IQueryHandler<ItemCategorySearchQuery, IEnumerable<ItemCategoryReadModel>>
     {
-        private readonly IShoppingListRepository shoppingListRepository;
+        private readonly IItemCategoryRepository itemCategoryRepository;
 
-        public ItemCategorySearchQueryHandler(IShoppingListRepository shoppingListRepository)
+        public ItemCategorySearchQueryHandler(IItemCategoryRepository itemCategoryRepository)
         {
-            this.shoppingListRepository = shoppingListRepository;
+            this.itemCategoryRepository = itemCategoryRepository;
         }
 
         public async Task<IEnumerable<ItemCategoryReadModel>> HandleAsync(ItemCategorySearchQuery query,
             CancellationToken cancellationToken)
         {
-            var itemCategoryModels = await shoppingListRepository.FindItemCategoriesByAsync(query.SearchInput,
+            var itemCategoryModels = await itemCategoryRepository.FindByAsync(query.SearchInput,
                 cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();

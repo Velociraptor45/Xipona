@@ -10,12 +10,17 @@ namespace ShoppingList.Domain.Commands.AddItemToShoppingList
     {
         private readonly IShoppingListRepository shoppingListRepository;
         private readonly IItemRepository itemRepository;
+        private readonly IItemCategoryRepository itemCategoryRepository;
+        private readonly IManufacturerRepository manufacturerRepository;
 
         public AddItemToShoppingListCommandHandler(IShoppingListRepository shoppingListRepository,
-            IItemRepository itemRepository)
+            IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository,
+            IManufacturerRepository manufacturerRepository)
         {
             this.shoppingListRepository = shoppingListRepository;
             this.itemRepository = itemRepository;
+            this.itemCategoryRepository = itemCategoryRepository;
+            this.manufacturerRepository = manufacturerRepository;
         }
 
         public async Task<bool> HandleAsync(AddItemToShoppingListCommand query, CancellationToken cancellationToken)
@@ -29,10 +34,10 @@ namespace ShoppingList.Domain.Commands.AddItemToShoppingList
 
             var storeItem = await itemRepository.FindByAsync(query.ShoppingListItemId.ToStoreItemId(),
                 list.Store.Id, cancellationToken);
-            var manufacturer = await shoppingListRepository
-                .FindManufacturerByAsync(storeItem.ManufacturerId, cancellationToken);
-            var itemCategory = await shoppingListRepository
-                .FindItemCategoryByAsync(storeItem.ItemCategoryId, cancellationToken);
+            var manufacturer = await manufacturerRepository
+                .FindByAsync(storeItem.ManufacturerId, cancellationToken);
+            var itemCategory = await itemCategoryRepository
+                .FindByAsync(storeItem.ItemCategoryId, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
