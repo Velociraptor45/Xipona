@@ -9,19 +9,20 @@ namespace ShoppingList.Domain.Models
     public class ShoppingList
     {
         private IEnumerable<ShoppingListItem> items;
+        private DateTime? completionDate;
 
         public ShoppingList(ShoppingListId id, Store store, IEnumerable<ShoppingListItem> items, DateTime? completionDate)
         {
             Id = id;
             Store = store;
             this.items = items;
-            CompletionDate = completionDate;
+            this.completionDate = completionDate;
         }
 
         public ShoppingListId Id { get; }
         public Store Store { get; }
         public IReadOnlyCollection<ShoppingListItem> Items { get => items.ToList().AsReadOnly(); }
-        public DateTime? CompletionDate { get; }
+        public DateTime? CompletionDate => completionDate;
 
         public void AddItem(StoreItem storeItem, ItemCategory itemCategory, Manufacturer manufacturer,
             bool isInBasket, float quantity)
@@ -54,6 +55,21 @@ namespace ShoppingList.Domain.Models
                 throw new ItemNotOnShoppingListException("Item is not on shopping list");
 
             items = itemListWithoutSpecifiedItem;
+        }
+
+        /// <summary>
+        /// Finishes the current shopping list and returns a new shopping list with all items that were not in the
+        /// basket on it
+        /// </summary>
+        /// <returns></returns>
+        public ShoppingList Finish(DateTime completionDate)
+        {
+            var itemsNotInBasket = items.Where(i => !i.IsInBasket);
+
+            items = items.Where(i => i.IsInBasket);
+            this.completionDate = completionDate;
+
+            return new ShoppingList(new ShoppingListId(0), this.Store, itemsNotInBasket, null);
         }
     }
 }

@@ -2,6 +2,7 @@
 using ShoppingList.ApplicationServices;
 using ShoppingList.Domain.Commands.AddItemToShoppingList;
 using ShoppingList.Domain.Commands.CreateShoppingList;
+using ShoppingList.Domain.Commands.FinishShoppingList;
 using ShoppingList.Domain.Commands.RemoveItemFromShoppingList;
 using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.Models;
@@ -118,6 +119,25 @@ namespace ShoppingList.Endpoint.V1.Controllers
                 await commandDispatcher.DispatchAsync(command, default);
             }
             catch (ShoppingListAlreadyExistsException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("{shoppingListId}/finish")]
+        public async Task<IActionResult> FinishList([FromRoute(Name = "shoppingListId")] int shoppingListId)
+        {
+            var command = new FinishShoppingListCommand(new ShoppingListId(shoppingListId), DateTime.Now);
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (ShoppingListNotFoundException e)
             {
                 return BadRequest(e.Message);
             }
