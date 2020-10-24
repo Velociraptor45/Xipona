@@ -3,6 +3,7 @@ using ShoppingList.ApplicationServices;
 using ShoppingList.Domain.Commands.AddItemToShoppingList;
 using ShoppingList.Domain.Commands.CreateShoppingList;
 using ShoppingList.Domain.Commands.FinishShoppingList;
+using ShoppingList.Domain.Commands.PutItemInBasket;
 using ShoppingList.Domain.Commands.RemoveItemFromShoppingList;
 using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.Models;
@@ -99,6 +100,27 @@ namespace ShoppingList.Endpoint.V1.Controllers
                 return BadRequest(e.Message);
             }
             catch (ShoppingListNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("{shoppingListId}/items/{itemId}/put-in-basket")]
+        public async Task<IActionResult> PutItemInBasket([FromRoute(Name = "shoppingListId")] int shoppingListId,
+            [FromRoute(Name = "itemId")] int itemId)
+        {
+            var command = new PutItemInBasketCommand(new ShoppingListId(shoppingListId),
+                new ShoppingListItemId(itemId));
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (ItemNotOnShoppingListException e)
             {
                 return BadRequest(e.Message);
             }

@@ -2,8 +2,10 @@
 {
     public class ShoppingListItem
     {
-        public ShoppingListItem(ShoppingListItemId id, string name, bool isDeleted, string comment, bool isTemporary, float price,
-            QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+        private bool isInBasket;
+
+        public ShoppingListItem(ShoppingListItemId id, string name, bool isDeleted, string comment, bool isTemporary,
+            float price, QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             ItemCategory itemCategory, Manufacturer manufacturer, bool isInBasket, float quantity)
         {
             Id = id;
@@ -17,7 +19,7 @@
             QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
-            IsInBasket = isInBasket;
+            this.isInBasket = isInBasket;
             Quantity = quantity;
         }
 
@@ -32,7 +34,11 @@
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
         public ItemCategory ItemCategory { get; }
         public Manufacturer Manufacturer { get; }
-        public bool IsInBasket { get; }
-        public float Quantity { get; }
+        public bool IsInBasket => isInBasket; public float Quantity { get; }
+
+        public void PutInBasket()
+        {
+            isInBasket = true;
+        }
     }
 }
