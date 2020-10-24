@@ -25,23 +25,6 @@ namespace ShoppingList.Infrastructure.Adapters
 
         #region public methods
 
-        public async Task CreateNew(StoreId storeId, CancellationToken cancellationToken)
-        {
-            if (storeId == null)
-                throw new ArgumentNullException(nameof(storeId));
-
-            var entity = new Entities.ShoppingList()
-            {
-                StoreId = storeId.Value,
-                CompletionDate = null
-            };
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            dbContext.Entry(entity).State = EntityState.Added;
-            await dbContext.SaveChangesAsync();
-        }
-
         public async Task StoreAsync(Models.ShoppingList shoppingList, CancellationToken cancellationToken)
         {
             if (shoppingList == null)
