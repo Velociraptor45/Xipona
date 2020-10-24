@@ -50,6 +50,7 @@ namespace ShoppingList.Infrastructure.Adapters
             if (shoppingList.Id.Value <= 0)
             {
                 await StoreAsNewListAsync(shoppingList, cancellationToken);
+                return;
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -151,9 +152,10 @@ namespace ShoppingList.Infrastructure.Adapters
             foreach (var map in shoppingListEntityToStore.ItemsOnList)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                if (onListMappings.ContainsKey(map.ItemId))
+                if (onListMappings.TryGetValue(map.ItemId, out var existingMapping))
                 {
                     // mapping was modified
+                    map.Id = existingMapping.Id;
                     dbContext.Entry(map).State = EntityState.Modified;
                     onListMappings.Remove(map.ItemId);
                 }
