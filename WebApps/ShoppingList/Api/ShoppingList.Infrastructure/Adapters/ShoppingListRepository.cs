@@ -25,6 +25,23 @@ namespace ShoppingList.Infrastructure.Adapters
 
         #region public methods
 
+        public async Task CreateNew(StoreId storeId, CancellationToken cancellationToken)
+        {
+            if (storeId == null)
+                throw new ArgumentNullException(nameof(storeId));
+
+            var entity = new Entities.ShoppingList()
+            {
+                StoreId = storeId.Value,
+                CompletionDate = null
+            };
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            dbContext.Entry(entity).State = EntityState.Added;
+            await dbContext.SaveChangesAsync();
+        }
+
         public async Task StoreAsync(Models.ShoppingList shoppingList, CancellationToken cancellationToken)
         {
             if (shoppingList == null)
@@ -107,6 +124,17 @@ namespace ShoppingList.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             return storeEntities.Select(store => store.ToDomain());
+        }
+
+        public async Task<bool> ActiveShoppingListExistsForAsync(StoreId storeId, CancellationToken cancellationToken)
+        {
+            var list = await dbContext.ShoppingLists.AsNoTracking()
+                .FirstOrDefaultAsync(list => list.StoreId == storeId.Value
+                    && list.CompletionDate == null);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return list != null;
         }
 
         #endregion public methods

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.ApplicationServices;
 using ShoppingList.Domain.Commands.AddItemToShoppingList;
+using ShoppingList.Domain.Commands.CreateShoppingList;
 using ShoppingList.Domain.Commands.RemoveItemFromShoppingList;
 using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.Models;
@@ -97,6 +98,26 @@ namespace ShoppingList.Endpoint.V1.Controllers
                 return BadRequest(e.Message);
             }
             catch (ShoppingListNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [Route("create/{storeId}")]
+        public async Task<IActionResult> CreatList([FromRoute(Name = "storeId")] int storeId)
+        {
+            var command = new CreateShoppingListCommand(new StoreId(storeId));
+
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (ShoppingListAlreadyExistsException e)
             {
                 return BadRequest(e.Message);
             }

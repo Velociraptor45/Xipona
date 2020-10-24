@@ -23,7 +23,7 @@ namespace ShoppingList.Endpoint.v1.Controllers
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("/search/{search-input}")]
+        [Route("search/{search-input}")]
         public async Task<IActionResult> GetManufacturerSearchResults([FromRoute(Name = "search-input")] string searchInput)
         {
             searchInput = searchInput.Trim();
