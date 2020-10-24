@@ -4,6 +4,7 @@ using ShoppingList.Domain.Commands.AddItemToShoppingList;
 using ShoppingList.Domain.Commands.CreateShoppingList;
 using ShoppingList.Domain.Commands.FinishShoppingList;
 using ShoppingList.Domain.Commands.PutItemInBasket;
+using ShoppingList.Domain.Commands.RemoveItemFromBasket;
 using ShoppingList.Domain.Commands.RemoveItemFromShoppingList;
 using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.Models;
@@ -115,6 +116,27 @@ namespace ShoppingList.Endpoint.V1.Controllers
             [FromRoute(Name = "itemId")] int itemId)
         {
             var command = new PutItemInBasketCommand(new ShoppingListId(shoppingListId),
+                new ShoppingListItemId(itemId));
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (ItemNotOnShoppingListException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("{shoppingListId}/items/{itemId}/remove-from-basket")]
+        public async Task<IActionResult> RemoveItemFromBasket([FromRoute(Name = "shoppingListId")] int shoppingListId,
+            [FromRoute(Name = "itemId")] int itemId)
+        {
+            var command = new RemoveItemFromBasketCommand(new ShoppingListId(shoppingListId),
                 new ShoppingListItemId(itemId));
             try
             {

@@ -40,5 +40,10 @@
         {
             isInBasket = true;
         }
+
+        public void RemoveFromBasket()
+        {
+            isInBasket = false;
+        }
     }
 }
