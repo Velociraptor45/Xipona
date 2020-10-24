@@ -95,6 +95,25 @@ namespace ShoppingList.Domain.Models
             items = updatedList;
         }
 
+        public void ChangeItemQuantity(ShoppingListItemId itemId, float quantity)
+        {
+            if (itemId == null)
+                throw new ArgumentNullException(nameof(itemId));
+
+            var item = items.FirstOrDefault(item => item.Id == itemId);
+            if (item == null)
+                throw new ItemNotOnShoppingListException(Id, itemId);
+
+            item.ChangeQuantity(quantity);
+
+            var updatedList = items
+                .Where(item => item.Id != itemId)
+                .ToList();
+            updatedList.Add(item);
+
+            items = updatedList;
+        }
+
         /// <summary>
         /// Finishes the current shopping list and returns a new shopping list with all items that were not in the
         /// basket on it

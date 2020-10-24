@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.ApplicationServices;
 using ShoppingList.Domain.Commands.AddItemToShoppingList;
+using ShoppingList.Domain.Commands.ChangeItemQuantityOnShoppingList;
 using ShoppingList.Domain.Commands.CreateShoppingList;
 using ShoppingList.Domain.Commands.FinishShoppingList;
 using ShoppingList.Domain.Commands.PutItemInBasket;
@@ -152,7 +153,28 @@ namespace ShoppingList.Endpoint.V1.Controllers
 
         [HttpPost]
         [ProducesResponseType(200)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(400)]
+        [Route("{shoppingListId}/items/{itemId}/change-quantity/{quantity}")]
+        public async Task<IActionResult> RemoveItemFromBasket([FromRoute(Name = "shoppingListId")] int shoppingListId,
+            [FromRoute(Name = "itemId")] int itemId, [FromRoute(Name = "quantity")] float quantity)
+        {
+            var command = new ChangeItemQuantityOnShoppingListCommand(new ShoppingListId(shoppingListId),
+                new ShoppingListItemId(itemId), quantity);
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (ItemNotOnShoppingListException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [Route("create/{storeId}")]
         public async Task<IActionResult> CreatList([FromRoute(Name = "storeId")] int storeId)
         {
