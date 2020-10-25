@@ -46,9 +46,9 @@ namespace ShoppingList.Endpoint.v1.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [Route("update")]
-        public async Task<IActionResult> UpdateItem([FromBody] UpdateItemContract contract)
+        public async Task<IActionResult> UpdateItem([FromBody] UpdateItemContract updateItemContract)
         {
-            var model = contract.ToDomain();
+            var model = updateItemContract.ToDomain();
             var command = new UpdateItemCommand(model);
 
             try

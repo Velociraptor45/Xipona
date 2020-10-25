@@ -155,7 +155,7 @@ namespace ShoppingList.Endpoint.V1.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [Route("{shoppingListId}/items/{itemId}/change-quantity/{quantity}")]
-        public async Task<IActionResult> RemoveItemFromBasket([FromRoute(Name = "shoppingListId")] int shoppingListId,
+        public async Task<IActionResult> ChangeItemQuantityOnShoppingList([FromRoute(Name = "shoppingListId")] int shoppingListId,
             [FromRoute(Name = "itemId")] int itemId, [FromRoute(Name = "quantity")] float quantity)
         {
             var command = new ChangeItemQuantityOnShoppingListCommand(new ShoppingListId(shoppingListId),
