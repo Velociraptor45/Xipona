@@ -4,7 +4,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Frontend
+namespace ShoppingList.Frontend.WebApp
 {
     public class Program
     {
