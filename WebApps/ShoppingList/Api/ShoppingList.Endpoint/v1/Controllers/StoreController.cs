@@ -41,9 +41,9 @@ namespace ShoppingList.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [Route("create")]
-        public async Task<IActionResult> CreateStore([FromBody] CreateStoreContract contract)
+        public async Task<IActionResult> CreateStore([FromBody] CreateStoreContract createStoreContract)
         {
-            var model = contract.ToDomain();
+            var model = createStoreContract.ToDomain();
             var command = new CreateStoreCommand(model);
 
             await commandDispatcher.DispatchAsync(command, default);
@@ -55,9 +55,9 @@ namespace ShoppingList.Endpoint.v1.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [Route("update")]
-        public async Task<IActionResult> UpdateStore([FromBody] UpdateStoreContract contract)
+        public async Task<IActionResult> UpdateStore([FromBody] UpdateStoreContract updateStoreContract)
         {
-            var model = contract.ToDomain();
+            var model = updateStoreContract.ToDomain();
             var command = new UpdateStoreCommand(model);
 
             try

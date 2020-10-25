@@ -2,8 +2,11 @@
 using Newtonsoft.Json.Serialization;
 using RestEase;
 using ShoppingList.Contracts.Commands.CreateItem;
+using ShoppingList.Contracts.Commands.CreateStore;
 using ShoppingList.Contracts.Commands.UpdateItem;
+using ShoppingList.Contracts.Commands.UpdateStore;
 using ShoppingList.Contracts.Queries;
+using ShoppingList.Contracts.Queries.AllActiveStores;
 using ShoppingList.Contracts.SharedContracts;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -90,5 +93,42 @@ namespace ShoppingList.Client
         }
 
         #endregion ItemController
+
+        #region StoreController
+
+        public async Task<IEnumerable<ActiveStoreContract>> GetAllActiveStores()
+        {
+            return await apiClient.GetAllActiveStores();
+        }
+
+        public async Task CreateStore(CreateStoreContract createStoreContract)
+        {
+            await apiClient.CreateStore(createStoreContract);
+        }
+
+        public async Task UpdateStore(UpdateStoreContract updateStoreContract)
+        {
+            await apiClient.UpdateStore(updateStoreContract);
+        }
+
+        #endregion StoreController
+
+        #region ManufacturerController
+
+        public async Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResults(string searchInput)
+        {
+            return await apiClient.GetManufacturerSearchResults(searchInput);
+        }
+
+        #endregion ManufacturerController
+
+        #region ItemCategoryController
+
+        public async Task<IEnumerable<ManufacturerContract>> GetItemCategorySearchResults(string searchInput)
+        {
+            return await apiClient.GetItemCategorySearchResults(searchInput);
+        }
+
+        #endregion ItemCategoryController
     }
 }

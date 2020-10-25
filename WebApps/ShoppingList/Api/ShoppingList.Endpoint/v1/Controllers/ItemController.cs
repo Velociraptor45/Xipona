@@ -65,8 +65,8 @@ namespace ShoppingList.Endpoint.v1.Controllers
 
         [HttpGet]
         [ProducesResponseType(200)]
-        [Route("search/{search-input}/{storeId}")]
-        public async Task<IActionResult> GetItemSearchResults([FromRoute(Name = "search-input")] string searchInput,
+        [Route("search/{searchInput}/{storeId}")]
+        public async Task<IActionResult> GetItemSearchResults([FromRoute(Name = "searchInput")] string searchInput,
             [FromRoute(Name = "storeId")] int storeId)
         {
             var query = new ItemSearchQuery(searchInput, new StoreId(storeId));
