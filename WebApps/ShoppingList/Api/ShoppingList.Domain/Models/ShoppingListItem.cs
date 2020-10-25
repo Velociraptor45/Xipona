@@ -1,0 +1,56 @@
+﻿namespace ShoppingList.Domain.Models
+{
+    public class ShoppingListItem
+    {
+        private bool isInBasket;
+        private float quantity;
+
+        public ShoppingListItem(ShoppingListItemId id, string name, bool isDeleted, string comment, bool isTemporary,
+            float price, QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+            ItemCategory itemCategory, Manufacturer manufacturer, bool isInBasket, float quantity)
+        {
+            Id = id;
+            Name = name;
+            IsDeleted = isDeleted;
+            Comment = comment;
+            IsTemporary = isTemporary;
+            Price = price;
+            QuantityType = quantityType;
+            QuantityInPacket = quantityInPacket;
+            QuantityTypeInPacket = quantityTypeInPacket;
+            ItemCategory = itemCategory;
+            Manufacturer = manufacturer;
+            this.isInBasket = isInBasket;
+            this.quantity = quantity;
+        }
+
+        public ShoppingListItemId Id { get; }
+        public string Name { get; }
+        public bool IsDeleted { get; }
+        public string Comment { get; }
+        public bool IsTemporary { get; }
+        public float Price { get; }
+        public QuantityType QuantityType { get; }
+        public float QuantityInPacket { get; }
+        public QuantityTypeInPacket QuantityTypeInPacket { get; }
+        public ItemCategory ItemCategory { get; }
+        public Manufacturer Manufacturer { get; }
+        public bool IsInBasket => isInBasket;
+        public float Quantity => quantity;
+
+        public void PutInBasket()
+        {
+            isInBasket = true;
+        }
+
+        public void RemoveFromBasket()
+        {
+            isInBasket = false;
+        }
+
+        public void ChangeQuantity(float quantity)
+        {
+            this.quantity = quantity;
+        }
+    }
+}
