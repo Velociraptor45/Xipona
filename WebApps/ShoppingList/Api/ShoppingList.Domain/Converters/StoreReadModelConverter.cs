@@ -5,7 +5,7 @@ namespace ShoppingList.Domain.Converters
 {
     public static class StoreReadModelConverter
     {
-        public static StoreReadModel ToReadModel(this Store model)
+        public static StoreReadModel ToStoreReadModel(this Store model)
         {
             return new StoreReadModel(model.Id, model.Name, model.IsDeleted);
         }

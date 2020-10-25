@@ -5,6 +5,8 @@ using ShoppingList.Domain.Ports;
 using ShoppingList.Infrastructure.Converters;
 using ShoppingList.Infrastructure.Entities;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,6 +21,17 @@ namespace ShoppingList.Infrastructure.Adapters
         public StoreRepository(ShoppingContext dbContext)
         {
             this.dbContext = dbContext;
+        }
+
+        public async Task<IEnumerable<Models.Store>> FindActiveStoresAsync(CancellationToken cancellationToken)
+        {
+            var storeEntities = await dbContext.Stores.AsNoTracking()
+                .Where(store => !store.Deleted)
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return storeEntities.Select(store => store.ToDomain());
         }
 
         public async Task<Models.Store> FindByAsync(StoreId id, CancellationToken cancellationToken)

@@ -7,7 +7,7 @@ namespace ShoppingList.Domain.Converters
     {
         public static ShoppingListReadModel ToReadModel(this Models.ShoppingList model)
         {
-            return new ShoppingListReadModel(model.Id, model.CompletionDate, model.Store.ToReadModel(),
+            return new ShoppingListReadModel(model.Id, model.CompletionDate, model.Store.ToStoreReadModel(),
                 model.Items.Select(item => item.ToReadModel()));
         }
     }

@@ -1,18 +1,18 @@
-﻿using Models = ShoppingList.Domain.Models;
+﻿using ShoppingList.Domain.Models;
 
 namespace ShoppingList.Infrastructure.Converters
 {
     public static class StoreConverter
     {
-        public static Models.Store ToDomain(this Entities.Store entity)
+        public static Store ToDomain(this Entities.Store entity)
         {
-            return new Models.Store(
-                new Models.StoreId(entity.Id),
+            return new Store(
+                new StoreId(entity.Id),
                 entity.Name,
                 entity.Deleted);
         }
 
-        public static Entities.Store ToEntity(this Models.Store model)
+        public static Entities.Store ToEntity(this Store model)
         {
             return new Entities.Store()
             {

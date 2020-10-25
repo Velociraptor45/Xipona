@@ -9,6 +9,7 @@ namespace ShoppingList.Domain.Ports
     {
         Task<StoreItem> FindByAsync(StoreItemId storeItemId, StoreId storeId, CancellationToken cancellationToken);
         Task<IEnumerable<StoreItem>> FindByAsync(string searchInput, StoreId storeId, CancellationToken cancellationToken);
+        Task<IEnumerable<StoreItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken);
         Task<bool> IsValidIdAsync(StoreItemId id, CancellationToken cancellationToken);
 
         Task<StoreItemId> StoreAsync(StoreItem storeItem, CancellationToken cancellationToken);

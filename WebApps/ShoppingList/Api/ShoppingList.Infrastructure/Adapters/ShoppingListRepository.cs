@@ -99,17 +99,6 @@ namespace ShoppingList.Infrastructure.Adapters
             return list?.ToDomain();
         }
 
-        public async Task<IEnumerable<Models.Store>> FindActiveStoresAsync(CancellationToken cancellationToken)
-        {
-            var storeEntities = await dbContext.Stores.AsNoTracking()
-                .Where(store => !store.Deleted)
-                .ToListAsync();
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            return storeEntities.Select(store => store.ToDomain());
-        }
-
         public async Task<bool> ActiveShoppingListExistsForAsync(StoreId storeId, CancellationToken cancellationToken)
         {
             var list = await dbContext.ShoppingLists.AsNoTracking()

@@ -74,6 +74,22 @@ namespace ShoppingList.Infrastructure.Adapters
             return entities.Select(e => e.ToStoreItemDomain());
         }
 
+        public async Task<IEnumerable<StoreItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
+        {
+            if (storeId == null)
+                throw new ArgumentNullException(nameof(storeId));
+
+            var entities = await dbContext.Items.AsNoTracking()
+                .Include(item => item.ItemCategory)
+                .Include(item => item.Manufacturer)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Store)
+                .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId.Value) != null)
+                .ToListAsync();
+
+            return entities.Select(e => e.ToStoreItemDomain());
+        }
+
         public async Task<bool> IsValidIdAsync(StoreItemId id, CancellationToken cancellationToken)
         {
             if (id == null)
