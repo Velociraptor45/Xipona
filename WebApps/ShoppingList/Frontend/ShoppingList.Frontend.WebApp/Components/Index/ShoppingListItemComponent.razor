@@ -1,7 +1,7 @@
 ﻿@using ShoppingList.Frontend.Models;
 
-<li class="list-style-non py-2 @bgColorCss white">
-    <div @onclick="OnItemClicked" class="d-flex">
+<li class="list-style-non py-2 @bgColorCss white" @onclick="OnItemClickedAsync">
+    <div class="d-flex">
         <div class="m-0">
             <span>@Item.Quantity</span><span>g</span>
         </div>
@@ -41,8 +41,10 @@
         bgColorCss = Item.IsInBasket ? "green-bg" : "red-bg";
     }
 
-    private void OnItemClicked()
+    private async void OnItemClickedAsync()
     {
-        ItemBasketStatusChangedCallback.InvokeAsync(Item);
+        await ItemBasketStatusChangedCallback.InvokeAsync(Item);
+        UpdateBackgroundColor();
+        StateHasChanged();
     }
 }
