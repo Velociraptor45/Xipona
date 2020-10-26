@@ -1,4 +1,4 @@
-﻿using ShoppingList.Contracts.SharedContracts;
+﻿using ShoppingList.Api.Contracts.SharedContracts;
 using ShoppingList.Frontend.Models;
 
 namespace ShoppingList.Frontend.WebApp.Extensions.Contracts

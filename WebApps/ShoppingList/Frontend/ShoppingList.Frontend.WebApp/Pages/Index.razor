@@ -1,6 +1,9 @@
 ﻿@page "/"
+@inject ShoppingList.Api.Client.IShoppingListApiClient apiClient;
+@using ShoppingList.Frontend.WebApp.Extensions.Contracts;
 @using ShoppingList.Frontend.WebApp.Components.Index;
 @using ShoppingList.Frontend.Models;
+@using ShoppingList.Api.Client;
 
 <div>
     <!--search bar-->
@@ -23,21 +26,41 @@
 </div>
 
 @code{
-    string searchInput = "";
-    List<ShoppingListItem> items;
+    private ShoppingListRoot shoppingList;
 
-    protected override void OnInitialized()
+    string searchInput = "";
+
+    List<ShoppingListItem> items = new List<ShoppingListItem>();
+
+    protected override async Task OnInitializedAsync()
     {
+        //await Task.Delay(10000);
         base.OnInitialized();
-        items = new List<ShoppingListItem>()
-{
-            new ShoppingListItem(1, "Item1", false, 2.55f, 2f, "Cat1", "Man1", true, 3),
-            new ShoppingListItem(2, "Item2", false, 5.55f, 2f, "Cat2", "Man2", false, 1)
-        };
+        await LoadShoppingList();
+
+        //items = new List<ShoppingListItem>()
+        //{
+        //    new ShoppingListItem(1, "Item1", false, 2.55f, 2f, "Cat1", "Man1", true, 3),
+        //    new ShoppingListItem(2, "Item2", false, 5.55f, 2f, "Cat2", "Man2", false, 1)
+        //};
     }
 
-    private void OnItemBasketStatusChanged(ShoppingListItem item)
+    private async Task LoadShoppingList()
     {
-        // todo
+        shoppingList = (await apiClient.GetActiveShoppingListByStoreId(1))
+            .ToModel();
+    }
+
+    private async void OnItemBasketStatusChanged(ShoppingListItem item)
+    {
+        if (item.IsInBasket)
+        {
+            await apiClient.RemoveItemFromBasket(shoppingList.Id, item.Id);
+        }
+        else
+        {
+            await apiClient.PutItemInBasket(shoppingList.Id, item.Id);
+        }
+        await LoadShoppingList();
     }
 }
