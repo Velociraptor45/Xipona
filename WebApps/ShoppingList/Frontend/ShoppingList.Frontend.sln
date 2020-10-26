@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Frontend.Models", "ShoppingList.Frontend.Models\ShoppingList.Frontend.Models.csproj", "{2349EA1E-E53C-426F-889D-90148AF86FF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.Models", "ShoppingList.Frontend.Models\ShoppingList.Frontend.Models.csproj", "{2349EA1E-E53C-426F-889D-90148AF86FF9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.WebApp", "ShoppingList.Frontend.WebApp\ShoppingList.Frontend.WebApp.csproj", "{21E57D9E-231D-4899-B65A-95F1DACD8423}"
 EndProject

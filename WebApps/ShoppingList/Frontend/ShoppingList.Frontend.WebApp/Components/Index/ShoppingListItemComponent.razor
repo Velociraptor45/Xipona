@@ -1,0 +1,34 @@
+﻿@using ShoppingList.Frontend.Models;
+
+<li class="list-style-non py-2">
+    <div @onclick="OnItemClicked" class="d-flex">
+        <div class="m-0">
+            <span>@Item.Quantity</span><span>g</span>
+        </div>
+        <div class="m-0 pl-2">
+            @Item.Name
+        </div>
+        @if (!Item.IsTemporary)
+        {
+            <div class="px-2 m-0 align-self-center ml-auto">
+                <span>@(Item.Quantity * Item.Price)</span>
+            </div>
+        }
+    </div>
+</li>
+
+@code{
+    [Parameter]
+    public ShoppingListItem Item { get; set; }
+
+    [Parameter]
+    public EventCallback<ShoppingListItem> ItemBasketStatusChangedCallback { get; set; }
+
+    [Parameter]
+    public bool IsInEditMode { get; set; }
+
+    private void OnItemClicked()
+    {
+        ItemBasketStatusChangedCallback.InvokeAsync(Item);
+    }
+}

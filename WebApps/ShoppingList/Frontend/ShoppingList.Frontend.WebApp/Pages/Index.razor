@@ -1,1 +1,40 @@
 ﻿@page "/"
+@using ShoppingList.Frontend.WebApp.Components.Index;
+@using ShoppingList.Frontend.Models;
+
+<div>
+    <!--search bar-->
+    <div>
+        <Input Placeholder="search ..." @bind-Value="@searchInput">
+        <Prefix>
+            <Icon Type="search" />
+        </Prefix>
+        </Input>
+    </div>
+    @foreach (var item in items)
+    {
+        <ShoppingListItemComponent Item="@item"
+                                   ItemBasketStatusChangedCallback="@OnItemBasketStatusChanged"
+                                   IsInEditMode="false"></ShoppingListItemComponent>
+    }
+</div>
+
+@code{
+    string searchInput = "";
+    List<ShoppingListItem> items;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        items = new List<ShoppingListItem>()
+{
+            new ShoppingListItem(1, "Item1", false, 2.55f, 2f, "Cat1", "Man1", true, 3),
+            new ShoppingListItem(2, "Item2", false, 5.55f, 2f, "Cat2", "Man2", false, 1)
+        };
+    }
+
+    private void OnItemBasketStatusChanged(ShoppingListItem item)
+    {
+        // todo
+    }
+}
