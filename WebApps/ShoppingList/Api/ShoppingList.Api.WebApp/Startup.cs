@@ -27,6 +27,14 @@ namespace ShoppingList.Api.WebApp
             services.AddEndpointControllers();
             services.AddSwaggerGen();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("temporary",
+                builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); //todo
+                });
+            });
             services.AddInfrastructure(Configuration.GetConnectionString("Shopping-Database"));
             services.AddApplicationServices();
         }
@@ -45,9 +53,9 @@ namespace ShoppingList.Api.WebApp
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShoppingList API v1");
             });
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
+            app.UseCors("temporary");
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
