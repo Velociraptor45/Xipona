@@ -23,7 +23,7 @@
         public float QuantityInPacket { get; }
         public string ItemCategory { get; }
         public string Manufacturer { get; }
-        public bool IsInBasket { get; }
-        public float Quantity { get; }
+        public bool IsInBasket { get; set; }
+        public float Quantity { get; set; }
     }
 }

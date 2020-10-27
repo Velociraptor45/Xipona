@@ -1,31 +1,52 @@
 ﻿@using ShoppingList.Frontend.Models;
 
 <li class="list-style-non py-2 mb-1 @bgColorCss white" @onclick="OnItemClickedAsync">
-    <div class="d-flex">
-        <div class="m-0">
-            <span>@Item.Quantity</span><span>g</span>
-        </div>
-        <div class="m-0 pl-2">
-            @Item.Name
-        </div>
-        @if (!Item.IsTemporary)
-        {
-            <div class="px-2 m-0 align-self-center ml-auto">
-                <span>@(Item.Quantity * Item.Price)</span>
+    @if (IsInEditMode)
+    {
+        <div class="d-flex flex-column">
+            <div>
+                <!-- upper row -->
+                <div class="h3">@Item.Name</div>
             </div>
-        }
-    </div>
+            <div class="d-flex">
+                <!-- lower row -->
+                <div class="d-flex mr-3">
+                    <AntDesign.InputNumber Value="@Item.Quantity" Min="1f" ValueChanged="@(async (float d) => await OnQuantityInputValueChanged(d))"></AntDesign.InputNumber>
+                    <span>g</span>
+                </div>
+                <div>
+                    <Button Class="green">+</Button>
+                    <Button Class="red">-</Button>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex">
+            <div class="m-0">
+                <span>@Item.Quantity</span><span>g</span>
+            </div>
+            <div class="m-0 pl-2">
+                @Item.Name
+            </div>
+            @if (!Item.IsTemporary)
+            {
+                <div class="px-2 m-0 align-self-center ml-auto">
+                    <span>@(Item.Quantity * Item.Price)</span>
+                </div>
+            }
+        </div>
+    }
 </li>
 
 @code{
-    [Parameter]
-    public ShoppingListItem Item { get; set; }
+    [Parameter] public ShoppingListItem Item { get; set; }
 
-    [Parameter]
-    public EventCallback<ShoppingListItem> ItemBasketStatusChangedCallback { get; set; }
+    [Parameter] public EventCallback<ShoppingListItem> ItemBasketStatusChangedCallback { get; set; }
+    [Parameter] public EventCallback<ShoppingListItem> ItemQuantityChangedCallback { get; set; }
 
-    [Parameter]
-    public bool IsInEditMode { get; set; }
+    [Parameter] public bool IsInEditMode { get; set; }
 
     private string bgColorCss;
 
@@ -43,8 +64,17 @@
 
     private async void OnItemClickedAsync()
     {
+        if (IsInEditMode)
+            return;
+
         await ItemBasketStatusChangedCallback.InvokeAsync(Item);
         UpdateBackgroundColor();
         StateHasChanged();
+    }
+
+    private async Task OnQuantityInputValueChanged(float quantity)
+    {
+        Item.Quantity = quantity;
+        await ItemQuantityChangedCallback.InvokeAsync(Item);
     }
 }

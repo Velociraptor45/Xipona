@@ -14,7 +14,7 @@
                 <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
             }
         </Select>
-        <Button class="mr-1 d-flex align-items-center">
+        <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked">
             <Icon Type="edit" />
         </Button>
     </div>
@@ -30,7 +30,8 @@
     {
         <ShoppingListItemComponent Item="@item"
                                    ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
-                                   IsInEditMode="false"></ShoppingListItemComponent>
+                                   ItemQuantityChangedCallback="OnItemQuantityChangedAsync"
+                                   IsInEditMode="isInEditMode"></ShoppingListItemComponent>
     }
     <div class="d-flex justify-content-end">
         <Button Type="primary" class="mr-2">Finish List</Button>
@@ -40,19 +41,19 @@
 @code{
     private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListItem>());
     private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>());
-    private Select select;
-    string searchInput = "";
+
+    private string searchInput = "";
+    private bool isInEditMode = false;
 
     List<ShoppingListItem> items = new List<ShoppingListItem>();
 
     protected override async Task OnInitializedAsync()
     {
         //await Task.Delay(4000);
-        base.OnInitialized();
+        await base.OnInitializedAsync();
         await LoadAvailableStoresAsync();
         Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
         StateHasChanged();
-        //await LoadShoppingListAsync();
     }
 
     private async Task LoadAvailableStoresAsync()
@@ -80,6 +81,12 @@
         await LoadShoppingListAsync();
     }
 
+    private void OnEditModeButtonClicked()
+    {
+        isInEditMode = !isInEditMode;
+        StateHasChanged();
+    }
+
     private async Task OnItemBasketStatusChangedAsync(ShoppingListItem item)
     {
         if (item.IsInBasket)
@@ -90,6 +97,12 @@
         {
             await apiClient.PutItemInBasket(shoppingList.Id, item.Id);
         }
+        await LoadShoppingListAsync();
+    }
+
+    private async Task OnItemQuantityChangedAsync(ShoppingListItem item)
+    {
+        await apiClient.ChangeItemQuantityOnShoppingList(shoppingList.Id, item.Id, item.Quantity);
         await LoadShoppingListAsync();
     }
 }
