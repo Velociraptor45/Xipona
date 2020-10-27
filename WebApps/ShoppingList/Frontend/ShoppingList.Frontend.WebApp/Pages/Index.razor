@@ -3,11 +3,16 @@
 @using ShoppingList.Frontend.WebApp.Extensions.Contracts;
 @using ShoppingList.Frontend.WebApp.Components.Index;
 @using ShoppingList.Frontend.Models;
-@using ShoppingList.Api.Client;
 
 <div>
+    <div class="mb-1 d-flex justify-content-end align-items-center">
+        <div class="pr-2">@shoppingList?.Store?.Name</div>
+        <Button class="mr-1 d-flex align-items-center">
+            <Icon Type="edit" />
+        </Button>
+    </div>
     <!--search bar-->
-    <div>
+    <div class="mb-2">
         <Input Placeholder="search ..." @bind-Value="@searchInput">
         <Prefix>
             <Icon Type="search" />
