@@ -19,12 +19,17 @@
         </Button>
     </div>
     <!--search bar-->
-    <div class="mb-2">
-        <Input Placeholder="search ..." @bind-Value="@searchInput">
+    <div class="mb-2 d-flex">
+        <Input Placeholder="search ..." @bind-Value="@searchInput" @onfocusin="OnSearchBarFocusIn"
+               Class="@(isSearchBarFocused ? "ml-1 mr-2" : "mx-1")">
         <Prefix>
             <Icon Type="search" />
         </Prefix>
         </Input>
+        @if (isSearchBarFocused)
+        {
+            <Button Class="mr-1" OnClick="OnSearchBarCancleButtonClicked">Cancle</Button>
+        }
     </div>
     @foreach (var item in shoppingList.Items)
     {
@@ -43,6 +48,7 @@
     private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>());
 
     private string searchInput = "";
+    private bool isSearchBarFocused = false;
     private bool isInEditMode = false;
 
     List<ShoppingListItem> items = new List<ShoppingListItem>();
@@ -85,6 +91,16 @@
     {
         isInEditMode = !isInEditMode;
         StateHasChanged();
+    }
+
+    private void OnSearchBarFocusIn()
+    {
+        isSearchBarFocused = true;
+    }
+
+    private void OnSearchBarCancleButtonClicked()
+    {
+        isSearchBarFocused = false;
     }
 
     private async Task OnItemBasketStatusChangedAsync(ShoppingListItem item)
