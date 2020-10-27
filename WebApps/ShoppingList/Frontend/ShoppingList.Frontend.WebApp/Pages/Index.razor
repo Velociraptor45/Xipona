@@ -3,10 +3,17 @@
 @using ShoppingList.Frontend.WebApp.Extensions.Contracts;
 @using ShoppingList.Frontend.WebApp.Components.Index;
 @using ShoppingList.Frontend.Models;
+@using ShoppingList.Frontend.Models.Index;
+@using OneOf;
 
 <div>
     <div class="mb-1 d-flex justify-content-end align-items-center">
-        <div class="pr-2">@shoppingList?.Store?.Name</div>
+        <Select SelectedValues=@availableStores?.SelectedStore?.Name Class="min-w-100" OnChange="@OnSelectedStoreChanged">
+            @foreach (var store in availableStores.Stores)
+            {
+                <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
+            }
+        </Select>
         <Button class="mr-1 d-flex align-items-center">
             <Icon Type="edit" />
         </Button>
@@ -22,7 +29,7 @@
     @foreach (var item in shoppingList.Items)
     {
         <ShoppingListItemComponent Item="@item"
-                                   ItemBasketStatusChangedCallback="@OnItemBasketStatusChanged"
+                                   ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
                                    IsInEditMode="false"></ShoppingListItemComponent>
     }
     <div class="d-flex justify-content-end">
@@ -32,7 +39,8 @@
 
 @code{
     private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListItem>());
-
+    private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>());
+    private Select select;
     string searchInput = "";
 
     List<ShoppingListItem> items = new List<ShoppingListItem>();
@@ -41,22 +49,38 @@
     {
         //await Task.Delay(4000);
         base.OnInitialized();
-        await LoadShoppingList();
-
-        //items = new List<ShoppingListItem>()
-        //{
-        //    new ShoppingListItem(1, "Item1", false, 2.55f, 2f, "Cat1", "Man1", true, 3),
-        //    new ShoppingListItem(2, "Item2", false, 5.55f, 2f, "Cat2", "Man2", false, 1)
-        //};
+        await LoadAvailableStoresAsync();
+        Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
+        StateHasChanged();
+        //await LoadShoppingListAsync();
     }
 
-    private async Task LoadShoppingList()
+    private async Task LoadAvailableStoresAsync()
     {
-        shoppingList = (await apiClient.GetActiveShoppingListByStoreId(1))
-            .ToModel();
+        var stores = (await apiClient.GetAllActiveStores())
+            .Select(store => store.ToModel())
+            .ToList();
+
+        availableStores = new AvailableStores(stores);
     }
 
-    private async Task OnItemBasketStatusChanged(ShoppingListItem item)
+    private async Task LoadShoppingListAsync()
+    {
+        shoppingList = (await apiClient.GetActiveShoppingListByStoreId(availableStores.SelectedStore.Id))
+            .ToModel();
+        StateHasChanged();
+    }
+
+    private async void OnSelectedStoreChanged(
+        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
+        OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    {
+        int storeId = int.Parse(value.AsT0);
+        availableStores.SetSelectedStore(storeId);
+        await LoadShoppingListAsync();
+    }
+
+    private async Task OnItemBasketStatusChangedAsync(ShoppingListItem item)
     {
         if (item.IsInBasket)
         {
@@ -66,6 +90,6 @@
         {
             await apiClient.PutItemInBasket(shoppingList.Id, item.Id);
         }
-        await LoadShoppingList();
+        await LoadShoppingListAsync();
     }
 }
