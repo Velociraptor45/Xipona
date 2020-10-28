@@ -27,7 +27,9 @@
                 OnChange="OnSearchItemSelected">
             @foreach (var option in searchBar.Options)
             {
-                <SelectOption Value="@option.ItemId.ToString()">@option.Name</SelectOption>
+                <SelectOption Value="@option.ItemId.ToString()">
+                    @option.Name | @option.ManufacturerName | @option.Price€
+                </SelectOption>
             }
         </Select>
 
