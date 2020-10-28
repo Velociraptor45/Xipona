@@ -8,12 +8,26 @@
 
 <div>
     <div class="mb-1 d-flex justify-content-end align-items-center">
-        <Select SelectedValues=@availableStores?.SelectedStore?.Name Class="min-w-100" OnChange="@OnSelectedStoreChanged">
+        <Select SelectedValues=@availableStores?.SelectedStore?.Name
+                Class="mr-1 min-w-100"
+                OnChange="@OnSelectedStoreChanged">
             @foreach (var store in availableStores.Stores)
             {
                 <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
             }
         </Select>
+        <Button Class="mr-1 d-flex align-items-center"
+                OnClick="@OnShowBasketItemsChangeButtonClicked"
+                Disabled="@(!shoppingList?.AnyItemInBasket ?? true)">
+            @if (showItemsInBasket)
+            {
+                <Icon Type="eye" />
+            }
+            else
+            {
+                <Icon Type="eye-invisible" />
+            }
+        </Button>
         <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked">
             <Icon Type="edit" />
         </Button>
@@ -22,9 +36,9 @@
     <div class="mb-2 d-flex">
         <Select @ref="@searchSelect" @bind-Value="@searchBar.Input" @onfocusin="OnSearchBarFocusIn"
                 Class="@(searchBar.Active ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
-                OnSearch="OnSearchBarInput"
+                OnSearch="@OnSearchBarInput"
                 ShowSearch="true"
-                OnChange="OnSearchItemSelected">
+                OnChange="@OnSearchItemSelected">
             @foreach (var option in searchBar.Options)
             {
                 <SelectOption Value="@option.ItemId.ToString()">
@@ -35,16 +49,16 @@
 
         @if (searchBar.Active)
         {
-            <Button Class="mr-1" OnClick="OnSearchBarCancleButtonClicked">Cancle</Button>
+            <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
         }
     </div>
-    @foreach (var item in shoppingList.Items)
+    @foreach (var item in shoppingList.Items.Where(item => showItemsInBasket || !item.IsInBasket))
     {
         <ShoppingListItemComponent Item="@item"
                                    ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
-                                   ItemQuantityChangedCallback="OnItemQuantityChangedAsync"
-                                   ItemRemovedCallback="OnItemRemovedFromListAsync"
-                                   IsInEditMode="isInEditMode"></ShoppingListItemComponent>
+                                   ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
+                                   ItemRemovedCallback="@OnItemRemovedFromListAsync"
+                                   IsInEditMode="@isInEditMode"></ShoppingListItemComponent>
     }
     <div class="d-flex justify-content-end">
         <Button Type="primary"
@@ -63,6 +77,7 @@
     private Select searchSelect;
 
     private bool isInEditMode = false;
+    private bool showItemsInBasket = true;
 
     List<ShoppingListItem> items = new List<ShoppingListItem>();
 
@@ -101,6 +116,12 @@
     private void OnEditModeButtonClicked()
     {
         isInEditMode = !isInEditMode;
+        StateHasChanged();
+    }
+
+    private void OnShowBasketItemsChangeButtonClicked()
+    {
+        showItemsInBasket = !showItemsInBasket;
         StateHasChanged();
     }
 
@@ -177,11 +198,6 @@
     private async void OnFinishListButtonClicked()
     {
         await offlineClient.FinishListAsync(shoppingList.Id);
-
-        // This reset and StateHasChanged() call prevents a bug where the remaining items are marked
-        // as in basket although they're not
-        shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListItem>());
-        StateHasChanged();
 
         await LoadShoppingListAsync();
         StateHasChanged();

@@ -1,6 +1,6 @@
 ﻿@using ShoppingList.Frontend.Models;
 
-<li class="list-style-non py-2 mb-1 @bgColorCss white" @onclick="OnItemClickedAsync">
+<li class="list-style-non py-2 mb-1 @(Item.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
     @if (IsInEditMode)
     {
         <div class="d-flex flex-column">
@@ -55,18 +55,10 @@
 
     [Parameter] public bool IsInEditMode { get; set; }
 
-    private string bgColorCss;
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        UpdateBackgroundColor();
         StateHasChanged();
-    }
-
-    private void UpdateBackgroundColor()
-    {
-        bgColorCss = Item.IsInBasket ? "green-bg" : "red-bg";
     }
 
     private async void OnItemClickedAsync()
@@ -75,7 +67,6 @@
             return;
 
         await ItemBasketStatusChangedCallback.InvokeAsync(Item);
-        UpdateBackgroundColor();
         StateHasChanged();
     }
 

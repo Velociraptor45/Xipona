@@ -20,5 +20,6 @@ namespace ShoppingList.Frontend.Models
         public DateTime? CompletionDate { get; }
         public Store Store { get; }
         public IReadOnlyCollection<ShoppingListItem> Items => items.ToList().AsReadOnly();
+        public bool AnyItemInBasket => Items.FirstOrDefault(item => item.IsInBasket) != null;
     }
 }
