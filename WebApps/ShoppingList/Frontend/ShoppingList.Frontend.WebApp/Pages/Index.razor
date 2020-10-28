@@ -1,0 +1,216 @@
+﻿@page "/"
+@inject ShoppingList.Frontend.Models.Ports.IOfflineClient offlineClient;
+@using ShoppingList.Frontend.WebApp.Components.Index;
+@using ShoppingList.Frontend.Models;
+@using ShoppingList.Frontend.Models.Index;
+@using ShoppingList.Frontend.Models.Index.Search;
+@using OneOf;
+
+<div>
+    <div class="mb-1 d-flex justify-content-end align-items-center">
+        <Select SelectedValues=@availableStores?.SelectedStore?.Name
+                Class="mr-1 min-w-100"
+                OnChange="@OnSelectedStoreChanged">
+            @foreach (var store in availableStores.Stores)
+            {
+                <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
+            }
+        </Select>
+        <Button Class="mr-1 d-flex align-items-center"
+                OnClick="@OnShowBasketItemsChangeButtonClicked"
+                Disabled="@(!shoppingList?.AnyItemInBasket ?? true)">
+            @if (showItemsInBasket)
+            {
+                <Icon Type="eye" />
+            }
+            else
+            {
+                <Icon Type="eye-invisible" />
+            }
+        </Button>
+        <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
+                Disabled="@(shoppingList.Store == null)">
+            <Icon Type="edit" />
+        </Button>
+    </div>
+    <!--search bar-->
+    <div class="mb-2 d-flex">
+        <Select @ref="@searchSelect" @bind-Value="@searchBar.Input" @onfocusin="OnSearchBarFocusIn"
+                Class="@(searchBar.Active ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
+                OnSearch="@OnSearchBarInput"
+                ShowSearch="true"
+                OnChange="@OnSearchItemSelected">
+            @foreach (var option in searchBar.Options)
+            {
+                <SelectOption Value="@option.ItemId.ToString()">
+                    @option.Name | @option.ManufacturerName | @option.Price€
+                </SelectOption>
+            }
+        </Select>
+
+        @if (searchBar.Active)
+        {
+            <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
+        }
+    </div>
+    @foreach (var item in shoppingList.Items.Where(item => showItemsInBasket || !item.IsInBasket))
+    {
+        <ShoppingListItemComponent Item="@item"
+                                   ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
+                                   ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
+                                   ItemRemovedCallback="@OnItemRemovedFromListAsync"
+                                   IsInEditMode="@isInEditMode"></ShoppingListItemComponent>
+    }
+    <div class="d-flex justify-content-end">
+        <Button Type="primary"
+                OnClick="@OnFinishListButtonClicked"
+                Class="mr-2">
+            Finish List
+        </Button>
+    </div>
+</div>
+
+@code{
+    private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListItem>());
+    private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>());
+
+    private SearchBar searchBar = new SearchBar();
+    private Select searchSelect;
+
+    private bool isInEditMode = false;
+    private bool showItemsInBasket = true;
+
+    List<ShoppingListItem> items = new List<ShoppingListItem>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        //await Task.Delay(4000);
+        await base.OnInitializedAsync();
+        await LoadAvailableStoresAsync();
+        Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
+        StateHasChanged();
+    }
+
+    private void ResetEditMode()
+    {
+        isInEditMode = false;
+    }
+
+    #region Loading
+    private async Task LoadAvailableStoresAsync()
+    {
+        var stores = (await offlineClient.GetAllActiveStoresAsync())
+            .ToList();
+
+        availableStores = new AvailableStores(stores);
+    }
+
+    private async Task LoadShoppingListAsync()
+    {
+        shoppingList = await offlineClient.GetActiveShoppingListByStoreIdAsync(availableStores.SelectedStore.Id);
+        StateHasChanged();
+    }
+    #endregion
+
+    #region Callbacks
+    private async void OnSelectedStoreChanged(
+    OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
+    OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    {
+        int storeId = int.Parse(value.AsT0);
+        availableStores.SetSelectedStore(storeId);
+        ResetEditMode();
+        await LoadShoppingListAsync();
+    }
+
+    private void OnEditModeButtonClicked()
+    {
+        isInEditMode = !isInEditMode;
+        StateHasChanged();
+    }
+
+    private void OnShowBasketItemsChangeButtonClicked()
+    {
+        showItemsInBasket = !showItemsInBasket;
+        StateHasChanged();
+    }
+
+    private void OnSearchBarFocusIn()
+    {
+        searchBar.Active = true;
+    }
+
+    private void OnSearchBarCancleButtonClicked()
+    {
+        searchBar.Active = false;
+    }
+
+    private async void OnSearchBarInput(string searchInput)
+    {
+        if (shoppingList.Store == null)
+            return;
+
+        if (string.IsNullOrWhiteSpace(searchInput))
+        {
+            searchBar.Options = Enumerable.Empty<ItemSearchResult>();
+            return;
+        }
+
+        var result = await offlineClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id);
+        searchBar.Options = result;
+        StateHasChanged();
+    }
+
+    private async void OnSearchItemSelected(
+        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
+        OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    {
+        if (value.AsT0 == null)
+            return;
+
+        var itemId = int.Parse(value.AsT0);
+        await offlineClient.AddItemToShoppingListAsync(shoppingList.Id, itemId, 1); //todo default item quantity
+
+        searchBar.ResetInput();
+        searchBar.ResetOptions();
+        await searchSelect.ClearAll();
+
+        await LoadShoppingListAsync();
+        StateHasChanged();
+    }
+
+    private async Task OnItemBasketStatusChangedAsync(ShoppingListItem item)
+    {
+        if (item.IsInBasket)
+        {
+            await offlineClient.RemoveItemFromBasketAsync(shoppingList.Id, item.Id);
+        }
+        else
+        {
+            await offlineClient.PutItemInBasketAsync(shoppingList.Id, item.Id);
+        }
+
+        await LoadShoppingListAsync();
+    }
+
+    private async Task OnItemRemovedFromListAsync(ShoppingListItem item)
+    {
+        await offlineClient.RemoveItemFromShoppingListAsync(shoppingList.Id, item.Id);
+        await LoadShoppingListAsync();
+    }
+
+    private async Task OnItemQuantityChangedAsync(ShoppingListItem item)
+    {
+        await offlineClient.ChangeItemQuantityOnShoppingListAsync(shoppingList.Id, item.Id, item.Quantity);
+        await LoadShoppingListAsync();
+    }
+
+    private async void OnFinishListButtonClicked()
+    {
+        await offlineClient.FinishListAsync(shoppingList.Id);
+
+        await LoadShoppingListAsync();
+        StateHasChanged();
+    }
+    #endregion
+}
