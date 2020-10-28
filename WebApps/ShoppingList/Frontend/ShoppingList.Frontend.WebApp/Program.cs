@@ -1,5 +1,10 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using ShoppingList.Api.Client;
+using ShoppingList.Frontend.Infrastructure.Connection;
+using ShoppingList.Frontend.Models.Ports;
+using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace ShoppingList.Frontend.WebApp
@@ -11,7 +16,11 @@ namespace ShoppingList.Frontend.WebApp
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-            //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("") }); //todo
+            var uriBuilder = new UriBuilder("http", "", 0, "v1");
+
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = uriBuilder.Uri }); //todo
+            builder.Services.AddTransient<IShoppingListApiClient, ShoppingListApiClient>();
+            builder.Services.AddTransient<IOfflineClient, OfflineClient>();
             builder.Services.AddAntDesign();
 
             await builder.Build().RunAsync();

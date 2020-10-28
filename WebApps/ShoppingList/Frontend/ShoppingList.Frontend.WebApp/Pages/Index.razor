@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inject ShoppingList.Api.Client.IShoppingListApiClient apiClient;
+@inject ShoppingList.Frontend.Models.Ports.IOfflineClient offlineClient;
 @using ShoppingList.Frontend.WebApp.Extensions.Contracts;
 @using ShoppingList.Frontend.WebApp.Components.Index;
 @using ShoppingList.Frontend.Models;
@@ -72,8 +72,7 @@
 
     private async Task LoadAvailableStoresAsync()
     {
-        var stores = (await apiClient.GetAllActiveStores())
-            .Select(store => store.ToModel())
+        var stores = (await offlineClient.GetAllActiveStoresAsync())
             .ToList();
 
         availableStores = new AvailableStores(stores);
@@ -81,8 +80,7 @@
 
     private async Task LoadShoppingListAsync()
     {
-        shoppingList = (await apiClient.GetActiveShoppingListByStoreId(availableStores.SelectedStore.Id))
-            .ToModel();
+        shoppingList = await offlineClient.GetActiveShoppingListByStoreIdAsync(availableStores.SelectedStore.Id);
         StateHasChanged();
     }
 
@@ -122,8 +120,8 @@
             return;
         }
 
-        var result = await apiClient.GetItemSearchResults(searchInput, shoppingList.Store.Id);
-        searchBar.Options = result.Select(r => r.ToModel());
+        var result = await offlineClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id);
+        searchBar.Options = result;
         StateHasChanged();
     }
 
@@ -135,7 +133,7 @@
             return;
 
         var itemId = int.Parse(value.AsT0);
-        await apiClient.AddItemToShoppingList(shoppingList.Id, itemId, 1); //todo default item quantity
+        await offlineClient.AddItemToShoppingListAsync(shoppingList.Id, itemId, 1); //todo default item quantity
 
         searchBar.ResetInput();
         searchBar.ResetOptions();
@@ -149,24 +147,25 @@
     {
         if (item.IsInBasket)
         {
-            await apiClient.RemoveItemFromBasket(shoppingList.Id, item.Id);
+            await offlineClient.RemoveItemFromBasketAsync(shoppingList.Id, item.Id);
         }
         else
         {
-            await apiClient.PutItemInBasket(shoppingList.Id, item.Id);
+            await offlineClient.PutItemInBasketAsync(shoppingList.Id, item.Id);
         }
+
         await LoadShoppingListAsync();
     }
 
     private async Task OnItemRemovedFromListAsync(ShoppingListItem item)
     {
-        await apiClient.RemoveItemFromShoppingList(shoppingList.Id, item.Id);
+        await offlineClient.RemoveItemFromShoppingListAsync(shoppingList.Id, item.Id);
         await LoadShoppingListAsync();
     }
 
     private async Task OnItemQuantityChangedAsync(ShoppingListItem item)
     {
-        await apiClient.ChangeItemQuantityOnShoppingList(shoppingList.Id, item.Id, item.Quantity);
+        await offlineClient.ChangeItemQuantityOnShoppingListAsync(shoppingList.Id, item.Id, item.Quantity);
         await LoadShoppingListAsync();
     }
 }
