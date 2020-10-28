@@ -112,6 +112,9 @@
 
     private async void OnSearchBarInput(string searchInput)
     {
+        if (shoppingList.Store == null)
+            return;
+
         if (string.IsNullOrWhiteSpace(searchInput))
         {
             searchBar.Options = Enumerable.Empty<ItemSearchResult>();
