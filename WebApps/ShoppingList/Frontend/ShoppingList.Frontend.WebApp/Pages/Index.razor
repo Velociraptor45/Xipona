@@ -42,6 +42,7 @@
         <ShoppingListItemComponent Item="@item"
                                    ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
                                    ItemQuantityChangedCallback="OnItemQuantityChangedAsync"
+                                   ItemRemovedCallback="OnItemRemovedFromListAsync"
                                    IsInEditMode="isInEditMode"></ShoppingListItemComponent>
     }
     <div class="d-flex justify-content-end">
@@ -154,6 +155,12 @@
         {
             await apiClient.PutItemInBasket(shoppingList.Id, item.Id);
         }
+        await LoadShoppingListAsync();
+    }
+
+    private async Task OnItemRemovedFromListAsync(ShoppingListItem item)
+    {
+        await apiClient.RemoveItemFromShoppingList(shoppingList.Id, item.Id);
         await LoadShoppingListAsync();
     }
 
