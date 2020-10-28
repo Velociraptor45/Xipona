@@ -1,6 +1,5 @@
 ﻿@page "/"
 @inject ShoppingList.Frontend.Models.Ports.IOfflineClient offlineClient;
-@using ShoppingList.Frontend.WebApp.Extensions.Contracts;
 @using ShoppingList.Frontend.WebApp.Components.Index;
 @using ShoppingList.Frontend.Models;
 @using ShoppingList.Frontend.Models.Index;
@@ -46,7 +45,11 @@
                                    IsInEditMode="isInEditMode"></ShoppingListItemComponent>
     }
     <div class="d-flex justify-content-end">
-        <Button Type="primary" class="mr-2">Finish List</Button>
+        <Button Type="primary"
+                OnClick="@OnFinishListButtonClicked"
+                Class="mr-2">
+            Finish List
+        </Button>
     </div>
 </div>
 
@@ -167,5 +170,18 @@
     {
         await offlineClient.ChangeItemQuantityOnShoppingListAsync(shoppingList.Id, item.Id, item.Quantity);
         await LoadShoppingListAsync();
+    }
+
+    private async void OnFinishListButtonClicked()
+    {
+        await offlineClient.FinishListAsync(shoppingList.Id);
+
+        // This reset and StateHasChanged() call prevents a bug where the remaining items are marked
+        // as in basket although they're not
+        shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListItem>());
+        StateHasChanged();
+
+        await LoadShoppingListAsync();
+        StateHasChanged();
     }
 }

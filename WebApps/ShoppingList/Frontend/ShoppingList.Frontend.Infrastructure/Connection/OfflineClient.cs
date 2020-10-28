@@ -7,7 +7,6 @@ using ShoppingList.Frontend.Infrastructure.Extensions.Contracts;
 using ShoppingList.Frontend.Models;
 using ShoppingList.Frontend.Models.Index.Search;
 using ShoppingList.Frontend.Models.Ports;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -148,7 +147,6 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             {
                 try
                 {
-                    Console.WriteLine("Try");
                     await client.PutItemInBasket(shoppingListId, itemId);
                     return;
                 }
@@ -165,7 +163,6 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             {
                 try
                 {
-                    Console.WriteLine("Try");
                     await client.RemoveItemFromBasket(shoppingListId, itemId);
                     return;
                 }
