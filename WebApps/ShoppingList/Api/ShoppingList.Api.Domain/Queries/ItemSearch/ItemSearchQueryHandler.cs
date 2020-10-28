@@ -14,13 +14,15 @@ namespace ShoppingList.Api.Domain.Queries.ItemSearch
         private readonly IItemRepository itemRepository;
         private readonly IItemCategoryRepository itemCategoryRepository;
         private readonly IManufacturerRepository manufacturerRepository;
+        private readonly IShoppingListRepository shoppingListRepository;
 
         public ItemSearchQueryHandler(IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository,
-            IManufacturerRepository manufacturerRepository)
+            IManufacturerRepository manufacturerRepository, IShoppingListRepository shoppingListRepository)
         {
             this.itemRepository = itemRepository;
             this.itemCategoryRepository = itemCategoryRepository;
             this.manufacturerRepository = manufacturerRepository;
+            this.shoppingListRepository = shoppingListRepository;
         }
 
         public async Task<IEnumerable<ItemSearchReadModel>> HandleAsync(ItemSearchQuery query, CancellationToken cancellationToken)
@@ -32,16 +34,22 @@ namespace ShoppingList.Api.Domain.Queries.ItemSearch
 
             IEnumerable<StoreItem> storeItems = await itemRepository
                 .FindByAsync(query.SearchInput.Trim(), query.StoreId, cancellationToken);
+            Models.ShoppingList shoppingList = await shoppingListRepository
+                .FindActiveByAsync(query.StoreId, cancellationToken);
+            var itemIdsOnShoppingList = shoppingList.Items.Select(item => item.Id);
+
+            var itemsNotOnShoppingList = storeItems
+                .Where(item => !itemIdsOnShoppingList.Contains(item.Id.ToShoppingListItemId()));
 
             IEnumerable<ItemCategory> itemCategories = await itemCategoryRepository.FindByAsync(
-                storeItems.Select(item => item.ItemCategoryId), cancellationToken);
+                itemsNotOnShoppingList.Select(item => item.ItemCategoryId), cancellationToken);
             IEnumerable<Manufacturer> manufacturers = await manufacturerRepository.FindByAsync(
-                storeItems.Select(item => item.ManufacturerId), cancellationToken);
+                itemsNotOnShoppingList.Select(item => item.ManufacturerId), cancellationToken);
 
             var itemCategoriesDict = itemCategories.ToDictionary(cat => cat.Id);
             var manufacturersDict = manufacturers.ToDictionary(m => m.Id);
 
-            return storeItems.Select(item =>
+            return itemsNotOnShoppingList.Select(item =>
                 item.ToItemSearchReadModel(
                     query.StoreId,
                     itemCategoriesDict[item.ItemCategoryId],

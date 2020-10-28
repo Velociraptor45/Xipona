@@ -66,6 +66,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
                 .Where(item => item.Name.Contains(searchInput)
+                    && !item.Deleted
                     && item.AvailableAt.FirstOrDefault(map => map.StoreId == storeId.Value) != null)
                 .ToListAsync();
 
