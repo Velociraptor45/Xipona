@@ -5,8 +5,9 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
     public class ShoppingListItemReadModel
     {
         public ShoppingListItemReadModel(ShoppingListItemId id, string name, bool isDeleted, string comment,
-            bool isTemporary, float price, QuantityType quantityType, float quantityInPacket,
-            QuantityTypeInPacket quantityTypeInPacket, ItemCategoryReadModel itemCategory, ManufacturerReadModel manufacturer,
+            bool isTemporary, float pricePerQuantity, QuantityType quantityType, float quantityInPacket,
+            int defaultQuantity, string quantityLable, string priceLabel, QuantityTypeInPacket quantityTypeInPacket,
+            ItemCategoryReadModel itemCategory, ManufacturerReadModel manufacturer,
             bool isInBasket, float quantity)
         {
             Id = id;
@@ -14,9 +15,12 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
             IsDeleted = isDeleted;
             Comment = comment;
             IsTemporary = isTemporary;
-            Price = price;
+            PricePerQuantity = pricePerQuantity;
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
+            DefaultQuantity = defaultQuantity;
+            QuantityLable = quantityLable;
+            PriceLabel = priceLabel;
             QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
@@ -29,9 +33,12 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
         public bool IsDeleted { get; }
         public string Comment { get; }
         public bool IsTemporary { get; }
-        public float Price { get; }
+        public float PricePerQuantity { get; }
         public QuantityType QuantityType { get; }
         public float QuantityInPacket { get; }
+        public int DefaultQuantity { get; }
+        public string QuantityLable { get; }
+        public string PriceLabel { get; }
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
         public ItemCategoryReadModel ItemCategory { get; }
         public ManufacturerReadModel Manufacturer { get; }
