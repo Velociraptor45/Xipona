@@ -10,11 +10,13 @@ using ShoppingList.Api.Domain.Commands.RemoveItemFromShoppingList;
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Queries.ActiveShoppingListByStoreId;
+using ShoppingList.Api.Domain.Queries.AllQuantityInPacketTypes;
 using ShoppingList.Api.Domain.Queries.AllQuantityTypes;
 using ShoppingList.Api.Domain.Queries.SharedModels;
 using ShoppingList.Api.Endpoint.Converters;
 using ShoppingList.Api.Endpoint.Converters.ShoppingList;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ShoppingList.Api.Endpoint.v1.Controllers
@@ -219,10 +221,22 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
         public async Task<IActionResult> GetAllQuantityTypes()
         {
             var query = new AllQuantityTypesQuery();
-            var readModel = await queryDispatcher.DispatchAsync(query, default);
-            var contract = readModel.ToContract();
+            var readModels = await queryDispatcher.DispatchAsync(query, default);
+            var contracts = readModels.Select(rm => rm.ToContract());
 
-            return Ok(contract);
+            return Ok(contracts);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [Route("quantity-in-packet-types")]
+        public async Task<IActionResult> GetAllQuantityInPacketTypes()
+        {
+            var query = new AllQuantityInPacketTypesQuery();
+            var readModels = await queryDispatcher.DispatchAsync(query, default);
+            var contracts = readModels.Select(rm => rm.ToContract());
+
+            return Ok(contracts);
         }
     }
 }

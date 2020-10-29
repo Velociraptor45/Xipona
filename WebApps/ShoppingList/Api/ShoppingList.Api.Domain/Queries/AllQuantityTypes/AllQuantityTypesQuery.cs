@@ -1,6 +1,8 @@
-﻿namespace ShoppingList.Api.Domain.Queries.AllQuantityTypes
+﻿using System.Collections.Generic;
+
+namespace ShoppingList.Api.Domain.Queries.AllQuantityTypes
 {
-    public class AllQuantityTypesQuery : IQuery<QuantityTypesReadModel>
+    public class AllQuantityTypesQuery : IQuery<IEnumerable<QuantityTypeReadModel>>
     {
     }
 }
