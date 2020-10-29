@@ -2,14 +2,15 @@
 {
     public class ShoppingListItem
     {
-        public ShoppingListItem(int id, string name, bool isTemporary, float price, float quantityInPacket,
-            string itemCategory, string manufacturer, bool isInBasket, float quantity)
+        public ShoppingListItem(int id, string name, bool isTemporary, float pricePerQuantity, float quantityInPacket,
+            int defaultQuantity, string itemCategory, string manufacturer, bool isInBasket, float quantity)
         {
             Id = id;
             Name = name;
             IsTemporary = isTemporary;
-            Price = price;
+            PricePerQuantity = pricePerQuantity;
             QuantityInPacket = quantityInPacket;
+            DefaultQuantity = defaultQuantity;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
             IsInBasket = isInBasket;
@@ -19,8 +20,9 @@
         public int Id { get; }
         public string Name { get; }
         public bool IsTemporary { get; }
-        public float Price { get; }
+        public float PricePerQuantity { get; }
         public float QuantityInPacket { get; }
+        public int DefaultQuantity { get; }
         public string ItemCategory { get; }
         public string Manufacturer { get; }
         public bool IsInBasket { get; set; }

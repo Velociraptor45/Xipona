@@ -7,8 +7,8 @@ namespace ShoppingList.Frontend.Infrastructure.Extensions.Contracts
     {
         public static ShoppingListItem ToModel(this ShoppingListItemContract contract)
         {
-            return new ShoppingListItem(contract.Id, contract.Name, contract.IsTemporary, contract.Price,
-                contract.QuantityInPacket, contract.ItemCategory.Name, contract.Manufacturer.Name,
+            return new ShoppingListItem(contract.Id, contract.Name, contract.IsTemporary, contract.PricePerQuantity,
+                contract.QuantityInPacket, contract.DefaultQuantity, contract.ItemCategory.Name, contract.Manufacturer.Name,
                 contract.IsInBasket, contract.Quantity);
         }
     }

@@ -7,7 +7,7 @@ namespace ShoppingList.Frontend.Infrastructure.Extensions.Contracts
     {
         public static ItemSearchResult ToModel(this ItemSearchContract contract)
         {
-            return new ItemSearchResult(contract.Id, contract.Name, contract.Price, contract.ItemCategoryName,
+            return new ItemSearchResult(contract.Id, contract.Name, contract.Price, "€", contract.ItemCategoryName,
                 contract.ManufacturerName);
         }
     }

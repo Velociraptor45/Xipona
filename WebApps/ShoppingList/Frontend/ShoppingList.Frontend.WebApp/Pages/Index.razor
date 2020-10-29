@@ -43,7 +43,7 @@
             @foreach (var option in searchBar.Options)
             {
                 <SelectOption Value="@option.ItemId.ToString()">
-                    @option.Name | @option.ManufacturerName | @option.Price€
+                    @option.Name | @option.ManufacturerName | @option.Price@option.PriceLabel
                 </SelectOption>
             }
         </Select>
