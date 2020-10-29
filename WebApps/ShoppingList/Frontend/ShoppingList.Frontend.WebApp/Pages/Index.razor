@@ -64,7 +64,8 @@
     <div class="d-flex justify-content-end">
         <Button Type="primary"
                 OnClick="@OnFinishListButtonClicked"
-                Class="mr-2">
+                Class="mr-2"
+                Disabled="@(!shoppingList?.AnyItemInBasket ?? true)">
             Finish List
         </Button>
     </div>
