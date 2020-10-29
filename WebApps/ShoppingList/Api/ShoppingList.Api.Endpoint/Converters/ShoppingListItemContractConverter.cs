@@ -8,8 +8,9 @@ namespace ShoppingList.Api.Endpoint.Converters
         public static ShoppingListItemContract ToContract(this ShoppingListItemReadModel readModel)
         {
             return new ShoppingListItemContract(readModel.Id.Value, readModel.Name, readModel.IsDeleted, readModel.Comment,
-                readModel.IsTemporary, readModel.Price, readModel.QuantityType.ToString(), readModel.QuantityInPacket,
-                readModel.QuantityTypeInPacket.ToString(), readModel.ItemCategory.ToContract(),
+                readModel.IsTemporary, readModel.PricePerQuantity, (int)readModel.QuantityType, readModel.QuantityInPacket,
+                (int)readModel.QuantityTypeInPacket, readModel.DefaultQuantity, readModel.QuantityLable,
+                readModel.PriceLabel, readModel.ItemCategory.ToContract(),
                 readModel.Manufacturer.ToContract(), readModel.IsInBasket, readModel.Quantity);
         }
     }

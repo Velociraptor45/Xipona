@@ -5,6 +5,7 @@ using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
 using ShoppingList.Api.Contracts.Queries.AllActiveStores;
+using ShoppingList.Api.Contracts.Queries.AllQuantityTypes;
 using ShoppingList.Api.Contracts.SharedContracts;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -38,6 +39,12 @@ namespace ShoppingList.Api.Client
 
         [Post("shopping-list/{shoppingListId}/items/{itemId}/remove")]
         Task RemoveItemFromShoppingList([Path] int shoppingListId, [Path] int itemId);
+
+        [Get("shopping-list/quantity-types")]
+        Task<IEnumerable<QuantityTypeContract>> GetAllQuantityTypes();
+
+        [Get("shopping-list/quantity-in-packet-types")]
+        Task<IEnumerable<QuantityInPacketTypeContract>> GetAllQuantityInPacketTypes();
 
         #endregion ShoppingListController
 

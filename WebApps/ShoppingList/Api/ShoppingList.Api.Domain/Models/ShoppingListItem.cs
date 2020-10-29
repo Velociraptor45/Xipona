@@ -1,4 +1,6 @@
-﻿namespace ShoppingList.Api.Domain.Models
+﻿using System;
+
+namespace ShoppingList.Api.Domain.Models
 {
     public class ShoppingListItem
     {
@@ -6,7 +8,7 @@
         private float quantity;
 
         public ShoppingListItem(ShoppingListItemId id, string name, bool isDeleted, string comment, bool isTemporary,
-            float price, QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+            float pricePerQuantity, QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             ItemCategory itemCategory, Manufacturer manufacturer, bool isInBasket, float quantity)
         {
             Id = id;
@@ -14,7 +16,7 @@
             IsDeleted = isDeleted;
             Comment = comment;
             IsTemporary = isTemporary;
-            Price = price;
+            PricePerQuantity = pricePerQuantity;
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
@@ -29,7 +31,7 @@
         public bool IsDeleted { get; }
         public string Comment { get; }
         public bool IsTemporary { get; }
-        public float Price { get; }
+        public float PricePerQuantity { get; }
         public QuantityType QuantityType { get; }
         public float QuantityInPacket { get; }
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
@@ -37,6 +39,17 @@
         public Manufacturer Manufacturer { get; }
         public bool IsInBasket => isInBasket;
         public float Quantity => quantity;
+        public int DefaultQuantity => QuantityType == QuantityType.Unit ? 1 : 100;
+        public string QuantityLabel => QuantityType == QuantityType.Unit ? "" : "g";
+
+        public string PriceLabel => QuantityTypeInPacket switch
+        {
+            QuantityTypeInPacket.Unit => "€",
+            QuantityTypeInPacket.Weight => "€/kg",
+            QuantityTypeInPacket.Fluid => "€/l",
+            _ => throw new InvalidOperationException(
+                $"{nameof(QuantityTypeInPacket)} value {QuantityTypeInPacket} not recognized")
+        };
 
         public void PutInBasket()
         {
