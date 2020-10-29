@@ -7,6 +7,7 @@ using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
 using ShoppingList.Api.Contracts.Queries.AllActiveStores;
+using ShoppingList.Api.Contracts.Queries.AllQuantityTypes;
 using ShoppingList.Api.Contracts.SharedContracts;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -71,6 +72,16 @@ namespace ShoppingList.Api.Client
         public async Task FinishList(int shoppingListId)
         {
             await apiClient.FinishList(shoppingListId);
+        }
+
+        public async Task<IEnumerable<QuantityTypeContract>> GetAllQuantityTypes()
+        {
+            return await apiClient.GetAllQuantityTypes();
+        }
+
+        public async Task<IEnumerable<QuantityInPacketTypeContract>> GetAllQuantityInPacketTypes()
+        {
+            return await apiClient.GetAllQuantityInPacketTypes();
         }
 
         #endregion ShoppingListController
