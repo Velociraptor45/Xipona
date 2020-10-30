@@ -1,0 +1,82 @@
+﻿@page "/items"
+@using ShoppingList.Frontend.Models.Items;
+@using System.Collections.Generic;
+
+<div>
+    <Button @onclick="@(() => isInEditMode = !isInEditMode)"></Button>
+    @if (!isInEditMode)
+    {
+        <div>Items</div>
+        <div>
+            <div class="d-flex">
+                <div>
+                    Store
+                </div>
+                <Select Placeholder="Stores"></Select>
+            </div>
+            <div class="d-flex">
+                <div>
+                    Category
+                </div>
+                <Select Placeholder="Category"></Select>
+            </div>
+            <div class="d-flex">
+                <div>
+                    Manufacturer
+                </div>
+                <Select Placeholder="Manufacturer"></Select>
+            </div>
+        </div>
+        <div>
+            <!-- result item list -->
+        </div>
+    }
+    else
+    {
+        <div>
+            <div class="d-flex">
+                <Button>
+                    <Icon Type="arrow-left"></Icon>
+                </Button>
+                <Input @bind-Value="@storeItem.Name" />
+            </div>
+            <Divider></Divider>
+            <div class="d-flex">
+                <Select Placeholder="Category"></Select>
+                <Select Placeholder="Manufacturer" Class="ml-3"></Select>
+            </div>
+            <div class="d-flex">
+                <Select Placeholder="QuantityType"></Select>
+                <div class="ml-3">
+                    <Select Placeholder="Manufacturer"></Select>
+                    <Input @bind-Value="@storeItem.QuantityInPacket"></Input>
+                </div>
+            </div>
+            <div class="d-flex flex-row">
+                <!-- availabilities -->
+                <div class="d-flex flex-row align-items-center">
+                    <Input @bind-Value="@storeItem.Availabilities.First().PricePerQuantity" Class="ml-2 max-w-50" />
+                    <div class="mr-4">€</div>
+                    <Select Placeholder="Stores"></Select>
+                </div>
+                <div class="ml-2">
+                    <Button class="d-flex align-items-center">
+                        <Icon Type="plus"></Icon>
+                    </Button>
+                </div>
+            </div>
+            <div>
+                <Button>Update</Button>
+                <Button>Change</Button>
+                <Button Danger="true">Cancle</Button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private bool isInEditMode = false;
+    private StoreItem storeItem = new StoreItem(0, "TestItem", "Comment", false, 0, 1f, 0, 1, 1,
+        new List<StoreItemAvailabilities>(){
+            new StoreItemAvailabilities(1, 2.99f)});
+}

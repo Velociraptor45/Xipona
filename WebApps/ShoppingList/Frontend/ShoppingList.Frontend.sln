@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.Model
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.WebApp", "ShoppingList.Frontend.WebApp\ShoppingList.Frontend.WebApp.csproj", "{21E57D9E-231D-4899-B65A-95F1DACD8423}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Frontend.Infrastructure", "ShoppingList.Frontend.Infrastructure\ShoppingList.Frontend.Infrastructure.csproj", "{96C61D18-7462-4B57-8672-2C5851423AD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.Infrastructure", "ShoppingList.Frontend.Infrastructure\ShoppingList.Frontend.Infrastructure.csproj", "{96C61D18-7462-4B57-8672-2C5851423AD6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
