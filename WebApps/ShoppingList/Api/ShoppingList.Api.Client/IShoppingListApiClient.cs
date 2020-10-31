@@ -6,6 +6,7 @@ using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
 using ShoppingList.Api.Contracts.Queries.AllActiveStores;
 using ShoppingList.Api.Contracts.Queries.AllQuantityTypes;
+using ShoppingList.Api.Contracts.Queries.ItemFilterResults;
 using ShoppingList.Api.Contracts.SharedContracts;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -58,6 +59,10 @@ namespace ShoppingList.Api.Client
 
         [Post("item/update")]
         Task UpdateItem([Body] UpdateItemContract updateItemContract);
+
+        [Get("item/filter/{storeIds}/{itemCategoryIds}/{manufacturerIds}")]
+        Task<IEnumerable<ItemFilterResultContract>> GetItemFilterResult([Query] IEnumerable<int> storeIds,
+            [Query] IEnumerable<int> itemCategoriesIds, [Query] IEnumerable<int> manufacturerIds);
 
         #endregion ItemController
 

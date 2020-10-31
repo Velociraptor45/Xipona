@@ -8,6 +8,7 @@ using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
 using ShoppingList.Api.Contracts.Queries.AllActiveStores;
 using ShoppingList.Api.Contracts.Queries.AllQuantityTypes;
+using ShoppingList.Api.Contracts.Queries.ItemFilterResults;
 using ShoppingList.Api.Contracts.SharedContracts;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -101,6 +102,12 @@ namespace ShoppingList.Api.Client
         public async Task<IEnumerable<ItemSearchContract>> GetItemSearchResults(string searchInput, int storeId)
         {
             return await apiClient.GetItemSearchResults(searchInput, storeId);
+        }
+
+        public async Task<IEnumerable<ItemFilterResultContract>> GetItemFilterResult(IEnumerable<int> storeIds,
+            IEnumerable<int> itemCategoriesIds, IEnumerable<int> manufacturerIds)
+        {
+            return await apiClient.GetItemFilterResult(storeIds, itemCategoriesIds, manufacturerIds);
         }
 
         #endregion ItemController

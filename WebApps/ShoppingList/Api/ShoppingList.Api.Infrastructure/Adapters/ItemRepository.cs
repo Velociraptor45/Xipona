@@ -54,6 +54,48 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return itemEntity.ToStoreItemDomain();
         }
 
+        public async Task<IEnumerable<StoreItem>> FindByAsync(IEnumerable<StoreId> storeIds,
+            IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
+            CancellationToken cancellationToken)
+        {
+            if (storeIds is null)
+            {
+                throw new ArgumentNullException(nameof(storeIds));
+            }
+            else if (itemCategoriesIds is null)
+            {
+                throw new ArgumentNullException(nameof(itemCategoriesIds));
+            }
+            else if (manufacturerIds is null)
+            {
+                throw new ArgumentNullException(nameof(manufacturerIds));
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var storeIdLists = storeIds.Select(id => id.Value).ToList();
+            var itemCategoryIdLists = itemCategoriesIds.Select(id => id.Value).ToList();
+            var manufacturerIdLists = manufacturerIds.Select(id => id.Value).ToList();
+
+            var result = await dbContext.Items.AsNoTracking()
+                .Include(item => item.ItemCategory)
+                .Include(item => item.Manufacturer)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Store)
+                .Where(item =>
+                    itemCategoryIdLists.Contains(item.ItemCategoryId)
+                    && manufacturerIdLists.Contains(item.ManufacturerId))
+                .ToListAsync();
+
+            // filtering by store
+            var filteredResultByStore = result
+                .Where(item => storeIdLists.Intersect(item.AvailableAt.Select(av => av.StoreId)).Any());
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return filteredResultByStore.Select(r => r.ToStoreItemDomain());
+        }
+
         public async Task<IEnumerable<StoreItem>> FindByAsync(string searchInput, StoreId storeId,
             CancellationToken cancellationToken)
         {

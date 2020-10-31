@@ -6,8 +6,10 @@ using ShoppingList.Api.Domain.Commands.CreateItem;
 using ShoppingList.Api.Domain.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
+using ShoppingList.Api.Domain.Queries.ItemFilterResults;
 using ShoppingList.Api.Domain.Queries.ItemSearch;
 using ShoppingList.Api.Endpoint.Converters;
+using ShoppingList.Api.Endpoint.Converters.Item;
 using ShoppingList.Api.Endpoint.Converters.Store;
 using ShoppingList.Endpoint.Converters.Item;
 using System.Collections.Generic;
@@ -75,6 +77,23 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
             var contracts = readModels.Select(rm => rm.ToContract());
 
             return Ok(contracts);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [Route("filter")]
+        public async Task<IActionResult> GetItemFilterResults([FromQuery] IEnumerable<int> storeIds,
+            [FromQuery] IEnumerable<int> itemCategoryIds,
+            [FromQuery] IEnumerable<int> manufacturerIds)
+        {
+            var query = new ItemFilterResultsQuery(
+                storeIds.Select(id => new StoreId(id)),
+                itemCategoryIds.Select(id => new ItemCategoryId(id)),
+                manufacturerIds.Select(id => new ManufacturerId(id)));
+
+            var readModels = await queryDispatcher.DispatchAsync(query, default);
+
+            return Ok(readModels.Select(readModel => readModel.ToContract()));
         }
     }
 }
