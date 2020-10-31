@@ -10,6 +10,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Models = ShoppingList.Api.Domain.Models;
+
 namespace ShoppingList.Api.Infrastructure.Adapters
 {
     public class ItemCategoryRepository : IItemCategoryRepository
@@ -21,7 +23,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Domain.Models.ItemCategory>> FindByAsync(string searchInput,
+        public async Task<IEnumerable<Models.ItemCategory>> FindByAsync(string searchInput,
             CancellationToken cancellationToken)
         {
             var itemCategoryEntities = await dbContext.ItemCategories.AsNoTracking()
@@ -33,7 +35,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return itemCategoryEntities.Select(entity => entity.ToDomain());
         }
 
-        public async Task<Domain.Models.ItemCategory> FindByAsync(ItemCategoryId id,
+        public async Task<Models.ItemCategory> FindByAsync(ItemCategoryId id,
             CancellationToken cancellationToken)
         {
             if (id == null)
@@ -48,7 +50,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return entity.ToDomain();
         }
 
-        public async Task<IEnumerable<Domain.Models.ItemCategory>> FindByAsync(IEnumerable<ItemCategoryId> ids,
+        public async Task<IEnumerable<Models.ItemCategory>> FindByAsync(IEnumerable<ItemCategoryId> ids,
             CancellationToken cancellationToken)
         {
             if (ids == null)
@@ -65,6 +67,18 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             return entities.Select(e => e.ToDomain());
+        }
+
+        public async Task<IEnumerable<Models.ItemCategory>> FindByAsync(bool includeDeleted,
+            CancellationToken cancellationToken)
+        {
+            var results = await dbContext.ItemCategories.AsNoTracking()
+                .Where(m => !m.Deleted || includeDeleted)
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return results.Select(m => m.ToDomain());
         }
     }
 }
