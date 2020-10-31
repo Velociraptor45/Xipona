@@ -6,6 +6,7 @@ using ShoppingList.Api.Contracts.Commands.CreateStore;
 using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
+using ShoppingList.Api.Contracts.Queries.AllActiveItemCategories;
 using ShoppingList.Api.Contracts.Queries.AllActiveStores;
 using ShoppingList.Api.Contracts.Queries.AllQuantityTypes;
 using ShoppingList.Api.Contracts.Queries.ItemFilterResults;
@@ -138,6 +139,11 @@ namespace ShoppingList.Api.Client
             return await apiClient.GetManufacturerSearchResults(searchInput);
         }
 
+        public async Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveManufacturers()
+        {
+            return await apiClient.GetAllActiveManufacturers();
+        }
+
         #endregion ManufacturerController
 
         #region ItemCategoryController
@@ -145,6 +151,11 @@ namespace ShoppingList.Api.Client
         public async Task<IEnumerable<ManufacturerContract>> GetItemCategorySearchResults(string searchInput)
         {
             return await apiClient.GetItemCategorySearchResults(searchInput);
+        }
+
+        public async Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveItemCategories()
+        {
+            return await apiClient.GetAllActiveManufacturers();
         }
 
         #endregion ItemCategoryController
