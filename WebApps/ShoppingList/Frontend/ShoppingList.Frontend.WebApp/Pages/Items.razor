@@ -1,6 +1,8 @@
 ﻿@page "/items"
 @inject ShoppingList.Frontend.Models.Ports.IOfflineClient offlineClient;
 @using ShoppingList.Frontend.WebApp.Components.Items;
+@using ShoppingList.Frontend.Models;
+@using ShoppingList.Frontend.Models.Items;
 
 <div>
     <Button @onclick="@(() => isInEditMode = !isInEditMode)"></Button>
@@ -33,16 +35,32 @@
     }
     else
     {
-        <ItemEditor></ItemEditor>
+        <ItemEditor ItemId="@currentlyEditedItemId"
+                    Stores="@stores"
+                    Manufacturers="@manufacturers"
+                    ItemCategories="@itemCategories"></ItemEditor>
     }
 </div>
 
 @code {
-    private bool isInEditMode = false;
-    
+    private List<Store> stores = new List<Store>();
+    private List<ItemCategory> itemCategories = new List<ItemCategory>();
+    private List<Manufacturer> manufacturers = new List<Manufacturer>();
+
+    private bool isInEditMode = false; // todo remove
+    private int currentlyEditedItemId = 0;
 
     protected override Task OnInitializedAsync()
     {
+        //todo:
+        // - load all active stores
+        // - load all active manufacturers
+        // - load all active item categories
         return base.OnInitializedAsync();
+    }
+
+    private void OnItemClicked()
+    {
+        // todo: set currentlyEditedItem
     }
 }

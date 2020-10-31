@@ -13,13 +13,13 @@
     <Divider></Divider>
     <div class="d-flex">
         <Select Placeholder="Category">
-            @foreach (var itemCategory in itemCategories)
+            @foreach (var itemCategory in ItemCategories)
             {
                 <SelectOption Value="@itemCategory.Id.ToString()">@itemCategory.Name</SelectOption>
             }
         </Select>
         <Select Placeholder="Manufacturer" Class="ml-3">
-            @foreach (var manufacturer in manufacturers)
+            @foreach (var manufacturer in Manufacturers)
             {
                 <SelectOption Value="@manufacturer.Id.ToString()">@manufacturer.Name</SelectOption>
             }
@@ -42,7 +42,7 @@
                     <Input @bind-Value="@availability.PricePerQuantity" Class="ml-2 max-w-50" />
                     <div class="mr-4">€</div>
                     <Select Placeholder="Stores">
-                        @foreach (var store in stores)
+                        @foreach (var store in Stores)
                         {
                             <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
                         }
@@ -64,13 +64,20 @@
 </div>
 
 @code {
-    [Parameter] public List<Store> stores { get; set; }
-    [Parameter] public List<Manufacturer> manufacturers { get; set; }
-    [Parameter] public List<ItemCategory> itemCategories { get; set; }
+    [Parameter] public int ItemId { get; set; }
+    [Parameter] public List<Store> Stores { get; set; }
+    [Parameter] public List<Manufacturer> Manufacturers { get; set; }
+    [Parameter] public List<ItemCategory> ItemCategories { get; set; }
 
     private StoreItem storeItem = new StoreItem(0, "TestItem", "Comment", false, 0, 1f, 0, 1, 1,
         new List<StoreItemAvailabilities>(){
             new StoreItemAvailabilities(1, 2.99f)});
+
+    protected override Task OnInitializedAsync()
+    {
+        // todo: load storeItem
+        return Task.CompletedTask;
+    }
 
     private void OnAddStoreButtonClicked()
     {
