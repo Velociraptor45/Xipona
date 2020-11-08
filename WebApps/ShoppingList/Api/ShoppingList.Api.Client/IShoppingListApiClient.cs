@@ -2,6 +2,7 @@
 using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
 using ShoppingList.Api.Contracts.Commands.CreateStore;
+using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
 using ShoppingList.Api.Contracts.Queries.AllActiveItemCategories;
@@ -60,6 +61,9 @@ namespace ShoppingList.Api.Client
 
         [Post("item/change")]
         Task ChangeItem([Body] ChangeItemContract changeItemContract);
+
+        [Post("item/update")]
+        Task UpdateItemAsync([Body] UpdateItemContract updateItemContract);
 
         [Get("item/filter/{storeIds}/{itemCategoryIds}/{manufacturerIds}")]
         Task<IEnumerable<ItemFilterResultContract>> GetItemFilterResult([Query] IEnumerable<int> storeIds,
