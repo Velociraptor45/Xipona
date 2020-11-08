@@ -1,4 +1,5 @@
 ﻿using ShoppingList.Api.Contracts.Commands.UpdateItem;
+using ShoppingList.Api.Domain.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Models;
 using System.Linq;
 
@@ -6,9 +7,9 @@ namespace ShoppingList.Api.Endpoint.Converters.Store
 {
     public static class UpdateItemContractConverter
     {
-        public static StoreItem ToDomain(this UpdateItemContract contract)
+        public static ItemUpdate ToDomain(this UpdateItemContract contract)
         {
-            return new StoreItem(new StoreItemId(contract.Id),
+            return new ItemUpdate(new StoreItemId(contract.Id),
                 contract.Name,
                 false,
                 contract.Comment,
