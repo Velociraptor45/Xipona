@@ -1,5 +1,6 @@
 ﻿using ShoppingList.Api.Contracts.Commands.CreateItem;
 using ShoppingList.Api.Contracts.Commands.SharedContracts;
+using ShoppingList.Api.Domain.Commands.CreateItem;
 using ShoppingList.Api.Domain.Models;
 using System.Linq;
 
@@ -7,11 +8,10 @@ namespace ShoppingList.Api.Endpoint.Converters
 {
     public static class CreateItemContractConverter
     {
-        public static StoreItem ToDomain(this CreateItemContract contract)
+        public static ItemCreation ToDomain(this CreateItemContract contract)
         {
-            return new StoreItem(new StoreItemId(0),
+            return new ItemCreation(
                 contract.Name,
-                false,
                 contract.Comment,
                 contract.IsTemporary,
                 (QuantityType)contract.QuantityType,
