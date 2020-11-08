@@ -40,6 +40,9 @@ namespace ShoppingList.Api.Infrastructure.Adapters
                 .ThenInclude(map => map.Store)
                 .FirstOrDefaultAsync(item => item.Id == storeItemId.Value);
 
+            if (itemEntity == null)
+                throw new ItemNotFoundException(storeItemId);
+
             cancellationToken.ThrowIfCancellationRequested();
 
             return itemEntity.ToStoreItemDomain();
@@ -239,6 +242,13 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             }
 
             await dbContext.SaveChangesAsync();
+
+            entity = await dbContext.Items.AsNoTracking()
+                .Include(item => item.ItemCategory)
+                .Include(item => item.Manufacturer)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Store)
+                .FirstAsync(item => item.Id == entity.Id);
 
             return entity.ToStoreItemDomain();
         }

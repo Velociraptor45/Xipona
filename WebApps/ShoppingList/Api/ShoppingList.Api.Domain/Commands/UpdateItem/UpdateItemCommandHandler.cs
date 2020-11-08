@@ -46,17 +46,21 @@ namespace ShoppingList.Api.Domain.Commands.UpdateItem
 
             // change existing item references on shopping lists
             var shoppingListsWithOldItem = (await shoppingListRepository
-                .FindByAsync(command.ItemUpdate.OldId, cancellationToken))
+                .FindActiveByAsync(command.ItemUpdate.OldId, cancellationToken))
                 .ToList();
 
-            shoppingListsWithOldItem.ForEach(async list =>
+            foreach (var list in shoppingListsWithOldItem)
             {
                 ShoppingListItem shoppingListItem = list.Items
                     .First(i => i.Id == command.ItemUpdate.OldId.ToShoppingListItemId());
                 list.RemoveItem(command.ItemUpdate.OldId.ToShoppingListItemId());
-                list.AddItem(updatedItem, shoppingListItem.IsInBasket, shoppingListItem.Quantity);
+                if (updatedItem.IsAvailableInStore(list.Store.Id))
+                {
+                    list.AddItem(updatedItem, shoppingListItem.IsInBasket, shoppingListItem.Quantity);
+                }
+
                 await shoppingListRepository.StoreAsync(list, cancellationToken);
-            });
+            }
 
             return true;
         }

@@ -47,7 +47,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             await StoreModifiedListAsync(listEntity, shoppingList, cancellationToken);
         }
 
-        public async Task<IEnumerable<Domain.Models.ShoppingList>> FindByAsync(StoreItemId storeItemId,
+        public async Task<IEnumerable<Domain.Models.ShoppingList>> FindActiveByAsync(StoreItemId storeItemId,
             CancellationToken cancellationToken)
         {
             if (storeItemId is null)
@@ -66,7 +66,8 @@ namespace ShoppingList.Api.Infrastructure.Adapters
                 .Include(l => l.ItemsOnList)
                 .ThenInclude(map => map.Item)
                 .ThenInclude(item => item.AvailableAt)
-                .Where(l => l.ItemsOnList.FirstOrDefault(i => i.Id == storeItemId.Value) != null)
+                .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Value) != null
+                    && l.CompletionDate == null)
                 .ToListAsync();
 
             cancellationToken.ThrowIfCancellationRequested();

@@ -43,5 +43,10 @@ namespace ShoppingList.Api.Domain.Models
         {
             isDeleted = true;
         }
+
+        public bool IsAvailableInStore(StoreId storeId)
+        {
+            return Availabilities.FirstOrDefault(av => av.StoreId == storeId) != null;
+        }
     }
 }
