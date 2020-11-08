@@ -8,7 +8,7 @@ namespace ShoppingList.Api.Domain.Commands.UpdateItem
             Manufacturer manufacturer)
         {
             return new StoreItem(new StoreItemId(0),
-                itemUpdate.Name, false, itemUpdate.Comment, itemUpdate.IsTemporary, itemUpdate.QuantityType,
+                itemUpdate.Name, false, itemUpdate.Comment, false, itemUpdate.QuantityType,
                 itemUpdate.QuantityInPacket, itemUpdate.QuantityTypeInPacket, itemCategory, manufacturer,
                 itemUpdate.Availabilities);
         }

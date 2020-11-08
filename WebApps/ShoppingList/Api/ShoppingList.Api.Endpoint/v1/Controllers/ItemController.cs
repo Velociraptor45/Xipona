@@ -2,8 +2,10 @@
 using ShoppingList.Api.ApplicationServices;
 using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
+using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Commands.ChangeItem;
 using ShoppingList.Api.Domain.Commands.CreateItem;
+using ShoppingList.Api.Domain.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Queries.ItemFilterResults;
@@ -48,10 +50,31 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [Route("change")]
-        public async Task<IActionResult> ChangeItem([FromBody] ChangeItemContract updateItemContract)
+        public async Task<IActionResult> ChangeItem([FromBody] ChangeItemContract changeItemContract)
         {
-            var model = updateItemContract.ToDomain();
+            var model = changeItemContract.ToDomain();
             var command = new ChangeItemCommand(model);
+
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (ItemNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("update")]
+        public async Task<IActionResult> UpdateItem([FromBody] UpdateItemContract updateItemContract)
+        {
+            var model = updateItemContract.ToItemUpdate();
+            var command = new UpdateItemCommand(model);
 
             try
             {
