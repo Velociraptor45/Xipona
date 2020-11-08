@@ -58,8 +58,8 @@ namespace ShoppingList.Api.Client
         [Get("item/search/{searchInput}/{storeId}")]
         Task<IEnumerable<ItemSearchContract>> GetItemSearchResults([Path] string searchInput, [Path] int storeId);
 
-        [Post("item/update")]
-        Task UpdateItem([Body] UpdateItemContract updateItemContract);
+        [Post("item/change")]
+        Task ChangeItem([Body] ChangeItemContract changeItemContract);
 
         [Get("item/filter/{storeIds}/{itemCategoryIds}/{manufacturerIds}")]
         Task<IEnumerable<ItemFilterResultContract>> GetItemFilterResult([Query] IEnumerable<int> storeIds,

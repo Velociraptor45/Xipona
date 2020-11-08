@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace ShoppingList.Api.Endpoint.Converters.Store
 {
-    public static class UpdateItemContractConverter
+    public static class ChangeItemContractConverter
     {
-        public static ItemUpdate ToDomain(this UpdateItemContract contract)
+        public static ItemChange ToDomain(this ChangeItemContract contract)
         {
-            return new ItemUpdate(new StoreItemId(contract.Id),
+            return new ItemChange(new StoreItemId(contract.Id),
                 contract.Name,
                 false,
                 contract.Comment,

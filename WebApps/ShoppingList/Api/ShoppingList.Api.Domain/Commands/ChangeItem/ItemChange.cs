@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace ShoppingList.Api.Domain.Commands.UpdateItem
 {
-    public class ItemUpdate
+    public class ItemChange
     {
         private readonly IEnumerable<StoreItemAvailability> availabilities;
 
-        public ItemUpdate(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
+        public ItemChange(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
             IEnumerable<StoreItemAvailability> availabilities)

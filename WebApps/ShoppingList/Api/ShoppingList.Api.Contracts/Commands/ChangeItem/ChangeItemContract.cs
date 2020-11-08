@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ShoppingList.Api.Contracts.Commands.UpdateItem
 {
-    public class UpdateItemContract
+    public class ChangeItemContract
     {
         public int Id { get; set; }
         public string Name { get; set; }

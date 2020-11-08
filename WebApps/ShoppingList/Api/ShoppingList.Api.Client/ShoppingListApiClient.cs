@@ -95,9 +95,9 @@ namespace ShoppingList.Api.Client
             await apiClient.CreateItem(createItemContract);
         }
 
-        public async Task UpdateItem(UpdateItemContract updateItemContract)
+        public async Task ChangeItem(ChangeItemContract changeItemContract)
         {
-            await apiClient.UpdateItem(updateItemContract);
+            await apiClient.ChangeItem(changeItemContract);
         }
 
         public async Task<IEnumerable<ItemSearchContract>> GetItemSearchResults(string searchInput, int storeId)

@@ -47,11 +47,11 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("update")]
-        public async Task<IActionResult> UpdateItem([FromBody] UpdateItemContract updateItemContract)
+        [Route("change")]
+        public async Task<IActionResult> ChangeItem([FromBody] ChangeItemContract updateItemContract)
         {
             var model = updateItemContract.ToDomain();
-            var command = new UpdateItemCommand(model);
+            var command = new ChangeItemCommand(model);
 
             try
             {

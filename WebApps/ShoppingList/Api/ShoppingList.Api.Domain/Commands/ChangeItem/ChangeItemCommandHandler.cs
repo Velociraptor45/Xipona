@@ -1,4 +1,5 @@
 ﻿using ShoppingList.Api.Domain.Exceptions;
+using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Ports;
 using System;
 using System.Threading;
@@ -6,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace ShoppingList.Api.Domain.Commands.UpdateItem
 {
-    public class UpdateItemCommandHandler : ICommandHandler<UpdateItemCommand, bool>
+    public class ChangeItemCommandHandler : ICommandHandler<ChangeItemCommand, bool>
     {
         private readonly IItemRepository itemRepository;
         private readonly IItemCategoryRepository itemCategoryRepository;
         private readonly IManufacturerRepository manufacturerRepository;
 
-        public UpdateItemCommandHandler(IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository,
+        public ChangeItemCommandHandler(IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository,
             IManufacturerRepository manufacturerRepository)
         {
             this.itemRepository = itemRepository;
@@ -20,22 +21,22 @@ namespace ShoppingList.Api.Domain.Commands.UpdateItem
             this.manufacturerRepository = manufacturerRepository;
         }
 
-        public async Task<bool> HandleAsync(UpdateItemCommand command, CancellationToken cancellationToken)
+        public async Task<bool> HandleAsync(ChangeItemCommand command, CancellationToken cancellationToken)
         {
             if (command == null)
                 throw new ArgumentNullException(nameof(command));
 
-            if (!await itemRepository.IsValidIdAsync(command.ItemUpdate.Id, cancellationToken))
-                throw new ItemNotFoundException(command.ItemUpdate.Id);
+            if (!await itemRepository.IsValidIdAsync(command.ItemChange.Id, cancellationToken))
+                throw new ItemNotFoundException(command.ItemChange.Id);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var itemCategory = await itemCategoryRepository
-                .FindByAsync(command.ItemUpdate.ItemCategoryId, cancellationToken);
-            var manufacturer = await manufacturerRepository
-                .FindByAsync(command.ItemUpdate.ManufacturerId, cancellationToken);
+            ItemCategory itemCategory = await itemCategoryRepository
+                .FindByAsync(command.ItemChange.ItemCategoryId, cancellationToken);
+            Manufacturer manufacturer = await manufacturerRepository
+                .FindByAsync(command.ItemChange.ManufacturerId, cancellationToken);
 
-            var storeItem = command.ItemUpdate.ToStoreItem(itemCategory, manufacturer);
+            var storeItem = command.ItemChange.ToStoreItem(itemCategory, manufacturer);
 
             await itemRepository.StoreAsync(storeItem, cancellationToken);
 
