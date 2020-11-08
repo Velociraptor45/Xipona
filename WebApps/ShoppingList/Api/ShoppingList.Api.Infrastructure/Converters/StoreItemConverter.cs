@@ -16,8 +16,8 @@ namespace ShoppingList.Api.Infrastructure.Converters
                 (Models.QuantityType)entity.QuantityType,
                 entity.QuantityInPacket,
                 (Models.QuantityTypeInPacket)entity.QuantityTypeInPacket,
-                new Models.ItemCategoryId(entity.ItemCategory.Id),
-                new Models.ManufacturerId(entity.Manufacturer.Id),
+                entity.ItemCategory.ToDomain(),
+                entity.Manufacturer.ToDomain(),
                 entity.AvailableAt.Select(map => new Models.StoreItemAvailability(
                     new Models.StoreId(map.StoreId), map.Price)));
         }
@@ -34,8 +34,8 @@ namespace ShoppingList.Api.Infrastructure.Converters
                 QuantityType = (int)model.QuantityType,
                 QuantityInPacket = model.QuantityInPacket,
                 QuantityTypeInPacket = (int)model.QuantityTypeInPacket,
-                ItemCategoryId = model.ItemCategoryId.Value,
-                ManufacturerId = model.ManufacturerId.Value
+                ItemCategoryId = model.ItemCategory.Id.Value,
+                ManufacturerId = model.Manufacturer.Id.Value
             };
         }
     }

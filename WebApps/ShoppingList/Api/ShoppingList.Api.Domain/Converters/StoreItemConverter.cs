@@ -8,9 +8,9 @@ namespace ShoppingList.Api.Domain.Converters
     public static class StoreItemConverter
     {
         public static ShoppingListItem ToShoppingListItemDomain(this StoreItem storeItem, StoreId storeId,
-            ItemCategory itemCategory, Manufacturer manufacturer, bool isInBasket, float quantity)
+            bool isInBasket, float quantity)
         {
-            var availability = storeItem.Availabilities
+            StoreItemAvailability availability = storeItem.Availabilities
                 .FirstOrDefault(availability => availability.StoreId == storeId);
             if (availability == null)
                 throw new ItemAtStoreNotAvailableException(storeItem.Id, storeId);
@@ -24,23 +24,22 @@ namespace ShoppingList.Api.Domain.Converters
                 storeItem.QuantityType,
                 storeItem.QuantityInPacket,
                 storeItem.QuantityTypeInPacket,
-                itemCategory,
-                manufacturer,
+                storeItem.ItemCategory,
+                storeItem.Manufacturer,
                 isInBasket,
                 quantity);
         }
 
-        public static ItemSearchReadModel ToItemSearchReadModel(this StoreItem storeItem, StoreId storeId,
-            ItemCategory itemCategory, Manufacturer manufacturer)
+        public static ItemSearchReadModel ToItemSearchReadModel(this StoreItem storeItem, StoreId storeId)
         {
-            var storeAvailability = storeItem.Availabilities
+            StoreItemAvailability storeAvailability = storeItem.Availabilities
                 .FirstOrDefault(av => av.StoreId == storeId);
 
             if (storeAvailability == null)
                 throw new ItemAtStoreNotAvailableException(storeItem.Id, storeId);
 
             return new ItemSearchReadModel(storeItem.Id, storeItem.Name, storeAvailability.Price,
-                manufacturer, itemCategory);
+                storeItem.Manufacturer, storeItem.ItemCategory);
         }
     }
 }
