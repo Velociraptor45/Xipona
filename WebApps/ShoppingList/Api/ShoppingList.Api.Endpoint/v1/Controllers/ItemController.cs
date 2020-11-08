@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.Api.ApplicationServices;
+using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
-using ShoppingList.Api.Contracts.Commands.UpdateItem;
+using ShoppingList.Api.Domain.Commands.ChangeItem;
 using ShoppingList.Api.Domain.Commands.CreateItem;
-using ShoppingList.Api.Domain.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Queries.ItemFilterResults;

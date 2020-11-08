@@ -1,7 +1,7 @@
 ﻿using ShoppingList.Api.Contracts.Commands.SharedContracts;
 using System.Collections.Generic;
 
-namespace ShoppingList.Api.Contracts.Commands.UpdateItem
+namespace ShoppingList.Api.Contracts.Commands.ChangeItem
 {
     public class ChangeItemContract
     {

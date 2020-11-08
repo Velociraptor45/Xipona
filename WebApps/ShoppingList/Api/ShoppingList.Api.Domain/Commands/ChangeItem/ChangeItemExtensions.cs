@@ -1,6 +1,6 @@
 ﻿using ShoppingList.Api.Domain.Models;
 
-namespace ShoppingList.Api.Domain.Commands.UpdateItem
+namespace ShoppingList.Api.Domain.Commands.ChangeItem
 {
     public static class ChangeItemExtensions
     {

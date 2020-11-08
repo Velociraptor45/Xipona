@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Api.Domain.Commands.UpdateItem
+﻿namespace ShoppingList.Api.Domain.Commands.ChangeItem
 {
     public class ChangeItemCommand : ICommand<bool>
     {

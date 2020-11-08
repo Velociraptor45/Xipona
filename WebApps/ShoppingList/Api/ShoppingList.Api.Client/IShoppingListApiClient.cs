@@ -1,7 +1,7 @@
 ﻿using RestEase;
+using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
 using ShoppingList.Api.Contracts.Commands.CreateStore;
-using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
 using ShoppingList.Api.Contracts.Queries.AllActiveItemCategories;

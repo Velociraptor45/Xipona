@@ -1,5 +1,5 @@
-﻿using ShoppingList.Api.Contracts.Commands.UpdateItem;
-using ShoppingList.Api.Domain.Commands.UpdateItem;
+﻿using ShoppingList.Api.Contracts.Commands.ChangeItem;
+using ShoppingList.Api.Domain.Commands.ChangeItem;
 using ShoppingList.Api.Domain.Models;
 using System.Linq;
 

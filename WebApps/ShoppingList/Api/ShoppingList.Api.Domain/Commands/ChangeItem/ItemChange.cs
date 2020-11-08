@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ShoppingList.Api.Domain.Commands.UpdateItem
+namespace ShoppingList.Api.Domain.Commands.ChangeItem
 {
     public class ItemChange
     {
