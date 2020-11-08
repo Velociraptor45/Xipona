@@ -5,6 +5,7 @@ using ShoppingList.Api.Domain.Ports;
 using ShoppingList.Api.Infrastructure.Converters;
 using ShoppingList.Api.Infrastructure.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,6 +45,33 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             await StoreModifiedListAsync(listEntity, shoppingList, cancellationToken);
+        }
+
+        public async Task<IEnumerable<Domain.Models.ShoppingList>> FindByAsync(StoreItemId storeItemId,
+            CancellationToken cancellationToken)
+        {
+            if (storeItemId is null)
+            {
+                throw new ArgumentNullException(nameof(storeItemId));
+            }
+
+            List<Entities.ShoppingList> entities = await dbContext.ShoppingLists.AsNoTracking()
+                .Include(l => l.Store)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.Manufacturer)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.ItemCategory)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.AvailableAt)
+                .Where(l => l.ItemsOnList.FirstOrDefault(i => i.Id == storeItemId.Value) != null)
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return entities.Select(e => e.ToDomain());
         }
 
         public async Task<Domain.Models.ShoppingList> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)

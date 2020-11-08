@@ -17,8 +17,10 @@ namespace ShoppingList.Api.Domain.Ports
             IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
             CancellationToken cancellationToken);
 
+        Task<StoreItem> FindByAsync(StoreItemId storeItemId, CancellationToken cancellationToken);
+
         Task<bool> IsValidIdAsync(StoreItemId id, CancellationToken cancellationToken);
 
-        Task<StoreItemId> StoreAsync(StoreItem storeItem, CancellationToken cancellationToken);
+        Task<StoreItem> StoreAsync(StoreItem storeItem, CancellationToken cancellationToken);
     }
 }

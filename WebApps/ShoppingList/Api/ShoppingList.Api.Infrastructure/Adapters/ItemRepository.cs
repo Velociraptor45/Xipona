@@ -24,6 +24,27 @@ namespace ShoppingList.Api.Infrastructure.Adapters
 
         #region public methods
 
+        public async Task<StoreItem> FindByAsync(StoreItemId storeItemId, CancellationToken cancellationToken)
+        {
+            if (storeItemId is null)
+            {
+                throw new ArgumentNullException(nameof(storeItemId));
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var itemEntity = await dbContext.Items.AsNoTracking()
+                .Include(item => item.ItemCategory)
+                .Include(item => item.Manufacturer)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Store)
+                .FirstOrDefaultAsync(item => item.Id == storeItemId.Value);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return itemEntity.ToStoreItemDomain();
+        }
+
         public async Task<StoreItem> FindByAsync(StoreItemId storeItemId, StoreId storeId,
             CancellationToken cancellationToken)
         {
@@ -146,7 +167,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return entity != null;
         }
 
-        public async Task<StoreItemId> StoreAsync(StoreItem storeItem, CancellationToken cancellationToken)
+        public async Task<StoreItem> StoreAsync(StoreItem storeItem, CancellationToken cancellationToken)
         {
             if (storeItem == null)
                 throw new ArgumentNullException(nameof(storeItem));
@@ -165,7 +186,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
 
         #region private methods
 
-        private async Task<StoreItemId> StoreExistingAsync(StoreItem storeItem)
+        private async Task<StoreItem> StoreExistingAsync(StoreItem storeItem)
         {
             var entity = storeItem.ToEntity();
             List<AvailableAt> availabilities = storeItem.Availabilities
@@ -198,10 +219,10 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             dbContext.Entry(entity).State = EntityState.Modified;
             await dbContext.SaveChangesAsync();
 
-            return storeItem.Id;
+            return storeItem;
         }
 
-        private async Task<StoreItemId> AddNewAsync(StoreItem storeItem)
+        private async Task<StoreItem> AddNewAsync(StoreItem storeItem)
         {
             Item entity = storeItem.ToEntity();
             dbContext.Entry(entity).State = EntityState.Added;
@@ -219,7 +240,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
 
             await dbContext.SaveChangesAsync();
 
-            return id;
+            return entity.ToStoreItemDomain();
         }
 
         #endregion private methods
