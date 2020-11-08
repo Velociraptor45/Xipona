@@ -9,10 +9,10 @@ namespace ShoppingList.Api.Domain.Models
 
         public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
+            ItemCategory itemCategory, Manufacturer manufacturer,
             IEnumerable<StoreItemAvailability> availabilities)
         {
-            Id = id;
+            Id = id ?? throw new System.ArgumentNullException(nameof(id));
             Name = name;
             IsDeleted = isDeleted;
             Comment = comment;
@@ -20,9 +20,9 @@ namespace ShoppingList.Api.Domain.Models
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
-            ItemCategoryId = itemCategoryId;
-            ManufacturerId = manufacturerId;
-            this.availabilities = availabilities;
+            ItemCategory = itemCategory ?? throw new System.ArgumentNullException(nameof(itemCategory));
+            Manufacturer = manufacturer ?? throw new System.ArgumentNullException(nameof(manufacturer));
+            this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
         }
 
         public StoreItemId Id { get; }
@@ -33,8 +33,9 @@ namespace ShoppingList.Api.Domain.Models
         public QuantityType QuantityType { get; }
         public float QuantityInPacket { get; }
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
-        public ItemCategoryId ItemCategoryId { get; }
-        public ManufacturerId ManufacturerId { get; }
+        public ItemCategory ItemCategory { get; }
+        public Manufacturer Manufacturer { get; }
+
         public IReadOnlyCollection<StoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
     }
 }
