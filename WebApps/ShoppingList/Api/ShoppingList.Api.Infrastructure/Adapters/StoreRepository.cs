@@ -2,8 +2,9 @@
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Ports;
-using ShoppingList.Api.Infrastructure.Converters;
 using ShoppingList.Api.Infrastructure.Entities;
+using ShoppingList.Api.Infrastructure.Extensions.Entities;
+using ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
