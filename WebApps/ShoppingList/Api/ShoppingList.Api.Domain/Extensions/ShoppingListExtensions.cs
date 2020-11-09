@@ -1,9 +1,9 @@
 ﻿using ShoppingList.Api.Domain.Queries.SharedModels;
 using System.Linq;
 
-namespace ShoppingList.Api.Domain.Converters
+namespace ShoppingList.Api.Domain.Extensions
 {
-    public static class ShoppingListReadModelConverter
+    public static class ShoppingListExtensions
     {
         public static ShoppingListReadModel ToReadModel(this Models.ShoppingList model)
         {

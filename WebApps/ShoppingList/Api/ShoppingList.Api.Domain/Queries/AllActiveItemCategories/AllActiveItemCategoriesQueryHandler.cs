@@ -1,4 +1,4 @@
-﻿using ShoppingList.Api.Domain.Converters;
+﻿using ShoppingList.Api.Domain.Extensions;
 using ShoppingList.Api.Domain.Ports;
 using ShoppingList.Api.Domain.Queries.SharedModels;
 using System;

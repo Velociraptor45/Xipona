@@ -1,11 +1,12 @@
 ﻿using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
+using ShoppingList.Api.Domain.Queries.ItemFilterResults;
 using ShoppingList.Api.Domain.Queries.ItemSearch;
 using System.Linq;
 
-namespace ShoppingList.Api.Domain.Converters
+namespace ShoppingList.Api.Domain.Extensions
 {
-    public static class StoreItemConverter
+    public static class StoreItemExtensions
     {
         public static ShoppingListItem ToShoppingListItemDomain(this StoreItem storeItem, StoreId storeId,
             bool isInBasket, float quantity)
@@ -40,6 +41,11 @@ namespace ShoppingList.Api.Domain.Converters
 
             return new ItemSearchReadModel(storeItem.Id, storeItem.Name, storeAvailability.Price,
                 storeItem.Manufacturer, storeItem.ItemCategory);
+        }
+
+        public static ItemFilterResultReadModel ToItemFilterResultReadModel(this StoreItem model)
+        {
+            return new ItemFilterResultReadModel(model.Id, model.Name);
         }
     }
 }

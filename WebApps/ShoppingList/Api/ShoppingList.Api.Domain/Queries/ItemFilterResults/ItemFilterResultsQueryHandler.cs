@@ -1,4 +1,4 @@
-﻿using ShoppingList.Api.Domain.Converters;
+﻿using ShoppingList.Api.Domain.Extensions;
 using ShoppingList.Api.Domain.Ports;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +27,7 @@ namespace ShoppingList.Api.Domain.Queries.ItemFilterResults
             var storeItems = await itemRepository.FindByAsync(query.StoreIds, query.ItemCategoriesIds, query.ManufacturerIds,
                 cancellationToken);
 
-            return storeItems.Select(model => model.ToReadModel());
+            return storeItems.Select(model => model.ToItemFilterResultReadModel());
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using ShoppingList.Api.Domain.Converters;
-using ShoppingList.Api.Domain.Exceptions;
+﻿using ShoppingList.Api.Domain.Exceptions;
+using ShoppingList.Api.Domain.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
