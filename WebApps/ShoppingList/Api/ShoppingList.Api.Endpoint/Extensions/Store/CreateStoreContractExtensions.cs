@@ -1,10 +1,11 @@
 ﻿using ShoppingList.Api.Contracts.Commands.CreateStore;
 using ShoppingList.Api.Domain.Models;
+
 using Models = ShoppingList.Api.Domain.Models;
 
-namespace ShoppingList.Api.Endpoint.Converters
+namespace ShoppingList.Api.Endpoint.Extensions.Store
 {
-    public static class CreateStoreContractConverter
+    public static class CreateStoreContractExtensions
     {
         public static Models.Store ToDomain(this CreateStoreContract contract)
         {

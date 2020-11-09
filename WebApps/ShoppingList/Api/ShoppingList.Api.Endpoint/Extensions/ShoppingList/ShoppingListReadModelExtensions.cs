@@ -1,10 +1,12 @@
 ﻿using ShoppingList.Api.Contracts.SharedContracts;
 using ShoppingList.Api.Domain.Queries.SharedModels;
+using ShoppingList.Api.Endpoint.Extensions.Item;
+using ShoppingList.Api.Endpoint.Extensions.Store;
 using System.Linq;
 
-namespace ShoppingList.Api.Endpoint.Converters
+namespace ShoppingList.Api.Endpoint.Extensions.ShoppingList
 {
-    public static class ShoppingListContractConverter
+    public static class ShoppingListReadModelExtensions
     {
         public static ShoppingListContract ToContract(this ShoppingListReadModel readModel)
         {

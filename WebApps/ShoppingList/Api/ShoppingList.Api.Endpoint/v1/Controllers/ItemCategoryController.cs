@@ -2,8 +2,7 @@
 using ShoppingList.Api.ApplicationServices;
 using ShoppingList.Api.Domain.Queries.AllActiveItemCategories;
 using ShoppingList.Api.Domain.Queries.ItemCategorySearch;
-using ShoppingList.Api.Endpoint.Converters;
-using ShoppingList.Api.Endpoint.Converters.ItemCategory;
+using ShoppingList.Api.Endpoint.Extensions.ItemCategory;
 using System.Linq;
 using System.Threading.Tasks;
 

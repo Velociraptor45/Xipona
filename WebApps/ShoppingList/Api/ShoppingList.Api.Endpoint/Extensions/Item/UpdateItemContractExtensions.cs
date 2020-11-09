@@ -1,6 +1,7 @@
 ﻿using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Models;
+using ShoppingList.Api.Endpoint.Extensions.Item;
 using System.Linq;
 
 namespace ShoppingList.Api.Endpoint.Converters.Item

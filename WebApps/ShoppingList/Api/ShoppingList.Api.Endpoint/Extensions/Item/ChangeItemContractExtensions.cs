@@ -1,11 +1,12 @@
 ﻿using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Domain.Commands.ChangeItem;
 using ShoppingList.Api.Domain.Models;
+using ShoppingList.Api.Endpoint.Converters;
 using System.Linq;
 
-namespace ShoppingList.Api.Endpoint.Converters.Store
+namespace ShoppingList.Api.Endpoint.Extensions.Item
 {
-    public static class ChangeItemContractConverter
+    public static class ChangeItemContractExtensions
     {
         public static ItemChange ToDomain(this ChangeItemContract contract)
         {

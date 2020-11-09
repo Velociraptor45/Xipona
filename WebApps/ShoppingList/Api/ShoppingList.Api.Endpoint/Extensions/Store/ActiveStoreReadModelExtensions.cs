@@ -1,9 +1,9 @@
 ﻿using ShoppingList.Api.Contracts.Queries.AllActiveStores;
 using ShoppingList.Api.Domain.Queries.AllActiveStores;
 
-namespace ShoppingList.Api.Endpoint.Converters.Store
+namespace ShoppingList.Api.Endpoint.Extensions.Store
 {
-    public static class ActiveStoreContractConverter
+    public static class ActiveStoreReadModelExtensions
     {
         public static ActiveStoreContract ToContract(this ActiveStoreReadModel readModel)
         {

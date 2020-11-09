@@ -1,9 +1,9 @@
 ﻿using ShoppingList.Api.Contracts.Queries;
 using ShoppingList.Api.Domain.Queries.ItemSearch;
 
-namespace ShoppingList.Endpoint.Converters.Item
+namespace ShoppingList.Api.Endpoint.Extensions.Item
 {
-    public static class ItemSearchContractConverter
+    public static class ItemSearchReadModelExtensions
     {
         public static ItemSearchContract ToContract(this ItemSearchReadModel readModel)
         {

@@ -6,8 +6,7 @@ using ShoppingList.Api.Domain.Commands.CreateStore;
 using ShoppingList.Api.Domain.Commands.UpdateStore;
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Queries.AllActiveStores;
-using ShoppingList.Api.Endpoint.Converters;
-using ShoppingList.Api.Endpoint.Converters.Store;
+using ShoppingList.Api.Endpoint.Extensions.Store;
 using System.Linq;
 using System.Threading.Tasks;
 

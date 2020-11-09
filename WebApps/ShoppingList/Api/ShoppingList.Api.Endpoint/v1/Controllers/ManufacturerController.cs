@@ -2,8 +2,7 @@
 using ShoppingList.Api.ApplicationServices;
 using ShoppingList.Api.Domain.Queries.AllActiveManufacturers;
 using ShoppingList.Api.Domain.Queries.ManufacturerSearch;
-using ShoppingList.Api.Endpoint.Converters;
-using ShoppingList.Api.Endpoint.Converters.Manufacturer;
+using ShoppingList.Api.Endpoint.Extensions.Manufacturer;
 using System.Linq;
 using System.Threading.Tasks;
 

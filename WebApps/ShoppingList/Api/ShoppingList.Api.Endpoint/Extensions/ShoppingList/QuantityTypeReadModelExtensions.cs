@@ -1,9 +1,9 @@
 ﻿using ShoppingList.Api.Contracts.Queries.AllQuantityTypes;
 using ShoppingList.Api.Domain.Queries.AllQuantityTypes;
 
-namespace ShoppingList.Api.Endpoint.Converters.ShoppingList
+namespace ShoppingList.Api.Endpoint.Extensions.ShoppingList
 {
-    public static class QuantityTypeContractConverter
+    public static class QuantityTypeReadModelExtensions
     {
         public static QuantityTypeContract ToContract(this QuantityTypeReadModel readModel)
         {

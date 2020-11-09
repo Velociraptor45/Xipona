@@ -1,9 +1,9 @@
 ﻿using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Domain.Models;
 
-namespace ShoppingList.Api.Endpoint.Converters.Store
+namespace ShoppingList.Api.Endpoint.Extensions.Store
 {
-    public static class UpdateStoreContractConverter
+    public static class UpdateStoreContractExtensions
     {
         public static Domain.Models.Store ToDomain(this UpdateStoreContract contract)
         {
