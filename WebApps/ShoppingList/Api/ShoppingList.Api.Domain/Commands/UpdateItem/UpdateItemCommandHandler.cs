@@ -1,6 +1,7 @@
 ﻿using ShoppingList.Api.Domain.Extensions;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Ports;
+using ShoppingList.Api.Domain.Ports.Infrastructure;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,14 +14,17 @@ namespace ShoppingList.Api.Domain.Commands.UpdateItem
         private readonly IItemCategoryRepository itemCategoryRepository;
         private readonly IManufacturerRepository manufacturerRepository;
         private readonly IShoppingListRepository shoppingListRepository;
+        private readonly ITransactionGenerator transactionGenerator;
 
         public UpdateItemCommandHandler(IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository,
-            IManufacturerRepository manufacturerRepository, IShoppingListRepository shoppingListRepository)
+            IManufacturerRepository manufacturerRepository, IShoppingListRepository shoppingListRepository,
+            ITransactionGenerator transactionGenerator)
         {
             this.itemRepository = itemRepository;
             this.itemCategoryRepository = itemCategoryRepository;
             this.manufacturerRepository = manufacturerRepository;
             this.shoppingListRepository = shoppingListRepository;
+            this.transactionGenerator = transactionGenerator;
         }
 
         public async Task<bool> HandleAsync(UpdateItemCommand command, CancellationToken cancellationToken)
@@ -33,14 +37,16 @@ namespace ShoppingList.Api.Domain.Commands.UpdateItem
             // deactivate old item
             StoreItem oldItem = await itemRepository.FindByAsync(command.ItemUpdate.OldId, cancellationToken);
             oldItem.Delete();
-            await itemRepository.StoreAsync(oldItem, cancellationToken);
 
-            // create new Item
             ItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(command.ItemUpdate.ItemCategoryId, cancellationToken);
             Manufacturer manufacturer = await manufacturerRepository
                 .FindByAsync(command.ItemUpdate.ManufacturerId, cancellationToken);
 
+            using ITransaction transaction = await transactionGenerator.GenerateAsync(cancellationToken);
+            await itemRepository.StoreAsync(oldItem, cancellationToken);
+
+            // create new Item
             StoreItem updatedItem = command.ItemUpdate.ToStoreItem(itemCategory, manufacturer);
             updatedItem = await itemRepository.StoreAsync(updatedItem, cancellationToken);
 
@@ -61,6 +67,8 @@ namespace ShoppingList.Api.Domain.Commands.UpdateItem
 
                 await shoppingListRepository.StoreAsync(list, cancellationToken);
             }
+
+            await transaction.CommitAsync(cancellationToken);
 
             return true;
         }
