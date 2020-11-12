@@ -1,5 +1,4 @@
-﻿using ShoppingList.Api.Domain.Exceptions;
-using ShoppingList.Api.Domain.Ports;
+﻿using ShoppingList.Api.Domain.Ports;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,14 +19,12 @@ namespace ShoppingList.Api.Domain.Commands.UpdateStore
             if (command == null)
                 throw new ArgumentNullException(nameof(command));
 
-            var isIdValid = await storeRepository.IsValidIdAsync(command.Store.Id, cancellationToken);
-
-            if (!isIdValid)
-                throw new StoreNotFoundException(command.Store.Id);
+            var store = await storeRepository.FindByAsync(command.StoreUpdate.Id, cancellationToken);
+            store.ChangeName(command.StoreUpdate.Name);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await storeRepository.StoreAsync(command.Store, cancellationToken);
+            await storeRepository.StoreAsync(store, cancellationToken);
 
             return true;
         }

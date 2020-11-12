@@ -1,14 +1,12 @@
-﻿using ShoppingList.Api.Domain.Models;
-
-namespace ShoppingList.Api.Domain.Commands.UpdateStore
+﻿namespace ShoppingList.Api.Domain.Commands.UpdateStore
 {
     public class UpdateStoreCommand : ICommand<bool>
     {
-        public UpdateStoreCommand(Store store)
+        public UpdateStoreCommand(StoreUpdate storeUpdate)
         {
-            Store = store;
+            StoreUpdate = storeUpdate ?? throw new System.ArgumentNullException(nameof(storeUpdate));
         }
 
-        public Store Store { get; }
+        public StoreUpdate StoreUpdate { get; }
     }
 }
