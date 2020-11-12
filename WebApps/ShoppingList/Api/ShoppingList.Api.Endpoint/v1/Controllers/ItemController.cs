@@ -5,6 +5,7 @@ using ShoppingList.Api.Contracts.Commands.CreateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Commands.ChangeItem;
 using ShoppingList.Api.Domain.Commands.CreateItem;
+using ShoppingList.Api.Domain.Commands.DeleteItem;
 using ShoppingList.Api.Domain.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
@@ -115,6 +116,17 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
             var readModels = await queryDispatcher.DispatchAsync(query, default);
 
             return Ok(readModels.Select(readModel => readModel.ToContract()));
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [Route("delete/{itemId}")]
+        public async Task<IActionResult> DeleteItem([FromRoute(Name = "itemId")] int itemId)
+        {
+            var command = new DeleteItemCommand(new StoreItemId(itemId));
+            await commandDispatcher.DispatchAsync(command, default);
+
+            return Ok();
         }
     }
 }
