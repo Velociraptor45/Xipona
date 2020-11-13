@@ -1,4 +1,4 @@
-﻿using ShoppingList.Api.Domain.Converters;
+﻿using ShoppingList.Api.Domain.Extensions;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Ports;
 using System;
@@ -41,19 +41,8 @@ namespace ShoppingList.Api.Domain.Queries.ItemSearch
             var itemsNotOnShoppingList = storeItems
                 .Where(item => !itemIdsOnShoppingList.Contains(item.Id.ToShoppingListItemId()));
 
-            IEnumerable<ItemCategory> itemCategories = await itemCategoryRepository.FindByAsync(
-                itemsNotOnShoppingList.Select(item => item.ItemCategoryId), cancellationToken);
-            IEnumerable<Manufacturer> manufacturers = await manufacturerRepository.FindByAsync(
-                itemsNotOnShoppingList.Select(item => item.ManufacturerId), cancellationToken);
-
-            var itemCategoriesDict = itemCategories.ToDictionary(cat => cat.Id);
-            var manufacturersDict = manufacturers.ToDictionary(m => m.Id);
-
-            return itemsNotOnShoppingList.Select(item =>
-                item.ToItemSearchReadModel(
-                    query.StoreId,
-                    itemCategoriesDict[item.ItemCategoryId],
-                    manufacturersDict[item.ManufacturerId]));
+            return itemsNotOnShoppingList
+                .Select(item => item.ToItemSearchReadModel(query.StoreId));
         }
     }
 }

@@ -2,9 +2,11 @@
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Ports;
-using ShoppingList.Api.Infrastructure.Converters;
 using ShoppingList.Api.Infrastructure.Entities;
+using ShoppingList.Api.Infrastructure.Extensions.Entities;
+using ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,6 +46,34 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             await StoreModifiedListAsync(listEntity, shoppingList, cancellationToken);
+        }
+
+        public async Task<IEnumerable<Domain.Models.ShoppingList>> FindActiveByAsync(StoreItemId storeItemId,
+            CancellationToken cancellationToken)
+        {
+            if (storeItemId is null)
+            {
+                throw new ArgumentNullException(nameof(storeItemId));
+            }
+
+            List<Entities.ShoppingList> entities = await dbContext.ShoppingLists.AsNoTracking()
+                .Include(l => l.Store)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.Manufacturer)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.ItemCategory)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.AvailableAt)
+                .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Value) != null
+                    && l.CompletionDate == null)
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return entities.Select(e => e.ToDomain());
         }
 
         public async Task<Domain.Models.ShoppingList> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)

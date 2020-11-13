@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.Api.ApplicationServices;
+using ShoppingList.Api.Domain.Queries.AllActiveItemCategories;
 using ShoppingList.Api.Domain.Queries.ItemCategorySearch;
-using ShoppingList.Api.Endpoint.Converters;
+using ShoppingList.Api.Endpoint.Extensions.ItemCategory;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,6 +38,18 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
             var itemCategoryContracts = itemCategoryReadModels.Select(category => category.ToContract());
 
             return Ok(itemCategoryContracts);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [Route("all/active")]
+        public async Task<IActionResult> GetAllActiveItemCategories()
+        {
+            var query = new AllActiveItemCategoriesQuery();
+            var readModels = await queryDispatcher.DispatchAsync(query, default);
+            var contracts = readModels.Select(readModel => readModel.ToActiveContract());
+
+            return Ok(contracts);
         }
     }
 }

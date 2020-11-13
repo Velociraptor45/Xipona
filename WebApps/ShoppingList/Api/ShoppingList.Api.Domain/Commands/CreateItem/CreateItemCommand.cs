@@ -1,14 +1,12 @@
-﻿using ShoppingList.Api.Domain.Models;
-
-namespace ShoppingList.Api.Domain.Commands.CreateItem
+﻿namespace ShoppingList.Api.Domain.Commands.CreateItem
 {
     public class CreateItemCommand : ICommand<bool>
     {
-        public CreateItemCommand(StoreItem storeItem)
+        public CreateItemCommand(ItemCreation itemCreation)
         {
-            StoreItem = storeItem;
+            ItemCreation = itemCreation ?? throw new System.ArgumentNullException(nameof(itemCreation));
         }
 
-        public StoreItem StoreItem { get; }
+        public ItemCreation ItemCreation { get; }
     }
 }

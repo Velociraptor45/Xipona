@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.Api.ApplicationServices;
+using ShoppingList.Api.Domain.Queries.AllActiveManufacturers;
 using ShoppingList.Api.Domain.Queries.ManufacturerSearch;
-using ShoppingList.Api.Endpoint.Converters;
+using ShoppingList.Api.Endpoint.Extensions.Manufacturer;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,6 +38,18 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
             var manufacturerContracts = manufacturerReadModels.Select(category => category.ToContract());
 
             return Ok(manufacturerContracts);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [Route("all/active")]
+        public async Task<IActionResult> GetAllActiveManufacturers()
+        {
+            var query = new AllActiveManufacturersQuery();
+            var readModels = await queryDispatcher.DispatchAsync(query, default);
+            var contracts = readModels.Select(readModel => readModel.ToActiveContract());
+
+            return Ok(contracts);
         }
     }
 }

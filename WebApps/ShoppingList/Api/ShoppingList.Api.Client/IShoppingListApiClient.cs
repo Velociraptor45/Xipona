@@ -1,11 +1,14 @@
 ﻿using RestEase;
+using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
 using ShoppingList.Api.Contracts.Commands.CreateStore;
 using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
+using ShoppingList.Api.Contracts.Queries.AllActiveItemCategories;
 using ShoppingList.Api.Contracts.Queries.AllActiveStores;
 using ShoppingList.Api.Contracts.Queries.AllQuantityTypes;
+using ShoppingList.Api.Contracts.Queries.ItemFilterResults;
 using ShoppingList.Api.Contracts.SharedContracts;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -56,8 +59,15 @@ namespace ShoppingList.Api.Client
         [Get("item/search/{searchInput}/{storeId}")]
         Task<IEnumerable<ItemSearchContract>> GetItemSearchResults([Path] string searchInput, [Path] int storeId);
 
+        [Post("item/change")]
+        Task ChangeItem([Body] ChangeItemContract changeItemContract);
+
         [Post("item/update")]
-        Task UpdateItem([Body] UpdateItemContract updateItemContract);
+        Task UpdateItemAsync([Body] UpdateItemContract updateItemContract);
+
+        [Get("item/filter/{storeIds}/{itemCategoryIds}/{manufacturerIds}")]
+        Task<IEnumerable<ItemFilterResultContract>> GetItemFilterResult([Query] IEnumerable<int> storeIds,
+            [Query] IEnumerable<int> itemCategoriesIds, [Query] IEnumerable<int> manufacturerIds);
 
         #endregion ItemController
 
@@ -79,12 +89,18 @@ namespace ShoppingList.Api.Client
         [Get("manufacturer/search/{searchInput}")]
         Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResults([Path] string searchInput);
 
+        [Get("manufacturer/all/active")]
+        Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveManufacturers();
+
         #endregion ManufacturerController
 
         #region ItemCategoryController
 
         [Get("item-category/search/{searchInput}")]
         Task<IEnumerable<ManufacturerContract>> GetItemCategorySearchResults([Path] string searchInput);
+
+        [Get("item-category/all/active")]
+        Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveItemCategories();
 
         #endregion ItemCategoryController
     }

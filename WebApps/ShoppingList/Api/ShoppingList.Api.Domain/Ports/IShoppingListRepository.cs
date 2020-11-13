@@ -1,6 +1,7 @@
 ﻿using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace ShoppingList.Api.Domain.Ports
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ShoppingListNotFoundException"></exception>
         Task<Models.ShoppingList> FindByAsync(ShoppingListId id, CancellationToken cancellationToken);
+        Task<IEnumerable<Models.ShoppingList>> FindActiveByAsync(StoreItemId storeItemId, CancellationToken cancellationToken);
 
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ItemNotOnShoppingListException"></exception>

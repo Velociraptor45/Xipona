@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.Api.ApplicationServices;
+using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateItem;
+using ShoppingList.Api.Domain.Commands.ChangeItem;
 using ShoppingList.Api.Domain.Commands.CreateItem;
+using ShoppingList.Api.Domain.Commands.DeleteItem;
 using ShoppingList.Api.Domain.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
+using ShoppingList.Api.Domain.Queries.ItemFilterResults;
 using ShoppingList.Api.Domain.Queries.ItemSearch;
-using ShoppingList.Api.Endpoint.Converters;
-using ShoppingList.Api.Endpoint.Converters.Store;
-using ShoppingList.Endpoint.Converters.Item;
+using ShoppingList.Api.Endpoint.Converters.Item;
+using ShoppingList.Api.Endpoint.Extensions.Item;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,10 +48,31 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [Route("change")]
+        public async Task<IActionResult> ChangeItem([FromBody] ChangeItemContract changeItemContract)
+        {
+            var model = changeItemContract.ToDomain();
+            var command = new ChangeItemCommand(model);
+
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (ItemNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [Route("update")]
         public async Task<IActionResult> UpdateItem([FromBody] UpdateItemContract updateItemContract)
         {
-            var model = updateItemContract.ToDomain();
+            var model = updateItemContract.ToItemUpdate();
             var command = new UpdateItemCommand(model);
 
             try
@@ -75,6 +99,34 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
             var contracts = readModels.Select(rm => rm.ToContract());
 
             return Ok(contracts);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [Route("filter")]
+        public async Task<IActionResult> GetItemFilterResults([FromQuery] IEnumerable<int> storeIds,
+            [FromQuery] IEnumerable<int> itemCategoryIds,
+            [FromQuery] IEnumerable<int> manufacturerIds)
+        {
+            var query = new ItemFilterResultsQuery(
+                storeIds.Select(id => new StoreId(id)),
+                itemCategoryIds.Select(id => new ItemCategoryId(id)),
+                manufacturerIds.Select(id => new ManufacturerId(id)));
+
+            var readModels = await queryDispatcher.DispatchAsync(query, default);
+
+            return Ok(readModels.Select(readModel => readModel.ToContract()));
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [Route("delete/{itemId}")]
+        public async Task<IActionResult> DeleteItem([FromRoute(Name = "itemId")] int itemId)
+        {
+            var command = new DeleteItemCommand(new StoreItemId(itemId));
+            await commandDispatcher.DispatchAsync(command, default);
+
+            return Ok();
         }
     }
 }

@@ -1,0 +1,101 @@
+﻿@inject ShoppingList.Frontend.Models.Ports.IOfflineClient offlineClient;
+@using ShoppingList.Frontend.Models.Items;
+@using ShoppingList.Frontend.Models;
+@using System.Collections.Generic;
+
+<div>
+    <div class="d-flex">
+        <Button>
+            <Icon Type="arrow-left"></Icon>
+        </Button>
+        <Input @bind-Value="@storeItem.Name" />
+    </div>
+    <Divider></Divider>
+    <div class="d-flex">
+        <Select Placeholder="Category">
+            @foreach (var itemCategory in ItemCategories)
+            {
+                <SelectOption Value="@itemCategory.Id.ToString()">@itemCategory.Name</SelectOption>
+            }
+        </Select>
+        <Select Placeholder="Manufacturer" Class="ml-3">
+            @foreach (var manufacturer in Manufacturers)
+            {
+                <SelectOption Value="@manufacturer.Id.ToString()">@manufacturer.Name</SelectOption>
+            }
+        </Select>
+    </div>
+    <div class="d-flex">
+        <Select Placeholder="QuantityType"></Select>
+        <div class="ml-3">
+            <Select Placeholder="QuantityTypeInPacket">
+            </Select>
+            <Input @bind-Value="@storeItem.QuantityInPacket"></Input>
+        </div>
+    </div>
+    <div class="d-flex flex-row">
+        <!-- availabilities -->
+        <div>
+            @foreach (var availability in storeItem.Availabilities)
+            {
+                <div class="d-flex flex-row align-items-center">
+                    <Input @bind-Value="@availability.PricePerQuantity" Class="ml-2 max-w-50" />
+                    <div class="mr-4">€</div>
+                    <Select Placeholder="Stores">
+                        @foreach (var store in Stores)
+                        {
+                            <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
+                        }
+                    </Select>
+                </div>
+            }
+        </div>
+        <div class="ml-2">
+            <Button class="d-flex align-items-center">
+                <Icon Type="plus"></Icon>
+            </Button>
+        </div>
+    </div>
+    <div>
+        <Button OnClick="OnUpdateButtonClicked">Update</Button>
+        <Button OnClick="OnChangeButtonClicked">Change</Button>
+        <Button OnClick="OnCancleButtonClicked" Danger="true">Cancle</Button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int ItemId { get; set; }
+    [Parameter] public List<Store> Stores { get; set; }
+    [Parameter] public List<Manufacturer> Manufacturers { get; set; }
+    [Parameter] public List<ItemCategory> ItemCategories { get; set; }
+
+    private StoreItem storeItem = new StoreItem(0, "TestItem", "Comment", false, 0, 1f, 0, 1, 1,
+        new List<StoreItemAvailabilities>(){
+            new StoreItemAvailabilities(1, 2.99f)});
+
+    protected override Task OnInitializedAsync()
+    {
+        // todo: load storeItem
+        return Task.CompletedTask;
+    }
+
+    private void OnAddStoreButtonClicked()
+    {
+
+    }
+
+    private void OnUpdateButtonClicked()
+    {
+
+    }
+
+    private void OnChangeButtonClicked()
+    {
+
+    }
+
+    private void OnCancleButtonClicked()
+    {
+
+    }
+}

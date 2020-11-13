@@ -1,4 +1,4 @@
-﻿using ShoppingList.Api.Domain.Converters;
+﻿using ShoppingList.Api.Domain.Extensions;
 using ShoppingList.Api.Domain.Ports;
 using System;
 using System.Threading;
@@ -10,17 +10,12 @@ namespace ShoppingList.Api.Domain.Commands.AddItemToShoppingList
     {
         private readonly IShoppingListRepository shoppingListRepository;
         private readonly IItemRepository itemRepository;
-        private readonly IItemCategoryRepository itemCategoryRepository;
-        private readonly IManufacturerRepository manufacturerRepository;
 
         public AddItemToShoppingListCommandHandler(IShoppingListRepository shoppingListRepository,
-            IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository,
-            IManufacturerRepository manufacturerRepository)
+            IItemRepository itemRepository)
         {
             this.shoppingListRepository = shoppingListRepository;
             this.itemRepository = itemRepository;
-            this.itemCategoryRepository = itemCategoryRepository;
-            this.manufacturerRepository = manufacturerRepository;
         }
 
         public async Task<bool> HandleAsync(AddItemToShoppingListCommand query, CancellationToken cancellationToken)
@@ -34,14 +29,10 @@ namespace ShoppingList.Api.Domain.Commands.AddItemToShoppingList
 
             var storeItem = await itemRepository.FindByAsync(query.ShoppingListItemId.ToStoreItemId(),
                 list.Store.Id, cancellationToken);
-            var manufacturer = await manufacturerRepository
-                .FindByAsync(storeItem.ManufacturerId, cancellationToken);
-            var itemCategory = await itemCategoryRepository
-                .FindByAsync(storeItem.ItemCategoryId, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            list.AddItem(storeItem, itemCategory, manufacturer, false, query.Quantity);
+            list.AddItem(storeItem, false, query.Quantity);
 
             await shoppingListRepository.StoreAsync(list, cancellationToken);
 

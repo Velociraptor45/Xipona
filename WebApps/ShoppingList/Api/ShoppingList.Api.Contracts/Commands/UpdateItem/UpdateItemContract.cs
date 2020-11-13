@@ -5,11 +5,9 @@ namespace ShoppingList.Api.Contracts.Commands.UpdateItem
 {
     public class UpdateItemContract
     {
-        public int Id { get; set; }
+        public int OldId { get; set; }
         public string Name { get; set; }
-        public bool IsDeleted { get; set; }
         public string Comment { get; set; }
-        public bool IsTemporary { get; set; }
         public int QuantityType { get; set; }
         public float QuantityInPacket { get; set; }
         public int QuantityTypeInPacket { get; set; }

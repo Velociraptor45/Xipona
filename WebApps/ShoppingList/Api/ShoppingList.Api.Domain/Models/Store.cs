@@ -10,7 +10,13 @@
         }
 
         public StoreId Id { get; }
-        public string Name { get; }
         public bool IsDeleted { get; }
+
+        public string Name { get; private set; }
+
+        public void ChangeName(string name)
+        {
+            Name = name;
+        }
     }
 }

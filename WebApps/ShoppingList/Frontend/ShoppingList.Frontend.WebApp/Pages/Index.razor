@@ -43,7 +43,7 @@
             @foreach (var option in searchBar.Options)
             {
                 <SelectOption Value="@option.ItemId.ToString()">
-                    @option.Name | @option.ManufacturerName | @option.Price€
+                    @option.Name | @option.ManufacturerName | @option.Price@option.PriceLabel
                 </SelectOption>
             }
         </Select>
@@ -64,7 +64,8 @@
     <div class="d-flex justify-content-end">
         <Button Type="primary"
                 OnClick="@OnFinishListButtonClicked"
-                Class="mr-2">
+                Class="mr-2"
+                Disabled="@(!shoppingList?.AnyItemInBasket ?? true)">
             Finish List
         </Button>
     </div>

@@ -21,8 +21,10 @@
                     <span>g</span>
                 </div>
                 <div class="d-flex">
-                    <Button Class="d-flex align-items-center justify-content-center" Icon="plus"></Button>
-                    <Button Class="d-flex align-items-center justify-content-center" Icon="minus"></Button>
+                    <Button Class="d-flex align-items-center justify-content-center" Icon="plus"
+                            OnClick="OnIncrementQuantityButtonClicked"></Button>
+                    <Button Class="d-flex align-items-center justify-content-center" Icon="minus"
+                            OnClick="OnDecrementQuantityButtonClicked"></Button>
                 </div>
             </div>
         </div>
@@ -39,7 +41,8 @@
             @if (!Item.IsTemporary)
             {
                 <div class="px-2 m-0 align-self-center ml-auto">
-                    <span>@(Item.Quantity * Item.Price)</span>
+                    <span>@(Item.Quantity * Item.PricePerQuantity)</span>
+                    <span>€</span>
                 </div>
             }
         </div>
@@ -79,5 +82,17 @@
     private async Task OnRemoveItemButtonClickedAsync()
     {
         await ItemRemovedCallback.InvokeAsync(Item);
+    }
+
+    private async void OnIncrementQuantityButtonClicked()
+    {
+        Item.Quantity += Item.DefaultQuantity;
+        await ItemQuantityChangedCallback.InvokeAsync(Item);
+    }
+
+    private async void OnDecrementQuantityButtonClicked()
+    {
+        Item.Quantity -= Item.DefaultQuantity;
+        await ItemQuantityChangedCallback.InvokeAsync(Item);
     }
 }

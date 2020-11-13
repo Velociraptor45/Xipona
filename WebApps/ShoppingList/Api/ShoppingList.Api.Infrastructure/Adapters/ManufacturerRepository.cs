@@ -2,13 +2,15 @@
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Ports;
-using ShoppingList.Api.Infrastructure.Converters;
 using ShoppingList.Api.Infrastructure.Entities;
+using ShoppingList.Api.Infrastructure.Extensions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Models = ShoppingList.Api.Domain.Models;
 
 namespace ShoppingList.Api.Infrastructure.Adapters
 {
@@ -21,7 +23,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Domain.Models.Manufacturer>> FindByAsync(string searchInput,
+        public async Task<IEnumerable<Models.Manufacturer>> FindByAsync(string searchInput,
             CancellationToken cancellationToken)
         {
             var manufacturerEntities = await dbContext.Manufacturers.AsNoTracking()
@@ -33,7 +35,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return manufacturerEntities.Select(entity => entity.ToDomain());
         }
 
-        public async Task<Domain.Models.Manufacturer> FindByAsync(ManufacturerId id,
+        public async Task<Models.Manufacturer> FindByAsync(ManufacturerId id,
             CancellationToken cancellationToken)
         {
             if (id == null)
@@ -50,7 +52,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return entity.ToDomain();
         }
 
-        public async Task<IEnumerable<Domain.Models.Manufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids,
+        public async Task<IEnumerable<Models.Manufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids,
             CancellationToken cancellationToken)
         {
             if (ids == null)
@@ -67,6 +69,18 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             return entities.Select(e => e.ToDomain());
+        }
+
+        public async Task<IEnumerable<Models.Manufacturer>> FindByAsync(bool includeDeleted,
+            CancellationToken cancellationToken)
+        {
+            var results = await dbContext.Manufacturers.AsNoTracking()
+                .Where(m => !m.Deleted || includeDeleted)
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return results.Select(m => m.ToDomain());
         }
     }
 }

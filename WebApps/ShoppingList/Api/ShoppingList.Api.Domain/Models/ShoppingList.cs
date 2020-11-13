@@ -1,5 +1,5 @@
-﻿using ShoppingList.Api.Domain.Converters;
-using ShoppingList.Api.Domain.Exceptions;
+﻿using ShoppingList.Api.Domain.Exceptions;
+using ShoppingList.Api.Domain.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +24,7 @@ namespace ShoppingList.Api.Domain.Models
         public IReadOnlyCollection<ShoppingListItem> Items { get => items.ToList().AsReadOnly(); }
         public DateTime? CompletionDate => completionDate;
 
-        public void AddItem(StoreItem storeItem, ItemCategory itemCategory, Manufacturer manufacturer,
+        public void AddItem(StoreItem storeItem,
             bool isInBasket, float quantity)
         {
             if (storeItem == null)
@@ -36,7 +36,7 @@ namespace ShoppingList.Api.Domain.Models
             if (existingItem != null)
                 throw new ItemAlreadyOnShoppingListException($"Item {storeItem.Id.Value} already exists on shopping list {Id.Value}");
 
-            list.Add(storeItem.ToShoppingListItemDomain(Store.Id, itemCategory, manufacturer, isInBasket, quantity));
+            list.Add(storeItem.ToShoppingListItemDomain(Store.Id, isInBasket, quantity));
             items = list;
         }
 

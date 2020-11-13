@@ -2,8 +2,9 @@
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Ports;
-using ShoppingList.Api.Infrastructure.Converters;
 using ShoppingList.Api.Infrastructure.Entities;
+using ShoppingList.Api.Infrastructure.Extensions.Entities;
+using ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -23,6 +24,30 @@ namespace ShoppingList.Api.Infrastructure.Adapters
         }
 
         #region public methods
+
+        public async Task<StoreItem> FindByAsync(StoreItemId storeItemId, CancellationToken cancellationToken)
+        {
+            if (storeItemId is null)
+            {
+                throw new ArgumentNullException(nameof(storeItemId));
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var itemEntity = await dbContext.Items.AsNoTracking()
+                .Include(item => item.ItemCategory)
+                .Include(item => item.Manufacturer)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Store)
+                .FirstOrDefaultAsync(item => item.Id == storeItemId.Value);
+
+            if (itemEntity == null)
+                throw new ItemNotFoundException(storeItemId);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return itemEntity.ToStoreItemDomain();
+        }
 
         public async Task<StoreItem> FindByAsync(StoreItemId storeItemId, StoreId storeId,
             CancellationToken cancellationToken)
@@ -52,6 +77,48 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             return itemEntity.ToStoreItemDomain();
+        }
+
+        public async Task<IEnumerable<StoreItem>> FindByAsync(IEnumerable<StoreId> storeIds,
+            IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
+            CancellationToken cancellationToken)
+        {
+            if (storeIds is null)
+            {
+                throw new ArgumentNullException(nameof(storeIds));
+            }
+            else if (itemCategoriesIds is null)
+            {
+                throw new ArgumentNullException(nameof(itemCategoriesIds));
+            }
+            else if (manufacturerIds is null)
+            {
+                throw new ArgumentNullException(nameof(manufacturerIds));
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var storeIdLists = storeIds.Select(id => id.Value).ToList();
+            var itemCategoryIdLists = itemCategoriesIds.Select(id => id.Value).ToList();
+            var manufacturerIdLists = manufacturerIds.Select(id => id.Value).ToList();
+
+            var result = await dbContext.Items.AsNoTracking()
+                .Include(item => item.ItemCategory)
+                .Include(item => item.Manufacturer)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Store)
+                .Where(item =>
+                    itemCategoryIdLists.Contains(item.ItemCategoryId)
+                    && manufacturerIdLists.Contains(item.ManufacturerId))
+                .ToListAsync();
+
+            // filtering by store
+            var filteredResultByStore = result
+                .Where(item => storeIdLists.Intersect(item.AvailableAt.Select(av => av.StoreId)).Any());
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return filteredResultByStore.Select(r => r.ToStoreItemDomain());
         }
 
         public async Task<IEnumerable<StoreItem>> FindByAsync(string searchInput, StoreId storeId,
@@ -104,7 +171,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return entity != null;
         }
 
-        public async Task<StoreItemId> StoreAsync(StoreItem storeItem, CancellationToken cancellationToken)
+        public async Task<StoreItem> StoreAsync(StoreItem storeItem, CancellationToken cancellationToken)
         {
             if (storeItem == null)
                 throw new ArgumentNullException(nameof(storeItem));
@@ -123,7 +190,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
 
         #region private methods
 
-        private async Task<StoreItemId> StoreExistingAsync(StoreItem storeItem)
+        private async Task<StoreItem> StoreExistingAsync(StoreItem storeItem)
         {
             var entity = storeItem.ToEntity();
             List<AvailableAt> availabilities = storeItem.Availabilities
@@ -156,10 +223,10 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             dbContext.Entry(entity).State = EntityState.Modified;
             await dbContext.SaveChangesAsync();
 
-            return storeItem.Id;
+            return storeItem;
         }
 
-        private async Task<StoreItemId> AddNewAsync(StoreItem storeItem)
+        private async Task<StoreItem> AddNewAsync(StoreItem storeItem)
         {
             Item entity = storeItem.ToEntity();
             dbContext.Entry(entity).State = EntityState.Added;
@@ -177,7 +244,14 @@ namespace ShoppingList.Api.Infrastructure.Adapters
 
             await dbContext.SaveChangesAsync();
 
-            return id;
+            entity = await dbContext.Items.AsNoTracking()
+                .Include(item => item.ItemCategory)
+                .Include(item => item.Manufacturer)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Store)
+                .FirstAsync(item => item.Id == entity.Id);
+
+            return entity.ToStoreItemDomain();
         }
 
         #endregion private methods
