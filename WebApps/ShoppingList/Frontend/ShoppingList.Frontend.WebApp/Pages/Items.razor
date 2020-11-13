@@ -5,7 +5,7 @@
 @using ShoppingList.Frontend.Models.Items;
 
 <div>
-    <Button @onclick="@(() => isInEditMode = !isInEditMode)"></Button>
+    <Button @onclick="@(() => isInEditMode = !isInEditMode)">Change View</Button>
     @if (!isInEditMode)
     {
         <div>Items</div>
@@ -14,23 +14,43 @@
                 <div>
                     Store
                 </div>
-                <Select Placeholder="Stores"></Select>
+                <Select Mode="Tags" Placeholder="Stores" @ref="@storesSelectRef">
+                    @foreach (var store in stores)
+                    {
+                        <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
+                    }
+                </Select>
             </div>
             <div class="d-flex">
                 <div>
                     Category
                 </div>
-                <Select Placeholder="Category"></Select>
+                <Select Mode="Tags" Placeholder="Category" @ref="@itemCategoriesSelectRef">
+                    @foreach (var itemCategory in itemCategories)
+                    {
+                        <SelectOption Value="@itemCategory.Id.ToString()">@itemCategory.Name</SelectOption>
+                    }
+                </Select>
             </div>
             <div class="d-flex">
                 <div>
                     Manufacturer
                 </div>
-                <Select Placeholder="Manufacturer"></Select>
+                <Select Mode="Tags" Placeholder="Manufacturer" @ref="@manufacturersSelectRef">
+                    @foreach (var manufacturer in manufacturers)
+                    {
+                        <SelectOption Value="@manufacturer.Id.ToString()">@manufacturer.Name</SelectOption>
+                    }
+                </Select>
             </div>
+            <Button Class="" @onclick="@OnLoadButtonClickedAsync">Load</Button>
         </div>
         <div>
             <!-- result item list -->
+            @foreach (var item in items)
+            {
+                <div>@item.Name</div>
+            }
         </div>
     }
     else
@@ -46,17 +66,35 @@
     private List<Store> stores = new List<Store>();
     private List<ItemCategory> itemCategories = new List<ItemCategory>();
     private List<Manufacturer> manufacturers = new List<Manufacturer>();
+    private List<ItemFilterResult> items = new List<ItemFilterResult>();
+
+    private Select storesSelectRef;
+    private Select itemCategoriesSelectRef;
+    private Select manufacturersSelectRef;
 
     private bool isInEditMode = false; // todo remove
     private int currentlyEditedItemId = 0;
 
-    protected override Task OnInitializedAsync()
+    protected async override Task OnInitializedAsync()
     {
-        //todo:
-        // - load all active stores
-        // - load all active manufacturers
-        // - load all active item categories
-        return base.OnInitializedAsync();
+        stores = (await offlineClient.GetAllActiveStoresAsync()).ToList();
+        manufacturers = (await offlineClient.GetAllActiveManufacturers()).ToList();
+        itemCategories = (await offlineClient.GetAllActiveItemCategories()).ToList();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OnLoadButtonClickedAsync()
+    {
+        var stores = storesSelectRef.SelectedValues.Value.AsT1.Select(s => int.Parse(s)).ToList();
+        var itemCategories = itemCategoriesSelectRef.SelectedValues.Value.AsT1.Select(cat => int.Parse(cat)).ToList();
+        var manufacturers = manufacturersSelectRef.SelectedValues.Value.AsT1.Select(m => int.Parse(m)).ToList();
+
+        var result = await offlineClient.GetItemFilterResult(
+            stores,
+            itemCategories,
+            manufacturers);
+        items = result.ToList();
+        StateHasChanged();
     }
 
     private void OnItemClicked()

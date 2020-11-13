@@ -6,6 +6,7 @@ using ShoppingList.Frontend.Infrastructure.Exceptions;
 using ShoppingList.Frontend.Infrastructure.Extensions.Contracts;
 using ShoppingList.Frontend.Models;
 using ShoppingList.Frontend.Models.Index.Search;
+using ShoppingList.Frontend.Models.Items;
 using ShoppingList.Frontend.Models.Ports;
 using System.Collections.Generic;
 using System.Linq;
@@ -119,6 +120,20 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             return stores.Select(store => store.ToModel());
         }
 
+        public async Task<IEnumerable<Manufacturer>> GetAllActiveManufacturers()
+        {
+            var manufacturers = await client.GetAllActiveManufacturers();
+
+            return manufacturers.Select(man => man.ToModel());
+        }
+
+        public async Task<IEnumerable<ItemCategory>> GetAllActiveItemCategories()
+        {
+            var itemCategories = await client.GetAllActiveItemCategories();
+
+            return itemCategories.Select(cat => cat.ToModel());
+        }
+
         public async Task<IEnumerable<ItemSearchResult>> GetItemSearchResultsAsync(string searchInput, int storeId)
         {
             IEnumerable<ItemSearchContract> results = null;
@@ -187,6 +202,17 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
                     await Task.Delay(retryTimoutInMilliseconds);
                 }
             }
+        }
+
+        public async Task<IEnumerable<ItemFilterResult>> GetItemFilterResult(IEnumerable<int> storeIds,
+            IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds)
+        {
+            var result = await client.GetItemFilterResult(
+                storeIds,
+                itemCategoryIds,
+                manufacturerIds);
+
+            return result.Select(r => r.ToModel());
         }
     }
 }
