@@ -6,6 +6,7 @@ using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
 using ShoppingList.Api.Contracts.Queries.AllActiveItemCategories;
+using ShoppingList.Api.Contracts.Queries.AllActiveManufacturers;
 using ShoppingList.Api.Contracts.Queries.AllActiveStores;
 using ShoppingList.Api.Contracts.Queries.AllQuantityTypes;
 using ShoppingList.Api.Contracts.Queries.ItemFilterResults;
@@ -90,14 +91,14 @@ namespace ShoppingList.Api.Client
         Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResults([Path] string searchInput);
 
         [Get("manufacturer/all/active")]
-        Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveManufacturers();
+        Task<IEnumerable<ActiveManufacturerContract>> GetAllActiveManufacturers();
 
         #endregion ManufacturerController
 
         #region ItemCategoryController
 
         [Get("item-category/search/{searchInput}")]
-        Task<IEnumerable<ManufacturerContract>> GetItemCategorySearchResults([Path] string searchInput);
+        Task<IEnumerable<ItemCategoryContract>> GetItemCategorySearchResults([Path] string searchInput);
 
         [Get("item-category/all/active")]
         Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveItemCategories();
