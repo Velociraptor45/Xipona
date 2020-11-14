@@ -26,9 +26,18 @@
         </Select>
     </div>
     <div class="d-flex">
-        <Select Placeholder="QuantityType"></Select>
+        <Select Placeholder="QuantityType">
+            @foreach (var type in QuantityTypes)
+            {
+                <SelectOption Value="@type.Id.ToString()">@type.Name</SelectOption>
+            }
+        </Select>
         <div class="ml-3">
             <Select Placeholder="QuantityTypeInPacket">
+                @foreach (var type in QuantityInPacketTypes)
+                {
+                    <SelectOption Value="@type.Id.ToString()">@type.Name</SelectOption>
+                }
             </Select>
             <Input @bind-Value="@storeItem.QuantityInPacket"></Input>
         </div>
@@ -68,6 +77,8 @@
     [Parameter] public List<Store> Stores { get; set; }
     [Parameter] public List<Manufacturer> Manufacturers { get; set; }
     [Parameter] public List<ItemCategory> ItemCategories { get; set; }
+    [Parameter] public List<QuantityType> QuantityTypes { get; set; }
+    [Parameter] public List<QuantityInPacketType> QuantityInPacketTypes { get; set; }
 
     private StoreItem storeItem = new StoreItem(0, "TestItem", false, "Comment", false, 0, 1f, 0, 1, 1,
         new List<StoreItemAvailability>() { });
