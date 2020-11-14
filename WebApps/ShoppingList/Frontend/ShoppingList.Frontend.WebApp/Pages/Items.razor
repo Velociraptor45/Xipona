@@ -49,7 +49,8 @@
             <!-- result item list -->
             @foreach (var item in items)
             {
-                <div>@item.Name</div>
+                <ItemFilterResultComponent Item="@item"
+                                           OnClickCallback="@OnItemClicked"></ItemFilterResultComponent>
             }
         </div>
     }
@@ -80,6 +81,13 @@
         stores = (await offlineClient.GetAllActiveStoresAsync()).ToList();
         manufacturers = (await offlineClient.GetAllActiveManufacturers()).ToList();
         itemCategories = (await offlineClient.GetAllActiveItemCategories()).ToList();
+
+        var result = await offlineClient.GetItemFilterResult(
+            new List<int> { 1 },
+            new List<int> { 1 },
+            new List<int> { 1 });
+        items = result.ToList();
+
         await base.OnInitializedAsync();
     }
 
@@ -97,8 +105,9 @@
         StateHasChanged();
     }
 
-    private void OnItemClicked()
+    private void OnItemClicked(int itemId)
     {
         // todo: set currentlyEditedItem
+        Console.WriteLine($"Item {itemId} was clicked");
     }
 }
