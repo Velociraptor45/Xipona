@@ -4,7 +4,7 @@
     {
         public StoreItemAvailability(StoreId StoreId, float price)
         {
-            this.StoreId = StoreId;
+            this.StoreId = StoreId ?? throw new System.ArgumentNullException(nameof(StoreId));
             Price = price;
         }
 

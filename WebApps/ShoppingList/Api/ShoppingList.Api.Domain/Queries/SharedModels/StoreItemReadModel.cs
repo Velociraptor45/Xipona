@@ -13,7 +13,7 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
             ItemCategoryReadModel itemCategory, ManufacturerReadModel manufacturer,
             IEnumerable<StoreItemAvailabilityReadModel> availabilities)
         {
-            Id = id;
+            Id = id ?? throw new System.ArgumentNullException(nameof(id));
             Name = name;
             IsDeleted = isDeleted;
             Comment = comment;
@@ -21,9 +21,9 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
-            ItemCategory = itemCategory;
-            Manufacturer = manufacturer;
-            this.availabilities = availabilities;
+            ItemCategory = itemCategory ?? throw new System.ArgumentNullException(nameof(itemCategory));
+            Manufacturer = manufacturer ?? throw new System.ArgumentNullException(nameof(manufacturer));
+            this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
         }
 
         public StoreItemId Id { get; }
