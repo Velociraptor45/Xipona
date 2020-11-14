@@ -69,14 +69,12 @@
     [Parameter] public List<Manufacturer> Manufacturers { get; set; }
     [Parameter] public List<ItemCategory> ItemCategories { get; set; }
 
-    private StoreItem storeItem = new StoreItem(0, "TestItem", "Comment", false, 0, 1f, 0, 1, 1,
-        new List<StoreItemAvailabilities>(){
-            new StoreItemAvailabilities(1, 2.99f)});
+    private StoreItem storeItem = new StoreItem(0, "TestItem", false, "Comment", false, 0, 1f, 0, 1, 1,
+        new List<StoreItemAvailability>() { });
 
-    protected override Task OnInitializedAsync()
+    protected async override Task OnInitializedAsync()
     {
-        // todo: load storeItem
-        return Task.CompletedTask;
+        storeItem = await offlineClient.GetItemById(ItemId);
     }
 
     private void OnAddStoreButtonClicked()

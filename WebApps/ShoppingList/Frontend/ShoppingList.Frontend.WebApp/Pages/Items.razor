@@ -107,7 +107,7 @@
 
     private void OnItemClicked(int itemId)
     {
-        // todo: set currentlyEditedItem
-        Console.WriteLine($"Item {itemId} was clicked");
+        currentlyEditedItemId = itemId;
+        isInEditMode = true;
     }
 }
