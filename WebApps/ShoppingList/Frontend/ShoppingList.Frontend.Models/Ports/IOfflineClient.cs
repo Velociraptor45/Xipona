@@ -8,9 +8,9 @@ namespace ShoppingList.Frontend.Models.Ports
     public interface IOfflineClient
     {
         Task AddItemToShoppingListAsync(int shoppingListId, int itemId, float quantity);
-
+        Task ChangeItemAsync(StoreItem storeItem);
         Task ChangeItemQuantityOnShoppingListAsync(int shoppingListId, int itemId, float quantity);
-
+        Task DeleteItemAsync(int itemId);
         Task FinishListAsync(int shoppingListId);
 
         Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(int storeId);
@@ -32,5 +32,6 @@ namespace ShoppingList.Frontend.Models.Ports
         Task RemoveItemFromBasketAsync(int shoppingListId, int itemId);
 
         Task RemoveItemFromShoppingListAsync(int shoppingListId, int itemId);
+        Task UpdateItemAsync(StoreItem storeItem);
     }
 }

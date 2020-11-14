@@ -4,6 +4,7 @@ using ShoppingList.Api.Contracts.Queries.AllActiveStores;
 using ShoppingList.Api.Contracts.SharedContracts;
 using ShoppingList.Frontend.Infrastructure.Exceptions;
 using ShoppingList.Frontend.Infrastructure.Extensions.Contracts;
+using ShoppingList.Frontend.Infrastructure.Extensions.Models;
 using ShoppingList.Frontend.Models;
 using ShoppingList.Frontend.Models.Index.Search;
 using ShoppingList.Frontend.Models.Items;
@@ -231,6 +232,21 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
         {
             var result = await client.GetAllQuantityInPacketTypes();
             return result.Select(r => r.ToModel());
+        }
+
+        public async Task UpdateItemAsync(StoreItem storeItem)
+        {
+            await client.UpdateItemAsync(storeItem.ToUpdateItemContract());
+        }
+
+        public async Task ChangeItemAsync(StoreItem storeItem)
+        {
+            await client.ChangeItem(storeItem.ToChangeItemContract());
+        }
+
+        public async Task DeleteItemAsync(int itemId)
+        {
+            await client.DeleteItemAsync(itemId);
         }
     }
 }
