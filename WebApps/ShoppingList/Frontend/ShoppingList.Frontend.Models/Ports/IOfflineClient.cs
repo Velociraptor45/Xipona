@@ -15,13 +15,15 @@ namespace ShoppingList.Frontend.Models.Ports
 
         Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(int storeId);
 
-        Task<IEnumerable<ItemCategory>> GetAllActiveItemCategories();
+        Task<IEnumerable<ItemCategory>> GetAllActiveItemCategoriesAsync();
 
-        Task<IEnumerable<Manufacturer>> GetAllActiveManufacturers();
+        Task<IEnumerable<Manufacturer>> GetAllActiveManufacturersAsync();
 
         Task<IEnumerable<Store>> GetAllActiveStoresAsync();
-        Task<StoreItem> GetItemById(int itemId);
-        Task<IEnumerable<ItemFilterResult>> GetItemFilterResult(IEnumerable<int> storeIds, IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds);
+        Task<IEnumerable<QuantityInPacketType>> GetAllQuantityInPacketTypesAsync();
+        Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync();
+        Task<StoreItem> GetItemByIdAsync(int itemId);
+        Task<IEnumerable<ItemFilterResult>> GetItemFilterResultAsync(IEnumerable<int> storeIds, IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds);
 
         Task<IEnumerable<ItemSearchResult>> GetItemSearchResultsAsync(string searchInput, int storeId);
 

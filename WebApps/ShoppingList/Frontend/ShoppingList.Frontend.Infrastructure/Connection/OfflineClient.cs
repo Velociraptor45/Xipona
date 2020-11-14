@@ -120,14 +120,14 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             return stores.Select(store => store.ToModel());
         }
 
-        public async Task<IEnumerable<Manufacturer>> GetAllActiveManufacturers()
+        public async Task<IEnumerable<Manufacturer>> GetAllActiveManufacturersAsync()
         {
             var manufacturers = await client.GetAllActiveManufacturers();
 
             return manufacturers.Select(man => man.ToModel());
         }
 
-        public async Task<IEnumerable<ItemCategory>> GetAllActiveItemCategories()
+        public async Task<IEnumerable<ItemCategory>> GetAllActiveItemCategoriesAsync()
         {
             var itemCategories = await client.GetAllActiveItemCategories();
 
@@ -204,7 +204,7 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             }
         }
 
-        public async Task<IEnumerable<ItemFilterResult>> GetItemFilterResult(IEnumerable<int> storeIds,
+        public async Task<IEnumerable<ItemFilterResult>> GetItemFilterResultAsync(IEnumerable<int> storeIds,
             IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds)
         {
             var result = await client.GetItemFilterResult(
@@ -215,10 +215,22 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             return result.Select(r => r.ToModel());
         }
 
-        public async Task<StoreItem> GetItemById(int itemId)
+        public async Task<StoreItem> GetItemByIdAsync(int itemId)
         {
             var result = await client.Get(itemId);
             return result.ToModel();
+        }
+
+        public async Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync()
+        {
+            var result = await client.GetAllQuantityTypes();
+            return result.Select(r => r.ToModel());
+        }
+
+        public async Task<IEnumerable<QuantityInPacketType>> GetAllQuantityInPacketTypesAsync()
+        {
+            var result = await client.GetAllQuantityInPacketTypes();
+            return result.Select(r => r.ToModel());
         }
     }
 }
