@@ -118,6 +118,11 @@ namespace ShoppingList.Api.Client
             return await apiClient.GetItemFilterResult(storeIds, itemCategoryIds, manufacturerIds);
         }
 
+        public async Task<StoreItemContract> Get(int itemId)
+        {
+            return await apiClient.Get(itemId);
+        }
+
         #endregion ItemController
 
         #region StoreController
