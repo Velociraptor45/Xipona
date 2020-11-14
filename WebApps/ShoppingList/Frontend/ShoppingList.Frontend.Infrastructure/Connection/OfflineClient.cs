@@ -214,5 +214,11 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
 
             return result.Select(r => r.ToModel());
         }
+
+        public async Task<StoreItem> GetItemById(int itemId)
+        {
+            var result = await client.Get(itemId);
+            return result.ToModel();
+        }
     }
 }

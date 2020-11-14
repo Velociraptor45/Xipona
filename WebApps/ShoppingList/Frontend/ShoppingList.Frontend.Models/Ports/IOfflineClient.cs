@@ -20,7 +20,7 @@ namespace ShoppingList.Frontend.Models.Ports
         Task<IEnumerable<Manufacturer>> GetAllActiveManufacturers();
 
         Task<IEnumerable<Store>> GetAllActiveStoresAsync();
-
+        Task<StoreItem> GetItemById(int itemId);
         Task<IEnumerable<ItemFilterResult>> GetItemFilterResult(IEnumerable<int> storeIds, IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds);
 
         Task<IEnumerable<ItemSearchResult>> GetItemSearchResultsAsync(string searchInput, int storeId);
