@@ -148,7 +148,7 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest(e.Message);
             }
 
-            return Ok(result);
+            return Ok(result.ToContract());
         }
     }
 }
