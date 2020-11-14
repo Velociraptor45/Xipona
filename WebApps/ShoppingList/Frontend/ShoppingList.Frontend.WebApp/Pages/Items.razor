@@ -56,7 +56,7 @@
     }
     else
     {
-        <ItemEditor ItemId="@currentlyEditedItemId"
+        <ItemEditor StoreItem="@currentlyEditedItem"
                     Stores="@stores"
                     Manufacturers="@manufacturers"
                     ItemCategories="@itemCategories"
@@ -78,7 +78,7 @@
     private Select manufacturersSelectRef;
 
     private bool isInEditMode = false; // todo remove
-    private int currentlyEditedItemId = 0;
+    private StoreItem currentlyEditedItem = null;
 
     protected async override Task OnInitializedAsync()
     {
@@ -111,9 +111,9 @@
         StateHasChanged();
     }
 
-    private void OnItemClicked(int itemId)
+    private async Task OnItemClicked(int itemId)
     {
-        currentlyEditedItemId = itemId;
+        currentlyEditedItem = await offlineClient.GetItemByIdAsync(itemId);
         isInEditMode = true;
     }
 }
