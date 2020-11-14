@@ -113,9 +113,9 @@ namespace ShoppingList.Api.Client
         }
 
         public async Task<IEnumerable<ItemFilterResultContract>> GetItemFilterResult(IEnumerable<int> storeIds,
-            IEnumerable<int> itemCategoriesIds, IEnumerable<int> manufacturerIds)
+            IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds)
         {
-            return await apiClient.GetItemFilterResult(storeIds, itemCategoriesIds, manufacturerIds);
+            return await apiClient.GetItemFilterResult(storeIds, itemCategoryIds, manufacturerIds);
         }
 
         #endregion ItemController

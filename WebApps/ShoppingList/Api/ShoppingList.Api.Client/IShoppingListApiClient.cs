@@ -68,7 +68,7 @@ namespace ShoppingList.Api.Client
 
         [Get("item/filter")]
         Task<IEnumerable<ItemFilterResultContract>> GetItemFilterResult([Query] IEnumerable<int> storeIds,
-            [Query] IEnumerable<int> itemCategoriesIds, [Query] IEnumerable<int> manufacturerIds);
+            [Query] IEnumerable<int> itemCategoryIds, [Query] IEnumerable<int> manufacturerIds);
 
         #endregion ItemController
 
