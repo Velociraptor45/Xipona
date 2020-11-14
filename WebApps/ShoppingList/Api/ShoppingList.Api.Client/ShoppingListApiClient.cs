@@ -107,6 +107,11 @@ namespace ShoppingList.Api.Client
             await apiClient.UpdateItemAsync(updateItemContract);
         }
 
+        public async Task DeleteItemAsync(int itemId)
+        {
+            await apiClient.DeleteItemAsync(itemId);
+        }
+
         public async Task<IEnumerable<ItemSearchContract>> GetItemSearchResults(string searchInput, int storeId)
         {
             return await apiClient.GetItemSearchResults(searchInput, storeId);

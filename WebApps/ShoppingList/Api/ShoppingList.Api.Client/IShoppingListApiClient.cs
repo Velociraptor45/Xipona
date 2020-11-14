@@ -66,6 +66,9 @@ namespace ShoppingList.Api.Client
         [Post("item/update")]
         Task UpdateItemAsync([Body] UpdateItemContract updateItemContract);
 
+        [Post("item/delete/{itemId}")]
+        Task DeleteItemAsync([Path] int itemId);
+
         [Get("item/filter")]
         Task<IEnumerable<ItemFilterResultContract>> GetItemFilterResult([Query] IEnumerable<int> storeIds,
             [Query] IEnumerable<int> itemCategoryIds, [Query] IEnumerable<int> manufacturerIds);
