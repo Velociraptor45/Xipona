@@ -68,6 +68,8 @@
     private List<ItemCategory> itemCategories = new List<ItemCategory>();
     private List<Manufacturer> manufacturers = new List<Manufacturer>();
     private List<ItemFilterResult> items = new List<ItemFilterResult>();
+    private List<QuantityType> quantityTypes = new List<QuantityType>();
+    private List<QuantityInPacketType> quantityInPacketTypes = new List<QuantityInPacketType>();
 
     private Select storesSelectRef;
     private Select itemCategoriesSelectRef;
@@ -79,10 +81,12 @@
     protected async override Task OnInitializedAsync()
     {
         stores = (await offlineClient.GetAllActiveStoresAsync()).ToList();
-        manufacturers = (await offlineClient.GetAllActiveManufacturers()).ToList();
-        itemCategories = (await offlineClient.GetAllActiveItemCategories()).ToList();
+        manufacturers = (await offlineClient.GetAllActiveManufacturersAsync()).ToList();
+        itemCategories = (await offlineClient.GetAllActiveItemCategoriesAsync()).ToList();
+        quantityTypes = (await offlineClient.GetAllQuantityTypesAsync()).ToList();
+        quantityInPacketTypes = (await offlineClient.GetAllQuantityInPacketTypesAsync()).ToList();
 
-        var result = await offlineClient.GetItemFilterResult(
+        var result = await offlineClient.GetItemFilterResultAsync(
             new List<int> { 1 },
             new List<int> { 1 },
             new List<int> { 1 });
@@ -97,7 +101,7 @@
         var itemCategories = itemCategoriesSelectRef.SelectedValues.Value.AsT1.Select(cat => int.Parse(cat)).ToList();
         var manufacturers = manufacturersSelectRef.SelectedValues.Value.AsT1.Select(m => int.Parse(m)).ToList();
 
-        var result = await offlineClient.GetItemFilterResult(
+        var result = await offlineClient.GetItemFilterResultAsync(
             stores,
             itemCategories,
             manufacturers);
