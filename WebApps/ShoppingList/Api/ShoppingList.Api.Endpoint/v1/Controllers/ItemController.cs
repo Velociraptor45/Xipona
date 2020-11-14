@@ -9,8 +9,10 @@ using ShoppingList.Api.Domain.Commands.DeleteItem;
 using ShoppingList.Api.Domain.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
+using ShoppingList.Api.Domain.Queries.ItemById;
 using ShoppingList.Api.Domain.Queries.ItemFilterResults;
 using ShoppingList.Api.Domain.Queries.ItemSearch;
+using ShoppingList.Api.Domain.Queries.SharedModels;
 using ShoppingList.Api.Endpoint.Converters.Item;
 using ShoppingList.Api.Endpoint.Extensions.Item;
 using System.Collections.Generic;
@@ -127,6 +129,26 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
             await commandDispatcher.DispatchAsync(command, default);
 
             return Ok();
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("{itemId}")]
+        public async Task<IActionResult> Get([FromRoute(Name = "itemId")] int itemId)
+        {
+            var query = new ItemByIdQuery(new StoreItemId(itemId));
+            StoreItemReadModel result;
+            try
+            {
+                result = await queryDispatcher.DispatchAsync(query, default);
+            }
+            catch (ItemNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok(result);
         }
     }
 }
