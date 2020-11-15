@@ -61,7 +61,8 @@
             }
         </div>
         <div class="ml-2">
-            <Button class="d-flex align-items-center" OnClick="OnAddStoreButtonClicked">
+            <Button class="d-flex align-items-center" OnClick="OnAddStoreButtonClicked"
+                    Disabled="@(!GetNotRegisteredStoreIds(StoreItem).Any())">
                 <Icon Type="plus"></Icon>
             </Button>
         </div>
