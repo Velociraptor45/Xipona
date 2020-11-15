@@ -244,6 +244,11 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             await client.ChangeItem(storeItem.ToChangeItemContract());
         }
 
+        public async Task CreateItemAsync(StoreItem storeItem)
+        {
+            await client.CreateItem(storeItem.ToCreateItemContract());
+        }
+
         public async Task DeleteItemAsync(int itemId)
         {
             await client.DeleteItemAsync(itemId);

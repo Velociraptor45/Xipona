@@ -9,7 +9,10 @@
             <Icon Type="arrow-left"></Icon>
         </Button>
         <Input @bind-Value="@StoreItem.Name" />
-        <Button Danger="true" OnClick="@OnDeleteButtonClickedAsync">Delete</Button>
+        @if (StoreItem.Id != 0)
+        {
+            <Button Danger="true" OnClick="@OnDeleteButtonClickedAsync">Delete</Button>
+        }
     </div>
     <Divider></Divider>
     <div class="d-flex">
@@ -73,8 +76,15 @@
         <TextArea Placeholder="Comment" MinRows="2" @bind-Value="@StoreItem.Comment"></TextArea>
     </div>
     <div>
-        <Button OnClick="OnUpdateButtonClickedAsync">Update</Button>
-        <Button OnClick="OnChangeButtonClickedAsync">Change</Button>
+        @if (StoreItem.Id == 0)
+        {
+            <Button OnClick="@OnCreateButtonClicked">Create</Button>
+        }
+        else
+        {
+            <Button OnClick="@OnUpdateButtonClickedAsync">Update</Button>
+            <Button OnClick="@OnChangeButtonClickedAsync">Change</Button>
+        }
     </div>
 </div>
 
@@ -88,6 +98,7 @@
 
     [Parameter] public EventCallback<StoreItem> UpdateItemCallback { get; set; }
     [Parameter] public EventCallback<StoreItem> ChangeItemCallback { get; set; }
+    [Parameter] public EventCallback<StoreItem> CreateItemCallback { get; set; }
     [Parameter] public EventCallback<int> DeleteItemCallback { get; set; }
     [Parameter] public EventCallback LeaveEditorCallback { get; set; }
 
@@ -125,6 +136,11 @@
     private async Task OnChangeButtonClickedAsync()
     {
         await ChangeItemCallback.InvokeAsync(StoreItem);
+    }
+
+    private async Task OnCreateButtonClicked()
+    {
+        await CreateItemCallback.InvokeAsync(StoreItem);
     }
 
     private async Task OnDeleteButtonClickedAsync()

@@ -10,6 +10,7 @@ namespace ShoppingList.Frontend.Models.Ports
         Task AddItemToShoppingListAsync(int shoppingListId, int itemId, float quantity);
         Task ChangeItemAsync(StoreItem storeItem);
         Task ChangeItemQuantityOnShoppingListAsync(int shoppingListId, int itemId, float quantity);
+        Task CreateItemAsync(StoreItem storeItem);
         Task DeleteItemAsync(int itemId);
         Task FinishListAsync(int shoppingListId);
 

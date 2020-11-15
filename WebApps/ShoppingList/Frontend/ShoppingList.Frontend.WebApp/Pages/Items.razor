@@ -7,7 +7,12 @@
 <div>
     @if (currentlyEditedItem == null)
     {
-        <div>Items</div>
+        <div>
+            <div>Items</div>
+            <Button @onclick="OnCreateItemButtonClicked">
+                <Icon Type="plus"></Icon>
+            </Button>
+        </div>
         <div>
             <div class="d-flex">
                 <div>
@@ -42,7 +47,7 @@
                     }
                 </Select>
             </div>
-            <Button Class="" @onclick="@OnLoadButtonClickedAsync">Load</Button>
+            <Button @onclick="@OnLoadButtonClickedAsync">Load</Button>
         </div>
         <div>
             <!-- result item list -->
@@ -63,6 +68,7 @@
                     QuantityInPacketTypes="@quantityInPacketTypes"
                     UpdateItemCallback="@OnItemUpdatedAsync"
                     ChangeItemCallback="@OnItemChangedAsync"
+                    CreateItemCallback="@OnItemCreatedAsync"
                     DeleteItemCallback="@OnItemDeletedAsync"
                     LeaveEditorCallback="@OnLeaveEditor"></ItemEditor>
     }
@@ -134,6 +140,18 @@
     {
         await offlineClient.DeleteItemAsync(itemId);
         LeaveEditor();
+    }
+
+    private async Task OnItemCreatedAsync(StoreItem storeItem)
+    {
+        await offlineClient.CreateItemAsync(storeItem);
+        LeaveEditor();
+    }
+
+    private void OnCreateItemButtonClicked()
+    {
+        currentlyEditedItem =
+            new StoreItem(0, "", false, "", false, 0, 0, 0, 1, 1, new List<StoreItemAvailability>());
     }
 
     private void OnLeaveEditor()
