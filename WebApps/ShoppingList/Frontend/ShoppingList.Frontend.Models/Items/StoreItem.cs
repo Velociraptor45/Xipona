@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace ShoppingList.Frontend.Models.Items
 {
@@ -18,7 +19,7 @@ namespace ShoppingList.Frontend.Models.Items
             QuantityInPacketType = quantityInPacketType;
             ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
-            Availabilities = availabilities;
+            Availabilities = availabilities.ToList();
         }
 
         public int Id { get; }
@@ -31,6 +32,6 @@ namespace ShoppingList.Frontend.Models.Items
         public int QuantityInPacketType { get; set; }
         public int ItemCategoryId { get; set; }
         public int ManufacturerId { get; set; }
-        public IEnumerable<StoreItemAvailability> Availabilities { get; set; }
+        public List<StoreItemAvailability> Availabilities { get; set; }
     }
 }
