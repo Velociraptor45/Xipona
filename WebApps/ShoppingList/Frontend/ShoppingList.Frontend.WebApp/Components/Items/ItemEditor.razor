@@ -45,12 +45,12 @@
     <div class="d-flex flex-row">
         <!-- availabilities -->
         <div>
-            @*@foreach (var availability in StoreItem.Availabilities)*@
             @for (int i = 0; i < StoreItem.Availabilities.Count; i++)
             {
                 <Availablity ComponentIndex="i"
                              Availability="@StoreItem.Availabilities[i]"
                              Stores="@Stores"
+                             DisabledStoreIds="@GetDisabledStoresForAvailabilityByIndex(i)"
                              OnRemoveAvailabilityCallback="@OnRemoveAvailabilityButtonClicked"></Availablity>
             }
         </div>
@@ -139,5 +139,16 @@
         var allStoreIds = Stores.Select(s => s.Id);
 
         return allStoreIds.Except(registeredStoreId);
+    }
+
+    private IEnumerable<int> GetRegisteredStoreIds(StoreItem storeItem)
+    {
+        return storeItem.Availabilities.Select(av => av.StoreId);
+    }
+
+    private IEnumerable<int> GetDisabledStoresForAvailabilityByIndex(int availabilityIndex)
+    {
+        return GetRegisteredStoreIds(StoreItem)
+            .Except(new List<int>() { StoreItem.Availabilities[availabilityIndex].StoreId });
     }
 }

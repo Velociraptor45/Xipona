@@ -7,8 +7,9 @@
     <Select Placeholder="Stores" DefaultValue="@Availability.StoreId.ToString()">
         @foreach (var store in Stores)
         {
-            <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
-        }
+            <SelectOption Value=@store.Id.ToString() Class="min-w-100"
+                          Disabled="@DisabledStoreIds.Contains(store.Id)">@store.Name</SelectOption>
+                    }
     </Select>
     <Button OnClick="@OnRemoveStoreButtonClickedAsync">
         <Icon Type="minus"></Icon>
@@ -19,6 +20,7 @@
     [Parameter] public int ComponentIndex { get; set; }
     [Parameter] public StoreItemAvailability Availability { get; set; }
     [Parameter] public List<Store> Stores { get; set; }
+    [Parameter] public IEnumerable<int> DisabledStoreIds { get; set; }
 
     [Parameter] public EventCallback<int> OnRemoveAvailabilityCallback { get; set; }
 
