@@ -3,7 +3,9 @@
 @using OneOf;
 
 <div class="d-flex flex-row align-items-center">
-    <Input @bind-Value="@Availability.PricePerQuantity" Class="ml-2 max-w-50" />
+    <div class="max-w-60">
+        <Input @bind-Value="@Availability.PricePerQuantity" />
+    </div>
     <div class="mr-4">€</div>
     <Select Placeholder="Stores" DefaultValue="@Availability.StoreId.ToString()" OnChange="@OnStoreChanged">
         @foreach (var store in Stores)
@@ -12,9 +14,13 @@
                           Disabled="@DisabledStoreIds.Contains(store.Id)">@store.Name</SelectOption>
                     }
     </Select>
-    <Button OnClick="@OnRemoveStoreButtonClickedAsync">
-        <Icon Type="minus"></Icon>
-    </Button>
+    <div class="ml-2">
+        <Button Class="d-flex align-items-center" 
+                OnClick="@OnRemoveStoreButtonClickedAsync"
+                Danger="true">
+            <Icon Type="minus"></Icon>
+        </Button>
+    </div>
 </div>
 
 @code {

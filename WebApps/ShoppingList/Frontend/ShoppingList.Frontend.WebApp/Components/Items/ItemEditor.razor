@@ -3,35 +3,47 @@
 @using System.Collections.Generic;
 @using OneOf;
 
-<div>
+<div class="px-2">
     <div class="d-flex">
-        <Button OnClick="@OnBackButtonClickedAsync">
+        <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClickedAsync">
             <Icon Type="arrow-left"></Icon>
         </Button>
-        <Input @bind-Value="@StoreItem.Name" />
+        <div class="mx-3">
+            <Input @bind-Value="@StoreItem.Name" />
+        </div>
         @if (StoreItem.Id != 0)
         {
-            <Button Danger="true" OnClick="@OnDeleteButtonClickedAsync">Delete</Button>
+                <Button Danger="true"
+                        Class="ml-auto"
+                        OnClick="@OnDeleteButtonClickedAsync">
+                    Delete
+                </Button>
         }
     </div>
-    <Divider></Divider>
-    <div class="d-flex">
-        <Select Placeholder="Category" DefaultValue="@StoreItem.ItemCategoryId.ToString()"
-                OnChange="@OnItemCategoryChanged">
-            @foreach (var itemCategory in ItemCategories)
-            {
-                <SelectOption Value="@itemCategory.Id.ToString()">@itemCategory.Name</SelectOption>
-            }
-        </Select>
-        <Select Placeholder="Manufacturer" Class="ml-3" DefaultValue="@StoreItem.ManufacturerId.ToString()"
-                OnChange="@OnManfacturerChanged">
-            @foreach (var manufacturer in Manufacturers)
-            {
-                <SelectOption Value="@manufacturer.Id.ToString()">@manufacturer.Name</SelectOption>
-            }
-        </Select>
+    <Divider Class="my-3"></Divider>
+    <div class="d-flex pb-2">
+        <div>
+            <div class="font-weight-bold">Category</div>
+            <Select Placeholder="Category" DefaultValue="@StoreItem.ItemCategoryId.ToString()"
+                    OnChange="@OnItemCategoryChanged">
+                @foreach (var itemCategory in ItemCategories)
+                {
+                    <SelectOption Value="@itemCategory.Id.ToString()">@itemCategory.Name</SelectOption>
+                }
+            </Select>
+        </div>
+        <div class="ml-3">
+            <div class="font-weight-bold">Manufacturer</div>
+            <Select Placeholder="Manufacturer" DefaultValue="@StoreItem.ManufacturerId.ToString()"
+                    OnChange="@OnManfacturerChanged">
+                @foreach (var manufacturer in Manufacturers)
+                {
+                    <SelectOption Value="@manufacturer.Id.ToString()">@manufacturer.Name</SelectOption>
+                }
+            </Select>
+        </div>
     </div>
-    <div class="d-flex">
+    <div class="d-flex py-2">
         <Select Placeholder="QuantityType" DefaultValue="@StoreItem.QuantityType.ToString()"
                 OnChange="@OnQuantityTypeChanged">
             @foreach (var type in QuantityTypes)
@@ -41,7 +53,7 @@
         </Select>
         @if (StoreItem.QuantityType == 0)
         {
-            <div class="ml-3">
+            <div class="ml-3 d-flex flex-column">
                 <Select Placeholder="QuantityTypeInPacket" DefaultValue="@StoreItem.QuantityInPacketType.ToString()"
                         OnChange="@OnQuantityInPacketTypeChanged">
                     @foreach (var type in QuantityInPacketTypes)
@@ -49,11 +61,12 @@
                         <SelectOption Value="@type.Id.ToString()">@type.Name</SelectOption>
                     }
                 </Select>
-                <Input @bind-Value="@StoreItem.QuantityInPacket"></Input>
+                <Input Class="max-w-50" @bind-Value="@StoreItem.QuantityInPacket"></Input>
             </div>
         }
     </div>
-    <div class="d-flex flex-row">
+    <div class="font-weight-bold">Stores</div>
+    <div class="d-flex flex-row py-2">
         <!-- availabilities -->
         <div>
             @for (int i = 0; i < StoreItem.Availabilities.Count; i++)
@@ -65,17 +78,17 @@
                              OnRemoveAvailabilityCallback="@OnRemoveAvailabilityButtonClicked"></Availablity>
             }
         </div>
-        <div class="ml-2">
+        <div class="ml-4 d-flex justify-content-end">
             <Button class="d-flex align-items-center" OnClick="OnAddStoreButtonClicked"
                     Disabled="@(!GetNotRegisteredStoreIds(StoreItem).Any())">
                 <Icon Type="plus"></Icon>
             </Button>
         </div>
     </div>
-    <div>
+    <div class="pb-2 pt-4">
         <TextArea Placeholder="Comment" MinRows="2" @bind-Value="@StoreItem.Comment"></TextArea>
     </div>
-    <div>
+    <div class="d-flex justify-content-end">
         @if (StoreItem.Id == 0)
         {
             <Button OnClick="@OnCreateButtonClicked">Create</Button>
@@ -83,7 +96,7 @@
         else
         {
             <Button OnClick="@OnUpdateButtonClickedAsync">Update</Button>
-            <Button OnClick="@OnChangeButtonClickedAsync">Change</Button>
+            <Button Class="ml-2" OnClick="@OnChangeButtonClickedAsync">Change</Button>
         }
     </div>
 </div>
