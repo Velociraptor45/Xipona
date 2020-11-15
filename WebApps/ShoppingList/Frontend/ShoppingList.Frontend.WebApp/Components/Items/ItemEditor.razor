@@ -66,6 +66,9 @@
         </div>
     </div>
     <div>
+        <TextArea Placeholder="Comment" MinRows="2" @bind-Value="@StoreItem.Comment"></TextArea>
+    </div>
+    <div>
         <Button OnClick="OnUpdateButtonClickedAsync">Update</Button>
         <Button OnClick="OnChangeButtonClickedAsync">Change</Button>
         <Button OnClick="OnCancleButtonClickedAsync" Danger="true">Cancle</Button>
