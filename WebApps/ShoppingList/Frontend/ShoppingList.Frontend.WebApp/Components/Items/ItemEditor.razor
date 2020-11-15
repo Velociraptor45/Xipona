@@ -12,13 +12,15 @@
     </div>
     <Divider></Divider>
     <div class="d-flex">
-        <Select Placeholder="Category" DefaultValue="@StoreItem.ItemCategoryId.ToString()">
+        <Select Placeholder="Category" DefaultValue="@StoreItem.ItemCategoryId.ToString()"
+                OnChange="@OnItemCategoryChanged">
             @foreach (var itemCategory in ItemCategories)
             {
                 <SelectOption Value="@itemCategory.Id.ToString()">@itemCategory.Name</SelectOption>
             }
         </Select>
-        <Select Placeholder="Manufacturer" Class="ml-3" DefaultValue="@StoreItem.ManufacturerId.ToString()">
+        <Select Placeholder="Manufacturer" Class="ml-3" DefaultValue="@StoreItem.ManufacturerId.ToString()"
+                OnChange="@OnManfacturerChanged">
             @foreach (var manufacturer in Manufacturers)
             {
                 <SelectOption Value="@manufacturer.Id.ToString()">@manufacturer.Name</SelectOption>
@@ -26,14 +28,16 @@
         </Select>
     </div>
     <div class="d-flex">
-        <Select Placeholder="QuantityType" DefaultValue="@StoreItem.QuantityType.ToString()">
+        <Select Placeholder="QuantityType" DefaultValue="@StoreItem.QuantityType.ToString()"
+                OnChange="@OnQuantityTypeChanged">
             @foreach (var type in QuantityTypes)
             {
                 <SelectOption Value="@type.Id.ToString()">@type.Name</SelectOption>
             }
         </Select>
         <div class="ml-3">
-            <Select Placeholder="QuantityTypeInPacket" DefaultValue="@StoreItem.QuantityInPacketType.ToString()">
+            <Select Placeholder="QuantityTypeInPacket" DefaultValue="@StoreItem.QuantityInPacketType.ToString()"
+                    OnChange="@OnQuantityInPacketTypeChanged">
                 @foreach (var type in QuantityInPacketTypes)
                 {
                     <SelectOption Value="@type.Id.ToString()">@type.Name</SelectOption>
@@ -80,11 +84,6 @@
     [Parameter] public EventCallback<StoreItem> ChangeItemCallback { get; set; }
     [Parameter] public EventCallback<int> DeleteItemCallback { get; set; }
 
-    private Select manufacturerSelectRef;
-    private Select itemCategorySelectRef;
-    private Select QuantityTypeSelectRef;
-    private Select QuantityInPacketTypeSelectRef;
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -113,13 +112,11 @@
 
     private async Task OnUpdateButtonClickedAsync()
     {
-        FillStoreItem();
         await UpdateItemCallback.InvokeAsync(StoreItem);
     }
 
     private async Task OnChangeButtonClickedAsync()
     {
-        FillStoreItem();
         await ChangeItemCallback.InvokeAsync(StoreItem);
     }
 
@@ -128,9 +125,32 @@
         await DeleteItemCallback.InvokeAsync(StoreItem.Id);
     }
 
-    private void FillStoreItem()
+    private void OnManfacturerChanged(
+        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
+        OneOf<SelectOption, IEnumerable<SelectOption>> option)
     {
+        StoreItem.ManufacturerId = int.Parse(value.AsT0);
+    }
 
+    private void OnItemCategoryChanged(
+        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
+        OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    {
+        StoreItem.ItemCategoryId = int.Parse(value.AsT0);
+    }
+
+    private void OnQuantityTypeChanged(
+        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
+        OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    {
+        StoreItem.QuantityType = int.Parse(value.AsT0);
+    }
+
+    private void OnQuantityInPacketTypeChanged(
+        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
+        OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    {
+        StoreItem.QuantityInPacketType = int.Parse(value.AsT0);
     }
 
     private IEnumerable<int> GetNotRegisteredStoreIds(StoreItem storeItem)
