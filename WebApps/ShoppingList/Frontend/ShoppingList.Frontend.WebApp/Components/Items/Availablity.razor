@@ -1,0 +1,29 @@
+﻿@using ShoppingList.Frontend.Models.Items;
+@using ShoppingList.Frontend.Models;
+
+<div class="d-flex flex-row align-items-center">
+    <Input @bind-Value="@Availability.PricePerQuantity" Class="ml-2 max-w-50" />
+    <div class="mr-4">€</div>
+    <Select Placeholder="Stores" DefaultValue="@Availability.StoreId.ToString()">
+        @foreach (var store in Stores)
+        {
+            <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
+        }
+    </Select>
+    <Button OnClick="@OnRemoveStoreButtonClickedAsync">
+        <Icon Type="minus"></Icon>
+    </Button>
+</div>
+
+@code {
+    [Parameter] public int ComponentIndex { get; set; }
+    [Parameter] public StoreItemAvailability Availability { get; set; }
+    [Parameter] public List<Store> Stores { get; set; }
+
+    [Parameter] public EventCallback<int> OnRemoveAvailabilityCallback { get; set; }
+
+    private async Task OnRemoveStoreButtonClickedAsync()
+    {
+        await OnRemoveAvailabilityCallback.InvokeAsync(ComponentIndex);
+    }
+}

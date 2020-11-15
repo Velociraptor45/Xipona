@@ -45,19 +45,13 @@
     <div class="d-flex flex-row">
         <!-- availabilities -->
         <div>
-            @foreach (var availability in StoreItem.Availabilities)
+            @*@foreach (var availability in StoreItem.Availabilities)*@
+            @for (int i = 0; i < StoreItem.Availabilities.Count; i++)
             {
-                <div class="d-flex flex-row align-items-center">
-                    <Input @bind-Value="@availability.PricePerQuantity" Class="ml-2 max-w-50" />
-                    <div class="mr-4">€</div>
-                    <Select Placeholder="Stores" DefaultValue="@availability.StoreId.ToString()"
-                            @ref="@storeSelectRef[GetIndex(availability)]">
-                        @foreach (var store in Stores)
-                        {
-                            <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
-                        }
-                    </Select>
-                </div>
+                <Availablity ComponentIndex="i"
+                             Availability="@StoreItem.Availabilities[i]"
+                             Stores="@Stores"
+                             OnRemoveAvailabilityCallback="@OnRemoveAvailabilityButtonClicked"></Availablity>
             }
         </div>
         <div class="ml-2">
@@ -90,12 +84,9 @@
     private Select itemCategorySelectRef;
     private Select QuantityTypeSelectRef;
     private Select QuantityInPacketTypeSelectRef;
-    private List<Select> storeSelectRef = new List<Select>();
 
     protected override void OnInitialized()
     {
-        storeSelectRef.Clear();
-        StoreItem.Availabilities.ForEach(av => storeSelectRef.Add(null));
         base.OnInitialized();
     }
 
@@ -110,9 +101,14 @@
         if (!notRegisteredStoreIds.Any())
             return;
 
-        storeSelectRef.Add(null);
         StoreItem.Availabilities.Add(
             new StoreItemAvailability(notRegisteredStoreIds.First(), 1));
+    }
+
+    private void OnRemoveAvailabilityButtonClicked(int availabilityIndex)
+    {
+        StoreItem.Availabilities.RemoveAt(availabilityIndex);
+        StateHasChanged();
     }
 
     private async Task OnUpdateButtonClickedAsync()
