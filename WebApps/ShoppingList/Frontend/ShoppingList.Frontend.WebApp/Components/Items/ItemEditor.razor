@@ -36,16 +36,19 @@
                 <SelectOption Value="@type.Id.ToString()">@type.Name</SelectOption>
             }
         </Select>
-        <div class="ml-3">
-            <Select Placeholder="QuantityTypeInPacket" DefaultValue="@StoreItem.QuantityInPacketType.ToString()"
-                    OnChange="@OnQuantityInPacketTypeChanged">
-                @foreach (var type in QuantityInPacketTypes)
-                {
-                    <SelectOption Value="@type.Id.ToString()">@type.Name</SelectOption>
-                }
-            </Select>
-            <Input @bind-Value="@StoreItem.QuantityInPacket"></Input>
-        </div>
+        @if (StoreItem.QuantityType == 0)
+        {
+            <div class="ml-3">
+                <Select Placeholder="QuantityTypeInPacket" DefaultValue="@StoreItem.QuantityInPacketType.ToString()"
+                        OnChange="@OnQuantityInPacketTypeChanged">
+                    @foreach (var type in QuantityInPacketTypes)
+                    {
+                        <SelectOption Value="@type.Id.ToString()">@type.Name</SelectOption>
+                    }
+                </Select>
+                <Input @bind-Value="@StoreItem.QuantityInPacket"></Input>
+            </div>
+        }
     </div>
     <div class="d-flex flex-row">
         <!-- availabilities -->
@@ -153,6 +156,7 @@
         OneOf<SelectOption, IEnumerable<SelectOption>> option)
     {
         StoreItem.QuantityType = int.Parse(value.AsT0);
+        StateHasChanged();
     }
 
     private void OnQuantityInPacketTypeChanged(
