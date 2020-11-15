@@ -9,6 +9,7 @@
             <Icon Type="arrow-left"></Icon>
         </Button>
         <Input @bind-Value="@StoreItem.Name" />
+        <Button Danger="true" OnClick="@OnDeleteButtonClickedAsync">Delete</Button>
     </div>
     <Divider></Divider>
     <div class="d-flex">
@@ -71,7 +72,6 @@
     <div>
         <Button OnClick="OnUpdateButtonClickedAsync">Update</Button>
         <Button OnClick="OnChangeButtonClickedAsync">Change</Button>
-        <Button OnClick="OnCancleButtonClickedAsync" Danger="true">Cancle</Button>
     </div>
 </div>
 
@@ -124,7 +124,7 @@
         await ChangeItemCallback.InvokeAsync(StoreItem);
     }
 
-    private async Task OnCancleButtonClickedAsync()
+    private async Task OnDeleteButtonClickedAsync()
     {
         await DeleteItemCallback.InvokeAsync(StoreItem.Id);
     }
