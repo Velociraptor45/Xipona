@@ -1,6 +1,7 @@
 ﻿@using ShoppingList.Frontend.Models.Items;
 @using ShoppingList.Frontend.Models;
 @using System.Collections.Generic;
+@using OneOf;
 
 <div>
     <div class="d-flex">
@@ -49,7 +50,8 @@
                 <div class="d-flex flex-row align-items-center">
                     <Input @bind-Value="@availability.PricePerQuantity" Class="ml-2 max-w-50" />
                     <div class="mr-4">€</div>
-                    <Select Placeholder="Stores" DefaultValue="@availability.StoreId.ToString()">
+                    <Select Placeholder="Stores" DefaultValue="@availability.StoreId.ToString()"
+                            @ref="@storeSelectRef[GetIndex(availability)]">
                         @foreach (var store in Stores)
                         {
                             <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
@@ -59,7 +61,7 @@
             }
         </div>
         <div class="ml-2">
-            <Button class="d-flex align-items-center">
+            <Button class="d-flex align-items-center" OnClick="OnAddStoreButtonClicked">
                 <Icon Type="plus"></Icon>
             </Button>
         </div>
@@ -83,23 +85,62 @@
     [Parameter] public EventCallback<StoreItem> ChangeItemCallback { get; set; }
     [Parameter] public EventCallback<int> DeleteItemCallback { get; set; }
 
+    private Select manufacturerSelectRef;
+    private Select itemCategorySelectRef;
+    private Select QuantityTypeSelectRef;
+    private Select QuantityInPacketTypeSelectRef;
+    private List<Select> storeSelectRef = new List<Select>();
+
+    protected override void OnInitialized()
+    {
+        storeSelectRef.Clear();
+        StoreItem.Availabilities.ForEach(av => storeSelectRef.Add(null));
+        base.OnInitialized();
+    }
+
+    private int GetIndex(StoreItemAvailability av)
+    {
+        return StoreItem.Availabilities.IndexOf(av);
+    }
+
     private void OnAddStoreButtonClicked()
     {
+        var notRegisteredStoreIds = GetNotRegisteredStoreIds(StoreItem);
+        if (!notRegisteredStoreIds.Any())
+            return;
 
+        storeSelectRef.Add(null);
+        StoreItem.Availabilities.Add(
+            new StoreItemAvailability(notRegisteredStoreIds.First(), 1));
     }
 
     private async Task OnUpdateButtonClickedAsync()
     {
+        FillStoreItem();
         await UpdateItemCallback.InvokeAsync(StoreItem);
     }
 
     private async Task OnChangeButtonClickedAsync()
     {
+        FillStoreItem();
         await ChangeItemCallback.InvokeAsync(StoreItem);
     }
 
     private async Task OnCancleButtonClickedAsync()
     {
         await DeleteItemCallback.InvokeAsync(StoreItem.Id);
+    }
+
+    private void FillStoreItem()
+    {
+
+    }
+
+    private IEnumerable<int> GetNotRegisteredStoreIds(StoreItem storeItem)
+    {
+        var registeredStoreId = storeItem.Availabilities.Select(av => av.StoreId);
+        var allStoreIds = Stores.Select(s => s.Id);
+
+        return allStoreIds.Except(registeredStoreId);
     }
 }
