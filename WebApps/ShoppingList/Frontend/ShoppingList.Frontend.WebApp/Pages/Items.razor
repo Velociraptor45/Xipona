@@ -63,7 +63,8 @@
                     QuantityInPacketTypes="@quantityInPacketTypes"
                     UpdateItemCallback="@OnItemUpdatedAsync"
                     ChangeItemCallback="@OnItemChangedAsync"
-                    DeleteItemCallback="@OnItemDeletedAsync"></ItemEditor>
+                    DeleteItemCallback="@OnItemDeletedAsync"
+                    LeaveEditorCallback="@OnLeaveEditor"></ItemEditor>
     }
 </div>
 
@@ -120,18 +121,28 @@
     private async Task OnItemUpdatedAsync(StoreItem storeItem)
     {
         await offlineClient.UpdateItemAsync(storeItem);
-        currentlyEditedItem = null;
+        LeaveEditor();
     }
 
     private async Task OnItemChangedAsync(StoreItem storeItem)
     {
         await offlineClient.ChangeItemAsync(storeItem);
-        currentlyEditedItem = null;
+        LeaveEditor();
     }
 
     private async Task OnItemDeletedAsync(int itemId)
     {
         await offlineClient.DeleteItemAsync(itemId);
+        LeaveEditor();
+    }
+
+    private void OnLeaveEditor()
+    {
+        LeaveEditor();
+    }
+
+    private void LeaveEditor()
+    {
         currentlyEditedItem = null;
     }
 }
