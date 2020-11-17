@@ -10,6 +10,7 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
 
         public StoreItemReadModel(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+            string quantityLabel, string priceLabel,
             ItemCategoryReadModel itemCategory, ManufacturerReadModel manufacturer,
             IEnumerable<StoreItemAvailabilityReadModel> availabilities)
         {
@@ -21,6 +22,8 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
+            QuantityLabel = quantityLabel;
+            PriceLabel = priceLabel;
             ItemCategory = itemCategory ?? throw new System.ArgumentNullException(nameof(itemCategory));
             Manufacturer = manufacturer ?? throw new System.ArgumentNullException(nameof(manufacturer));
             this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
@@ -34,6 +37,8 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
         public QuantityType QuantityType { get; }
         public float QuantityInPacket { get; }
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
+        public string QuantityLabel { get; }
+        public string PriceLabel { get; }
         public ItemCategoryReadModel ItemCategory { get; }
         public ManufacturerReadModel Manufacturer { get; }
 

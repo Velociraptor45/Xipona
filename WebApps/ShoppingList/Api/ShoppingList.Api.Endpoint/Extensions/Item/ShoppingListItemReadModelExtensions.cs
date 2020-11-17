@@ -20,7 +20,7 @@ namespace ShoppingList.Api.Endpoint.Extensions.Item
                 readModel.QuantityInPacket,
                 (int)readModel.QuantityTypeInPacket,
                 readModel.DefaultQuantity,
-                readModel.QuantityLable,
+                readModel.QuantityLabel,
                 readModel.PriceLabel,
                 readModel.ItemCategory.ToContract(),
                 readModel.Manufacturer.ToContract(),

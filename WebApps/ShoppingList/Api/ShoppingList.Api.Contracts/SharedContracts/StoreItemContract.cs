@@ -9,6 +9,7 @@ namespace ShoppingList.Api.Contracts.SharedContracts
 
         public StoreItemContract(int id, string name, bool isDeleted, string comment, bool isTemporary,
             int quantityType, float quantityInPacket, int quantityTypeInPacket,
+            string quantityLabel, string priceLabel,
             ItemCategoryContract itemCategory, ManufacturerContract manufacturer,
             IEnumerable<StoreItemAvailabilityContract> availabilities)
         {
@@ -20,6 +21,8 @@ namespace ShoppingList.Api.Contracts.SharedContracts
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
+            QuantityLabel = quantityLabel;
+            PriceLabel = priceLabel;
             ItemCategory = itemCategory ?? throw new System.ArgumentNullException(nameof(itemCategory));
             Manufacturer = manufacturer ?? throw new System.ArgumentNullException(nameof(manufacturer));
             this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
@@ -33,6 +36,8 @@ namespace ShoppingList.Api.Contracts.SharedContracts
         public int QuantityType { get; }
         public float QuantityInPacket { get; }
         public int QuantityTypeInPacket { get; }
+        public string QuantityLabel { get; }
+        public string PriceLabel { get; }
         public ItemCategoryContract ItemCategory { get; }
         public ManufacturerContract Manufacturer { get; }
 

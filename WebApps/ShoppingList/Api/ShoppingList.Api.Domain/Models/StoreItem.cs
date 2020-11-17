@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ShoppingList.Api.Domain.Models
@@ -34,6 +35,17 @@ namespace ShoppingList.Api.Domain.Models
         public QuantityType QuantityType { get; }
         public float QuantityInPacket { get; }
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
+        public string QuantityLabel => QuantityType == QuantityType.Unit ? "" : "g";
+
+        public string PriceLabel => QuantityTypeInPacket switch
+        {
+            QuantityTypeInPacket.Unit => "€",
+            QuantityTypeInPacket.Weight => "€/kg",
+            QuantityTypeInPacket.Fluid => "€/l",
+            _ => throw new InvalidOperationException(
+                $"{nameof(QuantityTypeInPacket)} value {QuantityTypeInPacket} not recognized")
+        };
+
         public ItemCategory ItemCategory { get; }
         public Manufacturer Manufacturer { get; }
 

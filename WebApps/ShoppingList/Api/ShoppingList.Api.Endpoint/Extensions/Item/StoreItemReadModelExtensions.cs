@@ -12,7 +12,8 @@ namespace ShoppingList.Api.Endpoint.Extensions.Item
         {
             return new StoreItemContract(readModel.Id.Value, readModel.Name, readModel.IsDeleted, readModel.Comment,
                 readModel.IsTemporary, (int)readModel.QuantityType, readModel.QuantityInPacket,
-                (int)readModel.QuantityTypeInPacket, readModel.ItemCategory.ToContract(),
+                (int)readModel.QuantityTypeInPacket, readModel.QuantityLabel, readModel.PriceLabel,
+                readModel.ItemCategory.ToContract(),
                 readModel.Manufacturer.ToContract(), readModel.Availabilities.Select(av => av.ToContract()));
         }
     }

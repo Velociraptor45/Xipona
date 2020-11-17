@@ -6,7 +6,7 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
     {
         public ShoppingListItemReadModel(ShoppingListItemId id, string name, bool isDeleted, string comment,
             bool isTemporary, float pricePerQuantity, QuantityType quantityType, float quantityInPacket,
-            int defaultQuantity, string quantityLable, string priceLabel, QuantityTypeInPacket quantityTypeInPacket,
+            int defaultQuantity, string quantityLabel, string priceLabel, QuantityTypeInPacket quantityTypeInPacket,
             ItemCategoryReadModel itemCategory, ManufacturerReadModel manufacturer,
             bool isInBasket, float quantity)
         {
@@ -19,7 +19,7 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             DefaultQuantity = defaultQuantity;
-            QuantityLable = quantityLable;
+            QuantityLabel = quantityLabel;
             PriceLabel = priceLabel;
             QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategory = itemCategory;
@@ -37,7 +37,7 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
         public QuantityType QuantityType { get; }
         public float QuantityInPacket { get; }
         public int DefaultQuantity { get; }
-        public string QuantityLable { get; }
+        public string QuantityLabel { get; }
         public string PriceLabel { get; }
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
         public ItemCategoryReadModel ItemCategory { get; }

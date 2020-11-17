@@ -4,7 +4,7 @@
     {
         public ShoppingListItemContract(int id, string name, bool isDeleted, string comment, bool isTemporary,
             float pricePerQuantity, int quantityType, float quantityInPacket, int quantityTypeInPacket,
-            int defaultQuantity, string quantityLable, string priceLabel,
+            int defaultQuantity, string quantityLabel, string priceLabel,
             ItemCategoryContract itemCategory, ManufacturerContract manufacturer, bool isInBasket, float quantity)
         {
             Id = id;
@@ -17,7 +17,7 @@
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
             DefaultQuantity = defaultQuantity;
-            QuantityLable = quantityLable;
+            QuantityLabel = quantityLabel;
             PriceLabel = priceLabel;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
@@ -35,7 +35,7 @@
         public float QuantityInPacket { get; }
         public int QuantityTypeInPacket { get; }
         public int DefaultQuantity { get; }
-        public string QuantityLable { get; }
+        public string QuantityLabel { get; }
         public string PriceLabel { get; }
         public ItemCategoryContract ItemCategory { get; }
         public ManufacturerContract Manufacturer { get; }

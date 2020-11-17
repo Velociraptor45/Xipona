@@ -53,6 +53,7 @@ namespace ShoppingList.Api.Domain.Extensions
         {
             return new StoreItemReadModel(model.Id, model.Name, model.IsDeleted, model.Comment, model.IsTemporary,
                 model.QuantityType, model.QuantityInPacket, model.QuantityTypeInPacket,
+                model.QuantityLabel, model.PriceLabel,
                 model.ItemCategory.ToReadModel(), model.Manufacturer.ToReadModel(),
                 model.Availabilities.Select(av => av.ToReadModel()));
         }
