@@ -10,6 +10,10 @@
     max-width: 50px;
 }
 
+.max-w-60 {
+    max-width: 60px;
+}
+
 .max-w-100 {
     max-width: 100px;
 }
