@@ -2,13 +2,15 @@
 {
     public class QuantityInPacketTypeReadModel
     {
-        public QuantityInPacketTypeReadModel(int id, string name)
+        public QuantityInPacketTypeReadModel(int id, string name, string priceLabel)
         {
             Id = id;
             Name = name;
+            PriceLabel = priceLabel;
         }
 
         public int Id { get; }
         public string Name { get; }
+        public string PriceLabel { get; }
     }
 }
