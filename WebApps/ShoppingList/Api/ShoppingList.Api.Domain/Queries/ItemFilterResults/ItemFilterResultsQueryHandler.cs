@@ -27,7 +27,9 @@ namespace ShoppingList.Api.Domain.Queries.ItemFilterResults
             var storeItems = await itemRepository.FindByAsync(query.StoreIds, query.ItemCategoriesIds, query.ManufacturerIds,
                 cancellationToken);
 
-            return storeItems.Select(model => model.ToItemFilterResultReadModel());
+            return storeItems
+                .Where(model => !model.IsDeleted)
+                .Select(model => model.ToItemFilterResultReadModel());
         }
     }
 }
