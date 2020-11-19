@@ -2,15 +2,15 @@
 {
     public class QuantityInPacketTypeContract
     {
-        public QuantityInPacketTypeContract(int id, string name, string priceLabel)
+        public QuantityInPacketTypeContract(int id, string name, string quantityLabel)
         {
             Id = id;
             Name = name;
-            PriceLabel = priceLabel;
+            QuantityLabel = quantityLabel;
         }
 
         public int Id { get; }
         public string Name { get; }
-        public string PriceLabel { get; }
+        public string QuantityLabel { get; }
     }
 }

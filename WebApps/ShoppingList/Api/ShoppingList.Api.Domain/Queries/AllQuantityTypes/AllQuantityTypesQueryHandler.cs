@@ -1,4 +1,5 @@
-﻿using ShoppingList.Api.Domain.Extensions;
+﻿using ShoppingList.Api.Core.Attributes;
+using ShoppingList.Api.Core.Extensions;
 using ShoppingList.Api.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -23,8 +24,9 @@ namespace ShoppingList.Api.Domain.Queries.AllQuantityTypes
             for (int i = 0; i < values.Count; i++)
             {
                 var quantityType = values[i];
-                readModels.Add(new QuantityTypeReadModel(i, quantityType.ToString(), quantityType.ToDefaultQuantity(),
-                    quantityType.ToLabel()));
+                readModels.Add(new QuantityTypeReadModel(i, quantityType.ToString(),
+                    quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                    quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel));
             }
 
             return Task.FromResult(readModels.AsEnumerable());

@@ -2,17 +2,17 @@
 {
     public class QuantityTypeContract
     {
-        public QuantityTypeContract(int id, string name, int defaultQuantity, string label)
+        public QuantityTypeContract(int id, string name, int defaultQuantity, string pricelabel)
         {
             Id = id;
             Name = name;
             DefaultQuantity = defaultQuantity;
-            Label = label;
+            Pricelabel = pricelabel;
         }
 
         public int Id { get; }
         public string Name { get; }
         public int DefaultQuantity { get; }
-        public string Label { get; }
+        public string Pricelabel { get; }
     }
 }
