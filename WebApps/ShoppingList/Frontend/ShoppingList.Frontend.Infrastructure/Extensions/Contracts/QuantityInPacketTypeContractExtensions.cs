@@ -7,7 +7,7 @@ namespace ShoppingList.Frontend.Infrastructure.Extensions.Contracts
     {
         public static QuantityInPacketType ToModel(this QuantityInPacketTypeContract contract)
         {
-            return new QuantityInPacketType(contract.Id, contract.Name);
+            return new QuantityInPacketType(contract.Id, contract.Name, contract.QuantityLabel);
         }
     }
 }

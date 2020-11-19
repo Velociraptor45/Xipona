@@ -151,7 +151,9 @@
     private void OnCreateItemButtonClicked()
     {
         currentlyEditedItem =
-            new StoreItem(0, "", false, "", false, 0, 0, 0, 1, 1, new List<StoreItemAvailability>());
+            new StoreItem(0, "", false, "", false,
+            new QuantityType(0, "", 0, ""), 0,
+            new QuantityInPacketType(0, "", ""), 1, 1, new List<StoreItemAvailability>());
     }
 
     private void OnLeaveEditor()

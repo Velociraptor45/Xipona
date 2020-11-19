@@ -6,7 +6,7 @@
     <div class="max-w-60">
         <Input @bind-Value="@Availability.PricePerQuantity" />
     </div>
-    <div class="mr-4">€</div>
+    <div class="mr-4">@PriceLabel</div>
     <Select Placeholder="Stores" DefaultValue="@Availability.StoreId.ToString()" OnChange="@OnStoreChanged">
         @foreach (var store in Stores)
         {
@@ -15,7 +15,7 @@
                     }
     </Select>
     <div class="ml-2">
-        <Button Class="d-flex align-items-center" 
+        <Button Class="d-flex align-items-center"
                 OnClick="@OnRemoveStoreButtonClickedAsync"
                 Danger="true">
             <Icon Type="minus"></Icon>
@@ -26,6 +26,7 @@
 @code {
     [Parameter] public int ComponentIndex { get; set; }
     [Parameter] public StoreItemAvailability Availability { get; set; }
+    [Parameter] public string PriceLabel { get; set; }
     [Parameter] public List<Store> Stores { get; set; }
     [Parameter] public IEnumerable<int> DisabledStoreIds { get; set; }
 

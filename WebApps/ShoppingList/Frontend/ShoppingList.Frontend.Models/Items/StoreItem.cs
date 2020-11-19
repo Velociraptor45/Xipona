@@ -5,9 +5,9 @@ namespace ShoppingList.Frontend.Models.Items
 {
     public class StoreItem
     {
-        public StoreItem(int id, string name, bool isDeleted, string comment, bool isTemporary, int quantityType,
-            float quantityInPacket, int quantityInPacketType, int itemCategoryId, int manufacturerId,
-            IEnumerable<StoreItemAvailability> availabilities)
+        public StoreItem(int id, string name, bool isDeleted, string comment, bool isTemporary,
+            QuantityType quantityType, float quantityInPacket, QuantityInPacketType quantityInPacketType,
+            int itemCategoryId, int manufacturerId, IEnumerable<StoreItemAvailability> availabilities)
         {
             Id = id;
             Name = name;
@@ -27,9 +27,9 @@ namespace ShoppingList.Frontend.Models.Items
         public bool IsDeleted { get; set; }
         public string Comment { get; set; }
         public bool IsTemporary { get; set; }
-        public int QuantityType { get; set; }
+        public QuantityType QuantityType { get; set; }
         public float QuantityInPacket { get; set; }
-        public int QuantityInPacketType { get; set; }
+        public QuantityInPacketType QuantityInPacketType { get; set; }
         public int ItemCategoryId { get; set; }
         public int ManufacturerId { get; set; }
         public List<StoreItemAvailability> Availabilities { get; set; }
