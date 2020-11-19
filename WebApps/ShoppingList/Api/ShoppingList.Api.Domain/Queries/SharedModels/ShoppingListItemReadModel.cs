@@ -1,12 +1,14 @@
 ﻿using ShoppingList.Api.Domain.Models;
+using ShoppingList.Api.Domain.Queries.AllQuantityInPacketTypes;
+using ShoppingList.Api.Domain.Queries.AllQuantityTypes;
 
 namespace ShoppingList.Api.Domain.Queries.SharedModels
 {
     public class ShoppingListItemReadModel
     {
         public ShoppingListItemReadModel(ShoppingListItemId id, string name, bool isDeleted, string comment,
-            bool isTemporary, float pricePerQuantity, QuantityType quantityType, float quantityInPacket,
-            int defaultQuantity, string quantityLabel, string priceLabel, QuantityTypeInPacket quantityTypeInPacket,
+            bool isTemporary, float pricePerQuantity, QuantityTypeReadModel quantityType, float quantityInPacket,
+            QuantityInPacketTypeReadModel quantityTypeInPacket,
             ItemCategoryReadModel itemCategory, ManufacturerReadModel manufacturer,
             bool isInBasket, float quantity)
         {
@@ -18,9 +20,6 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
             PricePerQuantity = pricePerQuantity;
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
-            DefaultQuantity = defaultQuantity;
-            QuantityLabel = quantityLabel;
-            PriceLabel = priceLabel;
             QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
@@ -34,12 +33,9 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
         public string Comment { get; }
         public bool IsTemporary { get; }
         public float PricePerQuantity { get; }
-        public QuantityType QuantityType { get; }
+        public QuantityTypeReadModel QuantityType { get; }
         public float QuantityInPacket { get; }
-        public int DefaultQuantity { get; }
-        public string QuantityLabel { get; }
-        public string PriceLabel { get; }
-        public QuantityTypeInPacket QuantityTypeInPacket { get; }
+        public QuantityInPacketTypeReadModel QuantityTypeInPacket { get; }
         public ItemCategoryReadModel ItemCategory { get; }
         public ManufacturerReadModel Manufacturer { get; }
         public bool IsInBasket { get; }
