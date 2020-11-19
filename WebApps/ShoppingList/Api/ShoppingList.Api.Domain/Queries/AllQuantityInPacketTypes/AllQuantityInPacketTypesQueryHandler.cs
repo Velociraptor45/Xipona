@@ -1,5 +1,4 @@
-﻿using ShoppingList.Api.Core.Attributes;
-using ShoppingList.Api.Core.Extensions;
+﻿using ShoppingList.Api.Domain.Extensions;
 using ShoppingList.Api.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -19,15 +18,9 @@ namespace ShoppingList.Api.Domain.Queries.AllQuantityInPacketTypes
             var values = Enum.GetValues(typeof(QuantityTypeInPacket))
                 .Cast<QuantityTypeInPacket>()
                 .ToList();
-            var readModels = new List<QuantityInPacketTypeReadModel>();
+            var readModels = values.Select(v => v.ToReadModel());
 
-            for (int i = 0; i < values.Count; i++)
-            {
-                var quantityType = values[i];
-                readModels.Add(new QuantityInPacketTypeReadModel(i, quantityType.ToString(),
-                    quantityType.GetAttribute<QuantityLabelAttribute>().QuantityLabel));
-            }
-            return Task.FromResult(readModels.AsEnumerable());
+            return Task.FromResult(readModels);
         }
     }
 }
