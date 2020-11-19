@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ShoppingList.Api.Contracts.Queries.AllQuantityTypes;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ShoppingList.Api.Contracts.SharedContracts
@@ -8,21 +9,23 @@ namespace ShoppingList.Api.Contracts.SharedContracts
         private readonly IEnumerable<StoreItemAvailabilityContract> availabilities;
 
         public StoreItemContract(int id, string name, bool isDeleted, string comment, bool isTemporary,
-            int quantityType, float quantityInPacket, int quantityTypeInPacket,
-            string quantityLabel, string priceLabel,
+            QuantityTypeContract quantityType, float quantityInPacket, QuantityInPacketTypeContract quantityTypeInPacket,
             ItemCategoryContract itemCategory, ManufacturerContract manufacturer,
             IEnumerable<StoreItemAvailabilityContract> availabilities)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new System.ArgumentException($"'{nameof(name)}' cannot be null or empty", nameof(name));
+            }
+
             Id = id;
             Name = name;
             IsDeleted = isDeleted;
             Comment = comment;
             IsTemporary = isTemporary;
-            QuantityType = quantityType;
+            QuantityType = quantityType ?? throw new System.ArgumentNullException(nameof(quantityType));
             QuantityInPacket = quantityInPacket;
-            QuantityTypeInPacket = quantityTypeInPacket;
-            QuantityLabel = quantityLabel;
-            PriceLabel = priceLabel;
+            QuantityTypeInPacket = quantityTypeInPacket ?? throw new System.ArgumentNullException(nameof(quantityTypeInPacket));
             ItemCategory = itemCategory ?? throw new System.ArgumentNullException(nameof(itemCategory));
             Manufacturer = manufacturer ?? throw new System.ArgumentNullException(nameof(manufacturer));
             this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
@@ -33,11 +36,9 @@ namespace ShoppingList.Api.Contracts.SharedContracts
         public bool IsDeleted { get; }
         public string Comment { get; }
         public bool IsTemporary { get; }
-        public int QuantityType { get; }
+        public QuantityTypeContract QuantityType { get; }
         public float QuantityInPacket { get; }
-        public int QuantityTypeInPacket { get; }
-        public string QuantityLabel { get; }
-        public string PriceLabel { get; }
+        public QuantityInPacketTypeContract QuantityTypeInPacket { get; }
         public ItemCategoryContract ItemCategory { get; }
         public ManufacturerContract Manufacturer { get; }
 

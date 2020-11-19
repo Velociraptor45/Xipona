@@ -52,8 +52,7 @@ namespace ShoppingList.Api.Domain.Extensions
         public static StoreItemReadModel ToReadModel(this StoreItem model)
         {
             return new StoreItemReadModel(model.Id, model.Name, model.IsDeleted, model.Comment, model.IsTemporary,
-                model.QuantityType, model.QuantityInPacket, model.QuantityTypeInPacket,
-                model.QuantityType.ToLabel(), model.QuantityTypeInPacket.ToPriceLabel(),
+                model.QuantityType.ToReadModel(), model.QuantityInPacket, model.QuantityTypeInPacket.ToReadModel(),
                 model.ItemCategory.ToReadModel(), model.Manufacturer.ToReadModel(),
                 model.Availabilities.Select(av => av.ToReadModel()));
         }
