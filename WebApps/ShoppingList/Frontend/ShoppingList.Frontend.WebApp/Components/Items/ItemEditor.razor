@@ -61,9 +61,11 @@
                         <SelectOption Value="@type.Id.ToString()">@type.Name</SelectOption>
                     }
                 </Select>
-                <div>
-                    <Input Class="max-w-50" @bind-Value="@StoreItem.QuantityInPacket"></Input>
-                    <div>@StoreItem.QuantityInPacketType.QuantityLabel</div>
+                <div class="d-flex">
+                    <div class="max-w-50">
+                        <Input @bind-Value="@StoreItem.QuantityInPacket"></Input>
+                    </div>
+                    <div class="mt-1">@StoreItem.QuantityInPacketType.QuantityLabel</div>
                 </div>
             </div>
         }
