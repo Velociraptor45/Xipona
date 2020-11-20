@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ShoppingList.Api.Domain.Models
+﻿namespace ShoppingList.Api.Domain.Models
 {
     public class ShoppingListItem
     {
@@ -39,17 +37,6 @@ namespace ShoppingList.Api.Domain.Models
         public Manufacturer Manufacturer { get; }
         public bool IsInBasket => isInBasket;
         public float Quantity => quantity;
-        public int DefaultQuantity => QuantityType == QuantityType.Unit ? 1 : 100;
-        public string QuantityLabel => QuantityType == QuantityType.Unit ? "" : "g";
-
-        public string PriceLabel => QuantityTypeInPacket switch
-        {
-            QuantityTypeInPacket.Unit => "€",
-            QuantityTypeInPacket.Weight => "€/kg",
-            QuantityTypeInPacket.Fluid => "€/l",
-            _ => throw new InvalidOperationException(
-                $"{nameof(QuantityTypeInPacket)} value {QuantityTypeInPacket} not recognized")
-        };
 
         public void PutInBasket()
         {

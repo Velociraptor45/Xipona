@@ -86,13 +86,13 @@
 
     private async void OnIncrementQuantityButtonClicked()
     {
-        Item.Quantity += Item.DefaultQuantity;
+        Item.Quantity += Item.QuantityType.DefaultQuantity;
         await ItemQuantityChangedCallback.InvokeAsync(Item);
     }
 
     private async void OnDecrementQuantityButtonClicked()
     {
-        Item.Quantity -= Item.DefaultQuantity;
+        Item.Quantity -= Item.QuantityType.DefaultQuantity;
         await ItemQuantityChangedCallback.InvokeAsync(Item);
     }
 }

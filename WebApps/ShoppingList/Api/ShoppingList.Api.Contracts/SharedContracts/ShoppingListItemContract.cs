@@ -1,10 +1,12 @@
-﻿namespace ShoppingList.Api.Contracts.SharedContracts
+﻿using ShoppingList.Api.Contracts.Queries.AllQuantityTypes;
+
+namespace ShoppingList.Api.Contracts.SharedContracts
 {
     public class ShoppingListItemContract
     {
         public ShoppingListItemContract(int id, string name, bool isDeleted, string comment, bool isTemporary,
-            float pricePerQuantity, int quantityType, float quantityInPacket, int quantityTypeInPacket,
-            int defaultQuantity, string quantityLable, string priceLabel,
+            float pricePerQuantity, QuantityTypeContract quantityType, float quantityInPacket,
+            QuantityInPacketTypeContract quantityTypeInPacket,
             ItemCategoryContract itemCategory, ManufacturerContract manufacturer, bool isInBasket, float quantity)
         {
             Id = id;
@@ -16,9 +18,6 @@
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
-            DefaultQuantity = defaultQuantity;
-            QuantityLable = quantityLable;
-            PriceLabel = priceLabel;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
             IsInBasket = isInBasket;
@@ -31,12 +30,9 @@
         public string Comment { get; }
         public bool IsTemporary { get; }
         public float PricePerQuantity { get; }
-        public int QuantityType { get; }
+        public QuantityTypeContract QuantityType { get; }
         public float QuantityInPacket { get; }
-        public int QuantityTypeInPacket { get; }
-        public int DefaultQuantity { get; }
-        public string QuantityLable { get; }
-        public string PriceLabel { get; }
+        public QuantityInPacketTypeContract QuantityTypeInPacket { get; }
         public ItemCategoryContract ItemCategory { get; }
         public ManufacturerContract Manufacturer { get; }
         public bool IsInBasket { get; }

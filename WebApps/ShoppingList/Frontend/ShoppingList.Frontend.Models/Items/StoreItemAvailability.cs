@@ -1,8 +1,8 @@
 ﻿namespace ShoppingList.Frontend.Models.Items
 {
-    public class StoreItemAvailabilities
+    public class StoreItemAvailability
     {
-        public StoreItemAvailabilities(int storeId, float pricePerQuantity)
+        public StoreItemAvailability(int storeId, float pricePerQuantity)
         {
             StoreId = storeId;
             PricePerQuantity = pricePerQuantity;

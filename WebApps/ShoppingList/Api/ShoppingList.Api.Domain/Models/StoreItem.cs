@@ -34,6 +34,7 @@ namespace ShoppingList.Api.Domain.Models
         public QuantityType QuantityType { get; }
         public float QuantityInPacket { get; }
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
+
         public ItemCategory ItemCategory { get; }
         public Manufacturer Manufacturer { get; }
 

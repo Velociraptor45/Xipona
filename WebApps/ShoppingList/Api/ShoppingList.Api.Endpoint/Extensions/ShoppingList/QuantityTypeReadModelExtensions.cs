@@ -7,7 +7,7 @@ namespace ShoppingList.Api.Endpoint.Extensions.ShoppingList
     {
         public static QuantityTypeContract ToContract(this QuantityTypeReadModel readModel)
         {
-            return new QuantityTypeContract(readModel.Id, readModel.Name);
+            return new QuantityTypeContract(readModel.Id, readModel.Name, readModel.DefaultQuantity, readModel.Pricelabel);
         }
     }
 }

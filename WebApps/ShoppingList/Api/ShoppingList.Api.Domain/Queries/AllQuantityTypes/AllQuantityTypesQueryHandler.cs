@@ -1,4 +1,5 @@
-﻿using ShoppingList.Api.Domain.Models;
+﻿using ShoppingList.Api.Domain.Extensions;
+using ShoppingList.Api.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,14 +18,9 @@ namespace ShoppingList.Api.Domain.Queries.AllQuantityTypes
             var values = Enum.GetValues(typeof(QuantityType))
                 .Cast<QuantityType>()
                 .ToList();
-            var readModels = new List<QuantityTypeReadModel>();
+            var readModels = values.Select(v => v.ToReadModel());
 
-            for (int i = 0; i < values.Count; i++)
-            {
-                readModels.Add(new QuantityTypeReadModel(i, values[i].ToString()));
-            }
-
-            return Task.FromResult(readModels.AsEnumerable());
+            return Task.FromResult(readModels);
         }
     }
 }

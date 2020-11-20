@@ -5,40 +5,72 @@
 @using ShoppingList.Frontend.Models.Items;
 
 <div>
-    <Button @onclick="@(() => isInEditMode = !isInEditMode)"></Button>
-    @if (!isInEditMode)
+    @if (currentlyEditedItem == null)
     {
-        <div>Items</div>
+        <div>
+            <div>Items</div>
+            <Button @onclick="OnCreateItemButtonClicked">
+                <Icon Type="plus"></Icon>
+            </Button>
+        </div>
         <div>
             <div class="d-flex">
                 <div>
                     Store
                 </div>
-                <Select Placeholder="Stores"></Select>
+                <Select Mode="Tags" Placeholder="Stores" @ref="@storesSelectRef">
+                    @foreach (var store in stores)
+                    {
+                        <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
+                    }
+                </Select>
             </div>
             <div class="d-flex">
                 <div>
                     Category
                 </div>
-                <Select Placeholder="Category"></Select>
+                <Select Mode="Tags" Placeholder="Category" @ref="@itemCategoriesSelectRef">
+                    @foreach (var itemCategory in itemCategories)
+                    {
+                        <SelectOption Value="@itemCategory.Id.ToString()">@itemCategory.Name</SelectOption>
+                    }
+                </Select>
             </div>
             <div class="d-flex">
                 <div>
                     Manufacturer
                 </div>
-                <Select Placeholder="Manufacturer"></Select>
+                <Select Mode="Tags" Placeholder="Manufacturer" @ref="@manufacturersSelectRef">
+                    @foreach (var manufacturer in manufacturers)
+                    {
+                        <SelectOption Value="@manufacturer.Id.ToString()">@manufacturer.Name</SelectOption>
+                    }
+                </Select>
             </div>
+            <Button @onclick="@OnLoadButtonClickedAsync">Load</Button>
         </div>
         <div>
             <!-- result item list -->
+            @foreach (var item in items)
+            {
+                <ItemFilterResultComponent Item="@item"
+                                           OnClickCallback="@OnItemClickedAsync"></ItemFilterResultComponent>
+            }
         </div>
     }
     else
     {
-        <ItemEditor ItemId="@currentlyEditedItemId"
+        <ItemEditor StoreItem="@currentlyEditedItem"
                     Stores="@stores"
                     Manufacturers="@manufacturers"
-                    ItemCategories="@itemCategories"></ItemEditor>
+                    ItemCategories="@itemCategories"
+                    QuantityTypes="@quantityTypes"
+                    QuantityInPacketTypes="@quantityInPacketTypes"
+                    UpdateItemCallback="@OnItemUpdatedAsync"
+                    ChangeItemCallback="@OnItemChangedAsync"
+                    CreateItemCallback="@OnItemCreatedAsync"
+                    DeleteItemCallback="@OnItemDeletedAsync"
+                    LeaveEditorCallback="@OnLeaveEditor"></ItemEditor>
     }
 </div>
 
@@ -46,21 +78,91 @@
     private List<Store> stores = new List<Store>();
     private List<ItemCategory> itemCategories = new List<ItemCategory>();
     private List<Manufacturer> manufacturers = new List<Manufacturer>();
+    private List<ItemFilterResult> items = new List<ItemFilterResult>();
+    private List<QuantityType> quantityTypes = new List<QuantityType>();
+    private List<QuantityInPacketType> quantityInPacketTypes = new List<QuantityInPacketType>();
 
-    private bool isInEditMode = false; // todo remove
-    private int currentlyEditedItemId = 0;
+    private Select storesSelectRef;
+    private Select itemCategoriesSelectRef;
+    private Select manufacturersSelectRef;
 
-    protected override Task OnInitializedAsync()
+    private StoreItem currentlyEditedItem = null;
+
+    protected async override Task OnInitializedAsync()
     {
-        //todo:
-        // - load all active stores
-        // - load all active manufacturers
-        // - load all active item categories
-        return base.OnInitializedAsync();
+        stores = (await offlineClient.GetAllActiveStoresAsync()).ToList();
+        manufacturers = (await offlineClient.GetAllActiveManufacturersAsync()).ToList();
+        itemCategories = (await offlineClient.GetAllActiveItemCategoriesAsync()).ToList();
+        quantityTypes = (await offlineClient.GetAllQuantityTypesAsync()).ToList();
+        quantityInPacketTypes = (await offlineClient.GetAllQuantityInPacketTypesAsync()).ToList();
+
+        var result = await offlineClient.GetItemFilterResultAsync(
+            new List<int> { 1 },
+            new List<int> { 1 },
+            new List<int> { 1 });
+        items = result.ToList();
+
+        await base.OnInitializedAsync();
     }
 
-    private void OnItemClicked()
+    private async Task OnLoadButtonClickedAsync()
     {
-        // todo: set currentlyEditedItem
+        var stores = storesSelectRef.SelectedValues.Value.AsT1.Select(s => int.Parse(s)).ToList();
+        var itemCategories = itemCategoriesSelectRef.SelectedValues.Value.AsT1.Select(cat => int.Parse(cat)).ToList();
+        var manufacturers = manufacturersSelectRef.SelectedValues.Value.AsT1.Select(m => int.Parse(m)).ToList();
+
+        var result = await offlineClient.GetItemFilterResultAsync(
+            stores,
+            itemCategories,
+            manufacturers);
+        items = result.ToList();
+        StateHasChanged();
+    }
+
+    private async Task OnItemClickedAsync(int itemId)
+    {
+        currentlyEditedItem = await offlineClient.GetItemByIdAsync(itemId);
+    }
+
+    private async Task OnItemUpdatedAsync(StoreItem storeItem)
+    {
+        await offlineClient.UpdateItemAsync(storeItem);
+        LeaveEditor();
+    }
+
+    private async Task OnItemChangedAsync(StoreItem storeItem)
+    {
+        await offlineClient.ChangeItemAsync(storeItem);
+        LeaveEditor();
+    }
+
+    private async Task OnItemDeletedAsync(int itemId)
+    {
+        await offlineClient.DeleteItemAsync(itemId);
+        LeaveEditor();
+    }
+
+    private async Task OnItemCreatedAsync(StoreItem storeItem)
+    {
+        await offlineClient.CreateItemAsync(storeItem);
+        LeaveEditor();
+    }
+
+    private void OnCreateItemButtonClicked()
+    {
+        currentlyEditedItem =
+            new StoreItem(0, "", false, "", false,
+            new QuantityType(0, "", 0, ""), 0,
+            new QuantityInPacketType(0, "", ""), 1, 1, new List<StoreItemAvailability>());
+    }
+
+    private void OnLeaveEditor()
+    {
+        LeaveEditor();
+    }
+
+    private void LeaveEditor()
+    {
+        currentlyEditedItem = null;
     }
 }

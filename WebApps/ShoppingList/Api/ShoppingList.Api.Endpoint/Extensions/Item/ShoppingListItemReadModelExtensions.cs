@@ -2,6 +2,7 @@
 using ShoppingList.Api.Domain.Queries.SharedModels;
 using ShoppingList.Api.Endpoint.Extensions.ItemCategory;
 using ShoppingList.Api.Endpoint.Extensions.Manufacturer;
+using ShoppingList.Api.Endpoint.Extensions.ShoppingList;
 
 namespace ShoppingList.Api.Endpoint.Extensions.Item
 {
@@ -16,12 +17,9 @@ namespace ShoppingList.Api.Endpoint.Extensions.Item
                 readModel.Comment,
                 readModel.IsTemporary,
                 readModel.PricePerQuantity,
-                (int)readModel.QuantityType,
+                readModel.QuantityType.ToContract(),
                 readModel.QuantityInPacket,
-                (int)readModel.QuantityTypeInPacket,
-                readModel.DefaultQuantity,
-                readModel.QuantityLable,
-                readModel.PriceLabel,
+                readModel.QuantityTypeInPacket.ToContract(),
                 readModel.ItemCategory.ToContract(),
                 readModel.Manufacturer.ToContract(),
                 readModel.IsInBasket,

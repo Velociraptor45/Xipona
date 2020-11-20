@@ -8,6 +8,7 @@ using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
 using ShoppingList.Api.Contracts.Queries.AllActiveItemCategories;
+using ShoppingList.Api.Contracts.Queries.AllActiveManufacturers;
 using ShoppingList.Api.Contracts.Queries.AllActiveStores;
 using ShoppingList.Api.Contracts.Queries.AllQuantityTypes;
 using ShoppingList.Api.Contracts.Queries.ItemFilterResults;
@@ -106,15 +107,25 @@ namespace ShoppingList.Api.Client
             await apiClient.UpdateItemAsync(updateItemContract);
         }
 
+        public async Task DeleteItemAsync(int itemId)
+        {
+            await apiClient.DeleteItemAsync(itemId);
+        }
+
         public async Task<IEnumerable<ItemSearchContract>> GetItemSearchResults(string searchInput, int storeId)
         {
             return await apiClient.GetItemSearchResults(searchInput, storeId);
         }
 
         public async Task<IEnumerable<ItemFilterResultContract>> GetItemFilterResult(IEnumerable<int> storeIds,
-            IEnumerable<int> itemCategoriesIds, IEnumerable<int> manufacturerIds)
+            IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds)
         {
-            return await apiClient.GetItemFilterResult(storeIds, itemCategoriesIds, manufacturerIds);
+            return await apiClient.GetItemFilterResult(storeIds, itemCategoryIds, manufacturerIds);
+        }
+
+        public async Task<StoreItemContract> Get(int itemId)
+        {
+            return await apiClient.Get(itemId);
         }
 
         #endregion ItemController
@@ -145,7 +156,7 @@ namespace ShoppingList.Api.Client
             return await apiClient.GetManufacturerSearchResults(searchInput);
         }
 
-        public async Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveManufacturers()
+        public async Task<IEnumerable<ActiveManufacturerContract>> GetAllActiveManufacturers()
         {
             return await apiClient.GetAllActiveManufacturers();
         }
@@ -154,14 +165,14 @@ namespace ShoppingList.Api.Client
 
         #region ItemCategoryController
 
-        public async Task<IEnumerable<ManufacturerContract>> GetItemCategorySearchResults(string searchInput)
+        public async Task<IEnumerable<ItemCategoryContract>> GetItemCategorySearchResults(string searchInput)
         {
             return await apiClient.GetItemCategorySearchResults(searchInput);
         }
 
         public async Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveItemCategories()
         {
-            return await apiClient.GetAllActiveManufacturers();
+            return await apiClient.GetAllActiveItemCategories();
         }
 
         #endregion ItemCategoryController
