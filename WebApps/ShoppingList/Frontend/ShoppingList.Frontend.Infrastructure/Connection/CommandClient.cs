@@ -1,6 +1,5 @@
 ﻿using ShoppingList.Api.Client;
 using ShoppingList.Frontend.Models.Shared.Requests;
-using System;
 using System.Threading.Tasks;
 
 namespace ShoppingList.Frontend.Infrastructure.Connection
@@ -21,9 +20,7 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task PutItemInBasketAsync(PutItemInBasketRequest request)
         {
-            Console.WriteLine("Try putting item in basket.");
             await client.PutItemInBasket(request.ShoppingListId, request.ItemId);
-            Console.WriteLine("Item successfully put in basket.");
         }
 
         public async Task RemoveItemFromBasketAsync(RemoveItemFromBasketRequest request)
@@ -36,7 +33,7 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             await client.ChangeItemQuantityOnShoppingList(request.ShoppingListId, request.ItemId, request.Quantity);
         }
 
-        public async Task FinishListRequestAsync(FinishListRequest request)
+        public async Task FinishListAsync(FinishListRequest request)
         {
             await client.FinishList(request.ShoppingListId);
         }

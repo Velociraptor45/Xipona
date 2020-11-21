@@ -126,6 +126,19 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
                 case nameof(PutItemInBasketRequest):
                     await commandClient.PutItemInBasketAsync((PutItemInBasketRequest)request);
                     break;
+                case nameof(RemoveItemFromBasketRequest):
+                    await commandClient.RemoveItemFromBasketAsync((RemoveItemFromBasketRequest)request);
+                    break;
+                case nameof(RemoveItemFromShoppingListRequest):
+                    await commandClient.RemoveItemFromShoppingListAsync((RemoveItemFromShoppingListRequest)request);
+                    break;
+                case nameof(FinishListRequest):
+                    await commandClient.FinishListAsync((FinishListRequest)request);
+                    break;
+                case nameof(ChangeItemQuantityOnShoppingListRequest):
+                    await commandClient.ChangeItemQuantityOnShoppingListAsync(
+                        (ChangeItemQuantityOnShoppingListRequest)request);
+                    break;
             }
         }
 

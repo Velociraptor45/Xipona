@@ -7,12 +7,14 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
     {
         Task ChangeItemQuantityOnShoppingListAsync(ChangeItemQuantityOnShoppingListRequest request);
 
-        Task FinishListRequestAsync(FinishListRequest request);
+        Task FinishListAsync(FinishListRequest request);
 
         Task IsAliveAsync();
 
         Task PutItemInBasketAsync(PutItemInBasketRequest request);
 
         Task RemoveItemFromBasketAsync(RemoveItemFromBasketRequest request);
+
+        Task RemoveItemFromShoppingListAsync(RemoveItemFromShoppingListRequest request);
     }
 }

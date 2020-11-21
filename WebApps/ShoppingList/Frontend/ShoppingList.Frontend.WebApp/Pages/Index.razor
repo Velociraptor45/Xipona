@@ -199,7 +199,9 @@
     {
         if (item.IsInBasket)
         {
-            await offlineClient.RemoveItemFromBasketAsync(shoppingList.Id, item.Id);
+            item.RemoveFromBasket();
+            var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), shoppingList.Id, item.Id);
+            await commandQueue.Enqueue(request);
         }
         else
         {
@@ -211,22 +213,21 @@
 
     private async Task OnItemRemovedFromListAsync(ShoppingListItem item)
     {
-        await offlineClient.RemoveItemFromShoppingListAsync(shoppingList.Id, item.Id);
-        await LoadShoppingListAsync();
+        var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id);
+        await commandQueue.Enqueue(request);
     }
 
     private async Task OnItemQuantityChangedAsync(ShoppingListItem item)
     {
-        await offlineClient.ChangeItemQuantityOnShoppingListAsync(shoppingList.Id, item.Id, item.Quantity);
-        await LoadShoppingListAsync();
+        var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id,
+            item.Quantity);
+        await commandQueue.Enqueue(request);
     }
 
     private async void OnFinishListButtonClicked()
     {
-        await offlineClient.FinishListAsync(shoppingList.Id);
-
-        await LoadShoppingListAsync();
-        StateHasChanged();
+        var requst = new FinishListRequest(Guid.NewGuid(), shoppingList.Id);
+        await commandQueue.Enqueue(requst);
     }
     #endregion
 }
