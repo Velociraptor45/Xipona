@@ -203,12 +203,10 @@
         }
         else
         {
-            //await offlineClient.PutItemInBasketAsync(shoppingList.Id, item.Id);
+            item.PutInBasket();
             var request = new PutItemInBasketRequest(Guid.NewGuid(), shoppingList.Id, item.Id);
             await commandQueue.Enqueue(request);
         }
-
-        //await LoadShoppingListAsync();
     }
 
     private async Task OnItemRemovedFromListAsync(ShoppingListItem item)

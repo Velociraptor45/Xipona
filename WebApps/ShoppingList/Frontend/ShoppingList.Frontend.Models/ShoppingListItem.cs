@@ -30,5 +30,20 @@
         public string Manufacturer { get; }
         public bool IsInBasket { get; set; }
         public float Quantity { get; set; }
+
+        public void PutInBasket()
+        {
+            IsInBasket = true;
+        }
+
+        public void RemoveFromBasket()
+        {
+            IsInBasket = false;
+        }
+
+        public void ChangeQuantity(float quantity)
+        {
+            Quantity = quantity;
+        }
     }
 }
