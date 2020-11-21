@@ -19,6 +19,8 @@ namespace ShoppingList.Api.Client
     public interface IShoppingListApiClient
     {
         #region ShoppingListController
+        [Get("shopping-list/is-alive")]
+        Task<bool> IsAlive();
 
         [Post("shopping-list/{shoppingListId}/items/{itemId}/add/{quantity}")]
         Task AddItemToShoppingList([Path] int shoppingListId, [Path] int itemId, [Path] float quantity);

@@ -35,6 +35,14 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
 
         [HttpGet]
         [ProducesResponseType(200)]
+        [Route("is-alive")]
+        public IActionResult IsAlive()
+        {
+            return Ok(true);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [Route("active/{storeId}")]
         public async Task<IActionResult> GetActiveShoppingListByStoreId([FromRoute(Name = "storeId")] int storeId)
