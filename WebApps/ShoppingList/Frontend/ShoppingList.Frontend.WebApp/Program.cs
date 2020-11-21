@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using ShoppingList.Api.Client;
 using ShoppingList.Frontend.Infrastructure.Connection;
-using ShoppingList.Frontend.Models.Ports;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -20,8 +19,7 @@ namespace ShoppingList.Frontend.WebApp
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = uriBuilder.Uri }); //todo
             builder.Services.AddTransient<IShoppingListApiClient, ShoppingListApiClient>();
-            builder.Services.AddTransient<IOfflineClient, OfflineClient>();
-            builder.Services.AddTransient<ICommandClient, CommandClient>();
+            builder.Services.AddTransient<IApiClient, ApiClient>();
             builder.Services.AddTransient<ICommandQueue, CommandQueue>();
             builder.Services.AddAntDesign();
 

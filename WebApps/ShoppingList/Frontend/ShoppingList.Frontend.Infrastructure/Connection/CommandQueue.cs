@@ -14,7 +14,7 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
         private const int ConnectionRetryIntervalInMilliseconds = 4000;
 
         private readonly Timer timer;
-        private readonly ICommandClient commandClient;
+        private readonly IApiClient commandClient;
 
         private bool connectionAlive = true;
         private readonly List<IApiRequest> queue = new List<IApiRequest>();
@@ -22,7 +22,7 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
         private Func<Task> FirstRequestFailedCallback;
         private Func<Task> AllQueueItemsProcessedCallback;
 
-        public CommandQueue(ICommandClient commandClient)
+        public CommandQueue(IApiClient commandClient)
         {
             timer = new Timer(ConnectionRetryIntervalInMilliseconds);
             timer.Elapsed += async (s, e) =>
