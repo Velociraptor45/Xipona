@@ -1,11 +1,11 @@
 ﻿@page "/"
-@inject ShoppingList.Frontend.Models.Ports.IOfflineClient offlineClient;
+@inject ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
 @inject ShoppingList.Frontend.Infrastructure.Connection.ICommandQueue commandQueue;
 @using ShoppingList.Frontend.WebApp.Components.Index;
 @using ShoppingList.Frontend.Models;
-@using ShoppingList.Frontend.Models.Shared.Requests;
 @using ShoppingList.Frontend.Models.Index;
 @using ShoppingList.Frontend.Models.Index.Search;
+@using ShoppingList.Frontend.Models.Shared.Requests;
 @using OneOf;
 
 <div>
@@ -103,15 +103,32 @@
     #region Loading
     private async Task LoadAvailableStoresAsync()
     {
-        var stores = (await offlineClient.GetAllActiveStoresAsync())
-            .ToList();
+        List<Store> stores;
+        try
+        {
+            stores = (await apiClient.GetAllActiveStoresAsync())
+                .ToList();
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+            return;
+        }
 
         availableStores = new AvailableStores(stores);
     }
 
     private async Task LoadShoppingListAsync()
     {
-        shoppingList = await offlineClient.GetActiveShoppingListByStoreIdAsync(availableStores.SelectedStore.Id);
+        try
+        {
+            shoppingList = await apiClient.GetActiveShoppingListByStoreIdAsync(availableStores.SelectedStore.Id);
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+            return;
+        }
         StateHasChanged();
     }
     #endregion
@@ -172,8 +189,15 @@
             return;
         }
 
-        var result = await offlineClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id);
-        searchBar.Options = result;
+        try
+        {
+            var result = await apiClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id);
+            searchBar.Options = result;
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+        }
         StateHasChanged();
     }
 
@@ -185,7 +209,15 @@
             return;
 
         var itemId = int.Parse(value.AsT0);
-        await offlineClient.AddItemToShoppingListAsync(shoppingList.Id, itemId, 1); //todo default item quantity
+        var request = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, itemId, 1); //todo default item quantity
+        try
+        {
+            await apiClient.AddItemToShoppingListAsync(request);
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+        }
 
         searchBar.ResetInput();
         searchBar.ResetOptions();
