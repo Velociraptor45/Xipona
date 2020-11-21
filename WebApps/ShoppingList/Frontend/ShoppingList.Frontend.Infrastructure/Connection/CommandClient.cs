@@ -25,5 +25,25 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             await client.PutItemInBasket(request.ShoppingListId, request.ItemId);
             Console.WriteLine("Item successfully put in basket.");
         }
+
+        public async Task RemoveItemFromBasketAsync(RemoveItemFromBasketRequest request)
+        {
+            await client.RemoveItemFromBasket(request.ShoppingListId, request.ItemId);
+        }
+
+        public async Task ChangeItemQuantityOnShoppingListAsync(ChangeItemQuantityOnShoppingListRequest request)
+        {
+            await client.ChangeItemQuantityOnShoppingList(request.ShoppingListId, request.ItemId, request.Quantity);
+        }
+
+        public async Task FinishListRequestAsync(FinishListRequest request)
+        {
+            await client.FinishList(request.ShoppingListId);
+        }
+
+        public async Task RemoveItemFromShoppingListAsync(RemoveItemFromShoppingListRequest request)
+        {
+            await client.RemoveItemFromShoppingList(request.ShoppingListId, request.ItemId);
+        }
     }
 }

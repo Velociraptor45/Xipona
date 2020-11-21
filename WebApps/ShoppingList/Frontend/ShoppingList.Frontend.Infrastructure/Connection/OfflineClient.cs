@@ -45,38 +45,6 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             }
         }
 
-        public async Task ChangeItemQuantityOnShoppingListAsync(int shoppingListId, int itemId, float quantity)
-        {
-            for (int i = 0; i < retryAttempts; i++)
-            {
-                try
-                {
-                    await client.ChangeItemQuantityOnShoppingList(shoppingListId, itemId, quantity);
-                    return;
-                }
-                catch (JSException e)
-                {
-                    await Task.Delay(retryTimoutInMilliseconds);
-                }
-            }
-        }
-
-        public async Task FinishListAsync(int shoppingListId)
-        {
-            for (int i = 0; i < retryAttempts; i++)
-            {
-                try
-                {
-                    await client.FinishList(shoppingListId);
-                    return;
-                }
-                catch (JSException e)
-                {
-                    await Task.Delay(retryTimoutInMilliseconds);
-                }
-            }
-        }
-
         public async Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(int storeId)
         {
             ShoppingListContract list = null;
@@ -155,54 +123,6 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
                 throw new RetryException();
 
             return results.Select(result => result.ToModel());
-        }
-
-        public async Task PutItemInBasketAsync(int shoppingListId, int itemId)
-        {
-            for (int i = 0; i < retryAttempts; i++)
-            {
-                try
-                {
-                    await client.PutItemInBasket(shoppingListId, itemId);
-                    return;
-                }
-                catch (JSException e)
-                {
-                    //await Task.Delay(retryTimoutInMilliseconds);
-                }
-            }
-        }
-
-        public async Task RemoveItemFromBasketAsync(int shoppingListId, int itemId)
-        {
-            for (int i = 0; i < retryAttempts; i++)
-            {
-                try
-                {
-                    await client.RemoveItemFromBasket(shoppingListId, itemId);
-                    return;
-                }
-                catch (JSException e)
-                {
-                    await Task.Delay(retryTimoutInMilliseconds);
-                }
-            }
-        }
-
-        public async Task RemoveItemFromShoppingListAsync(int shoppingListId, int itemId)
-        {
-            for (int i = 0; i < retryAttempts; i++)
-            {
-                try
-                {
-                    await client.RemoveItemFromShoppingList(shoppingListId, itemId);
-                    return;
-                }
-                catch (JSException e)
-                {
-                    await Task.Delay(retryTimoutInMilliseconds);
-                }
-            }
         }
 
         public async Task<IEnumerable<ItemFilterResult>> GetItemFilterResultAsync(IEnumerable<int> storeIds,
