@@ -8,6 +8,6 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
     {
         Task Enqueue(IApiRequest request);
 
-        void Initialize(Action firstRequestFailedCallback, Action allQueueItemsProcessedCallback);
+        void Initialize(Func<Task> firstRequestFailedCallback, Func<Task> allQueueItemsProcessedCallback);
     }
 }

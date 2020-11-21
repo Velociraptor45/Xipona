@@ -17,10 +17,10 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
         private readonly ICommandClient commandClient;
 
         private bool connectionAlive = true;
-        private List<IApiRequest> queue = new List<IApiRequest>();
+        private readonly List<IApiRequest> queue = new List<IApiRequest>();
 
-        private Action FirstRequestFailedCallback;
-        private Action AllQueueItemsProcessedCallback;
+        private Func<Task> FirstRequestFailedCallback;
+        private Func<Task> AllQueueItemsProcessedCallback;
 
         public CommandQueue(ICommandClient commandClient)
         {
@@ -34,7 +34,7 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             this.commandClient = commandClient;
         }
 
-        public void Initialize(Action firstRequestFailedCallback, Action allQueueItemsProcessedCallback)
+        public void Initialize(Func<Task> firstRequestFailedCallback, Func<Task> allQueueItemsProcessedCallback)
         {
             FirstRequestFailedCallback = firstRequestFailedCallback;
             AllQueueItemsProcessedCallback = allQueueItemsProcessedCallback;
@@ -67,7 +67,7 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             {
                 await commandClient.IsAliveAsync();
             }
-            catch (JSException e)
+            catch (JSException)
             {
                 Console.WriteLine("Connection still not available.");
                 return;
@@ -75,7 +75,6 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
 
             Console.WriteLine("Established connection. Processing queue.");
 
-            connectionAlive = true;
             try
             {
                 await ProcessQueue();
@@ -84,8 +83,9 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             {
                 await OnApiConnectionDied();
             }
+            connectionAlive = true;
 
-            AllQueueItemsProcessedCallback.Invoke();
+            await AllQueueItemsProcessedCallback.Invoke();
         }
 
         private async Task ProcessQueue()
@@ -132,7 +132,7 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
         private async Task OnApiConnectionDied()
         {
             connectionAlive = false;
-            FirstRequestFailedCallback.Invoke();
+            await FirstRequestFailedCallback.Invoke();
         }
     }
 }
