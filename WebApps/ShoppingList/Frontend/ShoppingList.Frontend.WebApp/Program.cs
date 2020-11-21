@@ -21,6 +21,8 @@ namespace ShoppingList.Frontend.WebApp
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = uriBuilder.Uri }); //todo
             builder.Services.AddTransient<IShoppingListApiClient, ShoppingListApiClient>();
             builder.Services.AddTransient<IOfflineClient, OfflineClient>();
+            builder.Services.AddTransient<ICommandClient, CommandClient>();
+            builder.Services.AddTransient<ICommandQueue, CommandQueue>();
             builder.Services.AddAntDesign();
 
             await builder.Build().RunAsync();

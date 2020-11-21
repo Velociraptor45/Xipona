@@ -1,18 +1,29 @@
-﻿using ShoppingList.Frontend.Models.Shared.Requests;
+﻿using ShoppingList.Api.Client;
+using ShoppingList.Frontend.Models.Shared.Requests;
+using System;
 using System.Threading.Tasks;
 
 namespace ShoppingList.Frontend.Infrastructure.Connection
 {
     public class CommandClient : ICommandClient
     {
-        public Task IsAliveAsync()
+        private readonly IShoppingListApiClient client;
+
+        public CommandClient(IShoppingListApiClient client)
         {
-            return Task.CompletedTask;
+            this.client = client;
         }
 
-        public Task PutItemInBasketAsync(PutItemInBasketRequest request)
+        public async Task IsAliveAsync()
         {
-            return Task.CompletedTask;
+            _ = await client.IsAlive();
+        }
+
+        public async Task PutItemInBasketAsync(PutItemInBasketRequest request)
+        {
+            Console.WriteLine("Try putting item in basket.");
+            await client.PutItemInBasket(request.ShoppingListId, request.ItemId);
+            Console.WriteLine("Item successfully put in basket.");
         }
     }
 }

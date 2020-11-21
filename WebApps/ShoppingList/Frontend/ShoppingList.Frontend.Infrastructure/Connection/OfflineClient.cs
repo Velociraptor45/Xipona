@@ -25,7 +25,7 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
         public OfflineClient(IShoppingListApiClient client)
         {
             this.client = client;
-            retryAttempts = 20;
+            retryAttempts = 1;
             retryTimoutInMilliseconds = 5000;
         }
 
@@ -168,7 +168,7 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
                 }
                 catch (JSException e)
                 {
-                    await Task.Delay(retryTimoutInMilliseconds);
+                    //await Task.Delay(retryTimoutInMilliseconds);
                 }
             }
         }
