@@ -1,9 +1,11 @@
 ﻿@page "/"
-@inject ShoppingList.Frontend.Models.Ports.IOfflineClient offlineClient;
+@inject ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
+@inject ShoppingList.Frontend.Infrastructure.Connection.ICommandQueue commandQueue;
 @using ShoppingList.Frontend.WebApp.Components.Index;
 @using ShoppingList.Frontend.Models;
 @using ShoppingList.Frontend.Models.Index;
 @using ShoppingList.Frontend.Models.Index.Search;
+@using ShoppingList.Frontend.Models.Shared.Requests;
 @using OneOf;
 
 <div>
@@ -89,6 +91,7 @@
         await base.OnInitializedAsync();
         await LoadAvailableStoresAsync();
         Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
+        commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed);
         StateHasChanged();
     }
 
@@ -100,23 +103,52 @@
     #region Loading
     private async Task LoadAvailableStoresAsync()
     {
-        var stores = (await offlineClient.GetAllActiveStoresAsync())
-            .ToList();
+        List<Store> stores;
+        try
+        {
+            stores = (await apiClient.GetAllActiveStoresAsync())
+                .ToList();
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+            return;
+        }
 
         availableStores = new AvailableStores(stores);
     }
 
     private async Task LoadShoppingListAsync()
     {
-        shoppingList = await offlineClient.GetActiveShoppingListByStoreIdAsync(availableStores.SelectedStore.Id);
+        try
+        {
+            shoppingList = await apiClient.GetActiveShoppingListByStoreIdAsync(availableStores.SelectedStore.Id);
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+            return;
+        }
         StateHasChanged();
     }
     #endregion
 
     #region Callbacks
+    private Task OnConnectionFailed()
+    {
+        Console.WriteLine("Connection failed");
+        return Task.CompletedTask;
+    }
+
+    private async Task OnQueueProcessed()
+    {
+        Console.WriteLine("Queue processed");
+        await LoadShoppingListAsync();
+    }
+
     private async void OnSelectedStoreChanged(
-    OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
-    OneOf<SelectOption, IEnumerable<SelectOption>> option)
+        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
+        OneOf<SelectOption, IEnumerable<SelectOption>> option)
     {
         int storeId = int.Parse(value.AsT0);
         availableStores.SetSelectedStore(storeId);
@@ -157,8 +189,15 @@
             return;
         }
 
-        var result = await offlineClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id);
-        searchBar.Options = result;
+        try
+        {
+            var result = await apiClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id);
+            searchBar.Options = result;
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+        }
         StateHasChanged();
     }
 
@@ -170,7 +209,15 @@
             return;
 
         var itemId = int.Parse(value.AsT0);
-        await offlineClient.AddItemToShoppingListAsync(shoppingList.Id, itemId, 1); //todo default item quantity
+        var request = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, itemId, 1); //todo default item quantity
+        try
+        {
+            await apiClient.AddItemToShoppingListAsync(request);
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+        }
 
         searchBar.ResetInput();
         searchBar.ResetOptions();
@@ -184,34 +231,35 @@
     {
         if (item.IsInBasket)
         {
-            await offlineClient.RemoveItemFromBasketAsync(shoppingList.Id, item.Id);
+            item.RemoveFromBasket();
+            var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), shoppingList.Id, item.Id);
+            await commandQueue.Enqueue(request);
         }
         else
         {
-            await offlineClient.PutItemInBasketAsync(shoppingList.Id, item.Id);
+            item.PutInBasket();
+            var request = new PutItemInBasketRequest(Guid.NewGuid(), shoppingList.Id, item.Id);
+            await commandQueue.Enqueue(request);
         }
-
-        await LoadShoppingListAsync();
     }
 
     private async Task OnItemRemovedFromListAsync(ShoppingListItem item)
     {
-        await offlineClient.RemoveItemFromShoppingListAsync(shoppingList.Id, item.Id);
-        await LoadShoppingListAsync();
+        var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id);
+        await commandQueue.Enqueue(request);
     }
 
     private async Task OnItemQuantityChangedAsync(ShoppingListItem item)
     {
-        await offlineClient.ChangeItemQuantityOnShoppingListAsync(shoppingList.Id, item.Id, item.Quantity);
-        await LoadShoppingListAsync();
+        var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id,
+            item.Quantity);
+        await commandQueue.Enqueue(request);
     }
 
     private async void OnFinishListButtonClicked()
     {
-        await offlineClient.FinishListAsync(shoppingList.Id);
-
-        await LoadShoppingListAsync();
-        StateHasChanged();
+        var requst = new FinishListRequest(Guid.NewGuid(), shoppingList.Id);
+        await commandQueue.Enqueue(requst);
     }
     #endregion
 }

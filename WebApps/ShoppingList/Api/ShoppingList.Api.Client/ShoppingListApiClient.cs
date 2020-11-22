@@ -38,6 +38,11 @@ namespace ShoppingList.Api.Client
 
         #region ShoppingListController
 
+        public async Task<bool> IsAlive()
+        {
+            return await apiClient.IsAlive();
+        }
+
         public async Task<ShoppingListContract> GetActiveShoppingListByStoreId(int storeId)
         {
             return await apiClient.GetActiveShoppingListByStoreId(storeId);
