@@ -207,15 +207,31 @@
 
     private async void OnNewManufacturerCreated(string name)
     {
-        await apiClient.CreateManufacturerAsync(name);
-        manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
+        try
+        {
+            await apiClient.CreateManufacturerAsync(name);
+            manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+            return;
+        }
         StateHasChanged();
     }
 
     private async void OnNewItemCategoryCreated(string name)
     {
-        await apiClient.CreateItemCategoryAsync(name);
-        itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
+        try
+        {
+            await apiClient.CreateItemCategoryAsync(name);
+            itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+            return;
+        }
         StateHasChanged();
     }
 
