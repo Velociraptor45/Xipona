@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.Api.ApplicationServices;
+using ShoppingList.Api.Domain.Commands.CreateItemCategory;
 using ShoppingList.Api.Domain.Queries.AllActiveItemCategories;
 using ShoppingList.Api.Domain.Queries.ItemCategorySearch;
 using ShoppingList.Api.Endpoint.Extensions.ItemCategory;
@@ -50,6 +51,17 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
             var contracts = readModels.Select(readModel => readModel.ToActiveContract());
 
             return Ok(contracts);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(500)]
+        [Route("create/{name}")]
+        public async Task<IActionResult> CreateItemCategory([FromRoute(Name = "name")] string name)
+        {
+            var command = new CreateItemCategoryCommand(name);
+            await commandDispatcher.DispatchAsync(command, default);
+
+            return Ok();
         }
     }
 }

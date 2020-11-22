@@ -4,6 +4,7 @@ using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Ports;
 using ShoppingList.Api.Infrastructure.Entities;
 using ShoppingList.Api.Infrastructure.Extensions.Entities;
+using ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,6 +80,25 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             return results.Select(m => m.ToDomain());
+        }
+
+        public async Task<Models.ItemCategory> StoreAsync(Models.ItemCategory model, CancellationToken cancellationToken)
+        {
+            var entity = model.ToEntity();
+
+            if (entity.Id <= 0)
+            {
+                dbContext.Entry(entity).State = EntityState.Added;
+            }
+            else
+            {
+                dbContext.Entry(entity).State = EntityState.Modified;
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await dbContext.SaveChangesAsync();
+            return entity.ToDomain();
         }
     }
 }

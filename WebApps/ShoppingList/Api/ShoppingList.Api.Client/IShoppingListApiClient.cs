@@ -115,6 +115,9 @@ namespace ShoppingList.Api.Client
         [Get("item-category/all/active")]
         Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveItemCategories();
 
+        [Post("item-category/create/{name}")]
+        Task CreateItemCategory([Path] string name);
+
         #endregion ItemCategoryController
     }
 }

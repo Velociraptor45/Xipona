@@ -185,6 +185,11 @@ namespace ShoppingList.Api.Client
             return await apiClient.GetAllActiveItemCategories();
         }
 
+        public async Task CreateItemCategory(string name)
+        {
+            await apiClient.CreateItemCategory(name);
+        }
+
         #endregion ItemCategoryController
     }
 }
