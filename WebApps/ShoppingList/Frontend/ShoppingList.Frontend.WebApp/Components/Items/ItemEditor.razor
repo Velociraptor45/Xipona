@@ -1,7 +1,7 @@
 ﻿@using ShoppingList.Frontend.Models.Items;
 @using ShoppingList.Frontend.Models;
 @using System.Collections.Generic;
-@using OneOf;
+@using ShoppingList.Frontend.Infrastructure.Connection;
 
 <div class="px-2">
     <div class="d-flex">
@@ -24,43 +24,41 @@
     <div class="d-flex pb-2">
         <div>
             <div class="font-weight-bold">Category</div>
-            <Select Placeholder="Category" DefaultValue="@StoreItem.ItemCategoryId.ToString()"
-                    OnChange="@OnItemCategoryChanged">
-                @foreach (var itemCategory in ItemCategories)
-                {
-                    <SelectOption Value="@itemCategory.Id.ToString()">@itemCategory.Name</SelectOption>
-                }
-            </Select>
+            <SingleSelect Placeholder="Item Category"
+                          DefaultValue="@StoreItem.ItemCategoryId.ToString()"
+                          CanAddItem="true"
+                          IdToNameMaps="@ItemCategories.Select(m => new Tuple<int, string>(m.Id, m.Name)).ToList()"
+                          OnChangeCallback="@OnItemCategoryChanged"
+                          OnItemAddedCallback="@ItemCategoryCreatedCallback">
+            </SingleSelect>
         </div>
         <div class="ml-3">
             <div class="font-weight-bold">Manufacturer</div>
-            <Select Placeholder="Manufacturer" DefaultValue="@StoreItem.ManufacturerId.ToString()"
-                    OnChange="@OnManfacturerChanged">
-                @foreach (var manufacturer in Manufacturers)
-                {
-                    <SelectOption Value="@manufacturer.Id.ToString()">@manufacturer.Name</SelectOption>
-                }
-            </Select>
+            <SingleSelect Placeholder="Manufacturer"
+                          DefaultValue="@StoreItem.ManufacturerId.ToString()"
+                          CanAddItem="true"
+                          IdToNameMaps="@Manufacturers.Select(m => new Tuple<int, string>(m.Id, m.Name)).ToList()"
+                          OnChangeCallback="@OnManfacturerChanged"
+                          OnItemAddedCallback="@ManufacturerCreatedCallback">
+            </SingleSelect>
         </div>
     </div>
     <div class="d-flex py-2">
-        <Select Placeholder="QuantityType" DefaultValue="@StoreItem.QuantityType.Id.ToString()"
-                OnChange="@OnQuantityTypeChanged">
-            @foreach (var type in QuantityTypes)
-            {
-                <SelectOption Value="@type.Id.ToString()">@type.Name</SelectOption>
-            }
-        </Select>
+        <SingleSelect Placeholder="QuantityType"
+                      DefaultValue="@StoreItem.QuantityType.Id.ToString()"
+                      CanAddItem="false"
+                      IdToNameMaps="@QuantityTypes.Select(m => new Tuple<int, string>(m.Id, m.Name)).ToList()"
+                      OnChangeCallback="@OnQuantityTypeChanged">
+        </SingleSelect>
         @if (StoreItem.QuantityType.Id == 0)
         {
             <div class="ml-3 d-flex flex-column">
-                <Select Placeholder="QuantityTypeInPacket" DefaultValue="@StoreItem.QuantityInPacketType.Id.ToString()"
-                        OnChange="@OnQuantityInPacketTypeChanged">
-                    @foreach (var type in QuantityInPacketTypes)
-                    {
-                        <SelectOption Value="@type.Id.ToString()">@type.Name</SelectOption>
-                    }
-                </Select>
+                <SingleSelect Placeholder="QuantityInPacketType"
+                              DefaultValue="@StoreItem.QuantityInPacketType.Id.ToString()"
+                              CanAddItem="false"
+                              IdToNameMaps="@QuantityInPacketTypes.Select(m => new Tuple<int, string>(m.Id, m.Name)).ToList()"
+                              OnChangeCallback="@OnQuantityInPacketTypeChanged">
+                </SingleSelect>
                 <div class="d-flex">
                     <div class="max-w-50">
                         <Input @bind-Value="@StoreItem.QuantityInPacket"></Input>
@@ -115,11 +113,17 @@
     [Parameter] public List<QuantityType> QuantityTypes { get; set; }
     [Parameter] public List<QuantityInPacketType> QuantityInPacketTypes { get; set; }
 
+    [Parameter] public IApiClient ApiClient { get; set; }
+
     [Parameter] public EventCallback<StoreItem> UpdateItemCallback { get; set; }
     [Parameter] public EventCallback<StoreItem> ChangeItemCallback { get; set; }
     [Parameter] public EventCallback<StoreItem> CreateItemCallback { get; set; }
     [Parameter] public EventCallback<int> DeleteItemCallback { get; set; }
     [Parameter] public EventCallback LeaveEditorCallback { get; set; }
+    [Parameter] public EventCallback<string> ManufacturerCreatedCallback { get; set; }
+    [Parameter] public EventCallback<string> ItemCategoryCreatedCallback { get; set; }
+
+    private string newManufacturerName = "";
 
     protected override void OnInitialized()
     {
@@ -172,34 +176,24 @@
         await LeaveEditorCallback.InvokeAsync(null);
     }
 
-    private void OnManfacturerChanged(
-        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
-        OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    private void OnManfacturerChanged(int id)
     {
-        StoreItem.ManufacturerId = int.Parse(value.AsT0);
+        StoreItem.ManufacturerId = id;
     }
 
-    private void OnItemCategoryChanged(
-        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
-        OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    private void OnItemCategoryChanged(int id)
     {
-        StoreItem.ItemCategoryId = int.Parse(value.AsT0);
+        StoreItem.ItemCategoryId = id;
     }
 
-    private void OnQuantityTypeChanged(
-        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
-        OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    private void OnQuantityTypeChanged(int id)
     {
-        StoreItem.QuantityType = GetQuantityTypeById(int.Parse(value.AsT0));
-        StateHasChanged();
+        StoreItem.QuantityType = GetQuantityTypeById(id);
     }
 
-    private void OnQuantityInPacketTypeChanged(
-        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
-        OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    private void OnQuantityInPacketTypeChanged(int id)
     {
-        StoreItem.QuantityInPacketType = GetQuantityInPacketTypeById(int.Parse(value.AsT0));
-        StateHasChanged();
+        StoreItem.QuantityInPacketType = GetQuantityInPacketTypeById(id);
     }
 
     private IEnumerable<int> GetNotRegisteredStoreIds(StoreItem storeItem)

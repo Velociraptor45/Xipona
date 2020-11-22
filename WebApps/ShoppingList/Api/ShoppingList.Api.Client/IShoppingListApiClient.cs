@@ -19,6 +19,7 @@ namespace ShoppingList.Api.Client
     public interface IShoppingListApiClient
     {
         #region ShoppingListController
+
         [Get("shopping-list/is-alive")]
         Task<bool> IsAlive();
 
@@ -101,6 +102,9 @@ namespace ShoppingList.Api.Client
         [Get("manufacturer/all/active")]
         Task<IEnumerable<ActiveManufacturerContract>> GetAllActiveManufacturers();
 
+        [Post("manufacturer/create/{name}")]
+        Task CreateManufacturer([Path] string name);
+
         #endregion ManufacturerController
 
         #region ItemCategoryController
@@ -110,6 +114,9 @@ namespace ShoppingList.Api.Client
 
         [Get("item-category/all/active")]
         Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveItemCategories();
+
+        [Post("item-category/create/{name}")]
+        Task CreateItemCategory([Path] string name);
 
         #endregion ItemCategoryController
     }

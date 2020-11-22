@@ -75,6 +75,16 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
             await client.DeleteItemAsync(request.ItemId);
         }
 
+        public async Task CreateManufacturerAsync(string name)
+        {
+            await client.CreateManufacturer(name);
+        }
+
+        public async Task CreateItemCategoryAsync(string name)
+        {
+            await client.CreateItemCategory(name);
+        }
+
         public async Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(int storeId)
         {
             var list = await client.GetActiveShoppingListByStoreId(storeId);

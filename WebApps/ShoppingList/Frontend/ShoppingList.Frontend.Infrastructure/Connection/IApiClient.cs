@@ -13,6 +13,8 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
         Task ChangeItemAsync(ChangeItemRequest request);
         Task ChangeItemQuantityOnShoppingListAsync(ChangeItemQuantityOnShoppingListRequest request);
         Task CreateItemAsync(CreateItemRequest request);
+        Task CreateItemCategoryAsync(string name);
+        Task CreateManufacturerAsync(string name);
         Task DeleteItemAsync(DeleteItemRequest request);
         Task FinishListAsync(FinishListRequest request);
         Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(int storeId);
