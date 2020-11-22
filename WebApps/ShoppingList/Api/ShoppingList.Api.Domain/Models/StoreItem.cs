@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ShoppingList.Api.Domain.Models
@@ -11,7 +12,7 @@ namespace ShoppingList.Api.Domain.Models
         public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             ItemCategory itemCategory, Manufacturer manufacturer,
-            IEnumerable<StoreItemAvailability> availabilities)
+            IEnumerable<StoreItemAvailability> availabilities, Guid? clientSideId = null)
         {
             Id = id ?? throw new System.ArgumentNullException(nameof(id));
             Name = name;
@@ -24,6 +25,7 @@ namespace ShoppingList.Api.Domain.Models
             ItemCategory = itemCategory ?? throw new System.ArgumentNullException(nameof(itemCategory));
             Manufacturer = manufacturer ?? throw new System.ArgumentNullException(nameof(manufacturer));
             this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
+            ClientSideId = clientSideId;
         }
 
         public StoreItemId Id { get; }
@@ -37,6 +39,7 @@ namespace ShoppingList.Api.Domain.Models
 
         public ItemCategory ItemCategory { get; }
         public Manufacturer Manufacturer { get; }
+        public Guid? ClientSideId { get; }
 
         public IReadOnlyCollection<StoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
 

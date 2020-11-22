@@ -18,7 +18,8 @@ namespace ShoppingList.Api.Endpoint.Extensions.Item
                 (QuantityTypeInPacket)contract.QuantityTypeInPacket,
                 new ItemCategoryId(contract.ItemCategoryId),
                 new ManufacturerId(contract.ManufacturerId),
-                contract.Availabilities.Select(av => av.ToDomain()));
+                contract.Availabilities.Select(av => av.ToDomain()),
+                contract.ClientSideId);
         }
     }
 }

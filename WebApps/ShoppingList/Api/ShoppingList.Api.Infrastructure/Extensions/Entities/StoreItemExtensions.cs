@@ -17,7 +17,8 @@ namespace ShoppingList.Api.Infrastructure.Extensions.Entities
                 entity.ItemCategory.ToDomain(),
                 entity.Manufacturer.ToDomain(),
                 entity.AvailableAt.Select(map => new Domain.Models.StoreItemAvailability(
-                    new Domain.Models.StoreId(map.StoreId), map.Price)));
+                    new Domain.Models.StoreId(map.StoreId), map.Price)),
+                entity.CreatedFrom);
         }
     }
 }

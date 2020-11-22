@@ -1,4 +1,5 @@
 ﻿using ShoppingList.Api.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +11,8 @@ namespace ShoppingList.Api.Domain.Commands.CreateItem
 
         public ItemCreation(string name, string comment, bool isTemporary, QuantityType quantityType,
             float quantityInPacket, QuantityTypeInPacket quantityInPacketType, ItemCategoryId itemCategoryId,
-            ManufacturerId manufacturerId, IEnumerable<StoreItemAvailability> availabilities)
+            ManufacturerId manufacturerId, IEnumerable<StoreItemAvailability> availabilities,
+            Guid? clientSideId)
         {
             Name = name;
             Comment = comment;
@@ -21,6 +23,7 @@ namespace ShoppingList.Api.Domain.Commands.CreateItem
             ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
             this.availabilities = availabilities;
+            ClientSideId = clientSideId;
         }
 
         public string Name { get; }
@@ -31,6 +34,7 @@ namespace ShoppingList.Api.Domain.Commands.CreateItem
         public QuantityTypeInPacket QuantityInPacketType { get; }
         public ItemCategoryId ItemCategoryId { get; }
         public ManufacturerId ManufacturerId { get; }
+        public Guid? ClientSideId { get; }
 
         public IReadOnlyCollection<StoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
     }

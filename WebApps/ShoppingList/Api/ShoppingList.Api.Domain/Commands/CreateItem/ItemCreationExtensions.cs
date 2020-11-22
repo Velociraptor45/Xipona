@@ -9,7 +9,8 @@ namespace ShoppingList.Api.Domain.Commands.CreateItem
         {
             return new StoreItem(new StoreItemId(0), itemCreation.Name, false, itemCreation.Comment,
                 itemCreation.IsTemporary, itemCreation.QuantityType, itemCreation.QuantityInPacket,
-                itemCreation.QuantityInPacketType, itemCategory, manufacturer, itemCreation.Availabilities);
+                itemCreation.QuantityInPacketType, itemCategory, manufacturer, itemCreation.Availabilities,
+                itemCreation.ClientSideId);
         }
     }
 }

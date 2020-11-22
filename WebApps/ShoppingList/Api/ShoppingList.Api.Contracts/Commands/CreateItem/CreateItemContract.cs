@@ -1,4 +1,5 @@
 ﻿using ShoppingList.Api.Contracts.Commands.SharedContracts;
+using System;
 using System.Collections.Generic;
 
 namespace ShoppingList.Api.Contracts.Commands.CreateItem
@@ -14,5 +15,6 @@ namespace ShoppingList.Api.Contracts.Commands.CreateItem
         public int ItemCategoryId { get; set; }
         public int ManufacturerId { get; set; }
         public IEnumerable<ItemAvailabilityContract> Availabilities { get; set; }
+        public Guid ClientSideId { get; set; }
     }
 }

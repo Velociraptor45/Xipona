@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,6 +20,7 @@ namespace ShoppingList.Api.Infrastructure.Entities
         public int QuantityTypeInPacket { get; set; }
         public int ItemCategoryId { get; set; }
         public int ManufacturerId { get; set; }
+        public Guid? CreatedFrom { get; set; }
 
         public Manufacturer Manufacturer { get; set; }
         public ItemCategory ItemCategory { get; set; }
