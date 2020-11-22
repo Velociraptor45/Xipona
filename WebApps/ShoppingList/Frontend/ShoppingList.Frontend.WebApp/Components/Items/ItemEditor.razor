@@ -1,7 +1,7 @@
 ﻿@using ShoppingList.Frontend.Models.Items;
 @using ShoppingList.Frontend.Models;
 @using System.Collections.Generic;
-@using OneOf;
+@using ShoppingList.Frontend.Infrastructure.Connection;
 
 <div class="px-2">
     <div class="d-flex">
@@ -29,7 +29,7 @@
                           CanAddItem="true"
                           IdToNameMaps="@ItemCategories.Select(m => new Tuple<int, string>(m.Id, m.Name)).ToList()"
                           OnChangeCallback="@OnItemCategoryChanged"
-                          OnItemAddedCallback="@OnItemCategoryAdded">
+                          OnItemAddedCallback="@ItemCategoryCreatedCallback">
             </SingleSelect>
         </div>
         <div class="ml-3">
@@ -39,7 +39,7 @@
                           CanAddItem="true"
                           IdToNameMaps="@Manufacturers.Select(m => new Tuple<int, string>(m.Id, m.Name)).ToList()"
                           OnChangeCallback="@OnManfacturerChanged"
-                          OnItemAddedCallback="@OnManfacturerAdded">
+                          OnItemAddedCallback="@ManufacturerCreatedCallback">
             </SingleSelect>
         </div>
     </div>
@@ -113,11 +113,15 @@
     [Parameter] public List<QuantityType> QuantityTypes { get; set; }
     [Parameter] public List<QuantityInPacketType> QuantityInPacketTypes { get; set; }
 
+    [Parameter] public IApiClient ApiClient { get; set; }
+
     [Parameter] public EventCallback<StoreItem> UpdateItemCallback { get; set; }
     [Parameter] public EventCallback<StoreItem> ChangeItemCallback { get; set; }
     [Parameter] public EventCallback<StoreItem> CreateItemCallback { get; set; }
     [Parameter] public EventCallback<int> DeleteItemCallback { get; set; }
     [Parameter] public EventCallback LeaveEditorCallback { get; set; }
+    [Parameter] public EventCallback<string> ManufacturerCreatedCallback { get; set; }
+    [Parameter] public EventCallback<string> ItemCategoryCreatedCallback { get; set; }
 
     private string newManufacturerName = "";
 
@@ -177,19 +181,9 @@
         StoreItem.ManufacturerId = id;
     }
 
-    private void OnManfacturerAdded(string name)
-    {
-        Manufacturers.Add(new Manufacturer(0, name));
-    }
-
     private void OnItemCategoryChanged(int id)
     {
         StoreItem.ItemCategoryId = id;
-    }
-
-    private void OnItemCategoryAdded(string name)
-    {
-        ItemCategories.Add(new ItemCategory(0, name));
     }
 
     private void OnQuantityTypeChanged(int id)

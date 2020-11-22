@@ -67,11 +67,14 @@
                     ItemCategories="@itemCategories"
                     QuantityTypes="@quantityTypes"
                     QuantityInPacketTypes="@quantityInPacketTypes"
+                    ApiClient="@apiClient"
                     UpdateItemCallback="@OnItemUpdatedAsync"
                     ChangeItemCallback="@OnItemChangedAsync"
                     CreateItemCallback="@OnItemCreatedAsync"
                     DeleteItemCallback="@OnItemDeletedAsync"
-                    LeaveEditorCallback="@OnLeaveEditor"></ItemEditor>
+                    LeaveEditorCallback="@OnLeaveEditor"
+                    ManufacturerCreatedCallback="@OnNewManufacturerCreated"
+                    ItemCategoryCreatedCallback="@OnNewItemCategoryCreated"></ItemEditor>
     }
 </div>
 
@@ -200,6 +203,20 @@
             new StoreItem(0, "", false, "", false,
             new QuantityType(0, "", 0, ""), 0,
             new QuantityInPacketType(0, "", ""), 1, 1, new List<StoreItemAvailability>());
+    }
+
+    private async void OnNewManufacturerCreated(string name)
+    {
+        await apiClient.CreateManufacturerAsync(name);
+        manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
+        StateHasChanged();
+    }
+
+    private async void OnNewItemCategoryCreated(string name)
+    {
+        await apiClient.CreateItemCategoryAsync(name);
+        itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
+        StateHasChanged();
     }
 
     private void OnLeaveEditor()
