@@ -166,6 +166,11 @@ namespace ShoppingList.Api.Client
             return await apiClient.GetAllActiveManufacturers();
         }
 
+        public async Task CreateManufacturer(string name)
+        {
+            await apiClient.CreateManufacturer(name);
+        }
+
         #endregion ManufacturerController
 
         #region ItemCategoryController

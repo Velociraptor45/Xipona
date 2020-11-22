@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.Api.ApplicationServices;
+using ShoppingList.Api.Domain.Commands.CreateManufacturer;
 using ShoppingList.Api.Domain.Queries.AllActiveManufacturers;
 using ShoppingList.Api.Domain.Queries.ManufacturerSearch;
 using ShoppingList.Api.Endpoint.Extensions.Manufacturer;
@@ -50,6 +51,17 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
             var contracts = readModels.Select(readModel => readModel.ToActiveContract());
 
             return Ok(contracts);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [Route("create/{name}")]
+        public async Task<IActionResult> CreateManufacturer([FromRoute(Name = "name")] string name)
+        {
+            var command = new CreateManufacturerCommand(name);
+            await commandDispatcher.DispatchAsync(command, default);
+
+            return Ok();
         }
     }
 }

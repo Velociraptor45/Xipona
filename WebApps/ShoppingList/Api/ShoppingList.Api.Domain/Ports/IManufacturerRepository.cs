@@ -11,5 +11,6 @@ namespace ShoppingList.Api.Domain.Ports
         Task<IEnumerable<Manufacturer>> FindByAsync(string searchInput, CancellationToken cancellationToken);
         Task<IEnumerable<Manufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids, CancellationToken cancellationToken);
         Task<IEnumerable<Manufacturer>> FindByAsync(bool includeDeleted, CancellationToken cancellationToken);
+        Task<Manufacturer> StoreAsync(Manufacturer model, CancellationToken cancellationToken);
     }
 }
