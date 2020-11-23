@@ -17,8 +17,8 @@ namespace ShoppingList.Api.Domain.Extensions
                 model.QuantityType.ToReadModel(),
                 model.QuantityInPacket,
                 model.QuantityTypeInPacket.ToReadModel(),
-                model.ItemCategory.ToReadModel(),
-                model.Manufacturer.ToReadModel(),
+                model.ItemCategory?.ToReadModel(),
+                model.Manufacturer?.ToReadModel(),
                 model.IsInBasket, model.Quantity);
         }
     }

@@ -7,30 +7,29 @@ namespace ShoppingList.Api.Domain.Models
     public class StoreItem
     {
         private readonly IEnumerable<StoreItemAvailability> availabilities;
-        private bool isDeleted;
 
         public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             ItemCategory itemCategory, Manufacturer manufacturer,
             IEnumerable<StoreItemAvailability> availabilities, Guid? clientSideId = null)
         {
-            Id = id ?? throw new System.ArgumentNullException(nameof(id));
+            Id = id ?? throw new ArgumentNullException(nameof(id));
             Name = name;
-            this.isDeleted = isDeleted;
+            IsDeleted = isDeleted;
             Comment = comment;
             IsTemporary = isTemporary;
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
-            ItemCategory = itemCategory ?? throw new System.ArgumentNullException(nameof(itemCategory));
-            Manufacturer = manufacturer ?? throw new System.ArgumentNullException(nameof(manufacturer));
-            this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
+            ItemCategory = itemCategory;
+            Manufacturer = manufacturer;
+            this.availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
             ClientSideId = clientSideId;
         }
 
         public StoreItemId Id { get; }
         public string Name { get; }
-        public bool IsDeleted => isDeleted;
+        public bool IsDeleted { get; private set; }
         public string Comment { get; }
         public bool IsTemporary { get; }
         public QuantityType QuantityType { get; }
@@ -45,7 +44,7 @@ namespace ShoppingList.Api.Domain.Models
 
         public void Delete()
         {
-            isDeleted = true;
+            IsDeleted = true;
         }
 
         public bool IsAvailableInStore(StoreId storeId)

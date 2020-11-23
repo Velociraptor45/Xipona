@@ -14,8 +14,8 @@ namespace ShoppingList.Api.Infrastructure.Extensions.Entities
                 (Domain.Models.QuantityType)entity.QuantityType,
                 entity.QuantityInPacket,
                 (Domain.Models.QuantityTypeInPacket)entity.QuantityTypeInPacket,
-                entity.ItemCategory.ToDomain(),
-                entity.Manufacturer.ToDomain(),
+                entity.ItemCategory?.ToDomain(),
+                entity.Manufacturer?.ToDomain(),
                 entity.AvailableAt.Select(map => new Domain.Models.StoreItemAvailability(
                     new Domain.Models.StoreId(map.StoreId), map.Price)),
                 entity.CreatedFrom);

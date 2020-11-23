@@ -14,16 +14,21 @@ namespace ShoppingList.Api.Domain.Commands.CreateItem
             ManufacturerId manufacturerId, IEnumerable<StoreItemAvailability> availabilities,
             Guid? clientSideId)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
+            }
+
             Name = name;
             Comment = comment;
             IsTemporary = isTemporary;
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityInPacketType = quantityInPacketType;
-            ItemCategoryId = itemCategoryId;
-            ManufacturerId = manufacturerId;
-            this.availabilities = availabilities;
-            ClientSideId = clientSideId;
+            ItemCategoryId = itemCategoryId ?? throw new ArgumentNullException(nameof(itemCategoryId));
+            ManufacturerId = manufacturerId ?? throw new ArgumentNullException(nameof(manufacturerId));
+            this.availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
+            ClientSideId = clientSideId ?? throw new ArgumentNullException(nameof(clientSideId));
         }
 
         public string Name { get; }

@@ -13,15 +13,20 @@ namespace ShoppingList.Api.Domain.Commands.UpdateItem
             ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
             IEnumerable<StoreItemAvailability> availabilities)
         {
-            OldId = oldId;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new System.ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
+            }
+
+            OldId = oldId ?? throw new System.ArgumentNullException(nameof(oldId));
             Name = name;
             Comment = comment;
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
-            ItemCategoryId = itemCategoryId;
-            ManufacturerId = manufacturerId;
-            this.availabilities = availabilities;
+            ItemCategoryId = itemCategoryId ?? throw new System.ArgumentNullException(nameof(itemCategoryId));
+            ManufacturerId = manufacturerId ?? throw new System.ArgumentNullException(nameof(manufacturerId));
+            this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
         }
 
         public StoreItemId OldId { get; }

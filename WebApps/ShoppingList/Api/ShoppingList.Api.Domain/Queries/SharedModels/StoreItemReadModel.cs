@@ -28,8 +28,8 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
             QuantityType = quantityType ?? throw new System.ArgumentNullException(nameof(quantityType));
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket ?? throw new System.ArgumentNullException(nameof(quantityTypeInPacket));
-            ItemCategory = itemCategory ?? throw new System.ArgumentNullException(nameof(itemCategory));
-            Manufacturer = manufacturer ?? throw new System.ArgumentNullException(nameof(manufacturer));
+            ItemCategory = itemCategory;
+            Manufacturer = manufacturer;
             this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
         }
 
