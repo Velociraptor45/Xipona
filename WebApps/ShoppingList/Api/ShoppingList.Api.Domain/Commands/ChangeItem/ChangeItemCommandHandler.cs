@@ -26,8 +26,12 @@ namespace ShoppingList.Api.Domain.Commands.ChangeItem
             if (command == null)
                 throw new ArgumentNullException(nameof(command));
 
-            if (!await itemRepository.IsValidIdAsync(command.ItemChange.Id, cancellationToken))
+            var oldStoreItem = await itemRepository.FindByAsync(command.ItemChange.Id, cancellationToken);
+
+            if (oldStoreItem == null)
                 throw new ItemNotFoundException(command.ItemChange.Id);
+            if (oldStoreItem.IsTemporary)
+                throw new TemporaryItemNotModifyableException(command.ItemChange.Id);
 
             cancellationToken.ThrowIfCancellationRequested();
 

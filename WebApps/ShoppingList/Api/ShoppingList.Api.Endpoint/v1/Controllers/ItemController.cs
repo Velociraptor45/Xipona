@@ -66,6 +66,10 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
             {
                 return BadRequest(e.Message);
             }
+            catch (TemporaryItemNotModifyableException e)
+            {
+                return BadRequest(e.Message);
+            }
 
             return Ok();
         }
