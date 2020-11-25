@@ -3,11 +3,13 @@ using ShoppingList.Api.ApplicationServices;
 using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
 using ShoppingList.Api.Contracts.Commands.CreateTemporaryItem;
+using ShoppingList.Api.Contracts.Commands.MakeTemporaryItemPermanent;
 using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Commands.ChangeItem;
 using ShoppingList.Api.Domain.Commands.CreateItem;
 using ShoppingList.Api.Domain.Commands.CreateTemporaryItem;
 using ShoppingList.Api.Domain.Commands.DeleteItem;
+using ShoppingList.Api.Domain.Commands.MakeTemporaryItemPermanent;
 using ShoppingList.Api.Domain.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
@@ -168,6 +170,37 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
         {
             var command = new CreateTemporaryItemCommand(contract.ToDomain());
             await commandDispatcher.DispatchAsync(command, default);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("make-temporary-item-permanent")]
+        public async Task<IActionResult> MakeTemporaryItemPermanent([FromBody] MakeTemporaryItemPermanentContract contract)
+        {
+            var command = new MakeTemporaryItemPermanentCommand(contract.ToDomain());
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (ItemCategoryNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (ManufacturerNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (ItemIsNotTemporaryException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (ItemNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
 
             return Ok();
         }
