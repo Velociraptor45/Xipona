@@ -1,4 +1,5 @@
-﻿using ShoppingList.Api.Domain.Extensions;
+﻿using ShoppingList.Api.Domain.Exceptions;
+using ShoppingList.Api.Domain.Extensions;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Ports;
 using ShoppingList.Api.Domain.Ports.Infrastructure;
@@ -34,8 +35,10 @@ namespace ShoppingList.Api.Domain.Commands.UpdateItem
                 throw new System.ArgumentNullException(nameof(command));
             }
 
-            // deactivate old item
             StoreItem oldItem = await itemRepository.FindByAsync(command.ItemUpdate.OldId, cancellationToken);
+            if (oldItem.IsTemporary)
+                throw new TemporaryItemNotUpdateableException(command.ItemUpdate.OldId);
+
             oldItem.Delete();
 
             ItemCategory itemCategory = await itemCategoryRepository
