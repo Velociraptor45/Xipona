@@ -108,8 +108,9 @@ namespace ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
                 .Where(item =>
-                    itemCategoryIdLists.Contains(item.ItemCategoryId)
-                    && manufacturerIdLists.Contains(item.ManufacturerId))
+                    !item.IsTemporary
+                    && itemCategoryIdLists.Contains(item.ItemCategoryId.Value)
+                    && manufacturerIdLists.Contains(item.ManufacturerId.Value))
                 .ToListAsync();
 
             // filtering by store
@@ -134,6 +135,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
                 .ThenInclude(map => map.Store)
                 .Where(item => item.Name.Contains(searchInput)
                     && !item.Deleted
+                    && !item.IsTemporary
                     && item.AvailableAt.FirstOrDefault(map => map.StoreId == storeId.Value) != null)
                 .ToListAsync();
 

@@ -2,9 +2,11 @@
 using ShoppingList.Api.ApplicationServices;
 using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
+using ShoppingList.Api.Contracts.Commands.CreateTemporaryItem;
 using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Commands.ChangeItem;
 using ShoppingList.Api.Domain.Commands.CreateItem;
+using ShoppingList.Api.Domain.Commands.CreateTemporaryItem;
 using ShoppingList.Api.Domain.Commands.DeleteItem;
 using ShoppingList.Api.Domain.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Exceptions;
@@ -149,6 +151,17 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
             }
 
             return Ok(result.ToContract());
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [Route("create/temporary")]
+        public async Task<IActionResult> CreateTemporaryItem([FromBody] CreateTemporaryItemContract contract)
+        {
+            var command = new CreateTemporaryItemCommand(contract.ToDomain());
+            await commandDispatcher.DispatchAsync(command, default);
+
+            return Ok();
         }
     }
 }
