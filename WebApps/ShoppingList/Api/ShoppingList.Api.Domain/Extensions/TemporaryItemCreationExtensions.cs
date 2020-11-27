@@ -1,6 +1,5 @@
 ﻿using ShoppingList.Api.Domain.Commands.CreateTemporaryItem;
 using ShoppingList.Api.Domain.Models;
-using System;
 using System.Collections.Generic;
 
 namespace ShoppingList.Api.Domain.Extensions
@@ -10,18 +9,17 @@ namespace ShoppingList.Api.Domain.Extensions
         public static StoreItem ToStoreItem(this TemporaryItemCreation model)
         {
             return new StoreItem(
-                new StoreItemId(0),
+                new StoreItemId(model.ClientSideId),
                 model.Name,
                 false,
-                String.Empty,
+                string.Empty,
                 true,
                 QuantityType.Unit,
                 1,
                 QuantityTypeInPacket.Unit,
                 null,
                 null,
-                new List<StoreItemAvailability>() { model.Availability },
-                model.ClientSideId);
+                new List<StoreItemAvailability>() { model.Availability });
         }
     }
 }

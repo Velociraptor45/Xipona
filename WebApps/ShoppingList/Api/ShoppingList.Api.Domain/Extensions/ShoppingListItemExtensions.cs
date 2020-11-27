@@ -8,7 +8,7 @@ namespace ShoppingList.Api.Domain.Extensions
         public static ShoppingListItemReadModel ToReadModel(this ShoppingListItem model)
         {
             return new ShoppingListItemReadModel(
-                model.Id,
+                model.Id.Actual,
                 model.Name,
                 model.IsDeleted,
                 model.Comment,

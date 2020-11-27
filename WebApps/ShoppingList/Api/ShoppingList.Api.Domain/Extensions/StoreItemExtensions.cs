@@ -40,20 +40,32 @@ namespace ShoppingList.Api.Domain.Extensions
             if (storeAvailability == null)
                 throw new ItemAtStoreNotAvailableException(storeItem.Id, storeId);
 
-            return new ItemSearchReadModel(storeItem.Id, storeItem.Name, storeAvailability.Price,
-                storeItem.Manufacturer, storeItem.ItemCategory);
+            return new ItemSearchReadModel(
+                storeItem.Id.Actual,
+                storeItem.Name,
+                storeAvailability.Price,
+                storeItem.Manufacturer,
+                storeItem.ItemCategory);
         }
 
         public static ItemFilterResultReadModel ToItemFilterResultReadModel(this StoreItem model)
         {
-            return new ItemFilterResultReadModel(model.Id, model.Name);
+            return new ItemFilterResultReadModel(model.Id.Actual, model.Name);
         }
 
         public static StoreItemReadModel ToReadModel(this StoreItem model)
         {
-            return new StoreItemReadModel(model.Id, model.Name, model.IsDeleted, model.Comment, model.IsTemporary,
-                model.QuantityType.ToReadModel(), model.QuantityInPacket, model.QuantityTypeInPacket.ToReadModel(),
-                model.ItemCategory?.ToReadModel(), model.Manufacturer?.ToReadModel(),
+            return new StoreItemReadModel(
+                model.Id.Actual,
+                model.Name,
+                model.IsDeleted,
+                model.Comment,
+                model.IsTemporary,
+                model.QuantityType.ToReadModel(),
+                model.QuantityInPacket,
+                model.QuantityTypeInPacket.ToReadModel(),
+                model.ItemCategory?.ToReadModel(),
+                model.Manufacturer?.ToReadModel(),
                 model.Availabilities.Select(av => av.ToReadModel()));
         }
     }

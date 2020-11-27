@@ -6,7 +6,7 @@ namespace ShoppingList.Api.Domain.Exceptions
     public class ItemIsNotTemporaryException : Exception
     {
         public ItemIsNotTemporaryException(StoreItemId id)
-            : base($"Item {id.Value} is not temporary.")
+            : base($"Item {id} is not temporary.")
         {
         }
 

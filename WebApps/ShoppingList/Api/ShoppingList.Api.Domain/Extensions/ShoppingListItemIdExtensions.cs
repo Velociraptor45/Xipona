@@ -6,7 +6,9 @@ namespace ShoppingList.Api.Domain.Extensions
     {
         public static StoreItemId ToStoreItemId(this ShoppingListItemId shoppingListItemId)
         {
-            return new StoreItemId(shoppingListItemId.Value);
+            return shoppingListItemId.IsActualId ?
+                new StoreItemId(shoppingListItemId.Actual.Value) :
+                new StoreItemId(shoppingListItemId.Offline.Value);
         }
     }
 }

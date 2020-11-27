@@ -6,7 +6,7 @@ namespace ShoppingList.Api.Domain.Exceptions
     public class TemporaryItemNotUpdateableException : Exception
     {
         public TemporaryItemNotUpdateableException(StoreItemId id)
-            : base($"Item {id.Value} is temporary and thus cannot be updated.")
+            : base($"Item {id} is temporary and thus cannot be updated.")
         {
         }
 

@@ -11,7 +11,7 @@ namespace ShoppingList.Api.Domain.Models
         public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             ItemCategory itemCategory, Manufacturer manufacturer,
-            IEnumerable<StoreItemAvailability> availabilities, Guid? clientSideId = null)
+            IEnumerable<StoreItemAvailability> availabilities)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Name = name;
@@ -24,7 +24,6 @@ namespace ShoppingList.Api.Domain.Models
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
             this.availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
-            ClientSideId = clientSideId;
         }
 
         public StoreItemId Id { get; }
@@ -38,7 +37,6 @@ namespace ShoppingList.Api.Domain.Models
 
         public ItemCategory ItemCategory { get; }
         public Manufacturer Manufacturer { get; }
-        public Guid? ClientSideId { get; }
 
         public IReadOnlyCollection<StoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
 

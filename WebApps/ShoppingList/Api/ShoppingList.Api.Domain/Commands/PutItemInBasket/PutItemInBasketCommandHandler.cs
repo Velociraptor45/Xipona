@@ -20,7 +20,7 @@ namespace ShoppingList.Api.Domain.Commands.PutItemInBasket
                 throw new ArgumentNullException(nameof(command));
 
             var shoppingList = await ShoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
-            shoppingList.PutItemInBasket(command.ItemId);
+            //shoppingList.PutItemInBasket(command.ItemId);
 
             cancellationToken.ThrowIfCancellationRequested();
 

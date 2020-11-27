@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.Api.ApplicationServices;
+using ShoppingList.Api.Contracts.Commands.PutItemInBasket;
 using ShoppingList.Api.Domain.Commands.AddItemToShoppingList;
 using ShoppingList.Api.Domain.Commands.ChangeItemQuantityOnShoppingList;
 using ShoppingList.Api.Domain.Commands.CreateShoppingList;
@@ -123,12 +124,11 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("{shoppingListId}/items/{itemId}/put-in-basket")]
-        public async Task<IActionResult> PutItemInBasket([FromRoute(Name = "shoppingListId")] int shoppingListId,
-            [FromRoute(Name = "itemId")] int itemId)
+        [Route("items/put-in-basket")]
+        public async Task<IActionResult> PutItemInBasket([FromBody] PutItemInBasketContract contract)
         {
-            var command = new PutItemInBasketCommand(new ShoppingListId(shoppingListId),
-                new ShoppingListItemId(itemId));
+            var command = new PutItemInBasketCommand(new ShoppingListId(contract.ShopingListId),
+                new ShoppingListItemId(contract.ItemId.Actual.Value)); //todo add check
             try
             {
                 await commandDispatcher.DispatchAsync(command, default);

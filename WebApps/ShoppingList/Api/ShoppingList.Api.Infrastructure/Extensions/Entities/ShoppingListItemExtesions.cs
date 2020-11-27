@@ -6,7 +6,7 @@
         {
             return new Infrastructure.Entities.Item()
             {
-                Id = model.Id.Value,
+                Id = model.Id.Actual.Value,
                 Name = model.Name,
                 Deleted = model.IsDeleted,
                 Comment = model.Comment,

@@ -1,4 +1,6 @@
-﻿namespace ShoppingList.Api.Infrastructure.Extensions.Models
+﻿using System.Linq;
+
+namespace ShoppingList.Api.Infrastructure.Extensions.Models
 {
     public static class StoreItemExtensions
     {
@@ -6,7 +8,7 @@
         {
             return new Infrastructure.Entities.Item()
             {
-                Id = model.Id.Value,
+                Id = model.Id.Actual?.Value ?? 0,
                 Name = model.Name,
                 Deleted = model.IsDeleted,
                 Comment = model.Comment,
@@ -15,7 +17,11 @@
                 QuantityInPacket = model.QuantityInPacket,
                 QuantityTypeInPacket = (int)model.QuantityTypeInPacket,
                 ItemCategoryId = model.ItemCategory?.Id.Value,
-                ManufacturerId = model.Manufacturer?.Id.Value
+                ManufacturerId = model.Manufacturer?.Id.Value,
+                CreatedFrom = model.Id.Offline?.Value,
+                Manufacturer = model.Manufacturer?.ToEntity(),
+                ItemCategory = model.ItemCategory?.ToEntity(),
+                AvailableAt = model.Availabilities.Select(av => av.ToEntity(model.Id)).ToList()
             };
         }
     }

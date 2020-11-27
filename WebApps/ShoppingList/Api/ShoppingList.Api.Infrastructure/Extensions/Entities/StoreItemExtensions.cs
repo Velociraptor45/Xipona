@@ -6,7 +6,8 @@ namespace ShoppingList.Api.Infrastructure.Extensions.Entities
     {
         public static Domain.Models.StoreItem ToStoreItemDomain(this Infrastructure.Entities.Item entity)
         {
-            return new Domain.Models.StoreItem(new Domain.Models.StoreItemId(entity.Id),
+            return new Domain.Models.StoreItem(
+                new Domain.Models.StoreItemId(entity.Id),
                 entity.Name,
                 entity.Deleted,
                 entity.Comment,
@@ -17,8 +18,7 @@ namespace ShoppingList.Api.Infrastructure.Extensions.Entities
                 entity.ItemCategory?.ToDomain(),
                 entity.Manufacturer?.ToDomain(),
                 entity.AvailableAt.Select(map => new Domain.Models.StoreItemAvailability(
-                    new Domain.Models.StoreId(map.StoreId), map.Price)),
-                entity.CreatedFrom);
+                    new Domain.Models.StoreId(map.StoreId), map.Price)));
         }
     }
 }

@@ -32,9 +32,9 @@ namespace ShoppingList.Api.Domain.Models
 
             var list = items.ToList();
 
-            var existingItem = list.FirstOrDefault(it => it.Id == storeItem.Id);
+            var existingItem = list.FirstOrDefault(it => it.Id == storeItem.Id.ToShoppingListItemId());
             if (existingItem != null)
-                throw new ItemAlreadyOnShoppingListException($"Item {storeItem.Id.Value} already exists on shopping list {Id.Value}");
+                throw new ItemAlreadyOnShoppingListException($"Item {storeItem.Id} already exists on shopping list {Id.Value}");
 
             list.Add(storeItem.ToShoppingListItemDomain(Store.Id, isInBasket, quantity));
             items = list;

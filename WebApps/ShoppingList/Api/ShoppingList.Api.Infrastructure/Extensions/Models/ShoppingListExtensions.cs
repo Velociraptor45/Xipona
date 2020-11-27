@@ -24,7 +24,7 @@ namespace ShoppingList.Api.Infrastructure.Extensions.Models
                 new Infrastructure.Entities.ItemsOnList()
                 {
                     ShoppingListId = model.Id.Value,
-                    ItemId = item.Id.Value,
+                    ItemId = item.Id.Actual.Value,
                     InBasket = item.IsInBasket,
                     Quantity = item.Quantity,
                     Item = item.ToEntity()
