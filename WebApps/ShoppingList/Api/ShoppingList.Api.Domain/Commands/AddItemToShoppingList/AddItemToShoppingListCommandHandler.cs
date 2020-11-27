@@ -18,21 +18,21 @@ namespace ShoppingList.Api.Domain.Commands.AddItemToShoppingList
             this.itemRepository = itemRepository;
         }
 
-        public async Task<bool> HandleAsync(AddItemToShoppingListCommand query, CancellationToken cancellationToken)
+        public async Task<bool> HandleAsync(AddItemToShoppingListCommand command, CancellationToken cancellationToken)
         {
-            if (query == null)
-                throw new ArgumentNullException(nameof(query));
+            if (command == null)
+                throw new ArgumentNullException(nameof(command));
 
-            var list = await shoppingListRepository.FindByAsync(query.ShoppingListId, cancellationToken);
+            var list = await shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var storeItem = await itemRepository.FindByAsync(query.ShoppingListItemId.ToStoreItemId(),
+            var storeItem = await itemRepository.FindByAsync(command.ShoppingListItemId.ToStoreItemId(),
                 list.Store.Id, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            list.AddItem(storeItem, false, query.Quantity);
+            list.AddItem(storeItem, false, command.Quantity);
 
             await shoppingListRepository.StoreAsync(list, cancellationToken);
 

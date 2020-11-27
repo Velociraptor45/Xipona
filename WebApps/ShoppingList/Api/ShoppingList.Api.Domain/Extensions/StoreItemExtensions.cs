@@ -9,20 +9,15 @@ namespace ShoppingList.Api.Domain.Extensions
 {
     public static class StoreItemExtensions
     {
-        public static ShoppingListItem ToShoppingListItemDomain(this StoreItem storeItem, StoreId storeId,
+        public static ShoppingListItem ToShoppingListItemDomain(this StoreItem storeItem, float price,
             bool isInBasket, float quantity)
         {
-            StoreItemAvailability availability = storeItem.Availabilities
-                .FirstOrDefault(availability => availability.StoreId == storeId);
-            if (availability == null)
-                throw new ItemAtStoreNotAvailableException(storeItem.Id, storeId);
-
             return new ShoppingListItem(storeItem.Id.ToShoppingListItemId(),
                 storeItem.Name,
                 storeItem.IsDeleted,
                 storeItem.Comment,
                 storeItem.IsTemporary,
-                availability.Price,
+                price,
                 storeItem.QuantityType,
                 storeItem.QuantityInPacket,
                 storeItem.QuantityTypeInPacket,

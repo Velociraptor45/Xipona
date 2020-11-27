@@ -36,7 +36,12 @@ namespace ShoppingList.Api.Domain.Models
             if (existingItem != null)
                 throw new ItemAlreadyOnShoppingListException($"Item {storeItem.Id} already exists on shopping list {Id.Value}");
 
-            list.Add(storeItem.ToShoppingListItemDomain(Store.Id, isInBasket, quantity));
+            StoreItemAvailability availability = storeItem.Availabilities
+                .FirstOrDefault(availability => availability.StoreId == Store.Id);
+            if (availability == null)
+                throw new ItemAtStoreNotAvailableException(storeItem.Id, Store.Id);
+
+            list.Add(storeItem.ToShoppingListItemDomain(availability.Price, isInBasket, quantity));
             items = list;
         }
 
