@@ -11,7 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-using Models = ShoppingList.Api.Domain.Models;
+using DomainModels = ShoppingList.Api.Domain.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShoppingList
 {
@@ -61,7 +61,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
             {
                 result.Should().BeTrue();
                 repositoryMock.Verify(
-                    i => i.StoreAsync(It.IsAny<Models.ShoppingList>(), It.IsAny<CancellationToken>()),
+                    i => i.StoreAsync(It.IsAny<DomainModels.ShoppingList>(), It.IsAny<CancellationToken>()),
                     Times.Once);
             }
         }
@@ -89,7 +89,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
             {
                 result.Should().BeTrue();
                 repositoryMock.Verify(
-                    i => i.StoreAsync(It.IsAny<Models.ShoppingList>(), It.IsAny<CancellationToken>()),
+                    i => i.StoreAsync(It.IsAny<DomainModels.ShoppingList>(), It.IsAny<CancellationToken>()),
                     Times.Once);
             }
         }

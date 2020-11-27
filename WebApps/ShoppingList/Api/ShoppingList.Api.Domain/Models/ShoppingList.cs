@@ -24,8 +24,7 @@ namespace ShoppingList.Api.Domain.Models
         public IReadOnlyCollection<ShoppingListItem> Items { get => items.ToList().AsReadOnly(); }
         public DateTime? CompletionDate => completionDate;
 
-        public void AddItem(StoreItem storeItem,
-            bool isInBasket, float quantity)
+        public void AddItem(StoreItem storeItem, bool isInBasket, float quantity)
         {
             if (storeItem == null)
                 throw new ArgumentNullException(nameof(storeItem));
