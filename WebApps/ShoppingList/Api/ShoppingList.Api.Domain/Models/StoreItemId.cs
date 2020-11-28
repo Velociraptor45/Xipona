@@ -35,11 +35,21 @@ namespace ShoppingList.Api.Domain.Models
 
         public static bool operator ==(StoreItemId left, StoreItemId right)
         {
+            if (left is null)
+            {
+                return right is null;
+            }
+
             return left.Equals(right);
         }
 
         public static bool operator !=(StoreItemId left, StoreItemId right)
         {
+            if (left is null)
+            {
+                return !(right is null);
+            }
+
             return !left.Equals(right);
         }
 
