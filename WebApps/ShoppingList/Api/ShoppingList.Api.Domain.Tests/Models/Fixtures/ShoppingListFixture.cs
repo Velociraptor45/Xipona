@@ -19,49 +19,48 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
             this.commonFixture = commonFixture;
         }
 
-        public DomainModels.ShoppingList GetShoppingList(int itemCount, IEnumerable<int> requiredItemIds = null,
-            StoreId storeId = null)
+        public DomainModels.ShoppingList GetShoppingList(int itemCount = 3,
+            IEnumerable<ShoppingListItem> additionalItems = null)
         {
-            List<ShoppingListItem> items = new List<ShoppingListItem>();
-            List<int> requiredItemIdList = requiredItemIds?.ToList() ?? new List<int>();
+            var listId = new ShoppingListId(commonFixture.NextInt());
+            var storeId = new StoreId(commonFixture.NextInt());
+            return GetShoppingList(listId, storeId, itemCount, additionalItems);
+        }
 
-            for (int i = 0; i < itemCount; i++)
-            {
-                if (i < requiredItemIdList.Count)
-                {
-                    int id = requiredItemIdList[i];
-                    items.Add(shoppingListItemFixture.GetShoppingListItemWithId(id));
-                    continue;
-                }
+        public DomainModels.ShoppingList GetShoppingList(StoreId storeId, int itemCount = 3,
+            IEnumerable<ShoppingListItem> additionalItems = null)
+        {
+            var listId = new ShoppingListId(commonFixture.NextInt());
+            return GetShoppingList(listId, storeId, itemCount, additionalItems);
+        }
 
-                items.Add(shoppingListItemFixture.GetShoppingListItem());
-            }
+        public DomainModels.ShoppingList GetShoppingList(ShoppingListId id, StoreId storeId, int itemCount = 3,
+            IEnumerable<ShoppingListItem> additionalItems = null)
+        {
+            var allItems = additionalItems?.ToList() ?? new List<ShoppingListItem>();
+            var additionalItemIds = allItems.Select(i => i.Id.Actual.Value);
+            var uniqueItems = GetUniqueShoppingListItems(itemCount, additionalItemIds);
+            allItems.AddRange(uniqueItems);
+            allItems.Shuffle();
 
             var fixture = commonFixture.GetNewFixture();
-            fixture.Inject(items.AsEnumerable());
-            fixture.Inject(storeId ?? new StoreId(commonFixture.NextInt()));
+            fixture.Inject(id);
+            fixture.Inject(storeId);
+            fixture.Inject(allItems.AsEnumerable());
             return fixture.Create<DomainModels.ShoppingList>();
         }
 
-        public DomainModels.ShoppingList GetShoppingList(int itemCount, IEnumerable<ShoppingListItem> items)
+        private IEnumerable<ShoppingListItem> GetUniqueShoppingListItems(int count, IEnumerable<int> exclude)
         {
-            List<ShoppingListItem> itemsList = items?.ToList() ?? new List<ShoppingListItem>();
-            if (itemsList.Count > itemCount)
-            {
-                itemsList.RemoveRange(itemCount, itemsList.Count - 1);
-            }
-            else if (itemCount > itemsList.Count)
-            {
-                for (int i = itemsList.Count; i < itemCount; i++)
-                {
-                    itemsList.Add(shoppingListItemFixture.GetShoppingListItem());
-                }
-            }
-            itemsList.Shuffle();
+            List<int> itemIds = commonFixture.NextUniqueInts(count, exclude).ToList();
+            List<ShoppingListItem> items = new List<ShoppingListItem>();
 
-            var fixture = commonFixture.GetNewFixture();
-            fixture.Inject(itemsList.AsEnumerable());
-            return fixture.Create<DomainModels.ShoppingList>();
+            foreach (var itemId in itemIds)
+            {
+                var item = shoppingListItemFixture.GetShoppingListItemWithId(itemId);
+                items.Add(item);
+            }
+            return items;
         }
     }
 }

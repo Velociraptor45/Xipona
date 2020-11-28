@@ -17,6 +17,26 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests
             return fixture;
         }
 
+        public IEnumerable<int> NextUniqueInts(int amount, IEnumerable<int> exclude = null)
+        {
+            if (amount < 0)
+                throw new ArgumentException($"{nameof(amount)} mustn't be negative.");
+
+            List<int> numbers = new List<int>();
+            List<int> excludedNumbers = exclude?.ToList() ?? new List<int>();
+
+            for (int i = 0; i < amount; i++)
+            {
+                int number;
+                do
+                {
+                    number = NextInt();
+                } while (numbers.Contains(number) || excludedNumbers.Contains(number));
+                numbers.Add(number);
+            }
+            return numbers;
+        }
+
         public int NextInt(int minValue, int maxValue)
         {
             return random.Next(minValue, maxValue);
@@ -24,7 +44,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests
 
         public int NextInt()
         {
-            return random.Next(1, int.MaxValue);
+            return NextInt(1, int.MaxValue);
         }
 
         public int NextInt(IEnumerable<int> exclude)
@@ -32,7 +52,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests
             List<int> excludedInts = exclude.ToList();
             while (true)
             {
-                var number = random.Next(1, int.MaxValue);
+                var number = NextInt();
                 if (!excludedInts.Contains(number))
                     return number;
             }

@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using ShoppingList.Api.Core.Tests;
 using ShoppingList.Api.Domain.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,44 +17,39 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
             this.commonFixture = commonFixture;
         }
 
-        public StoreItem GetStoreItem(StoreItemId id)
+        public StoreItem GetStoreItem(int availabilityCount = 3,
+            IEnumerable<StoreItemAvailability> additionalAvailabilities = null)
         {
+            var storeItemId = new StoreItemId(commonFixture.NextInt());
+            return GetStoreItem(storeItemId, availabilityCount, additionalAvailabilities);
+        }
+
+        public StoreItem GetStoreItem(StoreItemId id, int availabilityCount = 3,
+            IEnumerable<StoreItemAvailability> additionalAvailabilities = null)
+        {
+            var allAvailabilities = additionalAvailabilities?.ToList() ?? new List<StoreItemAvailability>();
+            var additionalStoreIds = allAvailabilities.Select(av => av.StoreId.Value);
+            var uniqueStoreItemAvailabilities = GetUniqueStoreItemAvailabilities(availabilityCount, additionalStoreIds);
+            allAvailabilities.AddRange(uniqueStoreItemAvailabilities);
+            allAvailabilities.Shuffle();
+
             var fixture = commonFixture.GetNewFixture();
             fixture.Inject(id);
+            fixture.Inject(allAvailabilities.AsEnumerable());
             return fixture.Create<StoreItem>();
         }
 
-        public StoreItem GetStoreItem(StoreItemId id, int availabilityCount, IEnumerable<int> requiredStoreIds = null)
+        private IEnumerable<StoreItemAvailability> GetUniqueStoreItemAvailabilities(int count, IEnumerable<int> exclude)
         {
+            List<int> storeIds = commonFixture.NextUniqueInts(count, exclude).ToList();
             List<StoreItemAvailability> availabilities = new List<StoreItemAvailability>();
-            List<int> requiredStoreIdList = requiredStoreIds?.ToList() ?? new List<int>();
 
-            for (int i = 0; i < availabilityCount; i++)
+            foreach (var storeId in storeIds)
             {
-                if (i < requiredStoreIdList.Count)
-                {
-                    int storeId = requiredStoreIdList[i];
-                    availabilities.Add(storeItemAvailabilityFixture.GetAvailability(storeId));
-                    continue;
-                }
-
-                availabilities.Add(storeItemAvailabilityFixture.GetAvailability());
+                var availability = storeItemAvailabilityFixture.GetAvailability(storeId);
+                availabilities.Add(availability);
             }
-
-            var fixture = commonFixture.GetNewFixture();
-            fixture.Inject(id);
-            fixture.Inject(availabilities.AsEnumerable());
-            return fixture.Create<StoreItem>();
-        }
-
-        public StoreItem GetStoreItem(int availabilityCount, IEnumerable<int> requiredStoreIds = null)
-        {
-            return GetStoreItem(new StoreItemId(commonFixture.NextInt()), availabilityCount, requiredStoreIds);
-        }
-
-        public StoreItem GetStoreItem(int storeItemId, int availabilityCount, IEnumerable<int> requiredStoreIds = null)
-        {
-            return GetStoreItem(new StoreItemId(storeItemId), availabilityCount, requiredStoreIds);
+            return availabilities;
         }
     }
 }
