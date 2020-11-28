@@ -38,19 +38,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         {
             // Arrange
             var commonFixture = new CommonFixture();
-            var shoppingListItemFixture = new ShoppingListItemFixture();
+            var shoppingListFixture = new ShoppingListFixture();
+            var storeItemFixture = new StoreItemFixture();
 
             var itemId = commonFixture.NextInt();
-            var itemsAlreadyOnList = new List<ShoppingListItem>
-            {
-                shoppingListItemFixture.GetShoppingListItemWithId(new ShoppingListItemId(itemId)),
-                shoppingListItemFixture.GetShoppingListItemWithId(new ShoppingListItemId(commonFixture.NextInt()))
-            }.AsEnumerable();
-
-            var fixure = commonFixture.GetNewFixture();
-            fixure.Inject(itemsAlreadyOnList);
-            var shoppingList = fixure.Create<DomainModels.ShoppingList>();
-            var collidingItem = shoppingListItemFixture.GetStoreItemWithId(new StoreItemId(itemId));
+            var shoppingList = shoppingListFixture.GetShoppingList(2, new List<int> { itemId });
+            var collidingItem = storeItemFixture.GetStoreItem(new StoreItemId(itemId));
 
             // Act
             Action action = () => shoppingList.AddItem(collidingItem, false, 20.4f);
@@ -68,14 +61,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
             // Arrange
             var commonFixture = new CommonFixture();
             var shoppingListFixture = new ShoppingListFixture();
-            var shoppingListItemFixture = new ShoppingListItemFixture();
+            var storeItemFixture = new StoreItemFixture();
 
             var storeId = commonFixture.NextInt();
             var list = shoppingListFixture.GetShoppingList(3, storeId: new StoreId(storeId));
 
             var excludeAsItemId = list.Items.Select(i => i.Id.Actual.Value);
             var storeIdsForAvailablity = new List<int> { commonFixture.NextInt(storeId), commonFixture.NextInt(storeId) };
-            var storeItem = shoppingListItemFixture.GetStoreItem(commonFixture.NextInt(excludeAsItemId), 2, storeIdsForAvailablity);
+            var storeItem = storeItemFixture.GetStoreItem(commonFixture.NextInt(excludeAsItemId), 2, storeIdsForAvailablity);
 
             // Act
             Action action = () => list.AddItem(storeItem, commonFixture.NextBool(), commonFixture.NextFloat());

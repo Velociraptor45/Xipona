@@ -1,46 +1,22 @@
 ﻿using AutoFixture;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
 using ShoppingList.Api.Domain.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
 {
-    public class ShoppingListItemFixture
+    public class StoreItemFixture
     {
         private readonly CommonFixture commonFixture;
         private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
 
-        public ShoppingListItemFixture()
+        public StoreItemFixture()
         {
             commonFixture = new CommonFixture();
             storeItemAvailabilityFixture = new StoreItemAvailabilityFixture();
         }
 
-        public ShoppingListItem GetShoppingListItemWithId(ShoppingListItemId id)
-        {
-            var fixture = commonFixture.GetNewFixture();
-            fixture.Inject(id);
-            return fixture.Create<ShoppingListItem>();
-        }
-
-        public ShoppingListItem GetShoppingListItemWithId(int id)
-        {
-            return GetShoppingListItemWithId(new ShoppingListItemId(id));
-        }
-
-        public ShoppingListItem GetShoppingListItemWithId(Guid id)
-        {
-            return GetShoppingListItemWithId(new ShoppingListItemId(id));
-        }
-
-        public ShoppingListItem GetShoppingListItem()
-        {
-            return GetShoppingListItemWithId(commonFixture.NextInt());
-        }
-
-        public StoreItem GetStoreItemWithId(StoreItemId id)
+        public StoreItem GetStoreItem(StoreItemId id)
         {
             var fixture = commonFixture.GetNewFixture();
             fixture.Inject(id);
