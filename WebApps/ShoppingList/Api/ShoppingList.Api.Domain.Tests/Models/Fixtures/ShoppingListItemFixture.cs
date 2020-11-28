@@ -1,8 +1,7 @@
 ﻿using AutoFixture;
+using ShoppingList.Api.Core.Tests.AutoFixture;
 using ShoppingList.Api.Domain.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
 {
@@ -35,6 +34,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
         public ShoppingListItem GetShoppingListItem()
         {
             return GetShoppingListItemWithId(commonFixture.NextInt());
+        }
+
+        public ShoppingListItem GetShoppingListItem(bool isInBasket)
+        {
+            var fixture = commonFixture.GetNewFixture();
+            fixture.ConstructorArgumentFor<ShoppingListItem, bool>("isInBasket", isInBasket);
+            return fixture.Create<ShoppingListItem>();
         }
     }
 }

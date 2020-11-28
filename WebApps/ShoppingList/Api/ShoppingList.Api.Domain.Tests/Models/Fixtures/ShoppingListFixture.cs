@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using ShoppingList.Api.Core.Tests;
 using ShoppingList.Api.Domain.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,27 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
             var fixture = commonFixture.GetNewFixture();
             fixture.Inject(items.AsEnumerable());
             fixture.Inject(storeId ?? new StoreId(commonFixture.NextInt()));
+            return fixture.Create<DomainModels.ShoppingList>();
+        }
+
+        public DomainModels.ShoppingList GetShoppingList(int itemCount, IEnumerable<ShoppingListItem> items)
+        {
+            List<ShoppingListItem> itemsList = items?.ToList() ?? new List<ShoppingListItem>();
+            if (itemsList.Count > itemCount)
+            {
+                itemsList.RemoveRange(itemCount, itemsList.Count - 1);
+            }
+            else if (itemCount > itemsList.Count)
+            {
+                for (int i = itemsList.Count; i < itemCount; i++)
+                {
+                    itemsList.Add(shoppingListItemFixture.GetShoppingListItem());
+                }
+            }
+            itemsList.Shuffle();
+
+            var fixture = commonFixture.GetNewFixture();
+            fixture.Inject(itemsList.AsEnumerable());
             return fixture.Create<DomainModels.ShoppingList>();
         }
     }
