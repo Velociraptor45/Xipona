@@ -42,7 +42,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
 
             var fixture = commonFixture.GetNewFixture();
             fixture.Inject(id);
-            fixture.Inject(availabilities);
+            fixture.Inject(availabilities.AsEnumerable());
             return fixture.Create<StoreItem>();
         }
 

@@ -79,5 +79,32 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
                 action.Should().Throw<ItemAtStoreNotAvailableException>();
             }
         }
+
+        [Fact]
+        public void AddItem_WithValidItemWithActualId_ShouldAddItemToList()
+        {
+            // Arrange
+            var commonFixture = new CommonFixture();
+            var shoppingListFixture = new ShoppingListFixture();
+            var storeItemFixture = new StoreItemFixture();
+
+            var storeId = commonFixture.NextInt();
+            var list = shoppingListFixture.GetShoppingList(3, storeId: new StoreId(storeId));
+
+            var excludeAsItemId = list.Items.Select(i => i.Id.Actual.Value);
+            var storeItem = storeItemFixture.GetStoreItem(commonFixture.NextInt(excludeAsItemId), 2, new List<int> { storeId });
+            bool isItemInBasket = commonFixture.NextBool();
+            float itemQuantity = commonFixture.NextFloat();
+
+            // Act
+            list.AddItem(storeItem, isItemInBasket, itemQuantity);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                list.Items.Should().HaveCount(4);
+                list.Items.Select(i => i.Id.Actual?.Value).Should().Contain(storeItem.Id.Actual.Value);
+            }
+        }
     }
 }
