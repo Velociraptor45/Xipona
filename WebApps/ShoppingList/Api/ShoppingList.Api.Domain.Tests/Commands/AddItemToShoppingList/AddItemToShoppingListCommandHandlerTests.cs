@@ -2,10 +2,13 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
+using ShoppingList.Api.Core.Tests.AutoFixture;
 using ShoppingList.Api.Domain.Commands.AddItemToShoppingList;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Ports;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -17,10 +20,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
     public class AddItemToShoppingListCommandHandlerTests
     {
         private readonly CommonFixture commonFixture;
+        private readonly ShoppingListItemFixture shoppingListItemFixture;
+        private readonly ShoppingListFixture shoppingListFixture;
+        private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
+        private readonly StoreItemFixture storeItemFixture;
 
         public AddItemToShoppingListCommandHandlerTests()
         {
             commonFixture = new CommonFixture();
+            shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
+            shoppingListFixture = new ShoppingListFixture(shoppingListItemFixture, commonFixture);
+            storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
+            storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
         }
 
         [Fact]
@@ -46,12 +57,23 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            var storeId = commonFixture.NextInt();
-            fixture.Inject(new ShoppingListItemId(Guid.NewGuid()));
-            fixture.Inject(new StoreId(storeId));
-            var repositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
+            fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, ShoppingListItemId>("shoppingListItemId",
+                new ShoppingListItemId(Guid.NewGuid()));
+            var shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
+            var itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
             var handler = fixture.Create<AddItemToShoppingListCommandHandler>();
             var command = fixture.Create<AddItemToShoppingListCommand>();
+
+            var (storeItem, list) = GetValidStoreItemAndShoppingList();
+
+            shoppingListRepositoryMock
+                .Setup(instance => instance.FindByAsync(It.IsAny<ShoppingListId>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(list));
+
+            itemRepositoryMock
+                .Setup(instance => instance.FindByAsync(It.IsAny<StoreItemId>(), It.IsAny<StoreId>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(storeItem));
 
             // Act
             bool result = await handler.HandleAsync(command, default);
@@ -60,7 +82,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                repositoryMock.Verify(
+                shoppingListRepositoryMock.Verify(
                     i => i.StoreAsync(It.IsAny<DomainModels.ShoppingList>(), It.IsAny<CancellationToken>()),
                     Times.Once);
             }
@@ -71,14 +93,24 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
-            var storeId = commonFixture.NextInt();
-            var listItemId = commonFixture.NextInt();
 
-            fixture.Inject(new ShoppingListItemId(listItemId));
-            fixture.Inject(new StoreId(storeId));
-            var repositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
+            fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, ShoppingListItemId>("shoppingListItemId",
+                new ShoppingListItemId(commonFixture.NextInt()));
+            var shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
+            var itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
             var handler = fixture.Create<AddItemToShoppingListCommandHandler>();
             var command = fixture.Create<AddItemToShoppingListCommand>();
+
+            var (storeItem, list) = GetValidStoreItemAndShoppingList();
+
+            shoppingListRepositoryMock
+                .Setup(instance => instance.FindByAsync(It.IsAny<ShoppingListId>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(list));
+
+            itemRepositoryMock
+                .Setup(instance => instance.FindByAsync(It.IsAny<StoreItemId>(), It.IsAny<StoreId>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(storeItem));
 
             // Act
             bool result = await handler.HandleAsync(command, default);
@@ -87,10 +119,24 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                repositoryMock.Verify(
+                shoppingListRepositoryMock.Verify(
                     i => i.StoreAsync(It.IsAny<DomainModels.ShoppingList>(), It.IsAny<CancellationToken>()),
                     Times.Once);
             }
+        }
+
+        private (StoreItem, DomainModels.ShoppingList) GetValidStoreItemAndShoppingList()
+        {
+            var availabilities = storeItemAvailabilityFixture.GetAvailabilities(count: 3).ToList();
+            var storeIdForShoppingList = availabilities[commonFixture.NextInt(0, availabilities.Count - 1)].StoreId.Value;
+            var list = shoppingListFixture.GetShoppingList(new StoreId(storeIdForShoppingList));
+
+            // this prevents that the item is already on the list
+            var usedItemIds = list.Items.Select(i => i.Id.Actual.Value);
+            int storeItemId = commonFixture.NextInt(usedItemIds);
+            var storeItem = storeItemFixture.GetStoreItem(new StoreItemId(storeItemId), 0, availabilities);
+
+            return (storeItem, list);
         }
     }
 }
