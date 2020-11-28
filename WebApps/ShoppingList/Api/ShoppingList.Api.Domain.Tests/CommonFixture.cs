@@ -17,6 +17,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests
             return fixture;
         }
 
+        public int NextInt(int minValue, int maxValue)
+        {
+            return random.Next(minValue, maxValue);
+        }
+
         public int NextInt()
         {
             return random.Next(1, int.MaxValue);
