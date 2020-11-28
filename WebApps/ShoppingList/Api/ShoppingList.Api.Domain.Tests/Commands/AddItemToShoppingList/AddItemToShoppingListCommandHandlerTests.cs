@@ -1,5 +1,4 @@
 ﻿using AutoFixture;
-using AutoFixture.AutoMoq;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
@@ -17,18 +16,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
 {
     public class AddItemToShoppingListCommandHandlerTests
     {
-        public Fixture GetNewFixture()
-        {
-            var fixture = new Fixture();
-            fixture.Customize(new AutoMoqCustomization { ConfigureMembers = true });
-            return fixture;
-        }
-
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var fixture = GetNewFixture();
+            var commonFixture = new CommonFixture();
+            var fixture = commonFixture.GetNewFixture();
             var handler = fixture.Create<AddItemToShoppingListCommandHandler>();
 
             // Act
@@ -45,8 +38,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
         public async Task HandleAsync_WithOfflineId_ShouldStoreItem()
         {
             // Arrange
-            var storeId = new Random().Next(1, int.MaxValue);
-            var fixture = GetNewFixture();
+            var commonFixture = new CommonFixture();
+            var fixture = commonFixture.GetNewFixture();
+
+            var storeId = commonFixture.NextInt();
             fixture.Inject(new ShoppingListItemId(Guid.NewGuid()));
             fixture.Inject(new StoreId(storeId));
             var repositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
@@ -70,11 +65,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
         public async Task HandleAsync_WithActualId_ShouldStoreItem()
         {
             // Arrange
-            var random = new Random();
-            var storeId = random.Next(1, int.MaxValue);
-            var listItemId = random.Next(1, int.MaxValue);
+            var commonFixture = new CommonFixture();
+            var fixture = commonFixture.GetNewFixture();
+            var storeId = commonFixture.NextInt();
+            var listItemId = commonFixture.NextInt();
 
-            var fixture = GetNewFixture();
             fixture.Inject(new ShoppingListItemId(listItemId));
             fixture.Inject(new StoreId(storeId));
             var repositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();

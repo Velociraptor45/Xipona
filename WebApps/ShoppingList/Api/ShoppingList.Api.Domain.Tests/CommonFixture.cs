@@ -4,18 +4,18 @@ using System;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests
 {
-    public static class CommonFixture
+    public class CommonFixture
     {
-        private static readonly Random random = new Random();
+        private readonly Random random = new Random();
 
-        public static Fixture GetNewFixture()
+        public Fixture GetNewFixture()
         {
             var fixture = new Fixture();
             fixture.Customize(new AutoMoqCustomization { ConfigureMembers = true });
             return fixture;
         }
 
-        public static int NextInt()
+        public int NextInt()
         {
             return random.Next(1, int.MaxValue);
         }

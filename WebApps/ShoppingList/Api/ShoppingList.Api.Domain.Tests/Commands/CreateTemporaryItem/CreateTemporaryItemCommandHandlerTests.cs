@@ -1,5 +1,4 @@
 ﻿using AutoFixture;
-using AutoFixture.AutoMoq;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
@@ -15,18 +14,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.CreateTemporaryIt
 {
     public class CreateTemporaryItemCommandHandlerTests
     {
-        public Fixture GetNewFixture()
-        {
-            var fixture = new Fixture();
-            fixture.Customize(new AutoMoqCustomization { ConfigureMembers = true });
-            return fixture;
-        }
-
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var fixture = GetNewFixture();
+            var commonFixture = new CommonFixture();
+            var fixture = commonFixture.GetNewFixture();
+
             var handler = fixture.Create<CreateTemporaryItemCommandHandler>();
 
             // Act
@@ -43,7 +37,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.CreateTemporaryIt
         public async Task HandleAsync_WithValidCommand_ShouldStoreItemAndReturnTrue()
         {
             // Arrange
-            var fixture = GetNewFixture();
+            var commonFixture = new CommonFixture();
+            var fixture = commonFixture.GetNewFixture();
+
             var repositoryMock = fixture.Freeze<Mock<IItemRepository>>();
             var handler = fixture.Create<CreateTemporaryItemCommandHandler>();
             var command = fixture.Create<CreateTemporaryItemCommand>();
