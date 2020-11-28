@@ -9,20 +9,23 @@ namespace ShoppingList.Api.Domain.Models
     public class ShoppingList
     {
         private IEnumerable<ShoppingListItem> items;
-        private DateTime? completionDate;
 
         public ShoppingList(ShoppingListId id, Store store, IEnumerable<ShoppingListItem> items, DateTime? completionDate)
         {
+            var item = items.FirstOrDefault(i => !i.Id.IsActualId);
+            if (item != null)
+                throw new ActualIdRequiredException(item.Id);
+
             Id = id;
             Store = store;
             this.items = items;
-            this.completionDate = completionDate;
+            CompletionDate = completionDate;
         }
 
         public ShoppingListId Id { get; }
         public Store Store { get; }
-        public IReadOnlyCollection<ShoppingListItem> Items { get => items.ToList().AsReadOnly(); }
-        public DateTime? CompletionDate => completionDate;
+        public IReadOnlyCollection<ShoppingListItem> Items => items.ToList().AsReadOnly();
+        public DateTime? CompletionDate { get; private set; }
 
         public void AddItem(StoreItem storeItem, bool isInBasket, float quantity)
         {
@@ -50,6 +53,8 @@ namespace ShoppingList.Api.Domain.Models
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
+            if (!id.IsActualId)
+                throw new ActualIdRequiredException(id);
 
             var itemList = items.ToList();
 
@@ -67,6 +72,8 @@ namespace ShoppingList.Api.Domain.Models
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
+            if (!itemId.IsActualId)
+                throw new ActualIdRequiredException(itemId);
 
             var item = items.FirstOrDefault(item => item.Id == itemId);
             if (item == null)
@@ -86,6 +93,8 @@ namespace ShoppingList.Api.Domain.Models
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
+            if (!itemId.IsActualId)
+                throw new ActualIdRequiredException(itemId);
 
             var item = items.FirstOrDefault(item => item.Id == itemId);
             if (item == null)
@@ -105,6 +114,8 @@ namespace ShoppingList.Api.Domain.Models
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
+            if (!itemId.IsActualId)
+                throw new ActualIdRequiredException(itemId);
 
             var item = items.FirstOrDefault(item => item.Id == itemId);
             if (item == null)
@@ -130,7 +141,7 @@ namespace ShoppingList.Api.Domain.Models
             var itemsNotInBasket = items.Where(i => !i.IsInBasket);
 
             items = items.Where(i => i.IsInBasket);
-            this.completionDate = completionDate;
+            CompletionDate = completionDate;
 
             return new ShoppingList(new ShoppingListId(0), Store, itemsNotInBasket, null);
         }
