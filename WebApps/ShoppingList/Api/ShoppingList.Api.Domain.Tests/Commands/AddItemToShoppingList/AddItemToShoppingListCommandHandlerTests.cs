@@ -16,11 +16,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
 {
     public class AddItemToShoppingListCommandHandlerTests
     {
+        private readonly CommonFixture commonFixture;
+
+        public AddItemToShoppingListCommandHandlerTests()
+        {
+            commonFixture = new CommonFixture();
+        }
+
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var commonFixture = new CommonFixture();
             var fixture = commonFixture.GetNewFixture();
             var handler = fixture.Create<AddItemToShoppingListCommandHandler>();
 
@@ -38,7 +44,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
         public async Task HandleAsync_WithOfflineId_ShouldStoreItem()
         {
             // Arrange
-            var commonFixture = new CommonFixture();
             var fixture = commonFixture.GetNewFixture();
 
             var storeId = commonFixture.NextInt();
@@ -65,7 +70,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
         public async Task HandleAsync_WithActualId_ShouldStoreItem()
         {
             // Arrange
-            var commonFixture = new CommonFixture();
             var fixture = commonFixture.GetNewFixture();
             var storeId = commonFixture.NextInt();
             var listItemId = commonFixture.NextInt();

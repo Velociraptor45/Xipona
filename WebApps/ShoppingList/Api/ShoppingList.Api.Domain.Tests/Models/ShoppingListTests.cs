@@ -16,18 +16,32 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
 {
     public class ShoppingListTests
     {
+        private readonly CommonFixture commonFixture;
+        private readonly ShoppingListItemFixture shoppingListItemFixture;
+        private readonly ShoppingListFixture shoppingListFixture;
+        private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
+        private readonly StoreItemFixture storeItemFixture;
+
+        public ShoppingListTests()
+        {
+            commonFixture = new CommonFixture();
+            shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
+            shoppingListFixture = new ShoppingListFixture(shoppingListItemFixture, commonFixture);
+            storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
+            storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
+        }
+
         #region AddItem
 
         [Fact]
         public void AddItem_WithStoreItemIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var commonFixture = new CommonFixture();
             var fixure = commonFixture.GetNewFixture();
             var shoppingList = fixure.Create<DomainModels.ShoppingList>();
 
             // Act
-            Action action = () => shoppingList.AddItem(null, false, 20.4f);
+            Action action = () => shoppingList.AddItem(null, commonFixture.NextBool(), commonFixture.NextFloat());
 
             // Assert
             using (new AssertionScope())
@@ -40,16 +54,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         public void AddItem_WithItemIdIsAlreadyOnList_ShouldThrowItemAlreadyOnShoppingListException()
         {
             // Arrange
-            var commonFixture = new CommonFixture();
-            var shoppingListFixture = new ShoppingListFixture();
-            var storeItemFixture = new StoreItemFixture();
 
             var itemId = commonFixture.NextInt();
             var shoppingList = shoppingListFixture.GetShoppingList(2, new List<int> { itemId });
             var collidingItem = storeItemFixture.GetStoreItem(new StoreItemId(itemId));
 
             // Act
-            Action action = () => shoppingList.AddItem(collidingItem, false, 20.4f);
+            Action action = () => shoppingList.AddItem(collidingItem, commonFixture.NextBool(), commonFixture.NextFloat());
 
             // Assert
             using (new AssertionScope())
@@ -62,10 +73,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         public void AddItem_WithNoAvailabilityForListStore_ShouldThrowItemAtStoreNotAvailableException()
         {
             // Arrange
-            var commonFixture = new CommonFixture();
-            var shoppingListFixture = new ShoppingListFixture();
-            var storeItemFixture = new StoreItemFixture();
-
             var storeId = commonFixture.NextInt();
             var list = shoppingListFixture.GetShoppingList(3, storeId: new StoreId(storeId));
 
@@ -87,15 +94,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         public void AddItem_WithValidItemWithActualId_ShouldAddItemToList()
         {
             // Arrange
-            var commonFixture = new CommonFixture();
-            var shoppingListFixture = new ShoppingListFixture();
-            var storeItemFixture = new StoreItemFixture();
-
             var storeId = commonFixture.NextInt();
             var list = shoppingListFixture.GetShoppingList(3, storeId: new StoreId(storeId));
 
             var excludeAsItemId = list.Items.Select(i => i.Id.Actual.Value);
-            var storeItem = storeItemFixture.GetStoreItem(commonFixture.NextInt(excludeAsItemId), 2, new List<int> { storeId });
+            var storeItem = storeItemFixture.GetStoreItem(commonFixture.NextInt(excludeAsItemId), 2, storeId.ToMonoList());
             bool isItemInBasket = commonFixture.NextBool();
             float itemQuantity = commonFixture.NextFloat();
 
@@ -114,10 +117,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         public void AddItem_WithItemWithOfflineId_ShouldThrowActualIdRequiredException()
         {
             // Arrange
-            var commonFixture = new CommonFixture();
-            var shoppingListFixture = new ShoppingListFixture();
-            var storeItemFixture = new StoreItemFixture();
-
             var list = shoppingListFixture.GetShoppingList(3);
             var storeItem = storeItemFixture.GetStoreItem(new StoreItemId(Guid.NewGuid()));
 
@@ -139,7 +138,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         public void RemoveItem_WithShoppingListItemIdIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var shoppingListFixture = new ShoppingListFixture();
             var list = shoppingListFixture.GetShoppingList(itemCount: 3);
 
             // Act
@@ -156,7 +154,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         public void RemoveItem_WithOfflineId_ShouldThrowActualIdRequiredException()
         {
             // Arrange
-            var shoppingListFixture = new ShoppingListFixture();
             var list = shoppingListFixture.GetShoppingList(itemCount: 3);
 
             // Act
@@ -173,8 +170,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         public void RemoveItem_WithShoppingListItemIdNotOnList_ShouldThrowItemNotOnShoppingListException()
         {
             // Arrange
-            var commonFixture = new CommonFixture();
-            var shoppingListFixture = new ShoppingListFixture();
             var list = shoppingListFixture.GetShoppingList(itemCount: 3);
             var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
             var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt(itemIdsToExclude));
@@ -193,9 +188,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         public void RemoveItem_WithValidItem_ShouldRemoveItemFromList()
         {
             // Arrange
-            var commonFixture = new CommonFixture();
-            var shoppingListFixture = new ShoppingListFixture();
-
             var list = shoppingListFixture.GetShoppingList(itemCount: 3);
             int idToRemove = list.Items.ElementAt(commonFixture.NextInt(0, list.Items.Count - 1)).Id.Actual.Value;
 
@@ -218,7 +210,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         public void PutItemInBasket_WithShoppingListItemIdIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var shoppingListFixture = new ShoppingListFixture();
             var list = shoppingListFixture.GetShoppingList(itemCount: 3);
 
             // Act
@@ -235,7 +226,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         public void PutItemInBasket_WithOfflineId_ShouldThrowActualIdRequiredException()
         {
             // Arrange
-            var shoppingListFixture = new ShoppingListFixture();
             var list = shoppingListFixture.GetShoppingList(itemCount: 3);
 
             // Act
@@ -252,8 +242,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         public void PutItemInBasket_WithShoppingListItemIdNotOnList_ShouldThrowItemNotOnShoppingListException()
         {
             // Arrange
-            var commonFixture = new CommonFixture();
-            var shoppingListFixture = new ShoppingListFixture();
             var list = shoppingListFixture.GetShoppingList(itemCount: 3);
             var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
             var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt(itemIdsToExclude));
@@ -272,9 +260,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         public void PutItemInBasket_WithValidItem_ShouldRemoveItemFromList()
         {
             // Arrange
-            var shoppingListFixture = new ShoppingListFixture();
-            var shoppingListItemFixture = new ShoppingListItemFixture();
-
             var shoppingListItem = shoppingListItemFixture.GetShoppingListItem(isInBasket: false);
             var list = shoppingListFixture.GetShoppingList(itemCount: 3, shoppingListItem.ToMonoList());
 

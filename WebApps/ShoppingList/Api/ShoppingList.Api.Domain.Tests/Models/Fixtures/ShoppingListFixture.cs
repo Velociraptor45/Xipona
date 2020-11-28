@@ -13,10 +13,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
         private readonly ShoppingListItemFixture shoppingListItemFixture;
         private readonly CommonFixture commonFixture;
 
-        public ShoppingListFixture()
+        public ShoppingListFixture(ShoppingListItemFixture shoppingListItemFixture, CommonFixture commonFixture)
         {
-            shoppingListItemFixture = new ShoppingListItemFixture();
-            commonFixture = new CommonFixture();
+            this.shoppingListItemFixture = shoppingListItemFixture;
+            this.commonFixture = commonFixture;
         }
 
         public DomainModels.ShoppingList GetShoppingList(int itemCount, IEnumerable<int> requiredItemIds = null,

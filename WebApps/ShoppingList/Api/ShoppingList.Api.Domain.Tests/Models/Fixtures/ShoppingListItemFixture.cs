@@ -9,9 +9,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
     {
         private readonly CommonFixture commonFixture;
 
-        public ShoppingListItemFixture()
+        public ShoppingListItemFixture(CommonFixture commonFixture)
         {
-            commonFixture = new CommonFixture();
+            this.commonFixture = commonFixture;
         }
 
         public ShoppingListItem GetShoppingListItemWithId(ShoppingListItemId id)

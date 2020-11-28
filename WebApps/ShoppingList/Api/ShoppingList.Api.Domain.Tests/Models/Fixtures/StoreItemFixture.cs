@@ -7,13 +7,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
 {
     public class StoreItemFixture
     {
-        private readonly CommonFixture commonFixture;
         private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
+        private readonly CommonFixture commonFixture;
 
-        public StoreItemFixture()
+        public StoreItemFixture(StoreItemAvailabilityFixture storeItemAvailabilityFixture, CommonFixture commonFixture)
         {
-            commonFixture = new CommonFixture();
-            storeItemAvailabilityFixture = new StoreItemAvailabilityFixture();
+            this.storeItemAvailabilityFixture = storeItemAvailabilityFixture;
+            this.commonFixture = commonFixture;
         }
 
         public StoreItem GetStoreItem(StoreItemId id)

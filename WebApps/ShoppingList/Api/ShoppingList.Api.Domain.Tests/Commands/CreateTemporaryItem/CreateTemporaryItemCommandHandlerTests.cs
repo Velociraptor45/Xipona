@@ -14,11 +14,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.CreateTemporaryIt
 {
     public class CreateTemporaryItemCommandHandlerTests
     {
+        private readonly CommonFixture commonFixture;
+
+        public CreateTemporaryItemCommandHandlerTests()
+        {
+            commonFixture = new CommonFixture();
+        }
+
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var commonFixture = new CommonFixture();
             var fixture = commonFixture.GetNewFixture();
 
             var handler = fixture.Create<CreateTemporaryItemCommandHandler>();
@@ -37,7 +43,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.CreateTemporaryIt
         public async Task HandleAsync_WithValidCommand_ShouldStoreItemAndReturnTrue()
         {
             // Arrange
-            var commonFixture = new CommonFixture();
             var fixture = commonFixture.GetNewFixture();
 
             var repositoryMock = fixture.Freeze<Mock<IItemRepository>>();
