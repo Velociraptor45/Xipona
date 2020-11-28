@@ -281,5 +281,171 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         }
 
         #endregion PutItemInBasket
+
+        #region RemoveFromBasket
+
+        [Fact]
+        public void RemoveFromBasket_WithShoppingListItemIdIsNull_ShouldThrowArgumentNullException()
+        {
+            // Arrange
+            var list = shoppingListFixture.GetShoppingList();
+
+            // Act
+            Action action = () => list.RemoveFromBasket(null);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                action.Should().Throw<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public void RemoveFromBasket_WithOfflineId_ShouldThrowActualIdRequiredException()
+        {
+            // Arrange
+            var list = shoppingListFixture.GetShoppingList();
+
+            // Act
+            Action action = () => list.RemoveFromBasket(new ShoppingListItemId(Guid.NewGuid()));
+
+            // Assert
+            using (new AssertionScope())
+            {
+                action.Should().Throw<ActualIdRequiredException>();
+            }
+        }
+
+        [Fact]
+        public void RemoveFromBasket_WithShoppingListItemIdNotOnList_ShouldThrowItemNotOnShoppingListException()
+        {
+            // Arrange
+            var list = shoppingListFixture.GetShoppingList();
+            var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
+            var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt(itemIdsToExclude));
+
+            // Act
+            Action action = () => list.RemoveFromBasket(shoppingListItemId);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                action.Should().Throw<ItemNotOnShoppingListException>();
+            }
+        }
+
+        [Fact]
+        public void RemoveFromBasket_WithValidItem_ShouldRemoveItemFromList()
+        {
+            // Arrange
+            var shoppingListItem = shoppingListItemFixture.GetShoppingListItem(isInBasket: true);
+            var list = shoppingListFixture.GetShoppingList(itemCount: 2, shoppingListItem.ToMonoList());
+
+            // Act
+            list.RemoveFromBasket(shoppingListItem.Id);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                list.Items.Should().HaveCount(3);
+                list.Items.Should().Contain(i => i.Id == shoppingListItem.Id);
+                list.Items.Single(i => i.Id == shoppingListItem.Id).IsInBasket.Should().BeFalse();
+            }
+        }
+
+        #endregion RemoveFromBasket
+
+        #region ChangeItemQuantity
+
+        [Fact]
+        public void ChangeItemQuantity_WithShoppingListItemIdIsNull_ShouldThrowArgumentNullException()
+        {
+            // Arrange
+            var list = shoppingListFixture.GetShoppingList();
+
+            // Act
+            Action action = () => list.ChangeItemQuantity(null, commonFixture.NextFloat());
+
+            // Assert
+            using (new AssertionScope())
+            {
+                action.Should().Throw<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public void ChangeItemQuantity_WithOfflineId_ShouldThrowActualIdRequiredException()
+        {
+            // Arrange
+            var list = shoppingListFixture.GetShoppingList();
+
+            // Act
+            Action action = () => list.ChangeItemQuantity(
+                new ShoppingListItemId(Guid.NewGuid()), commonFixture.NextFloat());
+
+            // Assert
+            using (new AssertionScope())
+            {
+                action.Should().Throw<ActualIdRequiredException>();
+            }
+        }
+
+        [Fact]
+        public void ChangeItemQuantity_WithShoppingListItemIdNotOnList_ShouldThrowItemNotOnShoppingListException()
+        {
+            // Arrange
+            var list = shoppingListFixture.GetShoppingList();
+            var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
+            var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt(itemIdsToExclude));
+
+            // Act
+            Action action = () => list.ChangeItemQuantity(shoppingListItemId, commonFixture.NextFloat());
+
+            // Assert
+            using (new AssertionScope())
+            {
+                action.Should().Throw<ItemNotOnShoppingListException>();
+            }
+        }
+
+        [Fact]
+        public void ChangeItemQuantity_WithInvalidQuantity_ShouldThrowInvalidItemQuantityException()
+        {
+            // Arrange
+            var shoppingListItem = shoppingListItemFixture.GetShoppingListItem();
+            var list = shoppingListFixture.GetShoppingList(itemCount: 2, shoppingListItem.ToMonoList());
+            var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt());
+
+            // Act
+            Action action = () => list.ChangeItemQuantity(shoppingListItemId, -commonFixture.NextFloat());
+
+            // Assert
+            using (new AssertionScope())
+            {
+                action.Should().Throw<InvalidItemQuantityException>();
+            }
+        }
+
+        [Fact]
+        public void ChangeItemQuantity_WithValidItem_ShouldRemoveItemFromList()
+        {
+            // Arrange
+            var shoppingListItem = shoppingListItemFixture.GetShoppingListItem();
+            var list = shoppingListFixture.GetShoppingList(itemCount: 2, shoppingListItem.ToMonoList());
+            var expectedQuantity = commonFixture.NextFloat();
+
+            // Act
+            list.ChangeItemQuantity(shoppingListItem.Id, expectedQuantity);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                list.Items.Should().HaveCount(3);
+                list.Items.Should().Contain(i => i.Id == shoppingListItem.Id);
+                list.Items.Single(i => i.Id == shoppingListItem.Id).Quantity.Should().Be(expectedQuantity);
+            }
+        }
+
+        #endregion ChangeItemQuantity
     }
 }
