@@ -106,5 +106,26 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
                 list.Items.Select(i => i.Id.Actual?.Value).Should().Contain(storeItem.Id.Actual.Value);
             }
         }
+
+        [Fact]
+        public void AddItem_WithItemWithOfflineId_ShouldThrowActualIdRequiredException()
+        {
+            // Arrange
+            var commonFixture = new CommonFixture();
+            var shoppingListFixture = new ShoppingListFixture();
+            var storeItemFixture = new StoreItemFixture();
+
+            var list = shoppingListFixture.GetShoppingList(3);
+            var storeItem = storeItemFixture.GetStoreItem(new StoreItemId(Guid.NewGuid()));
+
+            // Act
+            Action action = () => list.AddItem(storeItem, commonFixture.NextBool(), commonFixture.NextFloat());
+
+            // Assert
+            using (new AssertionScope())
+            {
+                action.Should().Throw<ActualIdRequiredException>();
+            }
+        }
     }
 }

@@ -28,6 +28,8 @@ namespace ShoppingList.Api.Domain.Models
         {
             if (storeItem == null)
                 throw new ArgumentNullException(nameof(storeItem));
+            if (!storeItem.Id.IsActualId)
+                throw new ActualIdRequiredException(storeItem.Id);
 
             var list = items.ToList();
 
