@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
 using System;
@@ -58,6 +59,31 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
             using (new AssertionScope())
             {
                 action.Should().Throw<ItemAlreadyOnShoppingListException>();
+            }
+        }
+
+        [Fact]
+        public void AddItem_WithNoAvailabilityForListStore_ShouldThrowItemAtStoreNotAvailableException()
+        {
+            // Arrange
+            var commonFixture = new CommonFixture();
+            var shoppingListFixture = new ShoppingListFixture();
+            var shoppingListItemFixture = new ShoppingListItemFixture();
+
+            var storeId = commonFixture.NextInt();
+            var list = shoppingListFixture.GetShoppingList(3, storeId: new StoreId(storeId));
+
+            var excludeAsItemId = list.Items.Select(i => i.Id.Actual.Value);
+            var storeIdsForAvailablity = new List<int> { commonFixture.NextInt(storeId), commonFixture.NextInt(storeId) };
+            var storeItem = shoppingListItemFixture.GetStoreItem(commonFixture.NextInt(excludeAsItemId), 2, storeIdsForAvailablity);
+
+            // Act
+            Action action = () => list.AddItem(storeItem, commonFixture.NextBool(), commonFixture.NextFloat());
+
+            // Assert
+            using (new AssertionScope())
+            {
+                action.Should().Throw<ItemAtStoreNotAvailableException>();
             }
         }
     }
