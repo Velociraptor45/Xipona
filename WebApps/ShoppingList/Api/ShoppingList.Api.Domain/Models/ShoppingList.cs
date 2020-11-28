@@ -116,6 +116,8 @@ namespace ShoppingList.Api.Domain.Models
                 throw new ArgumentNullException(nameof(itemId));
             if (!itemId.IsActualId)
                 throw new ActualIdRequiredException(itemId);
+            if (quantity <= 0f)
+                throw new InvalidItemQuantityException(quantity);
 
             var item = items.FirstOrDefault(item => item.Id == itemId);
             if (item == null)
