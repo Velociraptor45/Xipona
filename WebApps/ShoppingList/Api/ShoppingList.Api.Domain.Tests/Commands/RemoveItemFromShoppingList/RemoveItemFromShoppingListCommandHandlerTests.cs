@@ -52,7 +52,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.RemoveItemFromSho
         }
 
         [Fact]
-        public async Task HandleAsync_WithValidActualIdOfPermanentItemCommand_ShouldPutItemInBasket()
+        public async Task HandleAsync_WithValidActualIdOfPermanentItemCommand_ShouldRemoveItemFromBasket()
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
@@ -105,7 +105,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.RemoveItemFromSho
         }
 
         [Fact]
-        public async Task HandleAsync_WithValidActualIdOfTemporaryItemCommand_ShouldPutItemInBasket()
+        public async Task HandleAsync_WithValidActualIdOfTemporaryItemCommand_ShouldRemoveItemFromBasketAndDeleteIt()
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();

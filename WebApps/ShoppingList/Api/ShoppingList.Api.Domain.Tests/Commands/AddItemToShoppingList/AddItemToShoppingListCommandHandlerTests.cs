@@ -52,7 +52,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
         }
 
         [Fact]
-        public async Task HandleAsync_WithOfflineId_ShouldStoreItem()
+        public async Task HandleAsync_WithOfflineId_ShouldAddItemToList()
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
@@ -89,7 +89,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
         }
 
         [Fact]
-        public async Task HandleAsync_WithActualId_ShouldStoreItem()
+        public async Task HandleAsync_WithActualId_ShouldAddItemToList()
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
