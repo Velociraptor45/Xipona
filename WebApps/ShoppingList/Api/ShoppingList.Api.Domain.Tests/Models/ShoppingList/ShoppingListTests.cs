@@ -3,15 +3,17 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
 using ShoppingList.Api.Core.Extensions;
+using ShoppingList.Api.Core.Tests;
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
 using DomainModels = ShoppingList.Api.Domain.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.ShoppingList
 {
     public class ShoppingListTests
     {
@@ -447,5 +449,37 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models
         }
 
         #endregion ChangeItemQuantity
+
+        #region Finish
+
+        [Theory]
+        [ClassData(typeof(FinishShoppingListTestData))]
+        public void Finish__ShouldCreateNewListWithItemsNotInBasketAndRemoveThemFromCurrentList(
+            List<ShoppingListItem> itemsNotInBasket, List<ShoppingListItem> itemsInBasket)
+        {
+            // Arrange
+            var allItems = new List<ShoppingListItem>(itemsInBasket);
+            allItems.AddRange(itemsNotInBasket);
+            allItems.Shuffle();
+
+            DateTime completionDate = commonFixture.NextDate();
+            var list = shoppingListFixture.GetShoppingList(itemCount: 0, additionalItems: allItems);
+
+            // Act
+            var newList = list.Finish(completionDate);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                list.Items.Should().HaveCount(itemsInBasket.Count);
+                list.Items.Should().BeEquivalentTo(itemsInBasket);
+                newList.Items.Should().HaveCount(itemsNotInBasket.Count);
+                newList.Items.Should().BeEquivalentTo(itemsNotInBasket);
+                list.CompletionDate.Should().Be(completionDate);
+                newList.CompletionDate.Should().BeNull();
+            }
+        }
+
+        #endregion Finish
     }
 }

@@ -72,5 +72,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests
         {
             return (float)random.NextDouble();
         }
+
+        public DateTime NextDate()
+        {
+            var fixture = GetNewFixture();
+            return fixture.Create<DateTime>();
+        }
     }
 }
