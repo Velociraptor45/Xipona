@@ -1,4 +1,6 @@
-﻿using ShoppingList.Api.Domain.Ports;
+﻿using ShoppingList.Api.Domain.Extensions;
+using ShoppingList.Api.Domain.Models;
+using ShoppingList.Api.Domain.Ports;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,20 +11,29 @@ namespace ShoppingList.Api.Domain.Commands.RemoveItemFromShoppingList
         ICommandHandler<RemoveItemFromShoppingListCommand, bool>
     {
         private readonly IShoppingListRepository shoppingListRepository;
+        private readonly IItemRepository itemRepository;
 
-        public RemoveItemFromShoppingListCommandHandler(IShoppingListRepository shoppingListRepository)
+        public RemoveItemFromShoppingListCommandHandler(IShoppingListRepository shoppingListRepository,
+            IItemRepository itemRepository)
         {
             this.shoppingListRepository = shoppingListRepository;
+            this.itemRepository = itemRepository;
         }
 
-        public async Task<bool> HandleAsync(RemoveItemFromShoppingListCommand query, CancellationToken cancellationToken)
+        public async Task<bool> HandleAsync(RemoveItemFromShoppingListCommand command, CancellationToken cancellationToken)
         {
-            if (query == null)
-                throw new ArgumentNullException(nameof(query));
+            if (command == null)
+                throw new ArgumentNullException(nameof(command));
 
-            var list = await shoppingListRepository.FindByAsync(query.ShoppingListId, cancellationToken);
+            var list = await shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
+            StoreItem item = await itemRepository.FindByAsync(command.ShoppingListItemId.ToStoreItemId(), cancellationToken);
 
-            list.RemoveItem(query.ShoppingListItemId);
+            list.RemoveItem(command.ShoppingListItemId);
+            if (item.IsTemporary)
+            {
+                item.Delete();
+                await itemRepository.StoreAsync(item, cancellationToken);
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
 

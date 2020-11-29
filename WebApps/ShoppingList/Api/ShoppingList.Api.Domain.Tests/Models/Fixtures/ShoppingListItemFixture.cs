@@ -31,15 +31,23 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
             return GetShoppingListItemWithId(new ShoppingListItemId(id));
         }
 
-        public ShoppingListItem GetShoppingListItem()
+        public ShoppingListItem GetShoppingListItemWithId()
         {
             return GetShoppingListItemWithId(commonFixture.NextInt());
         }
 
-        public ShoppingListItem GetShoppingListItem(bool isInBasket)
+        public ShoppingListItem GetShoppingListItem(bool? isInBasket = null, bool? isTemporary = null,
+            bool? isDeleted = null)
         {
             var fixture = commonFixture.GetNewFixture();
-            fixture.ConstructorArgumentFor<ShoppingListItem, bool>("isInBasket", isInBasket);
+
+            if (isInBasket.HasValue)
+                fixture.ConstructorArgumentFor<ShoppingListItem, bool>("isInBasket", isInBasket.Value);
+            if (isTemporary.HasValue)
+                fixture.ConstructorArgumentFor<ShoppingListItem, bool>("isTemporary", isTemporary.Value);
+            if (isDeleted.HasValue)
+                fixture.ConstructorArgumentFor<ShoppingListItem, bool>("isDeleted", isDeleted.Value);
+
             return fixture.Create<ShoppingListItem>();
         }
     }

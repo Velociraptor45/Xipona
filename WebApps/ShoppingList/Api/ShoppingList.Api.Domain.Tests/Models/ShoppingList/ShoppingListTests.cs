@@ -414,7 +414,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.ShoppingList
         public void ChangeItemQuantity_WithInvalidQuantity_ShouldThrowInvalidItemQuantityException()
         {
             // Arrange
-            var shoppingListItem = shoppingListItemFixture.GetShoppingListItem();
+            var shoppingListItem = shoppingListItemFixture.GetShoppingListItemWithId();
             var list = shoppingListFixture.GetShoppingList(itemCount: 2, shoppingListItem.ToMonoList());
             var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt());
 
@@ -432,7 +432,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.ShoppingList
         public void ChangeItemQuantity_WithValidItem_ShouldRemoveItemFromList()
         {
             // Arrange
-            var shoppingListItem = shoppingListItemFixture.GetShoppingListItem();
+            var shoppingListItem = shoppingListItemFixture.GetShoppingListItemWithId();
             var list = shoppingListFixture.GetShoppingList(itemCount: 2, shoppingListItem.ToMonoList());
             var expectedQuantity = commonFixture.NextFloat();
 

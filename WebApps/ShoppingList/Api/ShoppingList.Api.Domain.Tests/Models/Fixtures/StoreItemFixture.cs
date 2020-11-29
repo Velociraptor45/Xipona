@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using ShoppingList.Api.Core.Tests;
+using ShoppingList.Api.Core.Tests.AutoFixture;
 using ShoppingList.Api.Domain.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
         }
 
         public StoreItem GetStoreItem(StoreItemId id, int availabilityCount = 3,
-            IEnumerable<StoreItemAvailability> additionalAvailabilities = null)
+            IEnumerable<StoreItemAvailability> additionalAvailabilities = null,
+            bool? isTemporary = null, bool? isDeleted = null)
         {
             var allAvailabilities = additionalAvailabilities?.ToList() ?? new List<StoreItemAvailability>();
             var additionalStoreIds = allAvailabilities.Select(av => av.StoreId.Value);
@@ -36,6 +38,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
             var fixture = commonFixture.GetNewFixture();
             fixture.Inject(id);
             fixture.Inject(allAvailabilities.AsEnumerable());
+            if (isTemporary.HasValue)
+                fixture.ConstructorArgumentFor<StoreItem, bool>("isTemporary", isTemporary.Value);
+            if (isDeleted.HasValue)
+                fixture.ConstructorArgumentFor<StoreItem, bool>("isDeleted", isDeleted.Value);
             return fixture.Create<StoreItem>();
         }
 
