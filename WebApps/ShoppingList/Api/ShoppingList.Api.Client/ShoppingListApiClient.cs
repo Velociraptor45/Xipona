@@ -4,6 +4,8 @@ using RestEase;
 using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
 using ShoppingList.Api.Contracts.Commands.CreateStore;
+using ShoppingList.Api.Contracts.Commands.CreateTemporaryItem;
+using ShoppingList.Api.Contracts.Commands.MakeTemporaryItemPermanent;
 using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
@@ -131,6 +133,16 @@ namespace ShoppingList.Api.Client
         public async Task<StoreItemContract> Get(int itemId)
         {
             return await apiClient.Get(itemId);
+        }
+
+        public async Task CreateTemporaryItem(CreateTemporaryItemContract contract)
+        {
+            await apiClient.CreateTemporaryItem(contract);
+        }
+
+        public async Task MakeTemporaryItemPermanent(MakeTemporaryItemPermanentContract contract)
+        {
+            await apiClient.MakeTemporaryItemPermanent(contract);
         }
 
         #endregion ItemController

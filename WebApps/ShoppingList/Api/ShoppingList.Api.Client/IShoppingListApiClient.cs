@@ -2,6 +2,8 @@
 using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
 using ShoppingList.Api.Contracts.Commands.CreateStore;
+using ShoppingList.Api.Contracts.Commands.CreateTemporaryItem;
+using ShoppingList.Api.Contracts.Commands.MakeTemporaryItemPermanent;
 using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
@@ -78,6 +80,12 @@ namespace ShoppingList.Api.Client
 
         [Get("item/{itemId}")]
         Task<StoreItemContract> Get([Path] int itemId);
+
+        [Post("item/create/temporary")]
+        Task CreateTemporaryItem([Body] CreateTemporaryItemContract contract);
+
+        [Post("item/make-temporary-item-permanent")]
+        Task MakeTemporaryItemPermanent([Body] MakeTemporaryItemPermanentContract contract);
 
         #endregion ItemController
 
