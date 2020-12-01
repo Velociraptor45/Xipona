@@ -1,4 +1,6 @@
-﻿using ShoppingList.Api.Domain.Exceptions;
+﻿using ShoppingList.Api.Core.Attributes;
+using ShoppingList.Api.Core.Extensions;
+using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Queries.ItemFilterResults;
 using ShoppingList.Api.Domain.Queries.ItemSearch;
@@ -38,6 +40,7 @@ namespace ShoppingList.Api.Domain.Extensions
             return new ItemSearchReadModel(
                 storeItem.Id.Actual,
                 storeItem.Name,
+                storeItem.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                 storeAvailability.Price,
                 storeItem.Manufacturer,
                 storeItem.ItemCategory);
