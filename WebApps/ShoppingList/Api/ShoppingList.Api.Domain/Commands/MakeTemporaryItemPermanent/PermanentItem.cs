@@ -25,7 +25,7 @@ namespace ShoppingList.Api.Domain.Commands.MakeTemporaryItemPermanent
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategoryId = itemCategoryId ?? throw new ArgumentNullException(nameof(itemCategoryId));
-            ManufacturerId = manufacturerId ?? throw new ArgumentNullException(nameof(manufacturerId));
+            ManufacturerId = manufacturerId;
             this.availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
         }
 

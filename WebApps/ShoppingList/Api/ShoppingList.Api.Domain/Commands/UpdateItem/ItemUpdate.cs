@@ -25,7 +25,7 @@ namespace ShoppingList.Api.Domain.Commands.UpdateItem
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategoryId = itemCategoryId ?? throw new System.ArgumentNullException(nameof(itemCategoryId));
-            ManufacturerId = manufacturerId ?? throw new System.ArgumentNullException(nameof(manufacturerId));
+            ManufacturerId = manufacturerId;
             this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
         }
 

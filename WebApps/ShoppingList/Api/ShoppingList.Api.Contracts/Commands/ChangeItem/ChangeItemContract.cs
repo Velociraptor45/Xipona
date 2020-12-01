@@ -14,7 +14,7 @@ namespace ShoppingList.Api.Contracts.Commands.ChangeItem
         public float QuantityInPacket { get; set; }
         public int QuantityTypeInPacket { get; set; }
         public int ItemCategoryId { get; set; }
-        public int ManufacturerId { get; set; }
+        public int? ManufacturerId { get; set; }
         public IEnumerable<ItemAvailabilityContract> Availabilities { get; set; }
     }
 }

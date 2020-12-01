@@ -1,4 +1,5 @@
 ﻿using ShoppingList.Api.Domain.Exceptions;
+using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Ports;
 using System;
 using System.Threading;
@@ -38,10 +39,14 @@ namespace ShoppingList.Api.Domain.Commands.MakeTemporaryItemPermanent
             if (itemCategory == null)
                 throw new ItemCategoryNotFoundException(command.PermanentItem.ItemCategoryId);
 
-            var manufacturer = await manufacturerRepository
-                .FindByAsync(command.PermanentItem.ManufacturerId, cancellationToken);
-            if (manufacturer == null)
-                throw new ManufacturerNotFoundException(command.PermanentItem.ManufacturerId);
+            Manufacturer manufacturer = null;
+            if (command.PermanentItem.ManufacturerId != null)
+            {
+                manufacturer = await manufacturerRepository
+                    .FindByAsync(command.PermanentItem.ManufacturerId, cancellationToken);
+                if (manufacturer == null)
+                    throw new ManufacturerNotFoundException(command.PermanentItem.ManufacturerId);
+            }
 
             var permanentItem = command.PermanentItem.ToStoreItem(itemCategory, manufacturer);
             await itemRepository.StoreAsync(permanentItem, cancellationToken);

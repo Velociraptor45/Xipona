@@ -27,8 +27,11 @@ namespace ShoppingList.Api.Domain.Commands.CreateItem
 
             ItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(command.ItemCreation.ItemCategoryId, cancellationToken);
-            Manufacturer manufacturer = await manufacturerRepository
-                .FindByAsync(command.ItemCreation.ManufacturerId, cancellationToken);
+
+            Manufacturer manufacturer = null;
+            if (command.ItemCreation.ManufacturerId != null)
+                manufacturer = await manufacturerRepository
+                    .FindByAsync(command.ItemCreation.ManufacturerId, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 

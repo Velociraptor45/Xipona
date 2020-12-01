@@ -37,7 +37,10 @@ namespace ShoppingList.Api.Domain.Commands.ChangeItem
 
             ItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(command.ItemChange.ItemCategoryId, cancellationToken);
-            Manufacturer manufacturer = await manufacturerRepository
+
+            Manufacturer manufacturer = null;
+            if (command.ItemChange.ManufacturerId != null)
+                manufacturer = await manufacturerRepository
                 .FindByAsync(command.ItemChange.ManufacturerId, cancellationToken);
 
             var storeItem = command.ItemChange.ToStoreItem(itemCategory, manufacturer);

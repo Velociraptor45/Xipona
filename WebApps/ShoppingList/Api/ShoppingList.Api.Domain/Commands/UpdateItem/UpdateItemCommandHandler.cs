@@ -43,7 +43,10 @@ namespace ShoppingList.Api.Domain.Commands.UpdateItem
 
             ItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(command.ItemUpdate.ItemCategoryId, cancellationToken);
-            Manufacturer manufacturer = await manufacturerRepository
+
+            Manufacturer manufacturer = null;
+            if (command.ItemUpdate.ManufacturerId != null)
+                manufacturer = await manufacturerRepository
                 .FindByAsync(command.ItemUpdate.ManufacturerId, cancellationToken);
 
             using ITransaction transaction = await transactionGenerator.GenerateAsync(cancellationToken);
