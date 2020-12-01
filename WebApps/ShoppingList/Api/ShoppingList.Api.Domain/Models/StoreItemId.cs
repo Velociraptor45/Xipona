@@ -29,6 +29,18 @@ namespace ShoppingList.Api.Domain.Models
             Actual = null;
         }
 
+        public StoreItemId(int actualId, Guid offlineId)
+        {
+            Actual = new StoreItemActualId(actualId);
+            Offline = new StoreItemOfflineId(offlineId);
+        }
+
+        public StoreItemId(StoreItemActualId actualId, StoreItemOfflineId offline)
+        {
+            Actual = actualId ?? throw new ArgumentNullException(nameof(actualId));
+            Offline = offline ?? throw new ArgumentNullException(nameof(offline));
+        }
+
         public StoreItemActualId Actual { get; }
         public StoreItemOfflineId Offline { get; }
         public bool IsActualId => Actual != null;

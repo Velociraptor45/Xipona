@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShoppingList.Api.Domain.Commands.MakeTemporaryItemPermanent;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +7,7 @@ namespace ShoppingList.Api.Domain.Models
 {
     public class StoreItem
     {
-        private readonly IEnumerable<StoreItemAvailability> availabilities;
+        private IEnumerable<StoreItemAvailability> availabilities;
 
         public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
@@ -27,16 +28,16 @@ namespace ShoppingList.Api.Domain.Models
         }
 
         public StoreItemId Id { get; }
-        public string Name { get; }
+        public string Name { get; private set; }
         public bool IsDeleted { get; private set; }
-        public string Comment { get; }
-        public bool IsTemporary { get; }
-        public QuantityType QuantityType { get; }
-        public float QuantityInPacket { get; }
-        public QuantityTypeInPacket QuantityTypeInPacket { get; }
+        public string Comment { get; private set; }
+        public bool IsTemporary { get; private set; }
+        public QuantityType QuantityType { get; private set; }
+        public float QuantityInPacket { get; private set; }
+        public QuantityTypeInPacket QuantityTypeInPacket { get; private set; }
 
-        public ItemCategory ItemCategory { get; }
-        public Manufacturer Manufacturer { get; }
+        public ItemCategory ItemCategory { get; private set; }
+        public Manufacturer Manufacturer { get; private set; }
 
         public IReadOnlyCollection<StoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
 
@@ -48,6 +49,19 @@ namespace ShoppingList.Api.Domain.Models
         public bool IsAvailableInStore(StoreId storeId)
         {
             return Availabilities.FirstOrDefault(av => av.StoreId == storeId) != null;
+        }
+
+        public void MakePermanent(PermanentItem permanentItem, ItemCategory itemCategory, Manufacturer manufacturer)
+        {
+            Name = permanentItem.Name;
+            Comment = permanentItem.Comment;
+            QuantityType = permanentItem.QuantityType;
+            QuantityInPacket = permanentItem.QuantityInPacket;
+            QuantityTypeInPacket = permanentItem.QuantityTypeInPacket;
+            ItemCategory = itemCategory;
+            Manufacturer = manufacturer;
+            availabilities = permanentItem.Availabilities;
+            IsTemporary = false;
         }
     }
 }

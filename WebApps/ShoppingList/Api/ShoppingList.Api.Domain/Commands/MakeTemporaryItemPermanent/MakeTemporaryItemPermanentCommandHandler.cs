@@ -33,7 +33,7 @@ namespace ShoppingList.Api.Domain.Commands.MakeTemporaryItemPermanent
                 throw new ArgumentNullException(nameof(command));
             }
 
-            var storeItem = await itemRepository.FindByAsync(command.PermanentItem.Id, cancellationToken);
+            StoreItem storeItem = await itemRepository.FindByAsync(command.PermanentItem.Id, cancellationToken);
             if (storeItem == null)
                 throw new ItemNotFoundException(command.PermanentItem.Id);
             if (!storeItem.IsTemporary)
@@ -64,8 +64,9 @@ namespace ShoppingList.Api.Domain.Commands.MakeTemporaryItemPermanent
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var permanentItem = command.PermanentItem.ToStoreItem(itemCategory, manufacturer);
-            await itemRepository.StoreAsync(permanentItem, cancellationToken);
+            storeItem.MakePermanent(command.PermanentItem, itemCategory, manufacturer);
+
+            await itemRepository.StoreAsync(storeItem, cancellationToken);
 
             return true;
         }
