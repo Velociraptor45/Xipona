@@ -1,4 +1,5 @@
-﻿using ShoppingList.Api.Domain.Commands.MakeTemporaryItemPermanent;
+﻿using ShoppingList.Api.Domain.Commands.ChangeItem;
+using ShoppingList.Api.Domain.Commands.MakeTemporaryItemPermanent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,6 +63,18 @@ namespace ShoppingList.Api.Domain.Models
             Manufacturer = manufacturer;
             availabilities = permanentItem.Availabilities;
             IsTemporary = false;
+        }
+
+        public void Modify(ItemChange itemChange, ItemCategory itemCategory, Manufacturer manufacturer)
+        {
+            Name = itemChange.Name;
+            Comment = itemChange.Comment;
+            QuantityType = itemChange.QuantityType;
+            QuantityInPacket = itemChange.QuantityInPacket;
+            QuantityTypeInPacket = itemChange.QuantityTypeInPacket;
+            ItemCategory = itemCategory;
+            Manufacturer = manufacturer;
+            availabilities = itemChange.Availabilities;
         }
     }
 }

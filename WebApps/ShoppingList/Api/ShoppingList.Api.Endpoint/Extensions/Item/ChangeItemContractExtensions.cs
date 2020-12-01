@@ -11,9 +11,7 @@ namespace ShoppingList.Api.Endpoint.Extensions.Item
         {
             return new ItemChange(new StoreItemId(contract.Id),
                 contract.Name,
-                false,
                 contract.Comment,
-                contract.IsTemporary,
                 (QuantityType)contract.QuantityType,
                 contract.QuantityInPacket,
                 (QuantityTypeInPacket)contract.QuantityTypeInPacket,
