@@ -169,7 +169,14 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
         public async Task<IActionResult> CreateTemporaryItem([FromBody] CreateTemporaryItemContract contract)
         {
             var command = new CreateTemporaryItemCommand(contract.ToDomain());
-            await commandDispatcher.DispatchAsync(command, default);
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (StoreNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
 
             return Ok();
         }
@@ -198,6 +205,10 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest(e.Message);
             }
             catch (ItemNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (StoreNotFoundException e)
             {
                 return BadRequest(e.Message);
             }
