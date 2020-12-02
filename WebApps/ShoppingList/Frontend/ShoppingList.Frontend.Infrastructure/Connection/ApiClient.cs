@@ -1,6 +1,7 @@
 ﻿using ShoppingList.Api.Client;
 using ShoppingList.Frontend.Infrastructure.Extensions.Contracts;
 using ShoppingList.Frontend.Infrastructure.Extensions.Models;
+using ShoppingList.Frontend.Infrastructure.Extensions.Requests;
 using ShoppingList.Frontend.Models;
 using ShoppingList.Frontend.Models.Index.Search;
 using ShoppingList.Frontend.Models.Items;
@@ -52,7 +53,7 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task AddItemToShoppingListAsync(AddItemToShoppingListRequest request)
         {
-            await client.AddItemToShoppingList(request.ShoppingListId, request.ItemId, request.Quantity);
+            await client.AddItemToShoppingList(request.ToContract());
         }
 
         public async Task UpdateItemAsync(UpdateItemRequest request)
@@ -144,6 +145,16 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
         {
             var result = await client.GetAllQuantityInPacketTypes();
             return result.Select(r => r.ToModel());
+        }
+
+        public async Task CreateTemporaryItem(CreateTemporaryItemRequest request)
+        {
+            await client.CreateTemporaryItem(request.ToContract());
+        }
+
+        public async Task MakeTemporaryItemPermanent(MakeTemporaryItemPermanentRequest request)
+        {
+            await client.MakeTemporaryItemPermanent(request.ToContract());
         }
     }
 }

@@ -5,6 +5,8 @@ namespace ShoppingList.Frontend.Models.Index.Search
 {
     public class SearchBar
     {
+        private string input = "";
+
         public SearchBar()
         {
             ResetInput();
@@ -12,7 +14,15 @@ namespace ShoppingList.Frontend.Models.Index.Search
             Active = false;
         }
 
-        public string Input { get; set; }
+        public string Input
+        {
+            get => input;
+            set
+            {
+                input = value;
+            }
+        }
+
         public bool Active { get; set; }
         public IEnumerable<ItemSearchResult> Options { get; set; }
 

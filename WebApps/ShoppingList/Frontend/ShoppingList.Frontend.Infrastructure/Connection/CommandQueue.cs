@@ -139,6 +139,14 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
                     await commandClient.ChangeItemQuantityOnShoppingListAsync(
                         (ChangeItemQuantityOnShoppingListRequest)request);
                     break;
+                case nameof(CreateTemporaryItemRequest):
+                    await commandClient.CreateTemporaryItem(
+                        (CreateTemporaryItemRequest)request);
+                    break;
+                case nameof(AddItemToShoppingListRequest):
+                    await commandClient.AddItemToShoppingListAsync(
+                        (AddItemToShoppingListRequest)request);
+                    break;
             }
         }
 
