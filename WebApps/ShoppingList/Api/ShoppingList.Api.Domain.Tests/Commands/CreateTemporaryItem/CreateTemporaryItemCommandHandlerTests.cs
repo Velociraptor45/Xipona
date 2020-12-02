@@ -2,6 +2,7 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
 using ShoppingList.Api.Domain.Commands.CreateTemporaryItem;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Ports;
@@ -15,10 +16,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.CreateTemporaryIt
     public class CreateTemporaryItemCommandHandlerTests
     {
         private readonly CommonFixture commonFixture;
+        private readonly StoreFixture storeFixture;
 
         public CreateTemporaryItemCommandHandlerTests()
         {
             commonFixture = new CommonFixture();
+            storeFixture = new StoreFixture(commonFixture);
         }
 
         [Fact]
@@ -44,10 +47,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.CreateTemporaryIt
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
+            var store = storeFixture.GetStore(isDeleted: false);
 
-            var repositoryMock = fixture.Freeze<Mock<IItemRepository>>();
+            var itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
+            var storeRepositoryMock = fixture.Freeze<Mock<IStoreRepository>>();
             var handler = fixture.Create<CreateTemporaryItemCommandHandler>();
             var command = fixture.Create<CreateTemporaryItemCommand>();
+
+            storeRepositoryMock
+                .Setup(i => i.FindByAsync(
+                    It.Is<StoreId>(id => id == command.TemporaryItemCreation.Availability.StoreId),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(store));
 
             // Act
             var result = await handler.HandleAsync(command, default);
@@ -56,7 +67,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.CreateTemporaryIt
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                repositoryMock.Verify(
+                itemRepositoryMock.Verify(
                     i => i.StoreAsync(It.IsAny<StoreItem>(), It.IsAny<CancellationToken>()),
                     Times.Once);
             }
