@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.Api.ApplicationServices;
+using ShoppingList.Api.Contracts.Commands.AddItemToShoppingList;
 using ShoppingList.Api.Contracts.Commands.PutItemInBasket;
 using ShoppingList.Api.Domain.Commands.AddItemToShoppingList;
 using ShoppingList.Api.Domain.Commands.ChangeItemQuantityOnShoppingList;
@@ -93,13 +94,21 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("{shoppingListId}/items/{itemId}/add/{quantity}")]
-        public async Task<IActionResult> AddItemToShoppingList(
-            [FromRoute(Name = "shoppingListId")] int shoppingListId, [FromRoute(Name = "itemId")] int itemId,
-            [FromRoute(Name = "quantity")] float quantity)
+        [Route("items/add")]
+        public async Task<IActionResult> AddItemToShoppingList([FromBody] AddItemToShoppingListContract contract)
         {
+            ShoppingListItemId itemId;
+            try
+            {
+                itemId = contract.ItemId.ToShoppingListItemId();
+            }
+            catch (ArgumentException)
+            {
+                return BadRequest("No item id was specified.");
+            }
+
             var command = new AddItemToShoppingListCommand(
-                new ShoppingListId(shoppingListId), new ShoppingListItemId(itemId), quantity);
+                new ShoppingListId(contract.ShoppingListId), itemId, contract.Quantity);
 
             try
             {
@@ -114,6 +123,10 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest(e.Message);
             }
             catch (ShoppingListNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch(ItemAtStoreNotAvailableException e)
             {
                 return BadRequest(e.Message);
             }

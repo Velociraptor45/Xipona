@@ -1,4 +1,5 @@
 ﻿using RestEase;
+using ShoppingList.Api.Contracts.Commands.AddItemToShoppingList;
 using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
 using ShoppingList.Api.Contracts.Commands.CreateStore;
@@ -25,8 +26,8 @@ namespace ShoppingList.Api.Client
         [Get("shopping-list/is-alive")]
         Task<bool> IsAlive();
 
-        [Post("shopping-list/{shoppingListId}/items/{itemId}/add/{quantity}")]
-        Task AddItemToShoppingList([Path] int shoppingListId, [Path] int itemId, [Path] float quantity);
+        [Post("shopping-list/items/add")]
+        Task AddItemToShoppingList([Body] AddItemToShoppingListContract contract);
 
         [Post("shopping-list/{shoppingListId}/items/{itemId}/change-quantity/{quantity}")]
         Task ChangeItemQuantityOnShoppingList([Path] int shoppingListId, [Path] int itemId, [Path] float quantity);

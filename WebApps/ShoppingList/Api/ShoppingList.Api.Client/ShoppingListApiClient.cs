@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using RestEase;
+using ShoppingList.Api.Contracts.Commands.AddItemToShoppingList;
 using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
 using ShoppingList.Api.Contracts.Commands.CreateStore;
@@ -55,9 +56,9 @@ namespace ShoppingList.Api.Client
             await apiClient.RemoveItemFromShoppingList(shoppingListId, itemId);
         }
 
-        public async Task AddItemToShoppingList(int shoppingListId, int itemId, float quantity)
+        public async Task AddItemToShoppingList(AddItemToShoppingListContract contract)
         {
-            await apiClient.AddItemToShoppingList(shoppingListId, itemId, quantity);
+            await apiClient.AddItemToShoppingList(contract);
         }
 
         public async Task PutItemInBasket(int shoppingListId, int itemId)
