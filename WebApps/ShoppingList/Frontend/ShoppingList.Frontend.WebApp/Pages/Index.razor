@@ -146,14 +146,18 @@
     #region Callbacks
     private void OnCreateNewTemporaryItem()
     {
-        var item = new ShoppingListItem(new ItemId(Guid.NewGuid()), searchBar.Input, true, 1f, default, 1, default, "", "", false, 1);
+        var quantityType = new QuantityType(0, "", 1, "€");
+        var quantityTypeInPacket = new QuantityInPacketType(0, "", "");
+        var item = new ShoppingListItem(new ItemId(Guid.NewGuid()), searchBar.Input, true, 1f, quantityType, 1,
+            quantityTypeInPacket, "", "", false, 1);
 
         var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId.Value, item.Name, shoppingList.Store.Id, item.PricePerQuantity);
         var addRequest = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id, item.Quantity);
         commandQueue.Enqueue(createRequest);
         commandQueue.Enqueue(addRequest);
 
-        //todo: add to ui
+        shoppingList.Items.Add(item);
+        StateHasChanged();
     }
 
     private Task OnConnectionFailed()
