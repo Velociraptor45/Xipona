@@ -1,5 +1,6 @@
 ﻿using ShoppingList.Api.Contracts.SharedContracts;
 using ShoppingList.Frontend.Models;
+using ShoppingList.Frontend.Models.Shared;
 
 namespace ShoppingList.Frontend.Infrastructure.Extensions.Contracts
 {
@@ -8,7 +9,7 @@ namespace ShoppingList.Frontend.Infrastructure.Extensions.Contracts
         public static ShoppingListItem ToModel(this ShoppingListItemContract contract)
         {
             return new ShoppingListItem(
-                    contract.Id,
+                    new ItemId(contract.Id),
                     contract.Name,
                     contract.IsTemporary,
                     contract.PricePerQuantity,
