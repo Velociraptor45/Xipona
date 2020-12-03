@@ -3,10 +3,14 @@ using Newtonsoft.Json.Serialization;
 using RestEase;
 using ShoppingList.Api.Contracts.Commands.AddItemToShoppingList;
 using ShoppingList.Api.Contracts.Commands.ChangeItem;
+using ShoppingList.Api.Contracts.Commands.ChangeItemQuantityOnShoppingList;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
 using ShoppingList.Api.Contracts.Commands.CreateStore;
 using ShoppingList.Api.Contracts.Commands.CreateTemporaryItem;
 using ShoppingList.Api.Contracts.Commands.MakeTemporaryItemPermanent;
+using ShoppingList.Api.Contracts.Commands.PutItemInBasket;
+using ShoppingList.Api.Contracts.Commands.RemoveItemFromBasket;
+using ShoppingList.Api.Contracts.Commands.RemoveItemFromShoppingList;
 using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
@@ -51,9 +55,9 @@ namespace ShoppingList.Api.Client
             return await apiClient.GetActiveShoppingListByStoreId(storeId);
         }
 
-        public async Task RemoveItemFromShoppingList(int shoppingListId, int itemId)
+        public async Task RemoveItemFromShoppingList(RemoveItemFromShoppingListContract contract)
         {
-            await apiClient.RemoveItemFromShoppingList(shoppingListId, itemId);
+            await apiClient.RemoveItemFromShoppingList(contract);
         }
 
         public async Task AddItemToShoppingList(AddItemToShoppingListContract contract)
@@ -61,19 +65,19 @@ namespace ShoppingList.Api.Client
             await apiClient.AddItemToShoppingList(contract);
         }
 
-        public async Task PutItemInBasket(int shoppingListId, int itemId)
+        public async Task PutItemInBasket(PutItemInBasketContract contract)
         {
-            await apiClient.PutItemInBasket(shoppingListId, itemId);
+            await apiClient.PutItemInBasket(contract);
         }
 
-        public async Task RemoveItemFromBasket(int shoppingListId, int itemId)
+        public async Task RemoveItemFromBasket(RemoveItemFromBasketContract contract)
         {
-            await apiClient.RemoveItemFromBasket(shoppingListId, itemId);
+            await apiClient.RemoveItemFromBasket(contract);
         }
 
-        public async Task ChangeItemQuantityOnShoppingList(int shoppingListId, int itemId, float quantity)
+        public async Task ChangeItemQuantityOnShoppingList(ChangeItemQuantityOnShoppingListContract contract)
         {
-            await apiClient.ChangeItemQuantityOnShoppingList(shoppingListId, itemId, quantity);
+            await apiClient.ChangeItemQuantityOnShoppingList(contract);
         }
 
         public async Task CreatList(int storeId)
