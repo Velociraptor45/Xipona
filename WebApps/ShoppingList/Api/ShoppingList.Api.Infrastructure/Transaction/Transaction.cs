@@ -67,6 +67,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Transaction
 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
             if (transaction == null)
                 return;
             RollbackAsync(default).GetAwaiter().GetResult();

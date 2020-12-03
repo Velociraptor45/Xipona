@@ -16,10 +16,5 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
             : base(options)
         {
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //optionsBuilder.UseMySql(@"server=;port=15909;user id=root;pwd=;database=shoppinglist-development");
-        }
     }
 }

@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions
 {

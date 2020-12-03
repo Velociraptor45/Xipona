@@ -1,6 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Attributes;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions

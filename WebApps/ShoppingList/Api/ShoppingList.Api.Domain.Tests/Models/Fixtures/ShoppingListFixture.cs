@@ -5,8 +5,6 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-using DomainModels = ShoppingList.Api.Domain.Models;
-
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
 {
     public class ShoppingListFixture

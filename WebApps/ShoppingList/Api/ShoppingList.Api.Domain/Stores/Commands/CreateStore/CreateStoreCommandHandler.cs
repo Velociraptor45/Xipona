@@ -22,7 +22,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await storeRepository.StoreAsync(command.Store, (CancellationToken)cancellationToken);
+            await storeRepository.StoreAsync(command.Store, cancellationToken);
 
             return true;
         }

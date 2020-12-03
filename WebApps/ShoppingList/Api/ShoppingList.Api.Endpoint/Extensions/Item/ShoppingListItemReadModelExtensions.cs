@@ -1,6 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
-using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Item;
 using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ItemCategory;
 using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Manufacturer;
 using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ShoppingList;

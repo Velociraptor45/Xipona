@@ -80,6 +80,30 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return entities.Select(e => e.ToDomain());
         }
 
+        public async Task<ShoppingListModels.ShoppingList> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
+        {
+            if (storeId == null)
+                throw new ArgumentNullException(nameof(storeId));
+
+            var list = await dbContext.ShoppingLists.AsNoTracking()
+                .Include(l => l.Store)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.Manufacturer)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.ItemCategory)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.AvailableAt)
+                .FirstOrDefaultAsync(list => list.CompletionDate == null
+                    && list.StoreId == storeId.Value);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return list?.ToDomain();
+        }
+
         public async Task<ShoppingListModels.ShoppingList> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)
         {
             if (id == null)
@@ -104,30 +128,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             return list.ToDomain();
-        }
-
-        public async Task<ShoppingListModels.ShoppingList> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
-        {
-            if (storeId == null)
-                throw new ArgumentNullException(nameof(storeId));
-
-            var list = await dbContext.ShoppingLists.AsNoTracking()
-                .Include(l => l.Store)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.Manufacturer)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.ItemCategory)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.AvailableAt)
-                .FirstOrDefaultAsync(list => list.CompletionDate == null
-                    && list.StoreId == storeId.Value);
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            return list?.ToDomain();
         }
 
         public async Task<bool> ActiveShoppingListExistsForAsync(StoreId storeId, CancellationToken cancellationToken)

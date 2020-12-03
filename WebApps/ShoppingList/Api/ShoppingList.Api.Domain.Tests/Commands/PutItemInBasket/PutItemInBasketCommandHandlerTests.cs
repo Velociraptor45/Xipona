@@ -16,8 +16,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-using DomainModels = ShoppingList.Api.Domain.Models;
-
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.PutItemInBasket
 {
     public class PutItemInBasketCommandHandlerTests

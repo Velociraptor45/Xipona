@@ -21,7 +21,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Api.WebApp", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{76C4349A-E0C0-4209-B812-93E101D703F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Api.Domain.Tests", "ShoppingList.Api.Domain.Tests\ShoppingList.Api.Domain.Tests.csproj", "{23A92F8F-B312-484C-A1EA-CFC90644E0EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Api.Domain.Tests", "ShoppingList.Api.Domain.Tests\ShoppingList.Api.Domain.Tests.csproj", "{23A92F8F-B312-484C-A1EA-CFC90644E0EC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{11C72102-01D3-4BD4-A535-83EBF393AE71}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

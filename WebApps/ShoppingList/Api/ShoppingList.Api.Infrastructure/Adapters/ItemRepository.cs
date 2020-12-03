@@ -9,7 +9,6 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
 using ShoppingList.Api.Domain.Models;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
