@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
-using ShoppingList.Api.Domain.Ports.Infrastructure;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Infrastructure.Transaction
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Transaction
 {
     public class Transaction : ITransaction
     {
@@ -12,7 +12,7 @@ namespace ShoppingList.Api.Infrastructure.Transaction
 
         public Transaction(IDbContextTransaction transaction)
         {
-            this.transaction = transaction ?? throw new System.ArgumentNullException(nameof(transaction));
+            this.transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
         }
 
         public async Task CommitAsync(CancellationToken cancellationToken)

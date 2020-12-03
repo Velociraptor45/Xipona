@@ -1,11 +1,12 @@
-﻿using ShoppingList.Api.Contracts.SharedContracts;
-using ShoppingList.Api.Domain.Queries.SharedModels;
-using ShoppingList.Api.Endpoint.Extensions.ItemCategory;
-using ShoppingList.Api.Endpoint.Extensions.Manufacturer;
-using ShoppingList.Api.Endpoint.Extensions.ShoppingList;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Item;
+using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ItemCategory;
+using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Manufacturer;
+using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ShoppingList;
 using System.Linq;
 
-namespace ShoppingList.Api.Endpoint.Extensions.Item
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Item
 {
     public static class StoreItemReadModelExtensions
     {

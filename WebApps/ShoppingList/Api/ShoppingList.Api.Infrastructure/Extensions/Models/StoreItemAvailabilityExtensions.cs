@@ -1,7 +1,7 @@
-﻿using ShoppingList.Api.Domain.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
 
-namespace ShoppingList.Api.Infrastructure.Extensions.Models
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
 {
     public static class StoreItemAvailabilityExtensions
     {

@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ShoppingList.Api.ApplicationServices;
-using ShoppingList.Api.Domain.Commands.CreateItemCategory;
-using ShoppingList.Api.Domain.Queries.AllActiveItemCategories;
-using ShoppingList.Api.Domain.Queries.ItemCategorySearch;
-using ShoppingList.Api.Endpoint.Extensions.ItemCategory;
+using ProjectHermes.ShoppingList.Api.ApplicationServices;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.CreateItemCategory;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.AllActiveItemCategories;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.ItemCategorySearch;
+using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ItemCategory;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Endpoint.v1.Controllers
+namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
 {
     [ApiController]
     [Route("v1/item-category")]

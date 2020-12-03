@@ -1,11 +1,13 @@
-﻿namespace ShoppingList.Api.Infrastructure.Extensions.Entities
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
 {
     public static class ManufacturerExtension
     {
-        public static Domain.Models.Manufacturer ToDomain(this Infrastructure.Entities.Manufacturer entity)
+        public static Manufacturer ToDomain(this Infrastructure.Entities.Manufacturer entity)
         {
-            return new Domain.Models.Manufacturer(
-                new Domain.Models.ManufacturerId(entity.Id),
+            return new Manufacturer(
+                new ManufacturerId(entity.Id),
                 entity.Name,
                 entity.Deleted);
         }

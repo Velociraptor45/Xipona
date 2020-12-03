@@ -1,8 +1,8 @@
-﻿using ShoppingList.Api.Contracts.Commands.Shared;
-using ShoppingList.Api.Domain.Models;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using System;
 
-namespace ShoppingList.Api.Endpoint.Extensions.ShoppingList
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ShoppingList
 {
     public static class ItemIdContractExtensions
     {

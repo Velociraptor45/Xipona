@@ -1,7 +1,8 @@
-﻿using ShoppingList.Api.Domain.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
 
-namespace ShoppingList.Api.Domain.Exceptions
+namespace ProjectHermes.ShoppingList.Api.Domain.Exceptions
 {
     public class ActualIdRequiredException : Exception
     {

@@ -1,8 +1,8 @@
-﻿using ShoppingList.Api.Contracts.Commands.UpdateStore;
-using ShoppingList.Api.Domain.Commands.UpdateStore;
-using ShoppingList.Api.Domain.Models;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
 
-namespace ShoppingList.Api.Endpoint.Extensions.Store
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Store
 {
     public static class UpdateStoreContractExtensions
     {

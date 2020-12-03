@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ShoppingList.Api.Domain.Commands;
-using ShoppingList.Api.Domain.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using System;
 using System.Linq;
 using System.Reflection;
 
-namespace ShoppingList.Api.Domain
+namespace ProjectHermes.ShoppingList.Api.Domain
 {
     public static class ServiceCollectionExtensions
     {

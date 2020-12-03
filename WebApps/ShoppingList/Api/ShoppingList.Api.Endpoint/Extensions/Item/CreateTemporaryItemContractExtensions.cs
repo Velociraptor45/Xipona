@@ -1,7 +1,7 @@
-﻿using ShoppingList.Api.Contracts.Commands.CreateTemporaryItem;
-using ShoppingList.Api.Domain.Commands.CreateTemporaryItem;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
 
-namespace ShoppingList.Api.Endpoint.Extensions.Item
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Item
 {
     public static class CreateTemporaryItemContractExtensions
     {

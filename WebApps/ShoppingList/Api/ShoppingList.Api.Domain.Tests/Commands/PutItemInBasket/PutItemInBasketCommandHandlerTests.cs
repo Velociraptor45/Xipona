@@ -2,12 +2,14 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemInBasket;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
-using ShoppingList.Api.Core.Extensions;
-using ShoppingList.Api.Core.Tests.AutoFixture;
-using ShoppingList.Api.Domain.Commands.PutItemInBasket;
-using ShoppingList.Api.Domain.Models;
-using ShoppingList.Api.Domain.Ports;
 using System;
 using System.Linq;
 using System.Threading;
@@ -82,7 +84,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.PutItemInBasket
                 shoppingList.Items.First().IsInBasket.Should().BeTrue();
                 shoppingListRepositoryMock.Verify(
                     i => i.StoreAsync(
-                        It.Is<DomainModels.ShoppingList>(list => list.Id == shoppingList.Id),
+                        It.Is<ShoppingLists.Models.ShoppingList>(list => list.Id == shoppingList.Id),
                         It.IsAny<CancellationToken>()),
                     Times.Once);
             }
@@ -130,7 +132,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.PutItemInBasket
                 shoppingList.Items.First().IsInBasket.Should().BeTrue();
                 shoppingListRepositoryMock.Verify(
                     i => i.StoreAsync(
-                        It.Is<DomainModels.ShoppingList>(list => list.Id == shoppingList.Id),
+                        It.Is<ShoppingLists.Models.ShoppingList>(list => list.Id == shoppingList.Id),
                         It.IsAny<CancellationToken>()),
                     Times.Once);
                 itemRepositoryMock.Verify(

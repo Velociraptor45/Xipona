@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ShoppingList.Api.ApplicationServices;
-using ShoppingList.Api.Contracts.Commands.CreateStore;
-using ShoppingList.Api.Contracts.Commands.UpdateStore;
-using ShoppingList.Api.Domain.Commands.CreateStore;
-using ShoppingList.Api.Domain.Commands.UpdateStore;
-using ShoppingList.Api.Domain.Exceptions;
-using ShoppingList.Api.Domain.Queries.AllActiveStores;
-using ShoppingList.Api.Endpoint.Extensions.Store;
+using ProjectHermes.ShoppingList.Api.ApplicationServices;
+using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Store;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Endpoint.v1.Controllers
+namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
 {
     [ApiController]
     [Route("v1/store")]

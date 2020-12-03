@@ -1,17 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ShoppingList.Api.Domain.Exceptions;
-using ShoppingList.Api.Domain.Models;
-using ShoppingList.Api.Domain.Ports;
-using ShoppingList.Api.Infrastructure.Entities;
-using ShoppingList.Api.Infrastructure.Extensions.Entities;
-using ShoppingList.Api.Infrastructure.Extensions.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Infrastructure.Adapters
+using CommonModels = ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 {
     public class StoreRepository : IStoreRepository
     {
@@ -22,7 +24,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Domain.Models.Store>> FindActiveStoresAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<CommonModels.Store>> FindActiveStoresAsync(CancellationToken cancellationToken)
         {
             var storeEntities = await dbContext.Stores.AsNoTracking()
                 .Where(store => !store.Deleted)
@@ -33,7 +35,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return storeEntities.Select(store => store.ToDomain());
         }
 
-        public async Task<Domain.Models.Store> FindByAsync(StoreId id, CancellationToken cancellationToken)
+        public async Task<CommonModels.Store> FindByAsync(StoreId id, CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
@@ -66,7 +68,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return entity != null;
         }
 
-        public async Task<StoreId> StoreAsync(Domain.Models.Store store, CancellationToken cancellationToken)
+        public async Task<StoreId> StoreAsync(CommonModels.Store store, CancellationToken cancellationToken)
         {
             if (store == null)
                 throw new ArgumentNullException(nameof(store));

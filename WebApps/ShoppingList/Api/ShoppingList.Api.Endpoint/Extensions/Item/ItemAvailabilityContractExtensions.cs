@@ -1,7 +1,8 @@
-﻿using ShoppingList.Api.Contracts.Commands.SharedContracts;
-using ShoppingList.Api.Domain.Models;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ShoppingList.Api.Endpoint.Extensions.Item
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Item
 {
     public static class ItemAvailabilityContractExtensions
     {

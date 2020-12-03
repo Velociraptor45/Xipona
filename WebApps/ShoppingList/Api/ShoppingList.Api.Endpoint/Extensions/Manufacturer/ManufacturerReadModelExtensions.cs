@@ -1,8 +1,8 @@
-﻿using ShoppingList.Api.Contracts.Queries.AllActiveManufacturers;
-using ShoppingList.Api.Contracts.SharedContracts;
-using ShoppingList.Api.Domain.Queries.SharedModels;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturer.Queries.AllActiveManufacturers;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 
-namespace ShoppingList.Api.Endpoint.Extensions.Manufacturer
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Manufacturer
 {
     public static class ManufacturerReadModelExtensions
     {

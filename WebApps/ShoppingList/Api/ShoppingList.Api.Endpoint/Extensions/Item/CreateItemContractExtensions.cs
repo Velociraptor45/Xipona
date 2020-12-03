@@ -1,9 +1,10 @@
-﻿using ShoppingList.Api.Contracts.Commands.CreateItem;
-using ShoppingList.Api.Domain.Commands.CreateItem;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 using ShoppingList.Api.Domain.Models;
 using System.Linq;
 
-namespace ShoppingList.Api.Endpoint.Extensions.Item
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Item
 {
     public static class CreateItemContractExtensions
     {

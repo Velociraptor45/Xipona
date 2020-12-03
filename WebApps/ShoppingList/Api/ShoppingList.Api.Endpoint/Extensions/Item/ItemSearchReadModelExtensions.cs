@@ -1,7 +1,7 @@
-﻿using ShoppingList.Api.Contracts.Queries;
-using ShoppingList.Api.Domain.Queries.ItemSearch;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
 
-namespace ShoppingList.Api.Endpoint.Extensions.Item
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Item
 {
     public static class ItemSearchReadModelExtensions
     {

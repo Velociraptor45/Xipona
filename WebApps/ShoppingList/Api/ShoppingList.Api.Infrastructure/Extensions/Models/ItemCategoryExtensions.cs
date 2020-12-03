@@ -1,8 +1,10 @@
-﻿namespace ShoppingList.Api.Infrastructure.Extensions.Models
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
 {
     public static class ItemCategoryExtensions
     {
-        public static Infrastructure.Entities.ItemCategory ToEntity(this Domain.Models.ItemCategory model)
+        public static Infrastructure.Entities.ItemCategory ToEntity(this ItemCategory model)
         {
             return new Infrastructure.Entities.ItemCategory()
             {

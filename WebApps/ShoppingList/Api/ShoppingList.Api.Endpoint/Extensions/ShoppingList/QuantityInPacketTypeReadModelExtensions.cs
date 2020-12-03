@@ -1,7 +1,7 @@
-﻿using ShoppingList.Api.Contracts.Queries.AllQuantityTypes;
-using ShoppingList.Api.Domain.Queries.AllQuantityInPacketTypes;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityInPacketTypes;
 
-namespace ShoppingList.Api.Endpoint.Extensions.ShoppingList
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ShoppingList
 {
     public static class QuantityInPacketTypeReadModelExtensions
     {

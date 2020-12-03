@@ -1,29 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ShoppingList.Api.ApplicationServices;
-using ShoppingList.Api.Contracts.Commands.ChangeItem;
-using ShoppingList.Api.Contracts.Commands.CreateItem;
-using ShoppingList.Api.Contracts.Commands.CreateTemporaryItem;
-using ShoppingList.Api.Contracts.Commands.MakeTemporaryItemPermanent;
-using ShoppingList.Api.Contracts.Commands.UpdateItem;
-using ShoppingList.Api.Domain.Commands.ChangeItem;
-using ShoppingList.Api.Domain.Commands.CreateItem;
-using ShoppingList.Api.Domain.Commands.CreateTemporaryItem;
-using ShoppingList.Api.Domain.Commands.DeleteItem;
-using ShoppingList.Api.Domain.Commands.MakeTemporaryItemPermanent;
-using ShoppingList.Api.Domain.Commands.UpdateItem;
-using ShoppingList.Api.Domain.Exceptions;
-using ShoppingList.Api.Domain.Models;
-using ShoppingList.Api.Domain.Queries.ItemById;
-using ShoppingList.Api.Domain.Queries.ItemFilterResults;
-using ShoppingList.Api.Domain.Queries.ItemSearch;
-using ShoppingList.Api.Domain.Queries.SharedModels;
-using ShoppingList.Api.Endpoint.Converters.Item;
-using ShoppingList.Api.Endpoint.Extensions.Item;
+using ProjectHermes.ShoppingList.Api.ApplicationServices;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemById;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterResults;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Item;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Endpoint.v1.Controllers
+namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
 {
     [ApiController]
     [Route("v1/item")]

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ShoppingList.Api.Endpoint.v1.Controllers;
+using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
-namespace ShoppingList.Endpoint
+namespace ProjectHermes.ShoppingList.Api.Endpoint
 {
     public static class ServiceCollectionExtensions
     {

@@ -1,7 +1,9 @@
-﻿using ShoppingList.Api.Domain.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ShoppingList.Api.Domain.Models;
 using System.Linq;
 
-namespace ShoppingList.Api.Infrastructure.Extensions.Entities
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
 {
     public static class StoreItemExtensions
     {

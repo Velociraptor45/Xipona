@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
 using ShoppingList.Api.Domain.Models;
-using ShoppingList.Api.Domain.Ports;
-using ShoppingList.Api.Infrastructure.Entities;
-using ShoppingList.Api.Infrastructure.Extensions.Entities;
-using ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,7 +14,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Infrastructure.Adapters
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 {
     public class ItemRepository : IItemRepository
     {

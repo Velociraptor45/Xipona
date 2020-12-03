@@ -1,9 +1,10 @@
-﻿using ShoppingList.Api.Contracts.Commands.ChangeItem;
-using ShoppingList.Api.Domain.Commands.ChangeItem;
-using ShoppingList.Api.Domain.Models;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System.Linq;
 
-namespace ShoppingList.Api.Endpoint.Extensions.Item
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Item
 {
     public static class ChangeItemContractExtensions
     {

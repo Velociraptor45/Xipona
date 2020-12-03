@@ -2,10 +2,11 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
-using ShoppingList.Api.Domain.Commands.CreateTemporaryItem;
 using ShoppingList.Api.Domain.Models;
-using ShoppingList.Api.Domain.Ports;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

@@ -1,7 +1,7 @@
-﻿using ShoppingList.Api.Contracts.SharedContracts;
-using ShoppingList.Api.Domain.Queries.SharedModels;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 
-namespace ShoppingList.Api.Endpoint.Extensions.Item
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Item
 {
     public static class StoreItemAvailabilityReadModelExtensions
     {

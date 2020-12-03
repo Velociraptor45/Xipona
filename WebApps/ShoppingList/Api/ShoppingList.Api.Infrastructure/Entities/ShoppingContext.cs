@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace ShoppingList.Api.Infrastructure.Entities
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
 {
     public class ShoppingContext : DbContext
     {

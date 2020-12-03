@@ -1,11 +1,13 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using System;
 using System.Linq;
 
-namespace ShoppingList.Api.Infrastructure.Extensions.Entities
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
 {
     public static class ShoppingListItemExtensions
     {
-        public static Domain.Models.ShoppingListItem ToShoppingListItemDomain(
+        public static ShoppingListItem ToShoppingListItemDomain(
             this Infrastructure.Entities.Item entity, int storeId, int shoppingListId)
         {
             Infrastructure.Entities.AvailableAt priceMap = entity.AvailableAt.FirstOrDefault(map => map.StoreId == storeId);
@@ -17,16 +19,16 @@ namespace ShoppingList.Api.Infrastructure.Extensions.Entities
             if (listMap == null)
                 throw new InvalidOperationException($"Item is not on list {shoppingListId}");
 
-            return new Domain.Models.ShoppingListItem(
-                new Domain.Models.ShoppingListItemId(entity.Id),
+            return new ShoppingListItem(
+                new ShoppingListItemId(entity.Id),
                 entity.Name,
                 entity.Deleted,
                 entity.Comment,
                 entity.IsTemporary,
                 priceMap.Price,
-                (Domain.Models.QuantityType)entity.QuantityType,
+                (QuantityType)entity.QuantityType,
                 entity.QuantityInPacket,
-                (Domain.Models.QuantityTypeInPacket)entity.QuantityTypeInPacket,
+                (QuantityTypeInPacket)entity.QuantityTypeInPacket,
                 entity.ItemCategory?.ToDomain(),
                 entity.Manufacturer?.ToDomain(),
                 listMap.InBasket,

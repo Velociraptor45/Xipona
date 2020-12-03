@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ShoppingList.Api.Core.Tests
+namespace ProjectHermes.ShoppingList.Api.Core.Tests
 {
     public static class ListExtensions
     {

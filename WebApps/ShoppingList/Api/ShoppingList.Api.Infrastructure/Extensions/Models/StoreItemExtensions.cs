@@ -1,10 +1,11 @@
-﻿using System.Linq;
+﻿using ShoppingList.Api.Domain.Models;
+using System.Linq;
 
-namespace ShoppingList.Api.Infrastructure.Extensions.Models
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
 {
     public static class StoreItemExtensions
     {
-        public static Infrastructure.Entities.Item ToEntity(this Domain.Models.StoreItem model)
+        public static Infrastructure.Entities.Item ToEntity(this StoreItem model)
         {
             return new Infrastructure.Entities.Item()
             {

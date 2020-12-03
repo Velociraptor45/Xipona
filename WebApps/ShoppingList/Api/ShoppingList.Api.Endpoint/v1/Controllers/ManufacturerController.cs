@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ShoppingList.Api.ApplicationServices;
-using ShoppingList.Api.Domain.Commands.CreateManufacturer;
-using ShoppingList.Api.Domain.Queries.AllActiveManufacturers;
-using ShoppingList.Api.Domain.Queries.ManufacturerSearch;
-using ShoppingList.Api.Endpoint.Extensions.Manufacturer;
+using ProjectHermes.ShoppingList.Api.ApplicationServices;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Commands.CreateManufacturer;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.AllActiveManufacturers;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.ManufacturerSearch;
+using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Manufacturer;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Endpoint.v1.Controllers
+namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
 {
     [ApiController]
     [Route("v1/manufacturer")]

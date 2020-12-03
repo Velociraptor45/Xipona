@@ -1,8 +1,8 @@
-﻿using ShoppingList.Api.Domain.Commands;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.ApplicationServices
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices
 {
     public interface ICommandDispatcher
     {

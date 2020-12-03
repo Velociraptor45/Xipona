@@ -1,7 +1,7 @@
-﻿using ShoppingList.Api.Contracts.Queries.AllActiveStores;
-using ShoppingList.Api.Domain.Queries.AllActiveStores;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
 
-namespace ShoppingList.Api.Endpoint.Extensions.Store
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Store
 {
     public static class ActiveStoreReadModelExtensions
     {

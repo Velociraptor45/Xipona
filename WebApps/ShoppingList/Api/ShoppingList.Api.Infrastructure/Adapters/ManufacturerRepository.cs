@@ -1,19 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ShoppingList.Api.Domain.Exceptions;
-using ShoppingList.Api.Domain.Models;
-using ShoppingList.Api.Domain.Ports;
-using ShoppingList.Api.Infrastructure.Entities;
-using ShoppingList.Api.Infrastructure.Extensions.Entities;
-using ShoppingList.Api.Infrastructure.Extensions.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Models = ShoppingList.Api.Domain.Models;
-
-namespace ShoppingList.Api.Infrastructure.Adapters
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 {
     public class ManufacturerRepository : IManufacturerRepository
     {
@@ -24,7 +22,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Models.Manufacturer>> FindByAsync(string searchInput,
+        public async Task<IEnumerable<Domain.Common.Models.Manufacturer>> FindByAsync(string searchInput,
             CancellationToken cancellationToken)
         {
             var manufacturerEntities = await dbContext.Manufacturers.AsNoTracking()
@@ -36,7 +34,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return manufacturerEntities.Select(entity => entity.ToDomain());
         }
 
-        public async Task<Models.Manufacturer> FindByAsync(ManufacturerId id,
+        public async Task<Domain.Common.Models.Manufacturer> FindByAsync(ManufacturerId id,
             CancellationToken cancellationToken)
         {
             if (id == null)
@@ -53,7 +51,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return entity.ToDomain();
         }
 
-        public async Task<IEnumerable<Models.Manufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids,
+        public async Task<IEnumerable<Domain.Common.Models.Manufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids,
             CancellationToken cancellationToken)
         {
             if (ids == null)
@@ -72,7 +70,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return entities.Select(e => e.ToDomain());
         }
 
-        public async Task<IEnumerable<Models.Manufacturer>> FindByAsync(bool includeDeleted,
+        public async Task<IEnumerable<Domain.Common.Models.Manufacturer>> FindByAsync(bool includeDeleted,
             CancellationToken cancellationToken)
         {
             var results = await dbContext.Manufacturers.AsNoTracking()
@@ -84,7 +82,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return results.Select(m => m.ToDomain());
         }
 
-        public async Task<Models.Manufacturer> StoreAsync(Models.Manufacturer model, CancellationToken cancellationToken)
+        public async Task<Domain.Common.Models.Manufacturer> StoreAsync(Domain.Common.Models.Manufacturer model, CancellationToken cancellationToken)
         {
             var entity = model.ToEntity();
 

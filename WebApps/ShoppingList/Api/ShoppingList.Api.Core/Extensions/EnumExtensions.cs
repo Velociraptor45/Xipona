@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace ShoppingList.Api.Core.Extensions
+namespace ProjectHermes.ShoppingList.Api.Core.Extensions
 {
     public static class EnumExtensions
     {

@@ -1,17 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ShoppingList.Api.Domain.Exceptions;
-using ShoppingList.Api.Domain.Models;
-using ShoppingList.Api.Domain.Ports;
-using ShoppingList.Api.Infrastructure.Entities;
-using ShoppingList.Api.Infrastructure.Extensions.Entities;
-using ShoppingList.Api.Infrastructure.Extensions.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Infrastructure.Adapters
+using ShoppingListModels = ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 {
     public class ShoppingListRepository : IShoppingListRepository
     {
@@ -24,7 +28,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
 
         #region public methods
 
-        public async Task StoreAsync(Domain.Models.ShoppingList shoppingList, CancellationToken cancellationToken)
+        public async Task StoreAsync(ShoppingListModels.ShoppingList shoppingList, CancellationToken cancellationToken)
         {
             if (shoppingList == null)
                 throw new ArgumentNullException(nameof(shoppingList));
@@ -48,7 +52,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             await StoreModifiedListAsync(listEntity, shoppingList, cancellationToken);
         }
 
-        public async Task<IEnumerable<Domain.Models.ShoppingList>> FindActiveByAsync(StoreItemId storeItemId,
+        public async Task<IEnumerable<ShoppingListModels.ShoppingList>> FindActiveByAsync(StoreItemId storeItemId,
             CancellationToken cancellationToken)
         {
             if (storeItemId is null)
@@ -76,7 +80,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return entities.Select(e => e.ToDomain());
         }
 
-        public async Task<Domain.Models.ShoppingList> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)
+        public async Task<ShoppingListModels.ShoppingList> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
@@ -102,7 +106,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return list.ToDomain();
         }
 
-        public async Task<Domain.Models.ShoppingList> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
+        public async Task<ShoppingListModels.ShoppingList> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
         {
             if (storeId == null)
                 throw new ArgumentNullException(nameof(storeId));
@@ -142,7 +146,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
         #region private methods
 
         private async Task StoreModifiedListAsync(Entities.ShoppingList existingShoppingListEntity,
-            Domain.Models.ShoppingList shoppingList, CancellationToken cancellationToken)
+            ShoppingListModels.ShoppingList shoppingList, CancellationToken cancellationToken)
         {
             var shoppingListEntityToStore = shoppingList.ToEntity();
             var onListMappings = existingShoppingListEntity.ItemsOnList.ToDictionary(map => map.ItemId);
@@ -176,7 +180,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             await dbContext.SaveChangesAsync();
         }
 
-        private async Task StoreAsNewListAsync(Domain.Models.ShoppingList shoppingList, CancellationToken cancellationToken)
+        private async Task StoreAsNewListAsync(ShoppingListModels.ShoppingList shoppingList, CancellationToken cancellationToken)
         {
             var entity = shoppingList.ToEntity();
 

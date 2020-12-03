@@ -1,5 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
-using ShoppingList.Api.Domain.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
 using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.ShoppingList

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace ShoppingList.Api.WebApp
+namespace ProjectHermes.ShoppingList.Api.WebApp
 {
     public class Program
     {

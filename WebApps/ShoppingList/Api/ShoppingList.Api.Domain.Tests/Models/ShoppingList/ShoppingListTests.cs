@@ -1,17 +1,17 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.Tests;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
-using ShoppingList.Api.Core.Extensions;
-using ShoppingList.Api.Core.Tests;
-using ShoppingList.Api.Domain.Exceptions;
-using ShoppingList.Api.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
-
-using DomainModels = ShoppingList.Api.Domain.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.ShoppingList
 {
@@ -39,7 +39,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.ShoppingList
         {
             // Arrange
             var fixure = commonFixture.GetNewFixture();
-            var shoppingList = fixure.Create<DomainModels.ShoppingList>();
+            var shoppingList = fixure.Create<Domain.ShoppingLists.Models.ShoppingList>();
 
             // Act
             Action action = () => shoppingList.AddItem(null, commonFixture.NextBool(), commonFixture.NextFloat());

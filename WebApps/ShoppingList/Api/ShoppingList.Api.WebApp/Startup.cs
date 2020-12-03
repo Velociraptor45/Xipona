@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ShoppingList.Api.ApplicationServices;
-using ShoppingList.Api.Domain;
-using ShoppingList.Api.Infrastructure;
-using ShoppingList.Endpoint;
+using ProjectHermes.ShoppingList.Api.ApplicationServices;
+using ProjectHermes.ShoppingList.Api.Domain;
+using ProjectHermes.ShoppingList.Api.Endpoint;
+using ProjectHermes.ShoppingList.Api.Infrastructure;
 
-namespace ShoppingList.Api.WebApp
+namespace ProjectHermes.ShoppingList.Api.WebApp
 {
     public class Startup
     {

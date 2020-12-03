@@ -1,8 +1,8 @@
-﻿using ShoppingList.Api.Domain.Queries;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.ApplicationServices
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices
 {
     public interface IQueryDispatcher
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ShoppingList.Api.Core
+namespace ProjectHermes.ShoppingList.Api.Core
 {
     public class GenericPrimitive<T>
         where T : struct

@@ -1,7 +1,7 @@
-﻿using ShoppingList.Api.Domain.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using System;
 
-namespace ShoppingList.Api.Domain.Exceptions
+namespace ProjectHermes.ShoppingList.Api.Domain.Exceptions
 {
     public class ShoppingListAlreadyFinishedException : Exception
     {

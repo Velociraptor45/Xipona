@@ -1,8 +1,8 @@
-﻿using ShoppingList.Api.Contracts.Queries.AllActiveItemCategories;
-using ShoppingList.Api.Contracts.SharedContracts;
-using ShoppingList.Api.Domain.Queries.SharedModels;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Queries.AllActiveItemCategories;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
 
-namespace ShoppingList.Api.Endpoint.Extensions.ItemCategory
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ItemCategory
 {
     public static class ItemCategoryReadModelConverter
     {

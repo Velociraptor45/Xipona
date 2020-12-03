@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ShoppingList.Api.Domain.Exceptions
+namespace ProjectHermes.ShoppingList.Api.Domain.Exceptions
 {
     public class ShoppingListNotFoundException : Exception
     {

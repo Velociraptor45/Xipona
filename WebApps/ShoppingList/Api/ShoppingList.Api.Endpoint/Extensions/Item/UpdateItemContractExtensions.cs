@@ -1,10 +1,10 @@
-﻿using ShoppingList.Api.Contracts.Commands.UpdateItem;
-using ShoppingList.Api.Domain.Commands.UpdateItem;
-using ShoppingList.Api.Domain.Models;
-using ShoppingList.Api.Endpoint.Extensions.Item;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System.Linq;
 
-namespace ShoppingList.Api.Endpoint.Converters.Item
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Item
 {
     public static class UpdateItemContractExtensions
     {

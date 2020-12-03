@@ -1,29 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ShoppingList.Api.ApplicationServices;
-using ShoppingList.Api.Contracts.Commands.AddItemToShoppingList;
-using ShoppingList.Api.Contracts.Commands.ChangeItemQuantityOnShoppingList;
-using ShoppingList.Api.Contracts.Commands.PutItemInBasket;
-using ShoppingList.Api.Contracts.Commands.RemoveItemFromBasket;
-using ShoppingList.Api.Contracts.Commands.RemoveItemFromShoppingList;
-using ShoppingList.Api.Domain.Commands.AddItemToShoppingList;
-using ShoppingList.Api.Domain.Commands.ChangeItemQuantityOnShoppingList;
-using ShoppingList.Api.Domain.Commands.CreateShoppingList;
-using ShoppingList.Api.Domain.Commands.FinishShoppingList;
-using ShoppingList.Api.Domain.Commands.PutItemInBasket;
-using ShoppingList.Api.Domain.Commands.RemoveItemFromBasket;
-using ShoppingList.Api.Domain.Commands.RemoveItemFromShoppingList;
-using ShoppingList.Api.Domain.Exceptions;
-using ShoppingList.Api.Domain.Models;
-using ShoppingList.Api.Domain.Queries.ActiveShoppingListByStoreId;
-using ShoppingList.Api.Domain.Queries.AllQuantityInPacketTypes;
-using ShoppingList.Api.Domain.Queries.AllQuantityTypes;
-using ShoppingList.Api.Domain.Queries.SharedModels;
-using ShoppingList.Api.Endpoint.Extensions.ShoppingList;
+using ProjectHermes.ShoppingList.Api.ApplicationServices;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.CreateShoppingList;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishShoppingList;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemInBasket;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromBasket;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromShoppingList;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityInPacketTypes;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ShoppingList;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Endpoint.v1.Controllers
+namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
 {
     [ApiController]
     [Route("v1/shopping-list")]

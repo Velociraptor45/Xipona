@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace ShoppingList.Api.ApplicationServices
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices
 {
     public static class ServiceCollectionExtensions
     {

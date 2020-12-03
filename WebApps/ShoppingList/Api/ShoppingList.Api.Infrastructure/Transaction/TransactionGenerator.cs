@@ -1,9 +1,9 @@
-﻿using ShoppingList.Api.Domain.Ports.Infrastructure;
-using ShoppingList.Api.Infrastructure.Entities;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Infrastructure.Transaction
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Transaction
 {
     public class TransactionGenerator : ITransactionGenerator
     {

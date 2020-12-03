@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ShoppingList.Api.Infrastructure.Entities
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
 {
     public class ItemsOnList
     {

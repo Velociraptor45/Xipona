@@ -1,15 +1,15 @@
-﻿using ShoppingList.Api.Contracts.Commands.CreateStore;
-using ShoppingList.Api.Domain.Models;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 
-using Models = ShoppingList.Api.Domain.Models;
+using CommonModels = ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 
-namespace ShoppingList.Api.Endpoint.Extensions.Store
+namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Store
 {
     public static class CreateStoreContractExtensions
     {
-        public static Models.Store ToDomain(this CreateStoreContract contract)
+        public static CommonModels.Store ToDomain(this CreateStoreContract contract)
         {
-            return new Models.Store(new StoreId(0),
+            return new CommonModels.Store(new StoreId(0),
                 contract.Name,
                 false);
         }

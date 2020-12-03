@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ShoppingList.Api.Core.Extensions
+namespace ProjectHermes.ShoppingList.Api.Core.Extensions
 {
     public static class ObjectExtensions
     {

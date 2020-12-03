@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ShoppingList.Api.Core.Attributes
+namespace ProjectHermes.ShoppingList.Api.Core.Attributes
 {
     public class QuantityLabelAttribute : Attribute
     {

@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ShoppingList.Api.Domain.Ports;
-using ShoppingList.Api.Domain.Ports.Infrastructure;
-using ShoppingList.Api.Infrastructure.Adapters;
-using ShoppingList.Api.Infrastructure.Entities;
-using ShoppingList.Api.Infrastructure.Transaction;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Adapters;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Transaction;
 
-namespace ShoppingList.Api.Infrastructure
+namespace ProjectHermes.ShoppingList.Api.Infrastructure
 {
     public static class ServiceCollectionExtensions
     {
