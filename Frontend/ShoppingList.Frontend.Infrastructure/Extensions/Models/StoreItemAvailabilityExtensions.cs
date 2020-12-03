@@ -1,4 +1,4 @@
-﻿using ShoppingList.Api.Contracts.Commands.SharedContracts;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
 using ShoppingList.Frontend.Models.Items;
 
 namespace ShoppingList.Frontend.Infrastructure.Extensions.Models

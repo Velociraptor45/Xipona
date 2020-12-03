@@ -1,6 +1,6 @@
-﻿using ShoppingList.Api.Contracts.Commands.ChangeItem;
-using ShoppingList.Api.Contracts.Commands.CreateItem;
-using ShoppingList.Api.Contracts.Commands.UpdateItem;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ShoppingList.Frontend.Models.Items;
 using System.Linq;
 

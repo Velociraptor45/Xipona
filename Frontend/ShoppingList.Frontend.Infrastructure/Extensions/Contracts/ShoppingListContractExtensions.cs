@@ -1,4 +1,4 @@
-﻿using ShoppingList.Api.Contracts.SharedContracts;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
 using ShoppingList.Frontend.Models;
 using System.Linq;
 

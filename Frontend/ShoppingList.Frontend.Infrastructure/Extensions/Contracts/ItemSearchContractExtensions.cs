@@ -1,4 +1,4 @@
-﻿using ShoppingList.Api.Contracts.Queries;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
 using ShoppingList.Frontend.Models.Index.Search;
 
 namespace ShoppingList.Frontend.Infrastructure.Extensions.Contracts

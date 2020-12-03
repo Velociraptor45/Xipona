@@ -1,4 +1,4 @@
-﻿using ShoppingList.Api.Contracts.Commands.MakeTemporaryItemPermanent;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
 using ShoppingList.Frontend.Infrastructure.Extensions.Models;
 using ShoppingList.Frontend.Models.Shared.Requests;
 using System.Linq;

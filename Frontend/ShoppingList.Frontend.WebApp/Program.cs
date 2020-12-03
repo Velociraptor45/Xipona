@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using ShoppingList.Api.Client;
+using ProjectHermes.ShoppingList.Api.Client;
 using ShoppingList.Frontend.Infrastructure.Connection;
 using System;
 using System.Net.Http;
@@ -15,7 +15,7 @@ namespace ShoppingList.Frontend.WebApp
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-            var uriBuilder = new UriBuilder("http", "192.168.178.92", 12489, "v1");
+            var uriBuilder = new UriBuilder("http", "", 0, "v1");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = uriBuilder.Uri }); //todo
             builder.Services.AddTransient<IShoppingListApiClient, ShoppingListApiClient>();

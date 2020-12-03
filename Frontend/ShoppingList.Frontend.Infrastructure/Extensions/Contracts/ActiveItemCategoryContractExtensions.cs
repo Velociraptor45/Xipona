@@ -1,4 +1,4 @@
-﻿using ShoppingList.Api.Contracts.Queries.AllActiveItemCategories;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Queries.AllActiveItemCategories;
 using ShoppingList.Frontend.Models;
 
 namespace ShoppingList.Frontend.Infrastructure.Extensions.Contracts

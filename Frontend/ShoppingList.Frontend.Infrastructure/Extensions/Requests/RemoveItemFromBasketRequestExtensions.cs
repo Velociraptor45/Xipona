@@ -1,4 +1,4 @@
-﻿using ShoppingList.Api.Contracts.Commands.RemoveItemFromBasket;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
 using ShoppingList.Frontend.Infrastructure.Extensions.Models;
 using ShoppingList.Frontend.Models.Shared.Requests;
 

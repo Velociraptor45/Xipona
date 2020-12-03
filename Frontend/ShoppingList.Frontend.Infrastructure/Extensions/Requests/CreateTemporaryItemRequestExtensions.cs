@@ -1,5 +1,5 @@
-﻿using ShoppingList.Api.Contracts.Commands.CreateTemporaryItem;
-using ShoppingList.Api.Contracts.Commands.SharedContracts;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
 using ShoppingList.Frontend.Models.Shared.Requests;
 
 namespace ShoppingList.Frontend.Infrastructure.Extensions.Requests

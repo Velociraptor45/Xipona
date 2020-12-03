@@ -1,4 +1,4 @@
-﻿using ShoppingList.Api.Client;
+﻿using ProjectHermes.ShoppingList.Api.Client;
 using ShoppingList.Frontend.Infrastructure.Extensions.Contracts;
 using ShoppingList.Frontend.Infrastructure.Extensions.Models;
 using ShoppingList.Frontend.Infrastructure.Extensions.Requests;

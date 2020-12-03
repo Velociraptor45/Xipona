@@ -1,4 +1,4 @@
-﻿using ShoppingList.Api.Contracts.Commands.ChangeItemQuantityOnShoppingList;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
 using ShoppingList.Frontend.Infrastructure.Extensions.Models;
 using ShoppingList.Frontend.Models.Shared.Requests;
 
