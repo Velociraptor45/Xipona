@@ -6,7 +6,7 @@ namespace ShoppingList.Api.Domain.Exceptions
     public class ItemAtStoreNotAvailableException : Exception
     {
         public ItemAtStoreNotAvailableException(StoreItemId itemId, StoreId storeId)
-            : base($"Item {itemId.Value} not available at store {storeId.Value}")
+            : base($"Item {itemId} not available at store {storeId.Value}")
         {
         }
 

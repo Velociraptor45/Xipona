@@ -1,25 +1,27 @@
-﻿namespace ShoppingList.Frontend.Models
+﻿using ShoppingList.Frontend.Models.Shared;
+
+namespace ShoppingList.Frontend.Models
 {
     public class ShoppingListItem
     {
-        public ShoppingListItem(int id, string name, bool isTemporary, float pricePerQuantity, QuantityType quantityType,
+        public ShoppingListItem(ItemId id, string name, bool isTemporary, float pricePerQuantity, QuantityType quantityType,
             float quantityInPacket, QuantityInPacketType quantityInPacketType, string itemCategory,
             string manufacturer, bool isInBasket, float quantity)
         {
-            Id = id;
+            Id = id ?? throw new System.ArgumentNullException(nameof(id));
             Name = name;
             IsTemporary = isTemporary;
             PricePerQuantity = pricePerQuantity;
-            QuantityType = quantityType;
+            QuantityType = quantityType ?? throw new System.ArgumentNullException(nameof(quantityType));
             QuantityInPacket = quantityInPacket;
-            QuantityInPacketType = quantityInPacketType;
+            QuantityInPacketType = quantityInPacketType ?? throw new System.ArgumentNullException(nameof(quantityInPacketType));
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
             IsInBasket = isInBasket;
             Quantity = quantity;
         }
 
-        public int Id { get; }
+        public ItemId Id { get; }
         public string Name { get; }
         public bool IsTemporary { get; }
         public float PricePerQuantity { get; }

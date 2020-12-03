@@ -12,12 +12,13 @@ namespace ShoppingList.Api.Endpoint.Extensions.Item
             return new ItemCreation(
                 contract.Name,
                 contract.Comment,
-                contract.IsTemporary,
                 (QuantityType)contract.QuantityType,
                 contract.QuantityInPacket,
                 (QuantityTypeInPacket)contract.QuantityTypeInPacket,
                 new ItemCategoryId(contract.ItemCategoryId),
-                new ManufacturerId(contract.ManufacturerId),
+                contract.ManufacturerId.HasValue ?
+                    new ManufacturerId(contract.ManufacturerId.Value) :
+                    null,
                 contract.Availabilities.Select(av => av.ToDomain()));
         }
     }

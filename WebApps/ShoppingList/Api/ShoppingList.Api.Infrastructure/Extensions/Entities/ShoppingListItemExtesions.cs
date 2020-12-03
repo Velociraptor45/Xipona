@@ -6,7 +6,7 @@
         {
             return new Infrastructure.Entities.Item()
             {
-                Id = model.Id.Value,
+                Id = model.Id.Actual.Value,
                 Name = model.Name,
                 Deleted = model.IsDeleted,
                 Comment = model.Comment,
@@ -14,8 +14,8 @@
                 QuantityType = (int)model.QuantityType,
                 QuantityInPacket = model.QuantityInPacket,
                 QuantityTypeInPacket = (int)model.QuantityTypeInPacket,
-                ItemCategoryId = model.ItemCategory.Id.Value,
-                ManufacturerId = model.Manufacturer.Id.Value
+                ItemCategoryId = model.ItemCategory?.Id.Value,
+                ManufacturerId = model.Manufacturer?.Id.Value
             };
         }
     }

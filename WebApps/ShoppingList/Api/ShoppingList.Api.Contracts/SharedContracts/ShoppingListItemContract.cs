@@ -9,15 +9,20 @@ namespace ShoppingList.Api.Contracts.SharedContracts
             QuantityInPacketTypeContract quantityTypeInPacket,
             ItemCategoryContract itemCategory, ManufacturerContract manufacturer, bool isInBasket, float quantity)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new System.ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
+            }
+
             Id = id;
             Name = name;
             IsDeleted = isDeleted;
             Comment = comment;
             IsTemporary = isTemporary;
             PricePerQuantity = pricePerQuantity;
-            QuantityType = quantityType;
+            QuantityType = quantityType ?? throw new System.ArgumentNullException(nameof(quantityType));
             QuantityInPacket = quantityInPacket;
-            QuantityTypeInPacket = quantityTypeInPacket;
+            QuantityTypeInPacket = quantityTypeInPacket ?? throw new System.ArgumentNullException(nameof(quantityTypeInPacket));
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
             IsInBasket = isInBasket;

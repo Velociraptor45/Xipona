@@ -1,7 +1,14 @@
 ﻿using RestEase;
+using ShoppingList.Api.Contracts.Commands.AddItemToShoppingList;
 using ShoppingList.Api.Contracts.Commands.ChangeItem;
+using ShoppingList.Api.Contracts.Commands.ChangeItemQuantityOnShoppingList;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
 using ShoppingList.Api.Contracts.Commands.CreateStore;
+using ShoppingList.Api.Contracts.Commands.CreateTemporaryItem;
+using ShoppingList.Api.Contracts.Commands.MakeTemporaryItemPermanent;
+using ShoppingList.Api.Contracts.Commands.PutItemInBasket;
+using ShoppingList.Api.Contracts.Commands.RemoveItemFromBasket;
+using ShoppingList.Api.Contracts.Commands.RemoveItemFromShoppingList;
 using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Contracts.Commands.UpdateStore;
 using ShoppingList.Api.Contracts.Queries;
@@ -23,11 +30,11 @@ namespace ShoppingList.Api.Client
         [Get("shopping-list/is-alive")]
         Task<bool> IsAlive();
 
-        [Post("shopping-list/{shoppingListId}/items/{itemId}/add/{quantity}")]
-        Task AddItemToShoppingList([Path] int shoppingListId, [Path] int itemId, [Path] float quantity);
+        [Post("shopping-list/items/add")]
+        Task AddItemToShoppingList([Body] AddItemToShoppingListContract contract);
 
-        [Post("shopping-list/{shoppingListId}/items/{itemId}/change-quantity/{quantity}")]
-        Task ChangeItemQuantityOnShoppingList([Path] int shoppingListId, [Path] int itemId, [Path] float quantity);
+        [Post("shopping-list/items/change-quantity")]
+        Task ChangeItemQuantityOnShoppingList([Body] ChangeItemQuantityOnShoppingListContract contract);
 
         [Post("shopping-list/create/{storeId}")]
         Task CreatList([Path] int storeId);
@@ -38,14 +45,14 @@ namespace ShoppingList.Api.Client
         [Get("shopping-list/active/{storeId}")]
         Task<ShoppingListContract> GetActiveShoppingListByStoreId([Path] int storeId);
 
-        [Post("shopping-list/{shoppingListId}/items/{itemId}/put-in-basket")]
-        Task PutItemInBasket([Path] int shoppingListId, [Path] int itemId);
+        [Post("shopping-list/items/put-in-basket")]
+        Task PutItemInBasket([Body] PutItemInBasketContract contract);
 
-        [Post("shopping-list/{shoppingListId}/items/{itemId}/remove-from-basket")]
-        Task RemoveItemFromBasket([Path] int shoppingListId, [Path] int itemId);
+        [Post("shopping-list/items/remove-from-basket")]
+        Task RemoveItemFromBasket([Body] RemoveItemFromBasketContract contract);
 
-        [Post("shopping-list/{shoppingListId}/items/{itemId}/remove")]
-        Task RemoveItemFromShoppingList([Path] int shoppingListId, [Path] int itemId);
+        [Post("shopping-list/items/remove")]
+        Task RemoveItemFromShoppingList([Body] RemoveItemFromShoppingListContract contract);
 
         [Get("shopping-list/quantity-types")]
         Task<IEnumerable<QuantityTypeContract>> GetAllQuantityTypes();
@@ -78,6 +85,12 @@ namespace ShoppingList.Api.Client
 
         [Get("item/{itemId}")]
         Task<StoreItemContract> Get([Path] int itemId);
+
+        [Post("item/create/temporary")]
+        Task CreateTemporaryItem([Body] CreateTemporaryItemContract contract);
+
+        [Post("item/make-temporary-item-permanent")]
+        Task MakeTemporaryItemPermanent([Body] MakeTemporaryItemPermanentContract contract);
 
         #endregion ItemController
 

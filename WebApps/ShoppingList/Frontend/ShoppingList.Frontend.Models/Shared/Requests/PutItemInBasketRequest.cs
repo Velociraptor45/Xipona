@@ -4,7 +4,7 @@ namespace ShoppingList.Frontend.Models.Shared.Requests
 {
     public class PutItemInBasketRequest : IApiRequest
     {
-        public PutItemInBasketRequest(Guid requestId, int shoppingListId, int itemId)
+        public PutItemInBasketRequest(Guid requestId, int shoppingListId, ItemId itemId)
         {
             RequestId = requestId;
             ShoppingListId = shoppingListId;
@@ -13,6 +13,6 @@ namespace ShoppingList.Frontend.Models.Shared.Requests
 
         public Guid RequestId { get; }
         public int ShoppingListId { get; }
-        public int ItemId { get; }
+        public ItemId ItemId { get; }
     }
 }

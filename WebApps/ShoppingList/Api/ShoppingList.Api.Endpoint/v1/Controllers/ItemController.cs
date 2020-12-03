@@ -2,10 +2,14 @@
 using ShoppingList.Api.ApplicationServices;
 using ShoppingList.Api.Contracts.Commands.ChangeItem;
 using ShoppingList.Api.Contracts.Commands.CreateItem;
+using ShoppingList.Api.Contracts.Commands.CreateTemporaryItem;
+using ShoppingList.Api.Contracts.Commands.MakeTemporaryItemPermanent;
 using ShoppingList.Api.Contracts.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Commands.ChangeItem;
 using ShoppingList.Api.Domain.Commands.CreateItem;
+using ShoppingList.Api.Domain.Commands.CreateTemporaryItem;
 using ShoppingList.Api.Domain.Commands.DeleteItem;
+using ShoppingList.Api.Domain.Commands.MakeTemporaryItemPermanent;
 using ShoppingList.Api.Domain.Commands.UpdateItem;
 using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
@@ -64,6 +68,10 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
             {
                 return BadRequest(e.Message);
             }
+            catch (TemporaryItemNotModifyableException e)
+            {
+                return BadRequest(e.Message);
+            }
 
             return Ok();
         }
@@ -82,6 +90,10 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
                 await commandDispatcher.DispatchAsync(command, default);
             }
             catch (ItemNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (TemporaryItemNotUpdateableException e)
             {
                 return BadRequest(e.Message);
             }
@@ -149,6 +161,59 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
             }
 
             return Ok(result.ToContract());
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [Route("create/temporary")]
+        public async Task<IActionResult> CreateTemporaryItem([FromBody] CreateTemporaryItemContract contract)
+        {
+            var command = new CreateTemporaryItemCommand(contract.ToDomain());
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (StoreNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("make-temporary-item-permanent")]
+        public async Task<IActionResult> MakeTemporaryItemPermanent([FromBody] MakeTemporaryItemPermanentContract contract)
+        {
+            var command = new MakeTemporaryItemPermanentCommand(contract.ToDomain());
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (ItemCategoryNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (ManufacturerNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (ItemIsNotTemporaryException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (ItemNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (StoreNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok();
         }
     }
 }

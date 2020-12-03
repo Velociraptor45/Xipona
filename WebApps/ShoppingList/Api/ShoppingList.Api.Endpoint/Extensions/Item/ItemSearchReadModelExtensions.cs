@@ -7,8 +7,8 @@ namespace ShoppingList.Api.Endpoint.Extensions.Item
     {
         public static ItemSearchContract ToContract(this ItemSearchReadModel readModel)
         {
-            return new ItemSearchContract(readModel.Id.Value, readModel.Name, readModel.Price,
-                readModel.ItemCategory.Name, readModel.Manufacturer.Name);
+            return new ItemSearchContract(readModel.Id.Value, readModel.Name, readModel.DefaultQuantity, readModel.Price,
+                readModel.ItemCategory.Name, readModel.Manufacturer?.Name ?? "");
         }
     }
 }

@@ -6,28 +6,33 @@ namespace ShoppingList.Api.Domain.Queries.SharedModels
 {
     public class ShoppingListItemReadModel
     {
-        public ShoppingListItemReadModel(ShoppingListItemId id, string name, bool isDeleted, string comment,
+        public ShoppingListItemReadModel(ShoppingListItemActualId id, string name, bool isDeleted, string comment,
             bool isTemporary, float pricePerQuantity, QuantityTypeReadModel quantityType, float quantityInPacket,
             QuantityInPacketTypeReadModel quantityTypeInPacket,
             ItemCategoryReadModel itemCategory, ManufacturerReadModel manufacturer,
             bool isInBasket, float quantity)
         {
-            Id = id;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new System.ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
+            }
+
+            Id = id ?? throw new System.ArgumentNullException(nameof(id));
             Name = name;
             IsDeleted = isDeleted;
             Comment = comment;
             IsTemporary = isTemporary;
             PricePerQuantity = pricePerQuantity;
-            QuantityType = quantityType;
+            QuantityType = quantityType ?? throw new System.ArgumentNullException(nameof(quantityType));
             QuantityInPacket = quantityInPacket;
-            QuantityTypeInPacket = quantityTypeInPacket;
+            QuantityTypeInPacket = quantityTypeInPacket ?? throw new System.ArgumentNullException(nameof(quantityTypeInPacket));
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
             IsInBasket = isInBasket;
             Quantity = quantity;
         }
 
-        public ShoppingListItemId Id { get; }
+        public ShoppingListItemActualId Id { get; }
         public string Name { get; }
         public bool IsDeleted { get; }
         public string Comment { get; }

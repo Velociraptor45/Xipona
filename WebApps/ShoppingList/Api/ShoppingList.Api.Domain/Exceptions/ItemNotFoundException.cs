@@ -6,7 +6,7 @@ namespace ShoppingList.Api.Domain.Exceptions
     public class ItemNotFoundException : Exception
     {
         public ItemNotFoundException(StoreItemId id)
-            : base($"Item {id.Value} not found.")
+            : base($"Item {id} not found.")
         {
         }
 

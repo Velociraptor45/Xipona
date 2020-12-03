@@ -22,7 +22,7 @@ namespace ShoppingList.Frontend.Models
 
         public ShoppingListItem GetItemById(int id)
         {
-            return Items.FirstOrDefault(item => item.Id == id);
+            return Items.FirstOrDefault(item => item.Id.ActualId == id);
         }
     }
 }

@@ -1,5 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.Api.ApplicationServices;
+using ShoppingList.Api.Contracts.Commands.AddItemToShoppingList;
+using ShoppingList.Api.Contracts.Commands.ChangeItemQuantityOnShoppingList;
+using ShoppingList.Api.Contracts.Commands.PutItemInBasket;
+using ShoppingList.Api.Contracts.Commands.RemoveItemFromBasket;
+using ShoppingList.Api.Contracts.Commands.RemoveItemFromShoppingList;
 using ShoppingList.Api.Domain.Commands.AddItemToShoppingList;
 using ShoppingList.Api.Domain.Commands.ChangeItemQuantityOnShoppingList;
 using ShoppingList.Api.Domain.Commands.CreateShoppingList;
@@ -66,12 +71,21 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("{shoppingListId}/items/{itemId}/remove")]
+        [Route("items/remove")]
         public async Task<IActionResult> RemoveItemFromShoppingList(
-            [FromRoute(Name = "shoppingListId")] int shoppingListId, [FromRoute(Name = "itemId")] int itemId)
+            [FromBody] RemoveItemFromShoppingListContract contract)
         {
-            var command = new RemoveItemFromShoppingListCommand(
-                new ShoppingListId(shoppingListId), new ShoppingListItemId(itemId));
+            ShoppingListItemId itemId;
+            try
+            {
+                itemId = contract.ItemId.ToShoppingListItemId();
+            }
+            catch (ArgumentException)
+            {
+                return BadRequest("No item id was specified.");
+            }
+
+            var command = new RemoveItemFromShoppingListCommand(new ShoppingListId(contract.ShoppingListId), itemId);
 
             try
             {
@@ -92,13 +106,21 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("{shoppingListId}/items/{itemId}/add/{quantity}")]
-        public async Task<IActionResult> AddItemToShoppingList(
-            [FromRoute(Name = "shoppingListId")] int shoppingListId, [FromRoute(Name = "itemId")] int itemId,
-            [FromRoute(Name = "quantity")] float quantity)
+        [Route("items/add")]
+        public async Task<IActionResult> AddItemToShoppingList([FromBody] AddItemToShoppingListContract contract)
         {
+            ShoppingListItemId itemId;
+            try
+            {
+                itemId = contract.ItemId.ToShoppingListItemId();
+            }
+            catch (ArgumentException)
+            {
+                return BadRequest("No item id was specified.");
+            }
+
             var command = new AddItemToShoppingListCommand(
-                new ShoppingListId(shoppingListId), new ShoppingListItemId(itemId), quantity);
+                new ShoppingListId(contract.ShoppingListId), itemId, contract.Quantity);
 
             try
             {
@@ -116,6 +138,10 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
             {
                 return BadRequest(e.Message);
             }
+            catch (ItemAtStoreNotAvailableException e)
+            {
+                return BadRequest(e.Message);
+            }
 
             return Ok();
         }
@@ -123,12 +149,12 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("{shoppingListId}/items/{itemId}/put-in-basket")]
-        public async Task<IActionResult> PutItemInBasket([FromRoute(Name = "shoppingListId")] int shoppingListId,
-            [FromRoute(Name = "itemId")] int itemId)
+        [Route("items/put-in-basket")]
+        public async Task<IActionResult> PutItemInBasket([FromBody] PutItemInBasketContract contract)
         {
-            var command = new PutItemInBasketCommand(new ShoppingListId(shoppingListId),
-                new ShoppingListItemId(itemId));
+            var command = new PutItemInBasketCommand(new ShoppingListId(contract.ShopingListId),
+                new ShoppingListItemId(contract.ItemId.Actual.Value));
+
             try
             {
                 await commandDispatcher.DispatchAsync(command, default);
@@ -144,12 +170,20 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("{shoppingListId}/items/{itemId}/remove-from-basket")]
-        public async Task<IActionResult> RemoveItemFromBasket([FromRoute(Name = "shoppingListId")] int shoppingListId,
-            [FromRoute(Name = "itemId")] int itemId)
+        [Route("items/remove-from-basket")]
+        public async Task<IActionResult> RemoveItemFromBasket([FromBody] RemoveItemFromBasketContract contract)
         {
-            var command = new RemoveItemFromBasketCommand(new ShoppingListId(shoppingListId),
-                new ShoppingListItemId(itemId));
+            ShoppingListItemId itemId;
+            try
+            {
+                itemId = contract.ItemId.ToShoppingListItemId();
+            }
+            catch (ArgumentException)
+            {
+                return BadRequest("No item id was specified.");
+            }
+
+            var command = new RemoveItemFromBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId);
             try
             {
                 await commandDispatcher.DispatchAsync(command, default);
@@ -165,12 +199,23 @@ namespace ShoppingList.Api.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("{shoppingListId}/items/{itemId}/change-quantity/{quantity}")]
-        public async Task<IActionResult> ChangeItemQuantityOnShoppingList([FromRoute(Name = "shoppingListId")] int shoppingListId,
-            [FromRoute(Name = "itemId")] int itemId, [FromRoute(Name = "quantity")] float quantity)
+        [Route("items/change-quantity")]
+        public async Task<IActionResult> ChangeItemQuantityOnShoppingList(
+            [FromBody] ChangeItemQuantityOnShoppingListContract contract)
         {
-            var command = new ChangeItemQuantityOnShoppingListCommand(new ShoppingListId(shoppingListId),
-                new ShoppingListItemId(itemId), quantity);
+            ShoppingListItemId itemId;
+            try
+            {
+                itemId = contract.ItemId.ToShoppingListItemId();
+            }
+            catch (ArgumentException)
+            {
+                return BadRequest("No item id was specified.");
+            }
+
+            var command = new ChangeItemQuantityOnShoppingListCommand(new ShoppingListId(contract.ShoppingListId),
+                itemId, contract.Quantity);
+
             try
             {
                 await commandDispatcher.DispatchAsync(command, default);

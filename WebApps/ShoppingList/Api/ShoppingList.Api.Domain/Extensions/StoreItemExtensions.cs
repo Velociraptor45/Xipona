@@ -1,4 +1,6 @@
-﻿using ShoppingList.Api.Domain.Exceptions;
+﻿using ShoppingList.Api.Core.Attributes;
+using ShoppingList.Api.Core.Extensions;
+using ShoppingList.Api.Domain.Exceptions;
 using ShoppingList.Api.Domain.Models;
 using ShoppingList.Api.Domain.Queries.ItemFilterResults;
 using ShoppingList.Api.Domain.Queries.ItemSearch;
@@ -9,20 +11,15 @@ namespace ShoppingList.Api.Domain.Extensions
 {
     public static class StoreItemExtensions
     {
-        public static ShoppingListItem ToShoppingListItemDomain(this StoreItem storeItem, StoreId storeId,
+        public static ShoppingListItem ToShoppingListItemDomain(this StoreItem storeItem, float price,
             bool isInBasket, float quantity)
         {
-            StoreItemAvailability availability = storeItem.Availabilities
-                .FirstOrDefault(availability => availability.StoreId == storeId);
-            if (availability == null)
-                throw new ItemAtStoreNotAvailableException(storeItem.Id, storeId);
-
             return new ShoppingListItem(storeItem.Id.ToShoppingListItemId(),
                 storeItem.Name,
                 storeItem.IsDeleted,
                 storeItem.Comment,
                 storeItem.IsTemporary,
-                availability.Price,
+                price,
                 storeItem.QuantityType,
                 storeItem.QuantityInPacket,
                 storeItem.QuantityTypeInPacket,
@@ -40,20 +37,33 @@ namespace ShoppingList.Api.Domain.Extensions
             if (storeAvailability == null)
                 throw new ItemAtStoreNotAvailableException(storeItem.Id, storeId);
 
-            return new ItemSearchReadModel(storeItem.Id, storeItem.Name, storeAvailability.Price,
-                storeItem.Manufacturer, storeItem.ItemCategory);
+            return new ItemSearchReadModel(
+                storeItem.Id.Actual,
+                storeItem.Name,
+                storeItem.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                storeAvailability.Price,
+                storeItem.Manufacturer,
+                storeItem.ItemCategory);
         }
 
         public static ItemFilterResultReadModel ToItemFilterResultReadModel(this StoreItem model)
         {
-            return new ItemFilterResultReadModel(model.Id, model.Name);
+            return new ItemFilterResultReadModel(model.Id.Actual, model.Name);
         }
 
         public static StoreItemReadModel ToReadModel(this StoreItem model)
         {
-            return new StoreItemReadModel(model.Id, model.Name, model.IsDeleted, model.Comment, model.IsTemporary,
-                model.QuantityType.ToReadModel(), model.QuantityInPacket, model.QuantityTypeInPacket.ToReadModel(),
-                model.ItemCategory.ToReadModel(), model.Manufacturer.ToReadModel(),
+            return new StoreItemReadModel(
+                model.Id.Actual,
+                model.Name,
+                model.IsDeleted,
+                model.Comment,
+                model.IsTemporary,
+                model.QuantityType.ToReadModel(),
+                model.QuantityInPacket,
+                model.QuantityTypeInPacket.ToReadModel(),
+                model.ItemCategory?.ToReadModel(),
+                model.Manufacturer?.ToReadModel(),
                 model.Availabilities.Select(av => av.ToReadModel()));
         }
     }

@@ -1,6 +1,7 @@
 ﻿using ShoppingList.Api.Client;
 using ShoppingList.Frontend.Infrastructure.Extensions.Contracts;
 using ShoppingList.Frontend.Infrastructure.Extensions.Models;
+using ShoppingList.Frontend.Infrastructure.Extensions.Requests;
 using ShoppingList.Frontend.Models;
 using ShoppingList.Frontend.Models.Index.Search;
 using ShoppingList.Frontend.Models.Items;
@@ -27,17 +28,17 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task PutItemInBasketAsync(PutItemInBasketRequest request)
         {
-            await client.PutItemInBasket(request.ShoppingListId, request.ItemId);
+            await client.PutItemInBasket(request.ToContract());
         }
 
         public async Task RemoveItemFromBasketAsync(RemoveItemFromBasketRequest request)
         {
-            await client.RemoveItemFromBasket(request.ShoppingListId, request.ItemId);
+            await client.RemoveItemFromBasket(request.ToContract());
         }
 
         public async Task ChangeItemQuantityOnShoppingListAsync(ChangeItemQuantityOnShoppingListRequest request)
         {
-            await client.ChangeItemQuantityOnShoppingList(request.ShoppingListId, request.ItemId, request.Quantity);
+            await client.ChangeItemQuantityOnShoppingList(request.ToContract());
         }
 
         public async Task FinishListAsync(FinishListRequest request)
@@ -47,12 +48,12 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task RemoveItemFromShoppingListAsync(RemoveItemFromShoppingListRequest request)
         {
-            await client.RemoveItemFromShoppingList(request.ShoppingListId, request.ItemId);
+            await client.RemoveItemFromShoppingList(request.ToContract());
         }
 
         public async Task AddItemToShoppingListAsync(AddItemToShoppingListRequest request)
         {
-            await client.AddItemToShoppingList(request.ShoppingListId, request.ItemId, request.Quantity);
+            await client.AddItemToShoppingList(request.ToContract());
         }
 
         public async Task UpdateItemAsync(UpdateItemRequest request)
@@ -144,6 +145,16 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
         {
             var result = await client.GetAllQuantityInPacketTypes();
             return result.Select(r => r.ToModel());
+        }
+
+        public async Task CreateTemporaryItem(CreateTemporaryItemRequest request)
+        {
+            await client.CreateTemporaryItem(request.ToContract());
+        }
+
+        public async Task MakeTemporaryItemPermanent(MakeTemporaryItemPermanentRequest request)
+        {
+            await client.MakeTemporaryItemPermanent(request.ToContract());
         }
     }
 }

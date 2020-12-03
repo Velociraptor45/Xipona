@@ -15,6 +15,7 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
         Task CreateItemAsync(CreateItemRequest request);
         Task CreateItemCategoryAsync(string name);
         Task CreateManufacturerAsync(string name);
+        Task CreateTemporaryItem(CreateTemporaryItemRequest request);
         Task DeleteItemAsync(DeleteItemRequest request);
         Task FinishListAsync(FinishListRequest request);
         Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(int storeId);
@@ -27,7 +28,7 @@ namespace ShoppingList.Frontend.Infrastructure.Connection
         Task<IEnumerable<ItemFilterResult>> GetItemFilterResultAsync(IEnumerable<int> storeIds, IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds);
         Task<IEnumerable<ItemSearchResult>> GetItemSearchResultsAsync(string searchInput, int storeId);
         Task IsAliveAsync();
-
+        Task MakeTemporaryItemPermanent(MakeTemporaryItemPermanentRequest request);
         Task PutItemInBasketAsync(PutItemInBasketRequest request);
 
         Task RemoveItemFromBasketAsync(RemoveItemFromBasketRequest request);

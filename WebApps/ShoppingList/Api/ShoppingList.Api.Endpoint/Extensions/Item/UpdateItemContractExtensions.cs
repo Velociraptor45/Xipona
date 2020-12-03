@@ -11,9 +11,13 @@ namespace ShoppingList.Api.Endpoint.Converters.Item
         public static ItemUpdate ToItemUpdate(this UpdateItemContract contract)
         {
             return new ItemUpdate(new StoreItemId(contract.OldId), contract.Name, contract.Comment,
-                (QuantityType)contract.QuantityType, contract.QuantityInPacket,
+                (QuantityType)contract.QuantityType,
+                contract.QuantityInPacket,
                 (QuantityTypeInPacket)contract.QuantityTypeInPacket,
-                new ItemCategoryId(contract.ItemCategoryId), new ManufacturerId(contract.ManufacturerId),
+                new ItemCategoryId(contract.ItemCategoryId),
+                contract.ManufacturerId.HasValue ?
+                    new ManufacturerId(contract.ManufacturerId.Value) :
+                    null,
                 contract.Availabilities.Select(av => av.ToDomain()));
         }
     }

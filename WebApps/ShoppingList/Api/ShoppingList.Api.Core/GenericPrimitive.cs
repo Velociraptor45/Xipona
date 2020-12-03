@@ -15,12 +15,22 @@ namespace ShoppingList.Api.Core
 
         public static bool operator ==(GenericPrimitive<T> left, GenericPrimitive<T> right)
         {
+            if (left is null)
+            {
+                return right is null;
+            }
+
             return left.Value.Equals(right?.Value);
         }
 
         public static bool operator !=(GenericPrimitive<T> left, GenericPrimitive<T> right)
         {
-            return !left.Value.Equals(right.Value);
+            if (left is null)
+            {
+                return !(right is null);
+            }
+
+            return !left.Value.Equals(right?.Value);
         }
 
         public override bool Equals(object obj)

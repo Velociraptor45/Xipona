@@ -19,8 +19,6 @@ namespace ShoppingList.Api.Domain.Ports
 
         Task<StoreItem> FindByAsync(StoreItemId storeItemId, CancellationToken cancellationToken);
 
-        Task<bool> IsValidIdAsync(StoreItemId id, CancellationToken cancellationToken);
-
         Task<StoreItem> StoreAsync(StoreItem storeItem, CancellationToken cancellationToken);
     }
 }

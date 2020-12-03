@@ -39,7 +39,9 @@ namespace ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
-                .FirstOrDefaultAsync(item => item.Id == storeItemId.Value);
+                .FirstOrDefaultAsync(item => storeItemId.IsActualId ?
+                    item.Id == storeItemId.Actual.Value :
+                    item.CreatedFrom == storeItemId.Offline.Value);
 
             if (itemEntity == null)
                 throw new ItemNotFoundException(storeItemId);
@@ -62,17 +64,18 @@ namespace ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
-                .FirstOrDefaultAsync(item => item.Id == storeItemId.Value);
+                .FirstOrDefaultAsync(item => storeItemId.IsActualId ?
+                    item.Id == storeItemId.Actual.Value :
+                    item.CreatedFrom == storeItemId.Offline.Value);
 
             cancellationToken.ThrowIfCancellationRequested();
 
             if (itemEntity == null)
-                throw new ItemNotFoundException($"Item id {storeItemId.Value} not found.");
+                throw new ItemNotFoundException(storeItemId);
 
             var storeMap = itemEntity.AvailableAt.FirstOrDefault(map => map.StoreId == storeId.Value);
             if (storeMap == null)
-                throw new ItemAtStoreNotAvailableException(
-                    $"Item {itemEntity.Id} not available at store {storeId.Value}");
+                throw new ItemAtStoreNotAvailableException(storeItemId, storeId);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -108,8 +111,9 @@ namespace ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
                 .Where(item =>
-                    itemCategoryIdLists.Contains(item.ItemCategoryId)
-                    && manufacturerIdLists.Contains(item.ManufacturerId))
+                    !item.IsTemporary
+                    && itemCategoryIdLists.Contains(item.ItemCategoryId.Value)
+                    && manufacturerIdLists.Contains(item.ManufacturerId.Value))
                 .ToListAsync();
 
             // filtering by store
@@ -134,6 +138,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
                 .ThenInclude(map => map.Store)
                 .Where(item => item.Name.Contains(searchInput)
                     && !item.Deleted
+                    && !item.IsTemporary
                     && item.AvailableAt.FirstOrDefault(map => map.StoreId == storeId.Value) != null)
                 .ToListAsync();
 
@@ -158,19 +163,6 @@ namespace ShoppingList.Api.Infrastructure.Adapters
             return entities.Select(e => e.ToStoreItemDomain());
         }
 
-        public async Task<bool> IsValidIdAsync(StoreItemId id, CancellationToken cancellationToken)
-        {
-            if (id == null)
-                throw new ArgumentNullException(nameof(id));
-
-            var entity = await dbContext.Items.AsNoTracking()
-                .FirstOrDefaultAsync(item => item.Id == id.Value);
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            return entity != null;
-        }
-
         public async Task<StoreItem> StoreAsync(StoreItem storeItem, CancellationToken cancellationToken)
         {
             if (storeItem == null)
@@ -178,80 +170,76 @@ namespace ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (storeItem.Id.Value <= 0)
-            {
-                return await AddNewAsync(storeItem);
-            }
+            var existingEntity = await FindTrackedEntityBy(storeItem.Id);
 
-            return await StoreExistingAsync(storeItem);
+            if (existingEntity == null)
+            {
+                var newEntity = storeItem.ToEntity();
+                dbContext.Add(newEntity);
+
+                if (newEntity.Manufacturer != null)
+                    dbContext.Entry(newEntity.Manufacturer).State = EntityState.Unchanged;
+                if (newEntity.ItemCategory != null)
+                    dbContext.Entry(newEntity.ItemCategory).State = EntityState.Unchanged;
+
+                await dbContext.SaveChangesAsync();
+                return newEntity.ToStoreItemDomain();
+            }
+            else
+            {
+                var updatedEntity = storeItem.ToEntity();
+                dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
+                dbContext.Entry(existingEntity).State = EntityState.Modified;
+
+                UpdateOrAddAvailabilities(existingEntity, updatedEntity);
+                DeleteAvailabilities(existingEntity, updatedEntity);
+
+                await dbContext.SaveChangesAsync();
+                return existingEntity.ToStoreItemDomain();
+            }
         }
 
         #endregion public methods
 
         #region private methods
 
-        private async Task<StoreItem> StoreExistingAsync(StoreItem storeItem)
+        private async Task<Item> FindTrackedEntityBy(StoreItemId id)
         {
-            var entity = storeItem.ToEntity();
-            List<AvailableAt> availabilities = storeItem.Availabilities
-                .Select(av => av.ToEntity(storeItem.Id))
-                .ToList();
+            return await dbContext.Items
+                .Include(item => item.AvailableAt)
+                .FirstOrDefaultAsync(i => id.IsActualId ?
+                    i.Id == id.Actual.Value :
+                    i.CreatedFrom == id.Offline.Value);
+        }
 
-            var existingAvailabilities = await dbContext.AvailableAts.AsNoTracking()
-                .Where(map => map.ItemId == storeItem.Id.Value)
-                .ToDictionaryAsync(av => av.StoreId);
-
-            foreach (var availability in availabilities)
+        private void UpdateOrAddAvailabilities(Item existing, Item updated)
+        {
+            foreach (var availability in updated.AvailableAt)
             {
-                if (existingAvailabilities.TryGetValue(availability.StoreId, out var existingAvailability))
+                var exisitingAvailability = existing.AvailableAt
+                    .FirstOrDefault(av => av.Id == availability.Id);
+
+                if (exisitingAvailability == null)
                 {
-                    availability.Id = existingAvailability.Id;
-                    dbContext.Entry(availability).State = EntityState.Modified;
-                    existingAvailabilities.Remove(availability.ItemId);
+                    existing.AvailableAt.Add(availability);
                 }
                 else
                 {
-                    dbContext.Entry(availability).State = EntityState.Added;
+                    dbContext.Entry(exisitingAvailability).CurrentValues.SetValues(availability);
                 }
             }
-
-            foreach (var existingAvailability in existingAvailabilities.Values)
-            {
-                dbContext.Entry(existingAvailability).State = EntityState.Deleted;
-            }
-
-            dbContext.Entry(entity).State = EntityState.Modified;
-            await dbContext.SaveChangesAsync();
-
-            return storeItem;
         }
 
-        private async Task<StoreItem> AddNewAsync(StoreItem storeItem)
+        private void DeleteAvailabilities(Item existing, Item updated)
         {
-            Item entity = storeItem.ToEntity();
-            dbContext.Entry(entity).State = EntityState.Added;
-            await dbContext.SaveChangesAsync();
-
-            var id = new StoreItemId(entity.Id);
-            List<AvailableAt> availabilityMap = storeItem.Availabilities
-                .Select(av => av.ToEntity(id))
-                .ToList();
-
-            foreach (var availability in availabilityMap)
+            foreach (var availability in existing.AvailableAt)
             {
-                dbContext.Entry(availability).State = EntityState.Added;
+                bool hasExistingAvailability = updated.AvailableAt.Any(av => av.Id == availability.Id);
+                if (!hasExistingAvailability)
+                {
+                    dbContext.Remove(availability);
+                }
             }
-
-            await dbContext.SaveChangesAsync();
-
-            entity = await dbContext.Items.AsNoTracking()
-                .Include(item => item.ItemCategory)
-                .Include(item => item.Manufacturer)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Store)
-                .FirstAsync(item => item.Id == entity.Id);
-
-            return entity.ToStoreItemDomain();
         }
 
         #endregion private methods

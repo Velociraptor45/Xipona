@@ -67,7 +67,7 @@ namespace ShoppingList.Api.Infrastructure.Adapters
                 .Include(l => l.ItemsOnList)
                 .ThenInclude(map => map.Item)
                 .ThenInclude(item => item.AvailableAt)
-                .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Value) != null
+                .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Actual.Value) != null
                     && l.CompletionDate == null)
                 .ToListAsync();
 

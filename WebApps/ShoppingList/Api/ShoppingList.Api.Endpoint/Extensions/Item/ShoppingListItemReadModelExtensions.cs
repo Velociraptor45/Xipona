@@ -20,8 +20,8 @@ namespace ShoppingList.Api.Endpoint.Extensions.Item
                 readModel.QuantityType.ToContract(),
                 readModel.QuantityInPacket,
                 readModel.QuantityTypeInPacket.ToContract(),
-                readModel.ItemCategory.ToContract(),
-                readModel.Manufacturer.ToContract(),
+                readModel.ItemCategory?.ToContract(),
+                readModel.Manufacturer?.ToContract(),
                 readModel.IsInBasket,
                 readModel.Quantity);
         }

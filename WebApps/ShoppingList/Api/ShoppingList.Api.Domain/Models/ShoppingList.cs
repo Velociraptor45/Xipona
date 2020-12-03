@@ -9,34 +9,43 @@ namespace ShoppingList.Api.Domain.Models
     public class ShoppingList
     {
         private IEnumerable<ShoppingListItem> items;
-        private DateTime? completionDate;
 
         public ShoppingList(ShoppingListId id, Store store, IEnumerable<ShoppingListItem> items, DateTime? completionDate)
         {
+            var item = items.FirstOrDefault(i => !i.Id.IsActualId);
+            if (item != null)
+                throw new ActualIdRequiredException(item.Id);
+
             Id = id;
             Store = store;
             this.items = items;
-            this.completionDate = completionDate;
+            CompletionDate = completionDate;
         }
 
         public ShoppingListId Id { get; }
         public Store Store { get; }
-        public IReadOnlyCollection<ShoppingListItem> Items { get => items.ToList().AsReadOnly(); }
-        public DateTime? CompletionDate => completionDate;
+        public IReadOnlyCollection<ShoppingListItem> Items => items.ToList().AsReadOnly();
+        public DateTime? CompletionDate { get; private set; }
 
-        public void AddItem(StoreItem storeItem,
-            bool isInBasket, float quantity)
+        public void AddItem(StoreItem storeItem, bool isInBasket, float quantity)
         {
             if (storeItem == null)
                 throw new ArgumentNullException(nameof(storeItem));
+            if (!storeItem.Id.IsActualId)
+                throw new ActualIdRequiredException(storeItem.Id);
 
             var list = items.ToList();
 
-            var existingItem = list.FirstOrDefault(it => it.Id == storeItem.Id);
+            var existingItem = list.FirstOrDefault(it => it.Id == storeItem.Id.ToShoppingListItemId());
             if (existingItem != null)
-                throw new ItemAlreadyOnShoppingListException($"Item {storeItem.Id.Value} already exists on shopping list {Id.Value}");
+                throw new ItemAlreadyOnShoppingListException($"Item {storeItem.Id} already exists on shopping list {Id.Value}");
 
-            list.Add(storeItem.ToShoppingListItemDomain(Store.Id, isInBasket, quantity));
+            StoreItemAvailability availability = storeItem.Availabilities
+                .FirstOrDefault(availability => availability.StoreId == Store.Id);
+            if (availability == null)
+                throw new ItemAtStoreNotAvailableException(storeItem.Id, Store.Id);
+
+            list.Add(storeItem.ToShoppingListItemDomain(availability.Price, isInBasket, quantity));
             items = list;
         }
 
@@ -44,6 +53,8 @@ namespace ShoppingList.Api.Domain.Models
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
+            if (!id.IsActualId)
+                throw new ActualIdRequiredException(id);
 
             var itemList = items.ToList();
 
@@ -61,6 +72,8 @@ namespace ShoppingList.Api.Domain.Models
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
+            if (!itemId.IsActualId)
+                throw new ActualIdRequiredException(itemId);
 
             var item = items.FirstOrDefault(item => item.Id == itemId);
             if (item == null)
@@ -80,6 +93,8 @@ namespace ShoppingList.Api.Domain.Models
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
+            if (!itemId.IsActualId)
+                throw new ActualIdRequiredException(itemId);
 
             var item = items.FirstOrDefault(item => item.Id == itemId);
             if (item == null)
@@ -99,6 +114,10 @@ namespace ShoppingList.Api.Domain.Models
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
+            if (!itemId.IsActualId)
+                throw new ActualIdRequiredException(itemId);
+            if (quantity <= 0f)
+                throw new InvalidItemQuantityException(quantity);
 
             var item = items.FirstOrDefault(item => item.Id == itemId);
             if (item == null)
@@ -124,7 +143,7 @@ namespace ShoppingList.Api.Domain.Models
             var itemsNotInBasket = items.Where(i => !i.IsInBasket);
 
             items = items.Where(i => i.IsInBasket);
-            this.completionDate = completionDate;
+            CompletionDate = completionDate;
 
             return new ShoppingList(new ShoppingListId(0), Store, itemsNotInBasket, null);
         }

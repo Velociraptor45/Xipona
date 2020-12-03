@@ -26,17 +26,24 @@ namespace ShoppingList.Api.Domain.Commands.ChangeItem
             if (command == null)
                 throw new ArgumentNullException(nameof(command));
 
-            if (!await itemRepository.IsValidIdAsync(command.ItemChange.Id, cancellationToken))
+            var storeItem = await itemRepository.FindByAsync(command.ItemChange.Id, cancellationToken);
+
+            if (storeItem == null)
                 throw new ItemNotFoundException(command.ItemChange.Id);
+            if (storeItem.IsTemporary)
+                throw new TemporaryItemNotModifyableException(command.ItemChange.Id);
 
             cancellationToken.ThrowIfCancellationRequested();
 
             ItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(command.ItemChange.ItemCategoryId, cancellationToken);
-            Manufacturer manufacturer = await manufacturerRepository
+
+            Manufacturer manufacturer = null;
+            if (command.ItemChange.ManufacturerId != null)
+                manufacturer = await manufacturerRepository
                 .FindByAsync(command.ItemChange.ManufacturerId, cancellationToken);
 
-            var storeItem = command.ItemChange.ToStoreItem(itemCategory, manufacturer);
+            storeItem.Modify(command.ItemChange, itemCategory, manufacturer);
 
             await itemRepository.StoreAsync(storeItem, cancellationToken);
 

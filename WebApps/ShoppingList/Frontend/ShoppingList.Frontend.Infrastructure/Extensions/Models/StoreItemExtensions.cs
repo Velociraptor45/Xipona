@@ -30,9 +30,7 @@ namespace ShoppingList.Frontend.Infrastructure.Extensions.Models
             {
                 Id = model.Id,
                 Name = model.Name,
-                IsDeleted = model.IsDeleted,
                 Comment = model.Comment,
-                IsTemporary = model.IsTemporary,
                 QuantityType = model.QuantityType.Id,
                 QuantityInPacket = model.QuantityInPacket,
                 QuantityTypeInPacket = model.QuantityInPacketType.Id,
@@ -48,7 +46,6 @@ namespace ShoppingList.Frontend.Infrastructure.Extensions.Models
             {
                 Name = model.Name,
                 Comment = model.Comment,
-                IsTemporary = model.IsTemporary,
                 QuantityType = model.QuantityType.Id,
                 QuantityInPacket = model.QuantityInPacket,
                 QuantityTypeInPacket = model.QuantityInPacketType.Id,

@@ -5,8 +5,7 @@ namespace ShoppingList.Api.Infrastructure.Extensions.Models
 {
     public static class StoreItemAvailabilityExtensions
     {
-        public static Infrastructure.Entities.AvailableAt ToEntity(
-            this StoreItemAvailability model, StoreItemId itemId)
+        public static Infrastructure.Entities.AvailableAt ToEntity(this StoreItemAvailability model, StoreItemId itemId)
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
@@ -15,7 +14,7 @@ namespace ShoppingList.Api.Infrastructure.Extensions.Models
             {
                 StoreId = model.StoreId.Value,
                 Price = model.Price,
-                ItemId = itemId.Value
+                ItemId = itemId.Actual?.Value ?? 0
             };
         }
     }

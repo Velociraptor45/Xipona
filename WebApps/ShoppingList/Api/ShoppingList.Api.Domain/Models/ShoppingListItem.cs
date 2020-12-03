@@ -2,9 +2,6 @@
 {
     public class ShoppingListItem
     {
-        private bool isInBasket;
-        private float quantity;
-
         public ShoppingListItem(ShoppingListItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             float pricePerQuantity, QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             ItemCategory itemCategory, Manufacturer manufacturer, bool isInBasket, float quantity)
@@ -20,8 +17,8 @@
             QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
-            this.isInBasket = isInBasket;
-            this.quantity = quantity;
+            IsInBasket = isInBasket;
+            Quantity = quantity;
         }
 
         public ShoppingListItemId Id { get; }
@@ -35,22 +32,22 @@
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
         public ItemCategory ItemCategory { get; }
         public Manufacturer Manufacturer { get; }
-        public bool IsInBasket => isInBasket;
-        public float Quantity => quantity;
+        public bool IsInBasket { get; private set; }
+        public float Quantity { get; private set; }
 
         public void PutInBasket()
         {
-            isInBasket = true;
+            IsInBasket = true;
         }
 
         public void RemoveFromBasket()
         {
-            isInBasket = false;
+            IsInBasket = false;
         }
 
         public void ChangeQuantity(float quantity)
         {
-            this.quantity = quantity;
+            this.Quantity = quantity;
         }
     }
 }

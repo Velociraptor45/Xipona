@@ -4,7 +4,7 @@ namespace ShoppingList.Api.Domain.Queries.ItemFilterResults
 {
     public class ItemFilterResultReadModel
     {
-        public ItemFilterResultReadModel(StoreItemId id, string ItemName)
+        public ItemFilterResultReadModel(StoreItemActualId id, string ItemName)
         {
             if (string.IsNullOrEmpty(ItemName))
             {
@@ -15,7 +15,7 @@ namespace ShoppingList.Api.Domain.Queries.ItemFilterResults
             this.ItemName = ItemName;
         }
 
-        public StoreItemId Id { get; }
+        public StoreItemActualId Id { get; }
         public string ItemName { get; }
     }
 }
