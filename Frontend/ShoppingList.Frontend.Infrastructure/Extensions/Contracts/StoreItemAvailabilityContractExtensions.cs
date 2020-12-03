@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
-using ShoppingList.Frontend.Models.Items;
+using ProjectHermes.ShoppingList.Frontend.Models.Items;
 
-namespace ShoppingList.Frontend.Infrastructure.Extensions.Contracts
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contracts
 {
     public static class StoreItemAvailabilityContractExtensions
     {

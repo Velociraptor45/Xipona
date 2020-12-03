@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Client;
-using ShoppingList.Frontend.Infrastructure.Connection;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Frontend.WebApp
+namespace ProjectHermes.ShoppingList.Frontend.WebApp
 {
     public class Program
     {

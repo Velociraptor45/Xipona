@@ -1,10 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
-using ShoppingList.Frontend.Models.Items;
+using ProjectHermes.ShoppingList.Frontend.Models.Items;
 using System.Linq;
 
-namespace ShoppingList.Frontend.Infrastructure.Extensions.Models
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models
 {
     public static class StoreItemExtensions
     {

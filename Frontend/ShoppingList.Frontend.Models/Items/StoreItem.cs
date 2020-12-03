@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ShoppingList.Frontend.Models.Items
+namespace ProjectHermes.ShoppingList.Frontend.Models.Items
 {
     public class StoreItem
     {

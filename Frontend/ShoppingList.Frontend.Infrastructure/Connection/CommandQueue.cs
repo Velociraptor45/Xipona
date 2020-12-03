@@ -1,5 +1,5 @@
-﻿using ShoppingList.Frontend.Infrastructure.Exceptions;
-using ShoppingList.Frontend.Models.Shared.Requests;
+﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
+using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using WebAssembly;
 
-namespace ShoppingList.Frontend.Infrastructure.Connection
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 {
     public class CommandQueue : ICommandQueue
     {

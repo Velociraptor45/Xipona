@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Frontend.Models
+﻿namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class Manufacturer
     {

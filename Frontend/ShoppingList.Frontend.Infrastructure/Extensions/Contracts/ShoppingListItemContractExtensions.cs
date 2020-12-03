@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
-using ShoppingList.Frontend.Models;
-using ShoppingList.Frontend.Models.Shared;
+using ProjectHermes.ShoppingList.Frontend.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 
-namespace ShoppingList.Frontend.Infrastructure.Extensions.Contracts
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contracts
 {
     public static class ShoppingListItemContractExtensions
     {

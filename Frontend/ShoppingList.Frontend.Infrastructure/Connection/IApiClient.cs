@@ -1,11 +1,11 @@
-﻿using ShoppingList.Frontend.Models;
-using ShoppingList.Frontend.Models.Index.Search;
-using ShoppingList.Frontend.Models.Items;
-using ShoppingList.Frontend.Models.Shared.Requests;
+﻿using ProjectHermes.ShoppingList.Frontend.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
+using ProjectHermes.ShoppingList.Frontend.Models.Items;
+using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Frontend.Infrastructure.Connection
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 {
     public interface IApiClient
     {

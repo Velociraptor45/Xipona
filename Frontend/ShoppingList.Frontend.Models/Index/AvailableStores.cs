@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ShoppingList.Frontend.Models.Index
+namespace ProjectHermes.ShoppingList.Frontend.Models.Index
 {
     public class AvailableStores
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ShoppingList.Frontend.Infrastructure.Exceptions
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions
 {
     public class ApiConnectionException : Exception
     {

@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Frontend.Models.Index.Search
+﻿namespace ProjectHermes.ShoppingList.Frontend.Models.Index.Search
 {
     public class ItemSearchResult
     {

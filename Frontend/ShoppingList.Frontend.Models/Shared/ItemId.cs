@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ShoppingList.Frontend.Models.Shared
+namespace ProjectHermes.ShoppingList.Frontend.Models.Shared
 {
     public class ItemId
     {

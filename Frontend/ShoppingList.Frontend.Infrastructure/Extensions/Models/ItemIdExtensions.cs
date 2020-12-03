@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.Shared;
-using ShoppingList.Frontend.Models.Shared;
+using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 
-namespace ShoppingList.Frontend.Infrastructure.Extensions.Models
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models
 {
     public static class ItemIdExtensions
     {

@@ -1,16 +1,16 @@
 ﻿using ProjectHermes.ShoppingList.Api.Client;
-using ShoppingList.Frontend.Infrastructure.Extensions.Contracts;
-using ShoppingList.Frontend.Infrastructure.Extensions.Models;
-using ShoppingList.Frontend.Infrastructure.Extensions.Requests;
-using ShoppingList.Frontend.Models;
-using ShoppingList.Frontend.Models.Index.Search;
-using ShoppingList.Frontend.Models.Items;
-using ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contracts;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests;
+using ProjectHermes.ShoppingList.Frontend.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
+using ProjectHermes.ShoppingList.Frontend.Models.Items;
+using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Frontend.Infrastructure.Connection
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 {
     public class ApiClient : IApiClient
     {

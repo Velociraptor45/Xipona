@@ -1,8 +1,8 @@
-﻿using ShoppingList.Frontend.Models.Items;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Items;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ShoppingList.Frontend.Models.Shared.Requests
+namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
 {
     public class MakeTemporaryItemPermanentRequest
     {

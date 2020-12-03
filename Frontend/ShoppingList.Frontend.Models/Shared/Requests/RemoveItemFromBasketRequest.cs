@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ShoppingList.Frontend.Models.Shared.Requests
+namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
 {
     public class RemoveItemFromBasketRequest : IApiRequest
     {

@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
-using ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 
-namespace ShoppingList.Frontend.Infrastructure.Extensions.Requests
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests
 {
     public static class CreateTemporaryItemRequestExtensions
     {

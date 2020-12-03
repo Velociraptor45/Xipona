@@ -1,6 +1,6 @@
-﻿using ShoppingList.Frontend.Models.Shared;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 
-namespace ShoppingList.Frontend.Models
+namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class ShoppingListItem
     {

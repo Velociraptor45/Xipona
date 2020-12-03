@@ -1,9 +1,9 @@
 ﻿@page "/items"
-@inject ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
-@using ShoppingList.Frontend.WebApp.Components.Items;
-@using ShoppingList.Frontend.Models;
-@using ShoppingList.Frontend.Models.Items;
-@using ShoppingList.Frontend.Models.Shared.Requests;
+@inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items;
+@using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.Items;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 
 <div>
     @if (currentlyEditedItem == null)

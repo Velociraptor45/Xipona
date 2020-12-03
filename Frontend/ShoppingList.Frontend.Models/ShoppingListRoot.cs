@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ShoppingList.Frontend.Models
+namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class ShoppingListRoot
     {

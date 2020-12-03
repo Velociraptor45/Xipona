@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Manufacturer.Queries.AllActiveManufacturers;
-using ShoppingList.Frontend.Models;
+using ProjectHermes.ShoppingList.Frontend.Models;
 
-namespace ShoppingList.Frontend.Infrastructure.Extensions.Contracts
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contracts
 {
     public static class ActiveManufacturerContractExtensions
     {
