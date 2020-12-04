@@ -2,17 +2,19 @@
 {
     public class QuantityTypeReadModel
     {
-        public QuantityTypeReadModel(int id, string name, int defaultQuantity, string pricelabel)
+        public QuantityTypeReadModel(int id, string name, int defaultQuantity, string priceLabel, string quantityLabel)
         {
             Id = id;
             Name = name;
             DefaultQuantity = defaultQuantity;
-            Pricelabel = pricelabel;
+            PriceLabel = priceLabel;
+            QuantityLabel = quantityLabel;
         }
 
         public int Id { get; }
         public string Name { get; }
         public int DefaultQuantity { get; }
-        public string Pricelabel { get; }
+        public string PriceLabel { get; }
+        public string QuantityLabel { get; }
     }
 }

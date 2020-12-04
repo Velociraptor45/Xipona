@@ -12,7 +12,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions
                 (int)quantityType,
                 quantityType.ToString(),
                 quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-                    quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel);
+                quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                quantityType.GetAttribute<QuantityLabelAttribute>().QuantityLabel);
         }
     }
 }
