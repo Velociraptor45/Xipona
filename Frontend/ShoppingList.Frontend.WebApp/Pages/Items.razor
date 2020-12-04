@@ -8,40 +8,40 @@
 <div>
     @if (currentlyEditedItem == null)
     {
-        <div>
-            <div>Items</div>
-            <Button @onclick="OnCreateItemButtonClicked">
+        <div class="d-flex">
+            <div class="h4">Items</div>
+            <Button @onclick="OnCreateItemButtonClicked" Class="d-flex align-items-center ml-auto">
                 <Icon Type="plus"></Icon>
             </Button>
         </div>
         <div>
-            <div class="d-flex">
-                <div>
+            <div class="d-flex py-1">
+                <div class="mr-2 align-self-center">
                     Store
                 </div>
-                <Select Mode="Tags" Placeholder="Stores" @ref="@storesSelectRef">
+                <Select Mode="Tags" Placeholder="Stores" @ref="@storesSelectRef" Class="min-w-100">
                     @foreach (var store in stores)
                     {
-                        <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
+                        <SelectOption Value=@store.Id.ToString()>@store.Name</SelectOption>
                     }
                 </Select>
             </div>
-            <div class="d-flex">
-                <div>
+            <div class="d-flex py-1">
+                <div class="mr-2 align-self-center">
                     Category
                 </div>
-                <Select Mode="Tags" Placeholder="Category" @ref="@itemCategoriesSelectRef">
+                <Select Mode="Tags" Placeholder="Category" @ref="@itemCategoriesSelectRef" Class="min-w-100">
                     @foreach (var itemCategory in itemCategories)
                     {
                         <SelectOption Value="@itemCategory.Id.ToString()">@itemCategory.Name</SelectOption>
                     }
                 </Select>
             </div>
-            <div class="d-flex">
-                <div>
+            <div class="d-flex py-1">
+                <div class="mr-2 align-self-center">
                     Manufacturer
                 </div>
-                <Select Mode="Tags" Placeholder="Manufacturer" @ref="@manufacturersSelectRef">
+                <Select Mode="Tags" Placeholder="Manufacturer" @ref="@manufacturersSelectRef" Class="min-w-100">
                     @foreach (var manufacturer in manufacturers)
                     {
                         <SelectOption Value="@manufacturer.Id.ToString()">@manufacturer.Name</SelectOption>
