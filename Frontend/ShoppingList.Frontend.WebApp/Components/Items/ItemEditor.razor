@@ -25,7 +25,7 @@
         <div>
             <div class="font-weight-bold">Category</div>
             <SingleSelect Placeholder="Item Category"
-                          DefaultValue="@StoreItem.ItemCategoryId.ToString()"
+                          DefaultValue="@StoreItem.ItemCategoryId.GetValueOrDefault().ToString()"
                           CanAddItem="true"
                           IdToNameMaps="@ItemCategories.Select(m => new Tuple<int, string>(m.Id, m.Name)).ToList()"
                           OnChangeCallback="@OnItemCategoryChanged"
@@ -37,6 +37,7 @@
             <SingleSelect Placeholder="Manufacturer"
                           DefaultValue="@StoreItem.ManufacturerId.ToString()"
                           CanAddItem="true"
+                          AllowClear="true"
                           IdToNameMaps="@Manufacturers.Select(m => new Tuple<int, string>(m.Id, m.Name)).ToList()"
                           OnChangeCallback="@OnManfacturerChanged"
                           OnItemAddedCallback="@ManufacturerCreatedCallback">
@@ -123,8 +124,6 @@
     [Parameter] public EventCallback<string> ManufacturerCreatedCallback { get; set; }
     [Parameter] public EventCallback<string> ItemCategoryCreatedCallback { get; set; }
 
-    private string newManufacturerName = "";
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -178,6 +177,12 @@
 
     private void OnManfacturerChanged(int id)
     {
+        if (id == -1)
+        {
+            StoreItem.ManufacturerId = null;
+            return;
+        }
+
         StoreItem.ManufacturerId = id;
     }
 

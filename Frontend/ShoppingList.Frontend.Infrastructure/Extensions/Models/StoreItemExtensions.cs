@@ -18,7 +18,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models
                 QuantityType = model.QuantityType.Id,
                 QuantityInPacket = model.QuantityInPacket,
                 QuantityTypeInPacket = model.QuantityInPacketType.Id,
-                ItemCategoryId = model.ItemCategoryId,
+                ItemCategoryId = model.ItemCategoryId.Value,
                 ManufacturerId = model.ManufacturerId,
                 Availabilities = model.Availabilities.Select(av => av.ToItemAvailabilityContract())
             };
@@ -34,7 +34,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models
                 QuantityType = model.QuantityType.Id,
                 QuantityInPacket = model.QuantityInPacket,
                 QuantityTypeInPacket = model.QuantityInPacketType.Id,
-                ItemCategoryId = model.ItemCategoryId,
+                ItemCategoryId = model.ItemCategoryId.Value,
                 ManufacturerId = model.ManufacturerId,
                 Availabilities = model.Availabilities.Select(av => av.ToItemAvailabilityContract())
             };
@@ -49,7 +49,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models
                 QuantityType = model.QuantityType.Id,
                 QuantityInPacket = model.QuantityInPacket,
                 QuantityTypeInPacket = model.QuantityInPacketType.Id,
-                ItemCategoryId = model.ItemCategoryId,
+                ItemCategoryId = model.ItemCategoryId.Value,
                 ManufacturerId = model.ManufacturerId,
                 Availabilities = model.Availabilities.Select(av => av.ToItemAvailabilityContract())
             };
