@@ -1,0 +1,15 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
+
+<div class="filter-result-outer-frame p-2" @onclick="@OnItemClicked">
+    <div>@Item.Name</div>
+</div>
+
+@code {
+    [Parameter] public ItemFilterResult Item { get; set; }
+    [Parameter] public EventCallback<int> OnClickCallback { get; set; }
+
+    private async Task OnItemClicked()
+    {
+        await OnClickCallback.InvokeAsync(Item.ItemId);
+    }
+}

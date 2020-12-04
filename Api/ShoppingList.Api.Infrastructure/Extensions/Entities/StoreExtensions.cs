@@ -1,0 +1,15 @@
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
+{
+    public static class StoreExtensions
+    {
+        public static Store ToDomain(this Infrastructure.Entities.Store entity)
+        {
+            return new Store(
+                new StoreId(entity.Id),
+                entity.Name,
+                entity.Deleted);
+        }
+    }
+}
