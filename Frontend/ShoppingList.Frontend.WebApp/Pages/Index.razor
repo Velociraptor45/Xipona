@@ -63,14 +63,16 @@
             <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
         }
     </div>
-    @foreach (var item in shoppingList.Items.Where(item => showItemsInBasket || !item.IsInBasket))
-    {
-        <ShoppingListItemComponent Item="@item"
-                                   ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
-                                   ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
-                                   ItemRemovedCallback="@OnItemRemovedFromListAsync"
-                                   IsInEditMode="@isInEditMode"></ShoppingListItemComponent>
-    }
+    <ul class="p-0">
+        @foreach (var item in shoppingList.Items.Where(item => showItemsInBasket || !item.IsInBasket))
+        {
+            <ShoppingListItemComponent Item="@item"
+                                       ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
+                                       ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
+                                       ItemRemovedCallback="@OnItemRemovedFromListAsync"
+                                       IsInEditMode="@isInEditMode"></ShoppingListItemComponent>
+        }
+    </ul>
     <div class="d-flex justify-content-end">
         <Button Type="primary"
                 OnClick="@OnFinishListButtonClicked"
@@ -158,7 +160,7 @@
     #region Callbacks
     private void OnCreateNewTemporaryItem()
     {
-        var quantityType = new QuantityType(0, "", 1, "€");
+        var quantityType = new QuantityType(0, "", 1, "€", "x");
         var quantityTypeInPacket = new QuantityTypeInPacket(0, "", "");
         var item = new ShoppingListItem(new ItemId(Guid.NewGuid()), searchBar.Input, true, 1f, quantityType, 1,
             quantityTypeInPacket, "", "", false, 1);

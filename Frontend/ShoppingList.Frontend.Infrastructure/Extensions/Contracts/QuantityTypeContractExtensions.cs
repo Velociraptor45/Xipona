@@ -7,7 +7,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contract
     {
         public static QuantityType ToModel(this QuantityTypeContract contract)
         {
-            return new QuantityType(contract.Id, contract.Name, contract.DefaultQuantity, contract.Pricelabel);
+            return new QuantityType(contract.Id, contract.Name, contract.DefaultQuantity, contract.Pricelabel,
+                contract.QuantityLabel);
         }
     }
 }

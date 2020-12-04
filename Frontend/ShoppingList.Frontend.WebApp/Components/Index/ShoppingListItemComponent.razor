@@ -18,7 +18,7 @@
                     <AntDesign.InputNumber Value="@Item.Quantity" Min="1f"
                                            ValueChanged="@(async (float d) => await OnQuantityInputValueChangedAsync(d))">
                     </AntDesign.InputNumber>
-                    <span>g</span>
+                    <span>@Item.QuantityType.QuantityLabel</span>
                 </div>
                 <div class="d-flex">
                     <Button Class="d-flex align-items-center justify-content-center" Icon="plus"
@@ -33,7 +33,7 @@
     {
         <div class="d-flex">
             <div class="m-0">
-                <span>@Item.Quantity</span><span>g</span>
+                <span>@Item.Quantity</span><span>@Item.QuantityType.QuantityLabel</span>
             </div>
             <div class="m-0 pl-2">
                 @Item.Name
