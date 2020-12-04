@@ -13,7 +13,8 @@
     <div class="mb-1 d-flex justify-content-end align-items-center">
         <Select SelectedValues=@availableStores?.SelectedStore?.Name
                 Class="mr-1 min-w-100"
-                OnChange="@OnSelectedStoreChanged">
+                OnChange="@OnSelectedStoreChanged"
+                @ref="@storeSelect">
             @foreach (var store in availableStores.Stores)
             {
                 <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
@@ -86,6 +87,7 @@
 
     private SearchBar searchBar = new SearchBar();
     private Select searchSelect;
+    private Select storeSelect;
 
     private bool isInEditMode = false;
     private bool showItemsInBasket = true;
@@ -94,12 +96,22 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //await Task.Delay(4000);
         await base.OnInitializedAsync();
         await LoadAvailableStoresAsync();
         Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
         commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed);
+
         StateHasChanged();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (availableStores.Stores.Any())
+        {
+            availableStores.SetSelectedStore(availableStores.Stores.First().Id);
+            await storeSelect.ToggleOrSetValue(availableStores.SelectedStore.Id.ToString());
+            await LoadShoppingListAsync();
+        }
     }
 
     private void ResetEditMode()
