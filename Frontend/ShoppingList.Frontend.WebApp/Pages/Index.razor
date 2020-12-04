@@ -13,7 +13,8 @@
     <div class="mb-1 d-flex justify-content-end align-items-center">
         <Select SelectedValues=@availableStores?.SelectedStore?.Name
                 Class="mr-1 min-w-100"
-                OnChange="@OnSelectedStoreChanged">
+                OnChange="@OnSelectedStoreChanged"
+                @ref="@storeSelect">
             @foreach (var store in availableStores.Stores)
             {
                 <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
@@ -62,14 +63,16 @@
             <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
         }
     </div>
-    @foreach (var item in shoppingList.Items.Where(item => showItemsInBasket || !item.IsInBasket))
-    {
-        <ShoppingListItemComponent Item="@item"
-                                   ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
-                                   ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
-                                   ItemRemovedCallback="@OnItemRemovedFromListAsync"
-                                   IsInEditMode="@isInEditMode"></ShoppingListItemComponent>
-    }
+    <ul class="p-0">
+        @foreach (var item in shoppingList.Items.Where(item => showItemsInBasket || !item.IsInBasket))
+        {
+            <ShoppingListItemComponent Item="@item"
+                                       ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
+                                       ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
+                                       ItemRemovedCallback="@OnItemRemovedFromListAsync"
+                                       IsInEditMode="@isInEditMode"></ShoppingListItemComponent>
+        }
+    </ul>
     <div class="d-flex justify-content-end">
         <Button Type="primary"
                 OnClick="@OnFinishListButtonClicked"
@@ -86,6 +89,7 @@
 
     private SearchBar searchBar = new SearchBar();
     private Select searchSelect;
+    private Select storeSelect;
 
     private bool isInEditMode = false;
     private bool showItemsInBasket = true;
@@ -94,12 +98,22 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //await Task.Delay(4000);
         await base.OnInitializedAsync();
         await LoadAvailableStoresAsync();
         Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
         commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed);
+
         StateHasChanged();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (availableStores.Stores.Any())
+        {
+            availableStores.SetSelectedStore(availableStores.Stores.First().Id);
+            await storeSelect.ToggleOrSetValue(availableStores.SelectedStore.Id.ToString());
+            await LoadShoppingListAsync();
+        }
     }
 
     private void ResetEditMode()
@@ -146,7 +160,7 @@
     #region Callbacks
     private void OnCreateNewTemporaryItem()
     {
-        var quantityType = new QuantityType(0, "", 1, "€");
+        var quantityType = new QuantityType(0, "", 1, "€", "x");
         var quantityTypeInPacket = new QuantityTypeInPacket(0, "", "");
         var item = new ShoppingListItem(new ItemId(Guid.NewGuid()), searchBar.Input, true, 1f, quantityType, 1,
             quantityTypeInPacket, "", "", false, 1);
