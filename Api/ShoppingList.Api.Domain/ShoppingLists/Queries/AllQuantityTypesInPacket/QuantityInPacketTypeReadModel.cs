@@ -1,8 +1,8 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityInPacketTypes
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket
 {
-    public class QuantityInPacketTypeReadModel
+    public class QuantityTypeInPacketReadModel
     {
-        public QuantityInPacketTypeReadModel(int id, string name, string quantityLabel)
+        public QuantityTypeInPacketReadModel(int id, string name, string quantityLabel)
         {
             Id = id;
             Name = name;

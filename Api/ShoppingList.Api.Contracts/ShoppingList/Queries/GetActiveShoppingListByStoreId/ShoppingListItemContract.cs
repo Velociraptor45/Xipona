@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
     {
         public ShoppingListItemContract(int id, string name, bool isDeleted, string comment, bool isTemporary,
             float pricePerQuantity, QuantityTypeContract quantityType, float quantityInPacket,
-            QuantityInPacketTypeContract quantityTypeInPacket,
+            QuantityTypeInPacketContract quantityTypeInPacket,
             ItemCategoryContract itemCategory, ManufacturerContract manufacturer, bool isInBasket, float quantity)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -38,7 +38,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
         public float PricePerQuantity { get; }
         public QuantityTypeContract QuantityType { get; }
         public float QuantityInPacket { get; }
-        public QuantityInPacketTypeContract QuantityTypeInPacket { get; }
+        public QuantityTypeInPacketContract QuantityTypeInPacket { get; }
         public ItemCategoryContract ItemCategory { get; }
         public ManufacturerContract Manufacturer { get; }
         public bool IsInBasket { get; }

@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get
         private readonly IEnumerable<StoreItemAvailabilityContract> availabilities;
 
         public StoreItemContract(int id, string name, bool isDeleted, string comment, bool isTemporary,
-            QuantityTypeContract quantityType, float quantityInPacket, QuantityInPacketTypeContract quantityTypeInPacket,
+            QuantityTypeContract quantityType, float quantityInPacket, QuantityTypeInPacketContract quantityTypeInPacket,
             ItemCategoryContract itemCategory, ManufacturerContract manufacturer,
             IEnumerable<StoreItemAvailabilityContract> availabilities)
         {
@@ -39,7 +39,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get
         public bool IsTemporary { get; }
         public QuantityTypeContract QuantityType { get; }
         public float QuantityInPacket { get; }
-        public QuantityInPacketTypeContract QuantityTypeInPacket { get; }
+        public QuantityTypeInPacketContract QuantityTypeInPacket { get; }
         public ItemCategoryContract ItemCategory { get; }
         public ManufacturerContract Manufacturer { get; }
 

@@ -16,7 +16,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFro
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityInPacketTypes;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ShoppingList;
@@ -282,10 +282,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
 
         [HttpGet]
         [ProducesResponseType(200)]
-        [Route("quantity-in-packet-types")]
-        public async Task<IActionResult> GetAllQuantityInPacketTypes()
+        [Route("quantity-types-in-packet")]
+        public async Task<IActionResult> GetAllQuantityTypesInPacket()
         {
-            var query = new AllQuantityInPacketTypesQuery();
+            var query = new AllQuantityTypesInPacketQuery();
             var readModels = await queryDispatcher.DispatchAsync(query, default);
             var contracts = readModels.Select(rm => rm.ToContract());
 

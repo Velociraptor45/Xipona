@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
         private readonly IEnumerable<StoreItemAvailability> availabilities;
 
         public ItemCreation(string name, string comment, QuantityType quantityType,
-            float quantityInPacket, QuantityTypeInPacket quantityInPacketType, ItemCategoryId itemCategoryId,
+            float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
             ManufacturerId manufacturerId, IEnumerable<StoreItemAvailability> availabilities)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -23,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
             Comment = comment;
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
-            QuantityInPacketType = quantityInPacketType;
+            QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategoryId = itemCategoryId ?? throw new ArgumentNullException(nameof(itemCategoryId));
             ManufacturerId = manufacturerId;
             this.availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
@@ -33,7 +33,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
         public string Comment { get; }
         public QuantityType QuantityType { get; }
         public float QuantityInPacket { get; }
-        public QuantityTypeInPacket QuantityInPacketType { get; }
+        public QuantityTypeInPacket QuantityTypeInPacket { get; }
         public ItemCategoryId ItemCategoryId { get; }
         public ManufacturerId ManufacturerId { get; }
 

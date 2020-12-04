@@ -7,11 +7,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityInPacketTypes
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket
 {
-    public class AllQuantityInPacketTypesQueryHandler : IQueryHandler<AllQuantityInPacketTypesQuery, IEnumerable<QuantityInPacketTypeReadModel>>
+    public class AllQuantityTypesInPacketQueryHandler : IQueryHandler<AllQuantityTypesInPacketQuery, IEnumerable<QuantityTypeInPacketReadModel>>
     {
-        public Task<IEnumerable<QuantityInPacketTypeReadModel>> HandleAsync(AllQuantityInPacketTypesQuery query, CancellationToken cancellationToken)
+        public Task<IEnumerable<QuantityTypeInPacketReadModel>> HandleAsync(AllQuantityTypesInPacketQuery query, CancellationToken cancellationToken)
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));

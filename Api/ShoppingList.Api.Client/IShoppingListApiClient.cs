@@ -59,8 +59,8 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Get("shopping-list/quantity-types")]
         Task<IEnumerable<QuantityTypeContract>> GetAllQuantityTypes();
 
-        [Get("shopping-list/quantity-in-packet-types")]
-        Task<IEnumerable<QuantityInPacketTypeContract>> GetAllQuantityInPacketTypes();
+        [Get("shopping-list/quantity-types-in-packet")]
+        Task<IEnumerable<QuantityTypeInPacketContract>> GetAllQuantityTypesInPacket();
 
         #endregion ShoppingListController
 

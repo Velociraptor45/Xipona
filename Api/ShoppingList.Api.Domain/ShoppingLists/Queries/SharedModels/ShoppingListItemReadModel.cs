@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityInPacketTypes;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels
@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedMode
     {
         public ShoppingListItemReadModel(ShoppingListItemActualId id, string name, bool isDeleted, string comment,
             bool isTemporary, float pricePerQuantity, QuantityTypeReadModel quantityType, float quantityInPacket,
-            QuantityInPacketTypeReadModel quantityTypeInPacket,
+            QuantityTypeInPacketReadModel quantityTypeInPacket,
             ItemCategoryReadModel itemCategory, ManufacturerReadModel manufacturer,
             bool isInBasket, float quantity)
         {
@@ -42,7 +42,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedMode
         public float PricePerQuantity { get; }
         public QuantityTypeReadModel QuantityType { get; }
         public float QuantityInPacket { get; }
-        public QuantityInPacketTypeReadModel QuantityTypeInPacket { get; }
+        public QuantityTypeInPacketReadModel QuantityTypeInPacket { get; }
         public ItemCategoryReadModel ItemCategory { get; }
         public ManufacturerReadModel Manufacturer { get; }
         public bool IsInBasket { get; }

@@ -16,7 +16,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
                 false,
                 itemCreation.QuantityType,
                 itemCreation.QuantityInPacket,
-                itemCreation.QuantityInPacketType,
+                itemCreation.QuantityTypeInPacket,
                 itemCategory,
                 manufacturer,
                 itemCreation.Availabilities);

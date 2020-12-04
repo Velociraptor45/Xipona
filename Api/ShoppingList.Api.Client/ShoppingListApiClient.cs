@@ -97,9 +97,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await apiClient.GetAllQuantityTypes();
         }
 
-        public async Task<IEnumerable<QuantityInPacketTypeContract>> GetAllQuantityInPacketTypes()
+        public async Task<IEnumerable<QuantityTypeInPacketContract>> GetAllQuantityTypesInPacket()
         {
-            return await apiClient.GetAllQuantityInPacketTypes();
+            return await apiClient.GetAllQuantityTypesInPacket();
         }
 
         #endregion ShoppingListController

@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityInPacketTypes;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels
         private readonly IEnumerable<StoreItemAvailabilityReadModel> availabilities;
 
         public StoreItemReadModel(StoreItemActualId id, string name, bool isDeleted, string comment, bool isTemporary,
-            QuantityTypeReadModel quantityType, float quantityInPacket, QuantityInPacketTypeReadModel quantityTypeInPacket,
+            QuantityTypeReadModel quantityType, float quantityInPacket, QuantityTypeInPacketReadModel quantityTypeInPacket,
             ItemCategoryReadModel itemCategory, ManufacturerReadModel manufacturer,
             IEnumerable<StoreItemAvailabilityReadModel> availabilities)
         {
@@ -42,7 +42,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels
         public bool IsTemporary { get; }
         public QuantityTypeReadModel QuantityType { get; }
         public float QuantityInPacket { get; }
-        public QuantityInPacketTypeReadModel QuantityTypeInPacket { get; }
+        public QuantityTypeInPacketReadModel QuantityTypeInPacket { get; }
         public ItemCategoryReadModel ItemCategory { get; }
         public ManufacturerReadModel Manufacturer { get; }
 
