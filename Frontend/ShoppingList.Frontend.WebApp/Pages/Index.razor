@@ -147,7 +147,7 @@
     private void OnCreateNewTemporaryItem()
     {
         var quantityType = new QuantityType(0, "", 1, "€");
-        var quantityTypeInPacket = new QuantityInPacketType(0, "", "");
+        var quantityTypeInPacket = new QuantityTypeInPacket(0, "", "");
         var item = new ShoppingListItem(new ItemId(Guid.NewGuid()), searchBar.Input, true, 1f, quantityType, 1,
             quantityTypeInPacket, "", "", false, 1);
 

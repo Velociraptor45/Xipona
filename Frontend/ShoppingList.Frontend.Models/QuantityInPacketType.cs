@@ -1,8 +1,8 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Models
 {
-    public class QuantityInPacketType
+    public class QuantityTypeInPacket
     {
-        public QuantityInPacketType(int id, string name, string quantityLabel)
+        public QuantityTypeInPacket(int id, string name, string quantityLabel)
         {
             Id = id;
             Name = name;

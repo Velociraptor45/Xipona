@@ -66,7 +66,7 @@
                     Manufacturers="@manufacturers"
                     ItemCategories="@itemCategories"
                     QuantityTypes="@quantityTypes"
-                    QuantityInPacketTypes="@quantityInPacketTypes"
+                    QuantityTypesInPacket="@quantityTypesInPacket"
                     ApiClient="@apiClient"
                     UpdateItemCallback="@OnItemUpdatedAsync"
                     ChangeItemCallback="@OnItemChangedAsync"
@@ -84,7 +84,7 @@
     private List<Manufacturer> manufacturers = new List<Manufacturer>();
     private List<ItemFilterResult> items = new List<ItemFilterResult>();
     private List<QuantityType> quantityTypes = new List<QuantityType>();
-    private List<QuantityInPacketType> quantityInPacketTypes = new List<QuantityInPacketType>();
+    private List<QuantityTypeInPacket> quantityTypesInPacket = new List<QuantityTypeInPacket>();
 
     private Select storesSelectRef;
     private Select itemCategoriesSelectRef;
@@ -100,7 +100,7 @@
             manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
             itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
             quantityTypes = (await apiClient.GetAllQuantityTypesAsync()).ToList();
-            quantityInPacketTypes = (await apiClient.GetAllQuantityInPacketTypesAsync()).ToList();
+            quantityTypesInPacket = (await apiClient.GetAllQuantityTypesInPacketAsync()).ToList();
         }
         catch (Exception)
         {
@@ -202,7 +202,7 @@
         currentlyEditedItem =
             new StoreItem(0, "", false, "", false,
             new QuantityType(0, "", 0, ""), 0,
-            new QuantityInPacketType(0, "", ""), 1, 1, new List<StoreItemAvailability>());
+            new QuantityTypeInPacket(0, "", ""), 1, 1, new List<StoreItemAvailability>());
     }
 
     private async void OnNewManufacturerCreated(string name)

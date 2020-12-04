@@ -3,11 +3,11 @@ using ProjectHermes.ShoppingList.Frontend.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contracts
 {
-    public static class QuantityInPacketTypeContractExtensions
+    public static class QuantityTypeInPacketContractExtensions
     {
-        public static QuantityInPacketType ToModel(this QuantityInPacketTypeContract contract)
+        public static QuantityTypeInPacket ToModel(this QuantityTypeInPacketContract contract)
         {
-            return new QuantityInPacketType(contract.Id, contract.Name, contract.QuantityLabel);
+            return new QuantityTypeInPacket(contract.Id, contract.Name, contract.QuantityLabel);
         }
     }
 }

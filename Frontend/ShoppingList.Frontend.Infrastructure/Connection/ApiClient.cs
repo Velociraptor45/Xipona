@@ -141,9 +141,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return result.Select(r => r.ToModel());
         }
 
-        public async Task<IEnumerable<QuantityInPacketType>> GetAllQuantityInPacketTypesAsync()
+        public async Task<IEnumerable<QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync()
         {
-            var result = await client.GetAllQuantityInPacketTypes();
+            var result = await client.GetAllQuantityTypesInPacket();
             return result.Select(r => r.ToModel());
         }
 
