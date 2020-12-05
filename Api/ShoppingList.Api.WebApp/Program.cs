@@ -25,7 +25,7 @@ namespace ProjectHermes.ShoppingList.Api.WebApp
                     webBuilder.UseKestrel(options =>
                         {
                             options.AddServerHeader = false;
-                            options.Listen(IPAddress.Loopback, 443, listenOptions =>
+                            options.Listen(IPAddress.Any, 443, listenOptions =>
                             {
                                 listenOptions.UseHttps(GetCertificate(configuration));
                             });
