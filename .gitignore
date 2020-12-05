@@ -6,3 +6,4 @@ Migrations/
 *.user
 
 *.pfx
+*.dll
