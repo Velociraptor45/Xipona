@@ -81,6 +81,7 @@
             Finish List
         </Button>
     </div>
+    <div>@errorMsg</div>
 </div>
 
 @code{
@@ -93,6 +94,8 @@
 
     private bool isInEditMode = false;
     private bool showItemsInBasket = true;
+
+    private string errorMsg = "";
 
     List<ShoppingListItem> items = new List<ShoppingListItem>();
 
@@ -130,8 +133,10 @@
             stores = (await apiClient.GetAllActiveStoresAsync())
                 .ToList();
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            errorMsg += System.Environment.NewLine;
+            errorMsg = e.Message;
             //todo show retry message
             return;
         }
@@ -150,7 +155,8 @@
         {
             Console.WriteLine("Loading failed");
             Console.WriteLine(e.Message);
-            //todo show retry message
+            errorMsg += System.Environment.NewLine;
+            errorMsg += e.Message;
             return;
         }
         StateHasChanged();
@@ -177,12 +183,14 @@
     private Task OnConnectionFailed()
     {
         Console.WriteLine("Connection failed");
+        errorMsg += $"{System.Environment.NewLine} Connection failed";
         return Task.CompletedTask;
     }
 
     private async Task OnQueueProcessed()
     {
         Console.WriteLine("Queue processed");
+        errorMsg += $"{System.Environment.NewLine} Queue processed";
         await LoadShoppingListAsync();
     }
 
