@@ -67,7 +67,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             {
                 await commandClient.IsAliveAsync();
             }
-            catch (JSException)
+            catch (Exception)
             {
                 Console.WriteLine("Connection still not available.");
                 return;
@@ -82,6 +82,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             catch (ApiConnectionException)
             {
                 await OnApiConnectionDied();
+                return;
             }
             connectionAlive = true;
 
