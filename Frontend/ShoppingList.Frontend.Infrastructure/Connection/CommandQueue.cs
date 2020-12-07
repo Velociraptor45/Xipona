@@ -1,11 +1,11 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
+﻿using Microsoft.AspNetCore.Components;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using WebAssembly;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 {
@@ -21,23 +21,33 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         private Func<Task> FirstRequestFailedCallback;
         private Func<Task> AllQueueItemsProcessedCallback;
+        private Func<string, int> DebugCallback;
 
         public CommandQueue(IApiClient commandClient)
         {
             timer = new Timer(ConnectionRetryIntervalInMilliseconds);
-            timer.Elapsed += async (s, e) =>
-            {
-                if (!connectionAlive)
-                    await RetryConnectionAsync();
-            };
-            timer.Start();
             this.commandClient = commandClient;
         }
 
-        public void Initialize(Func<Task> firstRequestFailedCallback, Func<Task> allQueueItemsProcessedCallback)
+        public void Initialize(Func<Task> firstRequestFailedCallback, Func<Task> allQueueItemsProcessedCallback,
+            Func<string, int> debugCallback)
         {
+            DebugCallback = debugCallback;
             FirstRequestFailedCallback = firstRequestFailedCallback;
             AllQueueItemsProcessedCallback = allQueueItemsProcessedCallback;
+            try
+            {
+                timer.Elapsed += async (s, e) =>
+                {
+                    if (!connectionAlive)
+                        await RetryConnectionAsync();
+                };
+                timer.Start();
+            }
+            catch(Exception e)
+            {
+                DebugCallback.Invoke(e.ToString());
+            }
         }
 
         public async Task Enqueue(IApiRequest request)
@@ -67,7 +77,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             {
                 await commandClient.IsAliveAsync();
             }
-            catch (JSException)
+            catch (Exception)
             {
                 Console.WriteLine("Connection still not available.");
                 return;
@@ -82,6 +92,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             catch (ApiConnectionException)
             {
                 await OnApiConnectionDied();
+                return;
             }
             connectionAlive = true;
 

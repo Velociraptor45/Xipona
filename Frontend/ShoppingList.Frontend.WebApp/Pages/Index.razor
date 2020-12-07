@@ -81,6 +81,12 @@
             Finish List
         </Button>
     </div>
+    <div>
+        @foreach(var s in errorMsg)
+        {
+            <div>@s</div>
+        }
+    </div>
 </div>
 
 @code{
@@ -94,6 +100,8 @@
     private bool isInEditMode = false;
     private bool showItemsInBasket = true;
 
+    private List<string> errorMsg = new List<string>();
+
     List<ShoppingListItem> items = new List<ShoppingListItem>();
 
     protected override async Task OnInitializedAsync()
@@ -101,9 +109,16 @@
         await base.OnInitializedAsync();
         await LoadAvailableStoresAsync();
         Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
-        commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed);
+        commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed, AddToError);
 
         StateHasChanged();
+    }
+
+    private int AddToError(string e)
+    {
+        errorMsg.Add(e);
+        StateHasChanged();
+        return 0;
     }
 
     protected override async Task OnParametersSetAsync()
@@ -130,8 +145,10 @@
             stores = (await apiClient.GetAllActiveStoresAsync())
                 .ToList();
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            //errorMsg += e.Message;
+            AddToError(e.ToString());
             //todo show retry message
             return;
         }
@@ -150,7 +167,8 @@
         {
             Console.WriteLine("Loading failed");
             Console.WriteLine(e.Message);
-            //todo show retry message
+
+            AddToError(e.Message);
             return;
         }
         StateHasChanged();
@@ -177,12 +195,14 @@
     private Task OnConnectionFailed()
     {
         Console.WriteLine("Connection failed");
+        AddToError("Connection failed");
         return Task.CompletedTask;
     }
 
     private async Task OnQueueProcessed()
     {
         Console.WriteLine("Queue processed");
+        AddToError("Queue processed");
         await LoadShoppingListAsync();
     }
 
