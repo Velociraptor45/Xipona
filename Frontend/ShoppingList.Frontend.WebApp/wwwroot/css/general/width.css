@@ -1,0 +1,23 @@
+﻿.min-w-100 {
+    min-width: 100px;
+}
+
+.min-w-200 {
+    min-width: 200px;
+}
+
+.max-w-50 {
+    max-width: 50px;
+}
+
+.max-w-60 {
+    max-width: 60px;
+}
+
+.max-w-100 {
+    max-width: 100px;
+}
+
+.max-w-200 {
+    max-width: 200px;
+}

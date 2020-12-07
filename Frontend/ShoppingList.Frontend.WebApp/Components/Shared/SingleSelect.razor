@@ -1,0 +1,67 @@
+﻿@using OneOf;
+
+<Select Placeholder="@Placeholder"
+        DefaultValue="@DefaultValue"
+        OnChange="@OnSelectionChanged"
+        DropdownRender="@OnRender"
+        AllowClear="@AllowClear">
+    @foreach (var map in IdToNameMaps)
+    {
+        <SelectOption Value="@map.Item1.ToString()">@map.Item2</SelectOption>
+    }
+</Select>
+
+@code {
+    [Parameter] public string Placeholder { get; set; }
+    [Parameter] public string DefaultValue { get; set; }
+    [Parameter] public bool CanAddItem { get; set; }
+    [Parameter] public bool AllowClear { get; set; } = false;
+    [Parameter] public List<Tuple<int, string>> IdToNameMaps { get; set; }
+    [Parameter] public EventCallback<string> OnItemAddedCallback { get; set; }
+    [Parameter] public EventCallback<int> OnChangeCallback { get; set; }
+
+    private string newItemName = "";
+
+    private async void OnSelectionChanged(
+        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
+        OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    {
+        int id;
+
+        if (string.IsNullOrWhiteSpace(value.AsT0))
+            id = -1;
+        else
+            id = int.Parse(value.AsT0);
+
+        await OnChangeCallback.InvokeAsync(id);
+    }
+
+    private async void OnAddNewItem()
+    {
+        await OnItemAddedCallback.InvokeAsync(newItemName);
+        newItemName = "";
+    }
+
+    private RenderFragment OnRender(RenderFragment originNode, Properties properties)
+    {
+        RenderFragment customDropdownRender =
+    @<Template>
+        <div>
+            @originNode
+            @if (CanAddItem)
+            {
+                <Divider Class="my-1"></Divider>
+                <div class="d-flex p-2">
+                    <div class="max-w-100">
+                        <Input @bind-Value="@newItemName" />
+                    </div>
+                    <a class="d-flex align-items-center min-w-50 px-2 py-1" @onclick="OnAddNewItem">
+                        <Icon Type="plus" Theme="outline"></Icon>
+                    </a>
+                </div>
+            }
+        </div>
+    </Template>;
+return customDropdownRender;
+}
+}

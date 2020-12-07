@@ -1,0 +1,247 @@
+﻿@page "/items"
+@inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items;
+@using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.Items;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+
+<div>
+    @if (currentlyEditedItem == null)
+    {
+        <div class="d-flex">
+            <div class="h4">Items</div>
+            <Button @onclick="OnCreateItemButtonClicked" Class="d-flex align-items-center ml-auto">
+                <Icon Type="plus"></Icon>
+            </Button>
+        </div>
+        <div>
+            <div class="d-flex py-1">
+                <div class="mr-2 align-self-center">
+                    Store
+                </div>
+                <Select Mode="Tags" Placeholder="Stores" @ref="@storesSelectRef" Class="min-w-100">
+                    @foreach (var store in stores)
+                    {
+                        <SelectOption Value=@store.Id.ToString()>@store.Name</SelectOption>
+                    }
+                </Select>
+            </div>
+            <div class="d-flex py-1">
+                <div class="mr-2 align-self-center">
+                    Category
+                </div>
+                <Select Mode="Tags" Placeholder="Category" @ref="@itemCategoriesSelectRef" Class="min-w-100">
+                    @foreach (var itemCategory in itemCategories)
+                    {
+                        <SelectOption Value="@itemCategory.Id.ToString()">@itemCategory.Name</SelectOption>
+                    }
+                </Select>
+            </div>
+            <div class="d-flex py-1">
+                <div class="mr-2 align-self-center">
+                    Manufacturer
+                </div>
+                <Select Mode="Tags" Placeholder="Manufacturer" @ref="@manufacturersSelectRef" Class="min-w-100">
+                    @foreach (var manufacturer in manufacturers)
+                    {
+                        <SelectOption Value="@manufacturer.Id.ToString()">@manufacturer.Name</SelectOption>
+                    }
+                </Select>
+            </div>
+            <Button @onclick="@OnLoadButtonClickedAsync">Load</Button>
+        </div>
+        <div>
+            <!-- result item list -->
+            @foreach (var item in items)
+            {
+                <ItemFilterResultComponent Item="@item"
+                                           OnClickCallback="@OnItemClickedAsync"></ItemFilterResultComponent>
+            }
+        </div>
+    }
+    else
+    {
+        <ItemEditor StoreItem="@currentlyEditedItem"
+                    Stores="@stores"
+                    Manufacturers="@manufacturers"
+                    ItemCategories="@itemCategories"
+                    QuantityTypes="@quantityTypes"
+                    QuantityTypesInPacket="@quantityTypesInPacket"
+                    ApiClient="@apiClient"
+                    UpdateItemCallback="@OnItemUpdatedAsync"
+                    ChangeItemCallback="@OnItemChangedAsync"
+                    CreateItemCallback="@OnItemCreatedAsync"
+                    DeleteItemCallback="@OnItemDeletedAsync"
+                    LeaveEditorCallback="@OnLeaveEditor"
+                    ManufacturerCreatedCallback="@OnNewManufacturerCreated"
+                    ItemCategoryCreatedCallback="@OnNewItemCategoryCreated"></ItemEditor>
+    }
+</div>
+
+@code {
+    private List<Store> stores = new List<Store>();
+    private List<ItemCategory> itemCategories = new List<ItemCategory>();
+    private List<Manufacturer> manufacturers = new List<Manufacturer>();
+    private List<ItemFilterResult> items = new List<ItemFilterResult>();
+    private List<QuantityType> quantityTypes = new List<QuantityType>();
+    private List<QuantityTypeInPacket> quantityTypesInPacket = new List<QuantityTypeInPacket>();
+
+    private Select storesSelectRef;
+    private Select itemCategoriesSelectRef;
+    private Select manufacturersSelectRef;
+
+    private StoreItem currentlyEditedItem = null;
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            stores = (await apiClient.GetAllActiveStoresAsync()).ToList();
+            manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
+            itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
+            quantityTypes = (await apiClient.GetAllQuantityTypesAsync()).ToList();
+            quantityTypesInPacket = (await apiClient.GetAllQuantityTypesInPacketAsync()).ToList();
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OnLoadButtonClickedAsync()
+    {
+        var stores = storesSelectRef.SelectedValues.Value.AsT1.Select(s => int.Parse(s)).ToList();
+        var itemCategories = itemCategoriesSelectRef.SelectedValues.Value.AsT1.Select(cat => int.Parse(cat)).ToList();
+        var manufacturers = manufacturersSelectRef.SelectedValues.Value.AsT1.Select(m => int.Parse(m)).ToList();
+
+        var result = await apiClient.GetItemFilterResultAsync(
+            stores,
+            itemCategories,
+            manufacturers);
+        items = result.ToList();
+        StateHasChanged();
+    }
+
+    private async Task OnItemClickedAsync(int itemId)
+    {
+        try
+        {
+            currentlyEditedItem = await apiClient.GetItemByIdAsync(itemId);
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+            return;
+        }
+    }
+
+    private async Task OnItemUpdatedAsync(StoreItem storeItem)
+    {
+        var request = new UpdateItemRequest(Guid.NewGuid(), storeItem);
+        try
+        {
+            await apiClient.UpdateItemAsync(request);
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+            return;
+        }
+        LeaveEditor();
+    }
+
+    private async Task OnItemChangedAsync(StoreItem storeItem)
+    {
+        var request = new ChangeItemRequest(Guid.NewGuid(), storeItem);
+        try
+        {
+            await apiClient.ChangeItemAsync(request);
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+            return;
+        }
+        LeaveEditor();
+    }
+
+    private async Task OnItemDeletedAsync(int itemId)
+    {
+        var request = new DeleteItemRequest(Guid.NewGuid(), itemId);
+        try
+        {
+            await apiClient.DeleteItemAsync(request);
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+            return;
+        }
+        LeaveEditor();
+    }
+
+    private async Task OnItemCreatedAsync(StoreItem storeItem)
+    {
+        var request = new CreateItemRequest(Guid.NewGuid(), storeItem);
+        try
+        {
+            await apiClient.CreateItemAsync(request);
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+            return;
+        }
+        LeaveEditor();
+    }
+
+    private void OnCreateItemButtonClicked()
+    {
+        currentlyEditedItem =
+            new StoreItem(0, "", false, "", false,
+            new QuantityType(0, "", 0, "", ""), 0,
+            new QuantityTypeInPacket(0, "", ""), 1, 1, new List<StoreItemAvailability>());
+    }
+
+    private async void OnNewManufacturerCreated(string name)
+    {
+        try
+        {
+            await apiClient.CreateManufacturerAsync(name);
+            manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+            return;
+        }
+        StateHasChanged();
+    }
+
+    private async void OnNewItemCategoryCreated(string name)
+    {
+        try
+        {
+            await apiClient.CreateItemCategoryAsync(name);
+            itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
+        }
+        catch (Exception)
+        {
+            //todo show retry message
+            return;
+        }
+        StateHasChanged();
+    }
+
+    private void OnLeaveEditor()
+    {
+        LeaveEditor();
+    }
+
+    private void LeaveEditor()
+    {
+        currentlyEditedItem = null;
+    }
+}

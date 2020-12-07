@@ -4,3 +4,6 @@ obj/
 Migrations/
 
 *.user
+
+*.pfx
+*.dll
