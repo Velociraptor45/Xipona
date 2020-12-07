@@ -104,9 +104,15 @@
         await base.OnInitializedAsync();
         await LoadAvailableStoresAsync();
         Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
-        commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed);
+        commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed, AddToError);
 
         StateHasChanged();
+    }
+
+    private int AddToError(string e)
+    {
+        errorMsg += e;
+        return 0;
     }
 
     protected override async Task OnParametersSetAsync()
@@ -135,8 +141,8 @@
         }
         catch (Exception e)
         {
-            errorMsg += System.Environment.NewLine;
-            errorMsg = e.Message;
+            //errorMsg += e.Message;
+            errorMsg += e.ToString();
             //todo show retry message
             return;
         }
@@ -183,14 +189,14 @@
     private Task OnConnectionFailed()
     {
         Console.WriteLine("Connection failed");
-        errorMsg += $"{System.Environment.NewLine} Connection failed";
+        errorMsg += "Connection failed";
         return Task.CompletedTask;
     }
 
     private async Task OnQueueProcessed()
     {
         Console.WriteLine("Queue processed");
-        errorMsg += $"{System.Environment.NewLine} Queue processed";
+        errorMsg += "Queue processed";
         await LoadShoppingListAsync();
     }
 
