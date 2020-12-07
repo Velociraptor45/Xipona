@@ -13,13 +13,6 @@ To get the API running, a couple of steps are necessary
 
 #### Certificate
 The API is running via https and thus needs a .pfx certificate in the *Api/ShoppingList.Api.WebApp* directory.
-To create a new certificate (under linux), execute this command
-
-`sudo openssl req -x509 -days 365 -newkey rsa:2048 -keyout shoppinglist-api.key -out shoppinglist-api.crt`
-
-and to export the certificate into .pfx format execute
-
-`sudo openssl pkcs12 -export -out shoppinglist-api.pfx -inkey shoppinglist-api.key -in shoppinglist-api.crt`.
 
 Additionally, you have to specify the certificate's name and passphrase in *Api/ShoppingList.Api.WebApp/certificate.json*.
 
