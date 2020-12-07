@@ -38,5 +38,10 @@ Specify the DB's connection string in the Development/Production appsettings und
 ***
 
 ## Client/Frontend
+The client can show and edit active shopping lists. Thanks to retry and queuing logic, it is possible to use the front page while shopping even if there's currently no internet connection. When the connection is re-established, the client syncs with the API.
 
 ### Setup
+#### Certificate
+A new folder *Frontend/ssl* must be created, containing two files:
+- shoppinglist-app.crt
+- shoppinglist-app.key
