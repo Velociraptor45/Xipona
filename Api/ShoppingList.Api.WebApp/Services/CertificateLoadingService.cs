@@ -15,6 +15,9 @@ namespace ProjectHermes.ShoppingList.Api.WebApp.Services
 
             using var rsa = RSA.Create();
             rsa.ImportRSAPrivateKey(GetBytesFromPem(passwordFileLines), out _);
+
+            // exporting the certificate is a workaround for a windows bug
+            // see: https://github.com/dotnet/runtime/issues/23749#issuecomment-388231655
             return new X509Certificate2(certificate.CopyWithPrivateKey(rsa).Export(X509ContentType.Pkcs12));
         }
 
