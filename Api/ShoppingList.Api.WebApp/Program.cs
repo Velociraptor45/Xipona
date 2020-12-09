@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using ProjectHermes.ShoppingList.Api.WebApp.Services;
 using System;
 using System.IO;
 using System.Net;
@@ -36,24 +37,23 @@ namespace ProjectHermes.ShoppingList.Api.WebApp
                 });
         }
 
-        public static X509Certificate2 GetCertificate(IConfiguration config)
-        {
-            var certificateSettings = config.GetSection("certificateSettings");
-            string fileName = certificateSettings.GetValue<string>("filename");
-            string password = certificateSettings.GetValue<string>("password");
-
-            return new X509Certificate2(fileName, password);
-        }
-
-        public static IConfiguration GetConfiguration()
+        private static IConfiguration GetConfiguration()
         {
             return new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddEnvironmentVariables()
-            .AddJsonFile("certificate.json", optional: true, reloadOnChange: true)
-            .AddJsonFile($"certificate.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", 
-                optional: true, reloadOnChange: true)
-            .Build();
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddEnvironmentVariables()
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json",
+                    optional: true, reloadOnChange: true)
+                .Build();
+        }
+
+        private static X509Certificate2 GetCertificate(IConfiguration configuration)
+        {
+            CertificateLoadingService loadingService = new CertificateLoadingService();
+            string crtFilePath = configuration["Certificate:CrtFilePath"];
+            string privateKeyFilePath = configuration["Certificate:PrivateKeyFilePath"];
+
+            return loadingService.GetCertificate(crtFilePath, privateKeyFilePath);
         }
     }
 }
