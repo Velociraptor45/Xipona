@@ -33,7 +33,6 @@ namespace ProjectHermes.ShoppingList.Api.WebApp
                     webBuilder.UseConfiguration(configuration);
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
-                    webBuilder.UseUrls("https://localhost:443");
                 });
         }
 
