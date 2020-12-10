@@ -103,12 +103,22 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
 
         [HttpGet]
         [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [Route("search/{searchInput}/{storeId}")]
         public async Task<IActionResult> GetItemSearchResults([FromRoute(Name = "searchInput")] string searchInput,
             [FromRoute(Name = "storeId")] int storeId)
         {
             var query = new ItemSearchQuery(searchInput, new StoreId(storeId));
-            IEnumerable<ItemSearchReadModel> readModels = await queryDispatcher.DispatchAsync(query, default);
+
+            IEnumerable<ItemSearchReadModel> readModels;
+            try
+            {
+                readModels = await queryDispatcher.DispatchAsync(query, default);
+            }
+            catch (StoreNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
 
             var contracts = readModels.Select(rm => rm.ToContract());
 
