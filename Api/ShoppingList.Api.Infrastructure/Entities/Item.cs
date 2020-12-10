@@ -21,9 +21,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
         public int? ItemCategoryId { get; set; }
         public int? ManufacturerId { get; set; }
         public Guid? CreatedFrom { get; set; }
+        public int? PredecessorId { get; set; }
 
         public Manufacturer Manufacturer { get; set; }
         public ItemCategory ItemCategory { get; set; }
+        public Item Predecessor { get; set; }
         public ICollection<AvailableAt> AvailableAt { get; set; }
         public ICollection<ItemsOnList> ItemsOnLists { get; set; }
     }
