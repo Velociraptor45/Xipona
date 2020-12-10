@@ -114,12 +114,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Where(item =>
                     !item.IsTemporary
                     && itemCategoryIdLists.Contains(item.ItemCategoryId.Value)
-                    && manufacturerIdLists.Contains(item.ManufacturerId.Value))
+                    && ((!item.ManufacturerId.HasValue && !manufacturerIdLists.Any())
+                        || manufacturerIdLists.Contains(item.ManufacturerId.Value)))
                 .ToListAsync();
 
             // filtering by store
             var filteredResultByStore = result
-                .Where(item => storeIdLists.Intersect(item.AvailableAt.Select(av => av.StoreId)).Any());
+                .Where(item => (!item.AvailableAt.Any() && !storeIdLists.Any())
+                    || storeIdLists.Intersect(item.AvailableAt.Select(av => av.StoreId)).Any());
 
             cancellationToken.ThrowIfCancellationRequested();
 
