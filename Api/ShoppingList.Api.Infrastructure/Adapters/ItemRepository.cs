@@ -49,6 +49,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
+            itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
+
             return itemEntity.ToStoreItemDomain();
         }
 
@@ -79,6 +81,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 throw new ItemAtStoreNotAvailableException(storeItemId, storeId);
 
             cancellationToken.ThrowIfCancellationRequested();
+
+            itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
 
             return itemEntity.ToStoreItemDomain();
         }
@@ -121,9 +125,15 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             // filtering by store
             var filteredResultByStore = result
                 .Where(item => (!item.AvailableAt.Any() && !storeIdLists.Any())
-                    || storeIdLists.Intersect(item.AvailableAt.Select(av => av.StoreId)).Any());
+                    || storeIdLists.Intersect(item.AvailableAt.Select(av => av.StoreId)).Any())
+                .ToList();
 
             cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var item in filteredResultByStore)
+            {
+                item.Predecessor = await LoadPredecessorsAsync(item);
+            }
 
             return filteredResultByStore.Select(r => r.ToStoreItemDomain());
         }
@@ -147,6 +157,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
+            foreach (var item in entities)
+            {
+                item.Predecessor = await LoadPredecessorsAsync(item);
+            }
+
             return entities.Select(e => e.ToStoreItemDomain());
         }
 
@@ -162,6 +177,13 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .ThenInclude(map => map.Store)
                 .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId.Value) != null)
                 .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var item in entities)
+            {
+                item.Predecessor = await LoadPredecessorsAsync(item);
+            }
 
             return entities.Select(e => e.ToStoreItemDomain());
         }
@@ -205,6 +227,24 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
         #endregion public methods
 
         #region private methods
+
+        private async Task<Item> LoadPredecessorsAsync(Item item)
+        {
+            if (item.PredecessorId == null)
+                return null;
+
+            var predecessor = await dbContext.Items.AsNoTracking()
+                .Include(item => item.ItemCategory)
+                .Include(item => item.Manufacturer)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Store)
+                .SingleOrDefaultAsync(i => i.Id == item.PredecessorId.Value);
+            if (predecessor == null)
+                return null;
+
+            predecessor.Predecessor = await LoadPredecessorsAsync(predecessor);
+            return predecessor;
+        }
 
         private async Task<Item> FindTrackedEntityBy(StoreItemId id)
         {

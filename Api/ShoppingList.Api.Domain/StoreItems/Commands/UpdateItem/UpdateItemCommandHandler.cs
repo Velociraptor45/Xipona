@@ -57,7 +57,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
             await itemRepository.StoreAsync(oldItem, cancellationToken);
 
             // create new Item
-            StoreItem updatedItem = ItemUpdateExtensions.ToStoreItem(command.ItemUpdate, itemCategory, manufacturer);
+            StoreItem updatedItem = command.ItemUpdate.ToStoreItem(itemCategory, manufacturer, oldItem);
             updatedItem = await itemRepository.StoreAsync(updatedItem, cancellationToken);
 
             // change existing item references on shopping lists
