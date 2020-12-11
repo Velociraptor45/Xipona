@@ -7,13 +7,15 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.ShoppingList
+using DomainModels = ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists
 {
     public class ShoppingListTests
     {
@@ -39,7 +41,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.ShoppingList
         {
             // Arrange
             var fixure = commonFixture.GetNewFixture();
-            var shoppingList = fixure.Create<Domain.ShoppingLists.Models.ShoppingList>();
+            var shoppingList = fixure.Create<DomainModels.ShoppingList>();
 
             // Act
             Action action = () => shoppingList.AddItem(null, commonFixture.NextBool(), commonFixture.NextFloat());

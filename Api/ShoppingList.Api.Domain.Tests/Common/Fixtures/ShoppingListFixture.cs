@@ -1,11 +1,13 @@
 ﻿using AutoFixture;
-using ProjectHermes.ShoppingList.Api.Core.Tests;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using Models = ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Core.Tests;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
 {
     public class ShoppingListFixture
     {
@@ -18,7 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
             this.commonFixture = commonFixture;
         }
 
-        public Domain.ShoppingLists.Models.ShoppingList GetShoppingList(int itemCount = 3,
+        public Models.ShoppingList GetShoppingList(int itemCount = 3,
             IEnumerable<ShoppingListItem> additionalItems = null)
         {
             var listId = new ShoppingListId(commonFixture.NextInt());
@@ -26,14 +28,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
             return GetShoppingList(listId, storeId, itemCount, additionalItems);
         }
 
-        public Domain.ShoppingLists.Models.ShoppingList GetShoppingList(StoreId storeId, int itemCount = 3,
+        public Models.ShoppingList GetShoppingList(StoreId storeId, int itemCount = 3,
             IEnumerable<ShoppingListItem> additionalItems = null)
         {
             var listId = new ShoppingListId(commonFixture.NextInt());
             return GetShoppingList(listId, storeId, itemCount, additionalItems);
         }
 
-        public Domain.ShoppingLists.Models.ShoppingList GetShoppingList(ShoppingListId id, StoreId storeId, int itemCount = 3,
+        public Models.ShoppingList GetShoppingList(ShoppingListId id, StoreId storeId, int itemCount = 3,
             IEnumerable<ShoppingListItem> additionalItems = null)
         {
             var allItems = additionalItems?.ToList() ?? new List<ShoppingListItem>();
@@ -46,7 +48,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
             fixture.Inject(id);
             fixture.Inject(storeId);
             fixture.Inject(allItems.AsEnumerable());
-            return fixture.Create<Domain.ShoppingLists.Models.ShoppingList>();
+            return fixture.Create<Models.ShoppingList>();
         }
 
         private IEnumerable<ShoppingListItem> GetUniqueShoppingListItems(int count, IEnumerable<int> exclude)

@@ -5,14 +5,14 @@ using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using ShoppingList.Api.Domain.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.CreateTemporaryItem
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.CreateTemporaryItem
 {
     public class CreateTemporaryItemCommandHandlerTests
     {

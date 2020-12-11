@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
 {
     public class StoreItemAvailabilityFixture
     {

@@ -5,20 +5,22 @@ using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromShoppingList;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
-using ShoppingList.Api.Domain.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.RemoveItemFromShoppingList
+using DomainModels = ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.PutItemInBasket
 {
-    public class RemoveItemFromShoppingListCommandHandlerTests
+    public class PutItemInBasketCommandHandlerTests
     {
         private readonly CommonFixture commonFixture;
         private readonly ShoppingListItemFixture shoppingListItemFixture;
@@ -26,7 +28,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.RemoveItemFromSho
         private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
         private readonly StoreItemFixture storeItemFixture;
 
-        public RemoveItemFromShoppingListCommandHandlerTests()
+        public PutItemInBasketCommandHandlerTests()
         {
             commonFixture = new CommonFixture();
             shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
@@ -40,7 +42,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.RemoveItemFromSho
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
-            var handler = fixture.Create<RemoveItemFromShoppingListCommandHandler>();
+            var handler = fixture.Create<PutItemInBasketCommandHandler>();
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(null, default);
@@ -53,34 +55,23 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.RemoveItemFromSho
         }
 
         [Fact]
-        public async Task HandleAsync_WithValidActualIdOfPermanentItemCommand_ShouldRemoveItemFromBasket()
+        public async Task HandleAsync_WithValidActualIdCommand_ShouldPutItemInBasket()
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
+            var itemNotInBasket = shoppingListItemFixture.GetShoppingListItem(isInBasket: false);
+            var shoppingList = shoppingListFixture.GetShoppingList(itemCount: 0, itemNotInBasket.ToMonoList());
             var shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
-            var itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
 
-            var listItem = shoppingListItemFixture.GetShoppingListItem();
-            var shoppingList = shoppingListFixture.GetShoppingList(itemCount: 2, listItem.ToMonoList());
-            var storeItemIdActual = new StoreItemId(listItem.Id.Actual.Value);
-            var storeItem = storeItemFixture.GetStoreItem(storeItemIdActual, isTemporary: false, isDeleted: false);
-
-            fixture.ConstructorArgumentFor<RemoveItemFromShoppingListCommand, ShoppingListItemId>(
-                "shoppingListItemId", listItem.Id);
-            var command = fixture.Create<RemoveItemFromShoppingListCommand>();
-            var handler = fixture.Create<RemoveItemFromShoppingListCommandHandler>();
+            fixture.ConstructorArgumentFor<PutItemInBasketCommand, ShoppingListItemId>("itemId", itemNotInBasket.Id);
+            var command = fixture.Create<PutItemInBasketCommand>();
+            var handler = fixture.Create<PutItemInBasketCommandHandler>();
 
             shoppingListRepositoryMock
                 .Setup(instance => instance.FindByAsync(
                     It.Is<ShoppingListId>(id => id == command.ShoppingListId),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(shoppingList));
-
-            itemRepositoryMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<StoreItemId>(id => id.Actual.Value == listItem.Id.Actual.Value),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(storeItem));
 
             // Act
             bool result = await handler.HandleAsync(command, default);
@@ -89,39 +80,34 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.RemoveItemFromSho
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                shoppingList.Items.Should().HaveCount(2);
-                shoppingList.Items.Should().NotContain(item => item.Id == listItem.Id);
-                storeItem.IsDeleted.Should().BeFalse();
+                shoppingList.Items.Should().ContainSingle();
+                shoppingList.Items.First().IsInBasket.Should().BeTrue();
                 shoppingListRepositoryMock.Verify(
                     i => i.StoreAsync(
-                        It.Is<ShoppingLists.Models.ShoppingList>(list => list.Id == shoppingList.Id),
+                        It.Is<DomainModels.ShoppingList>(list => list.Id == shoppingList.Id),
                         It.IsAny<CancellationToken>()),
                     Times.Once);
-                itemRepositoryMock.Verify(
-                    i => i.StoreAsync(
-                        It.IsAny<StoreItem>(),
-                        It.IsAny<CancellationToken>()),
-                    Times.Never);
             }
         }
 
         [Fact]
-        public async Task HandleAsync_WithValidActualIdOfTemporaryItemCommand_ShouldRemoveItemFromBasketAndDeleteIt()
+        public async Task HandleAsync_WithValidOfflineIdCommand_ShouldPutItemInBasket()
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
             var shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
             var itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
 
-            var listItem = shoppingListItemFixture.GetShoppingListItem();
-            var shoppingList = shoppingListFixture.GetShoppingList(itemCount: 2, listItem.ToMonoList());
-            var storeItemIdActual = new StoreItemId(listItem.Id.Actual.Value);
-            var storeItem = storeItemFixture.GetStoreItem(storeItemIdActual, isTemporary: true, isDeleted: false);
+            var itemNotInBasket = shoppingListItemFixture.GetShoppingListItem(isInBasket: false);
+            var shoppingList = shoppingListFixture.GetShoppingList(itemCount: 0, itemNotInBasket.ToMonoList());
+            var listItemIdOffline = new ShoppingListItemId(Guid.NewGuid());
+            var storeItemIdActual = new StoreItemId(itemNotInBasket.Id.Actual.Value);
+            var storeItemIdOffline = new StoreItemId(listItemIdOffline.Offline.Value);
+            var storeItem = storeItemFixture.GetStoreItem(storeItemIdActual);
 
-            fixture.ConstructorArgumentFor<RemoveItemFromShoppingListCommand, ShoppingListItemId>(
-                "shoppingListItemId", listItem.Id);
-            var command = fixture.Create<RemoveItemFromShoppingListCommand>();
-            var handler = fixture.Create<RemoveItemFromShoppingListCommandHandler>();
+            fixture.ConstructorArgumentFor<PutItemInBasketCommand, ShoppingListItemId>("itemId", listItemIdOffline);
+            var command = fixture.Create<PutItemInBasketCommand>();
+            var handler = fixture.Create<PutItemInBasketCommandHandler>();
 
             shoppingListRepositoryMock
                 .Setup(instance => instance.FindByAsync(
@@ -131,7 +117,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.RemoveItemFromSho
 
             itemRepositoryMock
                 .Setup(instance => instance.FindByAsync(
-                    It.Is<StoreItemId>(id => id.Actual.Value == listItem.Id.Actual.Value),
+                    It.Is<StoreItemId>(id => id.Offline.Value == listItemIdOffline.Offline.Value),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(storeItem));
 
@@ -142,17 +128,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.RemoveItemFromSho
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                shoppingList.Items.Should().HaveCount(2);
-                shoppingList.Items.Should().NotContain(item => item.Id == listItem.Id);
-                storeItem.IsDeleted.Should().BeTrue();
+                shoppingList.Items.Should().ContainSingle();
+                shoppingList.Items.First().IsInBasket.Should().BeTrue();
                 shoppingListRepositoryMock.Verify(
                     i => i.StoreAsync(
-                        It.Is<ShoppingLists.Models.ShoppingList>(list => list.Id == shoppingList.Id),
+                        It.Is<DomainModels.ShoppingList>(list => list.Id == shoppingList.Id),
                         It.IsAny<CancellationToken>()),
                     Times.Once);
                 itemRepositoryMock.Verify(
-                    i => i.StoreAsync(
-                        It.Is<StoreItem>(i => i.Id == storeItemIdActual),
+                    i => i.FindByAsync(
+                        It.Is<StoreItemId>(id => id == storeItemIdOffline),
                         It.IsAny<CancellationToken>()),
                     Times.Once);
             }

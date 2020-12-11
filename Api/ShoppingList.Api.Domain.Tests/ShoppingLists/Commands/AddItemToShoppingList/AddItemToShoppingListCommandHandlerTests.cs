@@ -9,7 +9,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemToShop
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using ShoppingList.Api.Domain.Models;
 using System;
 using System.Linq;
@@ -17,7 +17,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShoppingList
+using DomainModels = ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.AddItemToShoppingList
 {
     public class AddItemToShoppingListCommandHandlerTests
     {
@@ -85,7 +87,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
             {
                 result.Should().BeTrue();
                 shoppingListRepositoryMock.Verify(
-                    i => i.StoreAsync(It.IsAny<ShoppingLists.Models.ShoppingList>(), It.IsAny<CancellationToken>()),
+                    i => i.StoreAsync(It.IsAny<DomainModels.ShoppingList>(), It.IsAny<CancellationToken>()),
                     Times.Once);
             }
         }
@@ -122,12 +124,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
             {
                 result.Should().BeTrue();
                 shoppingListRepositoryMock.Verify(
-                    i => i.StoreAsync(It.IsAny<ShoppingLists.Models.ShoppingList>(), It.IsAny<CancellationToken>()),
+                    i => i.StoreAsync(It.IsAny<DomainModels.ShoppingList>(), It.IsAny<CancellationToken>()),
                     Times.Once);
             }
         }
 
-        private (StoreItem, ShoppingLists.Models.ShoppingList) GetValidStoreItemAndShoppingList()
+        private (StoreItem, DomainModels.ShoppingList) GetValidStoreItemAndShoppingList()
         {
             var availabilities = storeItemAvailabilityFixture.GetAvailabilities(count: 3).ToList();
             var storeIdForShoppingList = availabilities[commonFixture.NextInt(0, availabilities.Count - 1)].StoreId.Value;

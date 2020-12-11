@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.ShoppingList
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists
 {
     public class FinishShoppingListTestData : IEnumerable<object[]>
     {

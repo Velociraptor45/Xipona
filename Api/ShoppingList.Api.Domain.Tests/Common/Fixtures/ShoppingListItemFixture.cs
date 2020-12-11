@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using System;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
 {
     public class ShoppingListItemFixture
     {
