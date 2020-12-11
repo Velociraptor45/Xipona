@@ -27,7 +27,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
                 entity.ItemCategory?.ToDomain(),
                 entity.Manufacturer?.ToDomain(),
                 entity.AvailableAt.Select(map => new StoreItemAvailability(
-                    new StoreId(map.StoreId), map.Price)));
+                    new StoreId(map.StoreId), map.Price)),
+                entity.Predecessor?.ToStoreItemDomain());
         }
     }
 }

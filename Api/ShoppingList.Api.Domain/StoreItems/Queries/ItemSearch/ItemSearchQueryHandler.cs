@@ -38,7 +38,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch
                 throw new StoreNotFoundException(query.StoreId);
 
             IEnumerable<StoreItem> storeItems = await itemRepository
-                .FindByAsync(query.SearchInput.Trim(), query.StoreId, cancellationToken);
+                .FindActiveByAsync(query.SearchInput.Trim(), query.StoreId, cancellationToken);
             Domain.ShoppingLists.Models.ShoppingList shoppingList = await shoppingListRepository
                 .FindActiveByAsync(query.StoreId, cancellationToken);
             var itemIdsOnShoppingList = shoppingList.Items.Select(item => item.Id);

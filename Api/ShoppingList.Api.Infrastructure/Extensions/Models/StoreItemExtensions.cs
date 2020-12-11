@@ -22,7 +22,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
                 CreatedFrom = model.Id.Offline?.Value,
                 Manufacturer = model.Manufacturer?.ToEntity(),
                 ItemCategory = model.ItemCategory?.ToEntity(),
-                AvailableAt = model.Availabilities.Select(av => av.ToEntity(model.Id)).ToList()
+                AvailableAt = model.Availabilities.Select(av => av.ToEntity(model.Id)).ToList(),
+                PredecessorId = model.Predecessor?.Id.Actual.Value
             };
         }
     }
