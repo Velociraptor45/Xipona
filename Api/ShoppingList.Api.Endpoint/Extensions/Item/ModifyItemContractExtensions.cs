@@ -6,11 +6,11 @@ using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Item
 {
-    public static class ChangeItemContractExtensions
+    public static class ModifyItemContractExtensions
     {
-        public static ItemChange ToDomain(this ChangeItemContract contract)
+        public static ItemModify ToDomain(this ModifyItemContract contract)
         {
-            return new ItemChange(new StoreItemId(contract.Id),
+            return new ItemModify(new StoreItemId(contract.Id),
                 contract.Name,
                 contract.Comment,
                 (QuantityType)contract.QuantityType,

@@ -20,6 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ShoppingListNotFoundException"></exception>
         Task<Models.ShoppingList> FindByAsync(ShoppingListId id, CancellationToken cancellationToken);
+        Task<IEnumerable<Models.ShoppingList>> FindByAsync(StoreItemId storeItemId, CancellationToken cancellationToken);
 
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ItemNotOnShoppingListException"></exception>

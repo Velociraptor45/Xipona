@@ -69,7 +69,7 @@
                     QuantityTypesInPacket="@quantityTypesInPacket"
                     ApiClient="@apiClient"
                     UpdateItemCallback="@OnItemUpdatedAsync"
-                    ChangeItemCallback="@OnItemChangedAsync"
+                    ModifyItemCallback="@OnItemModifiedAsync"
                     CreateItemCallback="@OnItemCreatedAsync"
                     DeleteItemCallback="@OnItemDeletedAsync"
                     LeaveEditorCallback="@OnLeaveEditor"
@@ -152,12 +152,12 @@
         LeaveEditor();
     }
 
-    private async Task OnItemChangedAsync(StoreItem storeItem)
+    private async Task OnItemModifiedAsync(StoreItem storeItem)
     {
-        var request = new ChangeItemRequest(Guid.NewGuid(), storeItem);
+        var request = new ModifyItemRequest(Guid.NewGuid(), storeItem);
         try
         {
-            await apiClient.ChangeItemAsync(request);
+            await apiClient.ModifyItemAsync(request);
         }
         catch (Exception)
         {

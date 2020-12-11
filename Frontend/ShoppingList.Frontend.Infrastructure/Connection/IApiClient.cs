@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
     {
         Task AddItemToShoppingListAsync(AddItemToShoppingListRequest request);
 
-        Task ChangeItemAsync(ChangeItemRequest request);
+        Task ModifyItemAsync(ModifyItemRequest request);
 
         Task ChangeItemQuantityOnShoppingListAsync(ChangeItemQuantityOnShoppingListRequest request);
 
