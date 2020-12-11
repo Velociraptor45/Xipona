@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem
 {
-    public class ChangeItemContract
+    public class ModifyItemContract
     {
         public int Id { get; set; }
         public string Name { get; set; }

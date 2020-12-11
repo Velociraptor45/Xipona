@@ -54,11 +54,11 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("change")]
-        public async Task<IActionResult> ChangeItem([FromBody] ChangeItemContract changeItemContract)
+        [Route("modify")]
+        public async Task<IActionResult> ModifyItem([FromBody] ModifyItemContract modifyItemContract)
         {
-            var model = changeItemContract.ToDomain();
-            var command = new ChangeItemCommand(model);
+            var model = modifyItemContract.ToDomain();
+            var command = new ModifyItemCommand(model);
 
             try
             {

@@ -69,7 +69,7 @@ namespace ShoppingList.Api.Domain.Models
             IsTemporary = false;
         }
 
-        public void Modify(ItemChange itemChange, ItemCategory itemCategory, Manufacturer manufacturer)
+        public void Modify(ItemModify itemChange, ItemCategory itemCategory, Manufacturer manufacturer)
         {
             Name = itemChange.Name;
             Comment = itemChange.Comment;

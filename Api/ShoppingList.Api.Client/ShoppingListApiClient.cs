@@ -111,9 +111,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await apiClient.CreateItem(createItemContract);
         }
 
-        public async Task ChangeItem(ChangeItemContract changeItemContract)
+        public async Task ModifyItem(ModifyItemContract modifyItemContract)
         {
-            await apiClient.ChangeItem(changeItemContract);
+            await apiClient.ModifyItem(modifyItemContract);
         }
 
         public async Task UpdateItemAsync(UpdateItemContract updateItemContract)

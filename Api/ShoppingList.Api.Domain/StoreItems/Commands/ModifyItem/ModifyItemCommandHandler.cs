@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
 {
-    public class ChangeItemCommandHandler : ICommandHandler<ChangeItemCommand, bool>
+    public class ModifyItemCommandHandler : ICommandHandler<ModifyItemCommand, bool>
     {
         private readonly IItemRepository itemRepository;
         private readonly IItemCategoryRepository itemCategoryRepository;
@@ -20,7 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
         private readonly IShoppingListRepository shoppingListRepository;
         private readonly ITransactionGenerator transactionGenerator;
 
-        public ChangeItemCommandHandler(IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository,
+        public ModifyItemCommandHandler(IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository,
             IManufacturerRepository manufacturerRepository, IShoppingListRepository shoppingListRepository,
             ITransactionGenerator transactionGenerator)
         {
@@ -31,29 +31,29 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
             this.transactionGenerator = transactionGenerator;
         }
 
-        public async Task<bool> HandleAsync(ChangeItemCommand command, CancellationToken cancellationToken)
+        public async Task<bool> HandleAsync(ModifyItemCommand command, CancellationToken cancellationToken)
         {
             if (command == null)
                 throw new ArgumentNullException(nameof(command));
 
-            var storeItem = await itemRepository.FindByAsync(command.ItemChange.Id, cancellationToken);
+            var storeItem = await itemRepository.FindByAsync(command.ItemModify.Id, cancellationToken);
 
             if (storeItem == null)
-                throw new ItemNotFoundException(command.ItemChange.Id);
+                throw new ItemNotFoundException(command.ItemModify.Id);
             if (storeItem.IsTemporary)
-                throw new TemporaryItemNotModifyableException(command.ItemChange.Id);
+                throw new TemporaryItemNotModifyableException(command.ItemModify.Id);
 
             cancellationToken.ThrowIfCancellationRequested();
 
             ItemCategory itemCategory = await itemCategoryRepository
-                .FindByAsync(command.ItemChange.ItemCategoryId, cancellationToken);
+                .FindByAsync(command.ItemModify.ItemCategoryId, cancellationToken);
 
             Manufacturer manufacturer = null;
-            if (command.ItemChange.ManufacturerId != null)
+            if (command.ItemModify.ManufacturerId != null)
                 manufacturer = await manufacturerRepository
-                .FindByAsync(command.ItemChange.ManufacturerId, cancellationToken);
+                .FindByAsync(command.ItemModify.ManufacturerId, cancellationToken);
 
-            storeItem.Modify(command.ItemChange, itemCategory, manufacturer);
+            storeItem.Modify(command.ItemModify, itemCategory, manufacturer);
             var availableAtStores = storeItem.Availabilities.Select(av => av.StoreId);
 
             var shoppingListsWithItem = (await shoppingListRepository.FindByAsync(storeItem.Id, cancellationToken))
