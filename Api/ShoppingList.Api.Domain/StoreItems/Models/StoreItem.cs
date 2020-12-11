@@ -28,6 +28,9 @@ namespace ShoppingList.Api.Domain.Models
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
             this.availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
+
+            // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
+            // https://github.com/AutoFixture/AutoFixture/issues/1108
             Predecessor = null;
         }
 
