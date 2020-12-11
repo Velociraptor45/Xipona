@@ -28,7 +28,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
 
         public StoreItem GetStoreItem(StoreItemId id, int availabilityCount = 3,
             IEnumerable<StoreItemAvailability> additionalAvailabilities = null,
-            bool? isTemporary = null, bool? isDeleted = null, StoreItem predecessor = null)
+            bool? isTemporary = null, bool? isDeleted = null)
         {
             var allAvailabilities = additionalAvailabilities?.ToList() ?? new List<StoreItemAvailability>();
             var additionalStoreIds = allAvailabilities.Select(av => av.StoreId.Value);
@@ -43,9 +43,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
                 fixture.ConstructorArgumentFor<StoreItem, bool>("isTemporary", isTemporary.Value);
             if (isDeleted.HasValue)
                 fixture.ConstructorArgumentFor<StoreItem, bool>("isDeleted", isDeleted.Value);
-            fixture.ConstructorArgumentFor<StoreItem, StoreItem>("predecessor", predecessor);
             return fixture.Create<StoreItem>();
-            //return fixture.Build<StoreItem>().whi;
         }
 
         private IEnumerable<StoreItemAvailability> GetUniqueStoreItemAvailabilities(int count, IEnumerable<int> exclude)

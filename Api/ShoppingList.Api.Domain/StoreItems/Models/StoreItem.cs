@@ -15,7 +15,7 @@ namespace ShoppingList.Api.Domain.Models
         public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             ItemCategory itemCategory, Manufacturer manufacturer,
-            IEnumerable<StoreItemAvailability> availabilities, StoreItem predecessor)
+            IEnumerable<StoreItemAvailability> availabilities)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Name = name;
@@ -28,7 +28,7 @@ namespace ShoppingList.Api.Domain.Models
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
             this.availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
-            Predecessor = predecessor;
+            Predecessor = null;
         }
 
         public StoreItemId Id { get; }

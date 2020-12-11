@@ -20,8 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
                 QuantityTypeInPacket.Unit,
                 null,
                 null,
-                new List<StoreItemAvailability>() { model.Availability },
-                null);
+                new List<StoreItemAvailability>() { model.Availability });
         }
     }
 }
