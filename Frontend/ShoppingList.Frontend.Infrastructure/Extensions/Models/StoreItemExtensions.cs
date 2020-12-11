@@ -24,9 +24,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models
             };
         }
 
-        public static ChangeItemContract ToChangeItemContract(this StoreItem model)
+        public static ModifyItemContract ToModifyItemContract(this StoreItem model)
         {
-            return new ChangeItemContract()
+            return new ModifyItemContract()
             {
                 Id = model.Id,
                 Name = model.Name,

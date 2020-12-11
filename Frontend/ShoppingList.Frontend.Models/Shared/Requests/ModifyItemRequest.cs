@@ -3,9 +3,9 @@ using System;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
 {
-    public class ChangeItemRequest : IApiRequest
+    public class ModifyItemRequest : IApiRequest
     {
-        public ChangeItemRequest(Guid requestId, StoreItem storeItem)
+        public ModifyItemRequest(Guid requestId, StoreItem storeItem)
         {
             RequestId = requestId;
             StoreItem = storeItem;
