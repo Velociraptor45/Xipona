@@ -52,6 +52,33 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             await StoreModifiedListAsync(listEntity, shoppingList, cancellationToken);
         }
 
+        public async Task<IEnumerable<ShoppingListModels.ShoppingList>> FindByAsync(StoreItemId storeItemId,
+            CancellationToken cancellationToken)
+        {
+            if (storeItemId is null)
+            {
+                throw new ArgumentNullException(nameof(storeItemId));
+            }
+
+            List<Entities.ShoppingList> entities = await dbContext.ShoppingLists.AsNoTracking()
+                .Include(l => l.Store)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.Manufacturer)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.ItemCategory)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.AvailableAt)
+                .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Actual.Value) != null)
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return entities.Select(e => e.ToDomain());
+        }
+
         public async Task<IEnumerable<ShoppingListModels.ShoppingList>> FindActiveByAsync(StoreItemId storeItemId,
             CancellationToken cancellationToken)
         {

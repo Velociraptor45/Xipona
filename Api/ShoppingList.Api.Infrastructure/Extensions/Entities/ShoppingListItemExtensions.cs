@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using System;
 using System.Linq;
 
@@ -17,7 +18,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
             var listMap = entity.ItemsOnLists
                 .FirstOrDefault(map => map.ShoppingListId == shoppingListId);
             if (listMap == null)
-                throw new InvalidOperationException($"Item is not on list {shoppingListId}");
+                throw new ItemNotOnShoppingListException(new ShoppingListId(shoppingListId), 
+                    new ShoppingListItemId(entity.Id));
 
             return new ShoppingListItem(
                 new ShoppingListItemId(entity.Id),
