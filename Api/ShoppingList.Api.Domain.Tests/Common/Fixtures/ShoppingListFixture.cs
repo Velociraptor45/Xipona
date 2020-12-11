@@ -1,11 +1,11 @@
 ﻿using AutoFixture;
+using ProjectHermes.ShoppingList.Api.Core.Tests;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using Models = ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Core.Tests;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
 {
@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             return GetShoppingList(listId, storeId, itemCount, additionalItems);
         }
 
-        public Models.ShoppingList GetShoppingList(ShoppingListId id, StoreId storeId, int itemCount = 3,
+        public Models.ShoppingList GetShoppingList(ShoppingListId id, StoreId storeId = null, int itemCount = 3,
             IEnumerable<ShoppingListItem> additionalItems = null)
         {
             var allItems = additionalItems?.ToList() ?? new List<ShoppingListItem>();
@@ -46,7 +46,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
 
             var fixture = commonFixture.GetNewFixture();
             fixture.Inject(id);
-            fixture.Inject(storeId);
+
+            if (storeId != null)
+                fixture.Inject(storeId);
+
             fixture.Inject(allItems.AsEnumerable());
             return fixture.Create<Models.ShoppingList>();
         }
