@@ -25,7 +25,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterRes
                 throw new System.ArgumentNullException(nameof(query));
             }
 
-            var storeItems = await itemRepository.FindByAsync(query.StoreIds, query.ItemCategoriesIds, query.ManufacturerIds,
+            var storeItems = await itemRepository.FindPermanentByAsync(query.StoreIds, query.ItemCategoriesIds, query.ManufacturerIds,
                 cancellationToken);
 
             return storeItems

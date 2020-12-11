@@ -87,7 +87,30 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return itemEntity.ToStoreItemDomain();
         }
 
-        public async Task<IEnumerable<StoreItem>> FindByAsync(IEnumerable<StoreId> storeIds,
+        public async Task<IEnumerable<StoreItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
+        {
+            if (storeId == null)
+                throw new ArgumentNullException(nameof(storeId));
+
+            var entities = await dbContext.Items.AsNoTracking()
+                .Include(item => item.ItemCategory)
+                .Include(item => item.Manufacturer)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Store)
+                .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId.Value) != null)
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var item in entities)
+            {
+                item.Predecessor = await LoadPredecessorsAsync(item);
+            }
+
+            return entities.Select(e => e.ToStoreItemDomain());
+        }
+
+        public async Task<IEnumerable<StoreItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
             IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
             CancellationToken cancellationToken)
         {
@@ -138,7 +161,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return filteredResultByStore.Select(r => r.ToStoreItemDomain());
         }
 
-        public async Task<IEnumerable<StoreItem>> FindByAsync(string searchInput, StoreId storeId,
+        public async Task<IEnumerable<StoreItem>> FindActiveByAsync(string searchInput, StoreId storeId,
             CancellationToken cancellationToken)
         {
             if (storeId == null)
@@ -153,29 +176,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                     && !item.Deleted
                     && !item.IsTemporary
                     && item.AvailableAt.FirstOrDefault(map => map.StoreId == storeId.Value) != null)
-                .ToListAsync();
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            foreach (var item in entities)
-            {
-                item.Predecessor = await LoadPredecessorsAsync(item);
-            }
-
-            return entities.Select(e => e.ToStoreItemDomain());
-        }
-
-        public async Task<IEnumerable<StoreItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
-        {
-            if (storeId == null)
-                throw new ArgumentNullException(nameof(storeId));
-
-            var entities = await dbContext.Items.AsNoTracking()
-                .Include(item => item.ItemCategory)
-                .Include(item => item.Manufacturer)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Store)
-                .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId.Value) != null)
                 .ToListAsync();
 
             cancellationToken.ThrowIfCancellationRequested();

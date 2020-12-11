@@ -11,15 +11,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Ports
     {
         Task<StoreItem> FindByAsync(StoreItemId storeItemId, StoreId storeId, CancellationToken cancellationToken);
 
-        Task<IEnumerable<StoreItem>> FindByAsync(string searchInput, StoreId storeId, CancellationToken cancellationToken);
-
         Task<IEnumerable<StoreItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken);
 
-        Task<IEnumerable<StoreItem>> FindByAsync(IEnumerable<StoreId> storeIds,
+        Task<StoreItem> FindByAsync(StoreItemId storeItemId, CancellationToken cancellationToken);
+
+        Task<IEnumerable<StoreItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
             IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
             CancellationToken cancellationToken);
 
-        Task<StoreItem> FindByAsync(StoreItemId storeItemId, CancellationToken cancellationToken);
+        Task<IEnumerable<StoreItem>> FindActiveByAsync(string searchInput, StoreId storeId, CancellationToken cancellationToken);
 
         Task<StoreItem> StoreAsync(StoreItem storeItem, CancellationToken cancellationToken);
     }
