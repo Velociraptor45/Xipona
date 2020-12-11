@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using System;
 using System.Threading;
@@ -22,6 +23,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeIte
                 throw new ArgumentNullException(nameof(command));
 
             var list = await shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
+            if (list == null)
+                throw new ShoppingListNotFoundException(command.ShoppingListId);
+
             list.ChangeItemQuantity(command.ItemId, command.Quantity);
 
             cancellationToken.ThrowIfCancellationRequested();

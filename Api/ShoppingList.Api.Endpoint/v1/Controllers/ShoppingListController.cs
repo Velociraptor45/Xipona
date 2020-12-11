@@ -16,8 +16,8 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFro
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ShoppingList;
 using System;
@@ -222,6 +222,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 await commandDispatcher.DispatchAsync(command, default);
             }
             catch (ItemNotOnShoppingListException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (ShoppingListNotFoundException e)
             {
                 return BadRequest(e.Message);
             }
