@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
@@ -45,7 +46,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                     item.CreatedFrom == storeItemId.Offline.Value);
 
             if (itemEntity == null)
-                throw new ItemNotFoundException(storeItemId);
+                throw new DomainException(new ItemNotFoundReason(storeItemId));
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -74,11 +75,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             if (itemEntity == null)
-                throw new ItemNotFoundException(storeItemId);
+                throw new DomainException(new ItemNotFoundReason(storeItemId));
 
             var storeMap = itemEntity.AvailableAt.FirstOrDefault(map => map.StoreId == storeId.Value);
             if (storeMap == null)
-                throw new ItemAtStoreNotAvailableException(storeItemId, storeId);
+                throw new DomainException(new ItemAtStoreNotAvailableReason(storeItemId, storeId));
 
             cancellationToken.ThrowIfCancellationRequested();
 

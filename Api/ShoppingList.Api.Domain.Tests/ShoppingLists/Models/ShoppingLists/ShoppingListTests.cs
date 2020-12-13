@@ -3,8 +3,9 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.Tests;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
@@ -54,7 +55,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         [Fact]
-        public void AddItem_WithItemIdIsAlreadyOnList_ShouldThrowItemAlreadyOnShoppingListException()
+        public void AddItem_WithItemIdIsAlreadyOnList_ShouldThrowDomainException()
         {
             // Arrange
             var shoppingList = shoppingListFixture.GetShoppingList();
@@ -69,12 +70,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Assert
             using (new AssertionScope())
             {
-                action.Should().Throw<ItemAlreadyOnShoppingListException>();
+                action.Should().Throw<DomainException>()
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemAlreadyOnShoppingList);
             }
         }
 
         [Fact]
-        public void AddItem_WithNoAvailabilityForListStore_ShouldThrowItemAtStoreNotAvailableException()
+        public void AddItem_WithNoAvailabilityForListStore_ShouldThrowDomainException()
         {
             // Arrange
             var availabilities = storeItemAvailabilityFixture.GetAvailabilities(count: 3);
@@ -94,7 +96,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Assert
             using (new AssertionScope())
             {
-                action.Should().Throw<ItemAtStoreNotAvailableException>();
+                action.Should().Throw<DomainException>()
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemAtStoreNotAvailable);
             }
         }
 
@@ -123,7 +126,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         [Fact]
-        public void AddItem_WithItemWithOfflineId_ShouldThrowActualIdRequiredException()
+        public void AddItem_WithItemWithOfflineId_ShouldThrowDomainException()
         {
             // Arrange
             var list = shoppingListFixture.GetShoppingList();
@@ -135,7 +138,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Assert
             using (new AssertionScope())
             {
-                action.Should().Throw<ActualIdRequiredException>();
+                action.Should().Throw<DomainException>()
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ActualIdRequired);
             }
         }
 
@@ -160,7 +164,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         [Fact]
-        public void RemoveItem_WithOfflineId_ShouldThrowActualIdRequiredException()
+        public void RemoveItem_WithOfflineId_ShouldThrowDomainException()
         {
             // Arrange
             var list = shoppingListFixture.GetShoppingList();
@@ -171,12 +175,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Assert
             using (new AssertionScope())
             {
-                action.Should().Throw<ActualIdRequiredException>();
+                action.Should().Throw<DomainException>()
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ActualIdRequired);
             }
         }
 
         [Fact]
-        public void RemoveItem_WithShoppingListItemIdNotOnList_ShouldThrowItemNotOnShoppingListException()
+        public void RemoveItem_WithShoppingListItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
             var list = shoppingListFixture.GetShoppingList();
@@ -189,7 +194,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Assert
             using (new AssertionScope())
             {
-                action.Should().Throw<ItemNotOnShoppingListException>();
+                action.Should().Throw<DomainException>()
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemNotOnShoppingList);
             }
         }
 
@@ -232,7 +238,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         [Fact]
-        public void PutItemInBasket_WithOfflineId_ShouldThrowActualIdRequiredException()
+        public void PutItemInBasket_WithOfflineId_ShouldThrowDomainException()
         {
             // Arrange
             var list = shoppingListFixture.GetShoppingList();
@@ -243,12 +249,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Assert
             using (new AssertionScope())
             {
-                action.Should().Throw<ActualIdRequiredException>();
+                action.Should().Throw<DomainException>()
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ActualIdRequired);
             }
         }
 
         [Fact]
-        public void PutItemInBasket_WithShoppingListItemIdNotOnList_ShouldThrowItemNotOnShoppingListException()
+        public void PutItemInBasket_WithShoppingListItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
             var list = shoppingListFixture.GetShoppingList();
@@ -261,7 +268,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Assert
             using (new AssertionScope())
             {
-                action.Should().Throw<ItemNotOnShoppingListException>();
+                action.Should().Throw<DomainException>()
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemNotOnShoppingList);
             }
         }
 
@@ -305,7 +313,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         [Fact]
-        public void RemoveFromBasket_WithOfflineId_ShouldThrowActualIdRequiredException()
+        public void RemoveFromBasket_WithOfflineId_ShouldThrowDomainException()
         {
             // Arrange
             var list = shoppingListFixture.GetShoppingList();
@@ -316,12 +324,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Assert
             using (new AssertionScope())
             {
-                action.Should().Throw<ActualIdRequiredException>();
+                action.Should().Throw<DomainException>()
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ActualIdRequired);
             }
         }
 
         [Fact]
-        public void RemoveFromBasket_WithShoppingListItemIdNotOnList_ShouldThrowItemNotOnShoppingListException()
+        public void RemoveFromBasket_WithShoppingListItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
             var list = shoppingListFixture.GetShoppingList();
@@ -334,7 +343,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Assert
             using (new AssertionScope())
             {
-                action.Should().Throw<ItemNotOnShoppingListException>();
+                action.Should().Throw<DomainException>()
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemNotOnShoppingList);
             }
         }
 
@@ -378,7 +388,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         [Fact]
-        public void ChangeItemQuantity_WithOfflineId_ShouldThrowActualIdRequiredException()
+        public void ChangeItemQuantity_WithOfflineId_ShouldThrowDomainException()
         {
             // Arrange
             var list = shoppingListFixture.GetShoppingList();
@@ -390,12 +400,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Assert
             using (new AssertionScope())
             {
-                action.Should().Throw<ActualIdRequiredException>();
+                action.Should().Throw<DomainException>()
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ActualIdRequired);
             }
         }
 
         [Fact]
-        public void ChangeItemQuantity_WithShoppingListItemIdNotOnList_ShouldThrowItemNotOnShoppingListException()
+        public void ChangeItemQuantity_WithShoppingListItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
             var list = shoppingListFixture.GetShoppingList();
@@ -408,12 +419,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Assert
             using (new AssertionScope())
             {
-                action.Should().Throw<ItemNotOnShoppingListException>();
+                action.Should().Throw<DomainException>()
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemNotOnShoppingList);
             }
         }
 
         [Fact]
-        public void ChangeItemQuantity_WithInvalidQuantity_ShouldThrowInvalidItemQuantityException()
+        public void ChangeItemQuantity_WithInvalidQuantity_ShouldThrowDomainException()
         {
             // Arrange
             var shoppingListItem = shoppingListItemFixture.GetShoppingListItemWithId();
@@ -426,7 +438,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Assert
             using (new AssertionScope())
             {
-                action.Should().Throw<InvalidItemQuantityException>();
+                action.Should().Throw<DomainException>()
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.InvalidItemQuantity);
             }
         }
 

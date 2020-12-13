@@ -1,8 +1,9 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
 using System;
@@ -39,9 +40,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
             var storeItem = await itemRepository.FindByAsync(command.ItemModify.Id, cancellationToken);
 
             if (storeItem == null)
-                throw new ItemNotFoundException(command.ItemModify.Id);
+                throw new DomainException(new ItemNotFoundReason(command.ItemModify.Id));
             if (storeItem.IsTemporary)
-                throw new TemporaryItemNotModifyableException(command.ItemModify.Id);
+                throw new DomainException(new TemporaryItemNotModifyableReason(command.ItemModify.Id));
 
             cancellationToken.ThrowIfCancellationRequested();
 

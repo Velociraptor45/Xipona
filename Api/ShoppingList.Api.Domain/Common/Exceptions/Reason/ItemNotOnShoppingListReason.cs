@@ -2,7 +2,7 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
 {
-    public class ItemNotOnShoppingListReason
+    public class ItemNotOnShoppingListReason : IReason
     {
         public ItemNotOnShoppingListReason(ShoppingListId shoppingListId, ShoppingListItemId shoppingListItemId)
         {

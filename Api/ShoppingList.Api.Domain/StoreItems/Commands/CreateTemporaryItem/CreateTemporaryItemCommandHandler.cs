@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
             var store = await storeRepository.FindByAsync(command.TemporaryItemCreation.Availability.StoreId,
                 cancellationToken);
             if (store == null || store.IsDeleted)
-                throw new StoreNotFoundException(command.TemporaryItemCreation.Availability.StoreId);
+                throw new DomainException(new StoreNotFoundReason(command.TemporaryItemCreation.Availability.StoreId));
 
             var storeItem = command.TemporaryItemCreation.ToStoreItem();
 

@@ -2,7 +2,7 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
 {
-    public class TemporaryItemNotModifyableReason
+    public class TemporaryItemNotModifyableReason : IReason
     {
         public TemporaryItemNotModifyableReason(StoreItemId id)
         {

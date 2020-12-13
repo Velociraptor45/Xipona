@@ -5,8 +5,8 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQ
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.CreateShoppingList;
@@ -92,13 +92,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (ItemNotOnShoppingListException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
-            }
-            catch (ShoppingListNotFoundException e)
-            {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();
@@ -127,21 +123,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (ItemAlreadyOnShoppingListException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
-            }
-            catch (ItemNotFoundException e)
-            {
-                return BadRequest(e.Message);
-            }
-            catch (ShoppingListNotFoundException e)
-            {
-                return BadRequest(e.Message);
-            }
-            catch (ItemAtStoreNotAvailableException e)
-            {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();
@@ -160,9 +144,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (ItemNotOnShoppingListException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();
@@ -189,9 +173,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (ItemNotOnShoppingListException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();
@@ -221,13 +205,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (ItemNotOnShoppingListException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
-            }
-            catch (ShoppingListNotFoundException e)
-            {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();
@@ -245,9 +225,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (ShoppingListAlreadyExistsException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();
@@ -264,9 +244,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (ShoppingListNotFoundException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();

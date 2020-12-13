@@ -16,6 +16,6 @@
         ShoppingListNotFound = 11,
         StoreNotFound = 12,
         TemporaryItemNotModifyable = 13,
-        TemporaryItemNotUpadateable = 14,
+        TemporaryItemNotUpdateable = 14,
     }
 }

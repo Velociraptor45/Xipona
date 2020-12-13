@@ -1,5 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
@@ -18,12 +18,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports
         Task<IEnumerable<Models.ShoppingList>> FindActiveByAsync(StoreItemId storeItemId, CancellationToken cancellationToken);
 
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ShoppingListNotFoundException"></exception>
+        /// <exception cref="DomainException"></exception>
         Task<Models.ShoppingList> FindByAsync(ShoppingListId id, CancellationToken cancellationToken);
+
         Task<IEnumerable<Models.ShoppingList>> FindByAsync(StoreItemId storeItemId, CancellationToken cancellationToken);
 
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ItemNotOnShoppingListException"></exception>
+        /// <exception cref="DomainException"></exception>
         Task StoreAsync(Models.ShoppingList shoppingList, CancellationToken cancellationToken);
     }
 }

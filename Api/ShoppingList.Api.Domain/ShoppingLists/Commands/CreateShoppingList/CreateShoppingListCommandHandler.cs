@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using System;
@@ -29,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.CreateSho
 
             if (await shoppingListRepository.ActiveShoppingListExistsForAsync(command.StoreId, cancellationToken))
             {
-                throw new ShoppingListAlreadyExistsException(command.StoreId);
+                throw new DomainException(new ShoppingListAlreadyExistsReason(command.StoreId));
             }
 
             var store = await storeRepository.FindByAsync(command.StoreId, cancellationToken);

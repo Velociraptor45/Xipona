@@ -4,7 +4,8 @@ using FluentAssertions.Execution;
 using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
@@ -58,7 +59,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
         }
 
         [Fact]
-        public async Task HandleAsync_WithInvalidShoppingListId_ShouldThrowShoppingListNotFoundException()
+        public async Task HandleAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
@@ -78,7 +79,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
             // Assert
             using (new AssertionScope())
             {
-                await function.Should().ThrowAsync<ShoppingListNotFoundException>();
+                (await function.Should().ThrowAsync<DomainException>())
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ShoppingListNotFound);
             }
         }
 

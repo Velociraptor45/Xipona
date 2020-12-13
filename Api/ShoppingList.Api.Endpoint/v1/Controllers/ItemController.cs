@@ -5,8 +5,8 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
@@ -64,13 +64,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (ItemNotFoundException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
-            }
-            catch (TemporaryItemNotModifyableException e)
-            {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();
@@ -89,13 +85,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (ItemNotFoundException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
-            }
-            catch (TemporaryItemNotUpdateableException e)
-            {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();
@@ -115,9 +107,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 readModels = await queryDispatcher.DispatchAsync(query, default);
             }
-            catch (StoreNotFoundException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             var contracts = readModels.Select(rm => rm.ToContract());
@@ -165,9 +157,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 result = await queryDispatcher.DispatchAsync(query, default);
             }
-            catch (ItemNotFoundException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok(result.ToContract());
@@ -183,9 +175,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (StoreNotFoundException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();
@@ -202,25 +194,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (ItemCategoryNotFoundException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
-            }
-            catch (ManufacturerNotFoundException e)
-            {
-                return BadRequest(e.Message);
-            }
-            catch (ItemIsNotTemporaryException e)
-            {
-                return BadRequest(e.Message);
-            }
-            catch (ItemNotFoundException e)
-            {
-                return BadRequest(e.Message);
-            }
-            catch (StoreNotFoundException e)
-            {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();
