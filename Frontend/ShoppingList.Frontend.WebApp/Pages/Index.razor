@@ -1,6 +1,7 @@
 ﻿@page "/"
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.ICommandQueue commandQueue;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Service.IShoppingListNotificationService notificationService;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Index;
@@ -82,7 +83,7 @@
         </Button>
     </div>
     <div>
-        @foreach(var s in errorMsg)
+        @foreach (var s in errorMsg)
         {
             <div>@s</div>
         }
@@ -148,6 +149,7 @@
         catch (Exception e)
         {
             //errorMsg += e.Message;
+            notificationService.NotifyError("Loading failed", e.Message);
             AddToError(e.ToString());
             //todo show retry message
             return;
@@ -194,15 +196,15 @@
 
     private Task OnConnectionFailed()
     {
-        Console.WriteLine("Connection failed");
         AddToError("Connection failed");
+        notificationService.NotifyWarning("Connection interrupted", "Connection to the server was interrupted.");
         return Task.CompletedTask;
     }
 
     private async Task OnQueueProcessed()
     {
-        Console.WriteLine("Queue processed");
         AddToError("Queue processed");
+        notificationService.NotifySuccess("Sync successful", "Synchronization with the server was successful.");
         await LoadShoppingListAsync();
     }
 
