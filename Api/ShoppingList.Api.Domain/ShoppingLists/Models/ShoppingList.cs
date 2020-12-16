@@ -30,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         public IReadOnlyCollection<ShoppingListItem> Items => items.ToList().AsReadOnly();
         public DateTime? CompletionDate { get; private set; }
 
-        public void AddItem(StoreItem storeItem, bool isInBasket, float quantity)
+        public void AddItem(IStoreItem storeItem, bool isInBasket, float quantity)
         {
             if (storeItem == null)
                 throw new ArgumentNullException(nameof(storeItem));

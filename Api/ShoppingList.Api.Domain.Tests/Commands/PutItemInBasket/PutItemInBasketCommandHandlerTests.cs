@@ -101,7 +101,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.PutItemInBasket
             var listItemIdOffline = new ShoppingListItemId(Guid.NewGuid());
             var storeItemIdActual = new StoreItemId(itemNotInBasket.Id.Actual.Value);
             var storeItemIdOffline = new StoreItemId(listItemIdOffline.Offline.Value);
-            var storeItem = storeItemFixture.GetStoreItem(storeItemIdActual);
+            IStoreItem storeItem = storeItemFixture.GetStoreItem(storeItemIdActual);
 
             fixture.ConstructorArgumentFor<PutItemInBasketCommand, ShoppingListItemId>("itemId", listItemIdOffline);
             var command = fixture.Create<PutItemInBasketCommand>();

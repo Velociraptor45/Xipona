@@ -5,8 +5,8 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
-using ShoppingList.Api.Domain.Models;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,7 +39,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
                 throw new System.ArgumentNullException(nameof(command));
             }
 
-            StoreItem oldItem = await itemRepository.FindByAsync(command.ItemUpdate.OldId, cancellationToken);
+            IStoreItem oldItem = await itemRepository.FindByAsync(command.ItemUpdate.OldId, cancellationToken);
             if (oldItem.IsTemporary)
                 throw new TemporaryItemNotUpdateableException(command.ItemUpdate.OldId);
 
@@ -57,7 +57,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
             await itemRepository.StoreAsync(oldItem, cancellationToken);
 
             // create new Item
-            StoreItem updatedItem = command.ItemUpdate.ToStoreItem(itemCategory, manufacturer, oldItem);
+            IStoreItem updatedItem = command.ItemUpdate.ToStoreItem(itemCategory, manufacturer, oldItem);
             updatedItem = await itemRepository.StoreAsync(updatedItem, cancellationToken);
 
             // change existing item references on shopping lists

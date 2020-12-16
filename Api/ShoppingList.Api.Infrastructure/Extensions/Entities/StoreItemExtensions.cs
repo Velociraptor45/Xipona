@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
 {
     public static class StoreItemExtensions
     {
-        public static StoreItem ToStoreItemDomain(this Infrastructure.Entities.Item entity)
+        public static IStoreItem ToStoreItemDomain(this Infrastructure.Entities.Item entity)
         {
             StoreItemId id;
             if (entity.CreatedFrom == null)

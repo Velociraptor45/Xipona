@@ -8,14 +8,14 @@ using System.Linq;
 
 namespace ShoppingList.Api.Domain.Models
 {
-    public class StoreItem
+    public class StoreItem : IStoreItem
     {
         private IEnumerable<StoreItemAvailability> availabilities;
 
         public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             IItemCategory itemCategory, IManufacturer manufacturer,
-            IEnumerable<StoreItemAvailability> availabilities, StoreItem predecessor)
+            IEnumerable<StoreItemAvailability> availabilities, IStoreItem predecessor)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Name = name;
@@ -42,7 +42,7 @@ namespace ShoppingList.Api.Domain.Models
 
         public IItemCategory ItemCategory { get; private set; }
         public IManufacturer Manufacturer { get; private set; }
-        public StoreItem Predecessor { get; private set; }
+        public IStoreItem Predecessor { get; private set; }
 
         public IReadOnlyCollection<StoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
 
@@ -81,7 +81,7 @@ namespace ShoppingList.Api.Domain.Models
             availabilities = itemChange.Availabilities;
         }
 
-        public void SetPredecessor(StoreItem predecessor)
+        public void SetPredecessor(IStoreItem predecessor)
         {
             Predecessor = predecessor;
         }

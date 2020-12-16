@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ShoppingList.Api.Domain.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,9 +7,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores
 {
     public class ActiveStoreReadModel
     {
-        private readonly IEnumerable<StoreItem> items;
+        private readonly IEnumerable<StoreItemReadModel> items;
 
-        public ActiveStoreReadModel(StoreId id, string name, IEnumerable<StoreItem> items)
+        public ActiveStoreReadModel(StoreId id, string name, IEnumerable<StoreItemReadModel> items)
         {
             Id = id;
             Name = name;
@@ -19,6 +19,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores
         public StoreId Id { get; }
         public string Name { get; }
 
-        public IReadOnlyCollection<StoreItem> Items => items.ToList().AsReadOnly();
+        public IReadOnlyCollection<StoreItemReadModel> Items => items.ToList().AsReadOnly();
     }
 }

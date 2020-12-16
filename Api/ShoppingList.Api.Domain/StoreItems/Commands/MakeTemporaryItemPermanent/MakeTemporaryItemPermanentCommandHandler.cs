@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
-using ShoppingList.Api.Domain.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
                 throw new ArgumentNullException(nameof(command));
             }
 
-            StoreItem storeItem = await itemRepository.FindByAsync(command.PermanentItem.Id, cancellationToken);
+            IStoreItem storeItem = await itemRepository.FindByAsync(command.PermanentItem.Id, cancellationToken);
             if (storeItem == null)
                 throw new ItemNotFoundException(command.PermanentItem.Id);
             if (!storeItem.IsTemporary)
