@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
 {
     public static class ManufacturerExtensions
     {
-        public static Infrastructure.Entities.Manufacturer ToEntity(this Manufacturer model)
+        public static Infrastructure.Entities.Manufacturer ToEntity(this IManufacturer model)
         {
             return new Infrastructure.Entities.Manufacturer()
             {

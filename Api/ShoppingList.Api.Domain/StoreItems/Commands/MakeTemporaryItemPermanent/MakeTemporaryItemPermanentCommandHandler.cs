@@ -48,7 +48,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            Manufacturer manufacturer = null;
+            IManufacturer manufacturer = null;
             if (command.PermanentItem.ManufacturerId != null)
             {
                 manufacturer = await manufacturerRepository

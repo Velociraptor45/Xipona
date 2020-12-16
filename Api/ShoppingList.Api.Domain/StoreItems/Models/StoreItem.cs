@@ -14,7 +14,7 @@ namespace ShoppingList.Api.Domain.Models
 
         public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            IItemCategory itemCategory, Manufacturer manufacturer,
+            IItemCategory itemCategory, IManufacturer manufacturer,
             IEnumerable<StoreItemAvailability> availabilities, StoreItem predecessor)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
@@ -41,7 +41,7 @@ namespace ShoppingList.Api.Domain.Models
         public QuantityTypeInPacket QuantityTypeInPacket { get; private set; }
 
         public IItemCategory ItemCategory { get; private set; }
-        public Manufacturer Manufacturer { get; private set; }
+        public IManufacturer Manufacturer { get; private set; }
         public StoreItem Predecessor { get; private set; }
 
         public IReadOnlyCollection<StoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
@@ -56,7 +56,7 @@ namespace ShoppingList.Api.Domain.Models
             return Availabilities.FirstOrDefault(av => av.StoreId == storeId) != null;
         }
 
-        public void MakePermanent(PermanentItem permanentItem, IItemCategory itemCategory, Manufacturer manufacturer)
+        public void MakePermanent(PermanentItem permanentItem, IItemCategory itemCategory, IManufacturer manufacturer)
         {
             Name = permanentItem.Name;
             Comment = permanentItem.Comment;
@@ -69,7 +69,7 @@ namespace ShoppingList.Api.Domain.Models
             IsTemporary = false;
         }
 
-        public void Modify(ItemModify itemChange, IItemCategory itemCategory, Manufacturer manufacturer)
+        public void Modify(ItemModify itemChange, IItemCategory itemCategory, IManufacturer manufacturer)
         {
             Name = itemChange.Name;
             Comment = itemChange.Comment;

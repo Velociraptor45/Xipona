@@ -29,7 +29,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
             IItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(command.ItemCreation.ItemCategoryId, cancellationToken);
 
-            Manufacturer manufacturer = null;
+            IManufacturer manufacturer = null;
             if (command.ItemCreation.ManufacturerId != null)
                 manufacturer = await manufacturerRepository
                     .FindByAsync(command.ItemCreation.ManufacturerId, cancellationToken);
