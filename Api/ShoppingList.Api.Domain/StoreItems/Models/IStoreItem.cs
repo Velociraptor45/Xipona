@@ -20,7 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         IManufacturer Manufacturer { get; }
         IStoreItem Predecessor { get; }
 
-        IReadOnlyCollection<StoreItemAvailability> Availabilities { get; }
+        IReadOnlyCollection<IStoreItemAvailability> Availabilities { get; }
 
         void Delete();
 

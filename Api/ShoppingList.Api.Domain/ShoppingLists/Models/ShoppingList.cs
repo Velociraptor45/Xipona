@@ -2,7 +2,6 @@
 using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
-using ShoppingList.Api.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +42,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (existingItem != null)
                 throw new ItemAlreadyOnShoppingListException($"Item {storeItem.Id} already exists on shopping list {Id.Value}");
 
-            StoreItemAvailability availability = storeItem.Availabilities
+            IStoreItemAvailability availability = storeItem.Availabilities
                 .FirstOrDefault(availability => availability.StoreId == Store.Id);
             if (availability == null)
                 throw new ItemAtStoreNotAvailableException(storeItem.Id, Store.Id);

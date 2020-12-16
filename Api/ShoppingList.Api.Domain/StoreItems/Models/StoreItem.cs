@@ -10,12 +10,12 @@ namespace ShoppingList.Api.Domain.Models
 {
     public class StoreItem : IStoreItem
     {
-        private IEnumerable<StoreItemAvailability> availabilities;
+        private IEnumerable<IStoreItemAvailability> availabilities;
 
         public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             IItemCategory itemCategory, IManufacturer manufacturer,
-            IEnumerable<StoreItemAvailability> availabilities, IStoreItem predecessor)
+            IEnumerable<IStoreItemAvailability> availabilities, IStoreItem predecessor)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Name = name;
@@ -44,7 +44,7 @@ namespace ShoppingList.Api.Domain.Models
         public IManufacturer Manufacturer { get; private set; }
         public IStoreItem Predecessor { get; private set; }
 
-        public IReadOnlyCollection<StoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
+        public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
 
         public void Delete()
         {

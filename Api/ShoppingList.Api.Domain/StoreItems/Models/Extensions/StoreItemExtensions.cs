@@ -33,7 +33,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions
 
         public static ItemSearchReadModel ToItemSearchReadModel(this IStoreItem storeItem, StoreId storeId)
         {
-            StoreItemAvailability storeAvailability = storeItem.Availabilities
+            IStoreItemAvailability storeAvailability = storeItem.Availabilities
                 .FirstOrDefault(av => av.StoreId == storeId);
 
             if (storeAvailability == null)
