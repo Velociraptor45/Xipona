@@ -45,8 +45,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions
                 storeItem.Name,
                 storeItem.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                 storeAvailability.Price,
-                storeItem.Manufacturer,
-                storeItem.ItemCategory);
+                storeItem.Manufacturer.ToReadModel(),
+                storeItem.ItemCategory.ToReadModel());
         }
 
         public static ItemFilterResultReadModel ToItemFilterResultReadModel(this StoreItem model)

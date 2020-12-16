@@ -45,7 +45,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
 
             oldItem.Delete();
 
-            ItemCategory itemCategory = await itemCategoryRepository
+            IItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(command.ItemUpdate.ItemCategoryId, cancellationToken);
 
             Manufacturer manufacturer = null;

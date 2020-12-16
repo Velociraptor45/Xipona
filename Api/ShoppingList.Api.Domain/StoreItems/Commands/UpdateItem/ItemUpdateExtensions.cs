@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
 {
     public static class ItemUpdateExtensions
     {
-        public static StoreItem ToStoreItem(this ItemUpdate itemUpdate, ItemCategory itemCategory,
+        public static StoreItem ToStoreItem(this ItemUpdate itemUpdate, IItemCategory itemCategory,
             Manufacturer manufacturer, StoreItem predecessor)
         {
             return new StoreItem(new StoreItemId(0),

@@ -26,7 +26,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
             if (command == null)
                 throw new ArgumentNullException(nameof(command));
 
-            ItemCategory itemCategory = await itemCategoryRepository
+            IItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(command.ItemCreation.ItemCategoryId, cancellationToken);
 
             Manufacturer manufacturer = null;

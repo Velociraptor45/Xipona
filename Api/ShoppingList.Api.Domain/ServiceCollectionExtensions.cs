@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -12,6 +13,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain
         public static void AddDomain(this IServiceCollection services)
         {
             services.AddHandlersForAssembly(typeof(ServiceCollectionExtensions).Assembly);
+            services.AddTransient<IItemCategoryFactory, ItemCategoryFactory>();
         }
 
         public static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)

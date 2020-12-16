@@ -45,7 +45,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            ItemCategory itemCategory = await itemCategoryRepository
+            IItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(command.ItemModify.ItemCategoryId, cancellationToken);
 
             Manufacturer manufacturer = null;

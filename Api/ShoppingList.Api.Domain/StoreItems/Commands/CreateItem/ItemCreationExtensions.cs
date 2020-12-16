@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
 {
     public static class ItemCreationExtensions
     {
-        public static StoreItem ToStoreItem(this ItemCreation itemCreation, ItemCategory itemCategory,
+        public static StoreItem ToStoreItem(this ItemCreation itemCreation, IItemCategory itemCategory,
             Manufacturer manufacturer)
         {
             return new StoreItem(new StoreItemId(0),

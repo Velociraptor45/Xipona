@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
     {
         public ShoppingListItem(ShoppingListItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             float pricePerQuantity, QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            ItemCategory itemCategory, Manufacturer manufacturer, bool isInBasket, float quantity)
+            IItemCategory itemCategory, Manufacturer manufacturer, bool isInBasket, float quantity)
         {
             Id = id;
             Name = name;
@@ -32,7 +32,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         public QuantityType QuantityType { get; }
         public float QuantityInPacket { get; }
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
-        public ItemCategory ItemCategory { get; }
+        public IItemCategory ItemCategory { get; }
         public Manufacturer Manufacturer { get; }
         public bool IsInBasket { get; private set; }
         public float Quantity { get; private set; }
