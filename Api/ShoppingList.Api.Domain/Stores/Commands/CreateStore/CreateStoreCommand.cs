@@ -1,15 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore
 {
     public class CreateStoreCommand : ICommand<bool>
     {
-        public CreateStoreCommand(Store store)
+        public CreateStoreCommand(StoreCreationInfo storeCreationInfo)
         {
-            Store = store;
+            StoreCreationInfo = storeCreationInfo;
         }
 
-        public Store Store { get; }
+        public StoreCreationInfo StoreCreationInfo { get; }
     }
 }

@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
     {
         private IEnumerable<ShoppingListItem> items;
 
-        public ShoppingList(ShoppingListId id, Store store, IEnumerable<ShoppingListItem> items, DateTime? completionDate)
+        public ShoppingList(ShoppingListId id, IStore store, IEnumerable<ShoppingListItem> items, DateTime? completionDate)
         {
             var item = items.FirstOrDefault(i => !i.Id.IsActualId);
             if (item != null)
@@ -25,7 +25,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         }
 
         public ShoppingListId Id { get; }
-        public Store Store { get; }
+        public IStore Store { get; }
         public IReadOnlyCollection<ShoppingListItem> Items => items.ToList().AsReadOnly();
         public DateTime? CompletionDate { get; private set; }
 

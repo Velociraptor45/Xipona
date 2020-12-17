@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model.Factories;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,10 +10,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore
     public class CreateStoreCommandHandler : ICommandHandler<CreateStoreCommand, bool>
     {
         private readonly IStoreRepository storeRepository;
+        private readonly IStoreFactory storeFactory;
 
-        public CreateStoreCommandHandler(IStoreRepository storeRepository)
+        public CreateStoreCommandHandler(IStoreRepository storeRepository, IStoreFactory storeFactory)
         {
             this.storeRepository = storeRepository;
+            this.storeFactory = storeFactory;
         }
 
         public async Task<bool> HandleAsync(CreateStoreCommand command, CancellationToken cancellationToken)
@@ -22,7 +25,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await storeRepository.StoreAsync(command.Store, cancellationToken);
+            var store = storeFactory.Create(command.StoreCreationInfo.Id, command.StoreCreationInfo.Name, false);
+
+            await storeRepository.StoreAsync(store, cancellationToken);
 
             return true;
         }
