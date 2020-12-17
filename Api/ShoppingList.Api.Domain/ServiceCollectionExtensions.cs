@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model.Factories;
 using System;
@@ -21,6 +22,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain
             services.AddTransient<IStoreItemFactory, StoreItemFactory>();
             services.AddTransient<IStoreItemAvailabilityFactory, StoreItemAvailabilityFactory>();
             services.AddTransient<IStoreFactory, StoreFactory>();
+            services.AddTransient<IShoppingListItemFactory, ShoppingListItemFactory>();
         }
 
         public static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)

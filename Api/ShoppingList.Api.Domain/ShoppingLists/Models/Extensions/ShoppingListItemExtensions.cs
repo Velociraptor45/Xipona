@@ -5,7 +5,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions
 {
     public static class ShoppingListItemExtensions
     {
-        public static ShoppingListItemReadModel ToReadModel(this ShoppingListItem model)
+        public static ShoppingListItemReadModel ToReadModel(this IShoppingListItem model)
         {
             return new ShoppingListItemReadModel(
                 model.Id.Actual,

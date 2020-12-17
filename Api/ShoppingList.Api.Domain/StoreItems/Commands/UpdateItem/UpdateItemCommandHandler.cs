@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
@@ -20,16 +21,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
         private readonly IManufacturerRepository manufacturerRepository;
         private readonly IShoppingListRepository shoppingListRepository;
         private readonly ITransactionGenerator transactionGenerator;
+        private readonly IShoppingListItemFactory shoppingListItemFactory;
 
         public UpdateItemCommandHandler(IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository,
             IManufacturerRepository manufacturerRepository, IShoppingListRepository shoppingListRepository,
-            ITransactionGenerator transactionGenerator)
+            ITransactionGenerator transactionGenerator, IShoppingListItemFactory shoppingListItemFactory)
         {
             this.itemRepository = itemRepository;
             this.itemCategoryRepository = itemCategoryRepository;
             this.manufacturerRepository = manufacturerRepository;
             this.shoppingListRepository = shoppingListRepository;
             this.transactionGenerator = transactionGenerator;
+            this.shoppingListItemFactory = shoppingListItemFactory;
         }
 
         public async Task<bool> HandleAsync(UpdateItemCommand command, CancellationToken cancellationToken)
@@ -67,12 +70,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
 
             foreach (var list in shoppingListsWithOldItem)
             {
-                ShoppingListItem shoppingListItem = list.Items
+                IShoppingListItem shoppingListItem = list.Items
                     .First(i => i.Id == command.ItemUpdate.OldId.ToShoppingListItemId());
-                list.RemoveItem(command.ItemUpdate.OldId.ToShoppingListItemId());
+                list.RemoveItem(shoppingListItem.Id);
                 if (updatedItem.IsAvailableInStore(list.Store.Id))
                 {
-                    list.AddItem(updatedItem, shoppingListItem.IsInBasket, shoppingListItem.Quantity);
+                    var priceAtStore = updatedItem.Availabilities
+                        .First(av => av.StoreId == list.Store.Id)
+                        .Price;
+
+                    var updatedListItem = shoppingListItemFactory.Create(updatedItem, priceAtStore,
+                        shoppingListItem.IsInBasket, shoppingListItem.Quantity);
+                    list.AddItem(updatedListItem);
                 }
 
                 await shoppingListRepository.StoreAsync(list, cancellationToken);

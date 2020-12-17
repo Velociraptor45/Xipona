@@ -2,7 +2,7 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
-    public class ShoppingListItem
+    public class ShoppingListItem : IShoppingListItem
     {
         public ShoppingListItem(ShoppingListItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             float pricePerQuantity, QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,

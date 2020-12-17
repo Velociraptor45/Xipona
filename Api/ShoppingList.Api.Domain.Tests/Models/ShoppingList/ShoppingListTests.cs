@@ -6,7 +6,6 @@ using ProjectHermes.ShoppingList.Api.Core.Tests;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Models.Fixtures;
 using System;
 using System.Collections.Generic;
@@ -42,7 +41,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.ShoppingList
             var shoppingList = fixure.Create<Domain.ShoppingLists.Models.ShoppingList>();
 
             // Act
-            Action action = () => shoppingList.AddItem(null, commonFixture.NextBool(), commonFixture.NextFloat());
+            Action action = () => shoppingList.AddItem(null);
 
             // Assert
             using (new AssertionScope())
@@ -59,40 +58,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.ShoppingList
             int collidingItemIndex = commonFixture.NextInt(0, shoppingList.Items.Count);
             int collidingItemId = shoppingList.Items.ElementAt(collidingItemIndex).Id.Actual.Value;
 
-            var collidingItem = storeItemFixture.GetStoreItem(new StoreItemId(collidingItemId));
+            var collidingItem = shoppingListItemFixture.GetShoppingListItemWithId(
+                new ShoppingListItemId(collidingItemId));
 
             // Act
-            Action action = () => shoppingList.AddItem(collidingItem, commonFixture.NextBool(), commonFixture.NextFloat());
+            Action action = () => shoppingList.AddItem(collidingItem);
 
             // Assert
             using (new AssertionScope())
             {
                 action.Should().Throw<ItemAlreadyOnShoppingListException>();
-            }
-        }
-
-        [Fact]
-        public void AddItem_WithNoAvailabilityForListStore_ShouldThrowItemAtStoreNotAvailableException()
-        {
-            // Arrange
-            var availabilities = storeItemAvailabilityFixture.GetAvailabilities(count: 3);
-            var usedAvailabilitiyStores = availabilities.Select(av => av.StoreId.Value);
-            var storeIdForShoppingList = commonFixture.NextInt(exclude: usedAvailabilitiyStores);
-
-            var list = shoppingListFixture.GetShoppingList(new StoreId(storeIdForShoppingList));
-
-            // this prevents that the item is already on the list
-            var usedItemIds = list.Items.Select(i => i.Id.Actual.Value);
-            int storeItemId = commonFixture.NextInt(usedItemIds);
-            var storeItem = storeItemFixture.GetStoreItem(new StoreItemId(storeItemId), 0, availabilities);
-
-            // Act
-            Action action = () => list.AddItem(storeItem, commonFixture.NextBool(), commonFixture.NextFloat());
-
-            // Assert
-            using (new AssertionScope())
-            {
-                action.Should().Throw<ItemAtStoreNotAvailableException>();
             }
         }
 
@@ -107,16 +82,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.ShoppingList
             // this prevents that the item is already on the list
             var usedItemIds = list.Items.Select(i => i.Id.Actual.Value);
             int storeItemId = commonFixture.NextInt(usedItemIds);
-            var storeItem = storeItemFixture.GetStoreItem(new StoreItemId(storeItemId), 0, availabilities);
+            var listItem = shoppingListItemFixture.GetShoppingListItemWithId(new ShoppingListItemId(storeItemId));
 
             // Act
-            list.AddItem(storeItem, commonFixture.NextBool(), commonFixture.NextFloat());
+            list.AddItem(listItem);
 
             // Assert
             using (new AssertionScope())
             {
                 list.Items.Should().HaveCount(4);
-                list.Items.Select(i => i.Id.Actual?.Value).Should().Contain(storeItem.Id.Actual.Value);
+                list.Items.Select(i => i.Id.Actual?.Value).Should().Contain(listItem.Id.Actual.Value);
             }
         }
 
@@ -125,10 +100,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Models.ShoppingList
         {
             // Arrange
             var list = shoppingListFixture.GetShoppingList();
-            var storeItem = storeItemFixture.GetStoreItem(new StoreItemId(Guid.NewGuid()));
+            var listItem = shoppingListItemFixture.GetShoppingListItemWithId(new ShoppingListItemId(Guid.NewGuid()));
 
             // Act
-            Action action = () => list.AddItem(storeItem, commonFixture.NextBool(), commonFixture.NextFloat());
+            Action action = () => list.AddItem(listItem);
 
             // Assert
             using (new AssertionScope())
