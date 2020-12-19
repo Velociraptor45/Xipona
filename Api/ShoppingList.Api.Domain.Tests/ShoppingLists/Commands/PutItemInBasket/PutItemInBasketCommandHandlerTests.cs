@@ -60,7 +60,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             // Arrange
             var fixture = commonFixture.GetNewFixture();
             var itemNotInBasket = shoppingListItemFixture.GetShoppingListItem(isInBasket: false);
-            var shoppingList = shoppingListFixture.GetShoppingList(itemCount: 0, itemNotInBasket.ToMonoList());
+            IShoppingList shoppingList = shoppingListFixture.GetShoppingList(itemCount: 0, itemNotInBasket.ToMonoList());
             var shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
 
             fixture.ConstructorArgumentFor<PutItemInBasketCommand, ShoppingListItemId>("itemId", itemNotInBasket.Id);
@@ -99,11 +99,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             var itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
 
             var itemNotInBasket = shoppingListItemFixture.GetShoppingListItem(isInBasket: false);
-            var shoppingList = shoppingListFixture.GetShoppingList(itemCount: 0, itemNotInBasket.ToMonoList());
+            IShoppingList shoppingList = shoppingListFixture.GetShoppingList(itemCount: 0, itemNotInBasket.ToMonoList());
             var listItemIdOffline = new ShoppingListItemId(Guid.NewGuid());
             var storeItemIdActual = new StoreItemId(itemNotInBasket.Id.Actual.Value);
             var storeItemIdOffline = new StoreItemId(listItemIdOffline.Offline.Value);
-            var storeItem = storeItemFixture.GetStoreItem(storeItemIdActual);
+            IStoreItem storeItem = storeItemFixture.GetStoreItem(storeItemIdActual);
 
             fixture.ConstructorArgumentFor<PutItemInBasketCommand, ShoppingListItemId>("itemId", listItemIdOffline);
             var command = fixture.Create<PutItemInBasketCommand>();

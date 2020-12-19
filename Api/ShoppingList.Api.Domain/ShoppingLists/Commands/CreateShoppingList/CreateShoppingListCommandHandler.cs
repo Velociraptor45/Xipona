@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using System;
 using System.Linq;
@@ -15,12 +16,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.CreateSho
     {
         private readonly IShoppingListRepository shoppingListRepository;
         private readonly IStoreRepository storeRepository;
+        private readonly IShoppingListFactory shoppingListFactory;
 
         public CreateShoppingListCommandHandler(IShoppingListRepository shoppingListRepository,
-            IStoreRepository storeRepository)
+            IStoreRepository storeRepository, IShoppingListFactory shoppingListFactory)
         {
             this.shoppingListRepository = shoppingListRepository;
             this.storeRepository = storeRepository;
+            this.shoppingListFactory = shoppingListFactory;
         }
 
         public async Task<bool> HandleAsync(CreateShoppingListCommand command, CancellationToken cancellationToken)
@@ -34,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.CreateSho
             }
 
             var store = await storeRepository.FindByAsync(command.StoreId, cancellationToken);
-            var list = new Models.ShoppingList(
+            var list = shoppingListFactory.Create(
                 new ShoppingListId(0), store, Enumerable.Empty<ShoppingListItem>(), null);
 
             cancellationToken.ThrowIfCancellationRequested();

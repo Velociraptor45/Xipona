@@ -1,6 +1,6 @@
 ﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models
 {
-    public class Manufacturer
+    public class Manufacturer : IManufacturer
     {
         public Manufacturer(ManufacturerId id, string name, bool isDeleted)
         {

@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
-using ShoppingList.Api.Domain.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +36,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
                 throw new ArgumentNullException(nameof(command));
             }
 
-            StoreItem storeItem = await itemRepository.FindByAsync(command.PermanentItem.Id, cancellationToken);
+            IStoreItem storeItem = await itemRepository.FindByAsync(command.PermanentItem.Id, cancellationToken);
             if (storeItem == null)
                 throw new DomainException(new ItemNotFoundReason(command.PermanentItem.Id));
             if (!storeItem.IsTemporary)
@@ -49,7 +49,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            Manufacturer manufacturer = null;
+            IManufacturer manufacturer = null;
             if (command.PermanentItem.ManufacturerId != null)
             {
                 manufacturer = await manufacturerRepository
@@ -58,7 +58,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
                     throw new DomainException(new ManufacturerNotFoundReason(command.PermanentItem.ManufacturerId));
             }
 
-            IEnumerable<Store> activeStores = await storeRepository.FindActiveStoresAsync(cancellationToken);
+            IEnumerable<IStore> activeStores = await storeRepository.FindActiveStoresAsync(cancellationToken);
             foreach (var availability in command.PermanentItem.Availabilities)
             {
                 if (!activeStores.Any(s => s.Id == availability.StoreId))

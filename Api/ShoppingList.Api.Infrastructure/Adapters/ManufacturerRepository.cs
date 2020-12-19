@@ -23,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Domain.Common.Models.Manufacturer>> FindByAsync(string searchInput,
+        public async Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput,
             CancellationToken cancellationToken)
         {
             var manufacturerEntities = await dbContext.Manufacturers.AsNoTracking()
@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return manufacturerEntities.Select(entity => entity.ToDomain());
         }
 
-        public async Task<Domain.Common.Models.Manufacturer> FindByAsync(ManufacturerId id,
+        public async Task<IManufacturer> FindByAsync(ManufacturerId id,
             CancellationToken cancellationToken)
         {
             if (id == null)
@@ -52,7 +52,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return entity.ToDomain();
         }
 
-        public async Task<IEnumerable<Domain.Common.Models.Manufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids,
+        public async Task<IEnumerable<IManufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids,
             CancellationToken cancellationToken)
         {
             if (ids == null)
@@ -71,7 +71,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return entities.Select(e => e.ToDomain());
         }
 
-        public async Task<IEnumerable<Domain.Common.Models.Manufacturer>> FindByAsync(bool includeDeleted,
+        public async Task<IEnumerable<IManufacturer>> FindByAsync(bool includeDeleted,
             CancellationToken cancellationToken)
         {
             var results = await dbContext.Manufacturers.AsNoTracking()
@@ -83,7 +83,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return results.Select(m => m.ToDomain());
         }
 
-        public async Task<Domain.Common.Models.Manufacturer> StoreAsync(Domain.Common.Models.Manufacturer model, CancellationToken cancellationToken)
+        public async Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken)
         {
             var entity = model.ToEntity();
 

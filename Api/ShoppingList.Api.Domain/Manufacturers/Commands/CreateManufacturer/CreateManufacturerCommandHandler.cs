@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,10 +11,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Commands.CreateMan
     public class CreateManufacturerCommandHandler : ICommandHandler<CreateManufacturerCommand, bool>
     {
         private readonly IManufacturerRepository manufacturerRepository;
+        private readonly IManufacturerFactory manufacturerFactory;
 
-        public CreateManufacturerCommandHandler(IManufacturerRepository manufacturerRepository)
+        public CreateManufacturerCommandHandler(IManufacturerRepository manufacturerRepository,
+            IManufacturerFactory manufacturerFactory)
         {
             this.manufacturerRepository = manufacturerRepository;
+            this.manufacturerFactory = manufacturerFactory;
         }
 
         public async Task<bool> HandleAsync(CreateManufacturerCommand command, CancellationToken cancellationToken)
@@ -23,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Commands.CreateMan
                 throw new ArgumentNullException(nameof(command));
             }
 
-            var model = new Manufacturer(new ManufacturerId(0), command.Name, false);
+            var model = manufacturerFactory.Create(new ManufacturerId(0), command.Name, false);
             await manufacturerRepository.StoreAsync(model, cancellationToken);
             return true;
         }

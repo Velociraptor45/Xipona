@@ -2,7 +2,8 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
-using ShoppingList.Api.Domain.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -24,12 +25,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores
         public async Task<IEnumerable<ActiveStoreReadModel>> HandleAsync(AllActiveStoresQuery query, CancellationToken cancellationToken)
         {
             var activeStores = (await storeRepository.FindActiveStoresAsync(cancellationToken)).ToList();
-            var itemPerStoreDict = new Dictionary<StoreId, IEnumerable<StoreItem>>();
+            var itemPerStoreDict = new Dictionary<StoreId, IEnumerable<StoreItemReadModel>>();
 
             foreach (var store in activeStores)
             {
                 var items = await itemRepository.FindByAsync(store.Id, cancellationToken);
-                itemPerStoreDict.Add(store.Id, items);
+                itemPerStoreDict.Add(store.Id, items.Select(i => i.ToReadModel()));
             }
 
             cancellationToken.ThrowIfCancellationRequested();

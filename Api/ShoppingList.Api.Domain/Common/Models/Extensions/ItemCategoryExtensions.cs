@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions
 {
     public static class ItemCategoryExtensions
     {
-        public static ItemCategoryReadModel ToReadModel(this ItemCategory model)
+        public static ItemCategoryReadModel ToReadModel(this IItemCategory model)
         {
             return new ItemCategoryReadModel(model.Id, model.Name, model.IsDeleted);
         }

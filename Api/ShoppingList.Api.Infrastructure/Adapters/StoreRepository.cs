@@ -12,8 +12,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using CommonModels = ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 {
     public class StoreRepository : IStoreRepository
@@ -25,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<CommonModels.Store>> FindActiveStoresAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<IStore>> FindActiveStoresAsync(CancellationToken cancellationToken)
         {
             var storeEntities = await dbContext.Stores.AsNoTracking()
                 .Where(store => !store.Deleted)
@@ -36,7 +34,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return storeEntities.Select(store => store.ToDomain());
         }
 
-        public async Task<CommonModels.Store> FindByAsync(StoreId id, CancellationToken cancellationToken)
+        public async Task<IStore> FindByAsync(StoreId id, CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
@@ -69,7 +67,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return entity != null;
         }
 
-        public async Task<StoreId> StoreAsync(CommonModels.Store store, CancellationToken cancellationToken)
+        public async Task<StoreId> StoreAsync(IStore store, CancellationToken cancellationToken)
         {
             if (store == null)
                 throw new ArgumentNullException(nameof(store));

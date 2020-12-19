@@ -1,6 +1,6 @@
 ﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models
 {
-    public class Store
+    public class Store : IStore
     {
         public Store(StoreId id, string name, bool isDeleted)
         {

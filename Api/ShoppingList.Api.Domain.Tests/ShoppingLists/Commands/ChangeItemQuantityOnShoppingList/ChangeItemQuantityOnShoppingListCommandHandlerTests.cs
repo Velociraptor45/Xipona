@@ -71,7 +71,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
                 .Setup(instance => instance.FindByAsync(
                     It.Is<ShoppingListId>(id => id == command.ShoppingListId),
                     It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<DomainModels.ShoppingList>(null));
+                .Returns(Task.FromResult<IShoppingList>(null));
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(command, default);
@@ -95,7 +95,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
             var command = fixture.Create<ChangeItemQuantityOnShoppingListCommand>();
 
             var item = shoppingListItemFixture.GetShoppingListItemWithId(command.ItemId);
-            var shoppingList = shoppingListFixture.GetShoppingList(command.ShoppingListId, additionalItems: item.ToMonoList());
+            IShoppingList shoppingList = shoppingListFixture.GetShoppingList(command.ShoppingListId, additionalItems: item.ToMonoList());
 
             shoppingListRepoMock
                 .Setup(instance => instance.FindByAsync(

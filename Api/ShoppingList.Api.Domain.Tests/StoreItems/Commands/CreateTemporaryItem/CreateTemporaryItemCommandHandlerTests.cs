@@ -48,7 +48,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
-            var store = storeFixture.GetStore(isDeleted: false);
+            IStore store = storeFixture.GetStore(isDeleted: false);
 
             var itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
             var storeRepositoryMock = fixture.Freeze<Mock<IStoreRepository>>();

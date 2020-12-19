@@ -1,20 +1,17 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
-using ShoppingList.Api.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
-    public class ShoppingList
+    public class ShoppingList : IShoppingList
     {
-        private IEnumerable<ShoppingListItem> items;
+        private IEnumerable<IShoppingListItem> items;
 
-        public ShoppingList(ShoppingListId id, Store store, IEnumerable<ShoppingListItem> items, DateTime? completionDate)
+        public ShoppingList(ShoppingListId id, IStore store, IEnumerable<IShoppingListItem> items, DateTime? completionDate)
         {
             var item = items.FirstOrDefault(i => !i.Id.IsActualId);
             if (item != null)
@@ -27,29 +24,24 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         }
 
         public ShoppingListId Id { get; }
-        public Store Store { get; }
-        public IReadOnlyCollection<ShoppingListItem> Items => items.ToList().AsReadOnly();
+        public IStore Store { get; }
+        public IReadOnlyCollection<IShoppingListItem> Items => items.ToList().AsReadOnly();
         public DateTime? CompletionDate { get; private set; }
 
-        public void AddItem(StoreItem storeItem, bool isInBasket, float quantity)
+        public void AddItem(IShoppingListItem item)
         {
-            if (storeItem == null)
-                throw new ArgumentNullException(nameof(storeItem));
-            if (!storeItem.Id.IsActualId)
-                throw new DomainException(new ActualIdRequiredReason(storeItem.Id));
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+            if (!item.Id.IsActualId)
+                throw new DomainException(new ActualIdRequiredReason(item.Id));
 
             var list = items.ToList();
 
-            var existingItem = list.FirstOrDefault(it => it.Id == storeItem.Id.ToShoppingListItemId());
+            var existingItem = list.FirstOrDefault(it => it.Id == item.Id);
             if (existingItem != null)
-                throw new DomainException(new ItemAlreadyOnShoppingListReason(storeItem.Id, Id));
+                throw new DomainException(new ItemAlreadyOnShoppingListReason(item.Id, Id));
 
-            StoreItemAvailability availability = storeItem.Availabilities
-                .FirstOrDefault(availability => availability.StoreId == Store.Id);
-            if (availability == null)
-                throw new DomainException(new ItemAtStoreNotAvailableReason(storeItem.Id, Store.Id));
-
-            list.Add(storeItem.ToShoppingListItemDomain(availability.Price, isInBasket, quantity));
+            list.Add(item);
             items = list;
         }
 
@@ -142,7 +134,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         /// basket on it
         /// </summary>
         /// <returns></returns>
-        public ShoppingList Finish(DateTime completionDate)
+        public IShoppingList Finish(DateTime completionDate)
         {
             var itemsNotInBasket = items.Where(i => !i.IsInBasket);
 
