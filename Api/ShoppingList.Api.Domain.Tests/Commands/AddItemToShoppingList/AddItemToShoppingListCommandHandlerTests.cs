@@ -121,12 +121,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.AddItemToShopping
             {
                 result.Should().BeTrue();
                 shoppingListRepositoryMock.Verify(
-                    i => i.StoreAsync(It.IsAny<ShoppingLists.Models.ShoppingList>(), It.IsAny<CancellationToken>()),
+                    i => i.StoreAsync(It.IsAny<IShoppingList>(), It.IsAny<CancellationToken>()),
                     Times.Once);
             }
         }
 
-        private (IStoreItem, ShoppingLists.Models.ShoppingList) GetValidStoreItemAndShoppingList()
+        private (IStoreItem, IShoppingList) GetValidStoreItemAndShoppingList()
         {
             var availabilities = storeItemAvailabilityFixture.GetAvailabilities(count: 3).ToList();
             var storeIdForShoppingList = availabilities[commonFixture.NextInt(0, availabilities.Count - 1)].StoreId.Value;

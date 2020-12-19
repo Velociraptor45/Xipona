@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
-    public class ShoppingList
+    public class ShoppingList : IShoppingList
     {
         private IEnumerable<IShoppingListItem> items;
 
@@ -133,7 +133,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         /// basket on it
         /// </summary>
         /// <returns></returns>
-        public ShoppingList Finish(DateTime completionDate)
+        public IShoppingList Finish(DateTime completionDate)
         {
             var itemsNotInBasket = items.Where(i => !i.IsInBasket);
 
