@@ -6,7 +6,6 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
-using ShoppingList.Api.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +25,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
         #region public methods
 
-        public async Task<StoreItem> FindByAsync(StoreItemId storeItemId, CancellationToken cancellationToken)
+        public async Task<IStoreItem> FindByAsync(StoreItemId storeItemId, CancellationToken cancellationToken)
         {
             if (storeItemId is null)
             {
@@ -54,7 +53,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return itemEntity.ToStoreItemDomain();
         }
 
-        public async Task<StoreItem> FindByAsync(StoreItemId storeItemId, StoreId storeId,
+        public async Task<IStoreItem> FindByAsync(StoreItemId storeItemId, StoreId storeId,
             CancellationToken cancellationToken)
         {
             if (storeItemId == null)
@@ -87,7 +86,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return itemEntity.ToStoreItemDomain();
         }
 
-        public async Task<IEnumerable<StoreItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
+        public async Task<IEnumerable<IStoreItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
         {
             if (storeId == null)
                 throw new ArgumentNullException(nameof(storeId));
@@ -110,7 +109,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return entities.Select(e => e.ToStoreItemDomain());
         }
 
-        public async Task<IEnumerable<StoreItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
+        public async Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
             IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
             CancellationToken cancellationToken)
         {
@@ -161,7 +160,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return filteredResultByStore.Select(r => r.ToStoreItemDomain());
         }
 
-        public async Task<IEnumerable<StoreItem>> FindActiveByAsync(string searchInput, StoreId storeId,
+        public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, StoreId storeId,
             CancellationToken cancellationToken)
         {
             if (storeId == null)
@@ -188,7 +187,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return entities.Select(e => e.ToStoreItemDomain());
         }
 
-        public async Task<StoreItem> StoreAsync(StoreItem storeItem, CancellationToken cancellationToken)
+        public async Task<IStoreItem> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken)
         {
             if (storeItem == null)
                 throw new ArgumentNullException(nameof(storeItem));

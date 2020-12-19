@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
 {
     public static class ShoppingListExtensions
     {
-        public static Infrastructure.Entities.ShoppingList ToEntity(this Domain.ShoppingLists.Models.ShoppingList model)
+        public static Infrastructure.Entities.ShoppingList ToEntity(this IShoppingList model)
         {
             return new Infrastructure.Entities.ShoppingList()
             {
@@ -17,7 +18,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
         }
 
         public static IEnumerable<Infrastructure.Entities.ItemsOnList> ToItemsOnListEntities(
-            this Domain.ShoppingLists.Models.ShoppingList model)
+            this IShoppingList model)
         {
             return model.Items.Select(item =>
                 new Infrastructure.Entities.ItemsOnList()

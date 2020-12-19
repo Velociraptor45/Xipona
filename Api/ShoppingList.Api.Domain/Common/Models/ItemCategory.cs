@@ -1,6 +1,6 @@
 ﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models
 {
-    public class ItemCategory
+    public class ItemCategory : IItemCategory
     {
         public ItemCategory(ItemCategoryId id, string name, bool isDeleted)
         {

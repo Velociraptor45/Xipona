@@ -1,9 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
-using ShoppingList.Api.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,9 +38,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch
             if (store == null)
                 throw new StoreNotFoundException(query.StoreId);
 
-            IEnumerable<StoreItem> storeItems = await itemRepository
+            IEnumerable<IStoreItem> storeItems = await itemRepository
                 .FindActiveByAsync(query.SearchInput.Trim(), query.StoreId, cancellationToken);
-            Domain.ShoppingLists.Models.ShoppingList shoppingList = await shoppingListRepository
+            IShoppingList shoppingList = await shoppingListRepository
                 .FindActiveByAsync(query.StoreId, cancellationToken);
             var itemIdsOnShoppingList = shoppingList.Items.Select(item => item.Id);
 

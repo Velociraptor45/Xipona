@@ -61,9 +61,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.RemoveItemFromSho
             var itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
 
             var listItem = shoppingListItemFixture.GetShoppingListItem();
-            var shoppingList = shoppingListFixture.GetShoppingList(itemCount: 2, listItem.ToMonoList());
+            IShoppingList shoppingList = shoppingListFixture.GetShoppingList(itemCount: 2, listItem.ToMonoList());
             var storeItemIdActual = new StoreItemId(listItem.Id.Actual.Value);
-            var storeItem = storeItemFixture.GetStoreItem(storeItemIdActual, isTemporary: false, isDeleted: false);
+            IStoreItem storeItem = storeItemFixture.GetStoreItem(storeItemIdActual, isTemporary: false, isDeleted: false);
 
             fixture.ConstructorArgumentFor<RemoveItemFromShoppingListCommand, ShoppingListItemId>(
                 "shoppingListItemId", listItem.Id);
@@ -114,9 +114,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Commands.RemoveItemFromSho
             var itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
 
             var listItem = shoppingListItemFixture.GetShoppingListItem();
-            var shoppingList = shoppingListFixture.GetShoppingList(itemCount: 2, listItem.ToMonoList());
+            IShoppingList shoppingList = shoppingListFixture.GetShoppingList(itemCount: 2, listItem.ToMonoList());
             var storeItemIdActual = new StoreItemId(listItem.Id.Actual.Value);
-            var storeItem = storeItemFixture.GetStoreItem(storeItemIdActual, isTemporary: true, isDeleted: false);
+            IStoreItem storeItem = storeItemFixture.GetStoreItem(storeItemIdActual, isTemporary: true, isDeleted: false);
 
             fixture.ConstructorArgumentFor<RemoveItemFromShoppingListCommand, ShoppingListItemId>(
                 "shoppingListItemId", listItem.Id);

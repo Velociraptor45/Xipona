@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
 {
     public static class ItemCategoryExtensions
     {
-        public static ItemCategory ToDomain(this Infrastructure.Entities.ItemCategory entity)
+        public static IItemCategory ToDomain(this Infrastructure.Entities.ItemCategory entity)
         {
             return new ItemCategory(
                 new ItemCategoryId(entity.Id),

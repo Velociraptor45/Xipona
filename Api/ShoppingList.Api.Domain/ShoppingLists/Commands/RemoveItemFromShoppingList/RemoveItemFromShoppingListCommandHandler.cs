@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.Models;
 using System;
 using System.Threading;
@@ -28,7 +29,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
                 throw new ArgumentNullException(nameof(command));
 
             var list = await shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
-            StoreItem item = await itemRepository.FindByAsync(command.ShoppingListItemId.ToStoreItemId(), cancellationToken);
+            IStoreItem item = await itemRepository.FindByAsync(command.ShoppingListItemId.ToStoreItemId(), cancellationToken);
 
             list.RemoveItem(command.ShoppingListItemId);
             if (item.IsTemporary)

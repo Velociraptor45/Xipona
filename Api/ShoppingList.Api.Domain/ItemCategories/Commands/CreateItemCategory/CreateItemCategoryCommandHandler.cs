@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,10 +11,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.CreateIt
     public class CreateItemCategoryCommandHandler : ICommandHandler<CreateItemCategoryCommand, bool>
     {
         private readonly IItemCategoryRepository itemCategoryRepository;
+        private readonly IItemCategoryFactory itemCategoryFactory;
 
-        public CreateItemCategoryCommandHandler(IItemCategoryRepository itemCategoryRepository)
+        public CreateItemCategoryCommandHandler(IItemCategoryRepository itemCategoryRepository,
+            IItemCategoryFactory itemCategoryFactory)
         {
             this.itemCategoryRepository = itemCategoryRepository;
+            this.itemCategoryFactory = itemCategoryFactory;
         }
 
         public async Task<bool> HandleAsync(CreateItemCategoryCommand command, CancellationToken cancellationToken)
@@ -23,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.CreateIt
                 throw new ArgumentNullException(nameof(command));
             }
 
-            var model = new ItemCategory(new ItemCategoryId(0), command.Name, false);
+            var model = itemCategoryFactory.Create(new ItemCategoryId(0), command.Name, false);
             await itemCategoryRepository.StoreAsync(model, cancellationToken);
             return true;
         }

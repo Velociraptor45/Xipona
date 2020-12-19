@@ -1,12 +1,13 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch
 {
     public class ItemSearchReadModel
     {
-        public ItemSearchReadModel(StoreItemActualId id, string name, int defaultQuantity, float price, Manufacturer manufacturer,
-            ItemCategory itemCategory)
+        public ItemSearchReadModel(StoreItemActualId id, string name, int defaultQuantity, float price,
+            ManufacturerReadModel manufacturer, ItemCategoryReadModel itemCategory)
         {
             Id = id;
             Name = name;
@@ -20,7 +21,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch
         public string Name { get; }
         public int DefaultQuantity { get; }
         public float Price { get; }
-        public Manufacturer Manufacturer { get; }
-        public ItemCategory ItemCategory { get; }
+        public ManufacturerReadModel Manufacturer { get; }
+        public ItemCategoryReadModel ItemCategory { get; }
     }
 }

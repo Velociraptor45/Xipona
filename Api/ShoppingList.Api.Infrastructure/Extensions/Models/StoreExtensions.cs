@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
 {
     public static class StoreExtensions
     {
-        public static Infrastructure.Entities.Store ToEntity(this Store model)
+        public static Infrastructure.Entities.Store ToEntity(this IStore model)
         {
             return new Infrastructure.Entities.Store()
             {
