@@ -20,25 +20,25 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             this.commonFixture = commonFixture;
         }
 
-        public Models.ShoppingList GetShoppingList(int itemCount = 3,
-            IEnumerable<ShoppingListItem> additionalItems = null)
+        public IShoppingList GetShoppingList(int itemCount = 3,
+            IEnumerable<IShoppingListItem> additionalItems = null)
         {
             var listId = new ShoppingListId(commonFixture.NextInt());
             var storeId = new StoreId(commonFixture.NextInt());
             return GetShoppingList(listId, storeId, itemCount, additionalItems);
         }
 
-        public Models.ShoppingList GetShoppingList(StoreId storeId, int itemCount = 3,
-            IEnumerable<ShoppingListItem> additionalItems = null)
+        public IShoppingList GetShoppingList(StoreId storeId, int itemCount = 3,
+            IEnumerable<IShoppingListItem> additionalItems = null)
         {
             var listId = new ShoppingListId(commonFixture.NextInt());
             return GetShoppingList(listId, storeId, itemCount, additionalItems);
         }
 
-        public Models.ShoppingList GetShoppingList(ShoppingListId id, StoreId storeId = null, int itemCount = 3,
-            IEnumerable<ShoppingListItem> additionalItems = null)
+        public IShoppingList GetShoppingList(ShoppingListId id, StoreId storeId = null, int itemCount = 3,
+            IEnumerable<IShoppingListItem> additionalItems = null)
         {
-            var allItems = additionalItems?.ToList() ?? new List<ShoppingListItem>();
+            var allItems = additionalItems?.ToList() ?? new List<IShoppingListItem>();
             var additionalItemIds = allItems.Select(i => i.Id.Actual.Value);
             var uniqueItems = GetUniqueShoppingListItems(itemCount, additionalItemIds);
             allItems.AddRange(uniqueItems);
@@ -54,10 +54,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             return fixture.Create<Models.ShoppingList>();
         }
 
-        private IEnumerable<ShoppingListItem> GetUniqueShoppingListItems(int count, IEnumerable<int> exclude)
+        private IEnumerable<IShoppingListItem> GetUniqueShoppingListItems(int count, IEnumerable<int> exclude)
         {
             List<int> itemIds = commonFixture.NextUniqueInts(count, exclude).ToList();
-            List<ShoppingListItem> items = new List<ShoppingListItem>();
+            List<IShoppingListItem> items = new List<IShoppingListItem>();
 
             foreach (var itemId in itemIds)
             {

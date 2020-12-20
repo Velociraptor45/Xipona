@@ -2,8 +2,6 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
-using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
@@ -14,8 +12,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-
-using DomainModels = ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList
 {
@@ -91,17 +87,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
             var fixture = commonFixture.GetNewFixture();
             var shoppingListRepoMock = fixture.Freeze<Mock<IShoppingListRepository>>();
             var handler = fixture.Create<ChangeItemQuantityOnShoppingListCommandHandler>();
-            fixture.ConstructorArgumentFor<ChangeItemQuantityOnShoppingListCommand, float>("quantity", commonFixture.NextFloat() + .01f);
             var command = fixture.Create<ChangeItemQuantityOnShoppingListCommand>();
 
-            var item = shoppingListItemFixture.GetShoppingListItemWithId(command.ItemId);
-            IShoppingList shoppingList = shoppingListFixture.GetShoppingList(command.ShoppingListId, additionalItems: item.ToMonoList());
+            Mock<IShoppingList> listMock = new Mock<IShoppingList>();
 
             shoppingListRepoMock
                 .Setup(instance => instance.FindByAsync(
                     It.Is<ShoppingListId>(id => id == command.ShoppingListId),
                     It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(shoppingList));
+                .Returns(Task.FromResult(listMock.Object));
 
             // Act
             bool result = await handler.HandleAsync(command, default);
@@ -110,9 +104,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
+                listMock.Verify(
+                    i => i.ChangeItemQuantity(
+                        It.Is<ShoppingListItemId>(id => id == command.ItemId),
+                        It.Is<float>(q => q == command.Quantity)),
+                    Times.Once);
                 shoppingListRepoMock.Verify(
                     i => i.StoreAsync(
-                        It.Is<DomainModels.ShoppingList>(list => list.Id == shoppingList.Id),
+                        It.Is<IShoppingList>(list => list.Id == listMock.Object.Id),
                         It.IsAny<CancellationToken>()),
                     Times.Once);
             }

@@ -19,18 +19,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             this.commonFixture = commonFixture;
         }
 
-        public StoreItem GetStoreItem(int availabilityCount = 3,
-            IEnumerable<StoreItemAvailability> additionalAvailabilities = null)
+        public IStoreItem GetStoreItem(int availabilityCount = 3,
+            IEnumerable<IStoreItemAvailability> additionalAvailabilities = null)
         {
             var storeItemId = new StoreItemId(commonFixture.NextInt());
             return GetStoreItem(storeItemId, availabilityCount, additionalAvailabilities);
         }
 
-        public StoreItem GetStoreItem(StoreItemId id, int availabilityCount = 3,
-            IEnumerable<StoreItemAvailability> additionalAvailabilities = null,
+        public IStoreItem GetStoreItem(StoreItemId id, int availabilityCount = 3,
+            IEnumerable<IStoreItemAvailability> additionalAvailabilities = null,
             bool? isTemporary = null, bool? isDeleted = null)
         {
-            var allAvailabilities = additionalAvailabilities?.ToList() ?? new List<StoreItemAvailability>();
+            var allAvailabilities = additionalAvailabilities?.ToList() ?? new List<IStoreItemAvailability>();
             var additionalStoreIds = allAvailabilities.Select(av => av.StoreId.Value);
             var uniqueStoreItemAvailabilities = GetUniqueStoreItemAvailabilities(availabilityCount, additionalStoreIds);
             allAvailabilities.AddRange(uniqueStoreItemAvailabilities);
@@ -46,10 +46,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             return fixture.Create<StoreItem>();
         }
 
-        private IEnumerable<StoreItemAvailability> GetUniqueStoreItemAvailabilities(int count, IEnumerable<int> exclude)
+        private IEnumerable<IStoreItemAvailability> GetUniqueStoreItemAvailabilities(int count, IEnumerable<int> exclude)
         {
             List<int> storeIds = commonFixture.NextUniqueInts(count, exclude).ToList();
-            List<StoreItemAvailability> availabilities = new List<StoreItemAvailability>();
+            List<IStoreItemAvailability> availabilities = new List<IStoreItemAvailability>();
 
             foreach (var storeId in storeIds)
             {
