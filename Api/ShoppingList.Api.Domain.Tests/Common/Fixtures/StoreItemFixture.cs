@@ -19,14 +19,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             this.commonFixture = commonFixture;
         }
 
-        public IStoreItem GetStoreItem(int availabilityCount = 3,
-            IEnumerable<IStoreItemAvailability> additionalAvailabilities = null)
-        {
-            var storeItemId = new StoreItemId(commonFixture.NextInt());
-            return GetStoreItem(storeItemId, availabilityCount, additionalAvailabilities);
-        }
-
-        public IStoreItem GetStoreItem(StoreItemId id, int availabilityCount = 3,
+        public IStoreItem GetStoreItem(StoreItemId id = null, int availabilityCount = 3,
             IEnumerable<IStoreItemAvailability> additionalAvailabilities = null,
             bool? isTemporary = null, bool? isDeleted = null)
         {
@@ -37,8 +30,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             allAvailabilities.Shuffle();
 
             var fixture = commonFixture.GetNewFixture();
-            fixture.Inject(id);
             fixture.Inject(allAvailabilities.AsEnumerable());
+            if (id != null)
+                fixture.Inject(id);
             if (isTemporary.HasValue)
                 fixture.ConstructorArgumentFor<StoreItem, bool>("isTemporary", isTemporary.Value);
             if (isDeleted.HasValue)
