@@ -31,12 +31,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.CreateSho
             if (command == null)
                 throw new ArgumentNullException(nameof(command));
 
-            if (await shoppingListRepository.ActiveShoppingListExistsForAsync(command.StoreId, cancellationToken))
-            {
+            var activeList = await shoppingListRepository.FindActiveByAsync(command.StoreId, cancellationToken);
+            if (activeList != null)
                 throw new DomainException(new ShoppingListAlreadyExistsReason(command.StoreId));
-            }
 
-            var store = await storeRepository.FindByAsync(command.StoreId, cancellationToken);
+            var store = await storeRepository.FindActiveByAsync(command.StoreId, cancellationToken);
+            if (store == null)
+                throw new DomainException(new StoreNotFoundReason(command.StoreId));
+
             var list = shoppingListFactory.Create(
                 new ShoppingListId(0), store, Enumerable.Empty<ShoppingListItem>(), null);
 

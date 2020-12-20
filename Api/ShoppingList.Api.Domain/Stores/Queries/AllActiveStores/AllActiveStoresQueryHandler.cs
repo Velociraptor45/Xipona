@@ -24,7 +24,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores
 
         public async Task<IEnumerable<ActiveStoreReadModel>> HandleAsync(AllActiveStoresQuery query, CancellationToken cancellationToken)
         {
-            var activeStores = (await storeRepository.FindActiveStoresAsync(cancellationToken)).ToList();
+            var activeStores = (await storeRepository.GetAsync(cancellationToken)).ToList();
             var itemPerStoreDict = new Dictionary<StoreId, IEnumerable<StoreItemReadModel>>();
 
             foreach (var store in activeStores)

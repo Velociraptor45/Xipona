@@ -9,8 +9,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports
 {
     public interface IShoppingListRepository
     {
-        Task<bool> ActiveShoppingListExistsForAsync(StoreId storeId, CancellationToken cancellationToken);
-
         Task<IShoppingList> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken);
 
         Task<IEnumerable<IShoppingList>> FindActiveByAsync(StoreItemId storeItemId, CancellationToken cancellationToken);

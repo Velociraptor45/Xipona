@@ -54,13 +54,41 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             await StoreModifiedListAsync(listEntity, shoppingList, cancellationToken);
         }
 
+        public async Task<IShoppingList> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
+
+            var entity = await dbContext.ShoppingLists.AsNoTracking()
+                .Include(l => l.Store)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.Manufacturer)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.ItemCategory)
+                .Include(l => l.ItemsOnList)
+                .ThenInclude(map => map.Item)
+                .ThenInclude(item => item.AvailableAt)
+                .FirstOrDefaultAsync(list => list.Id == id.Value);
+
+            if (entity == null) //todo throw in command handler
+                throw new DomainException(new ShoppingListNotFoundReason(id));
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return shoppingListFactory.Create(
+                new ShoppingListId(entity.Id),
+                entity.Store.ToDomain(),
+                entity.ItemsOnList.Select(map => map.Item.ToShoppingListItemDomain(entity.StoreId, entity.Id)),
+                entity.CompletionDate);
+        }
+
         public async Task<IEnumerable<IShoppingList>> FindByAsync(StoreItemId storeItemId,
             CancellationToken cancellationToken)
         {
             if (storeItemId is null)
-            {
                 throw new ArgumentNullException(nameof(storeItemId));
-            }
 
             List<Entities.ShoppingList> entities = await dbContext.ShoppingLists.AsNoTracking()
                 .Include(l => l.Store)
@@ -92,9 +120,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             CancellationToken cancellationToken)
         {
             if (storeItemId is null)
-            {
                 throw new ArgumentNullException(nameof(storeItemId));
-            }
 
             List<Entities.ShoppingList> entities = await dbContext.ShoppingLists.AsNoTracking()
                 .Include(l => l.Store)
@@ -152,47 +178,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 entity.Store.ToDomain(),
                 entity.ItemsOnList.Select(map => map.Item.ToShoppingListItemDomain(entity.StoreId, entity.Id)),
                 entity.CompletionDate);
-        }
-
-        public async Task<IShoppingList> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)
-        {
-            if (id == null)
-                throw new ArgumentNullException(nameof(id));
-
-            var entity = await dbContext.ShoppingLists.AsNoTracking()
-                .Include(l => l.Store)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.Manufacturer)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.ItemCategory)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.AvailableAt)
-                .FirstOrDefaultAsync(list => list.Id == id.Value);
-
-            if (entity == null) //todo throw in command handler
-                throw new DomainException(new ShoppingListNotFoundReason(id));
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            return shoppingListFactory.Create(
-                new ShoppingListId(entity.Id),
-                entity.Store.ToDomain(),
-                entity.ItemsOnList.Select(map => map.Item.ToShoppingListItemDomain(entity.StoreId, entity.Id)),
-                entity.CompletionDate);
-        }
-
-        public async Task<bool> ActiveShoppingListExistsForAsync(StoreId storeId, CancellationToken cancellationToken)
-        {
-            var list = await dbContext.ShoppingLists.AsNoTracking()
-                .FirstOrDefaultAsync(list => list.StoreId == storeId.Value
-                    && list.CompletionDate == null);
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            return list != null;
         }
 
         #endregion public methods

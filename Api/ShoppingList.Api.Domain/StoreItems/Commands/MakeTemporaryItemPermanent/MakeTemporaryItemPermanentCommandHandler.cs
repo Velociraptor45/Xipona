@@ -58,7 +58,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
                     throw new DomainException(new ManufacturerNotFoundReason(command.PermanentItem.ManufacturerId));
             }
 
-            IEnumerable<IStore> activeStores = await storeRepository.FindActiveStoresAsync(cancellationToken);
+            IEnumerable<IStore> activeStores = await storeRepository.GetAsync(cancellationToken);
             foreach (var availability in command.PermanentItem.Availabilities)
             {
                 if (!activeStores.Any(s => s.Id == availability.StoreId))

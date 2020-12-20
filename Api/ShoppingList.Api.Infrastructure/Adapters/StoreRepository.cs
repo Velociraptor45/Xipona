@@ -23,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<IStore>> FindActiveStoresAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<IStore>> GetAsync(CancellationToken cancellationToken)
         {
             var storeEntities = await dbContext.Stores.AsNoTracking()
                 .Where(store => !store.Deleted)
@@ -32,6 +32,25 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             return storeEntities.Select(store => store.ToDomain());
+        }
+
+        public async Task<IStore> FindActiveByAsync(StoreId id, CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var entity = await dbContext.Stores.AsNoTracking()
+                .Where(store => !store.Deleted)
+                .FirstOrDefaultAsync(store => store.Id == id.Value);
+
+            if (entity == null) // todo: move to command handler
+                throw new DomainException(new StoreNotFoundReason(id));
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return entity.ToDomain();
         }
 
         public async Task<IStore> FindByAsync(StoreId id, CancellationToken cancellationToken)
@@ -44,27 +63,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             var entity = await dbContext.Stores.AsNoTracking()
                 .FirstOrDefaultAsync(store => store.Id == id.Value);
 
-            if (entity == null)
+            if (entity == null) // todo: move to command handler
                 throw new DomainException(new StoreNotFoundReason(id));
 
             cancellationToken.ThrowIfCancellationRequested();
 
             return entity.ToDomain();
-        }
-
-        public async Task<bool> IsValidIdAsync(StoreId id, CancellationToken cancellationToken)
-        {
-            if (id == null)
-                throw new ArgumentNullException(nameof(id));
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var entity = await dbContext.Stores.AsNoTracking()
-                .FirstOrDefaultAsync(store => store.Id == id.Value);
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            return entity != null;
         }
 
         public async Task<StoreId> StoreAsync(IStore store, CancellationToken cancellationToken)

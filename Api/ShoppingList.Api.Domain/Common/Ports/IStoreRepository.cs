@@ -7,12 +7,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Ports
 {
     public interface IStoreRepository
     {
-        Task<IEnumerable<IStore>> FindActiveStoresAsync(CancellationToken cancellationToken);
+        Task<IEnumerable<IStore>> GetAsync(CancellationToken cancellationToken);
 
         Task<IStore> FindByAsync(StoreId id, CancellationToken cancellationToken);
 
-        Task<bool> IsValidIdAsync(StoreId id, CancellationToken cancellationToken);
-
         Task<StoreId> StoreAsync(IStore store, CancellationToken cancellationToken);
+        Task<IStore> FindActiveByAsync(StoreId id, CancellationToken cancellationToken);
     }
 }
