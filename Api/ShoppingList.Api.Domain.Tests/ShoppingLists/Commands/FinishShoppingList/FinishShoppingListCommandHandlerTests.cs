@@ -8,7 +8,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,18 +18,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
     public class FinishShoppingListCommandHandlerTests
     {
         private readonly CommonFixture commonFixture;
-        private readonly ShoppingListItemFixture shoppingListItemFixture;
-        private readonly ShoppingListFixture shoppingListFixture;
-        private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
-        private readonly StoreItemFixture storeItemFixture;
 
         public FinishShoppingListCommandHandlerTests()
         {
             commonFixture = new CommonFixture();
-            shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-            shoppingListFixture = new ShoppingListFixture(shoppingListItemFixture, commonFixture);
-            storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
-            storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
         }
 
         [Fact]
