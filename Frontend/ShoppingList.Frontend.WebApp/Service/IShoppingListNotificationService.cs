@@ -1,4 +1,6 @@
-﻿namespace ProjectHermes.ShoppingList.Frontend.WebApp.Service
+﻿using Microsoft.AspNetCore.Components;
+
+namespace ProjectHermes.ShoppingList.Frontend.WebApp.Service
 {
     public interface IShoppingListNotificationService
     {
@@ -9,5 +11,7 @@
         void NotifyWarning(string title, string message);
 
         void NotifyError(string title, string message);
+
+        void NotifyError(string title, string message, RenderFragment button);
     }
 }

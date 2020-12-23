@@ -1,4 +1,5 @@
 ﻿using AntDesign;
+using Microsoft.AspNetCore.Components;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Service
 {
@@ -47,6 +48,17 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Service
                 Message = title,
                 Description = message,
                 NotificationType = NotificationType.Error
+            });
+        }
+
+        public void NotifyError(string title, string message, RenderFragment button)
+        {
+            notificationService.Open(new NotificationConfig
+            {
+                Message = title,
+                Description = message,
+                NotificationType = NotificationType.Error,
+                Btn = button
             });
         }
     }
