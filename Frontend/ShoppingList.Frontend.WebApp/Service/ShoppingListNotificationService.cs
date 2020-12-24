@@ -37,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Service
             {
                 Message = title,
                 Description = message,
-                NotificationType = NotificationType.Warning
+                //NotificationType = NotificationType.Warning
             });
         }
 
@@ -47,7 +47,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Service
             {
                 Message = title,
                 Description = message,
-                NotificationType = NotificationType.Error
+                //NotificationType = NotificationType.Error
             });
         }
 
@@ -57,7 +57,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Service
             {
                 Message = title,
                 Description = message,
-                NotificationType = NotificationType.Error,
+                //NotificationType = NotificationType.Error,
                 Btn = button
             });
         }

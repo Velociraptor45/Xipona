@@ -12,7 +12,9 @@
 
 <div>
     <div class="mb-1 d-flex justify-content-end align-items-center">
-        <Switch Class="pr-2" Checked="@isDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="@OnDebugStateChanged" />
+        <div class="pr-2">
+            <Switch Checked="@isDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="@OnDebugStateChanged" />
+        </div>
         <Select Class="mr-1 min-w-100"
                 OnChange="@OnSelectedStoreChanged"
                 @ref="@storeSelect">
