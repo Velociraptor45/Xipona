@@ -12,6 +12,7 @@
 
 <div>
     <div class="mb-1 d-flex justify-content-end align-items-center">
+        <Switch Class="pr-2" Checked="@isDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="@OnDebugStateChanged" />
         <Select Class="mr-1 min-w-100"
                 OnChange="@OnSelectedStoreChanged"
                 @ref="@storeSelect">
@@ -90,6 +91,8 @@
 </div>
 
 @code{
+    private bool isDebug = true;
+
     private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListItem>());
     private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>());
 
@@ -123,7 +126,6 @@
         catch (Exception e)
         {
             notificationService.NotifyError("Page loading failed", e.Message, GetPageReloadRenderFragment());
-            Console.WriteLine(e.Message);
             AddToError(e.ToString());
             return;
         }
@@ -131,7 +133,11 @@
 
     private int AddToError(string e)
     {
+        if (!isDebug)
+            return 0;
+
         errorMsg.Add(e);
+        Console.WriteLine(e);
         StateHasChanged();
         return 0;
     }
@@ -183,6 +189,11 @@
     #endregion
 
     #region Callbacks
+    private void OnDebugStateChanged(bool active)
+    {
+        isDebug = active;
+    }
+
     private void OnCreateNewTemporaryItem()
     {
         var quantityType = new QuantityType(0, "", 1, "€", "x");
@@ -271,7 +282,6 @@
         catch (Exception e)
         {
             notificationService.NotifyError("Search for items failed", e.Message, GetSearchInputRetryRenderFragment(searchInput));
-            Console.WriteLine(e.Message);
             AddToError(e.ToString());
             return;
         }
@@ -294,7 +304,6 @@
         catch (Exception e)
         {
             notificationService.NotifyError("Adding item failed", e.Message);
-            Console.WriteLine(e.Message);
             AddToError(e.ToString());
             return;
         }
