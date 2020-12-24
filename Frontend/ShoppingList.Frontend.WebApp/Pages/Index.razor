@@ -2,6 +2,8 @@
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.ICommandQueue commandQueue;
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Service.IShoppingListNotificationService notificationService;
+@inject IWebAssemblyHostEnvironment Env;
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Index;
@@ -93,7 +95,7 @@
 </div>
 
 @code{
-    private bool isDebug = true;
+    private bool isDebug = false;
 
     private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListItem>());
     private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>());
@@ -112,6 +114,7 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        isDebug = Env.IsDevelopment();
 
         commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed, AddToError);
 
