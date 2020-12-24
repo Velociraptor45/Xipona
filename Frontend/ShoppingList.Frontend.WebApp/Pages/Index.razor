@@ -12,11 +12,10 @@
 
 <div>
     <div class="mb-1 d-flex justify-content-end align-items-center">
-        <Select SelectedValues=@availableStores?.SelectedStore?.Name
-                Class="mr-1 min-w-100"
+        <Select Class="mr-1 min-w-100"
                 OnChange="@OnSelectedStoreChanged"
                 @ref="@storeSelect">
-            @foreach (var store in availableStores.Stores)
+            @foreach (var store in availableStores?.Stores ?? Enumerable.Empty<Store>().ToList())
             {
                 <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
             }
@@ -108,6 +107,15 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
+        commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed, AddToError);
+
+        StateHasChanged();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
         try
         {
             await LoadPage();
@@ -119,10 +127,6 @@
             AddToError(e.ToString());
             return;
         }
-        Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
-        commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed, AddToError);
-
-        StateHasChanged();
     }
 
     private int AddToError(string e)
@@ -145,24 +149,34 @@
         if (availableStores.Stores.Any())
         {
             availableStores.SetSelectedStore(availableStores.Stores.First().Id);
-            await storeSelect.ToggleOrSetValue(availableStores.SelectedStore.Id.ToString());
-            await LoadShoppingListAsync();
+
+            // this call is not awaited to give Blazor time to render the SelectOptions
+            // of the store-Select. Otherwise an exception is thrown because the store-Select
+            // doesn't have any SelectOptions but sets a value
+            storeSelect.ToggleOrSetValue(availableStores.SelectedStore.Id.ToString());
         }
     }
 
     private async Task LoadAvailableStoresAsync()
     {
-        List<Store> stores;
-        stores = (await apiClient.GetAllActiveStoresAsync())
+        List<Store> stores = (await apiClient.GetAllActiveStoresAsync())
             .ToList();
 
         availableStores = new AvailableStores(stores);
+        Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
     }
 
     private async Task LoadShoppingListAsync()
     {
-        shoppingList = await apiClient.GetActiveShoppingListByStoreIdAsync(availableStores.SelectedStore.Id);
-        Console.WriteLine($"Loaded shopping list with {shoppingList.Items.Count} items");
+        try
+        {
+            shoppingList = await apiClient.GetActiveShoppingListByStoreIdAsync(availableStores.SelectedStore.Id);
+            Console.WriteLine($"Loaded shopping list with {shoppingList.Items.Count} items");
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
 
         StateHasChanged();
     }
@@ -233,7 +247,7 @@
         StateHasChanged();
     }
 
-    private async void OnSearchBarInput(string searchInput)
+    private void OnSearchBarInput(string searchInput)
     {
         if (shoppingList.Store == null)
             return;
@@ -249,12 +263,17 @@
 
         try
         {
-            var result = await apiClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id);
+            var result =
+                apiClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id)
+                .GetAwaiter().GetResult();
             searchBar.Options = result;
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //todo show retry message
+            notificationService.NotifyError("Search for items failed", e.Message, GetSearchInputRetryRenderFragment(searchInput));
+            Console.WriteLine(e.Message);
+            AddToError(e.ToString());
+            return;
         }
         StateHasChanged();
     }
@@ -324,5 +343,10 @@
     private RenderFragment GetPageReloadRenderFragment()
     {
         return@<Button Type="@ButtonType.Primary" OnClick="async () => await LoadPage()">Retry</Button>;
+}
+
+private RenderFragment GetSearchInputRetryRenderFragment(string input)
+{
+return@<Button Type="@ButtonType.Primary" OnClick="() => OnSearchBarInput(input)">Retry</Button>;
 }
 }
