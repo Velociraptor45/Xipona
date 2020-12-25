@@ -1,5 +1,6 @@
 ﻿@page "/items"
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Service.IShoppingListNotificationService notificationService;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items;
 @using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Items;
@@ -67,7 +68,6 @@
                     ItemCategories="@itemCategories"
                     QuantityTypes="@quantityTypes"
                     QuantityTypesInPacket="@quantityTypesInPacket"
-                    ApiClient="@apiClient"
                     UpdateItemCallback="@OnItemUpdatedAsync"
                     ModifyItemCallback="@OnItemModifiedAsync"
                     CreateItemCallback="@OnItemCreatedAsync"
@@ -94,6 +94,13 @@
 
     protected async override Task OnInitializedAsync()
     {
+        await InitialLoad();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task InitialLoad()
+    {
         try
         {
             stores = (await apiClient.GetAllActiveStoresAsync()).ToList();
@@ -102,12 +109,14 @@
             quantityTypes = (await apiClient.GetAllQuantityTypesAsync()).ToList();
             quantityTypesInPacket = (await apiClient.GetAllQuantityTypesInPacketAsync()).ToList();
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //todo show retry message
+            notificationService.NotifyError("Page loading failed", e.Message,
+                GetButtonRenderFragment(
+                    async (items) => await InitialLoad(),
+                    new object[0]));
+            return;
         }
-
-        await base.OnInitializedAsync();
     }
 
     private async Task OnLoadButtonClickedAsync()
@@ -115,13 +124,40 @@
         var stores = storesSelectRef.SelectedValues.Value.AsT1.Select(s => int.Parse(s)).ToList();
         var itemCategories = itemCategoriesSelectRef.SelectedValues.Value.AsT1.Select(cat => int.Parse(cat)).ToList();
         var manufacturers = manufacturersSelectRef.SelectedValues.Value.AsT1.Select(m => int.Parse(m)).ToList();
+        try
+        {
 
-        var result = await apiClient.GetItemFilterResultAsync(
-            stores,
-            itemCategories,
-            manufacturers);
-        items = result.ToList();
+            items = (await apiClient.GetItemFilterResultAsync(
+                    stores,
+                    itemCategories,
+                    manufacturers))
+                .ToList();
+        }
+        catch (Exception e)
+        {
+            notificationService.NotifyError("Item loading failed", e.Message,
+                GetButtonRenderFragment(
+                    async (items) => await OnLoadButtonClickedAsync(),
+                    new object[0]));
+            return;
+        }
         StateHasChanged();
+    }
+
+    private async Task LoadManufacturerList()
+    {
+        try
+        {
+            manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
+        }
+        catch (Exception e)
+        {
+            notificationService.NotifyError("Loading manufacturers failed", e.Message,
+                GetButtonRenderFragment(
+                    async (items) => await LoadManufacturerList(),
+                    new object[0]));
+            return;
+        }
     }
 
     private async Task OnItemClickedAsync(int itemId)
@@ -130,9 +166,12 @@
         {
             currentlyEditedItem = await apiClient.GetItemByIdAsync(itemId);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //todo show retry message
+            notificationService.NotifyError("Loading item failed", e.Message,
+                GetButtonRenderFragment(
+                    async (items) => await OnItemClickedAsync((int)items[0]),
+                    new object[] { itemId }));
             return;
         }
     }
@@ -144,9 +183,12 @@
         {
             await apiClient.UpdateItemAsync(request);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //todo show retry message
+            notificationService.NotifyError("Updating item failed", e.Message,
+                GetButtonRenderFragment(
+                    async (items) => await OnItemUpdatedAsync((StoreItem)items[0]),
+                    new object[] { storeItem }));
             return;
         }
         LeaveEditor();
@@ -159,9 +201,12 @@
         {
             await apiClient.ModifyItemAsync(request);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //todo show retry message
+            notificationService.NotifyError("Modifying item failed", e.Message,
+                GetButtonRenderFragment(
+                    async (items) => await OnItemModifiedAsync((StoreItem)items[0]),
+                    new object[] { storeItem }));
             return;
         }
         LeaveEditor();
@@ -174,9 +219,12 @@
         {
             await apiClient.DeleteItemAsync(request);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //todo show retry message
+            notificationService.NotifyError("Deleting item failed", e.Message,
+                GetButtonRenderFragment(
+                    async (items) => await OnItemDeletedAsync((int)items[0]),
+                    new object[] { itemId }));
             return;
         }
         LeaveEditor();
@@ -189,9 +237,12 @@
         {
             await apiClient.CreateItemAsync(request);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //todo show retry message
+            notificationService.NotifyError("Creating item failed", e.Message,
+                GetButtonRenderFragment(
+                    async (items) => await OnItemCreatedAsync((StoreItem)items[0]),
+                    new object[] { storeItem }));
             return;
         }
         LeaveEditor();
@@ -201,35 +252,41 @@
     {
         currentlyEditedItem =
             new StoreItem(0, "", false, "", false,
-            new QuantityType(0, "", 0, "", ""), 0,
-            new QuantityTypeInPacket(0, "", ""), 1, 1, new List<StoreItemAvailability>());
+                new QuantityType(0, "", 0, "", ""), 0,
+                new QuantityTypeInPacket(0, "", ""), 1, 1, new List<StoreItemAvailability>());
     }
 
-    private async void OnNewManufacturerCreated(string name)
+    private async Task OnNewManufacturerCreated(string name)
     {
         try
         {
             await apiClient.CreateManufacturerAsync(name);
-            manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //todo show retry message
+            notificationService.NotifyError("Creating manufacturer failed", e.Message,
+                GetButtonRenderFragment(
+                    async (items) => await OnNewManufacturerCreated((string)items[0]),
+                    new object[] { name }));
             return;
         }
+        await LoadManufacturerList();
         StateHasChanged();
     }
 
-    private async void OnNewItemCategoryCreated(string name)
+    private async Task OnNewItemCategoryCreated(string name)
     {
         try
         {
             await apiClient.CreateItemCategoryAsync(name);
             itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //todo show retry message
+            notificationService.NotifyError("Creating item category failed", e.Message,
+                GetButtonRenderFragment(
+                    async (items) => await OnNewItemCategoryCreated((string)items[0]),
+                    new object[] { name }));
             return;
         }
         StateHasChanged();
@@ -244,4 +301,9 @@
     {
         currentlyEditedItem = null;
     }
+
+    private RenderFragment GetButtonRenderFragment(Func<object[], Task> callback, object[] args, string label = "Retry")
+    {
+        return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback(args)">@label</Button>;
+}
 }

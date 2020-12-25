@@ -114,15 +114,13 @@
     [Parameter] public List<QuantityType> QuantityTypes { get; set; }
     [Parameter] public List<QuantityTypeInPacket> QuantityTypesInPacket { get; set; }
 
-    [Parameter] public IApiClient ApiClient { get; set; }
-
     [Parameter] public EventCallback<StoreItem> UpdateItemCallback { get; set; }
     [Parameter] public EventCallback<StoreItem> ModifyItemCallback { get; set; }
     [Parameter] public EventCallback<StoreItem> CreateItemCallback { get; set; }
     [Parameter] public EventCallback<int> DeleteItemCallback { get; set; }
     [Parameter] public EventCallback LeaveEditorCallback { get; set; }
-    [Parameter] public EventCallback<string> ManufacturerCreatedCallback { get; set; }
-    [Parameter] public EventCallback<string> ItemCategoryCreatedCallback { get; set; }
+    [Parameter] public Func<string, Task> ManufacturerCreatedCallback { get; set; }
+    [Parameter] public Func<string, Task> ItemCategoryCreatedCallback { get; set; }
 
     protected override void OnInitialized()
     {
