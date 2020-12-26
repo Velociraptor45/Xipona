@@ -1,6 +1,9 @@
 ﻿@page "/"
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.ICommandQueue commandQueue;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Service.IShoppingListNotificationService notificationService;
+@inject IWebAssemblyHostEnvironment Env;
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Index;
@@ -11,11 +14,13 @@
 
 <div>
     <div class="mb-1 d-flex justify-content-end align-items-center">
-        <Select SelectedValues=@availableStores?.SelectedStore?.Name
-                Class="mr-1 min-w-100"
+        <div class="pr-2">
+            <Switch Checked="@isDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="@OnDebugStateChanged" />
+        </div>
+        <Select Class="mr-1 min-w-100"
                 OnChange="@OnSelectedStoreChanged"
                 @ref="@storeSelect">
-            @foreach (var store in availableStores.Stores)
+            @foreach (var store in availableStores?.Stores ?? Enumerable.Empty<Store>().ToList())
             {
                 <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
             }
@@ -57,7 +62,7 @@
 
         @if (searchBar.Active)
         {
-            <Button Type="primary" OnClick="@OnCreateNewTemporaryItem">
+            <Button Type="@ButtonType.Primary" OnClick="@OnCreateNewTemporaryItem">
                 <Icon Type="plus"></Icon>
             </Button>
             <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
@@ -82,7 +87,7 @@
         </Button>
     </div>
     <div>
-        @foreach(var s in errorMsg)
+        @foreach (var s in errorMsg)
         {
             <div>@s</div>
         }
@@ -90,6 +95,8 @@
 </div>
 
 @code{
+    private bool isDebug = false;
+
     private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListItem>());
     private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>());
 
@@ -107,28 +114,40 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await LoadAvailableStoresAsync();
-        Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
+        isDebug = Env.IsDevelopment();
+
         commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed, AddToError);
 
         StateHasChanged();
     }
 
-    private int AddToError(string e)
-    {
-        errorMsg.Add(e);
-        StateHasChanged();
-        return 0;
-    }
-
     protected override async Task OnParametersSetAsync()
     {
-        if (availableStores.Stores.Any())
+        await base.OnParametersSetAsync();
+        try
         {
-            availableStores.SetSelectedStore(availableStores.Stores.First().Id);
-            await storeSelect.ToggleOrSetValue(availableStores.SelectedStore.Id.ToString());
-            await LoadShoppingListAsync();
+            await LoadPage();
         }
+        catch (Exception e)
+        {
+            notificationService.NotifyError("Page loading failed", e.Message,
+                GetAsyncButtonRenderFragment(
+                    async (items) => await LoadPage(),
+                    new object[0]));
+            AddToError(e.ToString());
+            return;
+        }
+    }
+
+    private int AddToError(string e)
+    {
+        if (!isDebug)
+            return 0;
+
+        errorMsg.Add(e);
+        Console.WriteLine(e);
+        StateHasChanged();
+        return 0;
     }
 
     private void ResetEditMode()
@@ -137,23 +156,28 @@
     }
 
     #region Loading
+
+    private async Task LoadPage()
+    {
+        await LoadAvailableStoresAsync();
+        if (availableStores.Stores.Any())
+        {
+            availableStores.SetSelectedStore(availableStores.Stores.First().Id);
+
+            // this call is not awaited to give Blazor time to render the SelectOptions
+            // of the store-Select. Otherwise an exception is thrown because the store-Select
+            // doesn't have any SelectOptions but sets a value
+            storeSelect.ToggleOrSetValue(availableStores.SelectedStore.Id.ToString());
+        }
+    }
+
     private async Task LoadAvailableStoresAsync()
     {
-        List<Store> stores;
-        try
-        {
-            stores = (await apiClient.GetAllActiveStoresAsync())
-                .ToList();
-        }
-        catch (Exception e)
-        {
-            //errorMsg += e.Message;
-            AddToError(e.ToString());
-            //todo show retry message
-            return;
-        }
+        List<Store> stores = (await apiClient.GetAllActiveStoresAsync())
+            .ToList();
 
         availableStores = new AvailableStores(stores);
+        Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
     }
 
     private async Task LoadShoppingListAsync()
@@ -165,23 +189,25 @@
         }
         catch (Exception e)
         {
-            Console.WriteLine("Loading failed");
-            Console.WriteLine(e.Message);
-
-            AddToError(e.Message);
-            return;
+            throw;
         }
+
         StateHasChanged();
     }
     #endregion
 
     #region Callbacks
+    private void OnDebugStateChanged(bool active)
+    {
+        isDebug = active;
+    }
+
     private void OnCreateNewTemporaryItem()
     {
         var quantityType = new QuantityType(0, "", 1, "€", "x");
         var quantityTypeInPacket = new QuantityTypeInPacket(0, "", "");
         var item = new ShoppingListItem(new ItemId(Guid.NewGuid()), searchBar.Input, true, 1f, quantityType, 1,
-            quantityTypeInPacket, "", "", false, 1);
+        quantityTypeInPacket, "", "", false, 1);
 
         var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId.Value, item.Name, shoppingList.Store.Id, item.PricePerQuantity);
         var addRequest = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id, item.Quantity);
@@ -194,21 +220,21 @@
 
     private Task OnConnectionFailed()
     {
-        Console.WriteLine("Connection failed");
         AddToError("Connection failed");
+        notificationService.NotifyWarning("Connection interrupted", "Connection to the server was interrupted.");
         return Task.CompletedTask;
     }
 
     private async Task OnQueueProcessed()
     {
-        Console.WriteLine("Queue processed");
         AddToError("Queue processed");
+        notificationService.NotifySuccess("Sync successful", "Synchronization with the server was successful.");
         await LoadShoppingListAsync();
     }
 
     private async void OnSelectedStoreChanged(
-        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
-        OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
+    OneOf<SelectOption, IEnumerable<SelectOption>> option)
     {
         int storeId = int.Parse(value.AsT0);
         availableStores.SetSelectedStore(storeId);
@@ -240,7 +266,7 @@
         StateHasChanged();
     }
 
-    private async void OnSearchBarInput(string searchInput)
+    private void OnSearchBarInput(string searchInput)
     {
         if (shoppingList.Store == null)
             return;
@@ -256,12 +282,19 @@
 
         try
         {
-            var result = await apiClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id);
+            var result =
+                apiClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id)
+                .GetAwaiter().GetResult();
             searchBar.Options = result;
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //todo show retry message
+            notificationService.NotifyError("Search for items failed", e.Message,
+                GetButtonRenderFragment(
+                    (items) => OnSearchBarInput((string)items[0]),
+                    new object[] { searchInput }));
+            AddToError(e.ToString());
+            return;
         }
         StateHasChanged();
     }
@@ -279,9 +312,11 @@
         {
             await apiClient.AddItemToShoppingListAsync(request);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //todo show retry message
+            notificationService.NotifyError("Adding item failed", e.Message);
+            AddToError(e.ToString());
+            return;
         }
 
         searchBar.ResetInput();
@@ -317,7 +352,7 @@
     private async Task OnItemQuantityChangedAsync(ShoppingListItem item)
     {
         var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id,
-            item.Quantity);
+        item.Quantity);
         await commandQueue.Enqueue(request);
     }
 
@@ -327,4 +362,14 @@
         await commandQueue.Enqueue(requst);
     }
     #endregion
+
+    private RenderFragment GetButtonRenderFragment(Action<object[]> callback, object[] args, string label = "Retry")
+    {
+        return@<Button Type="@ButtonType.Primary" OnClick="() => callback(args)">@label</Button>;
+}
+
+private RenderFragment GetAsyncButtonRenderFragment(Func<object[], Task> callback, object[] args, string label = "Retry")
+{
+return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback(args)">@label</Button>;
+}
 }

@@ -17,7 +17,7 @@
     [Parameter] public bool CanAddItem { get; set; }
     [Parameter] public bool AllowClear { get; set; } = false;
     [Parameter] public List<Tuple<int, string>> IdToNameMaps { get; set; }
-    [Parameter] public EventCallback<string> OnItemAddedCallback { get; set; }
+    [Parameter] public Func<string, Task> OnItemAddedCallback { get; set; }
     [Parameter] public EventCallback<int> OnChangeCallback { get; set; }
 
     private string newItemName = "";
@@ -38,7 +38,7 @@
 
     private async void OnAddNewItem()
     {
-        await OnItemAddedCallback.InvokeAsync(newItemName);
+        await OnItemAddedCallback.Invoke(newItemName);
         newItemName = "";
     }
 
