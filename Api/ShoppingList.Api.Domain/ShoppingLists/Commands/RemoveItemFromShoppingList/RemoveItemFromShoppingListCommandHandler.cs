@@ -1,8 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ShoppingList.Api.Domain.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,7 +30,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
                 throw new ArgumentNullException(nameof(command));
 
             var list = await shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
-            StoreItem item = await itemRepository.FindByAsync(command.ShoppingListItemId.ToStoreItemId(), cancellationToken);
+            if (list == null)
+                throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
+
+            var storeItemId = command.ShoppingListItemId.ToStoreItemId();
+            IStoreItem item = await itemRepository.FindByAsync(storeItemId, cancellationToken);
+            if (item == null)
+                throw new DomainException(new ItemNotFoundReason(storeItemId));
 
             list.RemoveItem(command.ShoppingListItemId);
             if (item.IsTemporary)

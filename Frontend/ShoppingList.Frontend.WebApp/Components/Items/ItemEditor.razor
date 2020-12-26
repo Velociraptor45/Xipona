@@ -101,7 +101,7 @@
         else
         {
             <Button OnClick="@OnUpdateButtonClickedAsync">Update</Button>
-            <Button Class="ml-2" OnClick="@OnChangeButtonClickedAsync">Change</Button>
+            <Button Class="ml-2" OnClick="@OnModifyButtonClickedAsync">Modify</Button>
         }
     </div>
 </div>
@@ -114,15 +114,13 @@
     [Parameter] public List<QuantityType> QuantityTypes { get; set; }
     [Parameter] public List<QuantityTypeInPacket> QuantityTypesInPacket { get; set; }
 
-    [Parameter] public IApiClient ApiClient { get; set; }
-
     [Parameter] public EventCallback<StoreItem> UpdateItemCallback { get; set; }
-    [Parameter] public EventCallback<StoreItem> ChangeItemCallback { get; set; }
+    [Parameter] public EventCallback<StoreItem> ModifyItemCallback { get; set; }
     [Parameter] public EventCallback<StoreItem> CreateItemCallback { get; set; }
     [Parameter] public EventCallback<int> DeleteItemCallback { get; set; }
     [Parameter] public EventCallback LeaveEditorCallback { get; set; }
-    [Parameter] public EventCallback<string> ManufacturerCreatedCallback { get; set; }
-    [Parameter] public EventCallback<string> ItemCategoryCreatedCallback { get; set; }
+    [Parameter] public Func<string, Task> ManufacturerCreatedCallback { get; set; }
+    [Parameter] public Func<string, Task> ItemCategoryCreatedCallback { get; set; }
 
     protected override void OnInitialized()
     {
@@ -155,9 +153,9 @@
         await UpdateItemCallback.InvokeAsync(StoreItem);
     }
 
-    private async Task OnChangeButtonClickedAsync()
+    private async Task OnModifyButtonClickedAsync()
     {
-        await ChangeItemCallback.InvokeAsync(StoreItem);
+        await ModifyItemCallback.InvokeAsync(StoreItem);
     }
 
     private async Task OnCreateButtonClicked()

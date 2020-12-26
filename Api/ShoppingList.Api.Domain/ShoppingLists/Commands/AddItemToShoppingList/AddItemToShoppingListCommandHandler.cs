@@ -1,8 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,12 +18,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
     {
         private readonly IShoppingListRepository shoppingListRepository;
         private readonly IItemRepository itemRepository;
+        private readonly IShoppingListItemFactory shoppingListItemFactory;
 
         public AddItemToShoppingListCommandHandler(IShoppingListRepository shoppingListRepository,
-            IItemRepository itemRepository)
+            IItemRepository itemRepository, IShoppingListItemFactory shoppingListItemFactory)
         {
             this.shoppingListRepository = shoppingListRepository;
             this.itemRepository = itemRepository;
+            this.shoppingListItemFactory = shoppingListItemFactory;
         }
 
         public async Task<bool> HandleAsync(AddItemToShoppingListCommand command, CancellationToken cancellationToken)
@@ -29,12 +37,25 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var storeItem = await itemRepository.FindByAsync(command.ShoppingListItemId.ToStoreItemId(),
-                list.Store.Id, cancellationToken);
+            StoreItemId itemId = command.ShoppingListItemId.ToStoreItemId();
+            var storeItem = await itemRepository.FindByAsync(itemId, cancellationToken);
+
+            if (storeItem == null)
+                throw new DomainException(new ItemNotFoundReason(itemId));
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            list.AddItem(storeItem, false, command.Quantity);
+            var priceAtStore = storeItem.Availabilities
+                        .FirstOrDefault(av => av.StoreId == list.Store.Id)?
+                        .Price;
+
+            if (priceAtStore == null)
+                throw new DomainException(new ItemAtStoreNotAvailableReason(itemId, list.Store.Id));
+
+            IShoppingListItem listItem = shoppingListItemFactory.Create(storeItem, priceAtStore.Value,
+                isInBasket: false, command.Quantity);
+
+            list.AddItem(listItem);
 
             await shoppingListRepository.StoreAsync(list, cancellationToken);
 

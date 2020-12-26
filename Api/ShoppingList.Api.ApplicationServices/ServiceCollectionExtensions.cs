@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices
 {

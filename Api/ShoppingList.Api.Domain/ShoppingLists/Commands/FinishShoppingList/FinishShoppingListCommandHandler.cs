@@ -1,4 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using System;
@@ -25,6 +27,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishSho
                 throw new ArgumentNullException(nameof(command));
 
             var shoppingList = await shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
+            if (shoppingList == null)
+                throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
 
             cancellationToken.ThrowIfCancellationRequested();
 

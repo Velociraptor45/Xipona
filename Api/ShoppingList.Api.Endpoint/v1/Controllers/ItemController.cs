@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectHermes.ShoppingList.Api.ApplicationServices;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
@@ -54,23 +54,19 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("change")]
-        public async Task<IActionResult> ChangeItem([FromBody] ChangeItemContract changeItemContract)
+        [Route("modify")]
+        public async Task<IActionResult> ModifyItem([FromBody] ModifyItemContract modifyItemContract)
         {
-            var model = changeItemContract.ToDomain();
-            var command = new ChangeItemCommand(model);
+            var model = modifyItemContract.ToDomain();
+            var command = new ModifyItemCommand(model);
 
             try
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (ItemNotFoundException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
-            }
-            catch (TemporaryItemNotModifyableException e)
-            {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();
@@ -89,13 +85,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (ItemNotFoundException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
-            }
-            catch (TemporaryItemNotUpdateableException e)
-            {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();
@@ -103,12 +95,22 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
 
         [HttpGet]
         [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [Route("search/{searchInput}/{storeId}")]
         public async Task<IActionResult> GetItemSearchResults([FromRoute(Name = "searchInput")] string searchInput,
             [FromRoute(Name = "storeId")] int storeId)
         {
             var query = new ItemSearchQuery(searchInput, new StoreId(storeId));
-            IEnumerable<ItemSearchReadModel> readModels = await queryDispatcher.DispatchAsync(query, default);
+
+            IEnumerable<ItemSearchReadModel> readModels;
+            try
+            {
+                readModels = await queryDispatcher.DispatchAsync(query, default);
+            }
+            catch (DomainException e)
+            {
+                return BadRequest(e.Reason);
+            }
 
             var contracts = readModels.Select(rm => rm.ToContract());
 
@@ -155,9 +157,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 result = await queryDispatcher.DispatchAsync(query, default);
             }
-            catch (ItemNotFoundException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok(result.ToContract());
@@ -173,9 +175,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (StoreNotFoundException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();
@@ -192,25 +194,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (ItemCategoryNotFoundException e)
+            catch (DomainException e)
             {
-                return BadRequest(e.Message);
-            }
-            catch (ManufacturerNotFoundException e)
-            {
-                return BadRequest(e.Message);
-            }
-            catch (ItemIsNotTemporaryException e)
-            {
-                return BadRequest(e.Message);
-            }
-            catch (ItemNotFoundException e)
-            {
-                return BadRequest(e.Message);
-            }
-            catch (StoreNotFoundException e)
-            {
-                return BadRequest(e.Message);
+                return BadRequest(e.Reason);
             }
 
             return Ok();

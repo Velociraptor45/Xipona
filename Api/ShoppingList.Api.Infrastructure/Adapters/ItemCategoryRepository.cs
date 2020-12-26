@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
@@ -10,8 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
-using CommonModels = ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 {
@@ -24,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<CommonModels.ItemCategory>> FindByAsync(string searchInput,
+        public async Task<IEnumerable<IItemCategory>> FindByAsync(string searchInput,
             CancellationToken cancellationToken)
         {
             var itemCategoryEntities = await dbContext.ItemCategories.AsNoTracking()
@@ -36,8 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return itemCategoryEntities.Select(entity => entity.ToDomain());
         }
 
-        public async Task<CommonModels.ItemCategory> FindByAsync(ItemCategoryId id,
-            CancellationToken cancellationToken)
+        public async Task<IItemCategory> FindByAsync(ItemCategoryId id, CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
@@ -45,13 +43,15 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             var entity = await dbContext.ItemCategories.AsNoTracking()
                 .FirstOrDefaultAsync(category => category.Id == id.Value);
 
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (entity == null)
-                throw new ItemCategoryNotFoundException($"Item category {id.Value} not found.");
+                throw new DomainException(new ItemCategoryNotFoundReason(id));
 
             return entity.ToDomain();
         }
 
-        public async Task<IEnumerable<CommonModels.ItemCategory>> FindByAsync(IEnumerable<ItemCategoryId> ids,
+        public async Task<IEnumerable<IItemCategory>> FindByAsync(IEnumerable<ItemCategoryId> ids,
             CancellationToken cancellationToken)
         {
             if (ids == null)
@@ -70,7 +70,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return entities.Select(e => e.ToDomain());
         }
 
-        public async Task<IEnumerable<CommonModels.ItemCategory>> FindByAsync(bool includeDeleted,
+        public async Task<IEnumerable<IItemCategory>> FindByAsync(bool includeDeleted,
             CancellationToken cancellationToken)
         {
             var results = await dbContext.ItemCategories.AsNoTracking()
@@ -82,7 +82,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return results.Select(m => m.ToDomain());
         }
 
-        public async Task<CommonModels.ItemCategory> StoreAsync(CommonModels.ItemCategory model,
+        public async Task<IItemCategory> StoreAsync(IItemCategory model,
             CancellationToken cancellationToken)
         {
             var entity = model.ToEntity();

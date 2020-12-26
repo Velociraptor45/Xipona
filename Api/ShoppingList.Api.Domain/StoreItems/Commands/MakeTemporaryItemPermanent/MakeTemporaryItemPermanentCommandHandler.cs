@@ -1,8 +1,9 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
-using ShoppingList.Api.Domain.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,33 +36,33 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
                 throw new ArgumentNullException(nameof(command));
             }
 
-            StoreItem storeItem = await itemRepository.FindByAsync(command.PermanentItem.Id, cancellationToken);
+            IStoreItem storeItem = await itemRepository.FindByAsync(command.PermanentItem.Id, cancellationToken);
             if (storeItem == null)
-                throw new ItemNotFoundException(command.PermanentItem.Id);
+                throw new DomainException(new ItemNotFoundReason(command.PermanentItem.Id));
             if (!storeItem.IsTemporary)
-                throw new ItemIsNotTemporaryException(command.PermanentItem.Id);
+                throw new DomainException(new ItemNotTemporaryReason(command.PermanentItem.Id));
 
             var itemCategory = await itemCategoryRepository
                 .FindByAsync(command.PermanentItem.ItemCategoryId, cancellationToken);
             if (itemCategory == null)
-                throw new ItemCategoryNotFoundException(command.PermanentItem.ItemCategoryId);
+                throw new DomainException(new ItemCategoryNotFoundReason(command.PermanentItem.ItemCategoryId));
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            Manufacturer manufacturer = null;
+            IManufacturer manufacturer = null;
             if (command.PermanentItem.ManufacturerId != null)
             {
                 manufacturer = await manufacturerRepository
                     .FindByAsync(command.PermanentItem.ManufacturerId, cancellationToken);
                 if (manufacturer == null)
-                    throw new ManufacturerNotFoundException(command.PermanentItem.ManufacturerId);
+                    throw new DomainException(new ManufacturerNotFoundReason(command.PermanentItem.ManufacturerId));
             }
 
-            IEnumerable<Store> activeStores = await storeRepository.FindActiveStoresAsync(cancellationToken);
+            IEnumerable<IStore> activeStores = await storeRepository.GetAsync(cancellationToken);
             foreach (var availability in command.PermanentItem.Availabilities)
             {
                 if (!activeStores.Any(s => s.Id == availability.StoreId))
-                    throw new StoreNotFoundException(availability.StoreId);
+                    throw new DomainException(new StoreNotFoundReason(availability.StoreId));
             }
 
             cancellationToken.ThrowIfCancellationRequested();

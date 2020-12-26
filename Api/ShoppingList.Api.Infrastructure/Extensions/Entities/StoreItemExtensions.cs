@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
 {
     public static class StoreItemExtensions
     {
-        public static StoreItem ToStoreItemDomain(this Infrastructure.Entities.Item entity)
+        public static IStoreItem ToStoreItemDomain(this Infrastructure.Entities.Item entity)
         {
             StoreItemId id;
             if (entity.CreatedFrom == null)
@@ -15,7 +15,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
             else
                 id = new StoreItemId(entity.Id, entity.CreatedFrom.Value);
 
-            return new StoreItem(
+            var model = new StoreItem(
                 id,
                 entity.Name,
                 entity.Deleted,
@@ -28,6 +28,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
                 entity.Manufacturer?.ToDomain(),
                 entity.AvailableAt.Select(map => new StoreItemAvailability(
                     new StoreId(map.StoreId), map.Price)));
+
+            model.SetPredecessor(entity.Predecessor?.ToStoreItemDomain());
+            return model;
         }
     }
 }

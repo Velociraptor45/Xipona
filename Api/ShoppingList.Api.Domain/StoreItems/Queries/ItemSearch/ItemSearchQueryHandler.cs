@@ -1,8 +1,11 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
-using ShoppingList.Api.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,17 +17,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch
     public class ItemSearchQueryHandler : IQueryHandler<ItemSearchQuery, IEnumerable<ItemSearchReadModel>>
     {
         private readonly IItemRepository itemRepository;
-        private readonly IItemCategoryRepository itemCategoryRepository;
-        private readonly IManufacturerRepository manufacturerRepository;
         private readonly IShoppingListRepository shoppingListRepository;
+        private readonly IStoreRepository storeRepository;
 
-        public ItemSearchQueryHandler(IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository,
-            IManufacturerRepository manufacturerRepository, IShoppingListRepository shoppingListRepository)
+        public ItemSearchQueryHandler(IItemRepository itemRepository, IShoppingListRepository shoppingListRepository,
+            IStoreRepository storeRepository)
         {
             this.itemRepository = itemRepository;
-            this.itemCategoryRepository = itemCategoryRepository;
-            this.manufacturerRepository = manufacturerRepository;
             this.shoppingListRepository = shoppingListRepository;
+            this.storeRepository = storeRepository;
         }
 
         public async Task<IEnumerable<ItemSearchReadModel>> HandleAsync(ItemSearchQuery query, CancellationToken cancellationToken)
@@ -34,9 +35,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch
             if (string.IsNullOrWhiteSpace(query.SearchInput))
                 return Enumerable.Empty<ItemSearchReadModel>();
 
-            IEnumerable<StoreItem> storeItems = await itemRepository
-                .FindByAsync(query.SearchInput.Trim(), query.StoreId, cancellationToken);
-            Domain.ShoppingLists.Models.ShoppingList shoppingList = await shoppingListRepository
+            var store = await storeRepository.FindByAsync(query.StoreId, cancellationToken);
+            if (store == null)
+                throw new DomainException(new StoreNotFoundReason(query.StoreId));
+
+            IEnumerable<IStoreItem> storeItems = await itemRepository
+                .FindActiveByAsync(query.SearchInput.Trim(), query.StoreId, cancellationToken);
+            IShoppingList shoppingList = await shoppingListRepository
                 .FindActiveByAsync(query.StoreId, cancellationToken);
             var itemIdsOnShoppingList = shoppingList.Items.Select(item => item.Id);
 

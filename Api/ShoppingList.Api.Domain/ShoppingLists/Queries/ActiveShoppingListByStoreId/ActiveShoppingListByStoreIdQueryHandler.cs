@@ -1,8 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,10 +23,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShop
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var listModel = await shoppingListRepository.FindActiveByAsync(query.StoreId, cancellationToken);
 
+            var listModel = await shoppingListRepository.FindActiveByAsync(query.StoreId, cancellationToken);
             if (listModel == null)
-                throw new ArgumentException($"No shopping list for store {query.StoreId.Value} found.");
+                throw new DomainException(new ShoppingListNotFoundReason(query.StoreId));
 
             return listModel.ToReadModel();
         }

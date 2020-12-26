@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
@@ -10,8 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
-using CommonModels = ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 {
@@ -24,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<CommonModels.Store>> FindActiveStoresAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<IStore>> GetAsync(CancellationToken cancellationToken)
         {
             var storeEntities = await dbContext.Stores.AsNoTracking()
                 .Where(store => !store.Deleted)
@@ -35,7 +34,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return storeEntities.Select(store => store.ToDomain());
         }
 
-        public async Task<CommonModels.Store> FindByAsync(StoreId id, CancellationToken cancellationToken)
+        public async Task<IStore> FindActiveByAsync(StoreId id, CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
@@ -43,17 +42,18 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             var entity = await dbContext.Stores.AsNoTracking()
+                .Where(store => !store.Deleted)
                 .FirstOrDefaultAsync(store => store.Id == id.Value);
 
-            if (entity == null)
-                throw new StoreNotFoundException(id);
+            if (entity == null) // todo: move to command handler
+                throw new DomainException(new StoreNotFoundReason(id));
 
             cancellationToken.ThrowIfCancellationRequested();
 
             return entity.ToDomain();
         }
 
-        public async Task<bool> IsValidIdAsync(StoreId id, CancellationToken cancellationToken)
+        public async Task<IStore> FindByAsync(StoreId id, CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
@@ -63,12 +63,15 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             var entity = await dbContext.Stores.AsNoTracking()
                 .FirstOrDefaultAsync(store => store.Id == id.Value);
 
+            if (entity == null) // todo: move to command handler
+                throw new DomainException(new StoreNotFoundReason(id));
+
             cancellationToken.ThrowIfCancellationRequested();
 
-            return entity != null;
+            return entity.ToDomain();
         }
 
-        public async Task<StoreId> StoreAsync(CommonModels.Store store, CancellationToken cancellationToken)
+        public async Task<StoreId> StoreAsync(IStore store, CancellationToken cancellationToken)
         {
             if (store == null)
                 throw new ArgumentNullException(nameof(store));

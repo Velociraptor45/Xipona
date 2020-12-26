@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions
 {
     public static class StoreItemAvailabilityExtensions
     {
-        public static StoreItemAvailabilityReadModel ToReadModel(this StoreItemAvailability model)
+        public static StoreItemAvailabilityReadModel ToReadModel(this IStoreItemAvailability model)
         {
             return new StoreItemAvailabilityReadModel(model.StoreId, model.Price);
         }

@@ -72,8 +72,8 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Get("item/search/{searchInput}/{storeId}")]
         Task<IEnumerable<ItemSearchContract>> GetItemSearchResults([Path] string searchInput, [Path] int storeId);
 
-        [Post("item/change")]
-        Task ChangeItem([Body] ChangeItemContract changeItemContract);
+        [Post("item/modify")]
+        Task ModifyItem([Body] ModifyItemContract modifyItemContract);
 
         [Post("item/update")]
         Task UpdateItemAsync([Body] UpdateItemContract updateItemContract);
