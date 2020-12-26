@@ -1,4 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
@@ -31,11 +33,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
 
             IItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(command.ItemCreation.ItemCategoryId, cancellationToken);
+            if (itemCategory == null)
+                throw new DomainException(new ItemCategoryNotFoundReason(command.ItemCreation.ItemCategoryId));
 
             IManufacturer manufacturer = null;
             if (command.ItemCreation.ManufacturerId != null)
+            {
                 manufacturer = await manufacturerRepository
                     .FindByAsync(command.ItemCreation.ManufacturerId, cancellationToken);
+                if (manufacturer == null)
+                    throw new DomainException(new ManufacturerNotFoundReason(command.ItemCreation.ManufacturerId));
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
 
