@@ -10,6 +10,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemInBask
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System;
 using System.Threading;
@@ -63,11 +64,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             var command = fixture.Create<PutItemInBasketCommand>();
             var handler = fixture.Create<PutItemInBasketCommandHandler>();
 
-            shoppingListRepositoryMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<ShoppingListId>(id => id == command.ShoppingListId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IShoppingList>(null));
+            shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, null);
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(command, default);
@@ -94,11 +91,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             var command = fixture.Create<PutItemInBasketCommand>();
             var handler = fixture.Create<PutItemInBasketCommandHandler>();
 
-            shoppingListRepositoryMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<ShoppingListId>(id => id == command.ShoppingListId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(listMock.Object));
+            shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
 
             // Act
             bool result = await handler.HandleAsync(command, default);
@@ -137,17 +130,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             var command = fixture.Create<PutItemInBasketCommand>();
             var handler = fixture.Create<PutItemInBasketCommandHandler>();
 
-            shoppingListRepositoryMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<ShoppingListId>(id => id == command.ShoppingListId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(listMock.Object));
-
-            itemRepositoryMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<StoreItemId>(id => id.Offline.Value == listItemIdOffline.Offline.Value),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(storeItem));
+            shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
+            itemRepositoryMock.SetupFindByAsync(new StoreItemId(listItemIdOffline.Offline.Value), storeItem);
 
             // Act
             bool result = await handler.HandleAsync(command, default);

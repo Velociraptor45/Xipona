@@ -7,6 +7,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -50,11 +51,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             var command = fixture.Create<RemoveItemFromBasketCommand>();
             var handler = fixture.Create<RemoveItemFromBasketCommandHandler>();
 
-            shoppingListRepositoryMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<ShoppingListId>(id => id == command.ShoppingListId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IShoppingList>(null));
+            shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, null);
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(command, default);
@@ -79,11 +76,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             var command = fixture.Create<RemoveItemFromBasketCommand>();
             var handler = fixture.Create<RemoveItemFromBasketCommandHandler>();
 
-            shoppingListRepositoryMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<ShoppingListId>(id => id == command.ShoppingListId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(shoppingListMock.Object));
+            shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, shoppingListMock.Object);
 
             // Act
             bool result = await handler.HandleAsync(command, default);

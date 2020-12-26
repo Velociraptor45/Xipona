@@ -7,6 +7,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System;
 using System.Threading;
@@ -31,11 +32,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
             storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
             storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
         }
-
-        /*
-         * all valid
-         *
-         */
 
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
@@ -63,11 +59,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
             var handler = fixture.Create<ChangeItemQuantityOnShoppingListCommandHandler>();
             var command = fixture.Create<ChangeItemQuantityOnShoppingListCommand>();
 
-            shoppingListRepoMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<ShoppingListId>(id => id == command.ShoppingListId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IShoppingList>(null));
+            shoppingListRepoMock.SetupFindByAsync(command.ShoppingListId, null);
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(command, default);
@@ -91,11 +83,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
 
             Mock<IShoppingList> listMock = new Mock<IShoppingList>();
 
-            shoppingListRepoMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<ShoppingListId>(id => id == command.ShoppingListId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(listMock.Object));
+            shoppingListRepoMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
 
             // Act
             bool result = await handler.HandleAsync(command, default);

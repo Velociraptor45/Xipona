@@ -25,5 +25,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(returnValue));
         }
+
+        public static void SetupFindActiveByAsync(this Mock<IStoreRepository> mock, StoreId storeId,
+            IStore returnValue)
+        {
+            mock
+                .Setup(i => i.FindActiveByAsync(
+                    It.Is<StoreId>(id => id == storeId),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult<IStore>(returnValue));
+        }
     }
 }

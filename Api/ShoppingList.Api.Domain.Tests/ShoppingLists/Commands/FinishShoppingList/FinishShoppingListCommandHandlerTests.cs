@@ -8,6 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,11 +53,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
             var command = fixture.Create<FinishShoppingListCommand>();
             var handler = fixture.Create<FinishShoppingListCommandHandler>();
 
-            shoppingListRepositoryMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<ShoppingListId>(id => id == command.ShoppingListId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IShoppingList>(null));
+            shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, null);
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(command, default);
@@ -85,21 +82,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
             var command = fixture.Create<FinishShoppingListCommand>();
             var handler = fixture.Create<FinishShoppingListCommandHandler>();
 
-            shoppingListRepositoryMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<ShoppingListId>(id => id == command.ShoppingListId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(listMock.Object));
-
+            shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
+            transactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
             listMock
                 .Setup(i => i.Finish(
                     It.Is<DateTime>(date => date == command.CompletionDate)))
                 .Returns(remainingListMock.Object);
-
-            transactionGeneratorMock
-                .Setup(i => i.GenerateAsync(
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(transactionMock.Object));
 
             // Act
             bool result = await handler.HandleAsync(command, default);

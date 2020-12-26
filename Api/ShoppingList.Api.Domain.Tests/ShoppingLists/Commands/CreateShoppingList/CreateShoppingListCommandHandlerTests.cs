@@ -4,14 +4,13 @@ using FluentAssertions.Execution;
 using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.CreateShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -62,11 +61,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cre
 
             IShoppingList shoppingList = shoppingListFixture.GetShoppingList(storeId: command.StoreId);
 
-            shoppingListRepositoryMock
-                .Setup(instance => instance.FindActiveByAsync(
-                    It.Is<StoreId>(id => id == command.StoreId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(shoppingList));
+            shoppingListRepositoryMock.SetupFindActiveByAsync(command.StoreId, shoppingList);
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(command, default);
@@ -91,17 +86,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cre
             var command = fixture.Create<CreateShoppingListCommand>();
             var handler = fixture.Create<CreateShoppingListCommandHandler>();
 
-            shoppingListRepositoryMock
-                .Setup(instance => instance.FindActiveByAsync(
-                    It.Is<StoreId>(id => id == command.StoreId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IShoppingList>(null));
+            shoppingListRepositoryMock.SetupFindActiveByAsync(command.StoreId, null);
 
-            storeRepositoryMock
-                .Setup(i => i.FindActiveByAsync(
-                    It.Is<StoreId>(id => id == command.StoreId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IStore>(null));
+            storeRepositoryMock.SetupFindActiveByAsync(command.StoreId, null);
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(command, default);

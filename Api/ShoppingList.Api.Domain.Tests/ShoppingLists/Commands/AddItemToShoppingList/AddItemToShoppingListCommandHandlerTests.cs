@@ -11,6 +11,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System;
 using System.Threading;
@@ -79,24 +80,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
                 .Setup(instace => instace.Store.Id)
                 .Returns(storeId);
 
-            shoppingListRepositoryMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<ShoppingListId>(id => id == command.ShoppingListId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(listMock.Object));
-
-            shoppingListItemFactoryMock
-                .Setup(instance => instance.Create(It.Is<IStoreItem>(i => i.Id == storeItem.Id),
-                    It.Is<float>(p => p == availability.Price),
-                    It.Is<bool>(b => !b),
-                    It.Is<float>(q => q == command.Quantity)))
-                .Returns(listItem);
-
-            itemRepositoryMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<StoreItemId>(id => id.Offline.Value == command.ShoppingListItemId.Offline.Value),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(storeItem));
+            shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
+            shoppingListItemFactoryMock.SetupCreate(storeItem, availability.Price, false, command.Quantity, listItem);
+            itemRepositoryMock.SetupFindByAsync(new StoreItemId(command.ShoppingListItemId.Offline.Value), storeItem);
 
             // Act
             bool result = await handler.HandleAsync(command, default);
@@ -139,22 +125,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
                 .Setup(instace => instace.Store.Id)
                 .Returns(storeId);
 
-            shoppingListRepositoryMock
-                .Setup(instance => instance.FindByAsync(It.IsAny<ShoppingListId>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(listMock.Object));
-
-            shoppingListItemFactoryMock
-                .Setup(instance => instance.Create(It.Is<IStoreItem>(i => i.Id == storeItem.Id),
-                    It.Is<float>(p => p == availability.Price),
-                    It.Is<bool>(b => !b),
-                    It.Is<float>(q => q == command.Quantity)))
-                .Returns(listItem);
-
-            itemRepositoryMock
-                .Setup(instance => instance.FindByAsync(
-                    It.Is<StoreItemId>(id => id == storeItem.Id),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(storeItem));
+            shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
+            shoppingListItemFactoryMock.SetupCreate(storeItem, availability.Price, false, command.Quantity, listItem);
+            itemRepositoryMock.SetupFindByAsync(storeItem.Id, storeItem);
 
             // Act
             bool result = await handler.HandleAsync(command, default);
