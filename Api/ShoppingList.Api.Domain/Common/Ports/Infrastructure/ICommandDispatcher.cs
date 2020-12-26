@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.ApplicationServices
+namespace ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure
 {
     public interface ICommandDispatcher
     {
