@@ -62,7 +62,7 @@
 
         @if (searchBar.Active)
         {
-            <Button Type="primary" OnClick="@OnCreateNewTemporaryItem">
+            <Button Type="@ButtonType.Primary" OnClick="@OnCreateNewTemporaryItem">
                 <Icon Type="plus"></Icon>
             </Button>
             <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
@@ -130,7 +130,10 @@
         }
         catch (Exception e)
         {
-            notificationService.NotifyError("Page loading failed", e.Message, GetPageReloadRenderFragment());
+            notificationService.NotifyError("Page loading failed", e.Message,
+                GetAsyncButtonRenderFragment(
+                    async (items) => await LoadPage(),
+                    new object[0]));
             AddToError(e.ToString());
             return;
         }
@@ -286,7 +289,10 @@
         }
         catch (Exception e)
         {
-            notificationService.NotifyError("Search for items failed", e.Message, GetSearchInputRetryRenderFragment(searchInput));
+            notificationService.NotifyError("Search for items failed", e.Message,
+                GetButtonRenderFragment(
+                    (items) => OnSearchBarInput((string)items[0]),
+                    new object[] { searchInput }));
             AddToError(e.ToString());
             return;
         }
@@ -357,13 +363,13 @@
     }
     #endregion
 
-    private RenderFragment GetPageReloadRenderFragment()
+    private RenderFragment GetButtonRenderFragment(Action<object[]> callback, object[] args, string label = "Retry")
     {
-        return@<Button Type="@ButtonType.Primary" OnClick="async () => await LoadPage()">Retry</Button>;
+        return@<Button Type="@ButtonType.Primary" OnClick="() => callback(args)">@label</Button>;
 }
 
-private RenderFragment GetSearchInputRetryRenderFragment(string input)
+private RenderFragment GetAsyncButtonRenderFragment(Func<object[], Task> callback, object[] args, string label = "Retry")
 {
-return@<Button Type="@ButtonType.Primary" OnClick="() => OnSearchBarInput(input)">Retry</Button>;
+return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback(args)">@label</Button>;
 }
 }
