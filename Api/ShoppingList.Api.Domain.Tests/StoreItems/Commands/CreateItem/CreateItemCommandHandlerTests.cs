@@ -105,7 +105,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         }
 
         [Fact]
-        public async Task HandleAsync_WithValidDataAndFilledManufacturerId_ShouldThrowDomainException()
+        public async Task HandleAsync_WithValidDataAndFilledManufacturerId_ShouldCreateItem()
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
@@ -157,7 +157,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         }
 
         [Fact]
-        public async Task HandleAsync_WithValidDataAndManufacturerIdNull_ShouldThrowDomainException()
+        public async Task HandleAsync_WithValidDataAndManufacturerIdNull_ShouldCreateItem()
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
