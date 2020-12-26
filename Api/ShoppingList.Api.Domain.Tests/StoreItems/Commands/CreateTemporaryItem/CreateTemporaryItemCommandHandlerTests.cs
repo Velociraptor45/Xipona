@@ -9,6 +9,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System;
 using System.Threading;
@@ -61,11 +62,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
 
             IStore store = storeFixture.GetStore(command.TemporaryItemCreation.Availability.StoreId, isDeleted: true);
 
-            storeRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<StoreId>(id => id == command.TemporaryItemCreation.Availability.StoreId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(store));
+            storeRepositoryMock.SetupFindByAsync(command.TemporaryItemCreation.Availability.StoreId, store);
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -89,11 +86,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             var handler = fixture.Create<CreateTemporaryItemCommandHandler>();
             var command = fixture.Create<CreateTemporaryItemCommand>();
 
-            storeRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<StoreId>(id => id == command.TemporaryItemCreation.Availability.StoreId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IStore>(null));
+            storeRepositoryMock.SetupFindByAsync(command.TemporaryItemCreation.Availability.StoreId, null);
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -122,16 +115,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             IStoreItem storeItem = storeItemFixture.GetStoreItem();
             IStore store = storeFixture.GetStore(command.TemporaryItemCreation.Availability.StoreId, isDeleted: false);
 
-            storeRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<StoreId>(id => id == command.TemporaryItemCreation.Availability.StoreId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(store));
-
-            storeItemFactoryMock
-                .Setup(i => i.Create(
-                    It.Is<TemporaryItemCreation>(obj => obj == command.TemporaryItemCreation)))
-                .Returns(storeItem);
+            storeRepositoryMock.SetupFindByAsync(command.TemporaryItemCreation.Availability.StoreId, store);
+            storeItemFactoryMock.SetupCreate(command.TemporaryItemCreation, storeItem);
 
             // Act
             var result = await handler.HandleAsync(command, default);

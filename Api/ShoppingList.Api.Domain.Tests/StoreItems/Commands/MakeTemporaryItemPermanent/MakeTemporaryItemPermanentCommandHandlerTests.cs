@@ -9,6 +9,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System;
 using System.Collections.Generic;
@@ -69,11 +70,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             var command = fixture.Create<MakeTemporaryItemPermanentCommand>();
             var handler = fixture.Create<MakeTemporaryItemPermanentCommandHandler>();
 
-            itemRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<StoreItemId>(id => id == command.PermanentItem.Id),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IStoreItem>(null));
+            itemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, null);
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -99,17 +96,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             var command = fixture.Create<MakeTemporaryItemPermanentCommand>();
             var handler = fixture.Create<MakeTemporaryItemPermanentCommandHandler>();
 
-            itemRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<StoreItemId>(id => id == command.PermanentItem.Id),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(storeItem));
-
-            itemCategoryRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<ItemCategoryId>(id => id == command.PermanentItem.ItemCategoryId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IItemCategory>(null));
+            itemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, storeItem);
+            itemCategoryRepositoryMock.SetupFindByAsync(command.PermanentItem.ItemCategoryId, null);
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -134,11 +122,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             var command = fixture.Create<MakeTemporaryItemPermanentCommand>();
             var handler = fixture.Create<MakeTemporaryItemPermanentCommandHandler>();
 
-            itemRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<StoreItemId>(id => id == command.PermanentItem.Id),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(storeItem));
+            itemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, storeItem);
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -168,23 +152,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             var command = makeTemporaryItemPermanentCommandFixture.GetCommand(manufacturerId);
             var handler = fixture.Create<MakeTemporaryItemPermanentCommandHandler>();
 
-            itemRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<StoreItemId>(id => id == command.PermanentItem.Id),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(storeItem));
-
-            itemCategoryRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<ItemCategoryId>(id => id == command.PermanentItem.ItemCategoryId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(itemCategory));
-
-            manufacturerRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<ManufacturerId>(id => id == manufacturerId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IManufacturer>(null));
+            itemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, storeItem);
+            itemCategoryRepositoryMock.SetupFindByAsync(command.PermanentItem.ItemCategoryId, itemCategory);
+            manufacturerRepositoryMock.SetupFindByAsync(manufacturerId, null);
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -221,28 +191,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
 
             var activeStores = allStores.Skip(1).ToList();
 
-            itemRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<StoreItemId>(id => id == command.PermanentItem.Id),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(storeItem));
-
-            itemCategoryRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<ItemCategoryId>(id => id == command.PermanentItem.ItemCategoryId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(itemCategory));
-
-            manufacturerRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<ManufacturerId>(id => id == manufacturerId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(manufacturer));
-
-            storeRepositoryMock
-                .Setup(i => i.GetAsync(
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(activeStores.AsEnumerable()));
+            itemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, storeItem);
+            itemCategoryRepositoryMock.SetupFindByAsync(command.PermanentItem.ItemCategoryId, itemCategory);
+            manufacturerRepositoryMock.SetupFindByAsync(manufacturerId, manufacturer);
+            storeRepositoryMock.SetupGetAsync(activeStores.AsEnumerable());
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -281,28 +233,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
                 .Setup(i => i.IsTemporary)
                 .Returns(true);
 
-            itemRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<StoreItemId>(id => id == command.PermanentItem.Id),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(storeItemMock.Object));
-
-            itemCategoryRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<ItemCategoryId>(id => id == command.PermanentItem.ItemCategoryId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(itemCategory));
-
-            manufacturerRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<ManufacturerId>(id => id == manufacturerId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(manufacturer));
-
-            storeRepositoryMock
-                .Setup(i => i.GetAsync(
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(allStores.AsEnumerable()));
+            itemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, storeItemMock.Object);
+            itemCategoryRepositoryMock.SetupFindByAsync(command.PermanentItem.ItemCategoryId, itemCategory);
+            manufacturerRepositoryMock.SetupFindByAsync(manufacturerId, manufacturer);
+            storeRepositoryMock.SetupGetAsync(allStores.AsEnumerable());
 
             // Act
             var result = await handler.HandleAsync(command, default);

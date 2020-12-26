@@ -9,6 +9,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System;
 using System.Threading;
@@ -58,11 +59,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             var handler = fixture.Create<CreateItemCommandHandler>();
             var command = fixture.Create<CreateItemCommand>();
 
-            itemCategoryRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<ItemCategoryId>(id => id == command.ItemCreation.ItemCategoryId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IItemCategory>(null));
+            itemCategoryRepositoryMock.SetupFindByAsync(command.ItemCreation.ItemCategoryId, null);
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -87,11 +84,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             var handler = fixture.Create<CreateItemCommandHandler>();
             var command = createItemCommandFixture.GetCreateItemCommand(manufacturerId);
 
-            manufacturerRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<ManufacturerId>(id => id == manufacturerId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IManufacturer>(null));
+            manufacturerRepositoryMock.SetupFindByAsync(manufacturerId, null);
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -122,24 +115,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             var handler = fixture.Create<CreateItemCommandHandler>();
             var command = createItemCommandFixture.GetCreateItemCommand(itemCategory.Id, manufacturer.Id);
 
-            storeItemFactoryMock
-                .Setup(i => i.Create(
-                    It.Is<ItemCreation>(c => c == command.ItemCreation),
-                    It.Is<IItemCategory>(cat => cat == itemCategory),
-                    It.Is<IManufacturer>(man => man == manufacturer)))
-                .Returns(storeItem);
-
-            itemCategoryRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<ItemCategoryId>(id => id == itemCategory.Id),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(itemCategory));
-
-            manufacturerRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<ManufacturerId>(id => id == manufacturer.Id),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(manufacturer));
+            storeItemFactoryMock.SetupCreate(command.ItemCreation, itemCategory, manufacturer, storeItem);
+            itemCategoryRepositoryMock.SetupFindByAsync(itemCategory.Id, itemCategory);
+            manufacturerRepositoryMock.SetupFindByAsync(manufacturer.Id, manufacturer);
 
             // Act
             var result = await handler.HandleAsync(command, default);
@@ -173,18 +151,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             var handler = fixture.Create<CreateItemCommandHandler>();
             var command = createItemCommandFixture.GetCreateItemCommand(itemCategory.Id, null);
 
-            storeItemFactoryMock
-                .Setup(i => i.Create(
-                    It.Is<ItemCreation>(c => c == command.ItemCreation),
-                    It.Is<IItemCategory>(cat => cat == itemCategory),
-                    It.Is<IManufacturer>(man => man == null)))
-                .Returns(storeItem);
-
-            itemCategoryRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<ItemCategoryId>(id => id == itemCategory.Id),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(itemCategory));
+            storeItemFactoryMock.SetupCreate(command.ItemCreation, itemCategory, null, storeItem);
+            itemCategoryRepositoryMock.SetupFindByAsync(itemCategory.Id, itemCategory);
 
             // Act
             var result = await handler.HandleAsync(command, default);

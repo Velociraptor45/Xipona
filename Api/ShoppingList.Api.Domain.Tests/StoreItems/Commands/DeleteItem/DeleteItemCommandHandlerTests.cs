@@ -11,6 +11,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System;
 using System.Collections;
@@ -25,18 +26,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
     public class DeleteItemCommandHandlerTests
     {
         private readonly CommonFixture commonFixture;
-        private readonly StoreFixture storeFixture;
-        private readonly StoreItemFixture storeItemFixture;
-        private readonly ShoppingListItemFixture shoppingListItemFixture;
-        private readonly ShoppingListFixture shoppingListFixture;
 
         public DeleteItemCommandHandlerTests()
         {
             commonFixture = new CommonFixture();
-            storeFixture = new StoreFixture(commonFixture);
-            storeItemFixture = new StoreItemFixture(new StoreItemAvailabilityFixture(commonFixture), commonFixture);
-            shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-            shoppingListFixture = new ShoppingListFixture(shoppingListItemFixture, commonFixture);
         }
 
         [Fact]
@@ -68,11 +61,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
             var command = fixture.Create<DeleteItemCommand>();
             var handler = fixture.Create<DeleteItemCommandHandler>();
 
-            itemRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<StoreItemId>(id => id == command.ItemId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IStoreItem>(null));
+            itemRepositoryMock.SetupFindByAsync(command.ItemId, null);
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -109,22 +98,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
                 .Setup(i => i.Id)
                 .Returns(storeItemId);
 
-            itemRepositoryMock
-                .Setup(i => i.FindByAsync(
-                    It.Is<StoreItemId>(id => id == command.ItemId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(storeItemMock.Object));
-
-            shoppingListRepositoryMock
-                .Setup(i => i.FindActiveByAsync(
-                    It.Is<StoreItemId>(id => id == storeItemId),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(shoppingLists.AsEnumerable()));
-
-            transactionGeneratorMock
-                .Setup(i => i.GenerateAsync(
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(transactionMock.Object));
+            itemRepositoryMock.SetupFindByAsync(command.ItemId, storeItemMock.Object);
+            shoppingListRepositoryMock.SetupFindActiveByAsync(storeItemId, shoppingLists.AsEnumerable());
+            transactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
 
             // Act
             var result = await handler.HandleAsync(command, default);
