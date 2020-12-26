@@ -15,7 +15,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             this.commonFixture = commonFixture;
         }
 
-        public IEnumerable<StoreItemAvailability> GetAvailabilities(int count = 2)
+        public IEnumerable<IStoreItemAvailability> GetAvailabilities(int count = 2)
         {
             if (count < 1)
                 throw new ArgumentException($"{nameof(count)} mustn't be smaller than 1.");
@@ -28,19 +28,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             }
         }
 
-        public StoreItemAvailability GetAvailability(StoreId storeId)
+        public IStoreItemAvailability GetAvailability(StoreId storeId)
         {
             var fixture = commonFixture.GetNewFixture();
             fixture.Inject(storeId);
             return fixture.Create<StoreItemAvailability>();
         }
 
-        public StoreItemAvailability GetAvailability(int storeId)
+        public IStoreItemAvailability GetAvailability(int storeId)
         {
             return GetAvailability(new StoreId(storeId));
         }
 
-        public StoreItemAvailability GetAvailability()
+        public IStoreItemAvailability GetAvailability()
         {
             return GetAvailability(commonFixture.NextInt());
         }

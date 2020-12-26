@@ -8,11 +8,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
 {
     public class PermanentItem
     {
-        private readonly IEnumerable<StoreItemAvailability> availabilities;
+        private readonly IEnumerable<IStoreItemAvailability> availabilities;
 
         public PermanentItem(StoreItemId id, string name, string comment, QuantityType quantityType,
             float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
-            ManufacturerId manufacturerId, IEnumerable<StoreItemAvailability> availabilities)
+            ManufacturerId manufacturerId, IEnumerable<IStoreItemAvailability> availabilities)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -30,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
             this.availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
         }
 
-        public IReadOnlyCollection<StoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
+        public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
 
         public StoreItemId Id { get; }
         public string Name { get; }
