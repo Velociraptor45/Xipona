@@ -21,8 +21,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
                 itemCreation.QuantityTypeInPacket,
                 itemCategory,
                 manufacturer,
-                itemCreation.Availabilities,
-                null);
+                itemCreation.Availabilities);
         }
 
         public IStoreItem Create(TemporaryItemCreation model)
@@ -38,8 +37,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
                 QuantityTypeInPacket.Unit,
                 null,
                 null,
-                new List<StoreItemAvailability>() { model.Availability },
-                null);
+                new List<StoreItemAvailability>() { model.Availability });
         }
     }
 }

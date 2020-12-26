@@ -1,5 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         {
             var item = items.FirstOrDefault(i => !i.Id.IsActualId);
             if (item != null)
-                throw new ActualIdRequiredException(item.Id);
+                throw new DomainException(new ActualIdRequiredReason(item.Id));
 
             Id = id;
             Store = store;
@@ -32,13 +33,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
             if (!item.Id.IsActualId)
-                throw new ActualIdRequiredException(item.Id);
+                throw new DomainException(new ActualIdRequiredReason(item.Id));
 
             var list = items.ToList();
 
             var existingItem = list.FirstOrDefault(it => it.Id == item.Id);
             if (existingItem != null)
-                throw new ItemAlreadyOnShoppingListException($"Item {item.Id} already exists on shopping list {Id.Value}");
+                throw new DomainException(new ItemAlreadyOnShoppingListReason(item.Id, Id));
 
             list.Add(item);
             items = list;
@@ -49,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
             if (!id.IsActualId)
-                throw new ActualIdRequiredException(id);
+                throw new DomainException(new ActualIdRequiredReason(id));
 
             var itemList = items.ToList();
 
@@ -58,7 +59,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
                 .ToList();
 
             if (itemList.Count == itemListWithoutSpecifiedItem.Count)
-                throw new ItemNotOnShoppingListException("Item is not on shopping list");
+                throw new DomainException(new ItemNotOnShoppingListReason(Id, id));
 
             items = itemListWithoutSpecifiedItem;
         }
@@ -68,11 +69,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
             if (!itemId.IsActualId)
-                throw new ActualIdRequiredException(itemId);
+                throw new DomainException(new ActualIdRequiredReason(itemId));
 
             var item = items.FirstOrDefault(item => item.Id == itemId);
             if (item == null)
-                throw new ItemNotOnShoppingListException(Id, itemId);
+                throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
             item.PutInBasket();
 
@@ -89,11 +90,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
             if (!itemId.IsActualId)
-                throw new ActualIdRequiredException(itemId);
+                throw new DomainException(new ActualIdRequiredReason(itemId));
 
             var item = items.FirstOrDefault(item => item.Id == itemId);
             if (item == null)
-                throw new ItemNotOnShoppingListException(Id, itemId);
+                throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
             item.RemoveFromBasket();
 
@@ -110,13 +111,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
             if (!itemId.IsActualId)
-                throw new ActualIdRequiredException(itemId);
+                throw new DomainException(new ActualIdRequiredReason(itemId));
             if (quantity <= 0f)
-                throw new InvalidItemQuantityException(quantity);
+                throw new DomainException(new InvalidItemQuantityReason(quantity));
 
             var item = items.FirstOrDefault(item => item.Id == itemId);
             if (item == null)
-                throw new ItemNotOnShoppingListException(Id, itemId);
+                throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
             item.ChangeQuantity(quantity);
 

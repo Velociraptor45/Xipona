@@ -1,8 +1,9 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
@@ -44,7 +45,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
 
             IStoreItem oldItem = await itemRepository.FindByAsync(command.ItemUpdate.OldId, cancellationToken);
             if (oldItem.IsTemporary)
-                throw new TemporaryItemNotUpdateableException(command.ItemUpdate.OldId);
+                throw new DomainException(new TemporaryItemNotUpdateableReason(command.ItemUpdate.OldId));
 
             oldItem.Delete();
 

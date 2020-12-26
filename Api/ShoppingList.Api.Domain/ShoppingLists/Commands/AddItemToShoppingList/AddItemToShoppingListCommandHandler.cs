@@ -1,9 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
 using System.Linq;
 using System.Threading;
@@ -34,16 +37,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var storeItem = await itemRepository.FindByAsync(command.ShoppingListItemId.ToStoreItemId(),
-                list.Store.Id, cancellationToken);
+            StoreItemId itemId = command.ShoppingListItemId.ToStoreItemId();
+            var storeItem = await itemRepository.FindByAsync(itemId, cancellationToken);
+
+            if (storeItem == null)
+                throw new DomainException(new ItemNotFoundReason(itemId));
 
             cancellationToken.ThrowIfCancellationRequested();
 
             var priceAtStore = storeItem.Availabilities
-                        .First(av => av.StoreId == list.Store.Id)
+                        .FirstOrDefault(av => av.StoreId == list.Store.Id)?
                         .Price;
 
-            IShoppingListItem listItem = shoppingListItemFactory.Create(storeItem, priceAtStore,
+            if (priceAtStore == null)
+                throw new DomainException(new ItemAtStoreNotAvailableReason(itemId, list.Store.Id));
+
+            IShoppingListItem listItem = shoppingListItemFactory.Create(storeItem, priceAtStore.Value,
                 isInBasket: false, command.Quantity);
 
             list.AddItem(listItem);

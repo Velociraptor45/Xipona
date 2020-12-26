@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using System;
 using System.Linq;
 using System.Threading;

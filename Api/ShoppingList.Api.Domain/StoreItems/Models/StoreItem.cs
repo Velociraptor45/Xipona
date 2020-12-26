@@ -15,7 +15,7 @@ namespace ShoppingList.Api.Domain.Models
         public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             IItemCategory itemCategory, IManufacturer manufacturer,
-            IEnumerable<IStoreItemAvailability> availabilities, IStoreItem predecessor)
+            IEnumerable<IStoreItemAvailability> availabilities)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Name = name;
@@ -28,7 +28,10 @@ namespace ShoppingList.Api.Domain.Models
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
             this.availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
-            Predecessor = predecessor;
+
+            // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
+            // https://github.com/AutoFixture/AutoFixture/issues/1108
+            Predecessor = null;
         }
 
         public StoreItemId Id { get; }

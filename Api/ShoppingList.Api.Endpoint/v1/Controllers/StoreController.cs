@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectHermes.ShoppingList.Api.ApplicationServices;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
@@ -63,9 +63,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 await commandDispatcher.DispatchAsync(command, default);
             }
-            catch (StoreNotFoundException)
+            catch (DomainException e)
             {
-                return BadRequest("Store doesn't exist.");
+                return BadRequest(e.Reason);
             }
 
             return Ok();

@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Exceptions;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
@@ -45,7 +46,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             if (entity == null)
-                throw new ItemCategoryNotFoundException($"Item category {id.Value} not found.");
+                throw new DomainException(new ItemCategoryNotFoundReason(id));
 
             return entity.ToDomain();
         }
