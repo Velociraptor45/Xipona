@@ -15,14 +15,14 @@
             </Button>
         </div>
         <div>
-            <ul>
-                @foreach (var store in stores)
+            <ol class="pl-0">
+                @foreach (var store in stores.OrderBy(s => s.Name))
                 {
                     <StoreListItem store="@store"
                                    OnStoreClickedCallback="@OnStoreSelected">
                     </StoreListItem>
                 }
-            </ul>
+            </ol>
         </div>
     }
     else
