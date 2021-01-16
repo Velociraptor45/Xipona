@@ -35,8 +35,6 @@
 </div>
 
 @code {
-    private bool isInEditMode = false;
-
     private List<Store> stores = new List<Store>();
 
     private Store currentlyEditedStore = null;
@@ -77,8 +75,6 @@
     private void OnStoreSelected(int storeId)
     {
         currentlyEditedStore = stores.FirstOrDefault(s => s.Id == storeId);
-        if (currentlyEditedStore != null)
-            isInEditMode = true;
     }
 
     private void OnCreateStoreButtonClicked()
