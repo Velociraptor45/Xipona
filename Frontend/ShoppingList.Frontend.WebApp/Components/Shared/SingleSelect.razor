@@ -4,7 +4,8 @@
         DefaultValue="@DefaultValue"
         OnChange="@OnSelectionChanged"
         DropdownRender="@OnRender"
-        AllowClear="@AllowClear">
+        AllowClear="@AllowClear"
+        Class="min-w-100">
     @foreach (var map in IdToNameMaps)
     {
         <SelectOption Value="@map.Item1.ToString()">@map.Item2</SelectOption>

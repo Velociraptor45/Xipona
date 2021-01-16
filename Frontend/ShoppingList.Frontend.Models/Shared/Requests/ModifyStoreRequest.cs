@@ -2,7 +2,7 @@
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
 {
-    public class ModifyStoreRequest
+    public class ModifyStoreRequest : IApiRequest
     {
         public ModifyStoreRequest(Guid requestId, int storeId, string name)
         {

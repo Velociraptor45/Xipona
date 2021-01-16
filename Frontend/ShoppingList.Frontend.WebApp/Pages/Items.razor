@@ -1,4 +1,5 @@
 ﻿@page "/items"
+@page "/items/{ItemId:int}"
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Service.IShoppingListNotificationService notificationService;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items;
@@ -72,6 +73,7 @@
                     ModifyItemCallback="@OnItemModifiedAsync"
                     CreateItemCallback="@OnItemCreatedAsync"
                     DeleteItemCallback="@OnItemDeletedAsync"
+                    MakeTemporaryItemPermanentCallback="@OnMakeTemporaryItemPermanentAsync"
                     LeaveEditorCallback="@OnLeaveEditor"
                     ManufacturerCreatedCallback="@OnNewManufacturerCreated"
                     ItemCategoryCreatedCallback="@OnNewItemCategoryCreated"></ItemEditor>
@@ -79,6 +81,8 @@
 </div>
 
 @code {
+    [Parameter] public int? ItemId { get; set; }
+
     private List<Store> stores = new List<Store>();
     private List<ItemCategory> itemCategories = new List<ItemCategory>();
     private List<Manufacturer> manufacturers = new List<Manufacturer>();
@@ -97,6 +101,16 @@
         await InitialLoad();
 
         await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ItemId.HasValue)
+        {
+            await OnItemClickedAsync(ItemId.Value);
+        }
+
+        await base.OnParametersSetAsync();
     }
 
     private async Task InitialLoad()
@@ -242,6 +256,26 @@
             notificationService.NotifyError("Creating item failed", e.Message,
                 GetButtonRenderFragment(
                     async (items) => await OnItemCreatedAsync((StoreItem)items[0]),
+                    new object[] { storeItem }));
+            return;
+        }
+        LeaveEditor();
+    }
+
+    private async Task OnMakeTemporaryItemPermanentAsync(StoreItem storeItem)
+    {
+        var request = new MakeTemporaryItemPermanentRequest(storeItem.Id, storeItem.Name, storeItem.Comment,
+            storeItem.QuantityType.Id, storeItem.QuantityInPacket, storeItem.QuantityInPacketType.Id,
+            storeItem.ItemCategoryId.Value, storeItem.ManufacturerId, storeItem.Availabilities);
+        try
+        {
+            await apiClient.MakeTemporaryItemPermanent(request);
+        }
+        catch (Exception e)
+        {
+            notificationService.NotifyError("Creating item failed", e.Message,
+                GetButtonRenderFragment(
+                    async (items) => await OnMakeTemporaryItemPermanentAsync((StoreItem)items[0]),
                     new object[] { storeItem }));
             return;
         }
