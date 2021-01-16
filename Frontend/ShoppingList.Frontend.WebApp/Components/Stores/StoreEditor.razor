@@ -1,0 +1,32 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models;
+
+<div>
+    <Input @bind-Value="@Store.Name" />
+
+    <div>
+        @if (Store.Id == 0)
+        {
+            <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
+        }
+        else
+        {
+            <Button @onclick="@OnSaveButtonClickedAsync">Save</Button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public Store Store { get; set; }
+    [Parameter] public EventCallback<Store> CreateStoreCallback { get; set; }
+    [Parameter] public EventCallback<Store> SaveStoreCallback { get; set; }
+
+    private async Task OnCreateButtonClickedAsync()
+    {
+        await CreateStoreCallback.InvokeAsync(Store);
+    }
+
+    private async Task OnSaveButtonClickedAsync()
+    {
+        await SaveStoreCallback.InvokeAsync(Store);
+    }
+}

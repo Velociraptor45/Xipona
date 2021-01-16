@@ -156,5 +156,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         {
             await client.MakeTemporaryItemPermanent(request.ToContract());
         }
+
+        public async Task CreateStoreAsync(CreateStoreRequest request)
+        {
+            await client.CreateStore(request.ToContract());
+        }
+
+        public async Task ModifyStoreAsync(ModifyStoreRequest request)
+        {
+            await client.UpdateStore(request.ToContract());
+        }
     }
 }
