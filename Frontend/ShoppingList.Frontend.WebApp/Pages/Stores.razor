@@ -29,7 +29,8 @@
     {
         <StoreEditor Store="@currentlyEditedStore"
                      SaveStoreCallback="@OnStoreSavedAsync"
-                     CreateStoreCallback="@OnStoreCreatedAsync"></StoreEditor>
+                     CreateStoreCallback="@OnStoreCreatedAsync"
+                     LeaveEditorCallback="@OnLeaveEditor"></StoreEditor>
     }
 </div>
 
@@ -66,6 +67,11 @@
     private void LeaveEditor()
     {
         currentlyEditedStore = null;
+    }
+
+    private void OnLeaveEditor()
+    {
+        LeaveEditor();
     }
 
     private void OnStoreSelected(int storeId)
