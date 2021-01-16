@@ -266,7 +266,7 @@
         StateHasChanged();
     }
 
-    private void OnSearchBarInput(string searchInput)
+    private async void OnSearchBarInput(string searchInput)
     {
         if (shoppingList.Store == null)
             return;
@@ -282,9 +282,7 @@
 
         try
         {
-            var result =
-                apiClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id)
-                .GetAwaiter().GetResult();
+            var result = await apiClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id);
             searchBar.Options = result;
         }
         catch (Exception e)
