@@ -1,0 +1,15 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models;
+
+<li class="list-style-non filter-result-outer-frame py-2" @onclick="@OnStoreClicked">
+    <div class="ml-2">@store.Name</div>
+</li>
+
+@code {
+    [Parameter] public Store store { get; set; }
+    [Parameter] public EventCallback<int> OnStoreClickedCallback { get; set; }
+
+    private async Task OnStoreClicked()
+    {
+        await OnStoreClickedCallback.InvokeAsync(store.Id);
+    }
+}
