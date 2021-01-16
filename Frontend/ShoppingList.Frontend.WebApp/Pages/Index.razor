@@ -2,6 +2,7 @@
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.ICommandQueue commandQueue;
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Service.IShoppingListNotificationService notificationService;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Service.IItemPriceCalculationService itemPriceCalculationService;
 @inject IWebAssemblyHostEnvironment Env;
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
@@ -75,7 +76,8 @@
                                        ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
                                        ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
                                        ItemRemovedCallback="@OnItemRemovedFromListAsync"
-                                       IsInEditMode="@isInEditMode"></ShoppingListItemComponent>
+                                       IsInEditMode="@isInEditMode"
+                                       ItemPriceCalculationService="@itemPriceCalculationService"></ShoppingListItemComponent>
         }
     </ul>
     <div class="d-flex justify-content-end">
@@ -116,6 +118,7 @@
         await base.OnInitializedAsync();
         isDebug = Env.IsDevelopment();
 
+        await itemPriceCalculationService.InitializeAsync();
         commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed, AddToError);
 
         StateHasChanged();

@@ -1,5 +1,6 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models;
-@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Service;
 
 <li class="list-style-non py-2 mb-1 @(Item.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
     @if (IsInEditMode)
@@ -73,6 +74,8 @@
 
     [Parameter] public bool IsInEditMode { get; set; }
 
+    [Parameter] public IItemPriceCalculationService ItemPriceCalculationService { get; set; }
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -90,21 +93,7 @@
 
     private float CalculatePrice()
     {
-        float price;
-        //todo: make this dynamic
-        switch (Item.QuantityType.Id)
-        {
-            case 0: // unit
-                price = Item.Quantity * Item.PricePerQuantity;
-                break;
-            case 1: // weight
-                price = (Item.Quantity / 1000) * Item.PricePerQuantity;
-                break;
-            default:
-                throw new InvalidOperationException($"Quantity type {Item.QuantityType.Id} not recognized.");
-        }
-
-        return (float)Math.Floor(price * 100) / 100;
+        return ItemPriceCalculationService.CalculatePrice(Item.QuantityType.Id, Item.PricePerQuantity, Item.Quantity);
     }
 
     private async Task OnQuantityInputValueChangedAsync(float quantity)
