@@ -4,7 +4,7 @@
 <li class="list-style-non py-2 mb-1 @(Item.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
     @if (IsInEditMode)
     {
-        <div class="d-flex flex-column">
+        <div class="d-flex flex-column ml-2">
             <div class="d-flex">
                 <!-- upper row -->
                 <div class="h3">@Item.Name</div>
@@ -16,7 +16,7 @@
             <div>
                 <!-- lower row -->
                 <div class="d-flex">
-                    <div ="d-flex">
+                    <div class="d-flex">
                         <div class="d-flex mr-3">
                             <AntDesign.InputNumber Value="@Item.Quantity" Min="1f"
                                                    ValueChanged="@(async (float d) => await OnQuantityInputValueChangedAsync(d))">
