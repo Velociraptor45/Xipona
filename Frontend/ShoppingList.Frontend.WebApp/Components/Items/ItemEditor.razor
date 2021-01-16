@@ -1,7 +1,6 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
 @using ProjectHermes.ShoppingList.Frontend.Models;
 @using System.Collections.Generic;
-@using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 
 <div class="px-2">
     <div class="d-flex">
@@ -98,6 +97,10 @@
         {
             <Button OnClick="@OnCreateButtonClicked">Create</Button>
         }
+        else if (StoreItem.IsTemporary)
+        {
+            <Button OnClick="@OnMakePermanentButtonClicked">Make Permanent</Button>
+        }
         else
         {
             <Button OnClick="@OnUpdateButtonClickedAsync">Update</Button>
@@ -117,6 +120,7 @@
     [Parameter] public EventCallback<StoreItem> UpdateItemCallback { get; set; }
     [Parameter] public EventCallback<StoreItem> ModifyItemCallback { get; set; }
     [Parameter] public EventCallback<StoreItem> CreateItemCallback { get; set; }
+    [Parameter] public EventCallback<StoreItem> MakeTemporaryItemPermanentCallback { get; set; }
     [Parameter] public EventCallback<int> DeleteItemCallback { get; set; }
     [Parameter] public EventCallback LeaveEditorCallback { get; set; }
     [Parameter] public Func<string, Task> ManufacturerCreatedCallback { get; set; }
@@ -161,6 +165,14 @@
     private async Task OnCreateButtonClicked()
     {
         await CreateItemCallback.InvokeAsync(StoreItem);
+    }
+
+    private async Task OnMakePermanentButtonClicked()
+    {
+        if (!StoreItem.ItemCategoryId.HasValue)
+            return;
+
+        await MakeTemporaryItemPermanentCallback.InvokeAsync(StoreItem);
     }
 
     private async Task OnDeleteButtonClickedAsync()
