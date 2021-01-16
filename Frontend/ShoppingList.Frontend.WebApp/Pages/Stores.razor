@@ -98,6 +98,19 @@
             return;
         }
         LeaveEditor();
+
+        try
+        {
+            await LoadPage();
+        }
+        catch (Exception e)
+        {
+            notificationService.NotifyError("Loading stores failed", e.Message,
+                GetButtonRenderFragment(
+                    async (items) => await LoadPage(),
+                    new object[0]));
+            return;
+        }
     }
 
     private async Task OnStoreSavedAsync(Store store)
