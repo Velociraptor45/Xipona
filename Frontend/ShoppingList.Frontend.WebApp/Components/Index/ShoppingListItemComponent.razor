@@ -55,7 +55,7 @@
             @if (!Item.IsTemporary)
             {
                 <div class="px-2 m-0 align-self-center ml-auto">
-                    <span>@(Item.Quantity * Item.PricePerQuantity)</span>
+                    <span>@(String.Format("{0:0.00}", CalculatePrice()))</span>
                     <span>€</span>
                 </div>
             }
@@ -86,6 +86,25 @@
 
         await ItemBasketStatusChangedCallback.InvokeAsync(Item);
         StateHasChanged();
+    }
+
+    private float CalculatePrice()
+    {
+        float price;
+        //todo: make this dynamic
+        switch (Item.QuantityType.Id)
+        {
+            case 0: // unit
+                price = Item.Quantity * Item.PricePerQuantity;
+                break;
+            case 1: // weight
+                price = (Item.Quantity / 1000) * Item.PricePerQuantity;
+                break;
+            default:
+                throw new InvalidOperationException($"Quantity type {Item.QuantityType.Id} not recognized.");
+        }
+
+        return (float)Math.Floor(price * 100) / 100;
     }
 
     private async Task OnQuantityInputValueChangedAsync(float quantity)
