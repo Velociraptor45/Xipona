@@ -24,17 +24,11 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Service
 
         public float CalculatePrice(int quantityTypeId, float pricePerQuantity, float quantity)
         {
-            float price;
-
             var type = quantityTypes.FirstOrDefault(type => type.Id == quantityTypeId);
             if (type == null)
                 throw new InvalidOperationException($"Quantity type {quantityTypeId} not recognized.");
 
-            //todo: make this dynamic
-            if (type.Id == 1)
-                price = (quantity / 1000) * pricePerQuantity;
-            else
-                price = quantity * pricePerQuantity;
+            float price = (quantity / type.QuantityNormalizer) * pricePerQuantity;
 
             return (float)Math.Floor(price * 100) / 100;
         }

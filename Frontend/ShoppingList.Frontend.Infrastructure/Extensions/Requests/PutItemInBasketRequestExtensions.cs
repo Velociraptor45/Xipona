@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests
         {
             return new PutItemInBasketContract()
             {
-                ShopingListId = request.ShoppingListId,
+                ShoppingListId = request.ShoppingListId,
                 ItemId = request.ItemId.ToContract()
             };
         }
