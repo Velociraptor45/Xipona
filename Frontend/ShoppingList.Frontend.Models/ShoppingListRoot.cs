@@ -24,5 +24,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         {
             return Items.FirstOrDefault(item => item.Id.ActualId == id);
         }
+
+        public void Remove(ShoppingListItem item)
+        {
+            Items.Remove(item);
+        }
     }
 }
