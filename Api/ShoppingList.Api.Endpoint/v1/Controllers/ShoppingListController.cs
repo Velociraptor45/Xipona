@@ -137,7 +137,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("items/put-in-basket")]
         public async Task<IActionResult> PutItemInBasket([FromBody] PutItemInBasketContract contract)
         {
-            var command = new PutItemInBasketCommand(new ShoppingListId(contract.ShopingListId),
+            var command = new PutItemInBasketCommand(new ShoppingListId(contract.ShoppingListId),
                 new ShoppingListItemId(contract.ItemId.Actual.Value));
 
             try
