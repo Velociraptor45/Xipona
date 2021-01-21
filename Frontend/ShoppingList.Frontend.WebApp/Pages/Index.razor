@@ -347,6 +347,7 @@
 
     private async Task OnItemRemovedFromListAsync(ShoppingListItem item)
     {
+        shoppingList.Remove(item);
         var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id);
         await commandQueue.Enqueue(request);
     }
