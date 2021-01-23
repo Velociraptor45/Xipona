@@ -11,6 +11,11 @@
 
         public ItemCategoryId Id { get; }
         public string Name { get; }
-        public bool IsDeleted { get; }
+        public bool IsDeleted { get; set; }
+
+        public void Delete()
+        {
+            IsDeleted = true;
+        }
     }
 }

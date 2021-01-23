@@ -5,5 +5,7 @@
         ItemCategoryId Id { get; }
         string Name { get; }
         bool IsDeleted { get; }
+
+        void Delete();
     }
 }
