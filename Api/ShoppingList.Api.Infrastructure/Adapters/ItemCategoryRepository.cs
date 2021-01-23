@@ -70,11 +70,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return entities.Select(e => e.ToDomain());
         }
 
-        public async Task<IEnumerable<IItemCategory>> FindByAsync(bool includeDeleted,
-            CancellationToken cancellationToken)
+        public async Task<IEnumerable<IItemCategory>> FindActiveByAsync(CancellationToken cancellationToken)
         {
             var results = await dbContext.ItemCategories.AsNoTracking()
-                .Where(m => !m.Deleted || includeDeleted)
+                .Where(m => !m.Deleted)
                 .ToListAsync();
 
             cancellationToken.ThrowIfCancellationRequested();

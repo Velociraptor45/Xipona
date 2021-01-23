@@ -27,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.AllActive
                 throw new ArgumentNullException(nameof(query));
             }
 
-            var results = await itemCategoryRepository.FindByAsync(false, cancellationToken);
+            var results = await itemCategoryRepository.FindActiveByAsync(cancellationToken);
 
             return results.Select(r => r.ToReadModel());
         }
