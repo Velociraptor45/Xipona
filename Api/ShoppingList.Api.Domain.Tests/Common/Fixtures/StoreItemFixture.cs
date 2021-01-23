@@ -40,7 +40,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             return fixture.Create<StoreItem>();
         }
 
-        private IEnumerable<IStoreItemAvailability> GetUniqueStoreItemAvailabilities(int count, IEnumerable<int> exclude)
+        public IEnumerable<IStoreItem> GetStoreItems(int amount = 3, int availabilityCount = 3,
+            bool? isTemporary = null, bool? isDeleted = null)
+        {
+            var ids = commonFixture.NextUniqueInts(amount).ToList();
+
+            foreach (var id in ids)
+            {
+                yield return GetStoreItem(new StoreItemId(id), availabilityCount: availabilityCount,
+                    isTemporary: isTemporary, isDeleted: isDeleted);
+            }
+        }
+
+        private IEnumerable<IStoreItemAvailability> GetUniqueStoreItemAvailabilities(int count,
+            IEnumerable<int> exclude = null)
         {
             List<int> storeIds = commonFixture.NextUniqueInts(count, exclude).ToList();
             List<IStoreItemAvailability> availabilities = new List<IStoreItemAvailability>();
