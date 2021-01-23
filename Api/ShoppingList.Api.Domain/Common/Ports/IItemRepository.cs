@@ -21,5 +21,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Ports
         Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, StoreId storeId, CancellationToken cancellationToken);
 
         Task<IStoreItem> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken);
+        Task<IEnumerable<IStoreItem>> FindActiveByAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);
     }
 }

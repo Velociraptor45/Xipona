@@ -188,6 +188,31 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return entities.Select(e => e.ToStoreItemDomain());
         }
 
+        public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(ItemCategoryId itemCategoryId,
+            CancellationToken cancellationToken)
+        {
+            if (itemCategoryId is null)
+            {
+                throw new ArgumentNullException(nameof(itemCategoryId));
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var entities = await dbContext.Items.AsNoTracking()
+                .Include(item => item.ItemCategory)
+                .Include(item => item.Manufacturer)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Store)
+                .Where(item => item.ItemCategoryId.HasValue
+                    && item.ItemCategoryId == itemCategoryId.Value
+                    && !item.Deleted)
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return entities.Select(entity => entity.ToStoreItemDomain());
+        }
+
         public async Task<IStoreItem> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken)
         {
             if (storeItem == null)
