@@ -21,6 +21,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                 .Returns(Task.FromResult(returnValue));
         }
 
+        public static void SetupFindActiveByAsync(this Mock<IShoppingListRepository> mock,
+            IEnumerable<IShoppingList> returnValue)
+        {
+            mock
+                .Setup(i => i.FindActiveByAsync(
+                    It.IsAny<StoreItemId>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(returnValue);
+        }
+
         public static void SetupFindActiveByAsync(this Mock<IShoppingListRepository> mock, StoreId storeId,
             IShoppingList returnValue)
         {
