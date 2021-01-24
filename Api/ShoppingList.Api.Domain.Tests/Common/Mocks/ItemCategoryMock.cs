@@ -1,0 +1,24 @@
+﻿using Moq;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks
+{
+    public class ItemCategoryMock : Mock<IItemCategory>
+    {
+        public ItemCategoryMock(IItemCategory itemCategory)
+        {
+            SetupId(itemCategory.Id);
+        }
+
+        public void SetupId(ItemCategoryId returnValue)
+        {
+            Setup(i => i.Id)
+                .Returns(returnValue);
+        }
+
+        public void VerifyDeleteOnce()
+        {
+            Verify(i => i.Delete(), Times.Once);
+        }
+    }
+}
