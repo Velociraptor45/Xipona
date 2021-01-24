@@ -139,7 +139,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         public async Task HandleAsync_WithSomeItemsOfItemCategoryOnNoActiveShoppingLists_ShouldStoreItemsButNoShoppingListsAndDeleteItemCategory()
         {
             // Arrange
-            int storeItemsCount = 3;
             var fixture = commonFixture.GetNewFixture();
 
             Mock<IItemCategoryRepository> itemCategoryRepositoryMock = fixture.Freeze<Mock<IItemCategoryRepository>>();
@@ -148,14 +147,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
             Mock<ITransactionGenerator> transactionGeneratorMock = fixture.Freeze<Mock<ITransactionGenerator>>();
 
             IItemCategory itemCategory = itemCategoryFixture.GetItemCategory(isDeleted: false);
-            List<IStoreItem> storeItems = storeItemFixture.GetStoreItems(storeItemsCount, isDeleted: false).ToList();
+            List<Mock<IStoreItem>> storeItemMocks = new List<Mock<IStoreItem>>
+            {
+                new Mock<IStoreItem>(),
+                new Mock<IStoreItem>(),
+                new Mock<IStoreItem>()
+            };
             Mock<ITransaction> transactionMock = new Mock<ITransaction>();
 
             var command = fixture.Create<DeleteItemCategoryCommand>();
             var handler = fixture.Create<DeleteItemCategoryCommandHandler>();
 
             itemCategoryRepositoryMock.SetupFindByAsync(command.ItemCategoryId, itemCategory);
-            itemRepositoryMock.SetupFindActiveByAsync(command.ItemCategoryId, storeItems);
+            itemRepositoryMock.SetupFindActiveByAsync(command.ItemCategoryId, storeItemMocks.Select(m => m.Object));
             shoppingListRepositoryMock.SetupFindActiveByAsync(Enumerable.Empty<IShoppingList>());
             transactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
 
@@ -174,11 +178,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
                         It.IsAny<CancellationToken>()),
                     Times.Never);
 
-                foreach (var storeItem in storeItems)
+                foreach (var storeItemMock in storeItemMocks)
                 {
+                    storeItemMock.Verify(
+                        i => i.Delete(),
+                        Times.Once);
+
                     itemRepositoryMock.Verify(
                         i => i.StoreAsync(
-                            It.Is<IStoreItem>(item => item == storeItem),
+                            It.Is<IStoreItem>(item => item == storeItemMock.Object),
                             It.IsAny<CancellationToken>()),
                         Times.Once);
                 }
