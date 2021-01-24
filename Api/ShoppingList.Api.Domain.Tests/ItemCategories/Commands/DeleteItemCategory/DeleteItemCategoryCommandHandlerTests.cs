@@ -11,6 +11,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.DeleteItemCa
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks;
@@ -264,6 +265,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
                     IEnumerable<ShoppingListMock> affiliatedShoppinListMocks = shoppingLists[storeItemMock];
                     foreach (var listMock in affiliatedShoppinListMocks)
                     {
+                        listMock.VerifyRemoveItemOnce(storeItemMock.Object.Id.ToShoppingListItemId());
+
                         shoppingListRepositoryMock.Verify(
                             i => i.StoreAsync(
                                 It.Is<IShoppingList>(l => l == listMock.Object),

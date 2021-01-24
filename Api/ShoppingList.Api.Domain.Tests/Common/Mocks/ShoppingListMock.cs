@@ -7,6 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks
     {
         public ShoppingListMock(IShoppingList shoppingList)
         {
+            SetupId(shoppingList.Id);
         }
 
         public void SetupId(ShoppingListId returnValue)
