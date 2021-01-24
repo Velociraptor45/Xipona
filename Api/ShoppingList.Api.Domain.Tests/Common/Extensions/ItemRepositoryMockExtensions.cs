@@ -29,5 +29,23 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(returnValue);
         }
+
+        public static void VerifyStoreAsyncOnce(this Mock<IItemRepository> mock, IStoreItem storeItem)
+        {
+            mock.Verify(
+                i => i.StoreAsync(
+                    It.Is<IStoreItem>(item => item == storeItem),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
+
+        public static void VerifyStoreAsyncNever(this Mock<IItemRepository> mock)
+        {
+            mock.Verify(
+                i => i.StoreAsync(
+                    It.IsAny<IStoreItem>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Never);
+        }
     }
 }
