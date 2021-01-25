@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Queries.AllActiveItemCategories;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturer.Queries.AllActiveManufacturers;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
@@ -132,6 +133,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Post("item-category/create/{name}")]
         Task CreateItemCategory([Path] string name);
+
+        [Post("item-category/delete")]
+        Task DeleteItemCategory([Body] DeleteItemCategoryContract contract);
 
         #endregion ItemCategoryController
     }
