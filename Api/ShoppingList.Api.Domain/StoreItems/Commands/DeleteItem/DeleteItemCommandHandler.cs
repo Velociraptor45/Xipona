@@ -18,10 +18,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem
         private readonly IItemRepository itemRepository;
         private readonly IShoppingListRepository shoppingListRepository;
         private readonly ITransactionGenerator transactionGenerator;
-        private readonly ICommandDispatcher commandDispatcher;
 
         public DeleteItemCommandHandler(IItemRepository itemRepository, IShoppingListRepository shoppingListRepository,
-            ITransactionGenerator transactionGenerator, ICommandDispatcher commandDispatcher)
+            ITransactionGenerator transactionGenerator)
         {
             this.itemRepository = itemRepository;
             this.shoppingListRepository = shoppingListRepository;
