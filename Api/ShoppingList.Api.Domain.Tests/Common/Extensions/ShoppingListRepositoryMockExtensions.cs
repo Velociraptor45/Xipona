@@ -21,6 +21,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                 .Returns(Task.FromResult(returnValue));
         }
 
+        public static void SetupFindActiveByAsync(this Mock<IShoppingListRepository> mock,
+            IEnumerable<IShoppingList> returnValue)
+        {
+            mock
+                .Setup(i => i.FindActiveByAsync(
+                    It.IsAny<StoreItemId>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(returnValue);
+        }
+
         public static void SetupFindActiveByAsync(this Mock<IShoppingListRepository> mock, StoreId storeId,
             IShoppingList returnValue)
         {
@@ -39,6 +49,24 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                     It.Is<ShoppingListId>(id => id == shoppingListId),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult<IShoppingList>(returnValue));
+        }
+
+        public static void VerifyStoreAsyncOnce(this Mock<IShoppingListRepository> mock, IShoppingList shoppingList)
+        {
+            mock.Verify(
+                i => i.StoreAsync(
+                    It.Is<IShoppingList>(list => list == shoppingList),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
+
+        public static void VerifyStoreAsyncNever(this Mock<IShoppingListRepository> mock)
+        {
+            mock.Verify(
+                i => i.StoreAsync(
+                    It.IsAny<IShoppingList>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Never);
         }
     }
 }

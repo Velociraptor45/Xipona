@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.CreateItemCategory;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.DeleteItemCategory;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.AllActiveItemCategories;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.ItemCategorySearch;
 using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ItemCategory;
@@ -54,12 +58,31 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(200)]
         [Route("create/{name}")]
         public async Task<IActionResult> CreateItemCategory([FromRoute(Name = "name")] string name)
         {
             var command = new CreateItemCategoryCommand(name);
             await commandDispatcher.DispatchAsync(command, default);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("delete")]
+        public async Task<IActionResult> DeleteItemCategory([FromBody] DeleteItemCategoryContract contract)
+        {
+            var command = new DeleteItemCategoryCommand(new ItemCategoryId(contract.ItemCategoryId));
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (DomainException e)
+            {
+                return BadRequest(e.Reason);
+            }
 
             return Ok();
         }

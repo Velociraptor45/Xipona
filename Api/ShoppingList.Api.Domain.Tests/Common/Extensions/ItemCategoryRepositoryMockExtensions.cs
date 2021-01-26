@@ -17,5 +17,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(returnValue));
         }
+
+        public static void VerifyStoreAsyncOnce(this Mock<IItemCategoryRepository> mock, IItemCategory itemCategory)
+        {
+            mock.
+                Verify(i => i.StoreAsync(
+                    It.Is<IItemCategory>(cat => cat == itemCategory),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
     }
 }
