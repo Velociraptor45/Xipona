@@ -4,18 +4,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
 {
-    public class Store
+    public class Section
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required]
         public string Name { get; set; }
+        public int StoreId { get; set; }
+        public int SortIndex { get; set; }
 
-        public bool Deleted { get; set; }
-
-        public ICollection<AvailableAt> AvailableItems { get; set; }
-        public ICollection<Section> Sections { get; set; }
+        public Store Store { get; set; }
+        public ICollection<AvailableAt> DefaultItemsInSection { get; set; }
+        public ICollection<ItemsOnList> ActualItemsSections { get; set; }
     }
 }
