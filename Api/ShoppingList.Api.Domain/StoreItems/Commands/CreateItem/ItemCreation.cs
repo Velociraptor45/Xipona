@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +8,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
 {
     public class ItemCreation
     {
-        private readonly IEnumerable<StoreItemAvailability> availabilities;
+        private readonly IEnumerable<ShortAvailability> availabilities;
 
         public ItemCreation(string name, string comment, QuantityType quantityType,
             float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
-            ManufacturerId manufacturerId, IEnumerable<StoreItemAvailability> availabilities)
+            ManufacturerId manufacturerId, IEnumerable<ShortAvailability> availabilities)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -37,6 +37,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
         public ItemCategoryId ItemCategoryId { get; }
         public ManufacturerId ManufacturerId { get; }
 
-        public IReadOnlyCollection<StoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
+        public IReadOnlyCollection<ShortAvailability> Availabilities => availabilities.ToList().AsReadOnly();
     }
 }

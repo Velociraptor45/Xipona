@@ -24,6 +24,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain
             services.AddTransient<IStoreFactory, StoreFactory>();
             services.AddTransient<IShoppingListItemFactory, ShoppingListItemFactory>();
             services.AddTransient<IShoppingListFactory, ShoppingListFactory>();
+
+            services.AddTransient<IStoreItemSectionFactory, StoreItemSectionFactory>();
         }
 
         public static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)

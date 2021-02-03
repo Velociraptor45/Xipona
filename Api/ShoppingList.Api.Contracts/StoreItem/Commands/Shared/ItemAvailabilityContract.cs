@@ -4,5 +4,6 @@
     {
         public int StoreId { get; set; }
         public float Price { get; set; }
+        public int DefaultSectionId { get; set; }
     }
 }

@@ -6,5 +6,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
     {
         StoreId StoreId { get; }
         float Price { get; }
+        IStoreItemSection DefaultSection { get; }
     }
 }

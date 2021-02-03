@@ -14,6 +14,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
         public string Name { get; set; }
 
         public bool Deleted { get; set; }
+        public int DefaultSectionId { get; set; }
+
+        [ForeignKey("DefaultSectionId")]
+        public Section DefaultSection { get; set; }
 
         public ICollection<AvailableAt> AvailableItems { get; set; }
         public ICollection<Section> Sections { get; set; }

@@ -24,11 +24,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 
         void Delete();
 
+        IStoreItemSection GetDefaultSectionForStore(StoreId storeId);
+
         bool IsAvailableInStore(StoreId storeId);
 
-        void MakePermanent(PermanentItem permanentItem, IItemCategory itemCategory, IManufacturer manufacturer);
+        void MakePermanent(PermanentItem permanentItem, IItemCategory itemCategory, IManufacturer manufacturer,
+            IEnumerable<IStoreItemAvailability> availabilities);
 
-        void Modify(ItemModify itemChange, IItemCategory itemCategory, IManufacturer manufacturer);
+        void Modify(ItemModify itemChange, IItemCategory itemCategory, IManufacturer manufacturer,
+            IEnumerable<IStoreItemAvailability> availabilities);
 
         void SetPredecessor(IStoreItem predecessor);
     }

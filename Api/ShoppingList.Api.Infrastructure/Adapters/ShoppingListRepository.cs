@@ -2,10 +2,12 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Sections.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
@@ -21,11 +23,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
     {
         private readonly ShoppingContext dbContext;
         private readonly IShoppingListFactory shoppingListFactory;
+        private readonly ISectionFactory sectionFactory;
 
-        public ShoppingListRepository(ShoppingContext dbContext, IShoppingListFactory shoppingListFactory)
+        public ShoppingListRepository(ShoppingContext dbContext, IShoppingListFactory shoppingListFactory,
+            ISectionFactory sectionFactory)
         {
             this.dbContext = dbContext;
             this.shoppingListFactory = shoppingListFactory;
+            this.sectionFactory = sectionFactory;
         }
 
         #region public methods
@@ -59,17 +64,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
 
-            var entity = await dbContext.ShoppingLists.AsNoTracking()
-                .Include(l => l.Store)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.Manufacturer)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.ItemCategory)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.AvailableAt)
+            var entity = await GetShoppingListQuery()
                 .FirstOrDefaultAsync(list => list.Id == id.Value);
 
             if (entity == null) //todo throw in command handler
@@ -77,10 +72,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
+            var sections = GetSections(entity);
+
             return shoppingListFactory.Create(
                 new ShoppingListId(entity.Id),
                 entity.Store.ToDomain(),
-                entity.ItemsOnList.Select(map => map.Item.ToShoppingListItemDomain(entity.StoreId, entity.Id)),
+                sections,
                 entity.CompletionDate);
         }
 
@@ -90,17 +87,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             if (storeItemId is null)
                 throw new ArgumentNullException(nameof(storeItemId));
 
-            List<Entities.ShoppingList> entities = await dbContext.ShoppingLists.AsNoTracking()
-                .Include(l => l.Store)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.Manufacturer)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.ItemCategory)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.AvailableAt)
+            List<Entities.ShoppingList> entities = await GetShoppingListQuery()
                 .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Actual.Value) != null)
                 .ToListAsync();
 
@@ -108,10 +95,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             return entities.Select(entity =>
             {
+                var sections = GetSections(entity);
+
                 return shoppingListFactory.Create(
                     new ShoppingListId(entity.Id),
                     entity.Store.ToDomain(),
-                    entity.ItemsOnList.Select(map => map.Item.ToShoppingListItemDomain(entity.StoreId, entity.Id)),
+                    sections,
                     entity.CompletionDate);
             });
         }
@@ -122,17 +111,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             if (storeItemId is null)
                 throw new ArgumentNullException(nameof(storeItemId));
 
-            List<Entities.ShoppingList> entities = await dbContext.ShoppingLists.AsNoTracking()
-                .Include(l => l.Store)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.Manufacturer)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.ItemCategory)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.AvailableAt)
+            List<Entities.ShoppingList> entities = await GetShoppingListQuery()
                 .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Actual.Value) != null
                     && l.CompletionDate == null)
                 .ToListAsync();
@@ -141,10 +120,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             return entities.Select(entity =>
             {
+                var sections = GetSections(entity);
+
                 return shoppingListFactory.Create(
                     new ShoppingListId(entity.Id),
                     entity.Store.ToDomain(),
-                    entity.ItemsOnList.Select(map => map.Item.ToShoppingListItemDomain(entity.StoreId, entity.Id)),
+                    sections,
                     entity.CompletionDate);
             });
         }
@@ -154,17 +135,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             if (storeId == null)
                 throw new ArgumentNullException(nameof(storeId));
 
-            var entity = await dbContext.ShoppingLists.AsNoTracking()
-                .Include(l => l.Store)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.Manufacturer)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.ItemCategory)
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.AvailableAt)
+            var entity = await GetShoppingListQuery()
                 .FirstOrDefaultAsync(list => list.CompletionDate == null
                     && list.StoreId == storeId.Value);
 
@@ -173,10 +144,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             if (entity == null)
                 return null;
 
+            var sections = GetSections(entity);
+
             return shoppingListFactory.Create(
                 new ShoppingListId(entity.Id),
                 entity.Store.ToDomain(),
-                entity.ItemsOnList.Select(map => map.Item.ToShoppingListItemDomain(entity.StoreId, entity.Id)),
+                sections,
                 entity.CompletionDate);
         }
 
@@ -236,8 +209,15 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
         private async Task<Entities.ShoppingList> FindEntityByIdAsync(ShoppingListId id)
         {
-            return await dbContext.ShoppingLists.AsNoTracking()
+            return await GetShoppingListQuery()
+                .FirstOrDefaultAsync(list => list.Id == id.Value);
+        }
+
+        private IQueryable<Entities.ShoppingList> GetShoppingListQuery()
+        {
+            return dbContext.ShoppingLists.AsNoTracking()
                 .Include(l => l.Store)
+                .ThenInclude(s => s.Sections)
                 .Include(l => l.ItemsOnList)
                 .ThenInclude(map => map.Item)
                 .ThenInclude(item => item.Manufacturer)
@@ -246,8 +226,21 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .ThenInclude(item => item.ItemCategory)
                 .Include(l => l.ItemsOnList)
                 .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.AvailableAt)
-                .FirstOrDefaultAsync(list => list.Id == id.Value);
+                .ThenInclude(item => item.AvailableAt);
+        }
+
+        private IEnumerable<ISection> GetSections(Entities.ShoppingList shoppingListEntity)
+        {
+            var itemsLookup = shoppingListEntity.ItemsOnList.ToLookup(i => i.SectionId.Value);
+            foreach (var section in shoppingListEntity.Store.Sections)
+            {
+                var itemsForSection = itemsLookup[section.Id];
+                var domainItems = itemsForSection
+                    .Select(map => map.Item.ToShoppingListItemDomain(shoppingListEntity.StoreId, shoppingListEntity.Id));
+                var domainSection = sectionFactory.Create(new SectionId(section.Id), section.Name, domainItems,
+                    section.SortIndex, shoppingListEntity.Store.DefaultSection.Id == section.Id);
+                yield return domainSection;
+            }
         }
 
         #endregion private methods

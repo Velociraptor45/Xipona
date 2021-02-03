@@ -1,4 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
@@ -59,7 +61,8 @@ namespace ShoppingList.Api.Domain.Models
             return Availabilities.FirstOrDefault(av => av.StoreId == storeId) != null;
         }
 
-        public void MakePermanent(PermanentItem permanentItem, IItemCategory itemCategory, IManufacturer manufacturer)
+        public void MakePermanent(PermanentItem permanentItem, IItemCategory itemCategory, IManufacturer manufacturer,
+            IEnumerable<IStoreItemAvailability> availabilities)
         {
             Name = permanentItem.Name;
             Comment = permanentItem.Comment;
@@ -68,11 +71,12 @@ namespace ShoppingList.Api.Domain.Models
             QuantityTypeInPacket = permanentItem.QuantityTypeInPacket;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
-            availabilities = permanentItem.Availabilities;
+            this.availabilities = availabilities;
             IsTemporary = false;
         }
 
-        public void Modify(ItemModify itemChange, IItemCategory itemCategory, IManufacturer manufacturer)
+        public void Modify(ItemModify itemChange, IItemCategory itemCategory, IManufacturer manufacturer,
+            IEnumerable<IStoreItemAvailability> availabilities)
         {
             Name = itemChange.Name;
             Comment = itemChange.Comment;
@@ -81,7 +85,16 @@ namespace ShoppingList.Api.Domain.Models
             QuantityTypeInPacket = itemChange.QuantityTypeInPacket;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
-            availabilities = itemChange.Availabilities;
+            this.availabilities = availabilities;
+        }
+
+        public IStoreItemSection GetDefaultSectionForStore(StoreId storeId)
+        {
+            var availability = availabilities.FirstOrDefault(av => av.StoreId == storeId);
+            if (availability == null)
+                throw new DomainException(new ItemAtStoreNotAvailableReason(Id, storeId));
+
+            return availability.DefaultSection;
         }
 
         public void SetPredecessor(IStoreItem predecessor)

@@ -7,8 +7,11 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,10 +26,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
         private readonly IShoppingListRepository shoppingListRepository;
         private readonly ITransactionGenerator transactionGenerator;
         private readonly IShoppingListItemFactory shoppingListItemFactory;
+        private readonly IStoreItemAvailabilityFactory storeItemAvailabilityFactory;
+        private readonly IStoreItemFactory storeItemFactory;
+        private readonly IStoreItemSectionReadRepository storeItemSectionReadRepository;
 
         public UpdateItemCommandHandler(IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository,
             IManufacturerRepository manufacturerRepository, IShoppingListRepository shoppingListRepository,
-            ITransactionGenerator transactionGenerator, IShoppingListItemFactory shoppingListItemFactory)
+            ITransactionGenerator transactionGenerator, IShoppingListItemFactory shoppingListItemFactory,
+            IStoreItemAvailabilityFactory storeItemAvailabilityFactory, IStoreItemFactory storeItemFactory,
+            IStoreItemSectionReadRepository storeItemSectionReadRepository)
         {
             this.itemRepository = itemRepository;
             this.itemCategoryRepository = itemCategoryRepository;
@@ -34,6 +42,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
             this.shoppingListRepository = shoppingListRepository;
             this.transactionGenerator = transactionGenerator;
             this.shoppingListItemFactory = shoppingListItemFactory;
+            this.storeItemAvailabilityFactory = storeItemAvailabilityFactory;
+            this.storeItemFactory = storeItemFactory;
+            this.storeItemSectionReadRepository = storeItemSectionReadRepository;
         }
 
         public async Task<bool> HandleAsync(UpdateItemCommand command, CancellationToken cancellationToken)
@@ -61,7 +72,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
             await itemRepository.StoreAsync(oldItem, cancellationToken);
 
             // create new Item
-            IStoreItem updatedItem = command.ItemUpdate.ToStoreItem(itemCategory, manufacturer, oldItem);
+            IEnumerable<IStoreItemAvailability> availabilities =
+                await GetStoreItemAvailabilities(command.ItemUpdate.Availabilities, cancellationToken);
+            IStoreItem updatedItem = storeItemFactory
+                .Create(command.ItemUpdate, itemCategory, manufacturer, oldItem, availabilities);
             updatedItem = await itemRepository.StoreAsync(updatedItem, cancellationToken);
 
             // change existing item references on shopping lists
@@ -80,9 +94,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
                         .First(av => av.StoreId == list.Store.Id)
                         .Price;
 
+                    var section = updatedItem.GetDefaultSectionForStore(list.Store.Id);
                     var updatedListItem = shoppingListItemFactory.Create(updatedItem, priceAtStore,
                         shoppingListItem.IsInBasket, shoppingListItem.Quantity);
-                    list.AddItem(updatedListItem);
+                    list.AddItem(updatedListItem, section.Id.ToShoppingListSectionId());
                 }
 
                 await shoppingListRepository.StoreAsync(list, cancellationToken);
@@ -91,6 +106,27 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
             await transaction.CommitAsync(cancellationToken);
 
             return true;
+        }
+
+        private async Task<IEnumerable<IStoreItemAvailability>> GetStoreItemAvailabilities(
+            IEnumerable<ShortAvailability> shortAvailabilities, CancellationToken cancellationToken)
+        {
+            var sectionIds = shortAvailabilities.Select(av => av.StoreItemSectionId);
+            var sections = (await storeItemSectionReadRepository.FindByAsync(sectionIds, cancellationToken))
+                .ToLookup(s => s.Id);
+
+            var availabilities = new List<IStoreItemAvailability>();
+            foreach (var shortAvailability in shortAvailabilities)
+            {
+                if (!sections.Contains(shortAvailability.StoreItemSectionId))
+                    throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
+                var section = sections[shortAvailability.StoreItemSectionId].First();
+                var availability = storeItemAvailabilityFactory
+                    .Create(shortAvailability.StoreId, shortAvailability.Price, section);
+                availabilities.Add(availability);
+            }
+
+            return availabilities;
         }
     }
 }
