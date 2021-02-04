@@ -1,16 +1,15 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Sections.Models
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
-    public class Section : ISection
+    public class ShoppingListSection : IShoppingListSection
     {
         private IEnumerable<IShoppingListItem> shoppingListItems;
 
-        public Section(SectionId id, string name, IEnumerable<IShoppingListItem> shoppingListItems, int sortingIndex,
+        public ShoppingListSection(ShoppingListSectionId id, string name, IEnumerable<IShoppingListItem> shoppingListItems, int sortingIndex,
             bool isDefaultSection)
         {
             Id = id;
@@ -20,7 +19,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Sections.Models
             IsDefaultSection = isDefaultSection;
         }
 
-        public SectionId Id { get; }
+        public ShoppingListSectionId Id { get; }
         public string Name { get; }
         public int SortingIndex { get; }
         public bool IsDefaultSection { get; }

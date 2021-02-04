@@ -1,11 +1,10 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Sections.Models
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
-    public interface ISection
+    public interface IShoppingListSection
     {
-        SectionId Id { get; }
+        ShoppingListSectionId Id { get; }
         string Name { get; }
         int SortingIndex { get; }
 
@@ -23,7 +22,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Sections.Models
         void RemoveItemFromBasket(ShoppingListItemId itemId);
 
         void RemoveItem(ShoppingListItemId id);
+
         void RemoveAllItemsInBasket();
+
         void RemoveAllItemsNotInBasket();
     }
 }

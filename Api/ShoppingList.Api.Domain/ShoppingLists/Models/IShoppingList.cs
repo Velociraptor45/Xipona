@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Sections.Models;
 using System;
 using System.Collections.Generic;
 
@@ -12,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         public IReadOnlyCollection<IShoppingListItem> Items { get; }
         public DateTime? CompletionDate { get; }
 
-        void AddItem(IShoppingListItem item, SectionId sectionId);
+        void AddItem(IShoppingListItem item, ShoppingListSectionId sectionId);
 
         void RemoveItem(ShoppingListItemId id);
 
@@ -24,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         void SetCompletionDate(DateTime completionDate);
 
-        IEnumerable<ISection> GetSectionsWithItemsNotInBasket();
+        IEnumerable<IShoppingListSection> GetSectionsWithItemsNotInBasket();
 
         void RemoveAllItemsNotInBasket();
     }

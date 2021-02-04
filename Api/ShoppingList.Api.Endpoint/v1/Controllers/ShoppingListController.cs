@@ -7,7 +7,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemF
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Sections.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishShoppingList;
@@ -119,7 +118,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             var command = new AddItemToShoppingListCommand(
                 new ShoppingListId(contract.ShoppingListId),
                 itemId,
-                new SectionId(contract.SectionId),
+                new ShoppingListSectionId(contract.SectionId),
                 contract.Quantity);
 
             try

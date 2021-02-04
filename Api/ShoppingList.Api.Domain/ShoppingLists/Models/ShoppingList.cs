@@ -1,7 +1,6 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Sections.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons;
 using System;
 using System.Collections.Generic;
@@ -11,9 +10,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
     public class ShoppingList : IShoppingList
     {
-        private IEnumerable<ISection> sections;
+        private IEnumerable<IShoppingListSection> sections;
 
-        public ShoppingList(ShoppingListId id, IStore store, IEnumerable<ISection> sections, DateTime? completionDate)
+        public ShoppingList(ShoppingListId id, IStore store, IEnumerable<IShoppingListSection> sections, DateTime? completionDate)
         {
             Id = id;
             Store = store;
@@ -25,9 +24,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         public IStore Store { get; }
         public IReadOnlyCollection<IShoppingListItem> Items => Sections.SelectMany(s => s.ShoppingListItems).ToList().AsReadOnly();
         public DateTime? CompletionDate { get; private set; }
-        public IReadOnlyCollection<ISection> Sections => sections.ToList().AsReadOnly();
+        public IReadOnlyCollection<IShoppingListSection> Sections => sections.ToList().AsReadOnly();
 
-        public void AddItem(IShoppingListItem item, SectionId sectionId)
+        public void AddItem(IShoppingListItem item, ShoppingListSectionId sectionId)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
@@ -40,7 +39,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
             var sectionList = sections.ToList();
 
-            ISection section;
+            IShoppingListSection section;
             if (sectionId == null)
             {
                 section = sectionList.SingleOrDefault(s => s.IsDefaultSection);
@@ -66,7 +65,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
                 throw new DomainException(new ActualIdRequiredReason(id));
 
             var sectionList = sections.ToList();
-            ISection section = sectionList.FirstOrDefault(s => s.ContainsItem(id));
+            IShoppingListSection section = sectionList.FirstOrDefault(s => s.ContainsItem(id));
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, id));
 
@@ -83,7 +82,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
                 throw new DomainException(new ActualIdRequiredReason(itemId));
 
             var sectionList = sections.ToList();
-            ISection section = sectionList.FirstOrDefault(s => s.ContainsItem(itemId));
+            IShoppingListSection section = sectionList.FirstOrDefault(s => s.ContainsItem(itemId));
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
@@ -100,7 +99,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
                 throw new DomainException(new ActualIdRequiredReason(itemId));
 
             var sectionList = sections.ToList();
-            ISection section = sectionList.FirstOrDefault(s => s.ContainsItem(itemId));
+            IShoppingListSection section = sectionList.FirstOrDefault(s => s.ContainsItem(itemId));
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
@@ -119,7 +118,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
                 throw new DomainException(new InvalidItemQuantityReason(quantity));
 
             var sectionList = sections.ToList();
-            ISection section = sectionList.FirstOrDefault(s => s.ContainsItem(itemId));
+            IShoppingListSection section = sectionList.FirstOrDefault(s => s.ContainsItem(itemId));
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
@@ -138,7 +137,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             CompletionDate = completionDate;
         }
 
-        public IEnumerable<ISection> GetSectionsWithItemsNotInBasket()
+        public IEnumerable<IShoppingListSection> GetSectionsWithItemsNotInBasket()
         {
             var sectionList = sections.ToList();
             foreach (var section in sectionList)
@@ -150,7 +149,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         public void RemoveAllItemsNotInBasket()
         {
-            var updatedSections = new List<ISection>();
+            var updatedSections = new List<IShoppingListSection>();
 
             var sectionList = sections.ToList();
             foreach (var section in sectionList)

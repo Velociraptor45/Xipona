@@ -2,7 +2,6 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Sections.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
@@ -229,7 +228,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .ThenInclude(item => item.AvailableAt);
         }
 
-        private IEnumerable<ISection> GetSections(Entities.ShoppingList shoppingListEntity)
+        private IEnumerable<IShoppingListSection> GetSections(Entities.ShoppingList shoppingListEntity)
         {
             var itemsLookup = shoppingListEntity.ItemsOnList.ToLookup(i => i.SectionId.Value);
             foreach (var section in shoppingListEntity.Store.Sections)
@@ -237,7 +236,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 var itemsForSection = itemsLookup[section.Id];
                 var domainItems = itemsForSection
                     .Select(map => map.Item.ToShoppingListItemDomain(shoppingListEntity.StoreId, shoppingListEntity.Id));
-                var domainSection = sectionFactory.Create(new SectionId(section.Id), section.Name, domainItems,
+                var domainSection = sectionFactory.Create(new ShoppingListSectionId(section.Id), section.Name, domainItems,
                     section.SortIndex, shoppingListEntity.Store.DefaultSection.Id == section.Id);
                 yield return domainSection;
             }
