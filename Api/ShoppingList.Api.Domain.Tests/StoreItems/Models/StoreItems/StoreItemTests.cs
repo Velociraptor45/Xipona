@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -101,9 +102,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
             PermanentItem permanentItem = fixture.Create<PermanentItem>();
             IManufacturer manufacturer = fixture.Create<IManufacturer>();
             IItemCategory itemCategory = fixture.Create<IItemCategory>();
+            IEnumerable<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.GetAvailabilities(4);
 
             // Act
-            storeItem.MakePermanent(permanentItem, itemCategory, manufacturer);
+            storeItem.MakePermanent(permanentItem, itemCategory, manufacturer, availabilities);
 
             // Assert
             using (new AssertionScope())
@@ -113,7 +115,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
                 storeItem.QuantityType.Should().Be(permanentItem.QuantityType);
                 storeItem.QuantityInPacket.Should().Be(permanentItem.QuantityInPacket);
                 storeItem.QuantityTypeInPacket.Should().Be(permanentItem.QuantityTypeInPacket);
-                storeItem.Availabilities.Should().BeEquivalentTo(permanentItem.Availabilities);
+                storeItem.Availabilities.Should().BeEquivalentTo(availabilities);
                 storeItem.ItemCategory.Should().Be(itemCategory);
                 storeItem.Manufacturer.Should().Be(manufacturer);
                 storeItem.IsTemporary.Should().BeFalse();
@@ -134,9 +136,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
             ItemModify itemModify = fixture.Create<ItemModify>();
             IManufacturer manufacturer = fixture.Create<IManufacturer>();
             IItemCategory itemCategory = fixture.Create<IItemCategory>();
+            IEnumerable<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.GetAvailabilities(4);
 
             // Act
-            storeItem.Modify(itemModify, itemCategory, manufacturer);
+            storeItem.Modify(itemModify, itemCategory, manufacturer, availabilities);
 
             // Assert
             using (new AssertionScope())
@@ -146,7 +149,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
                 storeItem.QuantityType.Should().Be(itemModify.QuantityType);
                 storeItem.QuantityInPacket.Should().Be(itemModify.QuantityInPacket);
                 storeItem.QuantityTypeInPacket.Should().Be(itemModify.QuantityTypeInPacket);
-                storeItem.Availabilities.Should().BeEquivalentTo(itemModify.Availabilities);
+                storeItem.Availabilities.Should().BeEquivalentTo(availabilities);
                 storeItem.ItemCategory.Should().Be(itemCategory);
                 storeItem.Manufacturer.Should().Be(manufacturer);
                 storeItem.IsTemporary.Should().Be(isTemporary);

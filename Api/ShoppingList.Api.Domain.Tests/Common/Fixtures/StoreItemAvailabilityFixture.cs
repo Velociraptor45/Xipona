@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
 {
@@ -26,6 +27,36 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             {
                 yield return GetAvailability(uniqueStoreId);
             }
+        }
+
+        public IEnumerable<IStoreItemAvailability> GetAvailabilities(IEnumerable<IStoreItemSection> sections)
+        {
+            if (sections is null)
+                throw new ArgumentNullException(nameof(sections));
+
+            var sectionsList = sections.ToList();
+            var uniqueIds = commonFixture.NextUniqueInts(sectionsList.Count).ToList();
+
+            for (int i = 0; i < sectionsList.Count; i++)
+            {
+                IStoreItemSection section = sectionsList[i];
+                int id = uniqueIds[i];
+                yield return GetAvailability(new StoreId(id), section);
+            }
+        }
+
+        public IStoreItemAvailability GetAvailability(StoreId storeId, IStoreItemSection section)
+        {
+            var fixture = commonFixture.GetNewFixture();
+            fixture.Inject(storeId);
+            fixture.Inject(section);
+            return fixture.Create<StoreItemAvailability>();
+        }
+
+        public IStoreItemAvailability GetAvailability(IStoreItemSection section)
+        {
+            int storeId = commonFixture.NextInt();
+            return GetAvailability(new StoreId(storeId), section);
         }
 
         public IStoreItemAvailability GetAvailability(StoreId storeId)

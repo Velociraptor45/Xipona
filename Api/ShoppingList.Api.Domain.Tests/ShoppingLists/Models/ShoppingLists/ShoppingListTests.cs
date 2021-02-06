@@ -2,14 +2,12 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Core.Tests;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -34,6 +32,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
         }
 
+        //todo: check everything -,-
+
         #region AddItem
 
         [Fact]
@@ -42,9 +42,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Arrange
             var fixure = commonFixture.GetNewFixture();
             var shoppingList = fixure.Create<DomainModels.ShoppingList>();
+            var sectionId = commonFixture.GetNewFixture().Create<ShoppingListSectionId>();
 
             // Act
-            Action action = () => shoppingList.AddItem(null);
+            Action action = () => shoppingList.AddItem(null, sectionId);
 
             // Assert
             using (new AssertionScope())
@@ -63,9 +64,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
 
             var collidingItem = shoppingListItemFixture.GetShoppingListItemWithId(
                 new ShoppingListItemId(collidingItemId));
+            var sectionId = commonFixture.GetNewFixture().Create<ShoppingListSectionId>();
 
             // Act
-            Action action = () => shoppingList.AddItem(collidingItem);
+            Action action = () => shoppingList.AddItem(collidingItem, sectionId);
 
             // Assert
             using (new AssertionScope())
@@ -87,9 +89,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var usedItemIds = list.Items.Select(i => i.Id.Actual.Value);
             int storeItemId = commonFixture.NextInt(usedItemIds);
             var listItem = shoppingListItemFixture.GetShoppingListItemWithId(new ShoppingListItemId(storeItemId));
+            var sectionId = commonFixture.GetNewFixture().Create<ShoppingListSectionId>();
 
             // Act
-            list.AddItem(listItem);
+            list.AddItem(listItem, sectionId);
 
             // Assert
             using (new AssertionScope())
@@ -105,9 +108,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Arrange
             var list = shoppingListFixture.GetShoppingList();
             var listItem = shoppingListItemFixture.GetShoppingListItemWithId(new ShoppingListItemId(Guid.NewGuid()));
+            var sectionId = commonFixture.GetNewFixture().Create<ShoppingListSectionId>();
 
             // Act
-            Action action = () => list.AddItem(listItem);
+            Action action = () => list.AddItem(listItem, sectionId);
 
             // Assert
             using (new AssertionScope())
@@ -441,33 +445,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
 
         #region Finish
 
-        [Theory]
-        [ClassData(typeof(FinishShoppingListTestData))]
-        public void Finish__ShouldCreateNewListWithItemsNotInBasketAndRemoveThemFromCurrentList(
-            List<ShoppingListItem> itemsNotInBasket, List<ShoppingListItem> itemsInBasket)
-        {
-            // Arrange
-            var allItems = new List<ShoppingListItem>(itemsInBasket);
-            allItems.AddRange(itemsNotInBasket);
-            allItems.Shuffle();
-
-            DateTime completionDate = commonFixture.NextDate();
-            var list = shoppingListFixture.GetShoppingList(itemCount: 0, additionalItems: allItems);
-
-            // Act
-            var newList = list.Finish(completionDate);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                list.Items.Should().HaveCount(itemsInBasket.Count);
-                list.Items.Should().BeEquivalentTo(itemsInBasket);
-                newList.Items.Should().HaveCount(itemsNotInBasket.Count);
-                newList.Items.Should().BeEquivalentTo(itemsNotInBasket);
-                list.CompletionDate.Should().Be(completionDate);
-                newList.CompletionDate.Should().BeNull();
-            }
-        }
+        // todo: implement tests for new finish logic
 
         #endregion Finish
     }

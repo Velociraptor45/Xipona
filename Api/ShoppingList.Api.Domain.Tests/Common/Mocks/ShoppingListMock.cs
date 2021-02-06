@@ -22,5 +22,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks
                     It.Is<ShoppingListItemId>(id => id == itemId)),
                 Times.Once);
         }
+
+        public void VerifyAddItemOnce(IShoppingListItem listItem, ShoppingListSectionId sectionId)
+        {
+            Verify(i => i.AddItem(
+                    It.Is<IShoppingListItem>(item => item == listItem),
+                    It.Is<ShoppingListSectionId>(id => id == sectionId)),
+                Times.Once);
+        }
     }
 }

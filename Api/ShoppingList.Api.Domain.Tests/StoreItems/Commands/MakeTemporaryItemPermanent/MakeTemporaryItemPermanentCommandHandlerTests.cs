@@ -9,8 +9,10 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,9 +27,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         private readonly CommonFixture commonFixture;
         private readonly StoreFixture storeFixture;
         private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
+        private readonly StoreItemSectionFixture storeItemSectionFixture;
         private readonly StoreItemFixture storeItemFixture;
         private readonly ShoppingListItemFixture shoppingListItemFixture;
         private readonly ShoppingListFixture shoppingListFixture;
+        private readonly StoreItemMockFixture storeItemMockFixture;
         private readonly MakeTemporaryItemPermanentCommandFixture makeTemporaryItemPermanentCommandFixture;
 
         public MakeTemporaryItemPermanentCommandHandlerTests()
@@ -35,9 +39,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             commonFixture = new CommonFixture();
             storeFixture = new StoreFixture(commonFixture);
             storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
+            storeItemSectionFixture = new StoreItemSectionFixture(commonFixture);
             storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
             shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
             shoppingListFixture = new ShoppingListFixture(shoppingListItemFixture, commonFixture);
+            storeItemMockFixture = new StoreItemMockFixture(commonFixture, storeItemFixture);
             makeTemporaryItemPermanentCommandFixture = new MakeTemporaryItemPermanentCommandFixture(commonFixture);
         }
 
@@ -217,6 +223,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             Mock<IItemCategoryRepository> itemCategoryRepositoryMock = fixture.Freeze<Mock<IItemCategoryRepository>>();
             Mock<IManufacturerRepository> manufacturerRepositoryMock = fixture.Freeze<Mock<IManufacturerRepository>>();
             Mock<IStoreRepository> storeRepositoryMock = fixture.Freeze<Mock<IStoreRepository>>();
+            Mock<IStoreItemAvailabilityFactory> availabilityFactoryMock = fixture.Freeze<Mock<IStoreItemAvailabilityFactory>>();
+            Mock<IStoreItemSectionReadRepository> sectionReadRepositoryMock = fixture.Freeze<Mock<IStoreItemSectionReadRepository>>();
 
             var manufacturerId = new ManufacturerId(commonFixture.NextInt());
             var allStores = storeFixture.GetStores(isDeleted: false).ToList();
@@ -225,13 +233,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
 
             var handler = fixture.Create<MakeTemporaryItemPermanentCommandHandler>();
 
-            Mock<IStoreItem> storeItemMock = new Mock<IStoreItem>();
+            StoreItemMock storeItemMock = storeItemMockFixture.Create();
             IItemCategory itemCategory = fixture.Create<IItemCategory>();
             IManufacturer manufacturer = fixture.Create<IManufacturer>();
 
-            storeItemMock
-                .Setup(i => i.IsTemporary)
-                .Returns(true);
+            // setup sections
+            IEnumerable<StoreItemSectionId> sectionIds = command.PermanentItem.Availabilities
+                .Select(av => new StoreItemSectionId(av.StoreItemSectionId.Value));
+            IEnumerable<IStoreItemSection> sections = storeItemSectionFixture.CreateMany(sectionIds);
+            sectionReadRepositoryMock.SetupFindByAsync(sectionIds, sections);
+
+            // setup availabilities
+            IEnumerable<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.GetAvailabilities(sections);
+            availabilityFactoryMock.SetupMultipleCreate(availabilities);
 
             itemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, storeItemMock.Object);
             itemCategoryRepositoryMock.SetupFindByAsync(command.PermanentItem.ItemCategoryId, itemCategory);
@@ -245,12 +259,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                storeItemMock.Verify(
-                    i => i.MakePermanent(
-                        It.Is<PermanentItem>(pi => pi == command.PermanentItem),
-                        It.Is<IItemCategory>(cat => cat == itemCategory),
-                        It.Is<IManufacturer>(man => man == manufacturer)),
-                    Times.Once);
+                storeItemMock.VerifyMakePermanentOnce(command.PermanentItem, itemCategory, manufacturer, availabilities);
                 itemRepositoryMock.Verify(
                     i => i.StoreAsync(
                         It.Is<IStoreItem>(item => item == storeItemMock.Object),
@@ -258,6 +267,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
                     Times.Once);
             }
         }
+
+        //todo add test for StoreItemSectionNotFoundReason
 
         private MakeTemporaryItemPermanentCommand CreateCommandWithAvailabilities(ManufacturerId manufacturerId,
             IEnumerable<IStore> stores)
