@@ -1,4 +1,5 @@
 ﻿using Moq;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks
@@ -8,11 +9,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks
         public ShoppingListMock(IShoppingList shoppingList)
         {
             SetupId(shoppingList.Id);
+            SetupStore(shoppingList.Store);
         }
 
         public void SetupId(ShoppingListId returnValue)
         {
             Setup(i => i.Id)
+                .Returns(returnValue);
+        }
+
+        public void SetupStore(IStore returnValue)
+        {
+            Setup(i => i.Store)
                 .Returns(returnValue);
         }
 
