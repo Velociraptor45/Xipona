@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,13 +22,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
 
         public IEnumerable<ShoppingListMock> CreateMany(int amount)
         {
-            var uniqueIds = commonFixture.NextUniqueInts(amount);
-
-            foreach (var id in uniqueIds)
-            {
-                var shoppingList = shoppingListFixture.GetShoppingList(new ShoppingListId(id));
-                yield return new ShoppingListMock(shoppingList);
-            }
+            var shoppingLists = shoppingListFixture.CreateMany(amount);
+            return shoppingLists.Select(list => new ShoppingListMock(list));
         }
     }
 }
