@@ -1,12 +1,17 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using System;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons
 {
     public class NoDefaultSectionSpecifiedReason : IReason
     {
-        public string Message => throw new NotImplementedException();
+        public NoDefaultSectionSpecifiedReason(StoreId id)
+        {
+            Message = $"No default section for store {id}'s shopping list.";
+        }
 
-        public ErrorReasonCode ErrorCode => throw new NotImplementedException();
+        public string Message { get; }
+
+        public ErrorReasonCode ErrorCode => ErrorReasonCode.NoDefaultSectionSpecified;
     }
 }

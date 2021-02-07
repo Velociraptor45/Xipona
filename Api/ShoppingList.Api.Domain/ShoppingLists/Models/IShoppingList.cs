@@ -10,6 +10,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         public IStore Store { get; }
         public IReadOnlyCollection<IShoppingListItem> Items { get; }
         public DateTime? CompletionDate { get; }
+        IReadOnlyCollection<IShoppingListSection> Sections { get; }
 
         void AddItem(IShoppingListItem item, ShoppingListSectionId sectionId);
 

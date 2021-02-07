@@ -44,13 +44,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             {
                 section = sectionList.SingleOrDefault(s => s.IsDefaultSection);
                 if (section == null)
-                    throw new DomainException(new NoDefaultSectionSpecifiedReason());
+                    throw new DomainException(new NoDefaultSectionSpecifiedReason(Store.Id));
             }
             else
             {
                 section = sectionList.FirstOrDefault(s => s.Id == sectionId);
                 if (section == null)
-                    throw new DomainException(new SectionNotPartOfShoppingListReason());
+                    throw new DomainException(new SectionNotPartOfStoreReason(sectionId, Store.Id));
             }
 
             section.AddItem(item);

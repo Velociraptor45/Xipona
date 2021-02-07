@@ -18,8 +18,9 @@
         TemporaryItemNotModifyable = 13,
         TemporaryItemNotUpdateable = 14,
         ItemNotInSection = 15,
-        SectionNotPartOfShoppingList = 16,
+        SectionNotPartOfStore = 16,
         ItemAlreadyInSection = 17,
-        StoreItemSectionNotFound = 18
+        StoreItemSectionNotFound = 18,
+        NoDefaultSectionSpecified = 19,
     }
 }
