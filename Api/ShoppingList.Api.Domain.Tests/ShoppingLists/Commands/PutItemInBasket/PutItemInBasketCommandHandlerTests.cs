@@ -23,6 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
     {
         private readonly CommonFixture commonFixture;
         private readonly ShoppingListItemFixture shoppingListItemFixture;
+        private readonly ShoppingListSectionFixture shoppingListSectionFixture;
         private readonly ShoppingListFixture shoppingListFixture;
         private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
         private readonly StoreItemFixture storeItemFixture;
@@ -31,7 +32,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
         {
             commonFixture = new CommonFixture();
             shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-            shoppingListFixture = new ShoppingListFixture(shoppingListItemFixture, commonFixture);
+            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture, shoppingListItemFixture);
+            shoppingListFixture = new ShoppingListFixture(shoppingListSectionFixture, commonFixture);
             storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
             storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
         }

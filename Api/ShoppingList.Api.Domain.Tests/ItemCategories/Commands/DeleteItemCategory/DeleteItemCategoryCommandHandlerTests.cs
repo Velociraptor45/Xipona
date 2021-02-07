@@ -33,7 +33,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             commonFixture = new CommonFixture();
             var shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-            var shoppingListFixture = new ShoppingListFixture(shoppingListItemFixture, commonFixture);
+            var shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture, shoppingListItemFixture);
+            var shoppingListFixture = new ShoppingListFixture(shoppingListSectionFixture, commonFixture);
             var storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
             var storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
             var itemCategoryFixture = new ItemCategoryFixture(commonFixture);

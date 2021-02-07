@@ -132,7 +132,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
             {
                 var commonFixture = new CommonFixture();
                 var shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-                var shoppingListFixture = new ShoppingListFixture(shoppingListItemFixture, commonFixture);
+                var shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture, shoppingListItemFixture);
+                var shoppingListFixture = new ShoppingListFixture(shoppingListSectionFixture, commonFixture);
                 var shoppingListMockFixture = new ShoppingListMockFixture(commonFixture, shoppingListFixture);
 
                 yield return new object[]
