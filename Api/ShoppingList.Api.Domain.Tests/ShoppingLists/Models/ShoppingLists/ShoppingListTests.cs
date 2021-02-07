@@ -36,8 +36,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             shoppingListSectionMockFixture = new ShoppingListSectionMockFixture(shoppingListSectionFixture, commonFixture);
         }
 
-        //todo: check everything -,-
-
         #region AddItem
 
         [Fact]
@@ -587,5 +585,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         #endregion SetCompletionDate
+
+        #region GetSectionsWithItemsNotInBasket
+
+        // todo implement
+
+        #endregion GetSectionsWithItemsNotInBasket
+
+        #region RemoveAllItemsNotInBasket
+
+        // todo implement
+
+        #endregion RemoveAllItemsNotInBasket
     }
 }
