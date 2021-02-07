@@ -17,6 +17,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests
             return fixture;
         }
 
+        public T ChooseRandom<T>(IEnumerable<T> enumerable)
+        {
+            if (!enumerable.Any())
+                throw new ArgumentException($"{nameof(enumerable)} must at least contain one element.");
+
+            List<T> list = enumerable.ToList();
+
+            int index = NextInt(0, list.Count - 1);
+            return list[index];
+        }
+
         public IEnumerable<int> NextUniqueInts(int amount, IEnumerable<int> exclude = null)
         {
             if (amount < 0)
