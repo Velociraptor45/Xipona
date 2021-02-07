@@ -226,17 +226,32 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void RemoveItem_WithValidItem_ShouldRemoveItemFromList()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
-            int idToRemove = list.Items.ElementAt(commonFixture.NextInt(0, list.Items.Count - 1)).Id.Actual.Value;
+            var sections = shoppingListSectionMockFixture.CreateMany(3).ToList();
+
+            var listDefinition = new ShoppingListGenerationDefinition()
+            {
+                Sections = sections.Select(s => s.Object)
+            };
+            var shoppingList = shoppingListFixture.Create(listDefinition);
+
+            ShoppingListSectionMock chosenSection = commonFixture.ChooseRandom(sections);
+            IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSection.Object.ShoppingListItems);
+
+            chosenSection.SetupContainsItem(chosenItem.Id, true);
 
             // Act
-            list.RemoveItem(new ShoppingListItemId(idToRemove));
+            shoppingList.RemoveItem(chosenItem.Id);
 
             // Assert
             using (new AssertionScope())
             {
-                list.Items.Should().HaveCount(2);
-                list.Items.Should().NotContain(i => i.Id == new ShoppingListItemId(idToRemove));
+                foreach (var section in sections)
+                {
+                    if (section == chosenSection)
+                        section.VerifyRemoveItemOnce(chosenItem.Id);
+                    else
+                        section.VerifyRemoveItemNever();
+                }
             }
         }
 
@@ -297,10 +312,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         [Fact]
-        public void PutItemInBasket_WithValidItem_ShouldRemoveItemFromList()
+        public void PutItemInBasket_WithValidItem_ShouldPutItemInBasket()
         {
             // Arrange
-            var sections = shoppingListSectionMockFixture.CreateMany(3);
+            var sections = shoppingListSectionMockFixture.CreateMany(3).ToList();
 
             var listDefinition = new ShoppingListGenerationDefinition()
             {
@@ -310,6 +325,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
 
             ShoppingListSectionMock chosenSection = commonFixture.ChooseRandom(sections);
             IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSection.Object.ShoppingListItems);
+            chosenSection.SetupContainsItem(chosenItem.Id, true);
 
             // Act
             shoppingList.PutItemInBasket(chosenItem.Id);
@@ -387,7 +403,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void RemoveFromBasket_WithValidItem_ShouldRemoveItemFromList()
         {
             // Arrange
-            var sections = shoppingListSectionMockFixture.CreateMany(3);
+            var sections = shoppingListSectionMockFixture.CreateMany(3).ToList();
 
             var listDefinition = new ShoppingListGenerationDefinition()
             {
@@ -397,6 +413,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
 
             ShoppingListSectionMock chosenSection = commonFixture.ChooseRandom(sections);
             IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSection.Object.ShoppingListItems);
+            chosenSection.SetupContainsItem(chosenItem.Id, true);
 
             // Act
             shoppingList.RemoveFromBasket(chosenItem.Id);
@@ -493,7 +510,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void ChangeItemQuantity_WithValidItem_ShouldChangeQuantity()
         {
             // Arrange
-            var sections = shoppingListSectionMockFixture.CreateMany(3);
+            var sections = shoppingListSectionMockFixture.CreateMany(3).ToList();
 
             var listDefinition = new ShoppingListGenerationDefinition()
             {
@@ -503,6 +520,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
 
             ShoppingListSectionMock chosenSection = commonFixture.ChooseRandom(sections);
             IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSection.Object.ShoppingListItems);
+            chosenSection.SetupContainsItem(chosenItem.Id, true);
 
             float quantity = commonFixture.NextFloat();
 

@@ -45,6 +45,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks
                 .Returns(returnValue);
         }
 
+        public void SetupContainsItem(bool returnValue)
+        {
+            Setup(i => i.ContainsItem(
+                    It.IsAny<ShoppingListItemId>()))
+                .Returns(returnValue);
+        }
+
+        public void SetupContainsItem(ShoppingListItemId itemId, bool returnValue)
+        {
+            Setup(i => i.ContainsItem(
+                    It.Is<ShoppingListItemId>(id => id == itemId)))
+                .Returns(returnValue);
+        }
+
         public void VerifyAddItemOnce(IShoppingListItem item)
         {
             Verify(i => i.AddItem(
@@ -52,16 +66,30 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks
                 Times.Once);
         }
 
+        public void VerifyRemoveItemOnce(ShoppingListItemId id)
+        {
+            Verify(i => i.RemoveItem(
+                    It.Is<ShoppingListItemId>(itemId => itemId == id)),
+                Times.Once);
+        }
+
+        public void VerifyRemoveItemNever()
+        {
+            Verify(i => i.RemoveItem(
+                    It.IsAny<ShoppingListItemId>()),
+                Times.Never);
+        }
+
         public void VerifyPutItemInBasketOnce(ShoppingListItemId id)
         {
-            Verify(i => i.RemoveItemFromBasket(
+            Verify(i => i.PutItemInBasket(
                     It.Is<ShoppingListItemId>(itemId => itemId == id)),
                 Times.Once);
         }
 
         public void VerifyPutItemInBasketNever()
         {
-            Verify(i => i.RemoveItemFromBasket(
+            Verify(i => i.PutItemInBasket(
                     It.IsAny<ShoppingListItemId>()),
                 Times.Never);
         }
