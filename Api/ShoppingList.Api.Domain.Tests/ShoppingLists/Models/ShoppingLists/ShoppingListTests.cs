@@ -542,10 +542,50 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
 
         #endregion ChangeItemQuantity
 
-        #region Finish
+        #region SetCompletionDate
 
-        // todo: implement tests for new finish logic
+        [Fact]
+        public void SetCompletionDate_WithUncompletedShoppingList_ShouldSetCompletionDate()
+        {
+            // Arrange
+            var listDefinition = new ShoppingListGenerationDefinition() { UseCompletionDate = true, CompletionDate = null };
+            var shoppingList = shoppingListFixture.Create(listDefinition);
 
-        #endregion Finish
+            DateTime completionDate = commonFixture.GetNewFixture().Create<DateTime>();
+
+            // Act
+            shoppingList.SetCompletionDate(completionDate);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                shoppingList.CompletionDate.Should().Be(completionDate);
+            }
+        }
+
+        [Fact]
+        public void SetCompletionDate_WithCompletedShoppingList_ShouldSetCompletionDate()
+        {
+            // Arrange
+            var listDefinition = new ShoppingListGenerationDefinition()
+            {
+                UseCompletionDate = true,
+                CompletionDate = commonFixture.GetNewFixture().Create<DateTime>()
+            };
+            var shoppingList = shoppingListFixture.Create(listDefinition);
+
+            DateTime completionDate = commonFixture.GetNewFixture().Create<DateTime>();
+
+            // Act
+            shoppingList.SetCompletionDate(completionDate);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                shoppingList.CompletionDate.Should().Be(completionDate);
+            }
+        }
+
+        #endregion SetCompletionDate
     }
 }

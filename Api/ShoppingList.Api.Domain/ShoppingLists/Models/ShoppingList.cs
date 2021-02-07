@@ -127,11 +127,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             sections = sectionList;
         }
 
-        /// <summary>
-        /// Finishes the current shopping list and returns a new shopping list with all items that were not in the
-        /// basket on it
-        /// </summary>
-        /// <returns></returns>
         public void SetCompletionDate(DateTime completionDate)
         {
             CompletionDate = completionDate;
