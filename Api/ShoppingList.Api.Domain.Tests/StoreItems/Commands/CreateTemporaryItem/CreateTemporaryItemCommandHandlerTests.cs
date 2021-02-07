@@ -105,6 +105,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         }
 
         [Fact]
+        public async Task HandleAsync_WithInvalidStoreItemSectionId_ShouldThrowDomainException()
+        {
+            // todo implement
+        }
+
+        [Fact]
         public async Task HandleAsync_WithValidCommand_ShouldStoreItem()
         {
             // Arrange

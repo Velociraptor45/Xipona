@@ -216,7 +216,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         }
 
         [Fact]
-        public async Task HandleAsync_WithValidData_ShouldThrowDomainException()
+        public async Task HandleAsync_WithInvalidStoreItemSection_ShouldThrowDomainException()
+        {
+            // todo implement
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithValidData_ShouldMakeTemporaryItemPermanent()
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
@@ -269,8 +275,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
                     Times.Once);
             }
         }
-
-        //todo add test for StoreItemSectionNotFoundReason
 
         private MakeTemporaryItemPermanentCommand CreateCommandWithAvailabilities(ManufacturerId manufacturerId,
             IEnumerable<IStore> stores)

@@ -60,6 +60,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
         }
 
         [Fact]
+        public async Task HandleAsync_WithInvalidStoreItemId_ShouldThrowDomainException()
+        {
+            // todo implement
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithItemAtStoreNotAvailable_ShouldThrowDomainException()
+        {
+            // todo implement
+        }
+
+        [Fact]
         public async Task HandleAsync_WithOfflineId_ShouldAddItemToList()
         {
             // Arrange

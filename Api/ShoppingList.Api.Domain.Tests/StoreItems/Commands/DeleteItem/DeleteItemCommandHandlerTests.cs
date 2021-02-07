@@ -79,7 +79,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
 
         [Theory]
         [ClassData(typeof(HandleAsyncWithShoppingListsTestData))]
-        public async Task HandleAsync_WithItemOnShoppingLists_ShouldDeleteItemAndDispatchRemoveCommands(
+        public async Task HandleAsync_WithItemOnShoppingLists_ShouldDeleteItemAndRemoveItFromActiveShoppingLists(
             List<ShoppingListMock> shoppingListMocks)
         {
             // Arrange

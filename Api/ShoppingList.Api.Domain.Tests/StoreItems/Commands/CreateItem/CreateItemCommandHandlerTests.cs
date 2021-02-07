@@ -104,6 +104,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         }
 
         [Fact]
+        public async Task HandleAsync_WithInvalidStoreItemSection_ShouldThrowDomainException()
+        {
+            // todo implement
+        }
+
+        [Fact]
         public async Task HandleAsync_WithValidDataAndFilledManufacturerId_ShouldCreateItem()
         {
             // Arrange
@@ -203,7 +209,5 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                     Times.Once);
             }
         }
-
-        //todo: further tests
     }
 }

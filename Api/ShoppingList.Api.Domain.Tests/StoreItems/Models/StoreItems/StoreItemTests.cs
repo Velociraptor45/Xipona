@@ -48,7 +48,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         #region IsAvailableInStore
 
         [Fact]
-        public void IsAvailableInStore_WithNotAvailableInStore_ShouldReturnTrue()
+        public void IsAvailableInStore_WithNotAvailableInStore_ShouldReturnFalse()
         {
             // Arrange
             var availabilities = storeItemAvailabilityFixture.GetAvailabilities(4).ToList();
@@ -127,7 +127,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         #region Modify
 
         [Fact]
-        public void Modify_WithValidData_ShouldMakeItemPermanent()
+        public void Modify_WithValidData_ShouldModifyItem()
         {
             // Arrange
             Fixture fixture = commonFixture.GetNewFixture();
@@ -178,5 +178,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         }
 
         #endregion SetPredecessor
+
+        #region GetDefaultSectionForStore
+
+        // todo implement
+
+        #endregion GetDefaultSectionForStore
     }
 }
