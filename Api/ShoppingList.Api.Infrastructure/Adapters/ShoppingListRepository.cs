@@ -22,10 +22,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
     {
         private readonly ShoppingContext dbContext;
         private readonly IShoppingListFactory shoppingListFactory;
-        private readonly ISectionFactory sectionFactory;
+        private readonly IShoppingListSectionFactory sectionFactory;
 
         public ShoppingListRepository(ShoppingContext dbContext, IShoppingListFactory shoppingListFactory,
-            ISectionFactory sectionFactory)
+            IShoppingListSectionFactory sectionFactory)
         {
             this.dbContext = dbContext;
             this.shoppingListFactory = shoppingListFactory;
@@ -216,7 +216,13 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
         {
             return dbContext.ShoppingLists.AsNoTracking()
                 .Include(l => l.Store)
+                .ThenInclude(s => s.DefaultSection)
+                .Include(l => l.Store)
                 .ThenInclude(s => s.Sections)
+                .ThenInclude(s => s.ActualItemsSections)
+                .Include(l => l.Store)
+                .ThenInclude(s => s.Sections)
+                .ThenInclude(s => s.DefaultItemsInSection)
                 .Include(l => l.ItemsOnList)
                 .ThenInclude(map => map.Item)
                 .ThenInclude(item => item.Manufacturer)

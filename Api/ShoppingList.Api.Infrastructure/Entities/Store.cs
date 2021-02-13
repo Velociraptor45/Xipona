@@ -17,7 +17,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
         public int DefaultSectionId { get; set; }
 
         [ForeignKey("DefaultSectionId")]
-        public Section DefaultSection { get; set; }
+        public virtual Section DefaultSection { get; set; }
 
         public ICollection<AvailableAt> AvailableItems { get; set; }
         public ICollection<Section> Sections { get; set; }
