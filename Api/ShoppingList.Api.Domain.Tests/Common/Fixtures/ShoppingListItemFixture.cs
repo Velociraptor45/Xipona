@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,42 +15,23 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             this.commonFixture = commonFixture;
         }
 
-        public ShoppingListItem GetShoppingListItemWithId(ShoppingListItemId id)
+        public IShoppingListItem Create()
         {
-            var fixture = commonFixture.GetNewFixture();
-            fixture.Inject(id);
-            return fixture.Create<ShoppingListItem>();
+            return Create(new ShoppingListItemGenerationDefinition());
         }
 
-        public ShoppingListItem GetShoppingListItemWithId(int id)
+        public IShoppingListItem Create(int id)
         {
-            return GetShoppingListItemWithId(new ShoppingListItemId(id));
+            return Create(new ShoppingListItemId(id));
         }
 
-        public ShoppingListItem GetShoppingListItemWithId(Guid id)
+        public IShoppingListItem Create(ShoppingListItemId id)
         {
-            return GetShoppingListItemWithId(new ShoppingListItemId(id));
-        }
-
-        public ShoppingListItem GetShoppingListItemWithId()
-        {
-            return GetShoppingListItemWithId(commonFixture.NextInt());
-        }
-
-        public ShoppingListItem GetShoppingListItem(ShoppingListItemId id = null, bool? isInBasket = null,
-            bool? isTemporary = null, bool? isDeleted = null)
-        {
-            var fixture = commonFixture.GetNewFixture();
-            if (id != null)
-                fixture.ConstructorArgumentFor<ShoppingListItem, ShoppingListItemId>("id", id);
-            if (isInBasket.HasValue)
-                fixture.ConstructorArgumentFor<ShoppingListItem, bool>("isInBasket", isInBasket.Value);
-            if (isTemporary.HasValue)
-                fixture.ConstructorArgumentFor<ShoppingListItem, bool>("isTemporary", isTemporary.Value);
-            if (isDeleted.HasValue)
-                fixture.ConstructorArgumentFor<ShoppingListItem, bool>("isDeleted", isDeleted.Value);
-
-            return fixture.Create<ShoppingListItem>();
+            var definition = new ShoppingListItemGenerationDefinition
+            {
+                Id = id
+            };
+            return Create(definition);
         }
 
         public IShoppingListItem Create(ShoppingListItemGenerationDefinition definition)
@@ -67,17 +47,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             return fixture.Create<ShoppingListItem>();
         }
 
-        public IEnumerable<IShoppingListItem> CreateSpecialAndRandom(ShoppingListItemId id, bool? isInBasket = null,
-            bool? isTemporary = null, bool? isDeleted = null, int randomCount = 3)
-        {
-            IShoppingListItem special = GetShoppingListItem(id, isInBasket, isTemporary, isDeleted);
-            IEnumerable<IShoppingListItem> randoms = CreateMany(randomCount);
-
-            var result = randoms.ToList();
-            result.Add(special);
-            return result;
-        }
-
         public IEnumerable<IShoppingListItem> CreateMany(int count)
         {
             IEnumerable<int> uniqueIds = commonFixture.NextUniqueInts(count);
@@ -88,14 +57,25 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
         public IEnumerable<IShoppingListItem> CreateMany(IEnumerable<ShoppingListItemId> ids)
         {
             foreach (var id in ids)
-                yield return GetShoppingListItemWithId(id);
+                yield return Create(id);
         }
 
         public IShoppingListItem CreateUnique(IShoppingList shoppingList)
         {
             var usedItemIds = shoppingList.Items.Select(i => i.Id.Actual.Value);
             var itemId = commonFixture.NextInt(exclude: usedItemIds);
-            return GetShoppingListItemWithId(itemId);
+            return Create(itemId);
+        }
+
+        public IEnumerable<IShoppingListItem> CreateSpecialAndRandom(ShoppingListItemGenerationDefinition definition,
+            int randomCount = 3)
+        {
+            IShoppingListItem special = Create(definition);
+            IEnumerable<IShoppingListItem> randoms = CreateMany(randomCount);
+
+            var result = randoms.ToList();
+            result.Add(special);
+            return result;
         }
     }
 }

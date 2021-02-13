@@ -61,7 +61,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         {
             // Arrange
             var list = shoppingListFixture.Create();
-            var listItem = shoppingListItemFixture.GetShoppingListItemWithId(new ShoppingListItemId(Guid.NewGuid()));
+            var listItem = shoppingListItemFixture.Create(new ShoppingListItemId(Guid.NewGuid()));
             var sectionId = commonFixture.GetNewFixture().Create<ShoppingListSectionId>();
 
             // Act
@@ -83,7 +83,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             int collidingItemIndex = commonFixture.NextInt(0, shoppingList.Items.Count);
             int collidingItemId = shoppingList.Items.ElementAt(collidingItemIndex).Id.Actual.Value;
 
-            var collidingItem = shoppingListItemFixture.GetShoppingListItemWithId(
+            var collidingItem = shoppingListItemFixture.Create(
                 new ShoppingListItemId(collidingItemId));
             var sectionId = commonFixture.GetNewFixture().Create<ShoppingListSectionId>();
 
@@ -546,7 +546,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void SetCompletionDate_WithUncompletedShoppingList_ShouldSetCompletionDate()
         {
             // Arrange
-            var listDefinition = new ShoppingListGenerationDefinition() { UseCompletionDate = true, CompletionDate = null };
+            var listDefinition = new ShoppingListGenerationDefinition() { CompletionDate = null };
             var shoppingList = shoppingListFixture.Create(listDefinition);
 
             DateTime completionDate = commonFixture.GetNewFixture().Create<DateTime>();
@@ -565,11 +565,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void SetCompletionDate_WithCompletedShoppingList_ShouldSetCompletionDate()
         {
             // Arrange
-            var listDefinition = new ShoppingListGenerationDefinition()
-            {
-                UseCompletionDate = true,
-                CompletionDate = commonFixture.GetNewFixture().Create<DateTime>()
-            };
+            var listDefinition = new ShoppingListGenerationDefinition() { CompletionDate = commonFixture.GetNewFixture().Create<DateTime>() };
             var shoppingList = shoppingListFixture.Create(listDefinition);
 
             DateTime completionDate = commonFixture.GetNewFixture().Create<DateTime>();

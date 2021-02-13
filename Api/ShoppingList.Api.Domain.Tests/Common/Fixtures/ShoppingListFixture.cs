@@ -28,12 +28,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
 
         public IShoppingList Create(ShoppingListId id)
         {
-            var fixture = commonFixture.GetNewFixture();
             IEnumerable<IShoppingListSection> sections = shoppingListSectionFixture.CreateMany(3);
 
-            fixture.Inject(id);
-            fixture.Inject(sections);
-            return fixture.Create<Models.ShoppingList>();
+            var definition = new ShoppingListGenerationDefinition
+            {
+                Id = id,
+                Sections = sections
+            };
+
+            return Create(definition);
         }
 
         public IShoppingList Create(ShoppingListGenerationDefinition definition)

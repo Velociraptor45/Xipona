@@ -40,11 +40,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
 
         public IShoppingListSection Create(ShoppingListSectionId id, IEnumerable<IShoppingListItem> items)
         {
-            var fixture = commonFixture.GetNewFixture();
+            var definition = new ShoppingListSectionGenerationDefinition
+            {
+                Id = id,
+                Items = items
+            };
 
-            fixture.Inject(id);
-            fixture.Inject(items);
-            return fixture.Create<ShoppingListSection>();
+            return Create(definition);
         }
 
         public IShoppingListSection Create(ShoppingListSectionGenerationDefinition configuration)
