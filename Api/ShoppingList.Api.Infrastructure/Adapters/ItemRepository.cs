@@ -40,6 +40,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Section)
                 .FirstOrDefaultAsync(item => storeItemId.IsActualId ?
                     item.Id == storeItemId.Actual.Value :
                     item.CreatedFrom == storeItemId.Offline.Value);
@@ -67,6 +69,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Section)
                 .FirstOrDefaultAsync(item => storeItemId.IsActualId ?
                     item.Id == storeItemId.Actual.Value :
                     item.CreatedFrom == storeItemId.Offline.Value);
@@ -97,6 +101,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Section)
                 .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId.Value) != null)
                 .ToListAsync();
 
@@ -138,6 +144,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Section)
                 .Where(item =>
                     !item.IsTemporary
                     && itemCategoryIdLists.Contains(item.ItemCategoryId.Value)
@@ -172,6 +180,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Section)
                 .Where(item => item.Name.Contains(searchInput)
                     && !item.Deleted
                     && !item.IsTemporary
@@ -203,6 +213,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Section)
                 .Where(item => item.ItemCategoryId.HasValue
                     && item.ItemCategoryId == itemCategoryId.Value
                     && !item.Deleted)
