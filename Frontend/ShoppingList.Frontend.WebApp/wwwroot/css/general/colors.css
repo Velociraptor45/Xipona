@@ -21,3 +21,11 @@
 .white-bg {
     background-color: white;
 }
+
+.warning-bg {
+    background-color: #FFC401;
+}
+
+.warning-tx {
+    color: #162D5D;
+}
