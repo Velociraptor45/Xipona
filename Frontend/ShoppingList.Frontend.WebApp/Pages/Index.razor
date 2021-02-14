@@ -69,17 +69,25 @@
             <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
         }
     </div>
-    <ul class="p-0">
-        @foreach (var item in shoppingList.Items.Where(item => showItemsInBasket || !item.IsInBasket))
+    <div>
+        @foreach (var section in shoppingList.Sections.Where(s => s.Items.Any()))
         {
-            <ShoppingListItemComponent Item="@item"
-                                       ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
-                                       ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
-                                       ItemRemovedCallback="@OnItemRemovedFromListAsync"
-                                       IsInEditMode="@isInEditMode"
-                                       ItemPriceCalculationService="@itemPriceCalculationService"></ShoppingListItemComponent>
+            <div>
+                <div class="warning-bg warning-tx py-2 mb-1">@section.Name</div>
+                <ul class="pl-3">
+                    @foreach (var item in section.Items.Where(item => showItemsInBasket || !item.IsInBasket))
+                    {
+                        <ShoppingListItemComponent Item="@item"
+                                                   ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
+                                                   ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
+                                                   ItemRemovedCallback="@OnItemRemovedFromListAsync"
+                                                   IsInEditMode="@isInEditMode"
+                                                   ItemPriceCalculationService="@itemPriceCalculationService"></ShoppingListItemComponent>
+                    }
+                </ul>
+            </div>
         }
-    </ul>
+    </div>
     <div class="d-flex justify-content-end">
         <Button Type="primary"
                 OnClick="@OnFinishListButtonClicked"
@@ -99,7 +107,7 @@
 @code{
     private bool isDebug = false;
 
-    private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListItem>());
+    private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListSection>());
     private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>());
 
     private SearchBar searchBar = new SearchBar();
@@ -218,7 +226,7 @@
         commandQueue.Enqueue(createRequest);
         commandQueue.Enqueue(addRequest);
 
-        shoppingList.Items.Add(item);
+        shoppingList.AddItem(item, shoppingList.DefaultSectionId);
         StateHasChanged();
     }
 
@@ -347,7 +355,7 @@
 
     private async Task OnItemRemovedFromListAsync(ShoppingListItem item)
     {
-        shoppingList.Remove(item);
+        shoppingList.Remove(item.Id);
         var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id);
         await commandQueue.Enqueue(request);
     }
