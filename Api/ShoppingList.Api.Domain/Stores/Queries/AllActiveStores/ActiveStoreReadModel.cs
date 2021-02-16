@@ -1,5 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
+﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using System.Collections.Generic;
 using System.Linq;
 

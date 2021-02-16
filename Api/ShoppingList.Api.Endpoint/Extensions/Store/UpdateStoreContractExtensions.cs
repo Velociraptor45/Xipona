@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Store
 {
@@ -10,7 +11,8 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Store
         {
             return new StoreUpdate(
                 new StoreId(contract.Id),
-                contract.Name);
+                contract.Name,
+                contract.Sections.Select(s => s.ToDomain()));
         }
     }
 }

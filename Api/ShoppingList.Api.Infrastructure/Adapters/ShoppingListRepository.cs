@@ -6,7 +6,6 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
@@ -75,7 +74,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             return shoppingListFactory.Create(
                 new ShoppingListId(entity.Id),
-                entity.Store.ToDomain(),
+                entity.Store.ToCommonDomain(),
                 sections,
                 entity.CompletionDate);
         }
@@ -98,7 +97,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
                 return shoppingListFactory.Create(
                     new ShoppingListId(entity.Id),
-                    entity.Store.ToDomain(),
+                    entity.Store.ToCommonDomain(),
                     sections,
                     entity.CompletionDate);
             });
@@ -123,7 +122,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
                 return shoppingListFactory.Create(
                     new ShoppingListId(entity.Id),
-                    entity.Store.ToDomain(),
+                    entity.Store.ToCommonDomain(),
                     sections,
                     entity.CompletionDate);
             });
@@ -147,7 +146,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             return shoppingListFactory.Create(
                 new ShoppingListId(entity.Id),
-                entity.Store.ToDomain(),
+                entity.Store.ToCommonDomain(),
                 sections,
                 entity.CompletionDate);
         }

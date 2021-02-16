@@ -25,7 +25,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var store = storeFactory.Create(command.StoreCreationInfo.Id, command.StoreCreationInfo.Name, false);
+            var store = storeFactory.Create(command.StoreCreationInfo.Id, command.StoreCreationInfo.Name, false,
+                command.StoreCreationInfo.Sections);
 
             await storeRepository.StoreAsync(store, cancellationToken);
 

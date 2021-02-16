@@ -71,7 +71,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
             var availableAtStores = storeItem.Availabilities.Select(av => av.StoreId);
 
             var shoppingListsWithItem = (await shoppingListRepository.FindByAsync(storeItem.Id, cancellationToken))
-                .Where(list => !availableAtStores.Contains(list.Store.Id))
+                .Where(list => !availableAtStores.Contains(list.Store.Id.ToStoreItemStoreId()))
                 .ToList();
 
             using var transaction = await transactionGenerator.GenerateAsync(cancellationToken);
@@ -103,7 +103,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
                     throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
                 var section = sections[shortAvailability.StoreItemSectionId].First();
                 var availability = storeItemAvailabilityFactory
-                    .Create(shortAvailability.StoreId, shortAvailability.Price, section);
+                    .Create(shortAvailability.StoreId.ToStoreItemStoreId(), shortAvailability.Price, section);
                 availabilities.Add(availability);
             }
 

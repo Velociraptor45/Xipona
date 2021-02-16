@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch
             if (string.IsNullOrWhiteSpace(query.SearchInput))
                 return Enumerable.Empty<ItemSearchReadModel>();
 
-            var store = await storeRepository.FindByAsync(query.StoreId, cancellationToken);
+            var store = await storeRepository.FindByAsync(new Stores.Model.StoreId(query.StoreId.Value), cancellationToken);
             if (store == null)
                 throw new DomainException(new StoreNotFoundReason(query.StoreId));
 

@@ -29,13 +29,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores
 
             foreach (var store in activeStores)
             {
-                var items = await itemRepository.FindByAsync(store.Id, cancellationToken);
-                itemPerStoreDict.Add(store.Id, items.Select(i => i.ToReadModel()));
+                var storeId = new StoreId(store.Id.Value);
+                var items = await itemRepository.FindByAsync(storeId, cancellationToken);
+                itemPerStoreDict.Add(storeId, items.Select(i => i.ToReadModel()));
             }
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return activeStores.Select(store => store.ToActiveStoreReadModel(itemPerStoreDict[store.Id]));
+            return activeStores.Select(store => store.ToActiveStoreReadModel(itemPerStoreDict[new StoreId(store.Id.Value)]));
         }
     }
 }

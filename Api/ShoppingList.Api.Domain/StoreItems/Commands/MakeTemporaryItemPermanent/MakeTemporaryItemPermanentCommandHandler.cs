@@ -12,6 +12,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using StoreModels = ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent
 {
     public class MakeTemporaryItemPermanentCommandHandler : ICommandHandler<MakeTemporaryItemPermanentCommand, bool>
@@ -65,7 +67,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
                     throw new DomainException(new ManufacturerNotFoundReason(command.PermanentItem.ManufacturerId));
             }
 
-            IEnumerable<IStore> activeStores = await storeRepository.GetAsync(cancellationToken);
+            IEnumerable<StoreModels.IStore> activeStores = await storeRepository.GetAsync(cancellationToken);
             foreach (var availability in command.PermanentItem.Availabilities)
             {
                 if (!activeStores.Any(s => s.Id == availability.StoreId))
@@ -97,7 +99,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
                     throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
                 var section = sections[shortAvailability.StoreItemSectionId].First();
                 var availability = storeItemAvailabilityFactory
-                    .Create(shortAvailability.StoreId, shortAvailability.Price, section);
+                    .Create(shortAvailability.StoreId.ToStoreItemStoreId(), shortAvailability.Price, section);
                 availabilities.Add(availability);
             }
 

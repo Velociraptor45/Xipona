@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +11,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Ports
 
         Task<IStore> FindByAsync(StoreId id, CancellationToken cancellationToken);
 
-        Task<StoreId> StoreAsync(IStore store, CancellationToken cancellationToken);
+        Task StoreAsync(IStore store, CancellationToken cancellationToken);
+
         Task<IStore> FindActiveByAsync(StoreId id, CancellationToken cancellationToken);
     }
 }

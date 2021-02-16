@@ -21,7 +21,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore
                 throw new ArgumentNullException(nameof(command));
 
             var store = await storeRepository.FindByAsync(command.StoreUpdate.Id, cancellationToken);
+
             store.ChangeName(command.StoreUpdate.Name);
+            store.UpdateStores(command.StoreUpdate.Sections);
 
             cancellationToken.ThrowIfCancellationRequested();
 

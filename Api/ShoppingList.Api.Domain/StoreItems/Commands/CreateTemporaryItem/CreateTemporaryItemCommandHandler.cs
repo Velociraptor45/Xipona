@@ -37,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
                 throw new ArgumentNullException(nameof(command));
             }
 
-            var store = await storeRepository.FindByAsync(command.TemporaryItemCreation.Availability.StoreId,
+            var store = await storeRepository.FindByAsync(new Stores.Model.StoreId(command.TemporaryItemCreation.Availability.StoreId.Value),
                 cancellationToken);
             if (store == null || store.IsDeleted)
                 throw new DomainException(new StoreNotFoundReason(command.TemporaryItemCreation.Availability.StoreId));
@@ -50,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
                 throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
 
             IStoreItemAvailability storeItemAvailability = storeItemAvailabilityFactory
-                    .Create(shortAvailability.StoreId, shortAvailability.Price, section);
+                    .Create(shortAvailability.StoreId.ToStoreItemStoreId(), shortAvailability.Price, section);
 
             var storeItem = storeItemFactory.Create(command.TemporaryItemCreation, storeItemAvailability);
 
