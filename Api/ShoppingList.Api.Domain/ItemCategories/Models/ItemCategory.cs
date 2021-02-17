@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models
 {
     public class ItemCategory : IItemCategory
     {

@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions
 {
     public static class StoreExtensions
     {
-        public static CommonModels.StoreReadModel ToCommonStoreReadModel(this IShoppingListStore model)
+        public static StoreItems.Queries.SharedModels.StoreReadModel ToCommonStoreReadModel(this IShoppingListStore model)
         {
             return new CommonModels.StoreReadModel(model.Id, model.Name, model.IsDeleted);
         }

@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.Common.ReadModels;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 using StoreReadModels = ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.SharedModels;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Store

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Common.Ports
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports
 {
     public interface IStoreItemSectionReadRepository
     {

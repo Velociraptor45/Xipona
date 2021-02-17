@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 
 namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures

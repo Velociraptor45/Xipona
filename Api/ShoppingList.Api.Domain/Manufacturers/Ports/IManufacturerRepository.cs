@@ -1,9 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Common.Ports
+namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports
 {
     public interface IManufacturerRepository
     {

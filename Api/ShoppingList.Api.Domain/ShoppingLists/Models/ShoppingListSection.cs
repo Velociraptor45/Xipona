@@ -37,9 +37,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             shoppingListItems = updatedItems;
         }
 
-        public bool ContainsItem(ShoppingListItemId id)
+        public bool ContainsItem(ShoppingListItemId itemId)
         {
-            return shoppingListItems.Any(item => item.Id == id);
+            return shoppingListItems.Any(item => item.Id == itemId);
         }
 
         public void AddItem(IShoppingListItem item)

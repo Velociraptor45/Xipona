@@ -1,11 +1,12 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Common.Ports
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports
 {
     public interface IItemRepository
     {
@@ -21,7 +22,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Ports
 
         Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, ShoppingListStoreId storeId, CancellationToken cancellationToken);
 
-        Task<IStoreItem> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken);
         Task<IEnumerable<IStoreItem>> FindActiveByAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);
+
+        Task<IStoreItem> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken);
     }
 }

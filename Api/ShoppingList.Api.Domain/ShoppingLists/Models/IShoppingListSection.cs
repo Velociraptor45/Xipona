@@ -15,13 +15,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         void ChangeItemQuantity(ShoppingListItemId itemId, float quantity);
 
-        bool ContainsItem(ShoppingListItemId id);
+        bool ContainsItem(ShoppingListItemId itemId);
 
         void PutItemInBasket(ShoppingListItemId itemId);
 
         void RemoveItemFromBasket(ShoppingListItemId itemId);
 
-        void RemoveItem(ShoppingListItemId id);
+        void RemoveItem(ShoppingListItemId itemId);
 
         void RemoveAllItemsInBasket();
 

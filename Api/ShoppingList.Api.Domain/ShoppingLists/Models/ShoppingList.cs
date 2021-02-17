@@ -9,7 +9,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
     public class ShoppingList : IShoppingList
     {
-        private Dictionary<ShoppingListSectionId, IShoppingListSection> sections;
+        private readonly Dictionary<ShoppingListSectionId, IShoppingListSection> sections;
 
         public ShoppingList(ShoppingListId id, IShoppingListStore store, IEnumerable<IShoppingListSection> sections, DateTime? completionDate)
         {

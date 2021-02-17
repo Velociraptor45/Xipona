@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models
+namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models
 {
     public class ItemCategoryId : GenericPrimitive<int>
     {

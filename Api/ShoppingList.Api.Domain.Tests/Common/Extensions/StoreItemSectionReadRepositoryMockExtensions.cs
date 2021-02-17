@@ -1,6 +1,6 @@
 ﻿using Moq;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
