@@ -2,8 +2,8 @@
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterResults;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
@@ -13,7 +13,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions
 {
     public static class StoreItemExtensions
     {
-        public static ItemSearchReadModel ToItemSearchReadModel(this IStoreItem storeItem, StoreId storeId)
+        public static ItemSearchReadModel ToItemSearchReadModel(this IStoreItem storeItem, ShoppingListStoreId storeId)
         {
             IStoreItemAvailability storeAvailability = storeItem.Availabilities
                 .FirstOrDefault(av => av.StoreId == storeId);

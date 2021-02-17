@@ -7,6 +7,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryI
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
@@ -100,7 +101,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         public async Task<IActionResult> GetItemSearchResults([FromRoute(Name = "searchInput")] string searchInput,
             [FromRoute(Name = "storeId")] int storeId)
         {
-            var query = new ItemSearchQuery(searchInput, new StoreId(storeId));
+            var query = new ItemSearchQuery(searchInput, new ShoppingListStoreId(storeId));
 
             IEnumerable<ItemSearchReadModel> readModels;
             try
@@ -125,7 +126,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             [FromQuery] IEnumerable<int> manufacturerIds)
         {
             var query = new ItemFilterResultsQuery(
-                storeIds.Select(id => new StoreId(id)),
+                storeIds.Select(id => new ShoppingListStoreId(id)),
                 itemCategoryIds.Select(id => new ItemCategoryId(id)),
                 manufacturerIds.Select(id => new ManufacturerId(id)));
 

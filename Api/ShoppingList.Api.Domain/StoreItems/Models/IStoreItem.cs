@@ -24,9 +24,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 
         void Delete();
 
-        IStoreItemSection GetDefaultSectionForStore(StoreId storeId);
+        IStoreItemSection GetDefaultSectionForStore(StoreItemStoreId storeId);
 
-        bool IsAvailableInStore(StoreId storeId);
+        bool IsAvailableInStore(StoreItemStoreId storeId);
 
         void MakePermanent(PermanentItem permanentItem, IItemCategory itemCategory, IManufacturer manufacturer,
             IEnumerable<IStoreItemAvailability> availabilities);

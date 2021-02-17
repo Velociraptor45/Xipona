@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
@@ -74,7 +73,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             return shoppingListFactory.Create(
                 new ShoppingListId(entity.Id),
-                entity.Store.ToCommonDomain(),
+                entity.Store.ToShoppingListDomain(),
                 sections,
                 entity.CompletionDate);
         }
@@ -97,7 +96,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
                 return shoppingListFactory.Create(
                     new ShoppingListId(entity.Id),
-                    entity.Store.ToCommonDomain(),
+                    entity.Store.ToShoppingListDomain(),
                     sections,
                     entity.CompletionDate);
             });
@@ -122,13 +121,13 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
                 return shoppingListFactory.Create(
                     new ShoppingListId(entity.Id),
-                    entity.Store.ToCommonDomain(),
+                    entity.Store.ToShoppingListDomain(),
                     sections,
                     entity.CompletionDate);
             });
         }
 
-        public async Task<IShoppingList> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
+        public async Task<IShoppingList> FindActiveByAsync(ShoppingListStoreId storeId, CancellationToken cancellationToken)
         {
             if (storeId == null)
                 throw new ArgumentNullException(nameof(storeId));
@@ -146,7 +145,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             return shoppingListFactory.Create(
                 new ShoppingListId(entity.Id),
-                entity.Store.ToCommonDomain(),
+                entity.Store.ToShoppingListDomain(),
                 sections,
                 entity.CompletionDate);
         }

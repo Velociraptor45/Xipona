@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
@@ -56,7 +57,7 @@ namespace ShoppingList.Api.Domain.Models
             IsDeleted = true;
         }
 
-        public bool IsAvailableInStore(StoreId storeId)
+        public bool IsAvailableInStore(StoreItemStoreId storeId)
         {
             return Availabilities.FirstOrDefault(av => av.StoreId == storeId) != null;
         }
@@ -88,7 +89,7 @@ namespace ShoppingList.Api.Domain.Models
             this.availabilities = availabilities;
         }
 
-        public IStoreItemSection GetDefaultSectionForStore(StoreId storeId)
+        public IStoreItemSection GetDefaultSectionForStore(StoreItemStoreId storeId)
         {
             var availability = availabilities.FirstOrDefault(av => av.StoreId == storeId);
             if (availability == null)

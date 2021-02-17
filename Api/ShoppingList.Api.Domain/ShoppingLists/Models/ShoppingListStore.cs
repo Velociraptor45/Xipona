@@ -1,15 +1,15 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
-    public class Store : IStore
+    public class ShoppingListStore : IShoppingListStore
     {
-        public Store(StoreId id, string name, bool isDeleted)
+        public ShoppingListStore(ShoppingListStoreId id, string name, bool isDeleted)
         {
             Id = id;
             Name = name;
             IsDeleted = isDeleted;
         }
 
-        public StoreId Id { get; }
+        public ShoppingListStoreId Id { get; }
         public bool IsDeleted { get; }
 
         public string Name { get; private set; }

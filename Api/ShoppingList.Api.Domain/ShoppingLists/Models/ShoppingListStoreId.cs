@@ -1,11 +1,11 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
-    public class StoreId : GenericPrimitive<int>
+    public class ShoppingListStoreId : GenericPrimitive<int>
     {
-        public StoreId(int id)
+        public ShoppingListStoreId(int id)
             : base(id)
         {
         }

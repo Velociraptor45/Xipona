@@ -103,7 +103,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
                     throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
                 var section = sections[shortAvailability.StoreItemSectionId].First();
                 var availability = storeItemAvailabilityFactory
-                    .Create(shortAvailability.StoreId.ToStoreItemStoreId(), shortAvailability.Price, section);
+                    .Create(shortAvailability.StoreId, shortAvailability.Price, section);
                 availabilities.Add(availability);
             }
 

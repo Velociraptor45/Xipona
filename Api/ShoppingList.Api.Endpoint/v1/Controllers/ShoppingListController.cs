@@ -52,7 +52,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("active/{storeId}")]
         public async Task<IActionResult> GetActiveShoppingListByStoreId([FromRoute(Name = "storeId")] int storeId)
         {
-            var query = new ActiveShoppingListByStoreIdQuery(new StoreId(storeId));
+            var query = new ActiveShoppingListByStoreIdQuery(new ShoppingListStoreId(storeId));
             ShoppingListReadModel readModel;
             try
             {

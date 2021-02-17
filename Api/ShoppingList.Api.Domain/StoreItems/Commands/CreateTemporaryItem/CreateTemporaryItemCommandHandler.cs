@@ -50,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
                 throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
 
             IStoreItemAvailability storeItemAvailability = storeItemAvailabilityFactory
-                    .Create(shortAvailability.StoreId.ToStoreItemStoreId(), shortAvailability.Price, section);
+                    .Create(shortAvailability.StoreId, shortAvailability.Price, section);
 
             var storeItem = storeItemFactory.Create(command.TemporaryItemCreation, storeItemAvailability);
 

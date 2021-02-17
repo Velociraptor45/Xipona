@@ -1,6 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using System.Linq;
-using CommonModels = ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
 {
@@ -9,7 +9,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
         public static IStore ToDomain(this Infrastructure.Entities.Store entity)
         {
             return new Store(
-                new StoreId(entity.Id),
+                new Domain.Stores.Model.StoreId(entity.Id),
                 entity.Name,
                 entity.Deleted,
                 entity.Sections
@@ -20,10 +20,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
                         section.Id == entity.DefaultSectionId)));
         }
 
-        public static CommonModels.IStore ToCommonDomain(this Infrastructure.Entities.Store entity)
+        public static IShoppingListStore ToShoppingListDomain(this Infrastructure.Entities.Store entity)
         {
-            return new CommonModels.Store(
-                new CommonModels.StoreId(entity.Id),
+            return new ShoppingListStore(
+                new Domain.ShoppingLists.Models.ShoppingListStoreId(entity.Id),
                 entity.Name,
                 entity.Deleted);
         }

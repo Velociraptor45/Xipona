@@ -1,22 +1,28 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
-    public class StoreItemStoreId : GenericPrimitive<int>, IEqualityComparer<StoreId>
+    public class StoreItemStoreId : GenericPrimitive<int>, IEqualityComparer<ShoppingLists.Models.ShoppingListStoreId>
     {
         public StoreItemStoreId(int value) : base(value)
         {
         }
 
-        public StoreId ToShoppingListStoreId()
+        public ShoppingLists.Models.ShoppingListStoreId ToShoppingListStoreId()
         {
-            return new StoreId(Value);
+            return new ShoppingLists.Models.ShoppingListStoreId(Value);
         }
 
-        public bool Equals([AllowNull] StoreId x, [AllowNull] StoreId y)
+        public Stores.Model.StoreId AsStoreId()
+        {
+            return new Stores.Model.StoreId(Value);
+        }
+
+        public bool Equals([AllowNull] ShoppingLists.Models.ShoppingListStoreId x, [AllowNull] ShoppingLists.Models.ShoppingListStoreId y)
         {
             if (x is null)
                 return y is null;
@@ -26,7 +32,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             return x.Value == y.Value;
         }
 
-        public int GetHashCode([DisallowNull] StoreId obj)
+        public int GetHashCode([DisallowNull] ShoppingLists.Models.ShoppingListStoreId obj)
         {
             return obj.Value.GetHashCode();
         }

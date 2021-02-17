@@ -88,13 +88,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
                 IShoppingListItem shoppingListItem = list.Items
                     .First(i => i.Id == command.ItemUpdate.OldId.ToShoppingListItemId());
                 list.RemoveItem(shoppingListItem.Id);
-                if (updatedItem.IsAvailableInStore(list.Store.Id))
+                if (updatedItem.IsAvailableInStore(list.Store.Id.ToStoreItemStoreId()))
                 {
                     var priceAtStore = updatedItem.Availabilities
                         .First(av => av.StoreId == list.Store.Id)
                         .Price;
 
-                    var section = updatedItem.GetDefaultSectionForStore(list.Store.Id);
+                    var section = updatedItem.GetDefaultSectionForStore(list.Store.Id.ToStoreItemStoreId());
                     var updatedListItem = shoppingListItemFactory.Create(updatedItem, priceAtStore,
                         shoppingListItem.IsInBasket, shoppingListItem.Quantity);
                     list.AddItem(updatedListItem, section.Id.ToShoppingListSectionId());
@@ -122,7 +122,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
                     throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
                 var section = sections[shortAvailability.StoreItemSectionId].First();
                 var availability = storeItemAvailabilityFactory
-                    .Create(shortAvailability.StoreId.ToStoreItemStoreId(), shortAvailability.Price, section);
+                    .Create(shortAvailability.StoreId, shortAvailability.Price, section);
                 availabilities.Add(availability);
             }
 
