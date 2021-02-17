@@ -4,12 +4,11 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ShoppingList.Api.Domain.Models
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
     public class StoreItem : IStoreItem
     {

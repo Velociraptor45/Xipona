@@ -2,7 +2,6 @@
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem;
-using ShoppingList.Api.Domain.Models;
 using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
