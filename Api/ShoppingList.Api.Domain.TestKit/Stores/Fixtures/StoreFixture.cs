@@ -1,10 +1,11 @@
 ﻿using AutoFixture;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using ShoppingList.Api.Domain.TestKit.Shared;
 using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
+namespace ShoppingList.Api.Domain.TestKit.Stores.Fixtures
 {
     public class StoreFixture
     {

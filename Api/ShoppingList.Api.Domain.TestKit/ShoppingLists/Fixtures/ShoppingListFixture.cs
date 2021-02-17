@@ -1,12 +1,13 @@
 ﻿using AutoFixture;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ShoppingList.Api.Domain.TestKit.Shared;
 using System;
 using System.Collections.Generic;
 
-using Models = ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ListModels = ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
+namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 {
     public class ShoppingListFixture
     {
@@ -45,15 +46,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
                 definition.Sections = shoppingListSectionFixture.CreateMany(definition.SectionDefinitions);
 
             if (definition.Id != null)
-                fixture.ConstructorArgumentFor<Models.ShoppingList, ShoppingListId>("id", definition.Id);
+                fixture.ConstructorArgumentFor<ListModels.ShoppingList, ShoppingListId>("id", definition.Id);
             if (definition.Store != null)
-                fixture.ConstructorArgumentFor<Models.ShoppingList, IShoppingListStore>("store", definition.Store);
+                fixture.ConstructorArgumentFor<ListModels.ShoppingList, IShoppingListStore>("store", definition.Store);
             if (definition.Sections != null) //potential problem: duplicated section ids
-                fixture.ConstructorArgumentFor<Models.ShoppingList, IEnumerable<IShoppingListSection>>("sections", definition.Sections);
+                fixture.ConstructorArgumentFor<ListModels.ShoppingList, IEnumerable<IShoppingListSection>>("sections", definition.Sections);
             if (definition.UseCompletionDate)
-                fixture.ConstructorArgumentFor<Models.ShoppingList, DateTime?>("completionDate", definition.CompletionDate);
+                fixture.ConstructorArgumentFor<ListModels.ShoppingList, DateTime?>("completionDate", definition.CompletionDate);
 
-            return fixture.Create<Models.ShoppingList>();
+            return fixture.Create<ListModels.ShoppingList>();
         }
 
         public IEnumerable<IShoppingList> CreateMany(int count)

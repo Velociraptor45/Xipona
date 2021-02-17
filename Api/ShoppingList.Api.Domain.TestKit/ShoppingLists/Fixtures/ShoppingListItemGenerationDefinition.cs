@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
+namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 {
     public class ShoppingListItemGenerationDefinition
     {

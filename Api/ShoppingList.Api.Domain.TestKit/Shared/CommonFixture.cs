@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests
+namespace ShoppingList.Api.Domain.TestKit.Shared
 {
     public class CommonFixture
     {

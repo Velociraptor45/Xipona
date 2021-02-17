@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Shared;
 using Xunit;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Models

@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
+namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 {
     public class ShoppingListSectionGenerationDefinition
     {

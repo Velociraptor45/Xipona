@@ -2,7 +2,8 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
 using Xunit;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Stores.Models

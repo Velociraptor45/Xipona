@@ -1,7 +1,7 @@
 ﻿using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks
+namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Mocks
 {
     public class ItemCategoryMock : Mock<IItemCategory>
     {

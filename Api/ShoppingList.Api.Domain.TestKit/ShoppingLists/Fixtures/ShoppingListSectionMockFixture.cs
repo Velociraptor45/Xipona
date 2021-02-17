@@ -1,8 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks;
+﻿using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
+namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 {
     public class ShoppingListSectionMockFixture
     {

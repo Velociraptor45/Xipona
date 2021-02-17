@@ -1,9 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Mocks;
+using ShoppingList.Api.Domain.TestKit.Shared;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
+namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures
 {
     public class ItemCategoryMockFixture
     {

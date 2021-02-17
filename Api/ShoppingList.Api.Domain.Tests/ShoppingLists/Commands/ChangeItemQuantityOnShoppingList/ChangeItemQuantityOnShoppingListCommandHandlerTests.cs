@@ -8,7 +8,9 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeItemQua
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
