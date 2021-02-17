@@ -1,5 +1,4 @@
 ﻿using Moq;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using System.Collections.Generic;
@@ -21,7 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
             IStoreItemAvailability returnValue)
         {
             mock.Setup(i => i.Create(
-                        It.Is<StoreId>(id => id == returnValue.StoreId),
+                        It.Is<StoreItemStoreId>(id => id == returnValue.StoreId),
                         It.Is<float>(price => price == returnValue.Price),
                         It.Is<IStoreItemSection>(section => section == returnValue.DefaultSection)))
                     .Returns(returnValue);

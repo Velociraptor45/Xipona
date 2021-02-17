@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using System;
 using System.Collections.Generic;
 

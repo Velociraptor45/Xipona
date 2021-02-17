@@ -10,6 +10,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks;

@@ -1,5 +1,5 @@
 ﻿using AutoFixture;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
 using System.Collections.Generic;
@@ -41,11 +41,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             {
                 IStoreItemSection section = sectionsList[i];
                 int id = uniqueIds[i];
-                yield return GetAvailability(new StoreId(id), section);
+                yield return GetAvailability(new ShoppingListStoreId(id), section);
             }
         }
 
-        public IStoreItemAvailability GetAvailability(StoreId storeId, IStoreItemSection section)
+        public IStoreItemAvailability GetAvailability(ShoppingListStoreId storeId, IStoreItemSection section)
         {
             var fixture = commonFixture.GetNewFixture();
             fixture.Inject(storeId);
@@ -56,10 +56,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
         public IStoreItemAvailability GetAvailability(IStoreItemSection section)
         {
             int storeId = commonFixture.NextInt();
-            return GetAvailability(new StoreId(storeId), section);
+            return GetAvailability(new ShoppingListStoreId(storeId), section);
         }
 
-        public IStoreItemAvailability GetAvailability(StoreId storeId)
+        public IStoreItemAvailability GetAvailability(ShoppingListStoreId storeId)
         {
             var fixture = commonFixture.GetNewFixture();
             fixture.Inject(storeId);
@@ -68,7 +68,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
 
         public IStoreItemAvailability GetAvailability(int storeId)
         {
-            return GetAvailability(new StoreId(storeId));
+            return GetAvailability(new ShoppingListStoreId(storeId));
         }
 
         public IStoreItemAvailability GetAvailability()

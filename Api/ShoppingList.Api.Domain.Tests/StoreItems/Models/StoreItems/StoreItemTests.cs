@@ -58,7 +58,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
             var availabilityStoreIds = availabilities.Select(av => av.StoreId.Value).ToList();
 
             // Act
-            StoreId storeId = new StoreId(commonFixture.NextInt(availabilityStoreIds));
+            StoreItemStoreId storeId = new StoreItemStoreId(commonFixture.NextInt(availabilityStoreIds));
             bool result = storeItem.IsAvailableInStore(storeId);
 
             // Assert

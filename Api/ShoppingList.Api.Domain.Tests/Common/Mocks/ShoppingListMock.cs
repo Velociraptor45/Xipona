@@ -1,5 +1,4 @@
 ﻿using Moq;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks
@@ -18,7 +17,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks
                 .Returns(returnValue);
         }
 
-        public void SetupStore(IStore returnValue)
+        public void SetupStore(IShoppingListStore returnValue)
         {
             Setup(i => i.Store)
                 .Returns(returnValue);

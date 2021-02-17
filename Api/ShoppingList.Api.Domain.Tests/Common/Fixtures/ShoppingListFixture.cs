@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using System;
 using System.Collections.Generic;
@@ -48,7 +47,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures
             if (definition.Id != null)
                 fixture.ConstructorArgumentFor<Models.ShoppingList, ShoppingListId>("id", definition.Id);
             if (definition.Store != null)
-                fixture.ConstructorArgumentFor<Models.ShoppingList, IStore>("store", definition.Store);
+                fixture.ConstructorArgumentFor<Models.ShoppingList, IShoppingListStore>("store", definition.Store);
             if (definition.Sections != null) //potential problem: duplicated section ids
                 fixture.ConstructorArgumentFor<Models.ShoppingList, IEnumerable<IShoppingListSection>>("sections", definition.Sections);
             if (definition.UseCompletionDate)

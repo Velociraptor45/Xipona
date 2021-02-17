@@ -5,11 +5,11 @@ using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
 using System;
@@ -65,9 +65,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             var handler = fixture.Create<CreateTemporaryItemCommandHandler>();
             var command = fixture.Create<CreateTemporaryItemCommand>();
 
-            IStore store = storeFixture.GetStore(command.TemporaryItemCreation.Availability.StoreId, isDeleted: true);
+            IStore store = storeFixture.GetStore(command.TemporaryItemCreation.Availability.StoreId.AsStoreId(), isDeleted: true);
 
-            storeRepositoryMock.SetupFindByAsync(command.TemporaryItemCreation.Availability.StoreId, store);
+            storeRepositoryMock.SetupFindByAsync(command.TemporaryItemCreation.Availability.StoreId.AsStoreId(), store);
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -91,7 +91,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             var handler = fixture.Create<CreateTemporaryItemCommandHandler>();
             var command = fixture.Create<CreateTemporaryItemCommand>();
 
-            storeRepositoryMock.SetupFindByAsync(command.TemporaryItemCreation.Availability.StoreId, null);
+            storeRepositoryMock.SetupFindByAsync(command.TemporaryItemCreation.Availability.StoreId.AsStoreId(), null);
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -135,9 +135,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             availabilityFactoryMock.SetupCreate(availability);
 
             IStoreItem storeItem = storeItemFixture.GetStoreItem();
-            IStore store = storeFixture.GetStore(command.TemporaryItemCreation.Availability.StoreId, isDeleted: false);
+            IStore store = storeFixture.GetStore(command.TemporaryItemCreation.Availability.StoreId.AsStoreId(), isDeleted: false);
 
-            storeRepositoryMock.SetupFindByAsync(command.TemporaryItemCreation.Availability.StoreId, store);
+            storeRepositoryMock.SetupFindByAsync(command.TemporaryItemCreation.Availability.StoreId.AsStoreId(), store);
             storeItemFactoryMock.SetupCreate(command.TemporaryItemCreation, availability, storeItem);
 
             // Act
