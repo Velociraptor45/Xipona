@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.CreateItemCategory;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.DeleteItemCategory;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.AllActiveItemCategories;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.ItemCategorySearch;
 using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ItemCategory;

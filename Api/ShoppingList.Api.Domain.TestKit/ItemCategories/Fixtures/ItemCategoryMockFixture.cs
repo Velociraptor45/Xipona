@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Mocks;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using System.Collections.Generic;

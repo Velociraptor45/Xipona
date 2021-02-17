@@ -89,7 +89,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
 
             ShoppingListMock listMock = shoppingListMockFixture.Create();
             ShoppingListStoreId storeId = listMock.Object.Store.Id;
-            IStoreItemAvailability availability = storeItemAvailabilityFixture.GetAvailability(storeId);
+            IStoreItemAvailability availability = storeItemAvailabilityFixture.GetAvailability(storeId.ToStoreItemStoreId());
             IStoreItem storeItem = storeItemFixture.GetStoreItem(new StoreItemId(command.ShoppingListItemId.Offline.Value),
                 additionalAvailabilities: availability.ToMonoList());
             IShoppingListItem listItem = shoppingListItemFixture.Create();
@@ -128,7 +128,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
 
             ShoppingListMock listMock = shoppingListMockFixture.Create();
             ShoppingListStoreId storeId = listMock.Object.Store.Id;
-            IStoreItemAvailability availability = storeItemAvailabilityFixture.GetAvailability(storeId);
+            IStoreItemAvailability availability = storeItemAvailabilityFixture.GetAvailability(storeId.ToStoreItemStoreId());
             IStoreItem storeItem = storeItemFixture.GetStoreItem(new StoreItemId(command.ShoppingListItemId.Actual.Value),
                 additionalAvailabilities: availability.ToMonoList());
             IShoppingListItem listItem = shoppingListItemFixture.Create();
