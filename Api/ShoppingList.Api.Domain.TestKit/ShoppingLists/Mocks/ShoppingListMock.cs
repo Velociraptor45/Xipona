@@ -1,5 +1,7 @@
 ﻿using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using System;
+using System.Collections.Generic;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
 {
@@ -23,6 +25,12 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
                 .Returns(returnValue);
         }
 
+        public void SetupGetSectionsWithItemsNotInBasket(IEnumerable<IShoppingListSection> returnValue)
+        {
+            Setup(i => i.GetSectionsWithItemsNotInBasket())
+                .Returns(returnValue);
+        }
+
         public void VerifyRemoveItemOnce(ShoppingListItemId itemId)
         {
             Verify(i => i.RemoveItem(
@@ -35,6 +43,25 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
             Verify(i => i.AddItem(
                     It.Is<IShoppingListItem>(item => item == listItem),
                     It.Is<ShoppingListSectionId>(id => id == sectionId)),
+                Times.Once);
+        }
+
+        public void VerifySetCompletionDateOnce(DateTime completionDate)
+        {
+            Verify(i => i.SetCompletionDate(
+                    It.Is<DateTime>(date => date == completionDate)),
+                Times.Once);
+        }
+
+        public void VerifyGetSectionsWithItemsNotInBasketOnce()
+        {
+            Verify(i => i.GetSectionsWithItemsNotInBasket(),
+                Times.Once);
+        }
+
+        public void VerifyRemoveAllItemsNotInBasketOnce()
+        {
+            Verify(i => i.RemoveAllItemsNotInBasket(),
                 Times.Once);
         }
     }
