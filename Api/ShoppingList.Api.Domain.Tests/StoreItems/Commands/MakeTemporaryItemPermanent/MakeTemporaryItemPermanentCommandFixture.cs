@@ -2,8 +2,8 @@
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using System.Collections.Generic;
 
@@ -19,14 +19,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         }
 
         public MakeTemporaryItemPermanentCommand GetCommand(ManufacturerId manufacturerId,
-            IEnumerable<IStoreItemAvailability> availabilities = null)
+            IEnumerable<ShortAvailability> availabilities = null)
         {
             var fixture = commonFixture.GetNewFixture();
 
             fixture.ConstructorArgumentFor<PermanentItem, ManufacturerId>("manufacturerId", manufacturerId);
             if (availabilities != null)
             {
-                fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<IStoreItemAvailability>>(
+                fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<ShortAvailability>>(
                     "availabilities", availabilities);
             }
 

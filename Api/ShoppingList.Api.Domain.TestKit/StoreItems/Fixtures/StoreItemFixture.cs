@@ -40,6 +40,40 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             return fixture.Create<StoreItem>();
         }
 
+        public IStoreItem Create(StoreItemGenerationDefinition definition)
+        {
+            var fixture = commonFixture.GetNewFixture();
+
+            if (definition.Id != null)
+                fixture.ConstructorArgumentFor<StoreItem, StoreItemId>("id", definition.Id);
+            if (definition.IsDeleted.HasValue)
+                fixture.ConstructorArgumentFor<StoreItem, bool>("isDeleted", definition.IsDeleted.Value);
+            if (definition.IsTemporary.HasValue)
+                fixture.ConstructorArgumentFor<StoreItem, bool>("isTemporary", definition.IsTemporary.Value);
+
+            return fixture.Create<StoreItem>();
+        }
+
+        public IEnumerable<IStoreItem> CreateMany(IEnumerable<StoreItemGenerationDefinition> definitions)
+        {
+            var existingIds = definitions
+                .Where(def => def.Id != null)
+                .Select(d => d.Id.Actual.Value); // todo implement this for offline ids
+            var newIdCount = definitions.ToList().Count - existingIds.ToList().Count;
+            var newIds = commonFixture.NextUniqueInts(newIdCount, exclude: existingIds).ToList();
+
+            foreach (var definition in definitions)
+            {
+                if (definition.Id == null)
+                {
+                    definition.Id = new StoreItemId(newIds.First());
+                    newIds.RemoveAt(0);
+                }
+
+                yield return Create(definition);
+            }
+        }
+
         public IEnumerable<IStoreItem> GetStoreItems(int amount = 3, int availabilityCount = 3,
             bool? isTemporary = null, bool? isDeleted = null)
         {

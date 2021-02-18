@@ -13,6 +13,8 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
         public StoreItemMock(IStoreItem storeItem)
         {
             SetupId(storeItem.Id);
+            SetupIsTemporary(storeItem.IsTemporary);
+            SetupIsDeleted(storeItem.IsDeleted);
         }
 
         public void SetupId(StoreItemId returnValue)
@@ -24,6 +26,12 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
         public void SetupIsTemporary(bool returnValue)
         {
             Setup(i => i.IsTemporary)
+                .Returns(returnValue);
+        }
+
+        public void SetupIsDeleted(bool returnValue)
+        {
+            Setup(i => i.IsDeleted)
                 .Returns(returnValue);
         }
 

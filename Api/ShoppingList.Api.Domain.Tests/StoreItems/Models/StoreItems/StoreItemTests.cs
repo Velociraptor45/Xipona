@@ -104,7 +104,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
             PermanentItem permanentItem = fixture.Create<PermanentItem>();
             IManufacturer manufacturer = fixture.Create<IManufacturer>();
             IItemCategory itemCategory = fixture.Create<IItemCategory>();
-            IEnumerable<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.GetAvailabilities(4);
+            List<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.GetAvailabilities(4).ToList();
 
             // Act
             storeItem.MakePermanent(permanentItem, itemCategory, manufacturer, availabilities);
@@ -138,7 +138,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
             ItemModify itemModify = fixture.Create<ItemModify>();
             IManufacturer manufacturer = fixture.Create<IManufacturer>();
             IItemCategory itemCategory = fixture.Create<IItemCategory>();
-            IEnumerable<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.GetAvailabilities(4);
+            IEnumerable<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.GetAvailabilities(4).ToList();
 
             // Act
             storeItem.Modify(itemModify, itemCategory, manufacturer, availabilities);

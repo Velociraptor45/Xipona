@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Mocks;
 using System.Collections.Generic;
@@ -20,6 +21,16 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
         public StoreItemMock Create()
         {
             return CreateMany(1).First();
+        }
+
+        public StoreItemMock Create(StoreItemGenerationDefinition definition)
+        {
+            return CreateMany(definition.ToMonoList()).First();
+        }
+
+        public IEnumerable<StoreItemMock> CreateMany(IEnumerable<StoreItemGenerationDefinition> definitions)
+        {
+            return storeItemFixture.CreateMany(definitions).Select(item => new StoreItemMock(item));
         }
 
         public IEnumerable<StoreItemMock> CreateMany(int amount)

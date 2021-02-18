@@ -2,7 +2,6 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
-using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
@@ -131,11 +130,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             // setup sections
             StoreItemSectionId sectionId = command.TemporaryItemCreation.Availability.StoreItemSectionId;
             IStoreItemSection section = storeItemSectionFixture.Create(sectionId);
-            sectionReadRepositoryMock.SetupFindByAsync(sectionId.ToMonoList(), section.ToMonoList());
+            sectionReadRepositoryMock.SetupFindByAsync(sectionId, section);
 
             // setup availabilities
             IStoreItemAvailability availability = storeItemAvailabilityFixture.GetAvailability(section);
-            availabilityFactoryMock.SetupCreate(availability);
+            var tempAv = command.TemporaryItemCreation.Availability;
+            availabilityFactoryMock.SetupCreate(tempAv.StoreId, tempAv.Price, availability.DefaultSection, availability);
 
             IStoreItem storeItem = storeItemFixture.GetStoreItem();
             IStore store = storeFixture.GetStore(command.TemporaryItemCreation.Availability.StoreId.AsStoreId(), isDeleted: false);
