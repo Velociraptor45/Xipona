@@ -41,7 +41,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
         public IShoppingListSection Create(ShoppingListSectionId id, IEnumerable<IShoppingListItem> items)
         {
-            var definition = new ShoppingListSectionGenerationDefinition
+            var definition = new ShoppingListSectionDefinition
             {
                 Id = id,
                 Items = items
@@ -50,7 +50,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             return Create(definition);
         }
 
-        public IShoppingListSection Create(ShoppingListSectionGenerationDefinition configuration)
+        public IShoppingListSection Create(ShoppingListSectionDefinition configuration)
         {
             var fixture = commonFixture.GetNewFixture();
 
@@ -95,7 +95,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             return CreateMany(mappings);
         }
 
-        public IEnumerable<IShoppingListSection> CreateMany(IEnumerable<ShoppingListSectionGenerationDefinition> definitions)
+        public IEnumerable<IShoppingListSection> CreateMany(IEnumerable<ShoppingListSectionDefinition> definitions)
         {
             var existingIds = definitions
                 .Where(def => def.Id != null)
@@ -115,7 +115,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             }
         }
 
-        public IEnumerable<IShoppingListSection> CreateSpecialAndRandom(ShoppingListSectionGenerationDefinition definition, int randomCount = 3)
+        public IEnumerable<IShoppingListSection> CreateSpecialAndRandom(ShoppingListSectionDefinition definition, int randomCount = 3)
         {
             IShoppingListSection special = Create(definition);
             IEnumerable<IShoppingListSection> randoms = CreateMany(randomCount);

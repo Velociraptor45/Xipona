@@ -2,15 +2,15 @@
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
 {
-    public class StoreItemGenerationDefinition
+    public class StoreItemDefinition
     {
         public StoreItemId Id { get; set; }
         public bool? IsDeleted { get; set; }
         public bool? IsTemporary { get; set; }
 
-        public static StoreItemGenerationDefinition FromTemporary(bool isTemporary)
+        public static StoreItemDefinition FromTemporary(bool isTemporary)
         {
-            return new StoreItemGenerationDefinition
+            return new StoreItemDefinition
             {
                 IsTemporary = isTemporary
             };

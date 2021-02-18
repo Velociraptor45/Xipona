@@ -40,7 +40,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             return fixture.Create<StoreItem>();
         }
 
-        public IStoreItem Create(StoreItemGenerationDefinition definition)
+        public IStoreItem Create(StoreItemDefinition definition)
         {
             var fixture = commonFixture.GetNewFixture();
 
@@ -54,7 +54,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             return fixture.Create<StoreItem>();
         }
 
-        public IEnumerable<IStoreItem> CreateMany(IEnumerable<StoreItemGenerationDefinition> definitions)
+        public IEnumerable<IStoreItem> CreateMany(IEnumerable<StoreItemDefinition> definitions)
         {
             var existingIds = definitions
                 .Where(def => def.Id != null)

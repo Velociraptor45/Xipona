@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 {
-    public class ShoppingListGenerationDefinition
+    public class ShoppingListDefinition
     {
         private DateTime? completionDate;
 
         public ShoppingListId Id { get; set; }
         public IShoppingListStore Store { get; set; }
         public IEnumerable<IShoppingListSection> Sections { get; set; }
-        public IEnumerable<ShoppingListSectionGenerationDefinition> SectionDefinitions { get; set; }
+        public IEnumerable<ShoppingListSectionDefinition> SectionDefinitions { get; set; }
 
         public DateTime? CompletionDate
         {

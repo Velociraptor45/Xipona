@@ -104,9 +104,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void AddItem_WithNoDefaultSection_ShouldThrowDomainException()
         {
             // Arrange
-            var listDefinition = new ShoppingListGenerationDefinition()
+            var listDefinition = new ShoppingListDefinition()
             {
-                SectionDefinitions = new ShoppingListSectionGenerationDefinition() { IsDefaultSection = false }.ToMonoList()
+                SectionDefinitions = new ShoppingListSectionDefinition() { IsDefaultSection = false }.ToMonoList()
             };
             IShoppingList shoppingList = shoppingListFixture.Create(listDefinition);
             IShoppingListItem item = shoppingListItemFixture.CreateUnique(shoppingList);
@@ -147,7 +147,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Arrange
             var sections = shoppingListSectionMockFixture.CreateMany(3).ToList();
 
-            var listDefinition = new ShoppingListGenerationDefinition()
+            var listDefinition = new ShoppingListDefinition()
             {
                 Sections = sections.Select(s => s.Object)
             };
@@ -228,7 +228,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Arrange
             var sections = shoppingListSectionMockFixture.CreateMany(3).ToList();
 
-            var listDefinition = new ShoppingListGenerationDefinition()
+            var listDefinition = new ShoppingListDefinition()
             {
                 Sections = sections.Select(s => s.Object)
             };
@@ -317,7 +317,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Arrange
             var sections = shoppingListSectionMockFixture.CreateMany(3).ToList();
 
-            var listDefinition = new ShoppingListGenerationDefinition()
+            var listDefinition = new ShoppingListDefinition()
             {
                 Sections = sections.Select(s => s.Object)
             };
@@ -405,7 +405,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Arrange
             var sections = shoppingListSectionMockFixture.CreateMany(3).ToList();
 
-            var listDefinition = new ShoppingListGenerationDefinition()
+            var listDefinition = new ShoppingListDefinition()
             {
                 Sections = sections.Select(s => s.Object)
             };
@@ -512,7 +512,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Arrange
             var sections = shoppingListSectionMockFixture.CreateMany(3).ToList();
 
-            var listDefinition = new ShoppingListGenerationDefinition()
+            var listDefinition = new ShoppingListDefinition()
             {
                 Sections = sections.Select(s => s.Object)
             };
@@ -548,7 +548,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void SetCompletionDate_WithUncompletedShoppingList_ShouldSetCompletionDate()
         {
             // Arrange
-            var listDefinition = new ShoppingListGenerationDefinition() { CompletionDate = null };
+            var listDefinition = new ShoppingListDefinition() { CompletionDate = null };
             var shoppingList = shoppingListFixture.Create(listDefinition);
 
             DateTime completionDate = commonFixture.GetNewFixture().Create<DateTime>();
@@ -567,7 +567,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void SetCompletionDate_WithCompletedShoppingList_ShouldSetCompletionDate()
         {
             // Arrange
-            var listDefinition = new ShoppingListGenerationDefinition() { CompletionDate = commonFixture.GetNewFixture().Create<DateTime>() };
+            var listDefinition = new ShoppingListDefinition() { CompletionDate = commonFixture.GetNewFixture().Create<DateTime>() };
             var shoppingList = shoppingListFixture.Create(listDefinition);
 
             DateTime completionDate = commonFixture.GetNewFixture().Create<DateTime>();

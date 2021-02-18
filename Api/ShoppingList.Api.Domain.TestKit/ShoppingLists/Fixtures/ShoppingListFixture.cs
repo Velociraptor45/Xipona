@@ -30,7 +30,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
         {
             IEnumerable<IShoppingListSection> sections = shoppingListSectionFixture.CreateMany(3);
 
-            var definition = new ShoppingListGenerationDefinition
+            var definition = new ShoppingListDefinition
             {
                 Id = id,
                 Sections = sections
@@ -39,7 +39,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             return Create(definition);
         }
 
-        public IShoppingList Create(ShoppingListGenerationDefinition definition)
+        public IShoppingList Create(ShoppingListDefinition definition)
         {
             var fixture = commonFixture.GetNewFixture();
             if (definition.SectionDefinitions != null)

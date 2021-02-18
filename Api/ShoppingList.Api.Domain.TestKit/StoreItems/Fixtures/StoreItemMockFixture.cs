@@ -23,12 +23,12 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             return CreateMany(1).First();
         }
 
-        public StoreItemMock Create(StoreItemGenerationDefinition definition)
+        public StoreItemMock Create(StoreItemDefinition definition)
         {
             return CreateMany(definition.ToMonoList()).First();
         }
 
-        public IEnumerable<StoreItemMock> CreateMany(IEnumerable<StoreItemGenerationDefinition> definitions)
+        public IEnumerable<StoreItemMock> CreateMany(IEnumerable<StoreItemDefinition> definitions)
         {
             return storeItemFixture.CreateMany(definitions).Select(item => new StoreItemMock(item));
         }

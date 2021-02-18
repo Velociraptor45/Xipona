@@ -5,7 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 {
-    public class ShoppingListItemGenerationDefinition
+    public class ShoppingListItemDefinition
     {
         public ShoppingListItemId Id { get; set; }
         public string Name { get; set; }

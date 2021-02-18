@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 {
-    public class ShoppingListSectionGenerationDefinition
+    public class ShoppingListSectionDefinition
     {
         public ShoppingListSectionId Id { get; set; }
         public string Name { get; set; }

@@ -18,7 +18,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
         public IShoppingListItem Create()
         {
-            return Create(new ShoppingListItemGenerationDefinition());
+            return Create(new ShoppingListItemDefinition());
         }
 
         public IShoppingListItem Create(int id)
@@ -28,14 +28,14 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
         public IShoppingListItem Create(ShoppingListItemId id)
         {
-            var definition = new ShoppingListItemGenerationDefinition
+            var definition = new ShoppingListItemDefinition
             {
                 Id = id
             };
             return Create(definition);
         }
 
-        public IShoppingListItem Create(ShoppingListItemGenerationDefinition definition)
+        public IShoppingListItem Create(ShoppingListItemDefinition definition)
         {
             var fixture = commonFixture.GetNewFixture();
 
@@ -68,7 +68,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             return Create(itemId);
         }
 
-        public IEnumerable<IShoppingListItem> CreateSpecialAndRandom(ShoppingListItemGenerationDefinition definition,
+        public IEnumerable<IShoppingListItem> CreateSpecialAndRandom(ShoppingListItemDefinition definition,
             int randomCount = 3)
         {
             IShoppingListItem special = Create(definition);

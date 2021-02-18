@@ -250,7 +250,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
 
             var handler = fixture.Create<MakeTemporaryItemPermanentCommandHandler>();
 
-            StoreItemMock storeItemMock = storeItemMockFixture.Create(StoreItemGenerationDefinition.FromTemporary(true));
+            StoreItemMock storeItemMock = storeItemMockFixture.Create(StoreItemDefinition.FromTemporary(true));
             IItemCategory itemCategory = fixture.Create<IItemCategory>();
             IManufacturer manufacturer = fixture.Create<IManufacturer>();
 
