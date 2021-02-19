@@ -16,12 +16,14 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             Name = name;
             SortingIndex = sortingIndex;
             IsDefaultSection = isDefaultSection;
+            IsExpanded = true;
         }
 
         public int Id { get; }
         public string Name { get; }
         public int SortingIndex { get; }
         public bool IsDefaultSection { get; }
+        public bool IsExpanded { get; private set; }
         public IReadOnlyCollection<ShoppingListItem> Items => items.Values.ToList().AsReadOnly();
 
         public void RemoveItem(ItemId itemId)
@@ -38,6 +40,16 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
                 return;
 
             items.Add(item.Id, item);
+        }
+
+        public void Expand()
+        {
+            IsExpanded = true;
+        }
+
+        public void Close()
+        {
+            IsExpanded = false;
         }
     }
 }

@@ -72,20 +72,13 @@
     <div>
         @foreach (var section in shoppingList.Sections.Where(s => s.Items.Any()))
         {
-            <div>
-                <div class="warning-bg warning-tx py-2 mb-1">@section.Name</div>
-                <ul class="pl-3">
-                    @foreach (var item in section.Items.Where(item => showItemsInBasket || !item.IsInBasket))
-                    {
-                        <ShoppingListItemComponent Item="@item"
-                                                   ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
-                                                   ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
-                                                   ItemRemovedCallback="@OnItemRemovedFromListAsync"
-                                                   IsInEditMode="@isInEditMode"
-                                                   ItemPriceCalculationService="@itemPriceCalculationService"></ShoppingListItemComponent>
-                    }
-                </ul>
-            </div>
+            <Section Model="@section"
+                     ShowItemsInBasket="@showItemsInBasket"
+                     ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
+                     ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
+                     ItemRemovedCallback="@OnItemRemovedFromListAsync"
+                     IsInEditMode="@isInEditMode"
+                     ItemPriceCalculationService="@itemPriceCalculationService"></Section>
         }
     </div>
     <div class="d-flex justify-content-end">
