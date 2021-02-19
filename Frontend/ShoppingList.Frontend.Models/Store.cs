@@ -25,5 +25,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             Sections.ForEach(s => s.SetAsDefaultSection(false));
             section.SetAsDefaultSection(true);
         }
+
+        public void AddSection()
+        {
+            var section = new StoreSection(0, "", Sections.Max(s => s.SortingIndex) + 1, false);
+            Sections.Add(section);
+        }
     }
 }

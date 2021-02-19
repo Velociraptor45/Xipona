@@ -16,7 +16,9 @@
                 Sections
             </div>
             <div class="ml-2">
-                <Button Icon="plus" Class="align-items-center justify-content-center d-flex"></Button>
+                <Button Icon="plus"
+                        Class="align-items-center justify-content-center d-flex"
+                        OnClick="@OnAddSectionButtonClicked"></Button>
             </div>
         </div>
         @foreach (var section in Store.Sections)
@@ -72,5 +74,10 @@
     private void OnDefaultSectionChanged(int id)
     {
         Store.ChangeDefaultSection(id);
+    }
+
+    private void OnAddSectionButtonClicked()
+    {
+        Store.AddSection();
     }
 }
