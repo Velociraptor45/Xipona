@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Frontend.Models;
+using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contracts
 {
@@ -7,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contract
     {
         public static Store ToModel(this StoreContract contract)
         {
-            return new Store(contract.Id, contract.Name);
+            return new Store(contract.Id, contract.Name, Enumerable.Empty<StoreSection>());
         }
     }
 }

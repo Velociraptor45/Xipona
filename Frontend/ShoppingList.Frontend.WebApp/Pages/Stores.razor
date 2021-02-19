@@ -79,7 +79,7 @@
 
     private void OnCreateStoreButtonClicked()
     {
-        currentlyEditedStore = new Store(0, "");
+        currentlyEditedStore = new Store(0, "", Enumerable.Empty<StoreSection>());
     }
 
     private async Task OnStoreCreatedAsync(Store store)
