@@ -15,5 +15,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         public int Id { get; }
         public string Name { get; set; }
         public List<StoreSection> Sections { get; }
+
+        public void ChangeDefaultSection(int sectionId)
+        {
+            var section = Sections.FirstOrDefault(s => s.Id == sectionId);
+            if (section == null)
+                return;
+
+            Sections.ForEach(s => s.SetAsDefaultSection(false));
+            section.SetAsDefaultSection(true);
+        }
     }
 }
