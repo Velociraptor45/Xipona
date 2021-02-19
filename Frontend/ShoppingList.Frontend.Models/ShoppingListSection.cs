@@ -24,6 +24,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         public int SortingIndex { get; }
         public bool IsDefaultSection { get; }
         public bool IsExpanded { get; private set; }
+        public bool AllItemsInBasket => Items.All(i => i.IsInBasket);
+        public bool SomeItemsInBasket => !AllItemsInBasket && Items.Any(i => i.IsInBasket);
         public IReadOnlyCollection<ShoppingListItem> Items => items.Values.ToList().AsReadOnly();
 
         public void RemoveItem(ItemId itemId)
