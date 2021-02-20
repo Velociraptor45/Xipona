@@ -1,18 +1,44 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models;
 
 <div class="my-1 d-flex">
-    <Input @bind-Value="@Model.Name" />
-    <Button Icon="close"
-            Class="align-items-center justify-content-center d-flex"
-            OnClick="@OnRemoveButtonClicked"></Button>
+    <div class="d-flex mr-2">
+        <Button Icon="up" Class="align-items-center justify-content-center d-flex"
+                OnClick="@OnDecrementStortingIndexButtonClicked"
+                Disabled="@(Model.SortingIndex == ParentModel.MinSortingIndex)"></Button>
+        <Button Icon="down" Class="align-items-center justify-content-center d-flex"
+                OnClick="@OnIncrementStortingIndexButtonClicked"
+                Disabled="@(Model.SortingIndex == ParentModel.MaxSortingIndex)"></Button>
+    </div>
+    <div class="max-w-200">
+        <Input @bind-Value="@Model.Name" />
+    </div>
+    <div class="ml-2">
+        <Button Icon="close"
+                Class="align-items-center justify-content-center d-flex"
+                OnClick="@OnRemoveButtonClicked"></Button>
+    </div>
 </div>
 
 @code {
     [Parameter] public StoreSection Model { get; set; }
+    [Parameter] public Store ParentModel { get; set; }
     [Parameter] public EventCallback<StoreSection> OnSectionRemovedCallback { get; set; }
+    [Parameter] public Action StateChangedCallback { get; set; }
 
     public async Task OnRemoveButtonClicked()
     {
         await OnSectionRemovedCallback.InvokeAsync(Model);
+    }
+
+    public void OnIncrementStortingIndexButtonClicked()
+    {
+        ParentModel.IncrementSection(Model);
+        StateChangedCallback.Invoke();
+    }
+
+    public void OnDecrementStortingIndexButtonClicked()
+    {
+        ParentModel.DecrementSection(Model);
+        StateChangedCallback.Invoke();
     }
 }

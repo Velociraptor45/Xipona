@@ -24,6 +24,8 @@
         @foreach (var section in Store.Sections)
         {
             <Section Model="@section"
+                     ParentModel="@Store"
+                     StateChangedCallback="@OnStateChanged"
                      OnSectionRemovedCallback="@OnSectionRemoved"></Section>
         }
     </div>
@@ -83,5 +85,10 @@
     private void OnSectionRemoved(StoreSection section)
     {
         Store.Sections.Remove(section);
+    }
+
+    private void OnStateChanged()
+    {
+        StateHasChanged();
     }
 }
