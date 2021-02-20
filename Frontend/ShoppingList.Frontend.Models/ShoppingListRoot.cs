@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Comparer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,20 +8,20 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class ShoppingListRoot
     {
-        private readonly Dictionary<int, ShoppingListSection> sections;
+        private readonly SortedSet<ShoppingListSection> sections;
 
         public ShoppingListRoot(int id, DateTime? completionDate, Store store, IEnumerable<ShoppingListSection> sections)
         {
             Id = id;
             CompletionDate = completionDate;
             Store = store;
-            this.sections = sections.ToDictionary(s => s.Id);
+            this.sections = new SortedSet<ShoppingListSection>(sections, new SortingIndexComparer());
         }
 
         public int Id { get; }
         public DateTime? CompletionDate { get; }
         public Store Store { get; }
-        public IReadOnlyCollection<ShoppingListSection> Sections => sections.Values.ToList().AsReadOnly();
+        public IReadOnlyCollection<ShoppingListSection> Sections => sections.ToList().AsReadOnly();
         public IReadOnlyCollection<ShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
         public bool AnyItemInBasket => Items.Any(item => item.IsInBasket);
 
@@ -33,17 +34,16 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
 
         public void Remove(ItemId itemId)
         {
-            var section = sections.Values.FirstOrDefault(s => s.Items.Any(i => i.Id == itemId));
+            var section = sections.FirstOrDefault(s => s.Items.Any(i => i.Id == itemId));
 
-            section.RemoveItem(itemId);
+            section?.RemoveItem(itemId);
         }
 
         public void AddItem(ShoppingListItem item, int sectionId)
         {
-            if (!sections.TryGetValue(sectionId, out var section))
-                return;
+            var section = sections.FirstOrDefault(s => s.Id == sectionId);
 
-            section.AddItem(item);
+            section?.AddItem(item);
         }
     }
 }
