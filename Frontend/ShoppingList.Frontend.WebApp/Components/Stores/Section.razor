@@ -1,0 +1,18 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models;
+
+<div class="my-1 d-flex">
+    <Input @bind-Value="@Model.Name" />
+    <Button Icon="close"
+            Class="align-items-center justify-content-center d-flex"
+            OnClick="@OnRemoveButtonClicked"></Button>
+</div>
+
+@code {
+    [Parameter] public StoreSection Model { get; set; }
+    [Parameter] public EventCallback<StoreSection> OnSectionRemovedCallback { get; set; }
+
+    public async Task OnRemoveButtonClicked()
+    {
+        await OnSectionRemovedCallback.InvokeAsync(Model);
+    }
+}

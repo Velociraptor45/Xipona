@@ -23,9 +23,8 @@
         </div>
         @foreach (var section in Store.Sections)
         {
-            <div class="my-1">
-                <Input @bind-Value="@section.Name" />
-            </div>
+            <Section Model="@section"
+                     OnSectionRemovedCallback="@OnSectionRemoved"></Section>
         }
     </div>
 
@@ -79,5 +78,10 @@
     private void OnAddSectionButtonClicked()
     {
         Store.AddSection();
+    }
+
+    private void OnSectionRemoved(StoreSection section)
+    {
+        Store.Sections.Remove(section);
     }
 }
