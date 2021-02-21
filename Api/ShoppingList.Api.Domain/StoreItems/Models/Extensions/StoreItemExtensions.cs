@@ -16,7 +16,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions
         public static ItemSearchReadModel ToItemSearchReadModel(this IStoreItem storeItem, ShoppingListStoreId storeId)
         {
             IStoreItemAvailability storeAvailability = storeItem.Availabilities
-                .FirstOrDefault(av => av.Store == storeId);
+                .FirstOrDefault(av => av.Store.Id == storeId);
 
             if (storeAvailability == null)
                 throw new DomainException(new ItemAtStoreNotAvailableReason(storeItem.Id, storeId));
