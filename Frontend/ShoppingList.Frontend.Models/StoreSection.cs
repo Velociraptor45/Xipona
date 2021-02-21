@@ -1,4 +1,6 @@
-﻿namespace ProjectHermes.ShoppingList.Frontend.Models
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Items;
+
+namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class StoreSection
     {
@@ -23,6 +25,11 @@
         public void SetSortingIndex(int index)
         {
             SortingIndex = index;
+        }
+
+        public StoreItemSection AsStoreItemSection()
+        {
+            return new StoreItemSection(Id, Name, SortingIndex);
         }
     }
 }

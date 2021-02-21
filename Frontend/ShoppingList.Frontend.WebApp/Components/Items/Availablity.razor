@@ -41,13 +41,12 @@
         OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
         OneOf<SelectOption, IEnumerable<SelectOption>> option)
     {
-        //todo make less ugly
         var storeId = int.Parse(value.AsT0);
         var store = Stores.Single(s => s.Id == storeId);
-        Availability.Store = new StoreItemStore(store.Id, store.Name, store.Sections.Select(s => new StoreItemSection(s.Id, s.Name, s.SortingIndex)));
+        Availability.Store = store.AsStoreItemStore();
 
         var defaultSection = store.Sections.Single(s => s.IsDefaultSection);
-        Availability.ChangeDefaultSection(new StoreItemSection(defaultSection.Id, defaultSection.Name, defaultSection.SortingIndex));
+        Availability.ChangeDefaultSection(defaultSection.AsStoreItemSection());
         StateHasChanged();
     }
 

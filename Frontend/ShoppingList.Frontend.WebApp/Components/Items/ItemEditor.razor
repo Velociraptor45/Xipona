@@ -222,15 +222,13 @@
             return null;
 
         var availableStoreId = allStoreIds.Except(registeredStoreIds).First();
-        var availableStore = Stores.Single(s => s.Id == availableStoreId);
-        return new StoreItemStore(availableStore.Id, availableStore.Name,
-            availableStore.Sections.Select(s => new StoreItemSection(s.Id, s.Name, s.SortingIndex)));
+        return Stores.Single(s => s.Id == availableStoreId).AsStoreItemStore();
     }
 
     private StoreItemSection GetSectionForStoreId(int storeId)
     {
         var section = Stores.Single(s => s.Id == storeId).Sections.Single(s => s.IsDefaultSection);
-        return new StoreItemSection(section.Id, section.Name, section.SortingIndex);
+        return section.AsStoreItemSection();
     }
 
     private IEnumerable<int> GetRegisteredStoreIds(StoreItem storeItem)
@@ -241,7 +239,7 @@
     private IEnumerable<int> GetDisabledStoresForAvailabilityByIndex(int availabilityIndex)
     {
         return GetRegisteredStoreIds(StoreItem)
-            .Except(new List<int>() { StoreItem.Availabilities[availabilityIndex].Store.Id });
+            .Except(new[] { StoreItem.Availabilities[availabilityIndex].Store.Id });
     }
 
     private QuantityType GetQuantityTypeById(int id)

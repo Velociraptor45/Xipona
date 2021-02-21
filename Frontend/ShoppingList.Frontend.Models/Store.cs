@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Stores.Comparer;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Items;
+using ProjectHermes.ShoppingList.Frontend.Models.Stores.Comparer;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -75,6 +76,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             {
                 sections[i].SetSortingIndex(i);
             }
+        }
+
+        public StoreItemStore AsStoreItemStore()
+        {
+            return new StoreItemStore(Id, Name, Sections.Select(s => s.AsStoreItemSection()));
         }
     }
 }
