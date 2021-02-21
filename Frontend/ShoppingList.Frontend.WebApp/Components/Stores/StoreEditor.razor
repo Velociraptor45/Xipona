@@ -35,7 +35,7 @@
         <SingleSelect DefaultValue="@Store.Sections.First(s => s.IsDefaultSection).Id.ToString()"
                       CanAddItem="false"
                       AllowClear="false"
-                      IdToNameMaps="@Store.Sections.Select(s => new Tuple<int, string>(s.Id, s.Name)).ToList()"
+                      IdToNameMaps="@Store.Sections.OrderBy(s => s.Name).Select(s => new Tuple<int, string>(s.Id, s.Name)).ToList()"
                       OnChangeCallback="@OnDefaultSectionChanged"></SingleSelect>
     </div>
 
