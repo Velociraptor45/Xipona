@@ -42,6 +42,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .ThenInclude(store => store.Sections)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Section)
                 .FirstOrDefaultAsync(item => storeItemId.IsActualId ?
@@ -71,6 +72,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .ThenInclude(store => store.Sections)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Section)
                 .FirstOrDefaultAsync(item => storeItemId.IsActualId ?
@@ -103,6 +105,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .ThenInclude(store => store.Sections)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Section)
                 .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId.Value) != null)
@@ -146,6 +149,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .ThenInclude(store => store.Sections)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Section)
                 .Where(item =>
@@ -182,6 +186,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .ThenInclude(store => store.Sections)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Section)
                 .Where(item => item.Name.Contains(searchInput)
@@ -215,6 +220,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .ThenInclude(store => store.Sections)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Section)
                 .Where(item => item.ItemCategoryId.HasValue
