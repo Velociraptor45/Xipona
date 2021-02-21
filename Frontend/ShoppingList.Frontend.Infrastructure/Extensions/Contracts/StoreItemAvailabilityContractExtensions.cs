@@ -7,7 +7,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contract
     {
         public static StoreItemAvailability ToModel(this StoreItemAvailabilityContract contract)
         {
-            return new StoreItemAvailability(contract.StoreId, contract.Price);
+            return new StoreItemAvailability(contract.Store.ToContract(), contract.Price,
+                contract.DefaultSection.ToContract());
         }
     }
 }

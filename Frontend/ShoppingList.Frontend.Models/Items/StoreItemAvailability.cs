@@ -2,13 +2,20 @@
 {
     public class StoreItemAvailability
     {
-        public StoreItemAvailability(int storeId, float pricePerQuantity)
+        public StoreItemAvailability(StoreItemStore store, float pricePerQuantity, StoreItemSection defaultSection)
         {
-            StoreId = storeId;
+            Store = store;
             PricePerQuantity = pricePerQuantity;
+            DefaultSection = defaultSection;
         }
 
-        public int StoreId { get; set; }
+        public StoreItemStore Store { get; set; }
         public float PricePerQuantity { get; set; }
+        public StoreItemSection DefaultSection { get; set; }
+
+        public void ChangeDefaultSection(StoreItemSection section)
+        {
+            DefaultSection = section;
+        }
     }
 }
