@@ -57,7 +57,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
             IStoreItem storeItem = storeItemFixture.GetStoreItem(
                 availabilityCount: 0,
                 additionalAvailabilities: availabilities);
-            var availabilityStoreIds = availabilities.Select(av => av.StoreId.Value).ToList();
+            var availabilityStoreIds = availabilities.Select(av => av.Store.Id.Value).ToList();
 
             // Act
             StoreItemStoreId storeId = new StoreItemStoreId(commonFixture.NextInt(availabilityStoreIds));
@@ -78,7 +78,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
             IStoreItem storeItem = storeItemFixture.GetStoreItem(
                 availabilityCount: 0,
                 additionalAvailabilities: availabilities);
-            var availabilityStoreIds = availabilities.Select(av => av.StoreId).ToList();
+            var availabilityStoreIds = availabilities.Select(av => av.Store.Id).ToList();
 
             // Act
             int storeIdIndex = commonFixture.NextInt(0, availabilityStoreIds.Count - 1);

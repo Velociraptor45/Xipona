@@ -132,13 +132,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             IStoreItemSection section = storeItemSectionFixture.Create(sectionId);
             sectionReadRepositoryMock.SetupFindByAsync(sectionId, section);
 
+            IStoreItem storeItem = storeItemFixture.GetStoreItem();
+            IStore store = storeFixture.GetStore(command.TemporaryItemCreation.Availability.StoreId.AsStoreId(), isDeleted: false);
+
             // setup availabilities
             IStoreItemAvailability availability = storeItemAvailabilityFixture.GetAvailability(section);
             var tempAv = command.TemporaryItemCreation.Availability;
-            availabilityFactoryMock.SetupCreate(tempAv.StoreId, tempAv.Price, availability.DefaultSection, availability);
-
-            IStoreItem storeItem = storeItemFixture.GetStoreItem();
-            IStore store = storeFixture.GetStore(command.TemporaryItemCreation.Availability.StoreId.AsStoreId(), isDeleted: false);
+            availabilityFactoryMock.SetupCreate(store, tempAv.Price, availability.DefaultSection, availability);
 
             storeRepositoryMock.SetupFindByAsync(command.TemporaryItemCreation.Availability.StoreId.AsStoreId(), store);
             storeItemFactoryMock.SetupCreate(command.TemporaryItemCreation, availability, storeItem);
@@ -150,6 +150,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
+                storeRepositoryMock.VerifyFindByAsyncOnce(tempAv.StoreId.AsStoreId());
+                availabilityFactoryMock.VerifyCreateOnce(store, tempAv.Price, availability.DefaultSection);
                 itemRepositoryMock.Verify(
                     i => i.StoreAsync(It.Is<IStoreItem>(item => item == storeItem),
                     It.IsAny<CancellationToken>()),

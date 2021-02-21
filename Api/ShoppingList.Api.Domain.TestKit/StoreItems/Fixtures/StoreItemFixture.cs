@@ -24,7 +24,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             bool? isTemporary = null, bool? isDeleted = null)
         {
             var allAvailabilities = additionalAvailabilities?.ToList() ?? new List<IStoreItemAvailability>();
-            var additionalStoreIds = allAvailabilities.Select(av => av.StoreId.Value);
+            var additionalStoreIds = allAvailabilities.Select(av => av.Store.Id.Value);
             var uniqueStoreItemAvailabilities = GetUniqueStoreItemAvailabilities(availabilityCount, additionalStoreIds);
             allAvailabilities.AddRange(uniqueStoreItemAvailabilities);
             allAvailabilities.Shuffle();

@@ -262,10 +262,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
 
             // setup availabilities
             List<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.GetAvailabilities(sections).ToList();
+            List<IStore> stores = storeFixture.GetStores(availabilities.Count).ToList();
             for (int i = 0; i < availabilities.Count; i++)
             {
                 var shortAv = command.PermanentItem.Availabilities.ElementAt(i);
-                availabilityFactoryMock.SetupCreate(shortAv.StoreId, shortAv.Price, availabilities[i].DefaultSection, availabilities[i]);
+                var store = stores[i];
+                storeRepositoryMock.SetupFindActiveByAsync(shortAv.StoreId.AsStoreId(), store);
+                availabilityFactoryMock.SetupCreate(store, shortAv.Price, availabilities[i].DefaultSection, availabilities[i]);
             }
 
             itemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, storeItemMock.Object);
@@ -286,6 +289,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
                         It.Is<IStoreItem>(item => item == storeItemMock.Object),
                         It.IsAny<CancellationToken>()),
                     Times.Once);
+                foreach (var av in command.PermanentItem.Availabilities)
+                {
+                    storeRepositoryMock.VerifyFindActiveByAsyncOnce(av.StoreId.AsStoreId());
+                }
             }
         }
 
@@ -299,7 +306,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
                 availabilities.Add(storeItemAvailabilityFixture.GetAvailability(id));
             }
             return makeTemporaryItemPermanentCommandFixture.GetCommand(manufacturerId,
-                availabilities.Select(av => new ShortAvailability(av.StoreId, av.Price, av.DefaultSection.Id)).ToList());
+                availabilities.Select(av => new ShortAvailability(av.Store.Id, av.Price, av.DefaultSection.Id)).ToList());
         }
     }
 }
