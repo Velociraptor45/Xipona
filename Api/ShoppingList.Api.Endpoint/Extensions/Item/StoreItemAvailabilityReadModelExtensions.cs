@@ -7,7 +7,8 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Item
     {
         public static StoreItemAvailabilityContract ToContract(this StoreItemAvailabilityReadModel readModel)
         {
-            return new StoreItemAvailabilityContract(readModel.Store.ToContract(), readModel.Price);
+            return new StoreItemAvailabilityContract(readModel.Store.ToContract(), readModel.Price,
+                readModel.DefaultSection.ToContract());
         }
     }
 }
