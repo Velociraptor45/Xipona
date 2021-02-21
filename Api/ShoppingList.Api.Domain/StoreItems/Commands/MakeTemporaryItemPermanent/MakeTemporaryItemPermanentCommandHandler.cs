@@ -101,8 +101,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
                 if (!sections.Contains(shortAvailability.StoreItemSectionId))
                     throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
                 var section = sections[shortAvailability.StoreItemSectionId].First();
+                var store = await storeRepository.FindActiveByAsync(shortAvailability.StoreId.AsStoreId(), cancellationToken);
                 var availability = storeItemAvailabilityFactory
-                    .Create(shortAvailability.StoreId, shortAvailability.Price, section);
+                    .Create(store, shortAvailability.Price, section);
                 availabilities.Add(availability);
             }
 

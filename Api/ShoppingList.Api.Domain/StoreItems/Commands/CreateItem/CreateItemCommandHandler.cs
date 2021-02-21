@@ -9,6 +9,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,11 +25,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
         private readonly IItemCategoryRepository itemCategoryRepository;
         private readonly IStoreItemFactory storeItemFactory;
         private readonly IStoreItemAvailabilityFactory storeItemAvailabilityFactory;
+        private readonly IStoreRepository storeRepository;
         private readonly IStoreItemSectionReadRepository storeItemSectionReadRepository;
 
         public CreateItemCommandHandler(IItemRepository itemRepository, IManufacturerRepository manufacturerRepository,
             IItemCategoryRepository itemCategoryRepository, IStoreItemFactory storeItemFactory,
-            IStoreItemAvailabilityFactory storeItemAvailabilityFactory,
+            IStoreItemAvailabilityFactory storeItemAvailabilityFactory, IStoreRepository storeRepository,
             IStoreItemSectionReadRepository storeItemSectionReadRepository)
         {
             this.itemRepository = itemRepository;
@@ -36,6 +38,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
             this.itemCategoryRepository = itemCategoryRepository;
             this.storeItemFactory = storeItemFactory;
             this.storeItemAvailabilityFactory = storeItemAvailabilityFactory;
+            this.storeRepository = storeRepository;
             this.storeItemSectionReadRepository = storeItemSectionReadRepository;
         }
 
@@ -84,8 +87,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
                 if (!sections.Contains(shortAvailability.StoreItemSectionId))
                     throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
                 var section = sections[shortAvailability.StoreItemSectionId].First();
+                var store = await storeRepository.FindActiveByAsync(shortAvailability.StoreId.AsStoreId(), cancellationToken);
                 var availability = storeItemAvailabilityFactory
-                    .Create(shortAvailability.StoreId, shortAvailability.Price, section);
+                    .Create(store, shortAvailability.Price, section);
                 availabilities.Add(availability);
             }
 

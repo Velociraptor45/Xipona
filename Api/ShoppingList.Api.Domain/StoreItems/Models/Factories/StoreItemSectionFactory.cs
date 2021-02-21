@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using System;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
 {
@@ -17,6 +18,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
             }
 
             return new StoreItemSection(id, name, sortIndex);
+        }
+
+        public IStoreItemSection Create(IStoreSection section)
+        {
+            return Create(section.Id.AsStoreItemSectionId(), section.Name, section.SortingIndex);
         }
     }
 }

@@ -3,7 +3,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using System;
@@ -60,7 +59,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 
         public bool IsAvailableInStore(StoreItemStoreId storeId)
         {
-            return Availabilities.FirstOrDefault(av => av.StoreId == storeId) != null;
+            return Availabilities.FirstOrDefault(av => av.Store.Id == storeId) != null;
         }
 
         public void MakePermanent(PermanentItem permanentItem, IItemCategory itemCategory, IManufacturer manufacturer,
@@ -92,7 +91,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 
         public IStoreItemSection GetDefaultSectionForStore(StoreItemStoreId storeId)
         {
-            var availability = availabilities.FirstOrDefault(av => av.StoreId == storeId);
+            var availability = availabilities.FirstOrDefault(av => av.Store.Id == storeId);
             if (availability == null)
                 throw new DomainException(new ItemAtStoreNotAvailableReason(Id, storeId));
 

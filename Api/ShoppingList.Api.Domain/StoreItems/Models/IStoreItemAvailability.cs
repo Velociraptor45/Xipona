@@ -2,7 +2,7 @@
 {
     public interface IStoreItemAvailability
     {
-        StoreItemStoreId StoreId { get; }
+        IStoreItemStore Store { get; }
         float Price { get; }
         IStoreItemSection DefaultSection { get; }
     }
