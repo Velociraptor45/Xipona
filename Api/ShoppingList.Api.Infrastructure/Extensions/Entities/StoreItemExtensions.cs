@@ -28,7 +28,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
                 entity.AvailableAt.Select(map => new StoreItemAvailability(
                     map.Store.ToStoreItemDomain(),
                     map.Price,
-                    map.Section.ToStoreItemSectionDomain())));
+                    map.Section?.ToStoreItemSectionDomain())));
 
             model.SetPredecessor(entity.Predecessor?.ToStoreItemDomain());
             return model;

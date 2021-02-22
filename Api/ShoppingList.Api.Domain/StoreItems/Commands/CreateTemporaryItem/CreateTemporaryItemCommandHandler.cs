@@ -44,14 +44,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
                 throw new DomainException(new StoreNotFoundReason(command.TemporaryItemCreation.Availability.StoreId));
 
             ShortAvailability shortAvailability = command.TemporaryItemCreation.Availability;
-            IStoreItemSection section = await storeItemSectionReadRepository
-                .FindByAsync(shortAvailability.StoreItemSectionId, cancellationToken);
+            //IStoreItemSection section = await storeItemSectionReadRepository
+            //    .FindByAsync(shortAvailability.StoreItemSectionId, cancellationToken);
 
-            if (section == null)
-                throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
+            //if (section == null)
+            //    throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
 
             IStoreItemAvailability storeItemAvailability = storeItemAvailabilityFactory
-                    .Create(store, shortAvailability.Price, section);
+                    .Create(store, shortAvailability.Price, null);
 
             var storeItem = storeItemFactory.Create(command.TemporaryItemCreation, storeItemAvailability);
 
