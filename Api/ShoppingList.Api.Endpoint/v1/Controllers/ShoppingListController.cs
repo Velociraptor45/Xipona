@@ -6,7 +6,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBa
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishShoppingList;
@@ -118,7 +117,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             var command = new AddItemToShoppingListCommand(
                 new ShoppingListId(contract.ShoppingListId),
                 itemId,
-                new ShoppingListSectionId(contract.SectionId),
+                contract.SectionId.HasValue ? new ShoppingListSectionId(contract.SectionId.Value) : null,
                 contract.Quantity);
 
             try

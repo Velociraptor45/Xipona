@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
         {
             ShoppingListId = shoppingListId ?? throw new ArgumentNullException(nameof(shoppingListId));
             ShoppingListItemId = shoppingListItemId ?? throw new ArgumentNullException(nameof(shoppingListItemId));
-            SectionId = sectionId ?? throw new ArgumentNullException(nameof(sectionId));
+            SectionId = sectionId;
             Quantity = quantity;
         }
 
