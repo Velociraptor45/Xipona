@@ -77,7 +77,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
             var availableAtStores = storeItem.Availabilities.Select(av => av.Store);
 
             var shoppingListsWithItem = (await shoppingListRepository.FindByAsync(storeItem.Id, cancellationToken))
-                .Where(list => !availableAtStores.Any(store => store.Id == list.Store.Id.ToStoreItemStoreId()))
+                .Where(list => !availableAtStores.Any(store => store.Id == list.Store.Id.AsStoreItemStoreId()))
                 .ToList();
 
             using var transaction = await transactionGenerator.GenerateAsync(cancellationToken);

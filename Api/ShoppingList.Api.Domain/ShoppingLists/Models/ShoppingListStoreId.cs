@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         {
         }
 
-        public StoreItemStoreId ToStoreItemStoreId()
+        public StoreItemStoreId AsStoreItemStoreId()
         {
             return new StoreItemStoreId(Value);
         }

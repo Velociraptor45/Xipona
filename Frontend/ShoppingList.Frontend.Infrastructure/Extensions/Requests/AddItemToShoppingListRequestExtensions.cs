@@ -12,6 +12,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests
             {
                 ShoppingListId = contract.ShoppingListId,
                 ItemId = contract.ItemId.ToContract(),
+                SectionId = 
                 Quantity = contract.Quantity
             };
         }

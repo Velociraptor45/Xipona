@@ -17,9 +17,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions
         {
             IStoreItemAvailability storeAvailability = storeItem.Availabilities
                 .FirstOrDefault(av => av.Store.Id == storeId);
-
             if (storeAvailability == null)
                 throw new DomainException(new ItemAtStoreNotAvailableReason(storeItem.Id, storeId));
+
+            var defaultSection = storeItem.GetDefaultSectionForStore(storeId.AsStoreItemStoreId());
 
             return new ItemSearchReadModel(
                 storeItem.Id.Actual,
@@ -27,7 +28,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions
                 storeItem.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                 storeAvailability.Price,
                 storeItem.Manufacturer.ToReadModel(),
-                storeItem.ItemCategory.ToReadModel());
+                storeItem.ItemCategory.ToReadModel(),
+                defaultSection.ToReadModel());
         }
 
         public static ItemFilterResultReadModel ToItemFilterResultReadModel(this IStoreItem model)

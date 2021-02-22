@@ -94,13 +94,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
                 IShoppingListItem shoppingListItem = list.Items
                     .First(i => i.Id == command.ItemUpdate.OldId.ToShoppingListItemId());
                 list.RemoveItem(shoppingListItem.Id);
-                if (updatedItem.IsAvailableInStore(list.Store.Id.ToStoreItemStoreId()))
+                if (updatedItem.IsAvailableInStore(list.Store.Id.AsStoreItemStoreId()))
                 {
                     var priceAtStore = updatedItem.Availabilities
                         .First(av => av.Store.Id == list.Store.Id)
                         .Price;
 
-                    var section = updatedItem.GetDefaultSectionForStore(list.Store.Id.ToStoreItemStoreId());
+                    var section = updatedItem.GetDefaultSectionForStore(list.Store.Id.AsStoreItemStoreId());
                     var updatedListItem = shoppingListItemFactory.Create(updatedItem, priceAtStore,
                         shoppingListItem.IsInBasket, shoppingListItem.Quantity);
                     list.AddItem(updatedListItem, section.Id.ToShoppingListSectionId());
