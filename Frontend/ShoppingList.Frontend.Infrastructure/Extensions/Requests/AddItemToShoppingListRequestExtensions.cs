@@ -6,14 +6,14 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests
 {
     public static class AddItemToShoppingListRequestExtensions
     {
-        public static AddItemToShoppingListContract ToContract(this AddItemToShoppingListRequest contract)
+        public static AddItemToShoppingListContract ToContract(this AddItemToShoppingListRequest request)
         {
             return new AddItemToShoppingListContract
             {
-                ShoppingListId = contract.ShoppingListId,
-                ItemId = contract.ItemId.ToContract(),
-                SectionId = 
-                Quantity = contract.Quantity
+                ShoppingListId = request.ShoppingListId,
+                ItemId = request.ItemId.ToContract(),
+                SectionId = request.SectionId,
+                Quantity = request.Quantity
             };
         }
     }

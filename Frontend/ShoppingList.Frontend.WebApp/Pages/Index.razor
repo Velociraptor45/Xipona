@@ -215,7 +215,7 @@
         quantityTypeInPacket, "", "", false, 1);
 
         var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId.Value, item.Name, shoppingList.Store.Id, item.PricePerQuantity);
-        var addRequest = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id, item.Quantity);
+        var addRequest = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id, item.Quantity, null);
         commandQueue.Enqueue(createRequest);
         commandQueue.Enqueue(addRequest);
 
@@ -310,7 +310,10 @@
             return;
 
         var itemId = int.Parse(value.AsT0);
-        var request = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, new ItemId(itemId), 1); //todo default item quantity
+        var item = searchBar.Options.Single(o => o.ItemId == itemId);
+        var request = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, new ItemId(itemId), 1,
+            item.DefaultSectionId); //todo default item quantity
+
         try
         {
             await apiClient.AddItemToShoppingListAsync(request);

@@ -3,7 +3,7 @@
     public class ItemSearchResult
     {
         public ItemSearchResult(int itemId, string name, float price, string priceLabel,
-            string itemCategoryName, string manufacturerName)
+            string itemCategoryName, string manufacturerName, int defaultSectionId)
         {
             ItemId = itemId;
             Name = name;
@@ -11,6 +11,7 @@
             PriceLabel = priceLabel;
             ItemCategoryName = itemCategoryName;
             ManufacturerName = manufacturerName;
+            DefaultSectionId = defaultSectionId;
         }
 
         public int ItemId { get; }
@@ -19,5 +20,6 @@
         public string PriceLabel { get; }
         public string ItemCategoryName { get; }
         public string ManufacturerName { get; }
+        public int DefaultSectionId { get; }
     }
 }
