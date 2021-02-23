@@ -6,5 +6,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
     {
         IStoreItemAvailability Create(IStoreItemStore store, float price, IStoreItemSection defaultSection);
         IStoreItemAvailability Create(IStore store, float price, IStoreItemSection defaultSection);
+        IStoreItemAvailability Create(IStore store, float price, IStoreSection defaultSection);
     }
 }

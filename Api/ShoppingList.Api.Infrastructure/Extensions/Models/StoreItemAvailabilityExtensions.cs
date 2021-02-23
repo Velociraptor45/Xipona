@@ -15,7 +15,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
                 StoreId = model.Store.Id.Value,
                 Price = model.Price,
                 ItemId = itemId.Actual?.Value ?? 0,
-                DefaultSectionId = model.DefaultSection?.Id.Value
+                DefaultSectionId = model.DefaultSection.Id.Value
             };
         }
     }

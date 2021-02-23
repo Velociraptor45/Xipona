@@ -6,7 +6,7 @@
         {
             Store = store ?? throw new System.ArgumentNullException(nameof(store));
             Price = price;
-            DefaultSection = defaultSection;
+            DefaultSection = defaultSection ?? throw new System.ArgumentNullException(nameof(defaultSection));
         }
 
         public IStoreItemStore Store { get; }

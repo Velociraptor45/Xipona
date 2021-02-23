@@ -7,6 +7,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,20 +39,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
                 throw new ArgumentNullException(nameof(command));
             }
 
-            var store = await storeRepository.FindByAsync(command.TemporaryItemCreation.Availability.StoreId.AsStoreId(),
+            ShortAvailability shortAvailability = command.TemporaryItemCreation.Availability;
+
+            var store = await storeRepository.FindByAsync(shortAvailability.StoreId.AsStoreId(),
                 cancellationToken);
             if (store == null || store.IsDeleted)
-                throw new DomainException(new StoreNotFoundReason(command.TemporaryItemCreation.Availability.StoreId));
+                throw new DomainException(new StoreNotFoundReason(shortAvailability.StoreId));
 
-            ShortAvailability shortAvailability = command.TemporaryItemCreation.Availability;
-            //IStoreItemSection section = await storeItemSectionReadRepository
-            //    .FindByAsync(shortAvailability.StoreItemSectionId, cancellationToken);
-
-            //if (section == null)
-            //    throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
+            var defaultSection = store.Sections.Single(s => s.IsDefaultSection);
 
             IStoreItemAvailability storeItemAvailability = storeItemAvailabilityFactory
-                    .Create(store, shortAvailability.Price, null);
+                    .Create(store, shortAvailability.Price, defaultSection);
 
             var storeItem = storeItemFactory.Create(command.TemporaryItemCreation, storeItemAvailability);
 
