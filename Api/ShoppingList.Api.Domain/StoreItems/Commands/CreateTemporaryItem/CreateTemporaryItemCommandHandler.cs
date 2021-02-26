@@ -19,7 +19,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
         private readonly IStoreRepository storeRepository;
         private readonly IStoreItemFactory storeItemFactory;
         private readonly IStoreItemAvailabilityFactory storeItemAvailabilityFactory;
-        private readonly IStoreItemSectionReadRepository storeItemSectionReadRepository;
 
         public CreateTemporaryItemCommandHandler(IItemRepository itemRepository, IStoreRepository storeRepository,
             IStoreItemFactory storeItemFactory, IStoreItemAvailabilityFactory storeItemAvailabilityFactory,
@@ -29,7 +28,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
             this.storeRepository = storeRepository;
             this.storeItemFactory = storeItemFactory;
             this.storeItemAvailabilityFactory = storeItemAvailabilityFactory;
-            this.storeItemSectionReadRepository = storeItemSectionReadRepository;
         }
 
         public async Task<bool> HandleAsync(CreateTemporaryItemCommand command, CancellationToken cancellationToken)
