@@ -69,17 +69,18 @@
             <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
         }
     </div>
-    <ul class="p-0">
-        @foreach (var item in shoppingList.Items.Where(item => showItemsInBasket || !item.IsInBasket))
+    <div>
+        @foreach (var section in shoppingList.Sections.Where(s => s.Items.Any()))
         {
-            <ShoppingListItemComponent Item="@item"
-                                       ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
-                                       ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
-                                       ItemRemovedCallback="@OnItemRemovedFromListAsync"
-                                       IsInEditMode="@isInEditMode"
-                                       ItemPriceCalculationService="@itemPriceCalculationService"></ShoppingListItemComponent>
+            <Section Model="@section"
+                     ShowItemsInBasket="@showItemsInBasket"
+                     ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
+                     ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
+                     ItemRemovedCallback="@OnItemRemovedFromListAsync"
+                     IsInEditMode="@isInEditMode"
+                     ItemPriceCalculationService="@itemPriceCalculationService"></Section>
         }
-    </ul>
+    </div>
     <div class="d-flex justify-content-end">
         <Button Type="primary"
                 OnClick="@OnFinishListButtonClicked"
@@ -99,7 +100,7 @@
 @code{
     private bool isDebug = false;
 
-    private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListItem>());
+    private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListSection>());
     private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>());
 
     private SearchBar searchBar = new SearchBar();
@@ -214,11 +215,11 @@
         quantityTypeInPacket, "", "", false, 1);
 
         var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId.Value, item.Name, shoppingList.Store.Id, item.PricePerQuantity);
-        var addRequest = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id, item.Quantity);
+        var addRequest = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id, item.Quantity, null);
         commandQueue.Enqueue(createRequest);
         commandQueue.Enqueue(addRequest);
 
-        shoppingList.Items.Add(item);
+        shoppingList.AddItem(item, shoppingList.DefaultSectionId);
         StateHasChanged();
     }
 
@@ -309,7 +310,10 @@
             return;
 
         var itemId = int.Parse(value.AsT0);
-        var request = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, new ItemId(itemId), 1); //todo default item quantity
+        var item = searchBar.Options.Single(o => o.ItemId == itemId);
+        var request = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, new ItemId(itemId), 1,
+            item.DefaultSectionId); //todo default item quantity
+
         try
         {
             await apiClient.AddItemToShoppingListAsync(request);
@@ -347,7 +351,7 @@
 
     private async Task OnItemRemovedFromListAsync(ShoppingListItem item)
     {
-        shoppingList.Remove(item);
+        shoppingList.Remove(item.Id);
         var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id);
         await commandQueue.Enqueue(request);
     }

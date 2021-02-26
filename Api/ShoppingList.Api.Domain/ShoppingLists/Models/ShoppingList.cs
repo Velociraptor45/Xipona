@@ -1,6 +1,6 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,40 +9,47 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
     public class ShoppingList : IShoppingList
     {
-        private IEnumerable<IShoppingListItem> items;
+        private readonly Dictionary<ShoppingListSectionId, IShoppingListSection> sections;
 
-        public ShoppingList(ShoppingListId id, IStore store, IEnumerable<IShoppingListItem> items, DateTime? completionDate)
+        public ShoppingList(ShoppingListId id, IShoppingListStore store, IEnumerable<IShoppingListSection> sections, DateTime? completionDate)
         {
-            var item = items.FirstOrDefault(i => !i.Id.IsActualId);
-            if (item != null)
-                throw new DomainException(new ActualIdRequiredReason(item.Id));
-
             Id = id;
             Store = store;
-            this.items = items;
+            this.sections = sections.ToDictionary(s => s.Id);
             CompletionDate = completionDate;
         }
 
         public ShoppingListId Id { get; }
-        public IStore Store { get; }
-        public IReadOnlyCollection<IShoppingListItem> Items => items.ToList().AsReadOnly();
+        public IShoppingListStore Store { get; }
+        public IReadOnlyCollection<IShoppingListItem> Items => Sections.SelectMany(s => s.ShoppingListItems).ToList().AsReadOnly();
         public DateTime? CompletionDate { get; private set; }
+        public IReadOnlyCollection<IShoppingListSection> Sections => sections.Values.ToList().AsReadOnly();
 
-        public void AddItem(IShoppingListItem item)
+        public void AddItem(IShoppingListItem item, ShoppingListSectionId sectionId)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
             if (!item.Id.IsActualId)
                 throw new DomainException(new ActualIdRequiredReason(item.Id));
 
-            var list = items.ToList();
-
-            var existingItem = list.FirstOrDefault(it => it.Id == item.Id);
+            var existingItem = Items.FirstOrDefault(it => it.Id == item.Id);
             if (existingItem != null)
                 throw new DomainException(new ItemAlreadyOnShoppingListReason(item.Id, Id));
 
-            list.Add(item);
-            items = list;
+            IShoppingListSection section;
+            if (sectionId == null)
+            {
+                section = Sections.SingleOrDefault(s => s.IsDefaultSection);
+                if (section == null)
+                    throw new DomainException(new NoDefaultSectionSpecifiedReason(Store.Id));
+            }
+            else
+            {
+                if (!sections.TryGetValue(sectionId, out section))
+                    throw new DomainException(new SectionNotPartOfStoreReason(sectionId, Store.Id));
+            }
+
+            section.AddItem(item);
         }
 
         public void RemoveItem(ShoppingListItemId id)
@@ -52,16 +59,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (!id.IsActualId)
                 throw new DomainException(new ActualIdRequiredReason(id));
 
-            var itemList = items.ToList();
-
-            var itemListWithoutSpecifiedItem = itemList
-                .Where(item => item.Id != id)
-                .ToList();
-
-            if (itemList.Count == itemListWithoutSpecifiedItem.Count)
+            IShoppingListSection section = sections.Values.FirstOrDefault(s => s.ContainsItem(id));
+            if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, id));
 
-            items = itemListWithoutSpecifiedItem;
+            section.RemoveItem(id);
         }
 
         public void PutItemInBasket(ShoppingListItemId itemId)
@@ -71,18 +73,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (!itemId.IsActualId)
                 throw new DomainException(new ActualIdRequiredReason(itemId));
 
-            var item = items.FirstOrDefault(item => item.Id == itemId);
-            if (item == null)
+            IShoppingListSection section = sections.Values.FirstOrDefault(s => s.ContainsItem(itemId));
+            if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
-            item.PutInBasket();
-
-            var updatedList = items
-                .Where(item => item.Id != itemId)
-                .ToList();
-            updatedList.Add(item);
-
-            items = updatedList;
+            section.PutItemInBasket(itemId);
         }
 
         public void RemoveFromBasket(ShoppingListItemId itemId)
@@ -92,18 +87,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (!itemId.IsActualId)
                 throw new DomainException(new ActualIdRequiredReason(itemId));
 
-            var item = items.FirstOrDefault(item => item.Id == itemId);
-            if (item == null)
+            IShoppingListSection section = sections.Values.FirstOrDefault(s => s.ContainsItem(itemId));
+            if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
-            item.RemoveFromBasket();
-
-            var updatedList = items
-                .Where(item => item.Id != itemId)
-                .ToList();
-            updatedList.Add(item);
-
-            items = updatedList;
+            section.RemoveItemFromBasket(itemId);
         }
 
         public void ChangeItemQuantity(ShoppingListItemId itemId, float quantity)
@@ -115,33 +103,33 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (quantity <= 0f)
                 throw new DomainException(new InvalidItemQuantityReason(quantity));
 
-            var item = items.FirstOrDefault(item => item.Id == itemId);
-            if (item == null)
+            IShoppingListSection section = sections.Values.FirstOrDefault(s => s.ContainsItem(itemId));
+            if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
-            item.ChangeQuantity(quantity);
-
-            var updatedList = items
-                .Where(item => item.Id != itemId)
-                .ToList();
-            updatedList.Add(item);
-
-            items = updatedList;
+            section.ChangeItemQuantity(itemId, quantity);
         }
 
-        /// <summary>
-        /// Finishes the current shopping list and returns a new shopping list with all items that were not in the
-        /// basket on it
-        /// </summary>
-        /// <returns></returns>
-        public IShoppingList Finish(DateTime completionDate)
+        public void SetCompletionDate(DateTime completionDate)
         {
-            var itemsNotInBasket = items.Where(i => !i.IsInBasket);
-
-            items = items.Where(i => i.IsInBasket);
             CompletionDate = completionDate;
+        }
 
-            return new ShoppingList(new ShoppingListId(0), Store, itemsNotInBasket, null);
+        public IEnumerable<IShoppingListSection> GetSectionsWithItemsNotInBasket()
+        {
+            foreach (var section in sections.Values)
+            {
+                section.RemoveAllItemsInBasket();
+                yield return section;
+            }
+        }
+
+        public void RemoveAllItemsNotInBasket()
+        {
+            foreach (var section in sections.Values)
+            {
+                section.RemoveAllItemsInBasket();
+            }
         }
     }
 }

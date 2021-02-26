@@ -20,15 +20,21 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
         public static IEnumerable<Infrastructure.Entities.ItemsOnList> ToItemsOnListEntities(
             this IShoppingList model)
         {
-            return model.Items.Select(item =>
-                new Infrastructure.Entities.ItemsOnList()
+            foreach (var section in model.Sections)
+            {
+                foreach (var item in section.ShoppingListItems)
                 {
-                    ShoppingListId = model.Id.Value,
-                    ItemId = item.Id.Actual.Value,
-                    InBasket = item.IsInBasket,
-                    Quantity = item.Quantity,
-                    Item = item.ToEntity()
-                });
+                    yield return new Infrastructure.Entities.ItemsOnList()
+                    {
+                        ShoppingListId = model.Id.Value,
+                        ItemId = item.Id.Actual.Value,
+                        InBasket = item.IsInBasket,
+                        Quantity = item.Quantity,
+                        Item = item.ToEntity(),
+                        SectionId = section.Id.Value
+                    };
+                }
+            }
         }
     }
 }

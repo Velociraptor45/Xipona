@@ -8,7 +8,9 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeItemQua
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,6 +22,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
     {
         private readonly CommonFixture commonFixture;
         private readonly ShoppingListItemFixture shoppingListItemFixture;
+        private readonly ShoppingListSectionFixture shoppingListSectionFixture;
         private readonly ShoppingListFixture shoppingListFixture;
         private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
         private readonly StoreItemFixture storeItemFixture;
@@ -28,7 +31,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
         {
             commonFixture = new CommonFixture();
             shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-            shoppingListFixture = new ShoppingListFixture(shoppingListItemFixture, commonFixture);
+            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture, shoppingListItemFixture);
+            shoppingListFixture = new ShoppingListFixture(shoppingListSectionFixture, commonFixture);
             storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
             storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
         }

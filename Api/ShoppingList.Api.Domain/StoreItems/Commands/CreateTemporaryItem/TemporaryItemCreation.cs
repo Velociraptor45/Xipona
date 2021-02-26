@@ -1,11 +1,11 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.Common.Models;
 using System;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem
 {
     public class TemporaryItemCreation
     {
-        public TemporaryItemCreation(Guid clientSideId, string name, StoreItemAvailability availability)
+        public TemporaryItemCreation(Guid clientSideId, string name, ShortAvailability availability)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -19,6 +19,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
 
         public Guid ClientSideId { get; }
         public string Name { get; }
-        public StoreItemAvailability Availability { get; }
+        public ShortAvailability Availability { get; }
     }
 }

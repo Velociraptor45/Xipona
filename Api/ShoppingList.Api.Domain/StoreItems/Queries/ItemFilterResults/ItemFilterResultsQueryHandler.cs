@@ -1,6 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;

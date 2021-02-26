@@ -83,11 +83,6 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await apiClient.ChangeItemQuantityOnShoppingList(contract);
         }
 
-        public async Task CreatList(int storeId)
-        {
-            await apiClient.CreatList(storeId);
-        }
-
         public async Task FinishList(int shoppingListId)
         {
             await apiClient.FinishList(shoppingListId);

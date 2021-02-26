@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
 {
@@ -10,7 +11,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
             {
                 Id = model.Id.Value,
                 Name = model.Name,
-                Deleted = model.IsDeleted
+                Deleted = model.IsDeleted,
+                DefaultSectionId = model.Sections.Single(s => s.IsDefaultSection).Id.Value,
+                Sections = model.Sections.Select(s => s.ToEntity()).ToList()
             };
         }
     }

@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ShoppingList
         public static ShoppingListContract ToContract(this ShoppingListReadModel readModel)
         {
             return new ShoppingListContract(readModel.Id.Value, readModel.Store.ToContract(),
-                readModel.Items.Select(item => item.ToContract()), readModel.CompletionDate);
+                readModel.Sections.Select(section => section.ToContract()), readModel.CompletionDate);
         }
     }
 }

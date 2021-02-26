@@ -5,13 +5,15 @@ using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +25,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
     {
         private readonly CommonFixture commonFixture;
         private readonly ShoppingListItemFixture shoppingListItemFixture;
+        private readonly ShoppingListSectionFixture shoppingListSectionFixture;
         private readonly ShoppingListFixture shoppingListFixture;
         private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
         private readonly StoreItemFixture storeItemFixture;
@@ -31,7 +34,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         {
             commonFixture = new CommonFixture();
             shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-            shoppingListFixture = new ShoppingListFixture(shoppingListItemFixture, commonFixture);
+            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture, shoppingListItemFixture);
+            shoppingListFixture = new ShoppingListFixture(shoppingListSectionFixture, commonFixture);
             storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
             storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
         }

@@ -39,9 +39,6 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Post("shopping-list/items/change-quantity")]
         Task ChangeItemQuantityOnShoppingList([Body] ChangeItemQuantityOnShoppingListContract contract);
 
-        [Post("shopping-list/create/{storeId}")]
-        Task CreatList([Path] int storeId);
-
         [Post("shopping-list/{shoppingListId}/finish")]
         Task FinishList([Path] int shoppingListId);
 

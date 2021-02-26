@@ -8,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contract
         public static ItemSearchResult ToModel(this ItemSearchContract contract)
         {
             return new ItemSearchResult(contract.Id, contract.Name, contract.Price, "€", contract.ItemCategoryName,
-                contract.ManufacturerName);
+                contract.ManufacturerName, contract.DefaultSection.Id);
         }
     }
 }

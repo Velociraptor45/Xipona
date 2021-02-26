@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
 {

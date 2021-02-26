@@ -8,6 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFro
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
+using ShoppingList.Api.Domain.TestKit.Shared;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -65,7 +66,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         }
 
         [Fact]
-        public async Task HandleAsync_WithValidData_ShouldRemoveItemFromBasket()
+        public async Task HandleAsync_WithValidActualIdCommand_ShouldRemoveItemFromBasket()
         {
             var fixture = commonFixture.GetNewFixture();
 
@@ -95,6 +96,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
                         It.IsAny<CancellationToken>()),
                     Times.Once);
             }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithValidOfflineIdCommand_ShouldRemoveItemFromBasket()
+        {
+            // todo implement
         }
     }
 }

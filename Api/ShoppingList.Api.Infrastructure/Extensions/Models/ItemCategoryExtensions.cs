@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
 {

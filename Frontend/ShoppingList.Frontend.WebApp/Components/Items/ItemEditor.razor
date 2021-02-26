@@ -84,7 +84,7 @@
         </div>
         <div class="ml-4 d-flex justify-content-end">
             <Button class="d-flex align-items-center" OnClick="OnAddStoreButtonClicked"
-                    Disabled="@(!GetNotRegisteredStoreIds(StoreItem).Any())">
+                    Disabled="@(GetNotRegisteredStore(StoreItem) == null)">
                 <Icon Type="plus"></Icon>
             </Button>
         </div>
@@ -138,12 +138,14 @@
 
     private void OnAddStoreButtonClicked()
     {
-        var notRegisteredStoreIds = GetNotRegisteredStoreIds(StoreItem);
-        if (!notRegisteredStoreIds.Any())
+        var availableStore = GetNotRegisteredStore(StoreItem);
+        if (availableStore == null)
             return;
 
         StoreItem.Availabilities.Add(
-            new StoreItemAvailability(notRegisteredStoreIds.First(), 1));
+            new StoreItemAvailability(availableStore, 1, GetSectionForStoreId(availableStore.Id)));
+
+        StateHasChanged();
     }
 
     private void OnRemoveAvailabilityButtonClicked(int availabilityIndex)
@@ -211,23 +213,33 @@
         StoreItem.QuantityInPacketType = GetQuantityInPacketTypeById(id);
     }
 
-    private IEnumerable<int> GetNotRegisteredStoreIds(StoreItem storeItem)
+    private StoreItemStore GetNotRegisteredStore(StoreItem storeItem)
     {
-        var registeredStoreId = storeItem.Availabilities.Select(av => av.StoreId);
+        var registeredStoreIds = storeItem.Availabilities.Select(av => av.Store.Id);
         var allStoreIds = Stores.Select(s => s.Id);
 
-        return allStoreIds.Except(registeredStoreId);
+        if (allStoreIds.SequenceEqual(registeredStoreIds))
+            return null;
+
+        var availableStoreId = allStoreIds.Except(registeredStoreIds).First();
+        return Stores.Single(s => s.Id == availableStoreId).AsStoreItemStore();
+    }
+
+    private StoreItemSection GetSectionForStoreId(int storeId)
+    {
+        var section = Stores.Single(s => s.Id == storeId).Sections.Single(s => s.IsDefaultSection);
+        return section.AsStoreItemSection();
     }
 
     private IEnumerable<int> GetRegisteredStoreIds(StoreItem storeItem)
     {
-        return storeItem.Availabilities.Select(av => av.StoreId);
+        return storeItem.Availabilities.Select(av => av.Store.Id);
     }
 
     private IEnumerable<int> GetDisabledStoresForAvailabilityByIndex(int availabilityIndex)
     {
         return GetRegisteredStoreIds(StoreItem)
-            .Except(new List<int>() { StoreItem.Availabilities[availabilityIndex].StoreId });
+            .Except(new[] { StoreItem.Availabilities[availabilityIndex].Store.Id });
     }
 
     private QuantityType GetQuantityTypeById(int id)

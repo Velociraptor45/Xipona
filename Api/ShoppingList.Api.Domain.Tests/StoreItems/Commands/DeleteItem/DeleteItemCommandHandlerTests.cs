@@ -5,14 +5,17 @@ using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Mocks;
+using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Mocks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -79,7 +82,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
 
         [Theory]
         [ClassData(typeof(HandleAsyncWithShoppingListsTestData))]
-        public async Task HandleAsync_WithItemOnShoppingLists_ShouldDeleteItemAndDispatchRemoveCommands(
+        public async Task HandleAsync_WithItemOnShoppingLists_ShouldDeleteItemAndRemoveItFromActiveShoppingLists(
             List<ShoppingListMock> shoppingListMocks)
         {
             // Arrange
@@ -132,7 +135,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
             {
                 var commonFixture = new CommonFixture();
                 var shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-                var shoppingListFixture = new ShoppingListFixture(shoppingListItemFixture, commonFixture);
+                var shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture, shoppingListItemFixture);
+                var shoppingListFixture = new ShoppingListFixture(shoppingListSectionFixture, commonFixture);
                 var shoppingListMockFixture = new ShoppingListMockFixture(commonFixture, shoppingListFixture);
 
                 yield return new object[]

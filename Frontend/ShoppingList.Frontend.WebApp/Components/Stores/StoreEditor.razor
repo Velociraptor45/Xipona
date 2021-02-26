@@ -10,6 +10,35 @@
         </div>
     </div>
 
+    <div class="my-3">
+        <div class="d-flex align-items-center">
+            <div>
+                Sections
+            </div>
+            <div class="ml-2">
+                <Button Icon="plus"
+                        Class="align-items-center justify-content-center d-flex"
+                        OnClick="@OnAddSectionButtonClicked"></Button>
+            </div>
+        </div>
+        @foreach (var section in Store.Sections)
+        {
+            <Section Model="@section"
+                     ParentModel="@Store"
+                     StateChangedCallback="@OnStateChanged"
+                     OnSectionRemovedCallback="@OnSectionRemoved"></Section>
+        }
+    </div>
+
+    <div>
+        Default Section:
+        <SingleSelect DefaultValue="@Store.Sections.First(s => s.IsDefaultSection).Id.ToString()"
+                      CanAddItem="false"
+                      AllowClear="false"
+                      IdToNameMaps="@Store.Sections.OrderBy(s => s.Name).Select(s => new Tuple<int, string>(s.Id, s.Name)).ToList()"
+                      OnChangeCallback="@OnDefaultSectionChanged"></SingleSelect>
+    </div>
+
     <div class="d-flex justify-content-end mt-2">
         @if (Store.Id == 0)
         {
@@ -41,5 +70,25 @@
     private async Task OnSaveButtonClickedAsync()
     {
         await SaveStoreCallback.InvokeAsync(Store);
+    }
+
+    private void OnDefaultSectionChanged(int id)
+    {
+        Store.ChangeDefaultSection(id);
+    }
+
+    private void OnAddSectionButtonClicked()
+    {
+        Store.AddSection();
+    }
+
+    private void OnSectionRemoved(StoreSection section)
+    {
+        Store.Sections.Remove(section);
+    }
+
+    private void OnStateChanged()
+    {
+        StateHasChanged();
     }
 }

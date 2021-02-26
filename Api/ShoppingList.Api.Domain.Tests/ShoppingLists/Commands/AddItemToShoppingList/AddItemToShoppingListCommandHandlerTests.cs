@@ -4,15 +4,17 @@ using FluentAssertions.Execution;
 using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,17 +26,21 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
     {
         private readonly CommonFixture commonFixture;
         private readonly ShoppingListItemFixture shoppingListItemFixture;
+        private readonly ShoppingListSectionFixture shoppingListSectionFixture;
         private readonly ShoppingListFixture shoppingListFixture;
         private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
         private readonly StoreItemFixture storeItemFixture;
+        private readonly ShoppingListMockFixture shoppingListMockFixture;
 
         public AddItemToShoppingListCommandHandlerTests()
         {
             commonFixture = new CommonFixture();
             shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-            shoppingListFixture = new ShoppingListFixture(shoppingListItemFixture, commonFixture);
+            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture, shoppingListItemFixture);
+            shoppingListFixture = new ShoppingListFixture(shoppingListSectionFixture, commonFixture);
             storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
             storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
+            shoppingListMockFixture = new ShoppingListMockFixture(commonFixture, shoppingListFixture);
         }
 
         [Fact]
@@ -55,6 +61,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
         }
 
         [Fact]
+        public async Task HandleAsync_WithInvalidStoreItemId_ShouldThrowDomainException()
+        {
+            // todo implement
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithItemAtStoreNotAvailable_ShouldThrowDomainException()
+        {
+            // todo implement
+        }
+
+        [Fact]
         public async Task HandleAsync_WithOfflineId_ShouldAddItemToList()
         {
             // Arrange
@@ -69,16 +87,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
                 new ShoppingListItemId(Guid.NewGuid()));
             var command = fixture.Create<AddItemToShoppingListCommand>();
 
-            Mock<IShoppingList> listMock = new Mock<IShoppingList>();
-            StoreId storeId = new StoreId(commonFixture.NextInt());
-            IStoreItemAvailability availability = storeItemAvailabilityFixture.GetAvailability(storeId);
+            ShoppingListMock listMock = shoppingListMockFixture.Create();
+            ShoppingListStoreId storeId = listMock.Object.Store.Id;
+            IStoreItemAvailability availability = storeItemAvailabilityFixture.GetAvailability(storeId.AsStoreItemStoreId());
             IStoreItem storeItem = storeItemFixture.GetStoreItem(new StoreItemId(command.ShoppingListItemId.Offline.Value),
                 additionalAvailabilities: availability.ToMonoList());
-            IShoppingListItem listItem = shoppingListItemFixture.GetShoppingListItem();
-
-            listMock
-                .Setup(instace => instace.Store.Id)
-                .Returns(storeId);
+            IShoppingListItem listItem = shoppingListItemFixture.Create();
 
             shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
             shoppingListItemFactoryMock.SetupCreate(storeItem, availability.Price, false, command.Quantity, listItem);
@@ -91,9 +105,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                listMock.Verify(
-                    i => i.AddItem(It.Is<IShoppingListItem>(item => item == listItem)),
-                    Times.Once);
+                listMock.VerifyAddItemOnce(listItem, command.SectionId);
                 shoppingListRepositoryMock.Verify(
                     i => i.StoreAsync(It.IsAny<IShoppingList>(), It.IsAny<CancellationToken>()),
                     Times.Once);
@@ -114,16 +126,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
             var handler = fixture.Create<AddItemToShoppingListCommandHandler>();
             var command = fixture.Create<AddItemToShoppingListCommand>();
 
-            Mock<IShoppingList> listMock = new Mock<IShoppingList>();
-            StoreId storeId = new StoreId(commonFixture.NextInt());
-            IStoreItemAvailability availability = storeItemAvailabilityFixture.GetAvailability(storeId);
+            ShoppingListMock listMock = shoppingListMockFixture.Create();
+            ShoppingListStoreId storeId = listMock.Object.Store.Id;
+            IStoreItemAvailability availability = storeItemAvailabilityFixture.GetAvailability(storeId.AsStoreItemStoreId());
             IStoreItem storeItem = storeItemFixture.GetStoreItem(new StoreItemId(command.ShoppingListItemId.Actual.Value),
                 additionalAvailabilities: availability.ToMonoList());
-            IShoppingListItem listItem = shoppingListItemFixture.GetShoppingListItem();
-
-            listMock
-                .Setup(instace => instace.Store.Id)
-                .Returns(storeId);
+            IShoppingListItem listItem = shoppingListItemFixture.Create();
 
             shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
             shoppingListItemFactoryMock.SetupCreate(storeItem, availability.Price, false, command.Quantity, listItem);
@@ -136,9 +144,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                listMock.Verify(
-                    i => i.AddItem(It.Is<IShoppingListItem>(item => item == listItem)),
-                    Times.Once);
+                listMock.VerifyAddItemOnce(listItem, command.SectionId);
                 shoppingListRepositoryMock.Verify(
                     i => i.StoreAsync(It.IsAny<IShoppingList>(), It.IsAny<CancellationToken>()),
                     Times.Once);

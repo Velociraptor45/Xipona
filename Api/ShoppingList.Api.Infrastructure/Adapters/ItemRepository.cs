@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
@@ -40,6 +42,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .ThenInclude(store => store.Sections)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Section)
                 .FirstOrDefaultAsync(item => storeItemId.IsActualId ?
                     item.Id == storeItemId.Actual.Value :
                     item.CreatedFrom == storeItemId.Offline.Value);
@@ -54,7 +59,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return itemEntity.ToStoreItemDomain();
         }
 
-        public async Task<IStoreItem> FindByAsync(StoreItemId storeItemId, StoreId storeId,
+        public async Task<IStoreItem> FindByAsync(StoreItemId storeItemId, ShoppingListStoreId storeId,
             CancellationToken cancellationToken)
         {
             if (storeItemId == null)
@@ -67,6 +72,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .ThenInclude(store => store.Sections)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Section)
                 .FirstOrDefaultAsync(item => storeItemId.IsActualId ?
                     item.Id == storeItemId.Actual.Value :
                     item.CreatedFrom == storeItemId.Offline.Value);
@@ -87,7 +95,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return itemEntity.ToStoreItemDomain();
         }
 
-        public async Task<IEnumerable<IStoreItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
+        public async Task<IEnumerable<IStoreItem>> FindByAsync(ShoppingListStoreId storeId, CancellationToken cancellationToken)
         {
             if (storeId == null)
                 throw new ArgumentNullException(nameof(storeId));
@@ -97,6 +105,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .ThenInclude(store => store.Sections)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Section)
                 .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId.Value) != null)
                 .ToListAsync();
 
@@ -110,7 +121,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return entities.Select(e => e.ToStoreItemDomain());
         }
 
-        public async Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
+        public async Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<ShoppingListStoreId> storeIds,
             IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
             CancellationToken cancellationToken)
         {
@@ -138,6 +149,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .ThenInclude(store => store.Sections)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Section)
                 .Where(item =>
                     !item.IsTemporary
                     && itemCategoryIdLists.Contains(item.ItemCategoryId.Value)
@@ -161,7 +175,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return filteredResultByStore.Select(r => r.ToStoreItemDomain());
         }
 
-        public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, StoreId storeId,
+        public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, ShoppingListStoreId storeId,
             CancellationToken cancellationToken)
         {
             if (storeId == null)
@@ -172,6 +186,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .ThenInclude(store => store.Sections)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Section)
                 .Where(item => item.Name.Contains(searchInput)
                     && !item.Deleted
                     && !item.IsTemporary
@@ -203,6 +220,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .Include(item => item.Manufacturer)
                 .Include(item => item.AvailableAt)
                 .ThenInclude(map => map.Store)
+                .ThenInclude(store => store.Sections)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Section)
                 .Where(item => item.ItemCategoryId.HasValue
                     && item.ItemCategoryId == itemCategoryId.Value
                     && !item.Deleted)

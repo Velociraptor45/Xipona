@@ -1,11 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch
             if (string.IsNullOrWhiteSpace(query.SearchInput))
                 return Enumerable.Empty<ItemSearchReadModel>();
 
-            var store = await storeRepository.FindByAsync(query.StoreId, cancellationToken);
+            var store = await storeRepository.FindByAsync(new Stores.Model.StoreId(query.StoreId.Value), cancellationToken);
             if (store == null)
                 throw new DomainException(new StoreNotFoundReason(query.StoreId));
 

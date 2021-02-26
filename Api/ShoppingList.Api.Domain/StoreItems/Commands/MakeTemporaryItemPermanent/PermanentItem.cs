@@ -1,4 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
 using System.Collections.Generic;
@@ -8,11 +11,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
 {
     public class PermanentItem
     {
-        private readonly IEnumerable<IStoreItemAvailability> availabilities;
+        private readonly IEnumerable<ShortAvailability> availabilities;
 
         public PermanentItem(StoreItemId id, string name, string comment, QuantityType quantityType,
             float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
-            ManufacturerId manufacturerId, IEnumerable<IStoreItemAvailability> availabilities)
+            ManufacturerId manufacturerId, IEnumerable<ShortAvailability> availabilities)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -30,7 +33,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
             this.availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
         }
 
-        public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
+        public IReadOnlyCollection<ShortAvailability> Availabilities => availabilities.ToList().AsReadOnly();
 
         public StoreItemId Id { get; }
         public string Name { get; }

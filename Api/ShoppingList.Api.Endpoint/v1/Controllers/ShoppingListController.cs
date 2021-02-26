@@ -6,10 +6,8 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBa
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.CreateShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromBasket;
@@ -53,7 +51,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("active/{storeId}")]
         public async Task<IActionResult> GetActiveShoppingListByStoreId([FromRoute(Name = "storeId")] int storeId)
         {
-            var query = new ActiveShoppingListByStoreIdQuery(new StoreId(storeId));
+            var query = new ActiveShoppingListByStoreIdQuery(new ShoppingListStoreId(storeId));
             ShoppingListReadModel readModel;
             try
             {
@@ -117,7 +115,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             }
 
             var command = new AddItemToShoppingListCommand(
-                new ShoppingListId(contract.ShoppingListId), itemId, contract.Quantity);
+                new ShoppingListId(contract.ShoppingListId),
+                itemId,
+                contract.SectionId.HasValue ? new ShoppingListSectionId(contract.SectionId.Value) : null,
+                contract.Quantity);
 
             try
             {
@@ -200,26 +201,6 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
 
             var command = new ChangeItemQuantityOnShoppingListCommand(new ShoppingListId(contract.ShoppingListId),
                 itemId, contract.Quantity);
-
-            try
-            {
-                await commandDispatcher.DispatchAsync(command, default);
-            }
-            catch (DomainException e)
-            {
-                return BadRequest(e.Reason);
-            }
-
-            return Ok();
-        }
-
-        [HttpPost]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [Route("create/{storeId}")]
-        public async Task<IActionResult> CreatList([FromRoute(Name = "storeId")] int storeId)
-        {
-            var command = new CreateShoppingListCommand(new StoreId(storeId));
 
             try
             {

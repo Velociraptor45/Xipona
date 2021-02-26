@@ -1,6 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ShoppingList.Api.Domain.Models;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
@@ -27,7 +26,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities
                 entity.ItemCategory?.ToDomain(),
                 entity.Manufacturer?.ToDomain(),
                 entity.AvailableAt.Select(map => new StoreItemAvailability(
-                    new StoreId(map.StoreId), map.Price)));
+                    map.Store.ToStoreItemDomain(),
+                    map.Price,
+                    map.Section.ToStoreItemSectionDomain())));
 
             model.SetPredecessor(entity.Predecessor?.ToStoreItemDomain());
             return model;

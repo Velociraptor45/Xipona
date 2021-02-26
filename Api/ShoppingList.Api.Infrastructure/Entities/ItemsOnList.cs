@@ -13,8 +13,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
         public int ItemId { get; set; }
         public bool InBasket { get; set; }
         public float Quantity { get; set; }
+        public int? SectionId { get; set; }
 
         public ShoppingList ShoppingList { get; set; }
         public Item Item { get; set; }
+        public Section Section { get; set; }
     }
 }

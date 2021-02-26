@@ -2,13 +2,16 @@
 {
     public class StoreItemAvailabilityContract
     {
-        public StoreItemAvailabilityContract(int storeId, float price)
+        public StoreItemAvailabilityContract(StoreItemStoreContract store, float price,
+            StoreItemSectionContract defaultSection)
         {
-            StoreId = storeId;
+            Store = store;
             Price = price;
+            DefaultSection = defaultSection;
         }
 
-        public int StoreId { get; }
+        public StoreItemStoreContract Store { get; }
         public float Price { get; }
+        public StoreItemSectionContract DefaultSection { get; }
     }
 }

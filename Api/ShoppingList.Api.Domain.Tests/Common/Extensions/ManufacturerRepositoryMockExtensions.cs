@@ -1,6 +1,6 @@
 ﻿using Moq;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using System.Threading;
 using System.Threading.Tasks;
 

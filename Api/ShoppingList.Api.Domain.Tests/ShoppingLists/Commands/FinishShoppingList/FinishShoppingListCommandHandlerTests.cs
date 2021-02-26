@@ -7,9 +7,14 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
+using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -19,10 +24,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
     public class FinishShoppingListCommandHandlerTests
     {
         private readonly CommonFixture commonFixture;
+        private readonly ShoppingListMockFixture shoppingListMockFixture;
+        private readonly ShoppingListSectionFixture shoppingListSectionFixture;
 
         public FinishShoppingListCommandHandlerTests()
         {
             commonFixture = new CommonFixture();
+            var shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
+            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture, shoppingListItemFixture);
+            var shoppingListFixture = new ShoppingListFixture(shoppingListSectionFixture, commonFixture);
+            shoppingListMockFixture = new ShoppingListMockFixture(commonFixture, shoppingListFixture);
         }
 
         [Fact]
@@ -73,21 +84,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
             var fixture = commonFixture.GetNewFixture();
 
             Mock<ITransactionGenerator> transactionGeneratorMock = fixture.Freeze<Mock<ITransactionGenerator>>();
+            Mock<IShoppingListRepository> shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
+            Mock<IShoppingListFactory> shoppingListFactoryMock = fixture.Freeze<Mock<IShoppingListFactory>>();
             Mock<ITransaction> transactionMock = new Mock<ITransaction>();
 
-            Mock<IShoppingList> listMock = new Mock<IShoppingList>();
-            Mock<IShoppingList> remainingListMock = new Mock<IShoppingList>();
-            var shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
+            ShoppingListMock listMock = shoppingListMockFixture.Create();
+            ShoppingListMock remainingListMock = shoppingListMockFixture.Create();
+
+            var remainingSections = shoppingListSectionFixture.CreateMany(5).ToList();
+            listMock.SetupGetSectionsWithItemsNotInBasket(remainingSections);
 
             var command = fixture.Create<FinishShoppingListCommand>();
             var handler = fixture.Create<FinishShoppingListCommandHandler>();
 
             shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
+            shoppingListFactoryMock.SetupCreate(listMock.Object.Store, remainingSections, null, remainingListMock.Object);
             transactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
-            listMock
-                .Setup(i => i.Finish(
-                    It.Is<DateTime>(date => date == command.CompletionDate)))
-                .Returns(remainingListMock.Object);
 
             // Act
             bool result = await handler.HandleAsync(command, default);
@@ -96,10 +108,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                listMock.Verify(
-                    i => i.Finish(
-                        It.Is<DateTime>(date => date == command.CompletionDate)),
-                    Times.Once);
+                listMock.VerifySetCompletionDateOnce(command.CompletionDate);
+                listMock.VerifyGetSectionsWithItemsNotInBasketOnce();
+                listMock.VerifyRemoveAllItemsNotInBasketOnce();
                 transactionGeneratorMock.Verify(
                     i => i.GenerateAsync(
                         It.IsAny<CancellationToken>()),

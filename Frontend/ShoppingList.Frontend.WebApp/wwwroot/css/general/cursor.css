@@ -1,3 +1,7 @@
 ﻿.cursor-text:hover {
     cursor: text;
 }
+
+.cursor-pointer:hover {
+    cursor: pointer;
+}

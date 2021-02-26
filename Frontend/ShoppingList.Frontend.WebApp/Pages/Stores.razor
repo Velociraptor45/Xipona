@@ -79,7 +79,7 @@
 
     private void OnCreateStoreButtonClicked()
     {
-        currentlyEditedStore = new Store(0, "");
+        currentlyEditedStore = new Store(0, "", Enumerable.Empty<StoreSection>());
     }
 
     private async Task OnStoreCreatedAsync(Store store)
@@ -115,7 +115,7 @@
 
     private async Task OnStoreSavedAsync(Store store)
     {
-        var request = new ModifyStoreRequest(Guid.NewGuid(), store.Id, store.Name);
+        var request = new ModifyStoreRequest(Guid.NewGuid(), store.Id, store.Name, store.Sections);
         try
         {
             await apiClient.ModifyStoreAsync(request);

@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +25,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var store = storeFactory.Create(command.StoreCreationInfo.Id, command.StoreCreationInfo.Name, false);
+            var store = storeFactory.Create(command.StoreCreationInfo.Id, command.StoreCreationInfo.Name, false,
+                command.StoreCreationInfo.Sections);
 
             await storeRepository.StoreAsync(store, cancellationToken);
 

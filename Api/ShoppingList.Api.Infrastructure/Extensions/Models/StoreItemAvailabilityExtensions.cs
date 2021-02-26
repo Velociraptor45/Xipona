@@ -12,9 +12,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models
 
             return new Infrastructure.Entities.AvailableAt()
             {
-                StoreId = model.StoreId.Value,
+                StoreId = model.Store.Id.Value,
                 Price = model.Price,
-                ItemId = itemId.Actual?.Value ?? 0
+                ItemId = itemId.Actual?.Value ?? 0,
+                DefaultSectionId = model.DefaultSection.Id.Value
             };
         }
     }
