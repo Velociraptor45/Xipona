@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
@@ -7,8 +8,11 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Adapters;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Converters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Transaction;
+
+using StoreModels = ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure
 {
@@ -26,6 +30,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
             services.AddTransient<IStoreRepository, StoreRepository>();
             services.AddScoped<ITransactionGenerator, TransactionGenerator>();
             services.AddTransient<IStoreItemSectionReadRepository, StoreItemSectionReadRepository>();
+
+            services.AddConverters();
+        }
+
+        private static void AddConverters(this IServiceCollection services)
+        {
+            services.AddTransient<IToDomainConverter<Store, StoreModels.IStore>, StoreConverter>();
+            services.AddTransient<IToDomainConverter<Section, StoreModels.IStoreSection>, StoreSectionConverter>();
         }
     }
 }
