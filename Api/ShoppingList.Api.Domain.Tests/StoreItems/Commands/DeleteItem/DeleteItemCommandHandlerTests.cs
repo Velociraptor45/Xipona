@@ -1,16 +1,12 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
+using ShoppingList.Api.Domain.TestKit.Common.Mocks;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
@@ -62,7 +58,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            Mock<IItemRepository> itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
+            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
 
             var command = fixture.Create<DeleteItemCommand>();
             var handler = fixture.Create<DeleteItemCommandHandler>();
@@ -88,11 +84,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            Mock<IItemRepository> itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
-            Mock<IShoppingListRepository> shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
-            Mock<ITransactionGenerator> transactionGeneratorMock = fixture.Freeze<Mock<ITransactionGenerator>>();
+            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
+            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
+            TransactionGeneratorMock transactionGeneratorMock = new TransactionGeneratorMock(fixture);
 
-            Mock<ITransaction> transactionMock = new Mock<ITransaction>();
+            TransactionMock transactionMock = new TransactionMock();
             StoreItemMock storeItemMock = storeItemMockFixture.Create();
 
             var command = fixture.Create<DeleteItemCommand>();

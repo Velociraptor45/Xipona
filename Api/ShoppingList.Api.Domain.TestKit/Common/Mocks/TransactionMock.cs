@@ -2,13 +2,17 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using System.Threading;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
+namespace ShoppingList.Api.Domain.TestKit.Common.Mocks
 {
-    public static class TransactionMockExtensions
+    public class TransactionMock : Mock<ITransaction>
     {
-        public static void VerifyCommitAsyncOnce(this Mock<ITransaction> mock)
+        public TransactionMock()
         {
-            mock.Verify(
+        }
+
+        public void VerifyCommitAsyncOnce()
+        {
+            Verify(
                 i => i.CommitAsync(
                     It.IsAny<CancellationToken>()),
                 Times.Once);

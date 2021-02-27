@@ -1,27 +1,37 @@
-﻿using Moq;
+﻿using AutoFixture;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
+namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
 {
-    public static class ItemRepositoryMockExtensions
+    public class ItemRepositoryMock
     {
-        public static void SetupFindByAsync(this Mock<IItemRepository> mock, StoreItemId storeItemId,
-            IStoreItem returnValue)
+        private readonly Mock<IItemRepository> mock;
+
+        public ItemRepositoryMock(Mock<IItemRepository> mock)
+        {
+            this.mock = mock;
+        }
+
+        public ItemRepositoryMock(Fixture fixture)
+        {
+            mock = fixture.Freeze<Mock<IItemRepository>>();
+        }
+
+        public void SetupFindByAsync(StoreItemId storeItemId, IStoreItem returnValue)
         {
             mock
                 .Setup(i => i.FindByAsync(
                     It.Is<StoreItemId>(id => id == storeItemId),
                     It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(returnValue));
+                .ReturnsAsync(returnValue);
         }
 
-        public static void SetupFindActiveByAsync(this Mock<IItemRepository> mock, ItemCategoryId itemCategoryId,
-            IEnumerable<IStoreItem> returnValue)
+        public void SetupFindActiveByAsync(ItemCategoryId itemCategoryId, IEnumerable<IStoreItem> returnValue)
         {
             mock
                 .Setup(i => i.FindActiveByAsync(
@@ -30,7 +40,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                 .ReturnsAsync(returnValue);
         }
 
-        public static void VerifyStoreAsyncOnce(this Mock<IItemRepository> mock, IStoreItem storeItem)
+        public void VerifyFindByAsync(StoreItemId storeItemId)
+        {
+            mock.Verify(
+                i => i.FindByAsync(
+                        It.Is<StoreItemId>(id => id == storeItemId),
+                        It.IsAny<CancellationToken>()),
+                    Times.Once);
+        }
+
+        public void VerifyStoreAsyncOnce(IStoreItem storeItem)
         {
             mock.Verify(
                 i => i.StoreAsync(
@@ -39,7 +58,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                 Times.Once);
         }
 
-        public static void VerifyStoreAsyncNever(this Mock<IItemRepository> mock)
+        public void VerifyStoreAsyncNever()
         {
             mock.Verify(
                 i => i.StoreAsync(

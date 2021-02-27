@@ -5,19 +5,18 @@ using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Mocks;
+using ShoppingList.Api.Domain.TestKit.Manufacturers.Mocks;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Mocks;
 using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Stores.Mocks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +69,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            Mock<IItemCategoryRepository> itemCategoryRepositoryMock = fixture.Freeze<Mock<IItemCategoryRepository>>();
+            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
             var handler = fixture.Create<CreateItemCommandHandler>();
             var command = fixture.Create<CreateItemCommand>();
 
@@ -93,7 +92,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            Mock<IManufacturerRepository> manufacturerRepositoryMock = fixture.Freeze<Mock<IManufacturerRepository>>();
+            ManufacturerRepositoryMock manufacturerRepositoryMock = new ManufacturerRepositoryMock(fixture);
             ManufacturerId manufacturerId = new ManufacturerId(commonFixture.NextInt());
 
             var handler = fixture.Create<CreateItemCommandHandler>();
@@ -124,13 +123,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            Mock<IStoreItemFactory> storeItemFactoryMock = fixture.Freeze<Mock<IStoreItemFactory>>();
-            Mock<IItemRepository> itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
-            Mock<IItemCategoryRepository> itemCategoryRepositoryMock = fixture.Freeze<Mock<IItemCategoryRepository>>();
-            Mock<IManufacturerRepository> manufacturerRepositoryMock = fixture.Freeze<Mock<IManufacturerRepository>>();
-            Mock<IStoreItemAvailabilityFactory> availabilityFactoryMock = fixture.Freeze<Mock<IStoreItemAvailabilityFactory>>();
-            Mock<IStoreItemSectionReadRepository> sectionReadRepositoryMock = fixture.Freeze<Mock<IStoreItemSectionReadRepository>>();
-            Mock<IStoreRepository> storeRepositoryMock = fixture.Freeze<Mock<IStoreRepository>>();
+            StoreItemFactoryMock storeItemFactoryMock = new StoreItemFactoryMock(fixture);
+            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
+            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
+            ManufacturerRepositoryMock manufacturerRepositoryMock = new ManufacturerRepositoryMock(fixture);
+            StoreItemAvailabilityFactoryMock availabilityFactoryMock = new StoreItemAvailabilityFactoryMock(fixture);
+            StoreItemSectionReadRepositoryMock sectionReadRepositoryMock = new StoreItemSectionReadRepositoryMock(fixture);
+            StoreRepositoryMock storeRepositoryMock = new StoreRepositoryMock(fixture);
 
             IManufacturer manufacturer = fixture.Create<Manufacturer>();
             IItemCategory itemCategory = fixture.Create<ItemCategory>();
@@ -167,11 +166,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                itemRepositoryMock.Verify(
-                    i => i.StoreAsync(
-                        It.Is<IStoreItem>(item => item == storeItem),
-                        It.IsAny<CancellationToken>()),
-                    Times.Once);
+                itemRepositoryMock.VerifyStoreAsyncOnce(storeItem);
                 for (int i = 0; i < availabilities.Count; i++)
                 {
                     var shortAv = command.ItemCreation.Availabilities.ElementAt(i);
@@ -189,13 +184,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            Mock<IStoreItemFactory> storeItemFactoryMock = fixture.Freeze<Mock<IStoreItemFactory>>();
-            Mock<IItemRepository> itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
-            Mock<IItemCategoryRepository> itemCategoryRepositoryMock = fixture.Freeze<Mock<IItemCategoryRepository>>();
+            StoreItemFactoryMock storeItemFactoryMock = new StoreItemFactoryMock(fixture);
+            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
+            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
             Mock<IManufacturerRepository> manufacturerRepositoryMock = fixture.Freeze<Mock<IManufacturerRepository>>();
-            Mock<IStoreItemAvailabilityFactory> availabilityFactoryMock = fixture.Freeze<Mock<IStoreItemAvailabilityFactory>>();
-            Mock<IStoreItemSectionReadRepository> sectionReadRepositoryMock = fixture.Freeze<Mock<IStoreItemSectionReadRepository>>();
-            Mock<IStoreRepository> storeRepositoryMock = fixture.Freeze<Mock<IStoreRepository>>();
+            StoreItemAvailabilityFactoryMock availabilityFactoryMock = new StoreItemAvailabilityFactoryMock(fixture);
+            StoreItemSectionReadRepositoryMock sectionReadRepositoryMock = new StoreItemSectionReadRepositoryMock(fixture);
+            StoreRepositoryMock storeRepositoryMock = new StoreRepositoryMock(fixture);
 
             IItemCategory itemCategory = fixture.Create<ItemCategory>();
             IStoreItem storeItem = storeItemFixture.GetStoreItem();
@@ -235,11 +230,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                         It.IsAny<ManufacturerId>(),
                         It.IsAny<CancellationToken>()),
                     Times.Never);
-                itemRepositoryMock.Verify(
-                    i => i.StoreAsync(
-                        It.Is<IStoreItem>(item => item == storeItem),
-                        It.IsAny<CancellationToken>()),
-                    Times.Once);
+                itemRepositoryMock.VerifyStoreAsyncOnce(storeItem);
             }
         }
     }

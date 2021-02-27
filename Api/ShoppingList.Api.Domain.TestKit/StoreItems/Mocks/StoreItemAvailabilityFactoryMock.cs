@@ -1,14 +1,27 @@
-﻿using Moq;
+﻿using AutoFixture;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
+namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
 {
-    public static class StoreItemAvailabilityFactoryMockExtensions
+    public class StoreItemAvailabilityFactoryMock
     {
-        public static void SetupCreate(this Mock<IStoreItemAvailabilityFactory> mock, IStoreItemStore store,
-            float price, IStoreItemSection section, IStoreItemAvailability returnValue)
+        private readonly Mock<IStoreItemAvailabilityFactory> mock;
+
+        public StoreItemAvailabilityFactoryMock(Mock<IStoreItemAvailabilityFactory> mock)
+        {
+            this.mock = mock;
+        }
+
+        public StoreItemAvailabilityFactoryMock(Fixture fixture)
+        {
+            mock = fixture.Freeze<Mock<IStoreItemAvailabilityFactory>>();
+        }
+
+        public void SetupCreate(IStoreItemStore store, float price, IStoreItemSection section,
+            IStoreItemAvailability returnValue)
         {
             mock.Setup(i => i.Create(
                         It.Is<IStoreItemStore>(s => s == store),
@@ -17,8 +30,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                     .Returns(returnValue);
         }
 
-        public static void SetupCreate(this Mock<IStoreItemAvailabilityFactory> mock, IStore store,
-            float price, IStoreItemSection section, IStoreItemAvailability returnValue)
+        public void SetupCreate(IStore store, float price, IStoreItemSection section,
+            IStoreItemAvailability returnValue)
         {
             mock.Setup(i => i.Create(
                         It.Is<IStore>(s => s == store),
@@ -27,8 +40,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                     .Returns(returnValue);
         }
 
-        public static void SetupCreate(this Mock<IStoreItemAvailabilityFactory> mock, IStore store,
-            float price, IStoreSection section, IStoreItemAvailability returnValue)
+        public void SetupCreate(IStore store, float price, IStoreSection section, IStoreItemAvailability returnValue)
         {
             mock.Setup(i => i.Create(
                         It.Is<IStore>(s => s == store),
@@ -37,8 +49,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                     .Returns(returnValue);
         }
 
-        public static void VerifyCreateOnce(this Mock<IStoreItemAvailabilityFactory> mock, IStore store,
-            float price, IStoreItemSection section)
+        public void VerifyCreateOnce(IStore store, float price, IStoreItemSection section)
         {
             mock.Verify(i => i.Create(
                     It.Is<IStore>(s => s == store),
@@ -47,8 +58,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                 Times.Once);
         }
 
-        public static void VerifyCreateOnce(this Mock<IStoreItemAvailabilityFactory> mock, IStore store,
-            float price, IStoreSection section)
+        public void VerifyCreateOnce(IStore store, float price, IStoreSection section)
         {
             mock.Verify(i => i.Create(
                     It.Is<IStore>(s => s == store),

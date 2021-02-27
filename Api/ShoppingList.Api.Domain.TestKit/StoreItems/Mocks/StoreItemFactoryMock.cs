@@ -1,19 +1,33 @@
-﻿using Moq;
+﻿using AutoFixture;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
+namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
 {
-    public static class StoreItemFactoryMockExtensions
+    public class StoreItemFactoryMock
     {
-        public static void SetupCreate(this Mock<IStoreItemFactory> mock, TemporaryItemCreation temporaryItemCreation,
-            IStoreItemAvailability availability, IStoreItem returnValue)
+        private readonly Mock<IStoreItemFactory> mock;
+
+        public StoreItemFactoryMock(Mock<IStoreItemFactory> mock)
+        {
+            this.mock = mock;
+        }
+
+        public StoreItemFactoryMock(Fixture fixture)
+        {
+            mock = fixture.Freeze<Mock<IStoreItemFactory>>();
+        }
+
+        public void SetupCreate(TemporaryItemCreation temporaryItemCreation, IStoreItemAvailability availability,
+            IStoreItem returnValue)
         {
             mock
                 .Setup(i => i.Create(
@@ -22,9 +36,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                 .Returns(returnValue);
         }
 
-        public static void SetupCreate(this Mock<IStoreItemFactory> mock, ItemCreation itemCreation,
-            IItemCategory itemCategory, IManufacturer manufacturer, IEnumerable<IStoreItemAvailability> availabilities,
-            IStoreItem returnValue)
+        public void SetupCreate(ItemCreation itemCreation, IItemCategory itemCategory, IManufacturer manufacturer,
+            IEnumerable<IStoreItemAvailability> availabilities, IStoreItem returnValue)
         {
             mock
                 .Setup(i => i.Create(
