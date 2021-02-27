@@ -1,22 +1,17 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Mocks;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -78,9 +73,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            var shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
-            var shoppingListItemFactoryMock = fixture.Freeze<Mock<IShoppingListItemFactory>>();
-            var itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
+            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
+            ShoppingListItemFactoryMock shoppingListItemFactoryMock = new ShoppingListItemFactoryMock(fixture);
+            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
             var handler = fixture.Create<AddItemToShoppingListCommandHandler>();
 
             fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, ShoppingListItemId>("shoppingListItemId",
@@ -106,9 +101,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
             {
                 result.Should().BeTrue();
                 listMock.VerifyAddItemOnce(listItem, command.SectionId);
-                shoppingListRepositoryMock.Verify(
-                    i => i.StoreAsync(It.IsAny<IShoppingList>(), It.IsAny<CancellationToken>()),
-                    Times.Once);
+                shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
+                shoppingListItemFactoryMock.VerifyCreateOnce(storeItem, availability.Price, false, command.Quantity);
             }
         }
 
@@ -120,9 +114,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
 
             fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, ShoppingListItemId>("shoppingListItemId",
                 new ShoppingListItemId(commonFixture.NextInt()));
-            var shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
-            var shoppingListItemFactoryMock = fixture.Freeze<Mock<IShoppingListItemFactory>>();
-            var itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
+            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
+            ShoppingListItemFactoryMock shoppingListItemFactoryMock = new ShoppingListItemFactoryMock(fixture);
+            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
             var handler = fixture.Create<AddItemToShoppingListCommandHandler>();
             var command = fixture.Create<AddItemToShoppingListCommand>();
 
@@ -145,9 +139,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
             {
                 result.Should().BeTrue();
                 listMock.VerifyAddItemOnce(listItem, command.SectionId);
-                shoppingListRepositoryMock.Verify(
-                    i => i.StoreAsync(It.IsAny<IShoppingList>(), It.IsAny<CancellationToken>()),
-                    Times.Once);
+                shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
+                shoppingListItemFactoryMock.VerifyCreateOnce(storeItem, availability.Price, false, command.Quantity);
             }
         }
     }

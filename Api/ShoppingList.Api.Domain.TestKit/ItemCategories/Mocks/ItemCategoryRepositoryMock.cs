@@ -1,15 +1,27 @@
-﻿using Moq;
+﻿using AutoFixture;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
+namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Mocks
 {
-    public static class ItemCategoryRepositoryMockExtensions
+    public class ItemCategoryRepositoryMock
     {
-        public static void SetupFindByAsync(this Mock<IItemCategoryRepository> mock, ItemCategoryId itemCategoryId,
-            IItemCategory returnValue)
+        private readonly Mock<IItemCategoryRepository> mock;
+
+        public ItemCategoryRepositoryMock(Mock<IItemCategoryRepository> mock)
+        {
+            this.mock = mock;
+        }
+
+        public ItemCategoryRepositoryMock(Fixture fixture)
+        {
+            mock = fixture.Freeze<Mock<IItemCategoryRepository>>();
+        }
+
+        public void SetupFindByAsync(ItemCategoryId itemCategoryId, IItemCategory returnValue)
         {
             mock
                 .Setup(i => i.FindByAsync(
@@ -18,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions
                 .Returns(Task.FromResult(returnValue));
         }
 
-        public static void VerifyStoreAsyncOnce(this Mock<IItemCategoryRepository> mock, IItemCategory itemCategory)
+        public void VerifyStoreAsyncOnce(IItemCategory itemCategory)
         {
             mock.
                 Verify(i => i.StoreAsync(

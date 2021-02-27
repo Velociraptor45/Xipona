@@ -1,31 +1,26 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Tests;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Mocks;
+using ShoppingList.Api.Domain.TestKit.Manufacturers.Mocks;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Mocks;
 using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Stores.Mocks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -82,7 +77,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            Mock<IItemRepository> itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
+            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
 
             var command = fixture.Create<MakeTemporaryItemPermanentCommand>();
             var handler = fixture.Create<MakeTemporaryItemPermanentCommandHandler>();
@@ -106,8 +101,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            Mock<IItemRepository> itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
-            Mock<IItemCategoryRepository> itemCategoryRepositoryMock = fixture.Freeze<Mock<IItemCategoryRepository>>();
+            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
+            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
             IStoreItem storeItem = storeItemFixture.GetStoreItem(isTemporary: true);
 
             var command = fixture.Create<MakeTemporaryItemPermanentCommand>();
@@ -133,7 +128,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            Mock<IItemRepository> itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
+            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
             IStoreItem storeItem = storeItemFixture.GetStoreItem(isTemporary: false);
 
             var command = fixture.Create<MakeTemporaryItemPermanentCommand>();
@@ -158,9 +153,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            Mock<IItemRepository> itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
-            Mock<IItemCategoryRepository> itemCategoryRepositoryMock = fixture.Freeze<Mock<IItemCategoryRepository>>();
-            Mock<IManufacturerRepository> manufacturerRepositoryMock = fixture.Freeze<Mock<IManufacturerRepository>>();
+            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
+            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
+            ManufacturerRepositoryMock manufacturerRepositoryMock = new ManufacturerRepositoryMock(fixture);
 
             IStoreItem storeItem = storeItemFixture.GetStoreItem(isTemporary: true);
             IItemCategory itemCategory = fixture.Create<IItemCategory>();
@@ -190,10 +185,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            Mock<IItemRepository> itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
-            Mock<IItemCategoryRepository> itemCategoryRepositoryMock = fixture.Freeze<Mock<IItemCategoryRepository>>();
-            Mock<IManufacturerRepository> manufacturerRepositoryMock = fixture.Freeze<Mock<IManufacturerRepository>>();
-            Mock<IStoreRepository> storeRepositoryMock = fixture.Freeze<Mock<IStoreRepository>>();
+            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
+            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
+            ManufacturerRepositoryMock manufacturerRepositoryMock = new ManufacturerRepositoryMock(fixture);
+            StoreRepositoryMock storeRepositoryMock = new StoreRepositoryMock(fixture);
 
             var manufacturerId = new ManufacturerId(commonFixture.NextInt());
             var allStores = storeFixture.GetStores(isDeleted: false).ToList();
@@ -236,12 +231,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            Mock<IItemRepository> itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
-            Mock<IItemCategoryRepository> itemCategoryRepositoryMock = fixture.Freeze<Mock<IItemCategoryRepository>>();
-            Mock<IManufacturerRepository> manufacturerRepositoryMock = fixture.Freeze<Mock<IManufacturerRepository>>();
-            Mock<IStoreRepository> storeRepositoryMock = fixture.Freeze<Mock<IStoreRepository>>();
-            Mock<IStoreItemAvailabilityFactory> availabilityFactoryMock = fixture.Freeze<Mock<IStoreItemAvailabilityFactory>>();
-            Mock<IStoreItemSectionReadRepository> sectionReadRepositoryMock = fixture.Freeze<Mock<IStoreItemSectionReadRepository>>();
+            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
+            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
+            ManufacturerRepositoryMock manufacturerRepositoryMock = new ManufacturerRepositoryMock(fixture);
+            StoreRepositoryMock storeRepositoryMock = new StoreRepositoryMock(fixture);
+            StoreItemAvailabilityFactoryMock availabilityFactoryMock = new StoreItemAvailabilityFactoryMock(fixture);
+            StoreItemSectionReadRepositoryMock sectionReadRepositoryMock = new StoreItemSectionReadRepositoryMock(fixture);
 
             var manufacturerId = new ManufacturerId(commonFixture.NextInt());
             var allStores = storeFixture.GetStores(isDeleted: false).ToList();
@@ -284,11 +279,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             {
                 result.Should().BeTrue();
                 storeItemMock.VerifyMakePermanentOnce(command.PermanentItem, itemCategory, manufacturer, availabilities);
-                itemRepositoryMock.Verify(
-                    i => i.StoreAsync(
-                        It.Is<IStoreItem>(item => item == storeItemMock.Object),
-                        It.IsAny<CancellationToken>()),
-                    Times.Once);
+                itemRepositoryMock.VerifyStoreAsyncOnce(storeItemMock.Object);
                 foreach (var av in command.PermanentItem.Availabilities)
                 {
                     storeRepositoryMock.VerifyFindActiveByAsyncOnce(av.StoreId.AsStoreId());
