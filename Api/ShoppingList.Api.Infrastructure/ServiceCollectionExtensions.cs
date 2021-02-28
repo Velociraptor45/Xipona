@@ -11,7 +11,9 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Converters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Transaction;
-
+using System;
+using ItemCategoryModels = ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ManufacturerModels = ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using StoreModels = ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure
@@ -21,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
         public static void AddInfrastructure(this IServiceCollection services, string connectionString)
         {
             services.AddDbContext<ShoppingContext>(
-                options => options.UseMySql(connectionString));
+                options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(0, 3, 1))));
 
             services.AddTransient<IShoppingListRepository, ShoppingListRepository>();
             services.AddTransient<IItemRepository, ItemRepository>();
