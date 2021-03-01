@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model.Factories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,6 +21,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters
 
         public IStore ToDomain(Entities.Store source)
         {
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
             List<IStoreSection> sections = storeSectionConverter.ToDomain(source.Sections).ToList();
 
             return storeFactory.Create(

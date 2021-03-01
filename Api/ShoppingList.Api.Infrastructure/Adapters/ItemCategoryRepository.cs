@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
 using System.Collections.Generic;
@@ -17,10 +17,13 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
     public class ItemCategoryRepository : IItemCategoryRepository
     {
         private readonly ShoppingContext dbContext;
+        private readonly IToDomainConverter<Entities.ItemCategory, IItemCategory> itemCategoryConverter;
 
-        public ItemCategoryRepository(ShoppingContext dbContext)
+        public ItemCategoryRepository(ShoppingContext dbContext,
+            IToDomainConverter<Entities.ItemCategory, IItemCategory> itemCategoryConverter)
         {
             this.dbContext = dbContext;
+            this.itemCategoryConverter = itemCategoryConverter;
         }
 
         public async Task<IEnumerable<IItemCategory>> FindByAsync(string searchInput,
@@ -32,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return itemCategoryEntities.Select(entity => entity.ToDomain());
+            return itemCategoryConverter.ToDomain(itemCategoryEntities);
         }
 
         public async Task<IItemCategory> FindByAsync(ItemCategoryId id, CancellationToken cancellationToken)
@@ -48,7 +51,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             if (entity == null)
                 throw new DomainException(new ItemCategoryNotFoundReason(id));
 
-            return entity.ToDomain();
+            return itemCategoryConverter.ToDomain(entity);
         }
 
         public async Task<IEnumerable<IItemCategory>> FindByAsync(IEnumerable<ItemCategoryId> ids,
@@ -67,18 +70,18 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return entities.Select(e => e.ToDomain());
+            return itemCategoryConverter.ToDomain(entities);
         }
 
         public async Task<IEnumerable<IItemCategory>> FindActiveByAsync(CancellationToken cancellationToken)
         {
-            var results = await dbContext.ItemCategories.AsNoTracking()
+            var entities = await dbContext.ItemCategories.AsNoTracking()
                 .Where(m => !m.Deleted)
                 .ToListAsync();
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return results.Select(m => m.ToDomain());
+            return itemCategoryConverter.ToDomain(entities);
         }
 
         public async Task<IItemCategory> StoreAsync(IItemCategory model,
@@ -98,7 +101,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             await dbContext.SaveChangesAsync();
-            return entity.ToDomain();
+            return itemCategoryConverter.ToDomain(entity);
         }
     }
 }

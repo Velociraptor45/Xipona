@@ -24,6 +24,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain
             services.AddTransient<IStoreFactory, StoreFactory>();
             services.AddTransient<IShoppingListItemFactory, ShoppingListItemFactory>();
             services.AddTransient<IShoppingListFactory, ShoppingListFactory>();
+            services.AddTransient<IShoppingListStoreFactory, ShoppingListStoreFactory>();
+            services.AddTransient<IStoreSectionFactory, StoreSectionFactory>();
 
             services.AddTransient<IStoreItemSectionFactory, StoreItemSectionFactory>();
             services.AddTransient<IShoppingListSectionFactory, ShoppingListSectionFactory>();

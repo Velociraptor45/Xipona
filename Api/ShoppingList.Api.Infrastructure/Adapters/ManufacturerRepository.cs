@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
@@ -17,10 +18,13 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
     public class ManufacturerRepository : IManufacturerRepository
     {
         private readonly ShoppingContext dbContext;
+        private readonly IToDomainConverter<Entities.Manufacturer, IManufacturer> manufacturerConverter;
 
-        public ManufacturerRepository(ShoppingContext dbContext)
+        public ManufacturerRepository(ShoppingContext dbContext,
+            IToDomainConverter<Entities.Manufacturer, IManufacturer> manufacturerConverter)
         {
             this.dbContext = dbContext;
+            this.manufacturerConverter = manufacturerConverter;
         }
 
         public async Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput,
@@ -49,7 +53,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return entity.ToDomain();
+            return manufacturerConverter.ToDomain(entity);
         }
 
         public async Task<IEnumerable<IManufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids,
@@ -68,19 +72,19 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return entities.Select(e => e.ToDomain());
+            return manufacturerConverter.ToDomain(entities);
         }
 
         public async Task<IEnumerable<IManufacturer>> FindByAsync(bool includeDeleted,
             CancellationToken cancellationToken)
         {
-            var results = await dbContext.Manufacturers.AsNoTracking()
+            var entities = await dbContext.Manufacturers.AsNoTracking()
                 .Where(m => !m.Deleted || includeDeleted)
                 .ToListAsync();
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return results.Select(m => m.ToDomain());
+            return manufacturerConverter.ToDomain(entities);
         }
 
         public async Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken)
@@ -99,7 +103,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             await dbContext.SaveChangesAsync();
-            return entity.ToDomain();
+            return manufacturerConverter.ToDomain(entity);
         }
     }
 }

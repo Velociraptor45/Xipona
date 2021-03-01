@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
@@ -38,8 +39,13 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
 
         private static void AddConverters(this IServiceCollection services)
         {
+            services.AddTransient<IToDomainConverter<ItemCategory, ItemCategoryModels.IItemCategory>, ItemCategoryConverter>();
+            services.AddTransient<IToDomainConverter<Manufacturer, ManufacturerModels.IManufacturer>, ManufacturerConverter>();
+
             services.AddTransient<IToDomainConverter<Store, StoreModels.IStore>, StoreConverter>();
             services.AddTransient<IToDomainConverter<Section, StoreModels.IStoreSection>, StoreSectionConverter>();
+
+            services.AddTransient<IToDomainConverter<Entities.ShoppingList, IShoppingList>, ShoppingListConverter>();
         }
     }
 }
