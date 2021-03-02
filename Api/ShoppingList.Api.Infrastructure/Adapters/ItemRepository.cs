@@ -8,7 +8,6 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
 using System.Collections.Generic;
@@ -214,7 +213,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                     dbContext.Entry(newEntity.ItemCategory).State = EntityState.Unchanged;
 
                 await dbContext.SaveChangesAsync();
-                return newEntity.ToStoreItemDomain();
+                return storeItemConverter.ToDomain(newEntity);
             }
             else
             {
