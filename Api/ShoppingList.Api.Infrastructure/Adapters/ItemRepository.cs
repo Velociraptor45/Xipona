@@ -8,7 +8,6 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +19,15 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
     public class ItemRepository : IItemRepository
     {
         private readonly ShoppingContext dbContext;
-        private readonly IToDomainConverter<Item, IStoreItem> storeItemConverter;
+        private readonly IToDomainConverter<Item, IStoreItem> toModelConverter;
+        private readonly IToEntityConverter<IStoreItem, Item> toEntityConverter;
 
-        public ItemRepository(ShoppingContext dbContext, IToDomainConverter<Item, IStoreItem> storeItemConverter)
+        public ItemRepository(ShoppingContext dbContext, IToDomainConverter<Item, IStoreItem> toModelConverter,
+            IToEntityConverter<IStoreItem, Item> toEntityConverter)
         {
             this.dbContext = dbContext;
-            this.storeItemConverter = storeItemConverter;
+            this.toModelConverter = toModelConverter;
+            this.toEntityConverter = toEntityConverter;
         }
 
         #region public methods
@@ -51,7 +53,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
 
-            return storeItemConverter.ToDomain(itemEntity);
+            return toModelConverter.ToDomain(itemEntity);
         }
 
         public async Task<IStoreItem> FindByAsync(StoreItemId storeItemId, ShoppingListStoreId storeId,
@@ -80,7 +82,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
 
-            return storeItemConverter.ToDomain(itemEntity);
+            return toModelConverter.ToDomain(itemEntity);
         }
 
         public async Task<IEnumerable<IStoreItem>> FindByAsync(ShoppingListStoreId storeId, CancellationToken cancellationToken)
@@ -99,7 +101,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 item.Predecessor = await LoadPredecessorsAsync(item);
             }
 
-            return storeItemConverter.ToDomain(entities);
+            return toModelConverter.ToDomain(entities);
         }
 
         public async Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<ShoppingListStoreId> storeIds,
@@ -146,7 +148,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 item.Predecessor = await LoadPredecessorsAsync(item);
             }
 
-            return storeItemConverter.ToDomain(filteredResultByStore);
+            return toModelConverter.ToDomain(filteredResultByStore);
         }
 
         public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, ShoppingListStoreId storeId,
@@ -169,7 +171,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 item.Predecessor = await LoadPredecessorsAsync(item);
             }
 
-            return storeItemConverter.ToDomain(entities);
+            return toModelConverter.ToDomain(entities);
         }
 
         public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(ItemCategoryId itemCategoryId,
@@ -190,7 +192,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return storeItemConverter.ToDomain(entities);
+            return toModelConverter.ToDomain(entities);
         }
 
         public async Task<IStoreItem> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken)
@@ -204,7 +206,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             if (existingEntity == null)
             {
-                var newEntity = storeItem.ToEntity();
+                var newEntity = toEntityConverter.ToEntity(storeItem);
                 dbContext.Add(newEntity);
 
                 if (newEntity.Manufacturer != null)
@@ -213,11 +215,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                     dbContext.Entry(newEntity.ItemCategory).State = EntityState.Unchanged;
 
                 await dbContext.SaveChangesAsync();
-                return storeItemConverter.ToDomain(newEntity);
+                return toModelConverter.ToDomain(newEntity);
             }
             else
             {
-                var updatedEntity = storeItem.ToEntity();
+                var updatedEntity = toEntityConverter.ToEntity(storeItem);
                 dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
                 dbContext.Entry(existingEntity).State = EntityState.Modified;
 
@@ -225,7 +227,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 DeleteAvailabilities(existingEntity, updatedEntity);
 
                 await dbContext.SaveChangesAsync();
-                return storeItemConverter.ToDomain(existingEntity);
+                return toModelConverter.ToDomain(existingEntity);
             }
         }
 

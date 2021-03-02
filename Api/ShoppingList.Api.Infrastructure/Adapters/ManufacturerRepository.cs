@@ -5,8 +5,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,13 +16,16 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
     public class ManufacturerRepository : IManufacturerRepository
     {
         private readonly ShoppingContext dbContext;
-        private readonly IToDomainConverter<Entities.Manufacturer, IManufacturer> manufacturerConverter;
+        private readonly IToDomainConverter<Entities.Manufacturer, IManufacturer> toModelConverter;
+        private readonly IToEntityConverter<IManufacturer, Entities.Manufacturer> toEntityConverter;
 
         public ManufacturerRepository(ShoppingContext dbContext,
-            IToDomainConverter<Entities.Manufacturer, IManufacturer> manufacturerConverter)
+            IToDomainConverter<Entities.Manufacturer, IManufacturer> toModelConverter,
+            IToEntityConverter<IManufacturer, Entities.Manufacturer> toEntityConverter)
         {
             this.dbContext = dbContext;
-            this.manufacturerConverter = manufacturerConverter;
+            this.toModelConverter = toModelConverter;
+            this.toEntityConverter = toEntityConverter;
         }
 
         public async Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput,
@@ -36,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return manufacturerEntities.Select(entity => entity.ToDomain());
+            return toModelConverter.ToDomain(manufacturerEntities);
         }
 
         public async Task<IManufacturer> FindByAsync(ManufacturerId id,
@@ -53,7 +54,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return manufacturerConverter.ToDomain(entity);
+            return toModelConverter.ToDomain(entity);
         }
 
         public async Task<IEnumerable<IManufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids,
@@ -72,7 +73,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return manufacturerConverter.ToDomain(entities);
+            return toModelConverter.ToDomain(entities);
         }
 
         public async Task<IEnumerable<IManufacturer>> FindByAsync(bool includeDeleted,
@@ -84,12 +85,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return manufacturerConverter.ToDomain(entities);
+            return toModelConverter.ToDomain(entities);
         }
 
         public async Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken)
         {
-            var entity = model.ToEntity();
+            var entity = toEntityConverter.ToEntity(model);
 
             if (entity.Id <= 0)
             {
@@ -103,7 +104,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             await dbContext.SaveChangesAsync();
-            return manufacturerConverter.ToDomain(entity);
+            return toModelConverter.ToDomain(entity);
         }
     }
 }

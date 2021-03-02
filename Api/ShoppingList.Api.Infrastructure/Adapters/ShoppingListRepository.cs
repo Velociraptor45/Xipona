@@ -6,7 +6,6 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,13 +17,16 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
     public class ShoppingListRepository : IShoppingListRepository
     {
         private readonly ShoppingContext dbContext;
-        private readonly IToDomainConverter<Entities.ShoppingList, IShoppingList> shoppingListConverter;
+        private readonly IToDomainConverter<Entities.ShoppingList, IShoppingList> toModelConverter;
+        private readonly IToEntityConverter<IShoppingList, Entities.ShoppingList> toEntityConverter;
 
         public ShoppingListRepository(ShoppingContext dbContext,
-            IToDomainConverter<Entities.ShoppingList, IShoppingList> shoppingListConverter)
+            IToDomainConverter<Entities.ShoppingList, IShoppingList> toModelConverter,
+            IToEntityConverter<IShoppingList, Entities.ShoppingList> toEntityConverter)
         {
             this.dbContext = dbContext;
-            this.shoppingListConverter = shoppingListConverter;
+            this.toModelConverter = toModelConverter;
+            this.toEntityConverter = toEntityConverter;
         }
 
         #region public methods
@@ -66,7 +68,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return shoppingListConverter.ToDomain(entity);
+            return toModelConverter.ToDomain(entity);
         }
 
         public async Task<IEnumerable<IShoppingList>> FindByAsync(StoreItemId storeItemId,
@@ -81,7 +83,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return shoppingListConverter.ToDomain(entities);
+            return toModelConverter.ToDomain(entities);
         }
 
         public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(StoreItemId storeItemId,
@@ -97,7 +99,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return shoppingListConverter.ToDomain(entities);
+            return toModelConverter.ToDomain(entities);
         }
 
         public async Task<IShoppingList> FindActiveByAsync(ShoppingListStoreId storeId, CancellationToken cancellationToken)
@@ -114,7 +116,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             if (entity == null)
                 return null;
 
-            return shoppingListConverter.ToDomain(entity);
+            return toModelConverter.ToDomain(entity);
         }
 
         #endregion public methods
@@ -124,7 +126,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
         private async Task StoreModifiedListAsync(Entities.ShoppingList existingShoppingListEntity,
             IShoppingList shoppingList, CancellationToken cancellationToken)
         {
-            var shoppingListEntityToStore = shoppingList.ToEntity();
+            var shoppingListEntityToStore = toEntityConverter.ToEntity(shoppingList);
             var onListMappings = existingShoppingListEntity.ItemsOnList.ToDictionary(map => map.ItemId);
 
             dbContext.Entry(shoppingListEntityToStore).State = EntityState.Modified;
@@ -158,7 +160,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
         private async Task StoreAsNewListAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
         {
-            var entity = shoppingList.ToEntity();
+            var entity = toEntityConverter.ToEntity(shoppingList);
 
             dbContext.Entry(entity).State = EntityState.Added;
             foreach (var onListMap in entity.ItemsOnList)
