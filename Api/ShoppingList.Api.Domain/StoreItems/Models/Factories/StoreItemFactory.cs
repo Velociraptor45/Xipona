@@ -10,6 +10,28 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
 {
     public class StoreItemFactory : IStoreItemFactory
     {
+        public IStoreItem Create(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
+            QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+            IItemCategory itemCategory, IManufacturer manufacturer, IStoreItem predecessor,
+            IEnumerable<IStoreItemAvailability> availabilities)
+        {
+            var item = new StoreItem(
+                id,
+                name,
+                isDeleted,
+                comment,
+                isTemporary,
+                quantityType,
+                quantityInPacket,
+                quantityTypeInPacket,
+                itemCategory,
+                manufacturer,
+                availabilities);
+
+            item.SetPredecessor(predecessor);
+            return item;
+        }
+
         public IStoreItem Create(ItemCreation itemCreation, IItemCategory itemCategory,
             IManufacturer manufacturer, IEnumerable<IStoreItemAvailability> storeItemAvailabilities)
         {

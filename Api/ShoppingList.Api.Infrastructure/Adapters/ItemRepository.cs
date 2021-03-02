@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
@@ -20,10 +21,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
     public class ItemRepository : IItemRepository
     {
         private readonly ShoppingContext dbContext;
+        private readonly IToDomainConverter<Item, IStoreItem> storeItemConverter;
 
-        public ItemRepository(ShoppingContext dbContext)
+        public ItemRepository(ShoppingContext dbContext, IToDomainConverter<Item, IStoreItem> storeItemConverter)
         {
             this.dbContext = dbContext;
+            this.storeItemConverter = storeItemConverter;
         }
 
         #region public methods
@@ -37,14 +40,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var itemEntity = await dbContext.Items.AsNoTracking()
-                .Include(item => item.ItemCategory)
-                .Include(item => item.Manufacturer)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Store)
-                .ThenInclude(store => store.Sections)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Section)
+            var itemEntity = await GetItemQuery()
                 .FirstOrDefaultAsync(item => storeItemId.IsActualId ?
                     item.Id == storeItemId.Actual.Value :
                     item.CreatedFrom == storeItemId.Offline.Value);
@@ -56,7 +52,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
 
-            return itemEntity.ToStoreItemDomain();
+            return storeItemConverter.ToDomain(itemEntity);
         }
 
         public async Task<IStoreItem> FindByAsync(StoreItemId storeItemId, ShoppingListStoreId storeId,
@@ -67,14 +63,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             if (storeId == null)
                 throw new ArgumentNullException(nameof(storeId));
 
-            var itemEntity = await dbContext.Items.AsNoTracking()
-                .Include(item => item.ItemCategory)
-                .Include(item => item.Manufacturer)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Store)
-                .ThenInclude(store => store.Sections)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Section)
+            var itemEntity = await GetItemQuery()
                 .FirstOrDefaultAsync(item => storeItemId.IsActualId ?
                     item.Id == storeItemId.Actual.Value :
                     item.CreatedFrom == storeItemId.Offline.Value);
@@ -92,7 +81,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
 
-            return itemEntity.ToStoreItemDomain();
+            return storeItemConverter.ToDomain(itemEntity);
         }
 
         public async Task<IEnumerable<IStoreItem>> FindByAsync(ShoppingListStoreId storeId, CancellationToken cancellationToken)
@@ -100,14 +89,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             if (storeId == null)
                 throw new ArgumentNullException(nameof(storeId));
 
-            var entities = await dbContext.Items.AsNoTracking()
-                .Include(item => item.ItemCategory)
-                .Include(item => item.Manufacturer)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Store)
-                .ThenInclude(store => store.Sections)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Section)
+            var entities = await GetItemQuery()
                 .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId.Value) != null)
                 .ToListAsync();
 
@@ -118,7 +100,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 item.Predecessor = await LoadPredecessorsAsync(item);
             }
 
-            return entities.Select(e => e.ToStoreItemDomain());
+            return storeItemConverter.ToDomain(entities);
         }
 
         public async Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<ShoppingListStoreId> storeIds,
@@ -144,14 +126,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             var itemCategoryIdLists = itemCategoriesIds.Select(id => id.Value).ToList();
             var manufacturerIdLists = manufacturerIds.Select(id => id.Value).ToList();
 
-            var result = await dbContext.Items.AsNoTracking()
-                .Include(item => item.ItemCategory)
-                .Include(item => item.Manufacturer)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Store)
-                .ThenInclude(store => store.Sections)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Section)
+            var result = await GetItemQuery()
                 .Where(item =>
                     !item.IsTemporary
                     && itemCategoryIdLists.Contains(item.ItemCategoryId.Value)
@@ -172,7 +147,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 item.Predecessor = await LoadPredecessorsAsync(item);
             }
 
-            return filteredResultByStore.Select(r => r.ToStoreItemDomain());
+            return storeItemConverter.ToDomain(filteredResultByStore);
         }
 
         public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, ShoppingListStoreId storeId,
@@ -181,14 +156,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             if (storeId == null)
                 throw new ArgumentNullException(nameof(storeId));
 
-            var entities = await dbContext.Items.AsNoTracking()
-                .Include(item => item.ItemCategory)
-                .Include(item => item.Manufacturer)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Store)
-                .ThenInclude(store => store.Sections)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Section)
+            var entities = await GetItemQuery()
                 .Where(item => item.Name.Contains(searchInput)
                     && !item.Deleted
                     && !item.IsTemporary
@@ -202,7 +170,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 item.Predecessor = await LoadPredecessorsAsync(item);
             }
 
-            return entities.Select(e => e.ToStoreItemDomain());
+            return storeItemConverter.ToDomain(entities);
         }
 
         public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(ItemCategoryId itemCategoryId,
@@ -215,14 +183,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var entities = await dbContext.Items.AsNoTracking()
-                .Include(item => item.ItemCategory)
-                .Include(item => item.Manufacturer)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Store)
-                .ThenInclude(store => store.Sections)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Section)
+            var entities = await GetItemQuery()
                 .Where(item => item.ItemCategoryId.HasValue
                     && item.ItemCategoryId == itemCategoryId.Value
                     && !item.Deleted)
@@ -230,7 +191,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return entities.Select(entity => entity.ToStoreItemDomain());
+            return storeItemConverter.ToDomain(entities);
         }
 
         public async Task<IStoreItem> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken)
@@ -265,7 +226,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 DeleteAvailabilities(existingEntity, updatedEntity);
 
                 await dbContext.SaveChangesAsync();
-                return existingEntity.ToStoreItemDomain();
+                return storeItemConverter.ToDomain(existingEntity);
             }
         }
 
@@ -273,16 +234,22 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
         #region private methods
 
+        private IQueryable<Item> GetItemQuery()
+        {
+            return dbContext.Items.AsNoTracking()
+                .Include(item => item.ItemCategory)
+                .Include(item => item.Manufacturer)
+                .Include(item => item.AvailableAt)
+                .ThenInclude(map => map.Store)
+                .ThenInclude(store => store.Sections);
+        }
+
         private async Task<Item> LoadPredecessorsAsync(Item item)
         {
             if (item.PredecessorId == null)
                 return null;
 
-            var predecessor = await dbContext.Items.AsNoTracking()
-                .Include(item => item.ItemCategory)
-                .Include(item => item.Manufacturer)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Store)
+            var predecessor = await GetItemQuery()
                 .SingleOrDefaultAsync(i => i.Id == item.PredecessorId.Value);
             if (predecessor == null)
                 return null;

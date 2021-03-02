@@ -181,41 +181,19 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
         {
             return dbContext.ShoppingLists
                 .Include(l => l.Store)
-                .ThenInclude(s => s.DefaultSection)
-                
-                .Include(l => l.Store)
                 .ThenInclude(s => s.Sections)
-                .ThenInclude(s => s.ActualItemsSections)
-                .ThenInclude(s => s.Item)
-                .ThenInclude(i => i.AvailableAt)
-                
-                .Include(l => l.Store)
-                .ThenInclude(s => s.Sections)
-                .ThenInclude(s => s.ActualItemsSections)
-                .ThenInclude(s => s.ShoppingList)
 
-                .Include(l => l.Store)
-                .ThenInclude(s => s.Sections)
-                .ThenInclude(s => s.DefaultItemsInSection)
-                
-                .Include(l => l.Store)
-                .ThenInclude(s => s.Sections)
-                .ThenInclude(s => s.Store)
-                
                 .Include(l => l.ItemsOnList)
                 .ThenInclude(map => map.Item)
                 .ThenInclude(item => item.Manufacturer)
-                
+
                 .Include(l => l.ItemsOnList)
                 .ThenInclude(map => map.Item)
                 .ThenInclude(item => item.ItemCategory)
-                
+
                 .Include(l => l.ItemsOnList)
                 .ThenInclude(map => map.Item)
-                .ThenInclude(item => item.AvailableAt)
-                
-                .Include(l => l.ItemsOnList)
-                .ThenInclude(map => map.Section);
+                .ThenInclude(item => item.AvailableAt);
         }
 
         #endregion private methods
