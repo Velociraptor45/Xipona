@@ -2,9 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
@@ -17,25 +15,19 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
     public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
     {
         private readonly IStoreItemFactory storeItemFactory;
-        private readonly IItemCategoryFactory itemCategoryFactory;
-        private readonly IManufacturerFactory manufacturerFactory;
-        private readonly IStoreItemAvailabilityFactory storeItemAvailabilityFactory;
-        private readonly IStoreItemStoreFactory storeItemStoreFactory;
-        private readonly IStoreItemSectionFactory storeItemSectionFactory;
+        private readonly IToDomainConverter<AvailableAt, IStoreItemAvailability> storeItemAvailabilityConverter;
+        private readonly IToDomainConverter<Entities.Manufacturer, IManufacturer> manufacturerConverter;
+        private readonly IToDomainConverter<Entities.ItemCategory, IItemCategory> itemCategoryConverter;
 
         public StoreItemConverter(IStoreItemFactory storeItemFactory,
-            IItemCategoryFactory itemCategoryFactory,
-            IManufacturerFactory manufacturerFactory,
-            IStoreItemAvailabilityFactory storeItemAvailabilityFactory,
-            IStoreItemStoreFactory storeItemStoreFactory,
-            IStoreItemSectionFactory storeItemSectionFactory)
+            IToDomainConverter<AvailableAt, IStoreItemAvailability> storeItemAvailabilityConverter,
+            IToDomainConverter<Entities.Manufacturer, IManufacturer> manufacturerConverter,
+            IToDomainConverter<Entities.ItemCategory, IItemCategory> itemCategoryConverter)
         {
             this.storeItemFactory = storeItemFactory;
-            this.itemCategoryFactory = itemCategoryFactory;
-            this.manufacturerFactory = manufacturerFactory;
-            this.storeItemAvailabilityFactory = storeItemAvailabilityFactory;
-            this.storeItemStoreFactory = storeItemStoreFactory;
-            this.storeItemSectionFactory = storeItemSectionFactory;
+            this.storeItemAvailabilityConverter = storeItemAvailabilityConverter;
+            this.manufacturerConverter = manufacturerConverter;
+            this.itemCategoryConverter = itemCategoryConverter;
         }
 
         public IStoreItem ToDomain(Item source)
@@ -46,51 +38,25 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             IItemCategory itemCategory = null;
             if (source.ItemCategoryId != null)
             {
-                var itemCategoryEntity = source.ItemCategory;
-                itemCategory = itemCategoryFactory.Create(
-                    new ItemCategoryId(itemCategoryEntity.Id),
-                    itemCategoryEntity.Name,
-                    itemCategoryEntity.Deleted);
+                itemCategory = itemCategoryConverter.ToDomain(source.ItemCategory);
             }
 
             IManufacturer manufacturer = null;
             if (source.ManufacturerId != null)
             {
-                var manufacturerEntity = source.Manufacturer;
-                manufacturer = manufacturerFactory.Create(
-                    new ManufacturerId(manufacturerEntity.Id),
-                    manufacturerEntity.Name,
-                    manufacturerEntity.Deleted);
+                manufacturer = manufacturerConverter.ToDomain(source.Manufacturer);
             }
 
             IStoreItem predecessor = null;
             if (source.PredecessorId != null)
             {
-                var converter = new StoreItemConverter(storeItemFactory, itemCategoryFactory, manufacturerFactory,
-                    storeItemAvailabilityFactory, storeItemStoreFactory, storeItemSectionFactory);
+                var converter = new StoreItemConverter(storeItemFactory, storeItemAvailabilityConverter,
+                    manufacturerConverter, itemCategoryConverter);
                 predecessor = converter.ToDomain(source.Predecessor);
             }
 
-            List<IStoreItemAvailability> availabilities = new List<IStoreItemAvailability>();
-            foreach (var availabilityEntity in source.AvailableAt)
-            {
-                var sectionEntities = availabilityEntity.Store.Sections.ToList();
-
-                List<IStoreItemSection> sections = sectionEntities
-                    .Select(s => storeItemSectionFactory.Create(new StoreItemSectionId(s.Id), s.Name, s.SortIndex))
-                    .ToList();
-
-                IStoreItemStore store = storeItemStoreFactory.Create(
-                    new StoreItemStoreId(availabilityEntity.StoreId),
-                    availabilityEntity.Store.Name,
-                    sections);
-
-                var availabilityModel = storeItemAvailabilityFactory.Create(
-                    store,
-                    availabilityEntity.Price,
-                    sections.Single(s => s.Id.Value == availabilityEntity.Store.DefaultSectionId));
-                availabilities.Add(availabilityModel);
-            }
+            List<IStoreItemAvailability> availabilities = storeItemAvailabilityConverter.ToDomain(source.AvailableAt)
+                .ToList();
 
             return storeItemFactory.Create(
                 new StoreItemId(source.Id),

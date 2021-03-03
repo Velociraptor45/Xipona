@@ -49,6 +49,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
             services.AddTransient<IToDomainConverter<Entities.ShoppingList, IShoppingList>, ShoppingListConverter>();
 
             services.AddTransient<IToDomainConverter<Item, IStoreItem>, StoreItemConverter>();
+            services.AddTransient<IToDomainConverter<Entities.Store, IStoreItemStore>, StoreItemStoreConverter>();
+            services.AddTransient<IToDomainConverter<Section, IStoreItemSection>, StoreItemSectionConverter>();
+            services.AddTransient<IToDomainConverter<AvailableAt, IStoreItemAvailability>, StoreItemAvailabilityConverter>();
 
             services.AddTransient<IToEntityConverter<ManufacturerModels.IManufacturer, Manufacturer>, Converters.ToEntity.ManufacturerConverter>();
             services.AddTransient<IToEntityConverter<ItemCategoryModels.IItemCategory, ItemCategory>, Converters.ToEntity.ItemCategoryConverter>();
