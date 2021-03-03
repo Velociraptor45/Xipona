@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using System.Collections.Generic;
@@ -13,13 +13,13 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
     public class StoreItemSectionReadRepository : IStoreItemSectionReadRepository
     {
         private readonly ShoppingContext dbContext;
-        private readonly IStoreItemSectionFactory storeItemSectionFactory;
+        private readonly IToDomainConverter<Section, IStoreItemSection> toDomainConverter;
 
         public StoreItemSectionReadRepository(ShoppingContext dbContext,
-            IStoreItemSectionFactory storeItemSectionFactory)
+            IToDomainConverter<Section, IStoreItemSection> toDomainConverter)
         {
             this.dbContext = dbContext;
-            this.storeItemSectionFactory = storeItemSectionFactory;
+            this.toDomainConverter = toDomainConverter;
         }
 
         public async Task<IEnumerable<IStoreItemSection>> FindByAsync(IEnumerable<StoreItemSectionId> storeItemSectionIds,
@@ -33,15 +33,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var sectionList = new List<IStoreItemSection>();
-            foreach (var entity in entities)
-            {
-                var section = storeItemSectionFactory.Create(
-                    new StoreItemSectionId(entity.Id), entity.Name, entity.SortIndex);
-                sectionList.Add(section);
-            }
-
-            return sectionList;
+            return toDomainConverter.ToDomain(entities);
         }
 
         public async Task<IStoreItemSection> FindByAsync(StoreItemSectionId storeItemSectionId,
@@ -55,7 +47,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             if (entity == null)
                 return null;
 
-            return storeItemSectionFactory.Create(new StoreItemSectionId(entity.Id), entity.Name, entity.SortIndex);
+            return toDomainConverter.ToDomain(entity);
         }
     }
 }
