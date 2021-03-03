@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
 {
     public class StoreConverter : IToDomainConverter<Entities.Store, IStore>
     {

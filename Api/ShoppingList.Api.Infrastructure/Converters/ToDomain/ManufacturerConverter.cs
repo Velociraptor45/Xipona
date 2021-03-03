@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
 using System;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
 {
     public class ManufacturerConverter : IToDomainConverter<Entities.Manufacturer, IManufacturer>
     {

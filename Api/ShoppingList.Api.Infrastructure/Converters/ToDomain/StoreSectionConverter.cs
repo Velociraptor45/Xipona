@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model.Factories;
 using System;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
 {
     public class StoreSectionConverter : IToDomainConverter<Entities.Section, IStoreSection>
     {

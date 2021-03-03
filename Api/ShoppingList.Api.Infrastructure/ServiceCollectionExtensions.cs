@@ -11,7 +11,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Adapters;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Converters;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Transaction;
 using System;

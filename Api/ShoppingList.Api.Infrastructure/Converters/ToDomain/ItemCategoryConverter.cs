@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
 using System;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
 {
     public class ItemCategoryConverter : IToDomainConverter<Entities.ItemCategory, IItemCategory>
     {
