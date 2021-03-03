@@ -5,6 +5,10 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
@@ -33,11 +37,20 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
     {
         private readonly IQueryDispatcher queryDispatcher;
         private readonly ICommandDispatcher commandDispatcher;
+        private readonly IToContractConverter<StoreItemReadModel, StoreItemContract> storeItemContractConverter;
+        private readonly IToContractConverter<ItemSearchReadModel, ItemSearchContract> itemSearchContractConverter;
+        private readonly IToContractConverter<ItemFilterResultReadModel, ItemFilterResultContract> itemFilterResultContractConverter;
 
-        public ItemController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher)
+        public ItemController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
+            IToContractConverter<StoreItemReadModel, StoreItemContract> storeItemContractConverter,
+            IToContractConverter<ItemSearchReadModel, ItemSearchContract> itemSearchContractConverter,
+            IToContractConverter<ItemFilterResultReadModel, ItemFilterResultContract> itemFilterResultContractConverter)
         {
             this.queryDispatcher = queryDispatcher;
             this.commandDispatcher = commandDispatcher;
+            this.storeItemContractConverter = storeItemContractConverter;
+            this.itemSearchContractConverter = itemSearchContractConverter;
+            this.itemFilterResultContractConverter = itemFilterResultContractConverter;
         }
 
         [HttpPost]
@@ -114,7 +127,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest(e.Reason);
             }
 
-            var contracts = readModels.Select(rm => rm.ToContract());
+            var contracts = itemSearchContractConverter.ToContract(readModels);
 
             return Ok(contracts);
         }
@@ -132,8 +145,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 manufacturerIds.Select(id => new ManufacturerId(id)));
 
             var readModels = await queryDispatcher.DispatchAsync(query, default);
+            var contracts = itemFilterResultContractConverter.ToContract(readModels);
 
-            return Ok(readModels.Select(readModel => readModel.ToContract()));
+            return Ok(contracts);
         }
 
         [HttpPost]
@@ -164,7 +178,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest(e.Reason);
             }
 
-            return Ok(result.ToContract());
+            var contract = storeItemContractConverter.ToContract(result);
+
+            return Ok(contract);
         }
 
         [HttpPost]
