@@ -1,10 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels
 {
-    public class StoreReadModel
+    public class ShoppingListStoreReadModel
     {
-        public StoreReadModel(ShoppingListStoreId id, string name, bool isDeleted)
+        public ShoppingListStoreReadModel(ShoppingListStoreId id, string name, bool isDeleted)
         {
             Id = id;
             Name = name;

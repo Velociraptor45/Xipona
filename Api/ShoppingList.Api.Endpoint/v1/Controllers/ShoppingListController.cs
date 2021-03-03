@@ -5,6 +5,9 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQ
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
@@ -19,7 +22,6 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTyp
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ShoppingList;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
@@ -30,11 +32,20 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
     {
         private readonly IQueryDispatcher queryDispatcher;
         private readonly ICommandDispatcher commandDispatcher;
+        private readonly IToContractConverter<ShoppingListReadModel, ShoppingListContract> shoppingListToContractConverter;
+        private readonly IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeToContractConverter;
+        private readonly IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketToContractConverter;
 
-        public ShoppingListController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher)
+        public ShoppingListController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
+            IToContractConverter<ShoppingListReadModel, ShoppingListContract> shoppingListToContractConverter,
+            IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeToContractConverter,
+            IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketToContractConverter)
         {
             this.queryDispatcher = queryDispatcher;
             this.commandDispatcher = commandDispatcher;
+            this.shoppingListToContractConverter = shoppingListToContractConverter;
+            this.quantityTypeToContractConverter = quantityTypeToContractConverter;
+            this.quantityTypeInPacketToContractConverter = quantityTypeInPacketToContractConverter;
         }
 
         [HttpGet]
@@ -62,7 +73,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest(e.Message);
             }
 
-            var contract = readModel.ToContract();
+            var contract = shoppingListToContractConverter.ToContract(readModel);
 
             return Ok(contract);
         }
@@ -240,7 +251,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         {
             var query = new AllQuantityTypesQuery();
             var readModels = await queryDispatcher.DispatchAsync(query, default);
-            var contracts = readModels.Select(rm => rm.ToContract());
+            var contracts = quantityTypeToContractConverter.ToContract(readModels);
 
             return Ok(contracts);
         }
@@ -252,7 +263,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         {
             var query = new AllQuantityTypesInPacketQuery();
             var readModels = await queryDispatcher.DispatchAsync(query, default);
-            var contracts = readModels.Select(rm => rm.ToContract());
+            var contracts = quantityTypeInPacketToContractConverter.ToContract(readModels);
 
             return Ok(contracts);
         }
