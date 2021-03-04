@@ -159,8 +159,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
         private IQueryable<Entities.Store> GetStoreQuery()
         {
             return dbContext.Stores.AsNoTracking()
-                .Include(s => s.Sections)
-                .ThenInclude(s => s.Store);
+                .Include(s => s.Sections);
         }
 
         #endregion private methods
