@@ -215,7 +215,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                     dbContext.Entry(newEntity.ItemCategory).State = EntityState.Unchanged;
 
                 await dbContext.SaveChangesAsync();
-                return toModelConverter.ToDomain(newEntity);
+
+                var e = GetItemQuery().First(i => i.Id == newEntity.Id);
+                return toModelConverter.ToDomain(e);
             }
             else
             {
@@ -227,7 +229,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 DeleteAvailabilities(existingEntity, updatedEntity);
 
                 await dbContext.SaveChangesAsync();
-                return toModelConverter.ToDomain(existingEntity);
+
+                var e = GetItemQuery().First(i => i.Id == updatedEntity.Id);
+                return toModelConverter.ToDomain(e);
             }
         }
 
