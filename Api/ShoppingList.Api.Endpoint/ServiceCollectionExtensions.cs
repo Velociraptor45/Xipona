@@ -19,6 +19,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint
 
             var assembly = typeof(ServiceCollectionExtensions).Assembly;
             services.AddConverters(assembly, typeof(IToContractConverter<,>));
+            services.AddConverters(assembly, typeof(IToDomainConverter<,>));
         }
 
         public static void AddConverters(this IServiceCollection services, Assembly assembly,

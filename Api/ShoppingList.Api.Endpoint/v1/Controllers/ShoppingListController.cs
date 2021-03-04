@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQ
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
@@ -20,7 +21,6 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShopping
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
-using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.ShoppingList;
 using System;
 using System.Threading.Tasks;
 
@@ -35,17 +35,20 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         private readonly IToContractConverter<ShoppingListReadModel, ShoppingListContract> shoppingListToContractConverter;
         private readonly IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeToContractConverter;
         private readonly IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketToContractConverter;
+        private readonly IToDomainConverter<ItemIdContract, ShoppingListItemId> shoppingListItemIdConverter;
 
         public ShoppingListController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
             IToContractConverter<ShoppingListReadModel, ShoppingListContract> shoppingListToContractConverter,
             IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeToContractConverter,
-            IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketToContractConverter)
+            IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketToContractConverter,
+            IToDomainConverter<ItemIdContract, ShoppingListItemId> shoppingListItemIdConverter)
         {
             this.queryDispatcher = queryDispatcher;
             this.commandDispatcher = commandDispatcher;
             this.shoppingListToContractConverter = shoppingListToContractConverter;
             this.quantityTypeToContractConverter = quantityTypeToContractConverter;
             this.quantityTypeInPacketToContractConverter = quantityTypeInPacketToContractConverter;
+            this.shoppingListItemIdConverter = shoppingListItemIdConverter;
         }
 
         [HttpGet]
@@ -88,7 +91,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             ShoppingListItemId itemId;
             try
             {
-                itemId = contract.ItemId.ToShoppingListItemId();
+                itemId = shoppingListItemIdConverter.ToDomain(contract.ItemId);
             }
             catch (ArgumentException)
             {
@@ -118,7 +121,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             ShoppingListItemId itemId;
             try
             {
-                itemId = contract.ItemId.ToShoppingListItemId();
+                itemId = shoppingListItemIdConverter.ToDomain(contract.ItemId);
             }
             catch (ArgumentException)
             {
@@ -173,7 +176,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             ShoppingListItemId itemId;
             try
             {
-                itemId = contract.ItemId.ToShoppingListItemId();
+                itemId = shoppingListItemIdConverter.ToDomain(contract.ItemId);
             }
             catch (ArgumentException)
             {
@@ -203,7 +206,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             ShoppingListItemId itemId;
             try
             {
-                itemId = contract.ItemId.ToShoppingListItemId();
+                itemId = shoppingListItemIdConverter.ToDomain(contract.ItemId);
             }
             catch (ArgumentException)
             {

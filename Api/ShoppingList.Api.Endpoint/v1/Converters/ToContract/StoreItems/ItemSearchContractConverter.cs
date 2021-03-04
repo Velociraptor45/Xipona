@@ -5,7 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 using System;
 
-namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.StoreItem
+namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.StoreItems
 {
     public class ItemSearchContractConverter :
         IToContractConverter<ItemSearchReadModel, ItemSearchContract>

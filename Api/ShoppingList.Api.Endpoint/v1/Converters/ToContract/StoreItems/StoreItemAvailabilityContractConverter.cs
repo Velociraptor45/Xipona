@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 using System;
 
-namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.StoreItem
+namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.StoreItems
 {
     public class StoreItemAvailabilityContractConverter :
         IToContractConverter<StoreItemAvailabilityReadModel, StoreItemAvailabilityContract>

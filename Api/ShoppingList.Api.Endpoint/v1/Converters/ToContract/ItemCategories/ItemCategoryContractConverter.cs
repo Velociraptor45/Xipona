@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
 
-namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.ItemCategory
+namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.ItemCategories
 {
     public class ItemCategoryContractConverter : IToContractConverter<ItemCategoryReadModel, ItemCategoryContract>
     {
