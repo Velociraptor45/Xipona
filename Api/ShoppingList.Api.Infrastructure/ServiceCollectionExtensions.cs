@@ -31,8 +31,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
             services.AddTransient<IStoreItemSectionReadRepository, StoreItemSectionReadRepository>();
 
             var assembly = typeof(ServiceCollectionExtensions).Assembly;
-            services.AddConverters(assembly, typeof(IToEntityConverter<,>));
-            services.AddConverters(assembly, typeof(IToDomainConverter<,>));
+            services.AddInstancesOfGenericType(assembly, typeof(IToEntityConverter<,>));
+            services.AddInstancesOfGenericType(assembly, typeof(IToDomainConverter<,>));
         }
     }
 }
