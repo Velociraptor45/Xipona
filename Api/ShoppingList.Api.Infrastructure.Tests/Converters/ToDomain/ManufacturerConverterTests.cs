@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
@@ -29,6 +30,11 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
         }
 
         protected override void SetupServiceCollection()
+        {
+            AddDependencies(serviceCollection);
+        }
+
+        public static void AddDependencies(IServiceCollection serviceCollection)
         {
             serviceCollection.AddInstancesOfGenericType(typeof(ManufacturerConverter).Assembly, typeof(IToDomainConverter<,>));
             serviceCollection.AddInstancesOfNonGenericType(typeof(IManufacturerFactory).Assembly, typeof(IManufacturerFactory));

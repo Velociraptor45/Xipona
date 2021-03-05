@@ -16,6 +16,9 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             this.commonFixture = commonFixture;
         }
 
+        // todo: entirely rewrite this
+        // todo: make sure that the default section isn't different from the store's sections
+
         public IEnumerable<IStoreItemAvailability> GetAvailabilities(int count = 2)
         {
             if (count < 1)

@@ -2,6 +2,7 @@
 {
     public class StoreItemAvailability : IStoreItemAvailability
     {
+        // pass just default section id and search for it when property is accessed
         public StoreItemAvailability(IStoreItemStore store, float price, IStoreItemSection defaultSection)
         {
             Store = store ?? throw new System.ArgumentNullException(nameof(store));
