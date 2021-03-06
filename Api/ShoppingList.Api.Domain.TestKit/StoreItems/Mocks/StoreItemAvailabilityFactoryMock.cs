@@ -20,50 +20,50 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
             mock = fixture.Freeze<Mock<IStoreItemAvailabilityFactory>>();
         }
 
-        public void SetupCreate(IStoreItemStore store, float price, IStoreItemSection section,
+        public void SetupCreate(IStoreItemStore store, float price, StoreItemSectionId sectionId,
             IStoreItemAvailability returnValue)
         {
             mock.Setup(i => i.Create(
                         It.Is<IStoreItemStore>(s => s == store),
                         It.Is<float>(p => p == price),
-                        It.Is<IStoreItemSection>(sec => sec == section)))
+                        It.Is<StoreItemSectionId>(id => id == sectionId)))
                     .Returns(returnValue);
         }
 
-        public void SetupCreate(IStore store, float price, IStoreItemSection section,
+        public void SetupCreate(IStore store, float price, StoreItemSectionId sectionId,
             IStoreItemAvailability returnValue)
         {
             mock.Setup(i => i.Create(
                         It.Is<IStore>(s => s == store),
                         It.Is<float>(p => p == price),
-                        It.Is<IStoreItemSection>(sec => sec == section)))
+                        It.Is<StoreItemSectionId>(id => id == sectionId)))
                     .Returns(returnValue);
         }
 
-        public void SetupCreate(IStore store, float price, IStoreSection section, IStoreItemAvailability returnValue)
+        public void SetupCreate(IStore store, float price, StoreSectionId sectionId, IStoreItemAvailability returnValue)
         {
             mock.Setup(i => i.Create(
                         It.Is<IStore>(s => s == store),
                         It.Is<float>(p => p == price),
-                        It.Is<IStoreSection>(sec => sec == section)))
+                        It.Is<StoreSectionId>(id => id == sectionId)))
                     .Returns(returnValue);
         }
 
-        public void VerifyCreateOnce(IStore store, float price, IStoreItemSection section)
+        public void VerifyCreateOnce(IStore store, float price, StoreItemSectionId sectionId)
         {
             mock.Verify(i => i.Create(
                     It.Is<IStore>(s => s == store),
                     It.Is<float>(p => p == price),
-                    It.Is<IStoreItemSection>(s => s == section)),
+                    It.Is<StoreItemSectionId>(id => id == sectionId)),
                 Times.Once);
         }
 
-        public void VerifyCreateOnce(IStore store, float price, IStoreSection section)
+        public void VerifyCreateOnce(IStore store, float price, StoreSectionId sectionId)
         {
             mock.Verify(i => i.Create(
                     It.Is<IStore>(s => s == store),
                     It.Is<float>(p => p == price),
-                    It.Is<IStoreSection>(s => s == section)),
+                    It.Is<StoreSectionId>(id => id == sectionId)),
                 Times.Once);
         }
     }

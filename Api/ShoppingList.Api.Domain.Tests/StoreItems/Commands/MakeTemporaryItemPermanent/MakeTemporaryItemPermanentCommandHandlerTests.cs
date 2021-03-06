@@ -263,7 +263,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
                 var shortAv = command.PermanentItem.Availabilities.ElementAt(i);
                 var store = stores[i];
                 storeRepositoryMock.SetupFindActiveByAsync(shortAv.StoreId.AsStoreId(), store);
-                availabilityFactoryMock.SetupCreate(store, shortAv.Price, availabilities[i].DefaultSection, availabilities[i]);
+                availabilityFactoryMock.SetupCreate(store, shortAv.Price, availabilities[i].DefaultSection.Id, availabilities[i]);
             }
 
             itemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, storeItemMock.Object);

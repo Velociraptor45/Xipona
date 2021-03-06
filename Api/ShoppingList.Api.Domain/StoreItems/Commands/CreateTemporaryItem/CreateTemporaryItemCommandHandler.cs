@@ -44,10 +44,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
             if (store == null || store.IsDeleted)
                 throw new DomainException(new StoreNotFoundReason(shortAvailability.StoreId));
 
+            // todo add domain exception
             var defaultSection = store.Sections.Single(s => s.IsDefaultSection);
 
             IStoreItemAvailability storeItemAvailability = storeItemAvailabilityFactory
-                    .Create(store, shortAvailability.Price, defaultSection);
+                    .Create(store, shortAvailability.Price, defaultSection.Id);
 
             var storeItem = storeItemFactory.Create(command.TemporaryItemCreation, storeItemAvailability);
 

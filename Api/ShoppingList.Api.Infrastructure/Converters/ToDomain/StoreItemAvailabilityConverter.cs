@@ -3,7 +3,6 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using System;
-using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
 {
@@ -29,7 +28,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             return storeItemAvailabilityFactory.Create(
                 store,
                 source.Price,
-                store.Sections.Single(s => s.Id.Value == source.Store.DefaultSectionId));
+                new StoreItemSectionId(source.Store.DefaultSectionId));
         }
     }
 }

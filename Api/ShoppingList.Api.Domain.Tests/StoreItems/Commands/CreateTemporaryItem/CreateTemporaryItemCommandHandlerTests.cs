@@ -140,7 +140,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             // setup availabilities
             IStoreSection defaultSection = store.Sections.Single(s => s.IsDefaultSection);
             IStoreItemAvailability availability = storeItemAvailabilityFixture.GetAvailability(section);
-            availabilityFactoryMock.SetupCreate(store, tempAv.Price, defaultSection, availability);
+            availabilityFactoryMock.SetupCreate(store, tempAv.Price, defaultSection.Id, availability);
 
             //
             IStoreItem storeItem = storeItemFixture.GetStoreItem();
@@ -154,7 +154,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             {
                 result.Should().BeTrue();
                 storeRepositoryMock.VerifyFindByAsyncOnce(tempAv.StoreId.AsStoreId());
-                availabilityFactoryMock.VerifyCreateOnce(store, tempAv.Price, defaultSection);
+                availabilityFactoryMock.VerifyCreateOnce(store, tempAv.Price, defaultSection.Id);
                 itemRepositoryMock.VerifyStoreAsyncOnce(storeItem);
             }
         }

@@ -152,7 +152,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                 var shortAv = command.ItemCreation.Availabilities.ElementAt(i);
                 var store = stores[i];
                 storeRepositoryMock.SetupFindActiveByAsync(shortAv.StoreId.AsStoreId(), store);
-                availabilityFactoryMock.SetupCreate(store, shortAv.Price, availabilities[i].DefaultSection, availabilities[i]);
+                availabilityFactoryMock.SetupCreate(store, shortAv.Price, availabilities[i].DefaultSection.Id, availabilities[i]);
             }
 
             storeItemFactoryMock.SetupCreate(command.ItemCreation, itemCategory, manufacturer, availabilities, storeItem);
@@ -173,7 +173,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                     var av = availabilities[i];
                     var store = stores[i];
                     storeRepositoryMock.VerifyFindActiveByAsyncOnce(shortAv.StoreId.AsStoreId());
-                    availabilityFactoryMock.VerifyCreateOnce(store, shortAv.Price, av.DefaultSection);
+                    availabilityFactoryMock.VerifyCreateOnce(store, shortAv.Price, av.DefaultSection.Id);
                 }
             }
         }
@@ -212,7 +212,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                 var shortAv = command.ItemCreation.Availabilities.ElementAt(i);
                 var store = stores[i];
                 storeRepositoryMock.SetupFindActiveByAsync(shortAv.StoreId.AsStoreId(), store);
-                availabilityFactoryMock.SetupCreate(store, shortAv.Price, availabilities[i].DefaultSection, availabilities[i]);
+                availabilityFactoryMock.SetupCreate(store, shortAv.Price, availabilities[i].DefaultSection.Id, availabilities[i]);
             }
 
             storeItemFactoryMock.SetupCreate(command.ItemCreation, itemCategory, null, availabilities, storeItem);

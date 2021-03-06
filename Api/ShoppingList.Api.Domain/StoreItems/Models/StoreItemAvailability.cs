@@ -1,13 +1,14 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
+﻿using System.Linq;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
     public class StoreItemAvailability : IStoreItemAvailability
     {
-        // pass just default section id and search for it when property is accessed
-        public StoreItemAvailability(IStoreItemStore store, float price, IStoreItemSection defaultSection)
+        public StoreItemAvailability(IStoreItemStore store, float price, StoreItemSectionId defaultSectionId)
         {
             Store = store ?? throw new System.ArgumentNullException(nameof(store));
             Price = price;
-            DefaultSection = defaultSection ?? throw new System.ArgumentNullException(nameof(defaultSection));
+            DefaultSection = store.Sections.Single(s => s.Id == defaultSectionId); //todo add throwing domain exception
         }
 
         public IStoreItemStore Store { get; }

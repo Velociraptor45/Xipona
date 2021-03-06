@@ -14,24 +14,23 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
             this.storeItemSectionFactory = storeItemSectionFactory;
         }
 
-        public IStoreItemAvailability Create(IStoreItemStore store, float price, IStoreItemSection defaultSection)
+        public IStoreItemAvailability Create(IStoreItemStore store, float price, StoreItemSectionId defaultSectionId)
         {
-            return new StoreItemAvailability(store, price, defaultSection);
+            return new StoreItemAvailability(store, price, defaultSectionId);
         }
 
-        public IStoreItemAvailability Create(IStore store, float price, IStoreItemSection defaultSection)
+        public IStoreItemAvailability Create(IStore store, float price, StoreItemSectionId defaultSectionId)
         {
             var storeItemStore = storeItemStoreFactory.Create(store);
 
-            return new StoreItemAvailability(storeItemStore, price, defaultSection);
+            return new StoreItemAvailability(storeItemStore, price, defaultSectionId);
         }
 
-        public IStoreItemAvailability Create(IStore store, float price, IStoreSection defaultSection)
+        public IStoreItemAvailability Create(IStore store, float price, StoreSectionId defaultSectionId)
         {
             var storeItemStore = storeItemStoreFactory.Create(store);
-            var section = storeItemSectionFactory.Create(defaultSection);
 
-            return new StoreItemAvailability(storeItemStore, price, section);
+            return new StoreItemAvailability(storeItemStore, price, defaultSectionId.AsStoreItemSectionId());
         }
     }
 }
