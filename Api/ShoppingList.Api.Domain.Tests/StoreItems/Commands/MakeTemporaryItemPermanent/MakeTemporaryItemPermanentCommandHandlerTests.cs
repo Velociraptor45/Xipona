@@ -270,15 +270,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             sectionReadRepositoryMock.SetupFindByAsync(sectionIds, sections);
 
             // setup availabilities
-            //List<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.GetAvailabilities(sections).ToList();
-            //List<IStore> stores = storeFixture.GetStores(availabilities.Count).ToList();
-            //for (int i = 0; i < availabilities.Count; i++)
-            //{
-            //    var shortAv = command.PermanentItem.Availabilities.ElementAt(i);
-            //    var store = stores[i];
-            //    storeRepositoryMock.SetupFindActiveByAsync(shortAv.StoreId.AsStoreId(), store);
-            //    availabilityFactoryMock.SetupCreate(store, shortAv.Price, availabilities[i].DefaultSection.Id, availabilities[i]);
-            //}
             List<IStore> stores = storeFixture.GetStores(availabilities.Count).ToList();
             for (int i = 0; i < availabilities.Count; i++)
             {

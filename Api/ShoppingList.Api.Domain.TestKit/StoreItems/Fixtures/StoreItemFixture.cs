@@ -1,5 +1,4 @@
 ﻿using AutoFixture;
-using ProjectHermes.ShoppingList.Api.Core.Tests;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
@@ -20,27 +19,6 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             this.storeItemAvailabilityFixture = storeItemAvailabilityFixture;
             this.commonFixture = commonFixture;
             storeItemStoreFixture = new StoreItemStoreFixture(commonFixture);
-        }
-
-        public IStoreItem GetStoreItem(StoreItemId id = null, int availabilityCount = 3,
-            IEnumerable<IStoreItemAvailability> additionalAvailabilities = null,
-            bool? isTemporary = null, bool? isDeleted = null)
-        {
-            var allAvailabilities = additionalAvailabilities?.ToList() ?? new List<IStoreItemAvailability>();
-            var additionalStoreIds = allAvailabilities.Select(av => av.Store.Id.Value);
-            var uniqueStoreItemAvailabilities = GetUniqueStoreItemAvailabilities(availabilityCount, additionalStoreIds);
-            allAvailabilities.AddRange(uniqueStoreItemAvailabilities);
-            allAvailabilities.Shuffle();
-
-            var fixture = commonFixture.GetNewFixture();
-            fixture.Inject(allAvailabilities.AsEnumerable());
-            if (id != null)
-                fixture.Inject(id);
-            if (isTemporary.HasValue)
-                fixture.ConstructorArgumentFor<StoreItem, bool>("isTemporary", isTemporary.Value);
-            if (isDeleted.HasValue)
-                fixture.ConstructorArgumentFor<StoreItem, bool>("isDeleted", isDeleted.Value);
-            return fixture.Create<StoreItem>();
         }
 
         public IStoreItem Create(StoreItemDefinition definition)
@@ -106,20 +84,6 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
 
                 yield return Create(definition);
             }
-        }
-
-        private IEnumerable<IStoreItemAvailability> GetUniqueStoreItemAvailabilities(int count,
-            IEnumerable<int> exclude = null)
-        {
-            List<int> storeIds = commonFixture.NextUniqueInts(count, exclude).ToList();
-            List<IStoreItemAvailability> availabilities = new List<IStoreItemAvailability>();
-
-            foreach (var storeId in storeIds)
-            {
-                var availability = storeItemAvailabilityFixture.GetAvailability(storeId);
-                availabilities.Add(availability);
-            }
-            return availabilities;
         }
     }
 }

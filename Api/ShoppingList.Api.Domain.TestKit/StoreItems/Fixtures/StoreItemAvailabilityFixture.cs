@@ -20,9 +20,6 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             storeItemStoreFixture = new StoreItemStoreFixture(commonFixture);
         }
 
-        // todo: entirely rewrite this
-        // todo: make sure that the default section isn't different from the store's sections
-
         public IStoreItemAvailability Create(StoreItemAvailabilityDefinition definition)
         {
             var fixture = commonFixture.GetNewFixture();
@@ -87,60 +84,6 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             resultList.AddRange(CreateManyValid(count - 1));
 
             return resultList;
-        }
-
-        public IEnumerable<IStoreItemAvailability> GetAvailabilities(int count = 2)
-        {
-            if (count < 1)
-                throw new ArgumentException($"{nameof(count)} mustn't be smaller than 1.");
-
-            var uniqueStoreIds = commonFixture.NextUniqueInts(count);
-
-            foreach (int uniqueStoreId in uniqueStoreIds)
-            {
-                yield return GetAvailability(uniqueStoreId);
-            }
-        }
-
-        public IEnumerable<IStoreItemAvailability> GetAvailabilities(IEnumerable<IStoreItemSection> sections)
-        {
-            if (sections is null)
-                throw new ArgumentNullException(nameof(sections));
-
-            var sectionsList = sections.ToList();
-            var uniqueIds = commonFixture.NextUniqueInts(sectionsList.Count).ToList();
-
-            for (int i = 0; i < sectionsList.Count; i++)
-            {
-                IStoreItemSection section = sectionsList[i];
-                int id = uniqueIds[i];
-                yield return GetAvailability(new StoreItemStoreId(id), section);
-            }
-        }
-
-        public IStoreItemAvailability GetAvailability(StoreItemStoreId storeId, IStoreItemSection section)
-        {
-            var fixture = commonFixture.GetNewFixture();
-            fixture.Inject(storeId);
-            fixture.Inject(section);
-            return fixture.Create<StoreItemAvailability>();
-        }
-
-        public IStoreItemAvailability GetAvailability(StoreItemStoreId storeId)
-        {
-            var fixture = commonFixture.GetNewFixture();
-            fixture.Inject(storeId);
-            return fixture.Create<StoreItemAvailability>();
-        }
-
-        public IStoreItemAvailability GetAvailability(int storeId)
-        {
-            return GetAvailability(new StoreItemStoreId(storeId));
-        }
-
-        public IStoreItemAvailability GetAvailability()
-        {
-            return GetAvailability(commonFixture.NextInt());
         }
     }
 }
