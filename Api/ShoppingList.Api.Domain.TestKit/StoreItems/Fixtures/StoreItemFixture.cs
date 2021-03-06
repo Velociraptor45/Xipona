@@ -54,6 +54,19 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             return fixture.Create<StoreItem>();
         }
 
+        public IStoreItem CreateValid()
+        {
+            var availabilities = storeItemAvailabilityFixture.CreateManyValid();
+            var definition = new StoreItemDefinition
+            {
+                IsTemporary = false,
+                IsDeleted = false,
+                Availabilities = availabilities
+            };
+
+            return Create(definition);
+        }
+
         public IEnumerable<IStoreItem> CreateMany(IEnumerable<StoreItemDefinition> definitions)
         {
             var existingIds = definitions

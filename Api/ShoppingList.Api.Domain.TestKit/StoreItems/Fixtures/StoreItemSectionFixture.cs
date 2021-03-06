@@ -35,6 +35,12 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             }
         }
 
+        public IEnumerable<IStoreItemSection> CreateManyValid(int count = 3)
+        {
+            var uniqueIds = commonFixture.NextUniqueInts(count);
+            return CreateMany(uniqueIds);
+        }
+
         public IStoreItemSection Create(int id)
         {
             return Create(new StoreItemSectionId(id));
