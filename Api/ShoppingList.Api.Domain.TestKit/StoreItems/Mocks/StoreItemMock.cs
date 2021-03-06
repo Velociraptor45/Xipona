@@ -15,6 +15,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
             SetupId(storeItem.Id);
             SetupIsTemporary(storeItem.IsTemporary);
             SetupIsDeleted(storeItem.IsDeleted);
+            SetupAvailabilities(storeItem.Availabilities);
         }
 
         public void SetupId(StoreItemId returnValue)
@@ -33,6 +34,12 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
         {
             Setup(i => i.IsDeleted)
                 .Returns(returnValue);
+        }
+
+        public void SetupAvailabilities(IEnumerable<IStoreItemAvailability> returnValue)
+        {
+            Setup(i => i.Availabilities)
+                .Returns(returnValue.ToList().AsReadOnly());
         }
 
         public void VerifyDeleteOnce()

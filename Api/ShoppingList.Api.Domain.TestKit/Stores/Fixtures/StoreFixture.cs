@@ -81,17 +81,17 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Fixtures
             }
         }
 
-        public IStore CreateValid(int sectionAmount)
+        public IStore CreateValid()
         {
-            List<IStoreSection> sections = CreateValidSections(sectionAmount).ToList();
+            return CreateValid(new StoreDefinition());
+        }
 
-            var definition = new StoreDefinition()
-            {
-                Sections = sections,
-                IsDeleted = false
-            };
+        public IStore CreateValid(StoreDefinition baseDefinition)
+        {
+            baseDefinition.Sections ??= CreateValidSections(3).ToList();
+            baseDefinition.IsDeleted ??= false;
 
-            return Create(definition);
+            return Create(baseDefinition);
         }
 
         public IStore CreateValid(StoreDefinition baseDefinition, int sectionAmount)
@@ -104,6 +104,41 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Fixtures
             return Create(baseDefinition);
         }
 
+        public IEnumerable<IStore> CreateManyValid(int count = 3)
+        {
+            return CreateManyValid(new StoreDefinition(), count);
+        }
+
+        public IEnumerable<IStore> CreateManyValid(IEnumerable<StoreDefinition> definitions)
+        {
+            var definitionsList = definitions.ToList();
+
+            var uniqueStoreIds = commonFixture.NextUniqueInts(definitionsList.Count).ToList();
+
+            for (int i = 0; i < definitionsList.Count; i++)
+            {
+                StoreDefinition definition = definitionsList[i];
+                definition.Id ??= new StoreId(uniqueStoreIds[i]);
+                yield return CreateValid(definition);
+            }
+        }
+
+        public IEnumerable<IStore> CreateManyValid(StoreDefinition baseDefinition, int count = 3)
+        {
+            if (count <= 1)
+                throw new ArgumentException($"{nameof(count)} must be greater than 0.");
+
+            var uniqueStoreIds = commonFixture.NextUniqueInts(count);
+
+            foreach (int uniqueStoreId in uniqueStoreIds)
+            {
+                var definition = baseDefinition.Clone();
+                definition.Id = new StoreId(uniqueStoreId);
+                yield return Create(definition);
+            }
+        }
+
+        // todo: outsource this to StoreSectionFixture
         private IEnumerable<IStoreSection> CreateValidSections(int sectionAmount)
         {
             List<IStoreSection> sections = storeSectionFixture

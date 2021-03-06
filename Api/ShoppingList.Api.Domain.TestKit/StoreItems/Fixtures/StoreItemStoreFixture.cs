@@ -41,12 +41,14 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
 
         public IStoreItemStore CreateValid()
         {
-            var definition = new StoreItemStoreDefinition
-            {
-                Sections = storeItemSectionFixture.CreateManyValid()
-            };
+            return CreateValid(new StoreItemStoreDefinition());
+        }
 
-            return Create(definition);
+        public IStoreItemStore CreateValid(StoreItemStoreDefinition baseDefinition)
+        {
+            baseDefinition.Sections ??= storeItemSectionFixture.CreateManyValid();
+
+            return Create(baseDefinition);
         }
 
         public IEnumerable<IStoreItemStore> CreateManyValid(int count = 3, IEnumerable<StoreItemStoreId> excludedStoreIds = null)

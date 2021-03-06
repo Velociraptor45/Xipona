@@ -50,6 +50,17 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             return Create(definition);
         }
 
+        public IStoreItemAvailability CreateValidFor(IStoreItemStore store)
+        {
+            var definition = new StoreItemAvailabilityDefinition
+            {
+                Store = store,
+                DefaultSectionId = commonFixture.ChooseRandom(store.Sections).Id
+            };
+
+            return Create(definition);
+        }
+
         public IEnumerable<IStoreItemAvailability> CreateManyValid(int count = 3, IEnumerable<StoreItemStoreId> excludedStoreIds = null)
         {
             List<IStoreItemStore> stores = storeItemStoreFixture.CreateManyValid(count, excludedStoreIds).ToList();
@@ -72,12 +83,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             if (count <= 0)
                 throw new ArgumentException($"{nameof(count)} must be greater than 0");
 
-            var definition = new StoreItemAvailabilityDefinition
-            {
-                Store = store,
-                DefaultSectionId = commonFixture.ChooseRandom(store.Sections).Id
-            };
-            var resultList = Create(definition).ToMonoList();
+            var resultList = CreateValidFor(store).ToMonoList();
             resultList.AddRange(CreateManyValid(count - 1));
 
             return resultList;

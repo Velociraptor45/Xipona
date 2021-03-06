@@ -121,7 +121,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             Mock<IShoppingList> listMock = new Mock<IShoppingList>();
 
             StoreItemId actualItemId = new StoreItemId(commonFixture.NextInt());
-            IStoreItem storeItem = storeItemFixture.GetStoreItem(actualItemId);
+            var storeItemBaseDefinition = StoreItemDefinition.FromId(actualItemId);
+            IStoreItem storeItem = storeItemFixture.CreateValid(storeItemBaseDefinition);
 
             var listItemIdOffline = new ShoppingListItemId(Guid.NewGuid());
             fixture.ConstructorArgumentFor<PutItemInBasketCommand, ShoppingListItemId>("itemId", listItemIdOffline);

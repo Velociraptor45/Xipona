@@ -11,9 +11,14 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
 
         public static StoreItemStoreDefinition FromId(int id)
         {
+            return FromId(new StoreItemStoreId(id));
+        }
+
+        public static StoreItemStoreDefinition FromId(StoreItemStoreId id)
+        {
             return new StoreItemStoreDefinition
             {
-                Id = new StoreItemStoreId(id)
+                Id = id
             };
         }
     }
