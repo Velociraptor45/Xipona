@@ -25,6 +25,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         private readonly StoreItemSectionFixture storeItemSectionFixture;
         private readonly StoreFixture storeFixture;
         private readonly StoreItemFixture storeItemFixture;
+        private readonly CreateTemporaryItemCommandFixture createTemporaryItemCommandFixture;
 
         public CreateTemporaryItemCommandHandlerTests()
         {
@@ -33,6 +34,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             storeItemSectionFixture = new StoreItemSectionFixture(commonFixture);
             storeFixture = new StoreFixture(commonFixture);
             storeItemFixture = new StoreItemFixture(new StoreItemAvailabilityFixture(commonFixture), commonFixture);
+            createTemporaryItemCommandFixture = new CreateTemporaryItemCommandFixture(commonFixture);
         }
 
         [Fact]
@@ -119,18 +121,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
             StoreRepositoryMock storeRepositoryMock = new StoreRepositoryMock(fixture);
             StoreItemAvailabilityFactoryMock availabilityFactoryMock = new StoreItemAvailabilityFactoryMock(fixture);
-            StoreItemSectionReadRepositoryMock sectionReadRepositoryMock = new StoreItemSectionReadRepositoryMock(fixture);
+
+            IStoreItem storeItem = storeItemFixture.CreateValid();
+            IStoreItemAvailability availability = commonFixture.ChooseRandom(storeItem.Availabilities);
+            StoreId storeId = availability.Store.Id.AsStoreId();
 
             var handler = fixture.Create<CreateTemporaryItemCommandHandler>();
-            var command = fixture.Create<CreateTemporaryItemCommand>();
-
-            var tempAv = command.TemporaryItemCreation.Availability;
-            StoreId storeId = tempAv.StoreId.AsStoreId();
-            StoreItemSectionId sectionId = tempAv.StoreItemSectionId;
-
-            // setup sections
-            IStoreItemSection section = storeItemSectionFixture.Create(sectionId);
-            sectionReadRepositoryMock.SetupFindByAsync(sectionId, section);
+            var command = createTemporaryItemCommandFixture.Create(availability);
 
             // setup store
             StoreDefinition baseStoreDefinition = StoreDefinition.FromId(storeId);
@@ -139,11 +136,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
 
             // setup availabilities
             IStoreSection defaultSection = store.Sections.Single(s => s.IsDefaultSection);
-            IStoreItemAvailability availability = storeItemAvailabilityFixture.GetAvailability(section);
-            availabilityFactoryMock.SetupCreate(store, tempAv.Price, defaultSection.Id, availability);
 
-            //
-            IStoreItem storeItem = storeItemFixture.GetStoreItem();
+            availabilityFactoryMock.SetupCreate(store, availability.Price, defaultSection.Id, availability);
             storeItemFactoryMock.SetupCreate(command.TemporaryItemCreation, availability, storeItem);
 
             // Act
@@ -153,8 +147,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                storeRepositoryMock.VerifyFindByAsyncOnce(tempAv.StoreId.AsStoreId());
-                availabilityFactoryMock.VerifyCreateOnce(store, tempAv.Price, defaultSection.Id);
+                storeRepositoryMock.VerifyFindByAsyncOnce(storeId);
+                availabilityFactoryMock.VerifyCreateOnce(store, availability.Price, defaultSection.Id);
                 itemRepositoryMock.VerifyStoreAsyncOnce(storeItem);
             }
         }

@@ -93,12 +93,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             var fixture = commonFixture.GetNewFixture();
 
             ManufacturerRepositoryMock manufacturerRepositoryMock = new ManufacturerRepositoryMock(fixture);
+            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
+
             ManufacturerId manufacturerId = new ManufacturerId(commonFixture.NextInt());
+            IItemCategory itemCategory = fixture.Create<ItemCategory>();
 
             var handler = fixture.Create<CreateItemCommandHandler>();
-            var command = createItemCommandFixture.GetCreateItemCommand(manufacturerId);
+            var command = createItemCommandFixture.GetCreateItemCommand(itemCategory.Id, manufacturerId);
 
             manufacturerRepositoryMock.SetupFindByAsync(manufacturerId, null);
+            itemCategoryRepositoryMock.SetupFindByAsync(itemCategory.Id, itemCategory);
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -133,27 +137,25 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
 
             IManufacturer manufacturer = fixture.Create<Manufacturer>();
             IItemCategory itemCategory = fixture.Create<ItemCategory>();
-            IStoreItem storeItem = storeItemFixture.GetStoreItem();
+            IStoreItem storeItem = storeItemFixture.CreateValid();
+            List<IStoreItemAvailability> availabilities = storeItem.Availabilities.ToList();
 
-            var handler = fixture.Create<CreateItemCommandHandler>();
-            var command = createItemCommandFixture.GetCreateItemCommand(itemCategory.Id, manufacturer.Id);
-
-            // setup sections
-            IEnumerable<StoreItemSectionId> sectionIds = command.ItemCreation.Availabilities
-                .Select(av => new StoreItemSectionId(av.StoreItemSectionId.Value));
-            List<IStoreItemSection> sections = storeItemSectionFixture.CreateMany(sectionIds).ToList();
-            sectionReadRepositoryMock.SetupFindByAsync(sectionIds, sections);
-
-            // setup availabilities
-            List<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.GetAvailabilities(sections).ToList();
+            // setup availability creation
             List<IStore> stores = storeFixture.GetStores(availabilities.Count).ToList();
             for (int i = 0; i < availabilities.Count; i++)
             {
-                var shortAv = command.ItemCreation.Availabilities.ElementAt(i);
+                var av = availabilities[i];
                 var store = stores[i];
-                storeRepositoryMock.SetupFindActiveByAsync(shortAv.StoreId.AsStoreId(), store);
-                availabilityFactoryMock.SetupCreate(store, shortAv.Price, availabilities[i].DefaultSection.Id, availabilities[i]);
+                storeRepositoryMock.SetupFindActiveByAsync(av.Store.Id.AsStoreId(), store);
+                availabilityFactoryMock.SetupCreate(store, av.Price, av.DefaultSection.Id, av);
             }
+
+            var handler = fixture.Create<CreateItemCommandHandler>();
+            var command = createItemCommandFixture.GetCreateItemCommand(itemCategory.Id, manufacturer.Id, availabilities);
+
+            // setup retrieving availability sections
+            var availabilitySections = availabilities.Select(av => av.DefaultSection);
+            sectionReadRepositoryMock.SetupFindByAsync(availabilitySections);
 
             storeItemFactoryMock.SetupCreate(command.ItemCreation, itemCategory, manufacturer, availabilities, storeItem);
             itemCategoryRepositoryMock.SetupFindByAsync(itemCategory.Id, itemCategory);
@@ -193,27 +195,25 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             StoreRepositoryMock storeRepositoryMock = new StoreRepositoryMock(fixture);
 
             IItemCategory itemCategory = fixture.Create<ItemCategory>();
-            IStoreItem storeItem = storeItemFixture.GetStoreItem();
+            IStoreItem storeItem = storeItemFixture.CreateValid();
+            List<IStoreItemAvailability> availabilities = storeItem.Availabilities.ToList();
 
-            var handler = fixture.Create<CreateItemCommandHandler>();
-            var command = createItemCommandFixture.GetCreateItemCommand(itemCategory.Id, null);
-
-            // setup sections
-            IEnumerable<StoreItemSectionId> sectionIds = command.ItemCreation.Availabilities
-                .Select(av => new StoreItemSectionId(av.StoreItemSectionId.Value));
-            List<IStoreItemSection> sections = storeItemSectionFixture.CreateMany(sectionIds).ToList();
-            sectionReadRepositoryMock.SetupFindByAsync(sectionIds, sections);
-
-            // setup availabilities
-            List<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.GetAvailabilities(sections).ToList();
+            // setup availability creation
             List<IStore> stores = storeFixture.GetStores(availabilities.Count).ToList();
             for (int i = 0; i < availabilities.Count; i++)
             {
-                var shortAv = command.ItemCreation.Availabilities.ElementAt(i);
+                var av = availabilities[i];
                 var store = stores[i];
-                storeRepositoryMock.SetupFindActiveByAsync(shortAv.StoreId.AsStoreId(), store);
-                availabilityFactoryMock.SetupCreate(store, shortAv.Price, availabilities[i].DefaultSection.Id, availabilities[i]);
+                storeRepositoryMock.SetupFindActiveByAsync(av.Store.Id.AsStoreId(), store);
+                availabilityFactoryMock.SetupCreate(store, av.Price, av.DefaultSection.Id, av);
             }
+
+            var handler = fixture.Create<CreateItemCommandHandler>();
+            var command = createItemCommandFixture.GetCreateItemCommand(itemCategory.Id, null, availabilities);
+
+            // setup retrieving availability sections
+            var availabilitySections = availabilities.Select(av => av.DefaultSection);
+            sectionReadRepositoryMock.SetupFindByAsync(availabilitySections);
 
             storeItemFactoryMock.SetupCreate(command.ItemCreation, itemCategory, null, availabilities, storeItem);
             itemCategoryRepositoryMock.SetupFindByAsync(itemCategory.Id, itemCategory);

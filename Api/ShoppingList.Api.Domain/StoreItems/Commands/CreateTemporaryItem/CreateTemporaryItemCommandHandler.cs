@@ -21,8 +21,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
         private readonly IStoreItemAvailabilityFactory storeItemAvailabilityFactory;
 
         public CreateTemporaryItemCommandHandler(IItemRepository itemRepository, IStoreRepository storeRepository,
-            IStoreItemFactory storeItemFactory, IStoreItemAvailabilityFactory storeItemAvailabilityFactory,
-            IStoreItemSectionReadRepository storeItemSectionReadRepository)
+            IStoreItemFactory storeItemFactory, IStoreItemAvailabilityFactory storeItemAvailabilityFactory)
         {
             this.itemRepository = itemRepository;
             this.storeRepository = storeRepository;
