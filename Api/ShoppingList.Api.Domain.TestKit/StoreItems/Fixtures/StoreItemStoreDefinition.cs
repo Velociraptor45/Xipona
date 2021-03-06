@@ -8,5 +8,13 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
         public StoreItemStoreId Id { get; set; }
         public string Name { get; set; }
         public IEnumerable<IStoreItemSection> Sections { get; set; }
+
+        public static StoreItemStoreDefinition FromId(int id)
+        {
+            return new StoreItemStoreDefinition
+            {
+                Id = new StoreItemStoreId(id)
+            };
+        }
     }
 }

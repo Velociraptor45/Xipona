@@ -17,5 +17,13 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
                 IsTemporary = isTemporary
             };
         }
+
+        public static StoreItemDefinition FromId(StoreItemId id)
+        {
+            return new StoreItemDefinition
+            {
+                Id = id
+            };
+        }
     }
 }

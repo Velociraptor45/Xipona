@@ -49,9 +49,11 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             return Create(definition);
         }
 
-        public IEnumerable<IStoreItemStore> CreateManyValid(int count = 3)
+        public IEnumerable<IStoreItemStore> CreateManyValid(int count = 3, IEnumerable<StoreItemStoreId> excludedStoreIds = null)
         {
-            var uniqueIds = commonFixture.NextUniqueInts(count).ToList();
+            IEnumerable<int> excludedIds = excludedStoreIds?.Select(id => id.Value) ?? Enumerable.Empty<int>();
+
+            var uniqueIds = commonFixture.NextUniqueInts(count, excludedIds).ToList();
             foreach (var id in uniqueIds)
             {
                 var definition = new StoreItemStoreDefinition
