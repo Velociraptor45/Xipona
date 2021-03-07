@@ -28,7 +28,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             return storeItemAvailabilityFactory.Create(
                 store,
                 source.Price,
-                new StoreItemSectionId(source.Store.DefaultSectionId));
+                new StoreItemSectionId(source.DefaultSectionId));
         }
     }
 }

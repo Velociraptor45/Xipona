@@ -17,7 +17,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
         {
             var commonFixture = new CommonFixture();
             var availabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
-            var destination = availabilityFixture.GetAvailability();
+            var destination = availabilityFixture.CreateValid();
             var source = GetSource(destination, commonFixture);
 
             return (source, destination);
@@ -31,12 +31,12 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
         public static AvailableAt GetSource(IStoreItemAvailability destination, CommonFixture commonFixture)
         {
             var store = StoreItemStoreConverterTests.GetSource(destination.Store, commonFixture);
-            var defaultSection = StoreItemSectionConverterTests.GetSource(destination.DefaultSection);
 
             return new AvailableAt
             {
                 Store = store,
-                Price = destination.Price
+                Price = destination.Price,
+                DefaultSectionId = destination.DefaultSection.Id.Value
             };
         }
 
