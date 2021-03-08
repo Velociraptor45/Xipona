@@ -88,7 +88,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
             ShoppingListMock listMock = shoppingListMockFixture.Create();
             ShoppingListMock remainingListMock = shoppingListMockFixture.Create();
 
-            var remainingSections = shoppingListSectionFixture.CreateMany(5).ToList();
+            var remainingSections = shoppingListSectionFixture.CreateManyValid(5).ToList();
             listMock.SetupGetSectionsWithItemsNotInBasket(remainingSections);
 
             var command = fixture.Create<FinishShoppingListCommand>();

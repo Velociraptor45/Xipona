@@ -24,7 +24,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
         public IEnumerable<ShoppingListSectionMock> CreateMany(int count)
         {
-            var sections = shoppingListSectionFixture.CreateMany(count);
+            var sections = shoppingListSectionFixture.CreateManyValid(count);
             return sections.Select(s => new ShoppingListSectionMock(s));
         }
     }
