@@ -17,6 +17,12 @@ namespace ShoppingList.Api.Domain.TestKit.Shared
             return fixture;
         }
 
+        public TEnum ChooseRandom<TEnum>() where TEnum : Enum
+        {
+            IEnumerable<TEnum> values = Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
+            return ChooseRandom(values);
+        }
+
         public T ChooseRandom<T>(IEnumerable<T> enumerable)
         {
             if (!enumerable.Any())
