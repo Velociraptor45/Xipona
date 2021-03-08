@@ -20,5 +20,38 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
         public IManufacturer Manufacturer { get; set; }
         public bool? IsInBasket { get; set; }
         public float? Quantity { get; set; }
+
+        public ShoppingListItemDefinition Clone()
+        {
+            return new ShoppingListItemDefinition
+            {
+                Id = Id,
+                Name = Name,
+                IsDeleted = IsDeleted,
+                Comment = Comment,
+                IsTemporary = IsTemporary,
+                PricePerQuantity = PricePerQuantity,
+                QuantityType = QuantityType,
+                QuantityInPacket = QuantityInPacket,
+                QuantityTypeInPacket = QuantityTypeInPacket,
+                ItemCategory = ItemCategory,
+                Manufacturer = Manufacturer,
+                IsInBasket = IsInBasket,
+                Quantity = Quantity
+            };
+        }
+
+        public static ShoppingListItemDefinition FromId(int id)
+        {
+            return FromId(new ShoppingListItemId(id));
+        }
+
+        public static ShoppingListItemDefinition FromId(ShoppingListItemId id)
+        {
+            return new ShoppingListItemDefinition
+            {
+                Id = id
+            };
+        }
     }
 }
