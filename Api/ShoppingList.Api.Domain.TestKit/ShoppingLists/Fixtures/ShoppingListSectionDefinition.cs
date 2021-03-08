@@ -23,6 +23,14 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             };
         }
 
+        public static ShoppingListSectionDefinition FromIsDefaultSection(bool isDefaultSection)
+        {
+            return new ShoppingListSectionDefinition
+            {
+                IsDefaultSection = isDefaultSection
+            };
+        }
+
         public static ShoppingListSectionDefinition FromId(int id)
         {
             return FromId(new ShoppingListSectionId(id));

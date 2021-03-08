@@ -23,7 +23,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
         public IEnumerable<ShoppingListMock> CreateMany(int amount)
         {
-            var shoppingLists = shoppingListFixture.CreateMany(amount);
+            var shoppingLists = shoppingListFixture.CreateManyValid(amount);
             return shoppingLists.Select(list => new ShoppingListMock(list));
         }
     }

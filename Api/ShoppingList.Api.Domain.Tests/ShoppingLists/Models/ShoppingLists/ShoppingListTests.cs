@@ -104,9 +104,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void AddItem_WithNoDefaultSection_ShouldThrowDomainException()
         {
             // Arrange
+            var section = shoppingListSectionFixture.Create(ShoppingListSectionDefinition.FromIsDefaultSection(false));
             var listDefinition = new ShoppingListDefinition()
             {
-                SectionDefinitions = new ShoppingListSectionDefinition() { IsDefaultSection = false }.ToMonoList()
+                Sections = section.ToMonoList()
             };
             IShoppingList shoppingList = shoppingListFixture.Create(listDefinition);
             IShoppingListItem item = shoppingListItemFixture.CreateUnique(shoppingList);
