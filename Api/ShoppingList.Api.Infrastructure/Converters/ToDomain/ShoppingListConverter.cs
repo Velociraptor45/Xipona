@@ -2,9 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
@@ -18,24 +16,24 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
     {
         private readonly IShoppingListFactory shoppingListFactory;
         private readonly IShoppingListSectionFactory shoppingListSectionFactory;
-        private readonly IShoppingListStoreFactory shoppingListStoreFactory;
         private readonly IShoppingListItemFactory shoppingListItemFactory;
-        private readonly IItemCategoryFactory itemCategoryFactory;
-        private readonly IManufacturerFactory manufacturerFactory;
+        private readonly IToDomainConverter<Store, IShoppingListStore> shoppingListStoreConverter;
+        private readonly IToDomainConverter<Entities.Manufacturer, IManufacturer> manufacturerConverter;
+        private readonly IToDomainConverter<Entities.ItemCategory, IItemCategory> itemCategoryConverter;
 
         public ShoppingListConverter(IShoppingListFactory shoppingListFactory,
             IShoppingListSectionFactory shoppingListSectionFactory,
-            IShoppingListStoreFactory shoppingListStoreFactory,
             IShoppingListItemFactory shoppingListItemFactory,
-            IItemCategoryFactory itemCategoryFactory,
-            IManufacturerFactory manufacturerFactory)
+            IToDomainConverter<Entities.Store, IShoppingListStore> shoppingListStoreConverter,
+            IToDomainConverter<Entities.Manufacturer, IManufacturer> manufacturerConverter,
+            IToDomainConverter<Entities.ItemCategory, IItemCategory> itemCategoryConverter)
         {
             this.shoppingListFactory = shoppingListFactory;
             this.shoppingListSectionFactory = shoppingListSectionFactory;
-            this.shoppingListStoreFactory = shoppingListStoreFactory;
             this.shoppingListItemFactory = shoppingListItemFactory;
-            this.itemCategoryFactory = itemCategoryFactory;
-            this.manufacturerFactory = manufacturerFactory;
+            this.shoppingListStoreConverter = shoppingListStoreConverter;
+            this.manufacturerConverter = manufacturerConverter;
+            this.itemCategoryConverter = itemCategoryConverter;
         }
 
         public IShoppingList ToDomain(Entities.ShoppingList source)
@@ -43,10 +41,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            var store = shoppingListStoreFactory.Create(
-                new ShoppingListStoreId(source.Store.Id),
-                source.Store.Name,
-                source.Store.Deleted);
+            var store = shoppingListStoreConverter.ToDomain(source.Store);
 
             var itemMapsPerSection = source.ItemsOnList.GroupBy(
                 map => map.SectionId.Value,
@@ -68,6 +63,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             }
 
             return shoppingListFactory.Create(
+                new ShoppingListId(source.Id),
                 store,
                 sectionModels,
                 source.CompletionDate);
@@ -92,23 +88,17 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             IItemCategory itemCategory = null;
             if (itemCategoryEntity != null)
             {
-                itemCategory = itemCategoryFactory.Create(
-                    new ItemCategoryId(itemCategoryEntity.Id),
-                    itemCategoryEntity.Name,
-                    itemCategoryEntity.Deleted);
+                itemCategory = itemCategoryConverter.ToDomain(itemCategoryEntity);
             }
 
             IManufacturer manufacturer = null;
             if (manufacturerEntity != null)
             {
-                manufacturer = manufacturerFactory.Create(
-                    new ManufacturerId(manufacturerEntity.Id),
-                    manufacturerEntity.Name,
-                    manufacturerEntity.Deleted);
+                manufacturer = manufacturerConverter.ToDomain(manufacturerEntity);
             }
 
             return shoppingListItemFactory.Create(
-                new ShoppingListItemId(source.Id),
+                new ShoppingListItemId(map.Item.Id),
                 map.Item.Name,
                 map.Item.Deleted,
                 map.Item.Comment,
