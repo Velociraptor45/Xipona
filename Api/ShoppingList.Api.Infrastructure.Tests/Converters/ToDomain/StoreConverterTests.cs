@@ -4,23 +4,22 @@ using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
-
+using System.Linq;
 using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
 {
-    public class StoreSectionConverterTests : ToDomainConverterTestBase<Section, IStoreSection>
+    public class StoreConverterTests : ToDomainConverterTestBase<Entities.Store, IStore>
     {
-        protected override (Section, IStoreSection) CreateTestObjects()
+        protected override (Entities.Store, IStore) CreateTestObjects()
         {
             var commonFixture = new CommonFixture();
-            var storeSectionFixture = new StoreSectionFixture(commonFixture);
+            var storeFixture = new StoreFixture(commonFixture);
 
-            var destination = storeSectionFixture.Create(new StoreSectionDefinition());
+            var destination = storeFixture.CreateValid();
             var source = GetSource(destination, commonFixture);
 
             return (source, destination);
@@ -31,28 +30,27 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
             AddDependencies(serviceCollection);
         }
 
-        public static Section GetSource(IStoreSection destination, CommonFixture commonFixture)
+        public static Entities.Store GetSource(IStore destination, CommonFixture commonFixture)
         {
-            var defaultSectionId = destination.IsDefaultSection
-                ? destination.Id.Value
-                : commonFixture.NextInt(exclude: destination.Id.Value);
+            var sections = destination.Sections
+                .Select(s => StoreSectionConverterTests.GetSource(s, commonFixture))
+                .ToList();
 
-            return new Section()
+            return new Entities.Store
             {
                 Id = destination.Id.Value,
                 Name = destination.Name,
-                SortIndex = destination.SortingIndex,
-                Store = new Entities.Store
-                {
-                    DefaultSectionId = defaultSectionId
-                }
+                Deleted = destination.IsDeleted,
+                Sections = sections
             };
         }
 
         public static void AddDependencies(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddInstancesOfGenericType(typeof(StoreSectionConverter).Assembly, typeof(IToDomainConverter<,>));
-            serviceCollection.AddInstancesOfNonGenericType(typeof(IStoreSectionFactory).Assembly, typeof(IStoreSectionFactory));
+            serviceCollection.AddInstancesOfGenericType(typeof(StoreConverter).Assembly, typeof(IToDomainConverter<,>));
+            serviceCollection.AddInstancesOfNonGenericType(typeof(IStoreFactory).Assembly, typeof(IStoreFactory));
+
+            StoreSectionConverterTests.AddDependencies(serviceCollection);
         }
     }
 }

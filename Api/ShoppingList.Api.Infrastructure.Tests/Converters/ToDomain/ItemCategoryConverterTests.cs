@@ -19,12 +19,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
             var domainFixture = new ItemCategoryFixture(commonFixture);
 
             var destination = domainFixture.GetItemCategory();
-            var source = new Entities.ItemCategory()
-            {
-                Id = destination.Id.Value,
-                Deleted = destination.IsDeleted,
-                Name = destination.Name
-            };
+            var source = GetSource(destination);
 
             return (source, destination);
         }
@@ -32,6 +27,16 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
         protected override void SetupServiceCollection()
         {
             AddDependencies(serviceCollection);
+        }
+
+        public static Entities.ItemCategory GetSource(IItemCategory destination)
+        {
+            return new Entities.ItemCategory()
+            {
+                Id = destination.Id.Value,
+                Deleted = destination.IsDeleted,
+                Name = destination.Name
+            };
         }
 
         public static void AddDependencies(IServiceCollection serviceCollection)
