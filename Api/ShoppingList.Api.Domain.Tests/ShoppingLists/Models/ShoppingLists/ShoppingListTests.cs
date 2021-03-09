@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ShoppingList.Api.Domain.TestKit.Common.Fixtures;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
@@ -22,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         private readonly CommonFixture commonFixture;
         private readonly ShoppingListItemFixture shoppingListItemFixture;
         private readonly ShoppingListSectionFixture shoppingListSectionFixture;
-        private readonly ShoppingListFixture shoppingListFixture;
+        private readonly IModelFixture<IShoppingList, ShoppingListDefinition> shoppingListFixture;
         private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
         private readonly StoreItemFixture storeItemFixture;
         private readonly ShoppingListSectionMockFixture shoppingListSectionMockFixture;
@@ -31,8 +32,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         {
             commonFixture = new CommonFixture();
             shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture, shoppingListItemFixture);
-            shoppingListFixture = new ShoppingListFixture(shoppingListSectionFixture, commonFixture);
+            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture);
+            shoppingListFixture = new ShoppingListFixture(commonFixture).AsModelFixture();
             storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
             storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
             shoppingListSectionMockFixture = new ShoppingListSectionMockFixture(shoppingListSectionFixture, commonFixture);
@@ -62,8 +63,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void AddItem_WithItemWithOfflineId_ShouldThrowDomainException()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
-            var listItem = shoppingListItemFixture.Create(new ShoppingListItemId(Guid.NewGuid()));
+            var list = shoppingListFixture.CreateValid();
+            var listItem = shoppingListItemFixture.Create(ShoppingListItemDefinition.FromId(Guid.NewGuid()));
             var sectionId = commonFixture.GetNewFixture().Create<ShoppingListSectionId>();
 
             // Act
@@ -81,7 +82,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void AddItem_WithItemIdIsAlreadyOnList_ShouldThrowDomainException()
         {
             // Arrange
-            var shoppingList = shoppingListFixture.Create();
+            var shoppingList = shoppingListFixture.CreateValid();
             int collidingItemIndex = commonFixture.NextInt(0, shoppingList.Items.Count);
             int collidingItemId = shoppingList.Items.ElementAt(collidingItemIndex).Id.Actual.Value;
 
@@ -126,7 +127,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         [Fact]
         public void AddItem_WithSectionNotFound_ShouldThrowDomainException()
         {
-            IShoppingList shoppingList = shoppingListFixture.Create();
+            IShoppingList shoppingList = shoppingListFixture.CreateValid();
             IShoppingListItem item = shoppingListItemFixture.CreateUnique(shoppingList);
             var existingSectionIds = shoppingList.Sections.Select(s => s.Id.Value);
             int sectionId = commonFixture.NextInt(exclude: existingSectionIds);
@@ -175,7 +176,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void RemoveItem_WithShoppingListItemIdIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
+            var list = shoppingListFixture.CreateValid();
 
             // Act
             Action action = () => list.RemoveItem(null);
@@ -191,7 +192,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void RemoveItem_WithOfflineId_ShouldThrowDomainException()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
+            var list = shoppingListFixture.CreateValid();
 
             // Act
             Action action = () => list.RemoveItem(new ShoppingListItemId(Guid.NewGuid()));
@@ -208,7 +209,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void RemoveItem_WithShoppingListItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
+            var list = shoppingListFixture.CreateValid();
             var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
             var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt(itemIdsToExclude));
 
@@ -264,7 +265,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void PutItemInBasket_WithShoppingListItemIdIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
+            var list = shoppingListFixture.CreateValid();
 
             // Act
             Action action = () => list.PutItemInBasket(null);
@@ -280,7 +281,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void PutItemInBasket_WithOfflineId_ShouldThrowDomainException()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
+            var list = shoppingListFixture.CreateValid();
 
             // Act
             Action action = () => list.PutItemInBasket(new ShoppingListItemId(Guid.NewGuid()));
@@ -297,7 +298,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void PutItemInBasket_WithShoppingListItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
+            var list = shoppingListFixture.CreateValid();
             var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
             var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt(itemIdsToExclude));
 
@@ -352,7 +353,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void RemoveFromBasket_WithShoppingListItemIdIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
+            var list = shoppingListFixture.CreateValid();
 
             // Act
             Action action = () => list.RemoveFromBasket(null);
@@ -368,7 +369,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void RemoveFromBasket_WithOfflineId_ShouldThrowDomainException()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
+            var list = shoppingListFixture.CreateValid();
 
             // Act
             Action action = () => list.RemoveFromBasket(new ShoppingListItemId(Guid.NewGuid()));
@@ -385,7 +386,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void RemoveFromBasket_WithShoppingListItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
+            var list = shoppingListFixture.CreateValid();
             var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
             var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt(itemIdsToExclude));
 
@@ -440,7 +441,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void ChangeItemQuantity_WithShoppingListItemIdIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
+            var list = shoppingListFixture.CreateValid();
 
             // Act
             Action action = () => list.ChangeItemQuantity(null, commonFixture.NextFloat());
@@ -456,7 +457,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void ChangeItemQuantity_WithOfflineId_ShouldThrowDomainException()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
+            var list = shoppingListFixture.CreateValid();
 
             // Act
             Action action = () => list.ChangeItemQuantity(
@@ -474,7 +475,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void ChangeItemQuantity_WithShoppingListItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
-            var list = shoppingListFixture.Create();
+            var list = shoppingListFixture.CreateValid();
             var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
             var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt(itemIdsToExclude));
 
@@ -493,7 +494,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         public void ChangeItemQuantity_WithInvalidQuantity_ShouldThrowDomainException()
         {
             // Arrange
-            var shoppinglist = shoppingListFixture.Create();
+            var shoppinglist = shoppingListFixture.CreateValid();
             var chosenShoppingListItem = commonFixture.ChooseRandom(shoppinglist.Items);
 
             // Act

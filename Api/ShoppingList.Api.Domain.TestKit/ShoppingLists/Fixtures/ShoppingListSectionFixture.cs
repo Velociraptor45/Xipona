@@ -13,10 +13,10 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
         private readonly CommonFixture commonFixture;
         private readonly ShoppingListItemFixture shoppingListItemFixture;
 
-        public ShoppingListSectionFixture(CommonFixture commonFixture, ShoppingListItemFixture shoppingListItemFixture)
+        public ShoppingListSectionFixture(CommonFixture commonFixture)
         {
             this.commonFixture = commonFixture;
-            this.shoppingListItemFixture = shoppingListItemFixture;
+            this.shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
         }
 
         public IShoppingListSection Create(ShoppingListSectionDefinition definition)

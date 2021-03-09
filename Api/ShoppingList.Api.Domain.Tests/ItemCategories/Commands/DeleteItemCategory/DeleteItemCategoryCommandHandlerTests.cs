@@ -33,9 +33,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         public DeleteItemCategoryCommandHandlerTests()
         {
             commonFixture = new CommonFixture();
-            var shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-            var shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture, shoppingListItemFixture);
-            var shoppingListFixture = new ShoppingListFixture(shoppingListSectionFixture, commonFixture);
+            var shoppingListFixture = new ShoppingListFixture(commonFixture);
             var storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
             var storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
             var itemCategoryFixture = new ItemCategoryFixture(commonFixture);

@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using System;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 {
@@ -42,6 +43,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
         }
 
         public static ShoppingListItemDefinition FromId(int id)
+        {
+            return FromId(new ShoppingListItemId(id));
+        }
+
+        public static ShoppingListItemDefinition FromId(Guid id)
         {
             return FromId(new ShoppingListItemId(id));
         }

@@ -166,6 +166,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             }
         }
 
+        public IModelFixture<IShoppingListItem, ShoppingListItemDefinition> AsModelFixture()
+        {
+            return this;
+        }
+
         private void EnrichAsTemporaryItem(ShoppingListItemDefinition definition)
         {
             definition.IsTemporary = true;

@@ -27,9 +27,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
         public FinishShoppingListCommandHandlerTests()
         {
             commonFixture = new CommonFixture();
-            var shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture, shoppingListItemFixture);
-            var shoppingListFixture = new ShoppingListFixture(shoppingListSectionFixture, commonFixture);
+            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture);
+            var shoppingListFixture = new ShoppingListFixture(commonFixture);
             shoppingListMockFixture = new ShoppingListMockFixture(commonFixture, shoppingListFixture);
         }
 

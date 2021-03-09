@@ -36,8 +36,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         private readonly StoreItemSectionFixture storeItemSectionFixture;
         private readonly StoreItemStoreFixture storeItemStoreFixture;
         private readonly StoreItemFixture storeItemFixture;
-        private readonly ShoppingListItemFixture shoppingListItemFixture;
-        private readonly ShoppingListSectionFixture shoppingListSectionFixture;
         private readonly ShoppingListFixture shoppingListFixture;
         private readonly StoreItemMockFixture storeItemMockFixture;
         private readonly MakeTemporaryItemPermanentCommandFixture makeTemporaryItemPermanentCommandFixture;
@@ -51,9 +49,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             storeItemSectionFixture = new StoreItemSectionFixture(commonFixture);
             storeItemStoreFixture = new StoreItemStoreFixture(commonFixture);
             storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
-            shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture, shoppingListItemFixture);
-            shoppingListFixture = new ShoppingListFixture(shoppingListSectionFixture, commonFixture);
+            shoppingListFixture = new ShoppingListFixture(commonFixture);
             storeItemMockFixture = new StoreItemMockFixture(commonFixture, storeItemFixture);
             makeTemporaryItemPermanentCommandFixture = new MakeTemporaryItemPermanentCommandFixture(commonFixture);
         }

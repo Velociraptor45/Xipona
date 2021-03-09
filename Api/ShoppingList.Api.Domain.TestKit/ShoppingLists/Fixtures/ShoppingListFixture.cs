@@ -15,33 +15,13 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
     {
         private readonly ShoppingListSectionFixture shoppingListSectionFixture;
         private readonly ShoppingListStoreFixture shoppingListStoreFixture;
-
         private readonly CommonFixture commonFixture;
 
-        public ShoppingListFixture(ShoppingListSectionFixture shoppingListSectionFixture, CommonFixture commonFixture)
+        public ShoppingListFixture(CommonFixture commonFixture)
         {
-            this.shoppingListSectionFixture = shoppingListSectionFixture;
+            this.shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture);
             shoppingListStoreFixture = new ShoppingListStoreFixture(commonFixture);
             this.commonFixture = commonFixture;
-        }
-
-        public IShoppingList Create()
-        {
-            var id = commonFixture.NextInt();
-            return Create(new ShoppingListId(id));
-        }
-
-        public IShoppingList Create(ShoppingListId id)
-        {
-            IEnumerable<IShoppingListSection> sections = shoppingListSectionFixture.CreateManyValid();
-
-            var definition = new ShoppingListDefinition
-            {
-                Id = id,
-                Sections = sections
-            };
-
-            return Create(definition);
         }
 
         public IShoppingList Create(ShoppingListDefinition definition)
@@ -111,6 +91,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             baseDefinition.CompletionDate = null;
 
             return Create(baseDefinition);
+        }
+
+        public IModelFixture<IShoppingList, ShoppingListDefinition> AsModelFixture()
+        {
+            return this;
         }
     }
 }
