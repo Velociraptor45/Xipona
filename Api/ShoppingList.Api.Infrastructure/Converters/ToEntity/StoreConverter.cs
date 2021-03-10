@@ -24,7 +24,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
                 Id = source.Id.Value,
                 Name = source.Name,
                 Deleted = source.IsDeleted,
-                DefaultSectionId = source.Sections.Single(s => s.IsDefaultSection).Id.Value,
                 Sections = sectionConverter.ToEntity(source.Sections).ToList()
             };
         }

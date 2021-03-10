@@ -15,7 +15,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
             {
                 Id = source.Id.Value,
                 Name = source.Name,
-                SortIndex = source.SortingIndex
+                SortIndex = source.SortingIndex,
+                IsDefaultSection = source.IsDefaultSection
             };
         }
     }

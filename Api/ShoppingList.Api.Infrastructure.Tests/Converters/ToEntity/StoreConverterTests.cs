@@ -30,7 +30,6 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
                 Id = source.Id.Value,
                 Name = source.Name,
                 Deleted = source.IsDeleted,
-                DefaultSectionId = source.Sections.Single(s => s.IsDefaultSection).Id.Value,
                 Sections = source.Sections.Select(s => SectionConverterTests.GetDestination(s)).ToList()
             };
         }

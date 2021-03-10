@@ -23,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
                     new StoreSectionId(source.Id),
                     source.Name,
                     source.SortIndex,
-                    source.Id == source.Store.DefaultSectionId);
+                    source.IsDefaultSection);
         }
     }
 }

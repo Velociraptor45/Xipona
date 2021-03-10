@@ -13,6 +13,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
         public string Name { get; set; }
         public int StoreId { get; set; }
         public int SortIndex { get; set; }
+        public bool IsDefaultSection { get; set; }
 
         public Store Store { get; set; }
         public ICollection<AvailableAt> DefaultItemsInSection { get; set; }
