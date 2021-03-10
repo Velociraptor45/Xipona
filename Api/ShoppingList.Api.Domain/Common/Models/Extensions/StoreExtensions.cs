@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
 using System.Collections.Generic;
@@ -9,14 +10,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions
 {
     public static class StoreExtensions
     {
-        public static StoreReadModel ToCommonStoreReadModel(this IShoppingListStore model)
+        public static ShoppingListStoreReadModel ToCommonStoreReadModel(this IShoppingListStore model)
         {
-            return new StoreReadModel(model.Id, model.Name, model.IsDeleted);
-        }
-
-        public static Stores.Queries.SharedModels.StoreReadModel ToStoreReadModel(this StoreModels.IStore model)
-        {
-            return new Stores.Queries.SharedModels.StoreReadModel(model.Id, model.Name, model.IsDeleted);
+            return new ShoppingListStoreReadModel(model.Id, model.Name, model.IsDeleted);
         }
 
         public static ActiveStoreReadModel ToActiveStoreReadModel(this StoreModels.IStore model,

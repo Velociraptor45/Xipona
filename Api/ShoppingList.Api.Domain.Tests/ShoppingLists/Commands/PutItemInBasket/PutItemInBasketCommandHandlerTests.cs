@@ -22,8 +22,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
     public class PutItemInBasketCommandHandlerTests
     {
         private readonly CommonFixture commonFixture;
-        private readonly ShoppingListItemFixture shoppingListItemFixture;
-        private readonly ShoppingListSectionFixture shoppingListSectionFixture;
         private readonly ShoppingListFixture shoppingListFixture;
         private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
         private readonly StoreItemFixture storeItemFixture;
@@ -31,9 +29,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
         public PutItemInBasketCommandHandlerTests()
         {
             commonFixture = new CommonFixture();
-            shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture, shoppingListItemFixture);
-            shoppingListFixture = new ShoppingListFixture(shoppingListSectionFixture, commonFixture);
+            shoppingListFixture = new ShoppingListFixture(commonFixture);
             storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
             storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
         }
@@ -121,7 +117,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             Mock<IShoppingList> listMock = new Mock<IShoppingList>();
 
             StoreItemId actualItemId = new StoreItemId(commonFixture.NextInt());
-            IStoreItem storeItem = storeItemFixture.GetStoreItem(actualItemId);
+            var storeItemBaseDefinition = StoreItemDefinition.FromId(actualItemId);
+            IStoreItem storeItem = storeItemFixture.CreateValid(storeItemBaseDefinition);
 
             var listItemIdOffline = new ShoppingListItemId(Guid.NewGuid());
             fixture.ConstructorArgumentFor<PutItemInBasketCommand, ShoppingListItemId>("itemId", listItemIdOffline);

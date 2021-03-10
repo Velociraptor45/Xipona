@@ -1,13 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Extensions.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,15 +17,16 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
     public class ShoppingListRepository : IShoppingListRepository
     {
         private readonly ShoppingContext dbContext;
-        private readonly IShoppingListFactory shoppingListFactory;
-        private readonly IShoppingListSectionFactory sectionFactory;
+        private readonly IToDomainConverter<Entities.ShoppingList, IShoppingList> toModelConverter;
+        private readonly IToEntityConverter<IShoppingList, Entities.ShoppingList> toEntityConverter;
 
-        public ShoppingListRepository(ShoppingContext dbContext, IShoppingListFactory shoppingListFactory,
-            IShoppingListSectionFactory sectionFactory)
+        public ShoppingListRepository(ShoppingContext dbContext,
+            IToDomainConverter<Entities.ShoppingList, IShoppingList> toModelConverter,
+            IToEntityConverter<IShoppingList, Entities.ShoppingList> toEntityConverter)
         {
             this.dbContext = dbContext;
-            this.shoppingListFactory = shoppingListFactory;
-            this.sectionFactory = sectionFactory;
+            this.toModelConverter = toModelConverter;
+            this.toEntityConverter = toEntityConverter;
         }
 
         #region public methods
@@ -69,13 +68,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var sections = GetSections(entity);
-
-            return shoppingListFactory.Create(
-                new ShoppingListId(entity.Id),
-                entity.Store.ToShoppingListDomain(),
-                sections,
-                entity.CompletionDate);
+            return toModelConverter.ToDomain(entity);
         }
 
         public async Task<IEnumerable<IShoppingList>> FindByAsync(StoreItemId storeItemId,
@@ -90,16 +83,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return entities.Select(entity =>
-            {
-                var sections = GetSections(entity);
-
-                return shoppingListFactory.Create(
-                    new ShoppingListId(entity.Id),
-                    entity.Store.ToShoppingListDomain(),
-                    sections,
-                    entity.CompletionDate);
-            });
+            return toModelConverter.ToDomain(entities);
         }
 
         public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(StoreItemId storeItemId,
@@ -115,16 +99,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return entities.Select(entity =>
-            {
-                var sections = GetSections(entity);
-
-                return shoppingListFactory.Create(
-                    new ShoppingListId(entity.Id),
-                    entity.Store.ToShoppingListDomain(),
-                    sections,
-                    entity.CompletionDate);
-            });
+            return toModelConverter.ToDomain(entities);
         }
 
         public async Task<IShoppingList> FindActiveByAsync(ShoppingListStoreId storeId, CancellationToken cancellationToken)
@@ -141,13 +116,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             if (entity == null)
                 return null;
 
-            var sections = GetSections(entity);
-
-            return shoppingListFactory.Create(
-                new ShoppingListId(entity.Id),
-                entity.Store.ToShoppingListDomain(),
-                sections,
-                entity.CompletionDate);
+            return toModelConverter.ToDomain(entity);
         }
 
         #endregion public methods
@@ -157,7 +126,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
         private async Task StoreModifiedListAsync(Entities.ShoppingList existingShoppingListEntity,
             IShoppingList shoppingList, CancellationToken cancellationToken)
         {
-            var shoppingListEntityToStore = shoppingList.ToEntity();
+            var shoppingListEntityToStore = toEntityConverter.ToEntity(shoppingList);
             var onListMappings = existingShoppingListEntity.ItemsOnList.ToDictionary(map => map.ItemId);
 
             dbContext.Entry(shoppingListEntityToStore).State = EntityState.Modified;
@@ -191,7 +160,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
         private async Task StoreAsNewListAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
         {
-            var entity = shoppingList.ToEntity();
+            var entity = toEntityConverter.ToEntity(shoppingList);
 
             dbContext.Entry(entity).State = EntityState.Added;
             foreach (var onListMap in entity.ItemsOnList)
@@ -214,36 +183,19 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
         {
             return dbContext.ShoppingLists.AsNoTracking()
                 .Include(l => l.Store)
-                .ThenInclude(s => s.DefaultSection)
-                .Include(l => l.Store)
                 .ThenInclude(s => s.Sections)
-                .ThenInclude(s => s.ActualItemsSections)
-                .Include(l => l.Store)
-                .ThenInclude(s => s.Sections)
-                .ThenInclude(s => s.DefaultItemsInSection)
+
                 .Include(l => l.ItemsOnList)
                 .ThenInclude(map => map.Item)
                 .ThenInclude(item => item.Manufacturer)
+
                 .Include(l => l.ItemsOnList)
                 .ThenInclude(map => map.Item)
                 .ThenInclude(item => item.ItemCategory)
+
                 .Include(l => l.ItemsOnList)
                 .ThenInclude(map => map.Item)
                 .ThenInclude(item => item.AvailableAt);
-        }
-
-        private IEnumerable<IShoppingListSection> GetSections(Entities.ShoppingList shoppingListEntity)
-        {
-            var itemsLookup = shoppingListEntity.ItemsOnList.ToLookup(i => i.SectionId.Value);
-            foreach (var section in shoppingListEntity.Store.Sections)
-            {
-                var itemsForSection = itemsLookup[section.Id];
-                var domainItems = itemsForSection
-                    .Select(map => map.Item.ToShoppingListItemDomain(shoppingListEntity.StoreId, shoppingListEntity.Id));
-                var domainSection = sectionFactory.Create(new ShoppingListSectionId(section.Id), section.Name, domainItems,
-                    section.SortIndex, shoppingListEntity.Store.DefaultSection.Id == section.Id);
-                yield return domainSection;
-            }
         }
 
         #endregion private methods

@@ -1,98 +1,40 @@
 ﻿using AutoFixture;
-using ProjectHermes.ShoppingList.Api.Core.Tests;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ShoppingList.Api.Domain.TestKit.Common.Fixtures;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 {
-    public class ShoppingListSectionFixture
+    public class ShoppingListSectionFixture : IModelFixture<IShoppingListSection, ShoppingListSectionDefinition>
     {
         private readonly CommonFixture commonFixture;
         private readonly ShoppingListItemFixture shoppingListItemFixture;
 
-        public ShoppingListSectionFixture(CommonFixture commonFixture, ShoppingListItemFixture shoppingListItemFixture)
+        public ShoppingListSectionFixture(CommonFixture commonFixture)
         {
             this.commonFixture = commonFixture;
-            this.shoppingListItemFixture = shoppingListItemFixture;
+            this.shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
         }
 
-        public IShoppingListSection Create()
-        {
-            int sectionId = commonFixture.NextInt();
-            IEnumerable<int> itemIds = commonFixture.NextUniqueInts(3);
-            IEnumerable<ShoppingListItemId> shoppingListItemIds = itemIds.Select(id => new ShoppingListItemId(id));
-            return Create(new ShoppingListSectionId(sectionId), shoppingListItemIds);
-        }
-
-        public IShoppingListSection Create(ShoppingListSectionId id)
-        {
-            var items = shoppingListItemFixture.CreateMany(3);
-            return Create(id, items);
-        }
-
-        public IShoppingListSection Create(ShoppingListSectionId id, IEnumerable<ShoppingListItemId> itemIds)
-        {
-            var items = shoppingListItemFixture.CreateMany(itemIds);
-            return Create(id, items);
-        }
-
-        public IShoppingListSection Create(ShoppingListSectionId id, IEnumerable<IShoppingListItem> items)
-        {
-            var definition = new ShoppingListSectionDefinition
-            {
-                Id = id,
-                Items = items
-            };
-
-            return Create(definition);
-        }
-
-        public IShoppingListSection Create(ShoppingListSectionDefinition configuration)
+        public IShoppingListSection Create(ShoppingListSectionDefinition definition)
         {
             var fixture = commonFixture.GetNewFixture();
 
-            if (configuration.Id != null)
-                fixture.ConstructorArgumentFor<ShoppingListSection, ShoppingListSectionId>("id", configuration.Id);
-            if (configuration.Name != null)
-                fixture.ConstructorArgumentFor<IShoppingListSection, string>("name", configuration.Name);
-            if (configuration.SortingIndex.HasValue)
-                fixture.ConstructorArgumentFor<ShoppingListSection, int>("sortingIndex", configuration.SortingIndex.Value);
-            if (configuration.IsDefaultSection.HasValue)
-                fixture.ConstructorArgumentFor<ShoppingListSection, bool>("isDefaultSection", configuration.IsDefaultSection.Value);
-            if (configuration.Items != null)
-                fixture.ConstructorArgumentFor<ShoppingListSection, IEnumerable<IShoppingListItem>>("shoppingListItems", configuration.Items);
+            if (definition.Id != null)
+                fixture.ConstructorArgumentFor<ShoppingListSection, ShoppingListSectionId>("id", definition.Id);
+            if (definition.Name != null)
+                fixture.ConstructorArgumentFor<IShoppingListSection, string>("name", definition.Name);
+            if (definition.SortingIndex.HasValue)
+                fixture.ConstructorArgumentFor<ShoppingListSection, int>("sortingIndex", definition.SortingIndex.Value);
+            if (definition.IsDefaultSection.HasValue)
+                fixture.ConstructorArgumentFor<ShoppingListSection, bool>("isDefaultSection", definition.IsDefaultSection.Value);
+            if (definition.Items != null)
+                fixture.ConstructorArgumentFor<ShoppingListSection, IEnumerable<IShoppingListItem>>("shoppingListItems", definition.Items);
 
             return fixture.Create<ShoppingListSection>();
-        }
-
-        public IEnumerable<IShoppingListSection> CreateMany(IEnumerable<SectionIdMapping> mappings)
-        {
-            foreach (var mapping in mappings)
-            {
-                yield return Create(mapping.SectionId, mapping.ItemIds);
-            }
-        }
-
-        public IEnumerable<IShoppingListSection> CreateMany(int count)
-        {
-            IEnumerable<int> uniqueRawSectionIds = commonFixture.NextUniqueInts(count);
-            List<int> uniqueRawItemIds = commonFixture.NextUniqueInts(count * 3).ToList();
-            List<ShoppingListSectionId> uniqueSectionIds = uniqueRawSectionIds.Select(id => new ShoppingListSectionId(id)).ToList();
-            List<ShoppingListItemId> uniqueItemIds = uniqueRawItemIds.Select(id => new ShoppingListItemId(id)).ToList();
-
-            List<SectionIdMapping> mappings = new List<SectionIdMapping>();
-            for (int i = 0; i < uniqueSectionIds.Count; i++)
-            {
-                var sectionId = uniqueSectionIds[i];
-                var itemIds = uniqueItemIds.GetRange(i * 3, 3);
-                var mapping = new SectionIdMapping(sectionId, itemIds);
-                mappings.Add(mapping);
-            }
-
-            return CreateMany(mappings);
         }
 
         public IEnumerable<IShoppingListSection> CreateMany(IEnumerable<ShoppingListSectionDefinition> definitions)
@@ -115,29 +57,92 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             }
         }
 
-        public IEnumerable<IShoppingListSection> CreateSpecialAndRandom(ShoppingListSectionDefinition definition, int randomCount = 3)
+        public IEnumerable<IShoppingListSection> CreateManyValid(int count = 3)
         {
-            IShoppingListSection special = Create(definition);
-            IEnumerable<IShoppingListSection> randoms = CreateMany(randomCount);
+            List<int> uniqueIds = commonFixture.NextUniqueInts(count).ToList();
 
-            var result = randoms.ToList();
-            result.Add(special);
-            result.Shuffle();
-            return result;
-        }
-
-        public class SectionIdMapping
-        {
-            private readonly IEnumerable<ShoppingListItemId> itemIds;
-
-            public SectionIdMapping(ShoppingListSectionId sectionId, IEnumerable<ShoppingListItemId> itemIds)
+            List<ShoppingListSectionDefinition> definitions = new List<ShoppingListSectionDefinition>();
+            foreach (var id in uniqueIds)
             {
-                SectionId = sectionId;
-                this.itemIds = itemIds;
+                var definition = ShoppingListSectionDefinition.FromId(id);
+                definitions.Add(definition);
             }
 
-            public ShoppingListSectionId SectionId { get; }
-            public IReadOnlyCollection<ShoppingListItemId> ItemIds => itemIds.ToList().AsReadOnly();
+            return CreateManyValid(definitions);
+        }
+
+        public IEnumerable<IShoppingListSection> CreateManyValid(ShoppingListSectionDefinition definition, int count = 3)
+        {
+            List<int> uniqueIds = commonFixture.NextUniqueInts(count).ToList();
+
+            List<ShoppingListSectionDefinition> clonedDefinitions = new List<ShoppingListSectionDefinition>();
+            foreach (var id in uniqueIds)
+            {
+                var clone = definition.Clone();
+                clone.Id = new ShoppingListSectionId(id);
+                clonedDefinitions.Add(clone);
+            }
+
+            return CreateManyValid(clonedDefinitions);
+        }
+
+        public IEnumerable<IShoppingListSection> CreateManyValid(IEnumerable<ShoppingListSectionDefinition> definitions)
+        {
+            var definitionsList = definitions.ToList();
+            IEnumerable<int> existingIds = definitionsList
+                .Where(d => d.Id != null)
+                .Select(d => d.Id.Value);
+            List<int> uniqueIds = commonFixture
+                .NextUniqueInts(definitionsList.Count, existingIds)
+                .ToList();
+
+            EnsurePresenceOfDefaultSection(definitionsList);
+
+            for (int i = 0; i < definitionsList.Count; i++)
+            {
+                int id = uniqueIds[i];
+                var definition = definitionsList[i];
+                definition.Id ??= new ShoppingListSectionId(id);
+                yield return Create(definition);
+            }
+        }
+
+        public IShoppingListSection CreateValid(ShoppingListSectionDefinition baseDefinition)
+        {
+            var itemCount = commonFixture.NextInt(3, 5);
+            baseDefinition.Items = shoppingListItemFixture.CreateManyValid(itemCount).ToList();
+
+            return Create(baseDefinition);
+        }
+
+        private void EnsurePresenceOfDefaultSection(IEnumerable<ShoppingListSectionDefinition> definitions)
+        {
+            var definitionsList = definitions.ToList();
+
+            bool hasDefaultSection = definitionsList
+                .Where(d => d.IsDefaultSection.HasValue)
+                .Any(d => d.IsDefaultSection.Value);
+
+            var definitionsWithoutDefaultSectionValue = definitionsList
+                .Where(d => !d.IsDefaultSection.HasValue)
+                .ToList();
+
+            if (!definitionsWithoutDefaultSectionValue.Any())
+                return;
+
+            if (hasDefaultSection)
+            {
+                definitionsWithoutDefaultSectionValue.ForEach(d => d.IsDefaultSection = false);
+            }
+            else
+            {
+                var defaultSectionIndex = commonFixture.NextInt(0, definitionsWithoutDefaultSectionValue.Count - 1);
+
+                for (int i = 0; i < definitionsWithoutDefaultSectionValue.Count; i++)
+                {
+                    definitionsWithoutDefaultSectionValue[i].IsDefaultSection = i == defaultSectionIndex;
+                }
+            }
         }
     }
 }

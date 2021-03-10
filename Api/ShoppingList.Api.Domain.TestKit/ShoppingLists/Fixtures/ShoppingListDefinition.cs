@@ -11,7 +11,6 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
         public ShoppingListId Id { get; set; }
         public IShoppingListStore Store { get; set; }
         public IEnumerable<IShoppingListSection> Sections { get; set; }
-        public IEnumerable<ShoppingListSectionDefinition> SectionDefinitions { get; set; }
 
         public DateTime? CompletionDate
         {
@@ -24,5 +23,29 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
         }
 
         public bool UseCompletionDate { get; private set; } = false;
+
+        public ShoppingListDefinition Clone()
+        {
+            return new ShoppingListDefinition
+            {
+                Id = Id,
+                Store = Store,
+                Sections = Sections,
+                CompletionDate = CompletionDate
+            };
+        }
+
+        public static ShoppingListDefinition FromId(int id)
+        {
+            return FromId(new ShoppingListId(id));
+        }
+
+        public static ShoppingListDefinition FromId(ShoppingListId id)
+        {
+            return new ShoppingListDefinition
+            {
+                Id = id
+            };
+        }
     }
 }

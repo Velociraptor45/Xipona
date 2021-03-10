@@ -21,8 +21,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
         private readonly IStoreItemAvailabilityFactory storeItemAvailabilityFactory;
 
         public CreateTemporaryItemCommandHandler(IItemRepository itemRepository, IStoreRepository storeRepository,
-            IStoreItemFactory storeItemFactory, IStoreItemAvailabilityFactory storeItemAvailabilityFactory,
-            IStoreItemSectionReadRepository storeItemSectionReadRepository)
+            IStoreItemFactory storeItemFactory, IStoreItemAvailabilityFactory storeItemAvailabilityFactory)
         {
             this.itemRepository = itemRepository;
             this.storeRepository = storeRepository;
@@ -44,10 +43,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
             if (store == null || store.IsDeleted)
                 throw new DomainException(new StoreNotFoundReason(shortAvailability.StoreId));
 
+            // todo add domain exception
             var defaultSection = store.Sections.Single(s => s.IsDefaultSection);
 
             IStoreItemAvailability storeItemAvailability = storeItemAvailabilityFactory
-                    .Create(store, shortAvailability.Price, defaultSection);
+                    .Create(store, shortAvailability.Price, defaultSection.Id);
 
             var storeItem = storeItemFactory.Create(command.TemporaryItemCreation, storeItemAvailability);
 

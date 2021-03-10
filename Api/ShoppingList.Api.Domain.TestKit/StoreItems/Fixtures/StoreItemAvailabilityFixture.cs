@@ -1,4 +1,6 @@
 ﻿using AutoFixture;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using System;
@@ -10,70 +12,78 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
     public class StoreItemAvailabilityFixture
     {
         private readonly CommonFixture commonFixture;
+        private readonly StoreItemStoreFixture storeItemStoreFixture;
 
         public StoreItemAvailabilityFixture(CommonFixture commonFixture)
         {
             this.commonFixture = commonFixture;
+            storeItemStoreFixture = new StoreItemStoreFixture(commonFixture);
         }
 
-        public IEnumerable<IStoreItemAvailability> GetAvailabilities(int count = 2)
-        {
-            if (count < 1)
-                throw new ArgumentException($"{nameof(count)} mustn't be smaller than 1.");
-
-            var uniqueStoreIds = commonFixture.NextUniqueInts(count);
-
-            foreach (int uniqueStoreId in uniqueStoreIds)
-            {
-                yield return GetAvailability(uniqueStoreId);
-            }
-        }
-
-        public IEnumerable<IStoreItemAvailability> GetAvailabilities(IEnumerable<IStoreItemSection> sections)
-        {
-            if (sections is null)
-                throw new ArgumentNullException(nameof(sections));
-
-            var sectionsList = sections.ToList();
-            var uniqueIds = commonFixture.NextUniqueInts(sectionsList.Count).ToList();
-
-            for (int i = 0; i < sectionsList.Count; i++)
-            {
-                IStoreItemSection section = sectionsList[i];
-                int id = uniqueIds[i];
-                yield return GetAvailability(new StoreItemStoreId(id), section);
-            }
-        }
-
-        public IStoreItemAvailability GetAvailability(StoreItemStoreId storeId, IStoreItemSection section)
+        public IStoreItemAvailability Create(StoreItemAvailabilityDefinition definition)
         {
             var fixture = commonFixture.GetNewFixture();
-            fixture.Inject(storeId);
-            fixture.Inject(section);
+
+            if (definition.Store != null)
+                fixture.ConstructorArgumentFor<StoreItemAvailability, IStoreItemStore>("store", definition.Store);
+            if (definition.Price.HasValue)
+                fixture.ConstructorArgumentFor<StoreItemAvailability, float>("price", definition.Price.Value);
+            if (definition.DefaultSectionId != null)
+                fixture.ConstructorArgumentFor<StoreItemAvailability, StoreItemSectionId>("defaultSectionId", definition.DefaultSectionId);
+
             return fixture.Create<StoreItemAvailability>();
         }
 
-        public IStoreItemAvailability GetAvailability(IStoreItemSection section)
+        public IStoreItemAvailability CreateValid()
         {
-            int storeId = commonFixture.NextInt();
-            return GetAvailability(new StoreItemStoreId(storeId), section);
+            var store = storeItemStoreFixture.CreateValid();
+            var defaultSection = commonFixture.ChooseRandom(store.Sections);
+
+            var definition = new StoreItemAvailabilityDefinition
+            {
+                Store = store,
+                DefaultSectionId = defaultSection.Id
+            };
+            return Create(definition);
         }
 
-        public IStoreItemAvailability GetAvailability(StoreItemStoreId storeId)
+        public IStoreItemAvailability CreateValidFor(IStoreItemStore store)
         {
-            var fixture = commonFixture.GetNewFixture();
-            fixture.Inject(storeId);
-            return fixture.Create<StoreItemAvailability>();
+            var definition = new StoreItemAvailabilityDefinition
+            {
+                Store = store,
+                DefaultSectionId = commonFixture.ChooseRandom(store.Sections).Id
+            };
+
+            return Create(definition);
         }
 
-        public IStoreItemAvailability GetAvailability(int storeId)
+        public IEnumerable<IStoreItemAvailability> CreateManyValid(int count = 3, IEnumerable<StoreItemStoreId> excludedStoreIds = null)
         {
-            return GetAvailability(new StoreItemStoreId(storeId));
+            List<IStoreItemStore> stores = storeItemStoreFixture.CreateManyValid(count, excludedStoreIds).ToList();
+            foreach (var store in stores)
+            {
+                var defaultSection = commonFixture.ChooseRandom(store.Sections);
+
+                var definition = new StoreItemAvailabilityDefinition
+                {
+                    Store = store,
+                    DefaultSectionId = defaultSection.Id
+                };
+
+                yield return Create(definition);
+            }
         }
 
-        public IStoreItemAvailability GetAvailability()
+        public IEnumerable<IStoreItemAvailability> CreateManyValidFor(IStoreItemStore store, int count = 3)
         {
-            return GetAvailability(commonFixture.NextInt());
+            if (count <= 0)
+                throw new ArgumentException($"{nameof(count)} must be greater than 0");
+
+            var resultList = CreateValidFor(store).ToMonoList();
+            resultList.AddRange(CreateManyValid(count - 1));
+
+            return resultList;
         }
     }
 }

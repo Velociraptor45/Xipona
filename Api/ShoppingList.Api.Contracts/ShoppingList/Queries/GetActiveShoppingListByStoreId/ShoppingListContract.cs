@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
     {
         private readonly IEnumerable<ShoppingListSectionContract> sections;
 
-        public ShoppingListContract(int id, StoreContract store, IEnumerable<ShoppingListSectionContract> sections,
+        public ShoppingListContract(int id, ShoppingListStoreContract store, IEnumerable<ShoppingListSectionContract> sections,
             DateTime? completionDate)
         {
             Id = id;
@@ -19,7 +18,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
         }
 
         public int Id { get; }
-        public StoreContract Store { get; }
+        public ShoppingListStoreContract Store { get; }
         public IReadOnlyCollection<ShoppingListSectionContract> Sections { get => sections.ToList().AsReadOnly(); }
         public DateTime? CompletionDate { get; }
     }

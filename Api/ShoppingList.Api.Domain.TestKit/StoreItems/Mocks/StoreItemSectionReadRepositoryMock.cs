@@ -23,6 +23,17 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
             mock = fixture.Freeze<Mock<IStoreItemSectionReadRepository>>();
         }
 
+        public void SetupFindByAsync(IEnumerable<IStoreItemSection> returnValue)
+        {
+            var sectionList = returnValue.ToList();
+            var sectionIds = sectionList.Select(s => s.Id);
+
+            mock.Setup(i => i.FindByAsync(
+                    It.Is<IEnumerable<StoreItemSectionId>>(ids => ids.SequenceEqual(sectionIds)),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(sectionList);
+        }
+
         public void SetupFindByAsync(IEnumerable<StoreItemSectionId> sectionIds,
             IEnumerable<IStoreItemSection> returnValue)
         {

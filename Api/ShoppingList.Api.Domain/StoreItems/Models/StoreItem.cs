@@ -13,7 +13,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
     public class StoreItem : IStoreItem
     {
-        private IEnumerable<IStoreItemAvailability> availabilities;
+        private List<IStoreItemAvailability> availabilities;
 
         public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
@@ -30,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
-            this.availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
+            this.availabilities = availabilities.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
 
             // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
             // https://github.com/AutoFixture/AutoFixture/issues/1108
@@ -50,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         public IManufacturer Manufacturer { get; private set; }
         public IStoreItem Predecessor { get; private set; }
 
-        public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
+        public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.AsReadOnly();
 
         public void Delete()
         {
@@ -72,7 +72,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             QuantityTypeInPacket = permanentItem.QuantityTypeInPacket;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
-            this.availabilities = availabilities;
+            this.availabilities = availabilities.ToList();
             IsTemporary = false;
         }
 
@@ -86,7 +86,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             QuantityTypeInPacket = itemChange.QuantityTypeInPacket;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
-            this.availabilities = availabilities;
+            this.availabilities = availabilities.ToList();
         }
 
         public IStoreItemSection GetDefaultSectionForStore(StoreItemStoreId storeId)

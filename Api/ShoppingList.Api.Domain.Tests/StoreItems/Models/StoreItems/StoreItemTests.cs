@@ -33,7 +33,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         public void Delete_WithNotDeltedStoreItem_ShouldMarkStoreItemAsDeleted()
         {
             // Arrange
-            var storeItem = storeItemFixture.GetStoreItem(new StoreItemId(commonFixture.NextInt()), isDeleted: false);
+            var storeItem = storeItemFixture.CreateValid();
 
             // Act
             storeItem.Delete();
@@ -53,11 +53,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         public void IsAvailableInStore_WithNotAvailableInStore_ShouldReturnFalse()
         {
             // Arrange
-            var availabilities = storeItemAvailabilityFixture.GetAvailabilities(4).ToList();
-            IStoreItem storeItem = storeItemFixture.GetStoreItem(
-                availabilityCount: 0,
-                additionalAvailabilities: availabilities);
-            var availabilityStoreIds = availabilities.Select(av => av.Store.Id.Value).ToList();
+            IStoreItem storeItem = storeItemFixture.CreateValid();
+            var availabilityStoreIds = storeItem.Availabilities.Select(av => av.Store.Id.Value).ToList();
 
             // Act
             StoreItemStoreId storeId = new StoreItemStoreId(commonFixture.NextInt(availabilityStoreIds));
@@ -74,15 +71,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         public void IsAvailableInStore_WithAvailableInStore_ShouldReturnTrue()
         {
             // Arrange
-            var availabilities = storeItemAvailabilityFixture.GetAvailabilities(4).ToList();
-            IStoreItem storeItem = storeItemFixture.GetStoreItem(
-                availabilityCount: 0,
-                additionalAvailabilities: availabilities);
-            var availabilityStoreIds = availabilities.Select(av => av.Store.Id).ToList();
+            IStoreItem storeItem = storeItemFixture.CreateValid();
+            var availabilityStoreIds = storeItem.Availabilities.ToList().Select(av => av.Store.Id).ToList();
 
             // Act
-            int storeIdIndex = commonFixture.NextInt(0, availabilityStoreIds.Count - 1);
-            bool result = storeItem.IsAvailableInStore(availabilityStoreIds[storeIdIndex]);
+            StoreItemStoreId chosenStoreId = commonFixture.ChooseRandom(availabilityStoreIds);
+            bool result = storeItem.IsAvailableInStore(chosenStoreId);
 
             // Assert
             using (new AssertionScope())
@@ -100,11 +94,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         {
             // Arrange
             Fixture fixture = commonFixture.GetNewFixture();
-            IStoreItem storeItem = storeItemFixture.GetStoreItem(isTemporary: true);
+
+            var definition = StoreItemDefinition.FromTemporary(true);
+            IStoreItem storeItem = storeItemFixture.CreateValid(definition);
             PermanentItem permanentItem = fixture.Create<PermanentItem>();
             IManufacturer manufacturer = fixture.Create<IManufacturer>();
             IItemCategory itemCategory = fixture.Create<IItemCategory>();
-            List<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.GetAvailabilities(4).ToList();
+            List<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.CreateManyValid().ToList();
 
             // Act
             storeItem.MakePermanent(permanentItem, itemCategory, manufacturer, availabilities);
@@ -133,12 +129,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         {
             // Arrange
             Fixture fixture = commonFixture.GetNewFixture();
-            bool isTemporary = commonFixture.NextBool();
-            IStoreItem storeItem = storeItemFixture.GetStoreItem(isTemporary: isTemporary);
+
+            var isTemporary = commonFixture.NextBool();
+            var definition = StoreItemDefinition.FromTemporary(isTemporary);
+            IStoreItem storeItem = storeItemFixture.CreateValid(definition);
             ItemModify itemModify = fixture.Create<ItemModify>();
             IManufacturer manufacturer = fixture.Create<IManufacturer>();
             IItemCategory itemCategory = fixture.Create<IItemCategory>();
-            IEnumerable<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.GetAvailabilities(4).ToList();
+            IEnumerable<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.CreateManyValid().ToList();
 
             // Act
             storeItem.Modify(itemModify, itemCategory, manufacturer, availabilities);
@@ -166,8 +164,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         public void SetPredecessor_WithValidPredecessor_ShouldSetPredecessor()
         {
             // Arrange
-            IStoreItem storeItem = storeItemFixture.GetStoreItem();
-            IStoreItem predecessor = storeItemFixture.GetStoreItem();
+            IStoreItem storeItem = storeItemFixture.CreateValid();
+            IStoreItem predecessor = storeItemFixture.CreateValid();
 
             // Act
             storeItem.SetPredecessor(predecessor);
