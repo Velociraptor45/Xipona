@@ -41,8 +41,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
             {
                 Id = destination.Id.Value,
                 Name = destination.Name,
-                Sections = sections,
-                DefaultSectionId = sections[defaultSectionIndex].Id
+                Sections = sections
             };
         }
 

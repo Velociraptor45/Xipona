@@ -56,9 +56,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             List<IShoppingListSection> sectionModels = new List<IShoppingListSection>();
             foreach (var section in source.Store.Sections)
             {
-                var isDefault = source.Store.DefaultSectionId == section.Id;
                 var items = itemMapsPerSection[section.Id].Select(map => CreateItem(map, source));
-                var sectionModel = CreateSection(section, isDefault, items);
+                var sectionModel = CreateSection(section, items);
                 sectionModels.Add(sectionModel);
             }
 
@@ -69,15 +68,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
                 source.CompletionDate);
         }
 
-        public IShoppingListSection CreateSection(Section section, bool isDefaultSection,
-            IEnumerable<IShoppingListItem> items)
+        public IShoppingListSection CreateSection(Section section, IEnumerable<IShoppingListItem> items)
         {
             return shoppingListSectionFactory.Create(
                 new ShoppingListSectionId(section.Id),
                 section.Name,
                 items,
                 section.SortIndex,
-                isDefaultSection);
+                section.IsDefaultSection);
         }
 
         public IShoppingListItem CreateItem(ItemsOnList map, Entities.ShoppingList source)

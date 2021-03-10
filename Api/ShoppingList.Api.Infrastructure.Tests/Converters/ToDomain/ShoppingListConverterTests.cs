@@ -9,7 +9,6 @@ using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using System.Collections.Generic;
-using System.Linq;
 
 using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 
@@ -43,7 +42,8 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
                 {
                     Id = section.Id.Value,
                     Name = section.Name,
-                    SortIndex = section.SortingIndex
+                    SortIndex = section.SortingIndex,
+                    IsDefaultSection = section.IsDefaultSection
                 };
 
                 foreach (var item in section.ShoppingListItems)
@@ -90,8 +90,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
                 Id = destination.Store.Id.Value,
                 Name = destination.Store.Name,
                 Deleted = destination.Store.IsDeleted,
-                Sections = sectionEntities,
-                DefaultSectionId = destination.Sections.Single(s => s.IsDefaultSection).Id.Value
+                Sections = sectionEntities
             };
 
             return new Entities.ShoppingList

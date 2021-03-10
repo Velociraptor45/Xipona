@@ -9,8 +9,6 @@ using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
 
-using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
-
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
 {
     public class StoreSectionConverterTests : ToDomainConverterTestBase<Section, IStoreSection>
@@ -33,19 +31,12 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
 
         public static Section GetSource(IStoreSection destination, CommonFixture commonFixture)
         {
-            var defaultSectionId = destination.IsDefaultSection
-                ? destination.Id.Value
-                : commonFixture.NextInt(exclude: destination.Id.Value);
-
             return new Section()
             {
                 Id = destination.Id.Value,
                 Name = destination.Name,
                 SortIndex = destination.SortingIndex,
-                Store = new Entities.Store
-                {
-                    DefaultSectionId = defaultSectionId
-                }
+                IsDefaultSection = destination.IsDefaultSection
             };
         }
 
