@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:  
+  Database:
+    image: jsurf/rpi-mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: 
+      MYSQL_DATABASE: dev-shoppinglist
+    ports:
+      - "15906:3306"
+    networks: 
+      - dev-ph-shoppinglist
+    volumes:
+      - dev-ph-shoppinglist-database:/var/lib/mysql
+    restart: 
+      always
+
+  Api:
+    image:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "12486:433"
+    networks:
+      - dev-ph-shoppinglist
+    restart:
+      always
+
+  Frontend:
+    image: 
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "13997:433"
+    networks:
+      - dev-ph-shoppinglist
+    restart:
+      always
+
+
+volumes:
+  dev-ph-shoppinglist-database:
+    external: true
+networks:
+  dev-ph-shoppinglist:
+    name: dev-ph-shoppinglist
