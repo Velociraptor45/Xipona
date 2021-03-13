@@ -10,13 +10,20 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [Required]
         public string Name { get; set; }
+
         public int StoreId { get; set; }
         public int SortIndex { get; set; }
         public bool IsDefaultSection { get; set; }
 
+        [ForeignKey("StoreId")]
         public Store Store { get; set; }
+
+        [InverseProperty("Section")]
         public ICollection<AvailableAt> DefaultItemsInSection { get; set; }
+
+        [InverseProperty("Section")]
         public ICollection<ItemsOnList> ActualItemsSections { get; set; }
     }
 }

@@ -20,20 +20,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Section>()
-                .HasOne(s => s.Store)
-                .WithMany(store => store.Sections)
-                .HasForeignKey(s => s.StoreId);
-
-            modelBuilder.Entity<AvailableAt>()
-                .HasOne(av => av.Section)
-                .WithMany(section => section.DefaultItemsInSection)
-                .HasForeignKey(av => av.DefaultSectionId);
-
-            modelBuilder.Entity<ItemsOnList>()
-                .HasOne(i => i.Section)
-                .WithMany(section => section.ActualItemsSections)
-                .HasForeignKey(i => i.SectionId);
         }
     }
 }
