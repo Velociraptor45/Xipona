@@ -16,9 +16,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-            var uriBuilder = new UriBuilder("http", "", 0, "v1");
+            ConfigureHttpClient(builder);
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = uriBuilder.Uri }); //todo
             builder.Services.AddTransient<IShoppingListApiClient, ShoppingListApiClient>();
             builder.Services.AddTransient<IShoppingListNotificationService, ShoppingListNotificationService>();
             builder.Services.AddTransient<IApiClient, ApiClient>();
@@ -27,6 +26,12 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddAntDesign();
 
             await builder.Build().RunAsync();
+        }
+
+        private static void ConfigureHttpClient(WebAssemblyHostBuilder builder)
+        {
+            var uri = new Uri(builder.Configuration["Connection:Uri"]);
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = uri });
         }
     }
 }
