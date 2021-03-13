@@ -18,7 +18,7 @@ services:
   Api:
     image:
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_ENVIRONMENT: Production
     ports:
       - "12489:433"
     networks: 
@@ -29,7 +29,7 @@ services:
   Frontend:
     image: 
     environment: 
-      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_ENVIRONMENT: Production
     ports: 
       - "14000:433"
     networks: 
