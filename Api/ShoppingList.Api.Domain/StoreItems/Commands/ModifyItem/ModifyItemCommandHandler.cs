@@ -71,6 +71,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
             {
                 manufacturer = await manufacturerRepository
                     .FindByAsync(command.ItemModify.ManufacturerId, cancellationToken);
+                if (manufacturer == null)
+                    throw new DomainException(new ManufacturerNotFoundReason(command.ItemModify.ManufacturerId));
             }
 
             IEnumerable<IStoreItemAvailability> availabilities =

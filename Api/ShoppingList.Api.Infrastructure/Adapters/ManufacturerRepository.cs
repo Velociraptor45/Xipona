@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
@@ -48,9 +46,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             var entity = await dbContext.Manufacturers.AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id.Value);
-
-            if (entity == null)
-                throw new DomainException(new ManufacturerNotFoundReason(id));
 
             cancellationToken.ThrowIfCancellationRequested();
 

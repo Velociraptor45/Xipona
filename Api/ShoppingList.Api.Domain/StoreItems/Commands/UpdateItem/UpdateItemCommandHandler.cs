@@ -75,8 +75,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
 
             IManufacturer manufacturer = null;
             if (command.ItemUpdate.ManufacturerId != null)
+            {
                 manufacturer = await manufacturerRepository
-                .FindByAsync(command.ItemUpdate.ManufacturerId, cancellationToken);
+                    .FindByAsync(command.ItemUpdate.ManufacturerId, cancellationToken);
+                if (manufacturer == null)
+                    throw new DomainException(new ManufacturerNotFoundReason(command.ItemUpdate.ManufacturerId));
+            }
 
             using ITransaction transaction = await transactionGenerator.GenerateAsync(cancellationToken);
             await itemRepository.StoreAsync(oldItem, cancellationToken);
