@@ -12,6 +12,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System;
 using System.Collections.Generic;
@@ -63,12 +64,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
 
             IItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(command.ItemModify.ItemCategoryId, cancellationToken);
+            if (itemCategory == null)
+                throw new DomainException(new ItemCategoryNotFoundReason(command.ItemModify.ItemCategoryId));
 
             IManufacturer manufacturer = null;
             if (command.ItemModify.ManufacturerId != null)
             {
                 manufacturer = await manufacturerRepository
                     .FindByAsync(command.ItemModify.ManufacturerId, cancellationToken);
+                if (manufacturer == null)
+                    throw new DomainException(new ManufacturerNotFoundReason(command.ItemModify.ManufacturerId));
             }
 
             IEnumerable<IStoreItemAvailability> availabilities =
@@ -107,7 +112,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
             {
                 if (!sections.Contains(shortAvailability.StoreItemSectionId))
                     throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
-                var store = await storeRepository.FindActiveByAsync(shortAvailability.StoreId.AsStoreId(), cancellationToken);
+
+                StoreId storeId = shortAvailability.StoreId.AsStoreId();
+                var store = await storeRepository.FindActiveByAsync(storeId, cancellationToken);
+                if (store == null)
+                    throw new DomainException(new StoreNotFoundReason(storeId));
+
                 var availability = storeItemAvailabilityFactory
                     .Create(store, shortAvailability.Price, shortAvailability.StoreItemSectionId);
                 availabilities.Add(availability);

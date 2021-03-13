@@ -15,8 +15,13 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
         public float Quantity { get; set; }
         public int? SectionId { get; set; }
 
+        [ForeignKey("ShoppingListId")]
         public ShoppingList ShoppingList { get; set; }
+
+        [ForeignKey("ItemId")]
         public Item Item { get; set; }
+
+        [ForeignKey("SectionId")]
         public Section Section { get; set; }
     }
 }

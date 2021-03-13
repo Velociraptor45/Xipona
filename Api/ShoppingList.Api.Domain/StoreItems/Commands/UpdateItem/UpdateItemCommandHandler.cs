@@ -14,6 +14,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,6 +62,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
             }
 
             IStoreItem oldItem = await itemRepository.FindByAsync(command.ItemUpdate.OldId, cancellationToken);
+            if (oldItem == null)
+                throw new DomainException(new ItemNotFoundReason(command.ItemUpdate.OldId));
             if (oldItem.IsTemporary)
                 throw new DomainException(new TemporaryItemNotUpdateableReason(command.ItemUpdate.OldId));
 
@@ -68,11 +71,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
 
             IItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(command.ItemUpdate.ItemCategoryId, cancellationToken);
+            if (itemCategory == null)
+                throw new DomainException(new ItemCategoryNotFoundReason(command.ItemUpdate.ItemCategoryId));
 
             IManufacturer manufacturer = null;
             if (command.ItemUpdate.ManufacturerId != null)
+            {
                 manufacturer = await manufacturerRepository
-                .FindByAsync(command.ItemUpdate.ManufacturerId, cancellationToken);
+                    .FindByAsync(command.ItemUpdate.ManufacturerId, cancellationToken);
+                if (manufacturer == null)
+                    throw new DomainException(new ManufacturerNotFoundReason(command.ItemUpdate.ManufacturerId));
+            }
 
             using ITransaction transaction = await transactionGenerator.GenerateAsync(cancellationToken);
             await itemRepository.StoreAsync(oldItem, cancellationToken);
@@ -126,7 +135,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
             {
                 if (!sections.Contains(shortAvailability.StoreItemSectionId))
                     throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
-                var store = await storeRepository.FindActiveByAsync(shortAvailability.StoreId.AsStoreId(), cancellationToken);
+
+                StoreId storeId = shortAvailability.StoreId.AsStoreId();
+                var store = await storeRepository.FindActiveByAsync(storeId, cancellationToken);
+                if (store == null)
+                    throw new DomainException(new StoreNotFoundReason(storeId));
+
                 var availability = storeItemAvailabilityFactory
                     .Create(store, shortAvailability.Price, shortAvailability.StoreItemSectionId);
                 availabilities.Add(availability);

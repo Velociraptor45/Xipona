@@ -34,6 +34,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
                 throw new ArgumentNullException(nameof(command));
 
             var list = await shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
+            if (list == null)
+                throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
 
             cancellationToken.ThrowIfCancellationRequested();
 
