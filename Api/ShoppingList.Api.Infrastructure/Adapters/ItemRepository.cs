@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -35,9 +33,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
         public async Task<IStoreItem> FindByAsync(StoreItemId storeItemId, CancellationToken cancellationToken)
         {
             if (storeItemId is null)
-            {
                 throw new ArgumentNullException(nameof(storeItemId));
-            }
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -45,38 +41,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 .FirstOrDefaultAsync(item => storeItemId.IsActualId ?
                     item.Id == storeItemId.Actual.Value :
                     item.CreatedFrom == storeItemId.Offline.Value);
-
-            if (itemEntity == null)
-                throw new DomainException(new ItemNotFoundReason(storeItemId));
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
-
-            return toModelConverter.ToDomain(itemEntity);
-        }
-
-        public async Task<IStoreItem> FindByAsync(StoreItemId storeItemId, ShoppingListStoreId storeId,
-            CancellationToken cancellationToken)
-        {
-            if (storeItemId == null)
-                throw new ArgumentNullException(nameof(storeItemId));
-            if (storeId == null)
-                throw new ArgumentNullException(nameof(storeId));
-
-            var itemEntity = await GetItemQuery()
-                .FirstOrDefaultAsync(item => storeItemId.IsActualId ?
-                    item.Id == storeItemId.Actual.Value :
-                    item.CreatedFrom == storeItemId.Offline.Value);
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            if (itemEntity == null)
-                throw new DomainException(new ItemNotFoundReason(storeItemId));
-
-            var storeMap = itemEntity.AvailableAt.FirstOrDefault(map => map.StoreId == storeId.Value);
-            if (storeMap == null)
-                throw new DomainException(new ItemAtStoreNotAvailableReason(storeItemId, storeId));
 
             cancellationToken.ThrowIfCancellationRequested();
 

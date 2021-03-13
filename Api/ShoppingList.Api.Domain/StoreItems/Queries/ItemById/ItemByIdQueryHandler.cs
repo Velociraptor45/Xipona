@@ -1,4 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
@@ -27,6 +29,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemById
             cancellationToken.ThrowIfCancellationRequested();
 
             var item = await itemRepository.FindByAsync(query.ItemId, cancellationToken);
+            if (item == null)
+                throw new DomainException(new ItemNotFoundReason(query.ItemId));
 
             cancellationToken.ThrowIfCancellationRequested();
 
