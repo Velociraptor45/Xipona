@@ -233,6 +233,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         }
 
         [Fact]
+        public async Task HandleAsync_WithInvalidStoreStoreIdFromAvailability_ShouldThrowDomainException()
+        {
+            // todo implement
+        }
+
+        [Fact]
         public async Task HandleAsync_WithValidData_ShouldMakeTemporaryItemPermanent() //todo make this more readable
         {
             // Arrange
