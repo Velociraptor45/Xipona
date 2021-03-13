@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
@@ -45,10 +43,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             var listEntity = await FindEntityByIdAsync(shoppingList.Id);
-            if (listEntity == null)
-            {
-                throw new DomainException(new ShoppingListNotFoundReason(shoppingList.Id));
-            }
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -62,9 +56,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             var entity = await GetShoppingListQuery()
                 .FirstOrDefaultAsync(list => list.Id == id.Value);
-
-            if (entity == null) //todo throw in command handler
-                throw new DomainException(new ShoppingListNotFoundReason(id));
 
             cancellationToken.ThrowIfCancellationRequested();
 
