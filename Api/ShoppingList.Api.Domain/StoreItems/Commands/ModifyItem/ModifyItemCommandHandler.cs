@@ -63,6 +63,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
 
             IItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(command.ItemModify.ItemCategoryId, cancellationToken);
+            if (itemCategory == null)
+                throw new DomainException(new ItemCategoryNotFoundReason(command.ItemModify.ItemCategoryId));
 
             IManufacturer manufacturer = null;
             if (command.ItemModify.ManufacturerId != null)
