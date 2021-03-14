@@ -20,7 +20,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
     ports:
-      - "12486:433"
+      - "12486:443"
     networks:
       - dev-ph-shoppinglist
     restart:
@@ -31,7 +31,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
     ports:
-      - "13997:433"
+      - "13997:443"
     networks:
       - dev-ph-shoppinglist
     restart:
