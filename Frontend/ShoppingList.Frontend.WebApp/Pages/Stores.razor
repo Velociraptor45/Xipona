@@ -79,7 +79,8 @@
 
     private void OnCreateStoreButtonClicked()
     {
-        currentlyEditedStore = new Store(0, "", Enumerable.Empty<StoreSection>());
+        var defaultSection = new StoreSection(0, "Default", 0, true);
+        currentlyEditedStore = new Store(0, "", new[] { defaultSection });
     }
 
     private async Task OnStoreCreatedAsync(Store store)
