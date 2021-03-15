@@ -32,7 +32,7 @@
 
     <div>
         Default Section:
-        <SingleSelect DefaultValue="@Store.Sections.First(s => s.IsDefaultSection).Id.ToString()"
+        <SingleSelect DefaultValue="@Store.Sections.First(s => s.IsDefaultSection).Id.FrontendId.ToString()"
                       CanAddItem="false"
                       AllowClear="false"
                       GuidToNameMaps="@Store.Sections.OrderBy(s => s.Name).Select(s => new Tuple<Guid, string>(s.Id.FrontendId, s.Name)).ToList()"
