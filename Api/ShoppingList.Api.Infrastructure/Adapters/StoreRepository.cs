@@ -14,15 +14,15 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
     public class StoreRepository : IStoreRepository
     {
         private readonly ShoppingContext dbContext;
-        private readonly IToDomainConverter<Entities.Store, IStore> toModelConverter;
+        private readonly IToDomainConverter<Entities.Store, IStore> toDomainConverter;
         private readonly IToEntityConverter<IStore, Entities.Store> toEntityConverter;
 
         public StoreRepository(ShoppingContext dbContext,
-            IToDomainConverter<Entities.Store, IStore> toModelConverter,
+            IToDomainConverter<Entities.Store, IStore> toDomainConverter,
             IToEntityConverter<IStore, Entities.Store> toEntityConverter)
         {
             this.dbContext = dbContext;
-            this.toModelConverter = toModelConverter;
+            this.toDomainConverter = toDomainConverter;
             this.toEntityConverter = toEntityConverter;
         }
 
@@ -34,7 +34,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return toModelConverter.ToDomain(storeEntities);
+            return toDomainConverter.ToDomain(storeEntities);
         }
 
         public async Task<IStore> FindActiveByAsync(StoreId id, CancellationToken cancellationToken)
@@ -50,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return toModelConverter.ToDomain(entity);
+            return toDomainConverter.ToDomain(entity);
         }
 
         public async Task<IStore> FindByAsync(StoreId id, CancellationToken cancellationToken)
@@ -65,10 +65,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return toModelConverter.ToDomain(entity);
+            return toDomainConverter.ToDomain(entity);
         }
 
-        public async Task StoreAsync(IStore store, CancellationToken cancellationToken)
+        public async Task<IStore> StoreAsync(IStore store, CancellationToken cancellationToken)
         {
             if (store == null)
                 throw new ArgumentNullException(nameof(store));
@@ -77,17 +77,17 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             if (store.Id.Value == 0)
             {
-                await StoreAsNew(store, cancellationToken);
+                return await StoreAsNew(store, cancellationToken);
             }
             else
             {
-                await StoreAsModified(store, cancellationToken);
+                return await StoreAsModified(store, cancellationToken);
             }
         }
 
         #region private methods
 
-        private async Task StoreAsNew(IStore store, CancellationToken cancellationToken)
+        private async Task<IStore> StoreAsNew(IStore store, CancellationToken cancellationToken)
         {
             var entity = toEntityConverter.ToEntity(store);
             dbContext.Entry(entity).State = EntityState.Added;
@@ -100,9 +100,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             await dbContext.SaveChangesAsync();
+
+            return toDomainConverter.ToDomain(entity);
         }
 
-        private async Task StoreAsModified(IStore store, CancellationToken cancellationToken)
+        private async Task<IStore> StoreAsModified(IStore store, CancellationToken cancellationToken)
         {
             var existingEntity = await FindEntityById(store.Id.Value, cancellationToken);
             var existingSections = existingEntity.Sections.ToDictionary(s => s.Id);
@@ -136,6 +138,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             await dbContext.SaveChangesAsync();
+
+            return toDomainConverter.ToDomain(incomingEntity);
         }
 
         private async Task<Entities.Store> FindEntityById(int id, CancellationToken cancellationToken)
