@@ -39,7 +39,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishSho
             var sections = shoppingList.GetSectionsWithItemsNotInBasket();
             shoppingList.RemoveAllItemsNotInBasket();
 
-            var nextShoppingList = shoppingListFactory.Create(shoppingList.Store, sections, null);
+            var nextShoppingList = shoppingListFactory.CreateNew(shoppingList.Store, sections, null);
 
             cancellationToken.ThrowIfCancellationRequested();
 

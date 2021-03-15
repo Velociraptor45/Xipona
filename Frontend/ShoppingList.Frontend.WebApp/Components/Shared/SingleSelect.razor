@@ -6,9 +6,19 @@
         DropdownRender="@OnRender"
         AllowClear="@AllowClear"
         Class="min-w-100">
-    @foreach (var map in IdToNameMaps)
+    @if (GuidToNameMaps == null)
     {
-        <SelectOption Value="@map.Item1.ToString()">@map.Item2</SelectOption>
+        @foreach (var map in IdToNameMaps)
+        {
+            <SelectOption Value="@map.Item1.ToString()">@map.Item2</SelectOption>
+        }
+    }
+    else
+    {
+        @foreach (var map in GuidToNameMaps)
+        {
+            <SelectOption Value="@map.Item1.ToString()">@map.Item2</SelectOption>
+        }
     }
 </Select>
 
@@ -18,8 +28,10 @@
     [Parameter] public bool CanAddItem { get; set; }
     [Parameter] public bool AllowClear { get; set; } = false;
     [Parameter] public List<Tuple<int, string>> IdToNameMaps { get; set; }
+    [Parameter] public List<Tuple<Guid, string>> GuidToNameMaps { get; set; }
     [Parameter] public Func<string, Task> OnItemAddedCallback { get; set; }
     [Parameter] public EventCallback<int> OnChangeCallback { get; set; }
+    [Parameter] public EventCallback<Guid> OnChangeCallbackGuid { get; set; }
 
     private string newItemName = "";
 
@@ -27,14 +39,14 @@
         OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
         OneOf<SelectOption, IEnumerable<SelectOption>> option)
     {
-        int id;
-
-        if (string.IsNullOrWhiteSpace(value.AsT0))
-            id = -1;
-        else
-            id = int.Parse(value.AsT0);
-
-        await OnChangeCallback.InvokeAsync(id);
+        if (int.TryParse(value.AsT0, out int id))
+        {
+            await OnChangeCallback.InvokeAsync(id);
+        }
+        else if (Guid.TryParse(value.AsT0, out Guid guid))
+        {
+            await OnChangeCallbackGuid.InvokeAsync(guid);
+        }
     }
 
     private async void OnAddNewItem()

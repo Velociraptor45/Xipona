@@ -1,10 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Frontend.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contracts
 {
@@ -12,7 +8,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contract
     {
         public static StoreSection ToModel(this StoreSectionContract contract)
         {
-            return new StoreSection(contract.Id, contract.Name, contract.SortingIndex, contract.IsDefautlSection);
+            return new StoreSection(
+                new StoreSectionId(contract.Id, Guid.NewGuid()),
+                contract.Name,
+                contract.SortingIndex,
+                contract.IsDefautlSection);
         }
     }
 }

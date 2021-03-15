@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests
 {
@@ -9,7 +10,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests
         {
             return new CreateStoreContract()
             {
-                Name = request.Name
+                Name = request.Store.Name,
+                Sections = request.Store.Sections.Select(s => s.ToContract())
             };
         }
     }
