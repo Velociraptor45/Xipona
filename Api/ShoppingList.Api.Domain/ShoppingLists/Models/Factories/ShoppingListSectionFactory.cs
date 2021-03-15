@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories
 {
@@ -8,6 +9,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories
             int sortingIndex, bool isDefaultSection)
         {
             return new ShoppingListSection(sectionId, name, shoppingListItems, sortingIndex, isDefaultSection);
+        }
+
+        public IShoppingListSection Create(IStoreSection storeSection, IEnumerable<IShoppingListItem> items)
+        {
+            return new ShoppingListSection(storeSection.Id.AsShoppingListSectionId(), storeSection.Name, items,
+                storeSection.SortingIndex, storeSection.IsDefaultSection);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
         public void SetupCreate(IShoppingListStore store, IEnumerable<IShoppingListSection> sections,
             DateTime? completionDate, IShoppingList returnValue)
         {
-            mock.Setup(i => i.Create(
+            mock.Setup(i => i.CreateNew(
                     It.Is<IShoppingListStore>(s => s == store),
                     It.Is<IEnumerable<IShoppingListSection>>(sec => sec.SequenceEqual(sections)),
                     It.Is<DateTime?>(date => date == completionDate)))
