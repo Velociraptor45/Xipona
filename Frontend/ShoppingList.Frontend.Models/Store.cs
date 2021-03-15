@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Items;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Comparer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,9 +21,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         public int MaxSortingIndex => Sections.Max(s => s.SortingIndex);
         public int MinSortingIndex => Sections.Min(s => s.SortingIndex);
 
-        public void ChangeDefaultSection(int sectionId)
+        public void ChangeDefaultSection(Guid sectionId)
         {
-            var section = Sections.FirstOrDefault(s => s.Id == sectionId);
+            var section = Sections.FirstOrDefault(s => s.Id.FrontendId == sectionId);
             if (section == null)
                 return;
 
@@ -32,7 +33,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
 
         public void AddSection()
         {
-            var section = new StoreSection(0, "", Sections.Max(s => s.SortingIndex) + 1, false);
+            var section = new StoreSection(new StoreSectionId(Guid.NewGuid()), "", Sections.Max(s => s.SortingIndex) + 1, false);
             Sections.Add(section);
         }
 

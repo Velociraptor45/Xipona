@@ -4,13 +4,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
 {
     public class CreateStoreRequest : IApiRequest
     {
-        public CreateStoreRequest(Guid requestId, string name)
+        public CreateStoreRequest(Guid requestId, Store store)
         {
             RequestId = requestId;
-            Name = name;
+            Store = store;
         }
 
         public Guid RequestId { get; }
-        public string Name { get; }
+        public Store Store { get; }
     }
 }

@@ -79,13 +79,13 @@
 
     private void OnCreateStoreButtonClicked()
     {
-        var defaultSection = new StoreSection(0, "Default", 0, true);
+        var defaultSection = new StoreSection(new StoreSectionId(Guid.NewGuid()), "Default", 0, true);
         currentlyEditedStore = new Store(0, "", new[] { defaultSection });
     }
 
     private async Task OnStoreCreatedAsync(Store store)
     {
-        var request = new CreateStoreRequest(Guid.NewGuid(), store.Name);
+        var request = new CreateStoreRequest(Guid.NewGuid(), store);
         try
         {
             await apiClient.CreateStoreAsync(request);
