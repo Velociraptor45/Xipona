@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Model
@@ -12,6 +13,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Model
         public StoreItemSectionId AsStoreItemSectionId()
         {
             return new StoreItemSectionId(Value);
+        }
+
+        public ShoppingListSectionId AsShoppingListSectionId()
+        {
+            return new ShoppingListSectionId(Value);
         }
     }
 }
