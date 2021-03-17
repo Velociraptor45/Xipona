@@ -97,5 +97,25 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
         {
             return this;
         }
+
+        public IShoppingList CreateValidWithOneEmptySection()
+        {
+            var definitions = new List<ShoppingListSectionDefinition>
+            {
+                new ShoppingListSectionDefinition(),
+                new ShoppingListSectionDefinition
+                {
+                    Items = Enumerable.Empty<IShoppingListItem>()
+                },
+                new ShoppingListSectionDefinition()
+            };
+
+            var listDefinition = new ShoppingListDefinition
+            {
+                Sections = shoppingListSectionFixture.CreateManyValid(definitions)
+            };
+
+            return CreateValid(listDefinition);
+        }
     }
 }
