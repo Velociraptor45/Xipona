@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentAssertions;
+using FluentAssertions.Execution;
+using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -9,6 +11,8 @@ using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
 
 using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 
@@ -112,6 +116,26 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
             ManufacturerConverterTests.AddDependencies(serviceCollection);
             ItemCategoryConverterTests.AddDependencies(serviceCollection);
             ShoppingListStoreConverterTests.AddDependencies(serviceCollection);
+        }
+
+        [Fact]
+        public async Task ToDomain_WithEmptySection_ShouldConvertEntityToDomain()
+        {
+            // Arrange
+            var commonFixture = new CommonFixture();
+            var shoppingListFixture = new ShoppingListFixture(commonFixture);
+
+            var model = shoppingListFixture.CreateValidWithOneEmptySection();
+            var entity = GetSource(model);
+
+            // Act
+            var result = CreateConverter().ToDomain(entity);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                result.Should().BeEquivalentTo(model);
+            }
         }
     }
 }

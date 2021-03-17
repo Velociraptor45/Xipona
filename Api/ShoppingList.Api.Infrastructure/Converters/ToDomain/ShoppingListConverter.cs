@@ -56,7 +56,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             List<IShoppingListSection> sectionModels = new List<IShoppingListSection>();
             foreach (var section in source.Store.Sections)
             {
-                var items = itemMapsPerSection[section.Id].Select(map => CreateItem(map, source));
+                List<IShoppingListItem> items = new List<IShoppingListItem>();
+                if (itemMapsPerSection.TryGetValue(section.Id, out var maps))
+                {
+                    items = maps.Select(map => CreateItem(map, source)).ToList();
+                }
                 var sectionModel = CreateSection(section, items);
                 sectionModels.Add(sectionModel);
             }
