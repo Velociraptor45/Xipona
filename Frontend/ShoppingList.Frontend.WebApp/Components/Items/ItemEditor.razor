@@ -26,7 +26,7 @@
             <SingleSelect Placeholder="Item Category"
                           DefaultValue="@StoreItem.ItemCategoryId.GetValueOrDefault().ToString()"
                           CanAddItem="true"
-                          IdToNameMaps="@ItemCategories.Select(m => new Tuple<int, string>(m.Id, m.Name)).ToList()"
+                          IdToNameMaps="@ItemCategories.Select(m => new Tuple<int, string>(m.Id, m.Name)).OrderBy(m => m.Item2).ToList()"
                           OnChangeCallback="@OnItemCategoryChanged"
                           OnItemAddedCallback="@ItemCategoryCreatedCallback">
             </SingleSelect>
@@ -37,7 +37,7 @@
                           DefaultValue="@StoreItem.ManufacturerId.ToString()"
                           CanAddItem="true"
                           AllowClear="true"
-                          IdToNameMaps="@Manufacturers.Select(m => new Tuple<int, string>(m.Id, m.Name)).ToList()"
+                          IdToNameMaps="@Manufacturers.Select(m => new Tuple<int, string>(m.Id, m.Name)).OrderBy(m => m.Item2).ToList()"
                           OnChangeCallback="@OnManfacturerChanged"
                           OnItemAddedCallback="@ManufacturerCreatedCallback"
                           @ref="manufacturerSelect">
