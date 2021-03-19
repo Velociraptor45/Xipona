@@ -5,7 +5,8 @@
         OnChange="@OnSelectionChanged"
         DropdownRender="@OnRender"
         AllowClear="@AllowClear"
-        Class="min-w-100">
+        Class="min-w-100"
+        @ref="select">
     @if (GuidToNameMaps == null)
     {
         @foreach (var map in IdToNameMaps)
@@ -34,6 +35,7 @@
     [Parameter] public EventCallback<Guid> OnChangeCallbackGuid { get; set; }
 
     private string newItemName = "";
+    private Select select;
 
     private async void OnSelectionChanged(
         OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
@@ -47,6 +49,11 @@
         {
             await OnChangeCallbackGuid.InvokeAsync(guid);
         }
+    }
+
+    public bool IsEmpty()
+    {
+        return select.Value == null;
     }
 
     private async void OnAddNewItem()

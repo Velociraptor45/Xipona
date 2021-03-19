@@ -39,7 +39,8 @@
                           AllowClear="true"
                           IdToNameMaps="@Manufacturers.Select(m => new Tuple<int, string>(m.Id, m.Name)).ToList()"
                           OnChangeCallback="@OnManfacturerChanged"
-                          OnItemAddedCallback="@ManufacturerCreatedCallback">
+                          OnItemAddedCallback="@ManufacturerCreatedCallback"
+                          @ref="manufacturerSelect">
             </SingleSelect>
         </div>
     </div>
@@ -126,6 +127,8 @@
     [Parameter] public Func<string, Task> ManufacturerCreatedCallback { get; set; }
     [Parameter] public Func<string, Task> ItemCategoryCreatedCallback { get; set; }
 
+    private SingleSelect manufacturerSelect;
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -156,17 +159,28 @@
 
     private async Task OnUpdateButtonClickedAsync()
     {
+        PreSave();
         await UpdateItemCallback.InvokeAsync(StoreItem);
     }
 
     private async Task OnModifyButtonClickedAsync()
     {
+        PreSave();
         await ModifyItemCallback.InvokeAsync(StoreItem);
     }
 
     private async Task OnCreateButtonClicked()
     {
+        PreSave();
         await CreateItemCallback.InvokeAsync(StoreItem);
+    }
+
+    private void PreSave()
+    {
+        if (manufacturerSelect.IsEmpty())
+        {
+            StoreItem.ManufacturerId = null;
+        }
     }
 
     private async Task OnMakePermanentButtonClicked()
