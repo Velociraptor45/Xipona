@@ -1,7 +1,6 @@
 .vs/
 bin/
 obj/
-Migrations/
 [Ss]sl/
 
 *.user
