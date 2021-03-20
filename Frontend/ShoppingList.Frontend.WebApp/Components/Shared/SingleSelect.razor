@@ -1,5 +1,5 @@
-﻿@using OneOf;
-
+﻿@typeparam TItem
+@typeparam TValue
 @*<Select Placeholder="@Placeholder"
             DefaultValue="@DefaultValue"
             OnChange="@OnSelectionChanged"
@@ -22,43 +22,46 @@
             }
         }
     </Select>*@
+<Select Class="min-w-100"
+        Placeholder="@Placeholder"
+        ValueName="@ValueName"
+        LabelName="@LabelName"
+        DataSource="@DataSource"
+        DefaultValue="@DefaultValue"
+        OnSelectedItemChanged="OnSelectedItemChanged"
+        AllowClear="@AllowClear">
+</Select>
 
 @code {
     [Parameter] public string Placeholder { get; set; }
-    [Parameter] public string DefaultValue { get; set; }
-    [Parameter] public bool CanAddItem { get; set; }
+
+    [Parameter] public List<TItem> DataSource { get; set; }
+    [Parameter] public TValue DefaultValue { get; set; }
+    [Parameter] public string ValueName { get; set; }
+    [Parameter] public string LabelName { get; set; }
+
+    [Parameter] public bool CanAddItem { get; set; } = false;
     [Parameter] public bool AllowClear { get; set; } = false;
-    [Parameter] public List<Tuple<int, string>> IdToNameMaps { get; set; }
-    [Parameter] public List<Tuple<Guid, string>> GuidToNameMaps { get; set; }
-    [Parameter] public Func<string, Task> OnItemAddedCallback { get; set; }
-    [Parameter] public EventCallback<int> OnChangeCallback { get; set; }
-    [Parameter] public EventCallback<Guid> OnChangeCallbackGuid { get; set; }
+
+    [Parameter] public EventCallback<TItem> OnItemChanged { get; set; }
+    [Parameter] public EventCallback<string> OnItemAdded { get; set; }
+
+    //[Parameter] public List<Tuple<int, string>> IdToNameMaps { get; set; }
+    //[Parameter] public List<Tuple<Guid, string>> GuidToNameMaps { get; set; }
+    //[Parameter] public Func<string, Task> OnItemAddedCallback { get; set; }
+    //[Parameter] public EventCallback<int> OnChangeCallback { get; set; }
+    //[Parameter] public EventCallback<Guid> OnChangeCallbackGuid { get; set; }
 
     private string newItemName = "";
-    //private Select select;
 
-    //private async void OnSelectionChanged(
-    //    OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
-    //    OneOf<SelectOption, IEnumerable<SelectOption>> option)
-    //{
-    //    if (int.TryParse(value.AsT0, out int id))
-    //    {
-    //        await OnChangeCallback.InvokeAsync(id);
-    //    }
-    //    else if (Guid.TryParse(value.AsT0, out Guid guid))
-    //    {
-    //        await OnChangeCallbackGuid.InvokeAsync(guid);
-    //    }
-    //}
-
-    public bool IsEmpty()
+    private async void OnSelectedItemChanged(TItem item)
     {
-        return true;//select.Value == null;
+        await OnItemChanged.InvokeAsync(item);
     }
 
     private async void OnAddNewItem()
     {
-        await OnItemAddedCallback.Invoke(newItemName);
+        await OnItemAdded.InvokeAsync(newItemName);
         newItemName = "";
     }
 

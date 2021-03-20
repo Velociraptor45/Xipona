@@ -23,42 +23,55 @@
     <div class="d-flex pb-2">
         <div>
             <div class="font-weight-bold">Category</div>
-            <SingleSelect Placeholder="Item Category"
-                          DefaultValue="@StoreItem.ItemCategoryId.GetValueOrDefault().ToString()"
-                          CanAddItem="true"
-                          IdToNameMaps="@ItemCategories.Select(m => new Tuple<int, string>(m.Id, m.Name)).OrderBy(m => m.Item2).ToList()"
-                          OnChangeCallback="@OnItemCategoryChanged"
-                          OnItemAddedCallback="@ItemCategoryCreatedCallback">
+            <SingleSelect TItem="ItemCategory"
+                          TValue="int"
+                          ValueName="@nameof(ItemCategory.Id)"
+                          LabelName="@nameof(ItemCategory.Name)"
+                          DataSource="@ItemCategories"
+                          OnItemAdded="@ItemCategoryCreatedCallback"
+                          OnItemChanged="@OnItemCategoryChanged"
+                          Placeholder="Item Category"
+                          DefaultValue="@StoreItem.ItemCategoryId.GetValueOrDefault()"
+                          CanAddItem="true">
             </SingleSelect>
         </div>
         <div class="ml-3">
             <div class="font-weight-bold">Manufacturer</div>
-            <SingleSelect Placeholder="Manufacturer"
-                          DefaultValue="@StoreItem.ManufacturerId.ToString()"
+            <SingleSelect TItem="Manufacturer"
+                          TValue="int"
+                          ValueName="@nameof(Manufacturer.Id)"
+                          LabelName="@nameof(Manufacturer.Name)"
+                          DataSource="@Manufacturers"
+                          OnItemChanged="@OnManfacturerChanged"
+                          OnItemAdded="@ManufacturerCreatedCallback"
+                          Placeholder="Manufacturer"
+                          DefaultValue="@(StoreItem.ManufacturerId ?? -1)"
                           CanAddItem="true"
-                          AllowClear="true"
-                          IdToNameMaps="@Manufacturers.Select(m => new Tuple<int, string>(m.Id, m.Name)).OrderBy(m => m.Item2).ToList()"
-                          OnChangeCallback="@OnManfacturerChanged"
-                          OnItemAddedCallback="@ManufacturerCreatedCallback"
-                          @ref="manufacturerSelect">
+                          AllowClear="true">
             </SingleSelect>
         </div>
     </div>
     <div class="d-flex py-2">
-        <SingleSelect Placeholder="QuantityType"
-                      DefaultValue="@StoreItem.QuantityType.Id.ToString()"
-                      CanAddItem="false"
-                      IdToNameMaps="@QuantityTypes.Select(m => new Tuple<int, string>(m.Id, m.Name)).ToList()"
-                      OnChangeCallback="@OnQuantityTypeChanged">
+        <SingleSelect TItem="QuantityType"
+                      TValue="int"
+                      ValueName="@nameof(QuantityType.Id)"
+                      LabelName="@nameof(QuantityType.Name)"
+                      Placeholder="QuantityType"
+                      DefaultValue="@StoreItem.QuantityType.Id"
+                      DataSource="@QuantityTypes"
+                      OnItemChanged="@OnQuantityTypeChanged">
         </SingleSelect>
         @if (StoreItem.QuantityType.Id == 0)
         {
             <div class="ml-3 d-flex flex-column">
-                <SingleSelect Placeholder="QuantityInPacketType"
-                              DefaultValue="@StoreItem.QuantityInPacketType.Id.ToString()"
-                              CanAddItem="false"
-                              IdToNameMaps="@QuantityTypesInPacket.Select(m => new Tuple<int, string>(m.Id, m.Name)).ToList()"
-                              OnChangeCallback="@OnQuantityInPacketTypeChanged">
+                <SingleSelect TItem="QuantityTypeInPacket"
+                              TValue="int"
+                              ValueName="@nameof(QuantityTypeInPacket.Id)"
+                              LabelName="@nameof(QuantityTypeInPacket.Name)"
+                              Placeholder="QuantityInPacketType"
+                              DefaultValue="@StoreItem.QuantityInPacketType.Id"
+                              DataSource="@QuantityTypesInPacket"
+                              OnItemChanged="@OnQuantityInPacketTypeChanged">
                 </SingleSelect>
                 <div class="d-flex">
                     <div class="max-w-50">
@@ -127,7 +140,7 @@
     [Parameter] public Func<string, Task> ManufacturerCreatedCallback { get; set; }
     [Parameter] public Func<string, Task> ItemCategoryCreatedCallback { get; set; }
 
-    private SingleSelect manufacturerSelect;
+    private SingleSelect<Manufacturer, int> manufacturerSelect;
 
     protected override void OnInitialized()
     {
@@ -159,28 +172,17 @@
 
     private async Task OnUpdateButtonClickedAsync()
     {
-        PreSave();
         await UpdateItemCallback.InvokeAsync(StoreItem);
     }
 
     private async Task OnModifyButtonClickedAsync()
     {
-        PreSave();
         await ModifyItemCallback.InvokeAsync(StoreItem);
     }
 
     private async Task OnCreateButtonClicked()
     {
-        PreSave();
         await CreateItemCallback.InvokeAsync(StoreItem);
-    }
-
-    private void PreSave()
-    {
-        if (manufacturerSelect.IsEmpty())
-        {
-            StoreItem.ManufacturerId = null;
-        }
     }
 
     private async Task OnMakePermanentButtonClicked()
@@ -201,30 +203,24 @@
         await LeaveEditorCallback.InvokeAsync(null);
     }
 
-    private void OnManfacturerChanged(int id)
+    private void OnManfacturerChanged(Manufacturer manufacturer)
     {
-        if (id == -1)
-        {
-            StoreItem.ManufacturerId = null;
-            return;
-        }
-
-        StoreItem.ManufacturerId = id;
+        StoreItem.ManufacturerId = manufacturer?.Id;
     }
 
-    private void OnItemCategoryChanged(int id)
+    private void OnItemCategoryChanged(ItemCategory itemCategory)
     {
-        StoreItem.ItemCategoryId = id;
+        StoreItem.ItemCategoryId = itemCategory.Id;
     }
 
-    private void OnQuantityTypeChanged(int id)
+    private void OnQuantityTypeChanged(QuantityType quantityType)
     {
-        StoreItem.QuantityType = GetQuantityTypeById(id);
+        StoreItem.QuantityType = quantityType;
     }
 
-    private void OnQuantityInPacketTypeChanged(int id)
+    private void OnQuantityInPacketTypeChanged(QuantityTypeInPacket quantityTypeInPacket)
     {
-        StoreItem.QuantityInPacketType = GetQuantityInPacketTypeById(id);
+        StoreItem.QuantityInPacketType = quantityTypeInPacket;
     }
 
     private StoreItemStore GetNotRegisteredStore(StoreItem storeItem)
@@ -254,15 +250,5 @@
     {
         return GetRegisteredStoreIds(StoreItem)
             .Except(new[] { StoreItem.Availabilities[availabilityIndex].Store.Id });
-    }
-
-    private QuantityType GetQuantityTypeById(int id)
-    {
-        return QuantityTypes.FirstOrDefault(type => type.Id == id);
-    }
-
-    private QuantityTypeInPacket GetQuantityInPacketTypeById(int id)
-    {
-        return QuantityTypesInPacket.FirstOrDefault(type => type.Id == id);
     }
 }

@@ -19,11 +19,13 @@
             ValueName="@nameof(Store.Id)"
             LabelName="@nameof(Store.Name)">
     </Select>
-    <SingleSelect DefaultValue="@Availability.DefaultSection.Id.ToString()"
-                  CanAddItem="false"
-                  AllowClear="false"
-                  IdToNameMaps="@Availability.Store.Sections.Select(s => new Tuple<int, string>(s.Id, s.Name)).ToList()"
-                  OnChangeCallback="@OnDefaultSectionChanged"></SingleSelect>
+    <SingleSelect TItem="StoreItemSection"
+                  TValue="int"
+                  ValueName="@nameof(StoreItemSection.Id)"
+                  LabelName="@nameof(StoreItemSection.Name)"
+                  DataSource="@Availability.Store.Sections.ToList()"
+                  OnItemChanged="OnDefaultSectionChanged"
+                  DefaultValue="@Availability.DefaultSection.Id"></SingleSelect>
     <div class="ml-2">
         <Button Class="d-flex align-items-center"
                 OnClick="@OnRemoveStoreButtonClickedAsync"
@@ -62,9 +64,8 @@
         await OnRemoveAvailabilityCallback.InvokeAsync(ComponentIndex);
     }
 
-    private void OnDefaultSectionChanged(int sectionId)
+    private void OnDefaultSectionChanged(StoreItemSection section)
     {
-        var section = Availability.Store.Sections.Single(s => s.Id == sectionId);
         Availability.ChangeDefaultSection(section);
     }
 }

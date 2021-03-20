@@ -32,11 +32,13 @@
 
     <div>
         Default Section:
-        <SingleSelect DefaultValue="@Store.Sections.First(s => s.IsDefaultSection).Id.FrontendId.ToString()"
-                      CanAddItem="false"
-                      AllowClear="false"
-                      GuidToNameMaps="@Store.Sections.OrderBy(s => s.Name).Select(s => new Tuple<Guid, string>(s.Id.FrontendId, s.Name)).ToList()"
-                      OnChangeCallbackGuid="@OnDefaultSectionChanged"></SingleSelect>
+        <SingleSelect TItem="StoreSection"
+                      TValue="StoreSectionId"
+                      ValueName="@nameof(StoreSection.Id)"
+                      LabelName="@nameof(StoreSection.Name)"
+                      DefaultValue="@Store.Sections.First(s => s.IsDefaultSection).Id"
+                      DataSource="@Store.Sections.ToList()"
+                      OnItemChanged="OnDefaultSectionChanged"></SingleSelect>
     </div>
 
     <div class="d-flex justify-content-end mt-2">
@@ -72,9 +74,9 @@
         await SaveStoreCallback.InvokeAsync(Store);
     }
 
-    private void OnDefaultSectionChanged(Guid id)
+    private void OnDefaultSectionChanged(StoreSection section)
     {
-        Store.ChangeDefaultSection(id);
+        Store.ChangeDefaultSection(section.Id.FrontendId);
     }
 
     private void OnAddSectionButtonClicked()
