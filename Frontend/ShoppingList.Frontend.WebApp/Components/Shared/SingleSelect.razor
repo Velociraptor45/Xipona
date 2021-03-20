@@ -8,7 +8,8 @@
         DataSource="@DataSource"
         DefaultValue="@DefaultValue"
         OnSelectedItemChanged="OnSelectedItemChanged"
-        AllowClear="@AllowClear">
+        AllowClear="@AllowClear"
+        DropdownRender="@OnRender">
 </Select>
 
 @code {
@@ -38,7 +39,7 @@
         newItemName = "";
     }
 
-    private RenderFragment OnRender(RenderFragment originNode, Properties properties)
+    private RenderFragment OnRender(RenderFragment originNode)
     {
         RenderFragment customDropdownRender =
     @<Template>
