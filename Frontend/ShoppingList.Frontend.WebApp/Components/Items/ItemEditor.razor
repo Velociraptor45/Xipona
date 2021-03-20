@@ -45,7 +45,7 @@
                           OnItemChanged="@OnManfacturerChanged"
                           OnItemAdded="@ManufacturerCreatedCallback"
                           Placeholder="Manufacturer"
-                          DefaultValue="@(StoreItem.ManufacturerId ?? -1)"
+                          DefaultValue="@StoreItem.ManufacturerId.GetValueOrDefault()"
                           CanAddItem="true"
                           AllowClear="true">
             </SingleSelect>
