@@ -75,7 +75,7 @@
                 </SingleSelect>
                 <div class="d-flex">
                     <div class="max-w-50">
-                        <Input @bind-Value="@StoreItem.QuantityInPacket"></Input>
+                        <Input @bind-Value="@StoreItem.QuantityInPacket" />
                     </div>
                     <div class="mt-1">@StoreItem.QuantityInPacketType.QuantityLabel</div>
                 </div>
@@ -92,7 +92,6 @@
                              Availability="@StoreItem.Availabilities[i]"
                              PriceLabel="@StoreItem.QuantityType.PriceLabel"
                              Stores="@Stores"
-                             DisabledStoreIds="@GetDisabledStoresForAvailabilityByIndex(i)"
                              OnRemoveAvailabilityCallback="@OnRemoveAvailabilityButtonClicked"></Availablity>
             }
         </div>
@@ -139,8 +138,6 @@
     [Parameter] public EventCallback LeaveEditorCallback { get; set; }
     [Parameter] public Func<string, Task> ManufacturerCreatedCallback { get; set; }
     [Parameter] public Func<string, Task> ItemCategoryCreatedCallback { get; set; }
-
-    private SingleSelect<Manufacturer, int> manufacturerSelect;
 
     protected override void OnInitialized()
     {
@@ -239,16 +236,5 @@
     {
         var section = Stores.Single(s => s.Id == storeId).Sections.Single(s => s.IsDefaultSection);
         return section.AsStoreItemSection();
-    }
-
-    private IEnumerable<int> GetRegisteredStoreIds(StoreItem storeItem)
-    {
-        return storeItem.Availabilities.Select(av => av.Store.Id);
-    }
-
-    private IEnumerable<int> GetDisabledStoresForAvailabilityByIndex(int availabilityIndex)
-    {
-        return GetRegisteredStoreIds(StoreItem)
-            .Except(new[] { StoreItem.Availabilities[availabilityIndex].Store.Id });
     }
 }
