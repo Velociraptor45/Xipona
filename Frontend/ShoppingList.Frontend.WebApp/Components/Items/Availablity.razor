@@ -1,13 +1,13 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
 @using ProjectHermes.ShoppingList.Frontend.Models;
-@using OneOf;
 
 <div class="d-flex flex-row align-items-center">
     <div class="max-w-60">
         <Input @bind-Value="@Availability.PricePerQuantity" />
     </div>
-    <div class="mr-4">@PriceLabel</div>
-    <Select DataSource="Stores"
+    <div class="mr-2">@PriceLabel</div>
+    <Select Class="mr-2"
+            DataSource="Stores"
             TItem="Store"
             TItemValue="int"
             DefaultValue="Availability.Store.Id"

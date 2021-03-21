@@ -17,7 +17,8 @@
         <div class="pr-2">
             <Switch Checked="@isDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="@OnDebugStateChanged" />
         </div>
-        <Select DataSource="availableStores.Stores"
+        <Select Class="min-w-100 max-w-200 mr-3"
+                DataSource="availableStores.Stores"
                 @bind-Value="availableStores.SelectedStoreId"
                 ValueName="@nameof(Store.Id)"
                 LabelName="@nameof(Store.Name)"
@@ -58,7 +59,9 @@
 
         @if (searchBar.Active)
         {
-            <Button Type="@ButtonType.Primary" OnClick="@OnCreateNewTemporaryItem">
+            <Button Type="@ButtonType.Primary" 
+                    OnClick="@OnCreateNewTemporaryItem"
+                    Class="d-flex align-items-center">
                 <Icon Type="plus"></Icon>
             </Button>
             <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
