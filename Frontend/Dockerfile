@@ -10,7 +10,7 @@ FROM build AS publish
 RUN dotnet publish "ShoppingList.Frontend.WebApp/ShoppingList.Frontend.WebApp.csproj" -c Release -o /app/publish
 
 ################## FINAL ##################
-FROM arm32v6/nginx:1.19.8-alpine AS final
+FROM arm32v6/nginx:1.18-alpine AS final
 EXPOSE 443
 WORKDIR /usr/share/nginx/html
 COPY --from=publish /app/publish .
