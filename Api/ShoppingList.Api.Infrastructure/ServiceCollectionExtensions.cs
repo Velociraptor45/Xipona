@@ -20,7 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
         public static void AddInfrastructure(this IServiceCollection services, string connectionString)
         {
             services.AddDbContext<ShoppingContext>(
-                options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(0, 3, 1))));
+                options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(0, 4, 0))));
 
             services.AddTransient<IShoppingListRepository, ShoppingListRepository>();
             services.AddTransient<IItemRepository, ItemRepository>();
