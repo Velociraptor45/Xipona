@@ -13,7 +13,7 @@
             QuantityNormalizer = quantityNormalizer;
         }
 
-        public int Id { get; }
+        public int Id { get; set; }
         public string Name { get; }
         public int DefaultQuantity { get; }
         public string PriceLabel { get; }

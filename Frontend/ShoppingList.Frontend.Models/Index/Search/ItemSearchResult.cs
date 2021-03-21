@@ -14,12 +14,14 @@
             DefaultSectionId = defaultSectionId;
         }
 
-        public int ItemId { get; }
+        public int ItemId { get; set; }
         public string Name { get; }
         public float Price { get; }
         public string PriceLabel { get; }
         public string ItemCategoryName { get; }
         public string ManufacturerName { get; }
         public int DefaultSectionId { get; }
+
+        public string DisplayValue => $"{Name} | {ManufacturerName} | {Price}{PriceLabel}";
     }
 }

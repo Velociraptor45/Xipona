@@ -15,7 +15,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             Sections = new SortedSet<StoreSection>(sections, new SortingIndexComparer());
         }
 
-        public int Id { get; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public SortedSet<StoreSection> Sections { get; private set; }
         public int MaxSortingIndex => Sections.Max(s => s.SortingIndex);

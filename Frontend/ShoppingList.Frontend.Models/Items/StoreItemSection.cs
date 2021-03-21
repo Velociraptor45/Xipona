@@ -9,8 +9,8 @@
             SortingIndex = sortingIndex;
         }
 
-        public int Id { get; }
-        public string Name { get; }
+        public int Id { get; set; }
+        public string Name { get; set; }
         public int SortingIndex { get; }
     }
 }

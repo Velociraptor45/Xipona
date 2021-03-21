@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             IsDefaultSection = isDefaultSection;
         }
 
-        public StoreSectionId Id { get; }
+        public StoreSectionId Id { get; set; }
         public string Name { get; set; }
         public int SortingIndex { get; private set; }
         public bool IsDefaultSection { get; private set; }

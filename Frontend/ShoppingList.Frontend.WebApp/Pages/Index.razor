@@ -10,7 +10,6 @@
 @using ProjectHermes.ShoppingList.Frontend.Models.Index;
 @using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
 @using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
-@using OneOf;
 @using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 
 <div>
@@ -18,13 +17,12 @@
         <div class="pr-2">
             <Switch Checked="@isDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="@OnDebugStateChanged" />
         </div>
-        <Select Class="mr-1 min-w-100"
-                OnChange="@OnSelectedStoreChanged"
-                @ref="@storeSelect">
-            @foreach (var store in availableStores?.Stores ?? Enumerable.Empty<Store>().ToList())
-            {
-                <SelectOption Value=@store.Id.ToString() Class="min-w-100">@store.Name</SelectOption>
-            }
+        <Select Class="min-w-100 max-w-200 mr-3"
+                DataSource="availableStores.Stores"
+                @bind-Value="availableStores.SelectedStoreId"
+                ValueName="@nameof(Store.Id)"
+                LabelName="@nameof(Store.Name)"
+                OnSelectedItemChanged="OnSelectedStoreChanged">
         </Select>
         <Button Class="mr-1 d-flex align-items-center"
                 OnClick="@OnShowBasketItemsChangeButtonClicked"
@@ -45,25 +43,25 @@
     </div>
     <!--search bar-->
     <div class="mb-2 d-flex">
-        <Select @ref="@searchSelect"
-                OnFocus="OnSearchBarFocusIn"
+        <Select OnFocus="OnSearchBarFocusIn"
                 Class="@(searchBar.Active ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
-                OnSearch="@OnSearchBarInput"
-                ShowSearch="true"
-                AllowClear="true"
+                DataSource="searchBar.Options"
+                TItem="@ItemSearchResult"
+                TItemValue="@int"
+                ValueName="@nameof(ItemSearchResult.ItemId)"
+                LabelName="@nameof(ItemSearchResult.DisplayValue)"
                 AutoClearSearchValue="true"
-                OnChange="@OnSearchItemSelected">
-            @foreach (var option in searchBar.Options)
-            {
-                <SelectOption Value="@option.ItemId.ToString()">
-                    @option.Name | @option.ManufacturerName | @option.Price@option.PriceLabel
-                </SelectOption>
-            }
+                AllowClear="true"
+                OnSearch="OnSearch"
+                EnableSearch
+                OnSelectedItemChanged="OnSearchItemSelected">
         </Select>
 
         @if (searchBar.Active)
         {
-            <Button Type="@ButtonType.Primary" OnClick="@OnCreateNewTemporaryItem">
+            <Button Type="@ButtonType.Primary" 
+                    OnClick="@OnCreateNewTemporaryItem"
+                    Class="d-flex align-items-center">
                 <Icon Type="plus"></Icon>
             </Button>
             <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
@@ -101,11 +99,9 @@
     private bool isDebug = false;
 
     private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListSection>());
-    private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>());
+    private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>(), 0);
 
     private SearchBar searchBar = new SearchBar();
-    private Select searchSelect;
-    private Select storeSelect;
 
     private bool isInEditMode = false;
     private bool showItemsInBasket = true;
@@ -164,15 +160,6 @@
     private async Task LoadPage()
     {
         await LoadAvailableStoresAsync();
-        if (availableStores.Stores.Any())
-        {
-            availableStores.SetSelectedStore(availableStores.Stores.First().Id);
-
-            // this call is not awaited to give Blazor time to render the SelectOptions
-            // of the store-Select. Otherwise an exception is thrown because the store-Select
-            // doesn't have any SelectOptions but sets a value
-            storeSelect.ToggleOrSetValue(availableStores.SelectedStore.Id.ToString());
-        }
     }
 
     private async Task LoadAvailableStoresAsync()
@@ -180,7 +167,7 @@
         List<Store> stores = (await apiClient.GetAllActiveStoresAsync())
             .ToList();
 
-        availableStores = new AvailableStores(stores);
+        availableStores = new AvailableStores(stores, stores.FirstOrDefault()?.Id ?? 0);
         Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
     }
 
@@ -188,7 +175,7 @@
     {
         try
         {
-            shoppingList = await apiClient.GetActiveShoppingListByStoreIdAsync(availableStores.SelectedStore.Id);
+            shoppingList = await apiClient.GetActiveShoppingListByStoreIdAsync(availableStores.SelectedStoreId);
             Console.WriteLine($"Loaded shopping list with {shoppingList.Items.Count} items");
         }
         catch (Exception e)
@@ -237,12 +224,11 @@
         await LoadShoppingListAsync();
     }
 
-    private async void OnSelectedStoreChanged(
-    OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
-    OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    private async void OnSelectedStoreChanged(Store store)
     {
-        int storeId = int.Parse(value.AsT0);
-        availableStores.SetSelectedStore(storeId);
+        if (store == null)
+            return;
+
         ResetEditMode();
         await LoadShoppingListAsync();
     }
@@ -271,7 +257,7 @@
         StateHasChanged();
     }
 
-    private async void OnSearchBarInput(string searchInput)
+    private async void OnSearch(string searchInput)
     {
         if (shoppingList.Store == null)
             return;
@@ -289,12 +275,13 @@
         {
             var result = await apiClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id);
             searchBar.Options = result;
+            Console.WriteLine($"{searchInput}: {result.ToList().Count}");
         }
         catch (Exception e)
         {
             notificationService.NotifyError("Search for items failed", e.Message,
                 GetButtonRenderFragment(
-                    (items) => OnSearchBarInput((string)items[0]),
+                    (items) => OnSearch((string)items[0]),
                     new object[] { searchInput }));
             AddToError(e.ToString());
             return;
@@ -302,16 +289,12 @@
         StateHasChanged();
     }
 
-    private async void OnSearchItemSelected(
-        OneOf<string, IEnumerable<string>, LabeledValue, IEnumerable<LabeledValue>> value,
-        OneOf<SelectOption, IEnumerable<SelectOption>> option)
+    private async void OnSearchItemSelected(ItemSearchResult item)
     {
-        if (value.AsT0 == null)
+        if (item == null)
             return;
 
-        var itemId = int.Parse(value.AsT0);
-        var item = searchBar.Options.Single(o => o.ItemId == itemId);
-        var request = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, new ItemId(itemId), 1,
+        var request = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, new ItemId(item.ItemId), 1,
             item.DefaultSectionId); //todo default item quantity
 
         try
@@ -327,7 +310,6 @@
 
         searchBar.ResetInput();
         searchBar.ResetOptions();
-        await searchSelect.ClearAll();
 
         await LoadShoppingListAsync();
         StateHasChanged();
