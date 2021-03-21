@@ -1,6 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,11 +15,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore
     {
         private readonly IStoreRepository storeRepository;
         private readonly IStoreFactory storeFactory;
+        private readonly IShoppingListFactory shoppingListFactory;
+        private readonly IShoppingListRepository shoppingListRepository;
+        private readonly ITransactionGenerator transactionGenerator;
 
-        public CreateStoreCommandHandler(IStoreRepository storeRepository, IStoreFactory storeFactory)
+        public CreateStoreCommandHandler(IStoreRepository storeRepository, IStoreFactory storeFactory,
+            IShoppingListFactory shoppingListFactory, IShoppingListRepository shoppingListRepository,
+            ITransactionGenerator transactionGenerator)
         {
             this.storeRepository = storeRepository;
             this.storeFactory = storeFactory;
+            this.shoppingListFactory = shoppingListFactory;
+            this.shoppingListRepository = shoppingListRepository;
+            this.transactionGenerator = transactionGenerator;
         }
 
         public async Task<bool> HandleAsync(CreateStoreCommand command, CancellationToken cancellationToken)
@@ -25,9 +37,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var store = storeFactory.Create(command.StoreCreationInfo.Id, command.StoreCreationInfo.Name, false);
+            IStore store = storeFactory.Create(command.StoreCreationInfo.Id, command.StoreCreationInfo.Name, false,
+                command.StoreCreationInfo.Sections);
 
-            await storeRepository.StoreAsync(store, cancellationToken);
+            using ITransaction transaction = await transactionGenerator.GenerateAsync(cancellationToken);
+            store = await storeRepository.StoreAsync(store, cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var shoppingList = shoppingListFactory.CreateNew(store);
+            await shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await transaction.CommitAsync(cancellationToken);
 
             return true;
         }

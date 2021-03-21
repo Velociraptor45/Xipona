@@ -1,11 +1,14 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -30,7 +33,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         public void Delete_WithNotDeltedStoreItem_ShouldMarkStoreItemAsDeleted()
         {
             // Arrange
-            var storeItem = storeItemFixture.GetStoreItem(new StoreItemId(commonFixture.NextInt()), isDeleted: false);
+            var storeItem = storeItemFixture.CreateValid();
 
             // Act
             storeItem.Delete();
@@ -47,17 +50,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         #region IsAvailableInStore
 
         [Fact]
-        public void IsAvailableInStore_WithNotAvailableInStore_ShouldReturnTrue()
+        public void IsAvailableInStore_WithNotAvailableInStore_ShouldReturnFalse()
         {
             // Arrange
-            var availabilities = storeItemAvailabilityFixture.GetAvailabilities(4).ToList();
-            IStoreItem storeItem = storeItemFixture.GetStoreItem(
-                availabilityCount: 0,
-                additionalAvailabilities: availabilities);
-            var availabilityStoreIds = availabilities.Select(av => av.StoreId.Value).ToList();
+            IStoreItem storeItem = storeItemFixture.CreateValid();
+            var availabilityStoreIds = storeItem.Availabilities.Select(av => av.Store.Id.Value).ToList();
 
             // Act
-            StoreId storeId = new StoreId(commonFixture.NextInt(availabilityStoreIds));
+            StoreItemStoreId storeId = new StoreItemStoreId(commonFixture.NextInt(availabilityStoreIds));
             bool result = storeItem.IsAvailableInStore(storeId);
 
             // Assert
@@ -71,15 +71,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         public void IsAvailableInStore_WithAvailableInStore_ShouldReturnTrue()
         {
             // Arrange
-            var availabilities = storeItemAvailabilityFixture.GetAvailabilities(4).ToList();
-            IStoreItem storeItem = storeItemFixture.GetStoreItem(
-                availabilityCount: 0,
-                additionalAvailabilities: availabilities);
-            var availabilityStoreIds = availabilities.Select(av => av.StoreId).ToList();
+            IStoreItem storeItem = storeItemFixture.CreateValid();
+            var availabilityStoreIds = storeItem.Availabilities.ToList().Select(av => av.Store.Id).ToList();
 
             // Act
-            int storeIdIndex = commonFixture.NextInt(0, availabilityStoreIds.Count - 1);
-            bool result = storeItem.IsAvailableInStore(availabilityStoreIds[storeIdIndex]);
+            StoreItemStoreId chosenStoreId = commonFixture.ChooseRandom(availabilityStoreIds);
+            bool result = storeItem.IsAvailableInStore(chosenStoreId);
 
             // Assert
             using (new AssertionScope())
@@ -97,13 +94,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         {
             // Arrange
             Fixture fixture = commonFixture.GetNewFixture();
-            IStoreItem storeItem = storeItemFixture.GetStoreItem(isTemporary: true);
+
+            var definition = StoreItemDefinition.FromTemporary(true);
+            IStoreItem storeItem = storeItemFixture.CreateValid(definition);
             PermanentItem permanentItem = fixture.Create<PermanentItem>();
             IManufacturer manufacturer = fixture.Create<IManufacturer>();
             IItemCategory itemCategory = fixture.Create<IItemCategory>();
+            List<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.CreateManyValid().ToList();
 
             // Act
-            storeItem.MakePermanent(permanentItem, itemCategory, manufacturer);
+            storeItem.MakePermanent(permanentItem, itemCategory, manufacturer, availabilities);
 
             // Assert
             using (new AssertionScope())
@@ -113,7 +113,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
                 storeItem.QuantityType.Should().Be(permanentItem.QuantityType);
                 storeItem.QuantityInPacket.Should().Be(permanentItem.QuantityInPacket);
                 storeItem.QuantityTypeInPacket.Should().Be(permanentItem.QuantityTypeInPacket);
-                storeItem.Availabilities.Should().BeEquivalentTo(permanentItem.Availabilities);
+                storeItem.Availabilities.Should().BeEquivalentTo(availabilities);
                 storeItem.ItemCategory.Should().Be(itemCategory);
                 storeItem.Manufacturer.Should().Be(manufacturer);
                 storeItem.IsTemporary.Should().BeFalse();
@@ -125,18 +125,21 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         #region Modify
 
         [Fact]
-        public void Modify_WithValidData_ShouldMakeItemPermanent()
+        public void Modify_WithValidData_ShouldModifyItem()
         {
             // Arrange
             Fixture fixture = commonFixture.GetNewFixture();
-            bool isTemporary = commonFixture.NextBool();
-            IStoreItem storeItem = storeItemFixture.GetStoreItem(isTemporary: isTemporary);
+
+            var isTemporary = commonFixture.NextBool();
+            var definition = StoreItemDefinition.FromTemporary(isTemporary);
+            IStoreItem storeItem = storeItemFixture.CreateValid(definition);
             ItemModify itemModify = fixture.Create<ItemModify>();
             IManufacturer manufacturer = fixture.Create<IManufacturer>();
             IItemCategory itemCategory = fixture.Create<IItemCategory>();
+            IEnumerable<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.CreateManyValid().ToList();
 
             // Act
-            storeItem.Modify(itemModify, itemCategory, manufacturer);
+            storeItem.Modify(itemModify, itemCategory, manufacturer, availabilities);
 
             // Assert
             using (new AssertionScope())
@@ -146,7 +149,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
                 storeItem.QuantityType.Should().Be(itemModify.QuantityType);
                 storeItem.QuantityInPacket.Should().Be(itemModify.QuantityInPacket);
                 storeItem.QuantityTypeInPacket.Should().Be(itemModify.QuantityTypeInPacket);
-                storeItem.Availabilities.Should().BeEquivalentTo(itemModify.Availabilities);
+                storeItem.Availabilities.Should().BeEquivalentTo(availabilities);
                 storeItem.ItemCategory.Should().Be(itemCategory);
                 storeItem.Manufacturer.Should().Be(manufacturer);
                 storeItem.IsTemporary.Should().Be(isTemporary);
@@ -161,8 +164,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         public void SetPredecessor_WithValidPredecessor_ShouldSetPredecessor()
         {
             // Arrange
-            IStoreItem storeItem = storeItemFixture.GetStoreItem();
-            IStoreItem predecessor = storeItemFixture.GetStoreItem();
+            IStoreItem storeItem = storeItemFixture.CreateValid();
+            IStoreItem predecessor = storeItemFixture.CreateValid();
 
             // Act
             storeItem.SetPredecessor(predecessor);
@@ -175,5 +178,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         }
 
         #endregion SetPredecessor
+
+        #region GetDefaultSectionForStore
+
+        // todo implement
+
+        #endregion GetDefaultSectionForStore
     }
 }

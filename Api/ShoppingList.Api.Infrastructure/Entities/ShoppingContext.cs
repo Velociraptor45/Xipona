@@ -9,11 +9,16 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
         public DbSet<ItemCategory> ItemCategories { get; set; }
         public DbSet<ItemsOnList> ItemsOnLists { get; set; }
         public DbSet<Manufacturer> Manufacturers { get; set; }
+        public DbSet<Section> Sections { get; set; }
         public DbSet<ShoppingList> ShoppingLists { get; set; }
         public DbSet<Store> Stores { get; set; }
 
         public ShoppingContext(DbContextOptions<ShoppingContext> options)
             : base(options)
+        {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
         }
     }

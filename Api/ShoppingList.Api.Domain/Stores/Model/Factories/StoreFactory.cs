@@ -1,12 +1,12 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+﻿using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Model.Factories
 {
     public class StoreFactory : IStoreFactory
     {
-        public IStore Create(StoreId id, string name, bool isDeleted)
+        public IStore Create(StoreId id, string name, bool isDeleted, IEnumerable<IStoreSection> sections)
         {
-            return new Store(id, name, isDeleted);
+            return new Store(id, name, isDeleted, sections);
         }
     }
 }

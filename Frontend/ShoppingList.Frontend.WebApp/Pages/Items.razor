@@ -1,4 +1,5 @@
 ﻿@page "/items"
+@page "/items/{ItemId:int}"
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Service.IShoppingListNotificationService notificationService;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items;
@@ -20,34 +21,37 @@
                 <div class="mr-2 align-self-center">
                     Store
                 </div>
-                <Select Mode="Tags" Placeholder="Stores" @ref="@storesSelectRef" Class="min-w-100">
-                    @foreach (var store in stores)
-                    {
-                        <SelectOption Value=@store.Id.ToString()>@store.Name</SelectOption>
-                    }
-                </Select>
+                <Select Mode="tags"
+                        DataSource="@stores"
+                        TItem="Store"
+                        TItemValue="int"
+                        ValueName="@nameof(Store.Id)"
+                        LabelName="@nameof(Store.Name)"
+                        @ref="@storeSelectRef"></Select>
             </div>
             <div class="d-flex py-1">
                 <div class="mr-2 align-self-center">
                     Category
                 </div>
-                <Select Mode="Tags" Placeholder="Category" @ref="@itemCategoriesSelectRef" Class="min-w-100">
-                    @foreach (var itemCategory in itemCategories)
-                    {
-                        <SelectOption Value="@itemCategory.Id.ToString()">@itemCategory.Name</SelectOption>
-                    }
-                </Select>
+                <Select Mode="tags"
+                        DataSource="@itemCategories"
+                        TItem="ItemCategory"
+                        TItemValue="int"
+                        ValueName="@nameof(ItemCategory.Id)"
+                        LabelName="@nameof(ItemCategory.Name)"
+                        @ref="@itemCategoriesSelectRef"></Select>
             </div>
             <div class="d-flex py-1">
                 <div class="mr-2 align-self-center">
                     Manufacturer
                 </div>
-                <Select Mode="Tags" Placeholder="Manufacturer" @ref="@manufacturersSelectRef" Class="min-w-100">
-                    @foreach (var manufacturer in manufacturers)
-                    {
-                        <SelectOption Value="@manufacturer.Id.ToString()">@manufacturer.Name</SelectOption>
-                    }
-                </Select>
+                <Select Mode="tags"
+                        DataSource="@manufacturers"
+                        TItem="Manufacturer"
+                        TItemValue="int"
+                        ValueName="@nameof(Manufacturer.Id)"
+                        LabelName="@nameof(Manufacturer.Name)"
+                        @ref="@manufacturersSelectRef"></Select>
             </div>
             <Button @onclick="@OnLoadButtonClickedAsync">Load</Button>
         </div>
@@ -72,6 +76,7 @@
                     ModifyItemCallback="@OnItemModifiedAsync"
                     CreateItemCallback="@OnItemCreatedAsync"
                     DeleteItemCallback="@OnItemDeletedAsync"
+                    MakeTemporaryItemPermanentCallback="@OnMakeTemporaryItemPermanentAsync"
                     LeaveEditorCallback="@OnLeaveEditor"
                     ManufacturerCreatedCallback="@OnNewManufacturerCreated"
                     ItemCategoryCreatedCallback="@OnNewItemCategoryCreated"></ItemEditor>
@@ -79,6 +84,8 @@
 </div>
 
 @code {
+    [Parameter] public int? ItemId { get; set; }
+
     private List<Store> stores = new List<Store>();
     private List<ItemCategory> itemCategories = new List<ItemCategory>();
     private List<Manufacturer> manufacturers = new List<Manufacturer>();
@@ -86,9 +93,9 @@
     private List<QuantityType> quantityTypes = new List<QuantityType>();
     private List<QuantityTypeInPacket> quantityTypesInPacket = new List<QuantityTypeInPacket>();
 
-    private Select storesSelectRef;
-    private Select itemCategoriesSelectRef;
-    private Select manufacturersSelectRef;
+    private Select<int, Store> storeSelectRef;
+    private Select<int, ItemCategory> itemCategoriesSelectRef;
+    private Select<int, Manufacturer> manufacturersSelectRef;
 
     private StoreItem currentlyEditedItem = null;
 
@@ -97,6 +104,16 @@
         await InitialLoad();
 
         await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ItemId.HasValue)
+        {
+            await OnItemClickedAsync(ItemId.Value);
+        }
+
+        await base.OnParametersSetAsync();
     }
 
     private async Task InitialLoad()
@@ -121,9 +138,9 @@
 
     private async Task OnLoadButtonClickedAsync()
     {
-        var stores = storesSelectRef.SelectedValues.Value.AsT1.Select(s => int.Parse(s)).ToList();
-        var itemCategories = itemCategoriesSelectRef.SelectedValues.Value.AsT1.Select(cat => int.Parse(cat)).ToList();
-        var manufacturers = manufacturersSelectRef.SelectedValues.Value.AsT1.Select(m => int.Parse(m)).ToList();
+        var stores = storeSelectRef.Values;
+        var itemCategories = itemCategoriesSelectRef.Values;
+        var manufacturers = manufacturersSelectRef.Values;
         try
         {
 
@@ -248,11 +265,32 @@
         LeaveEditor();
     }
 
+    private async Task OnMakeTemporaryItemPermanentAsync(StoreItem storeItem)
+    {
+        var request = new MakeTemporaryItemPermanentRequest(storeItem.Id, storeItem.Name, storeItem.Comment,
+            storeItem.QuantityType.Id, storeItem.QuantityInPacket, storeItem.QuantityInPacketType.Id,
+            storeItem.ItemCategoryId.Value, storeItem.ManufacturerId, storeItem.Availabilities);
+        try
+        {
+            await apiClient.MakeTemporaryItemPermanent(request);
+        }
+        catch (Exception e)
+        {
+            notificationService.NotifyError("Creating item failed", e.Message,
+                GetButtonRenderFragment(
+                    async (items) => await OnMakeTemporaryItemPermanentAsync((StoreItem)items[0]),
+                    new object[] { storeItem }));
+            return;
+        }
+        LeaveEditor();
+    }
+
     private void OnCreateItemButtonClicked()
     {
+        // ugly
         currentlyEditedItem =
             new StoreItem(0, "", false, "", false,
-                new QuantityType(0, "", 0, "", ""), 0,
+                new QuantityType(0, "", 0, "", "", 0), 0,
                 new QuantityTypeInPacket(0, "", ""), 1, 1, new List<StoreItemAvailability>());
     }
 

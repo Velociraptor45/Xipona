@@ -6,10 +6,9 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
+using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -46,7 +45,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         {
             var fixture = commonFixture.GetNewFixture();
 
-            var shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
+            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
 
             var command = fixture.Create<RemoveItemFromBasketCommand>();
             var handler = fixture.Create<RemoveItemFromBasketCommandHandler>();
@@ -65,12 +64,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         }
 
         [Fact]
-        public async Task HandleAsync_WithValidData_ShouldRemoveItemFromBasket()
+        public async Task HandleAsync_WithValidActualIdCommand_ShouldRemoveItemFromBasket()
         {
             var fixture = commonFixture.GetNewFixture();
 
-            var shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
-
+            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
             Mock<IShoppingList> shoppingListMock = new Mock<IShoppingList>();
 
             var command = fixture.Create<RemoveItemFromBasketCommand>();
@@ -89,12 +87,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
                     i => i.RemoveFromBasket(
                         It.Is<ShoppingListItemId>(id => id == command.ItemId)),
                     Times.Once);
-                shoppingListRepositoryMock.Verify(
-                    i => i.StoreAsync(
-                        It.Is<IShoppingList>(list => list == shoppingListMock.Object),
-                        It.IsAny<CancellationToken>()),
-                    Times.Once);
+                shoppingListRepositoryMock.VerifyStoreAsyncOnce(shoppingListMock.Object);
             }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithValidOfflineIdCommand_ShouldRemoveItemFromBasket()
+        {
+            // todo implement
         }
     }
 }

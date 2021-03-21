@@ -15,6 +15,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Entities
 
         public bool Deleted { get; set; }
 
+        [InverseProperty("Store")]
         public ICollection<AvailableAt> AvailableItems { get; set; }
+
+        [InverseProperty("Store")]
+        public ICollection<Section> Sections { get; set; }
     }
 }

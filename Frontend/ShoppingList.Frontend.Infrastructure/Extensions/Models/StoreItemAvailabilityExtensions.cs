@@ -9,8 +9,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models
         {
             return new ItemAvailabilityContract()
             {
-                StoreId = model.StoreId,
-                Price = model.PricePerQuantity
+                StoreId = model.Store.Id,
+                Price = model.PricePerQuantity,
+                DefaultSectionId = model.DefaultSection.Id
             };
         }
     }

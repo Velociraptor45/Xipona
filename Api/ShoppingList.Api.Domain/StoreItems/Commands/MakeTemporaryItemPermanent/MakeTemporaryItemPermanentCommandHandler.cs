@@ -1,14 +1,22 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using StoreModels = ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent
 {
@@ -18,15 +26,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
         private readonly IItemCategoryRepository itemCategoryRepository;
         private readonly IManufacturerRepository manufacturerRepository;
         private readonly IStoreRepository storeRepository;
+        private readonly IStoreItemAvailabilityFactory storeItemAvailabilityFactory;
+        private readonly IStoreItemSectionReadRepository storeItemSectionReadRepository;
 
         public MakeTemporaryItemPermanentCommandHandler(IItemRepository itemRepository,
             IItemCategoryRepository itemCategoryRepository, IManufacturerRepository manufacturerRepository,
-            IStoreRepository storeRepository)
+            IStoreRepository storeRepository, IStoreItemAvailabilityFactory storeItemAvailabilityFactory,
+            IStoreItemSectionReadRepository storeItemSectionReadRepository)
         {
             this.itemRepository = itemRepository;
             this.itemCategoryRepository = itemCategoryRepository;
             this.manufacturerRepository = manufacturerRepository;
             this.storeRepository = storeRepository;
+            this.storeItemAvailabilityFactory = storeItemAvailabilityFactory;
+            this.storeItemSectionReadRepository = storeItemSectionReadRepository;
         }
 
         public async Task<bool> HandleAsync(MakeTemporaryItemPermanentCommand command, CancellationToken cancellationToken)
@@ -58,7 +71,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
                     throw new DomainException(new ManufacturerNotFoundReason(command.PermanentItem.ManufacturerId));
             }
 
-            IEnumerable<IStore> activeStores = await storeRepository.GetAsync(cancellationToken);
+            IEnumerable<StoreModels.IStore> activeStores = await storeRepository.GetAsync(cancellationToken);
             foreach (var availability in command.PermanentItem.Availabilities)
             {
                 if (!activeStores.Any(s => s.Id == availability.StoreId))
@@ -67,11 +80,39 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            storeItem.MakePermanent(command.PermanentItem, itemCategory, manufacturer);
+            IEnumerable<IStoreItemAvailability> availabilities =
+                await GetStoreItemAvailabilities(command.PermanentItem.Availabilities, cancellationToken);
+            storeItem.MakePermanent(command.PermanentItem, itemCategory, manufacturer, availabilities);
 
             await itemRepository.StoreAsync(storeItem, cancellationToken);
 
             return true;
+        }
+
+        private async Task<IEnumerable<IStoreItemAvailability>> GetStoreItemAvailabilities(
+            IEnumerable<ShortAvailability> shortAvailabilities, CancellationToken cancellationToken)
+        {
+            var sectionIds = shortAvailabilities.Select(av => av.StoreItemSectionId);
+            var sections = (await storeItemSectionReadRepository.FindByAsync(sectionIds, cancellationToken))
+                .ToLookup(s => s.Id);
+
+            var availabilities = new List<IStoreItemAvailability>();
+            foreach (var shortAvailability in shortAvailabilities)
+            {
+                if (!sections.Contains(shortAvailability.StoreItemSectionId))
+                    throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
+
+                StoreId storeId = shortAvailability.StoreId.AsStoreId();
+                var store = await storeRepository.FindActiveByAsync(storeId, cancellationToken);
+                if (store == null)
+                    throw new DomainException(new StoreNotFoundReason(storeId));
+
+                var availability = storeItemAvailabilityFactory
+                    .Create(store, shortAvailability.Price, shortAvailability.StoreItemSectionId);
+                availabilities.Add(availability);
+            }
+
+            return availabilities;
         }
     }
 }

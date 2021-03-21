@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjectHermes.ShoppingList.Api.ApplicationServices;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
-using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Store;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
@@ -18,11 +18,20 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
     {
         private readonly IQueryDispatcher queryDispatcher;
         private readonly ICommandDispatcher commandDispatcher;
+        private readonly IToContractConverter<ActiveStoreReadModel, ActiveStoreContract> activeStoreToContractConverter;
+        private readonly IToDomainConverter<UpdateStoreContract, StoreUpdate> storeUpdateConverter;
+        private readonly IToDomainConverter<CreateStoreContract, StoreCreationInfo> storeCreationInfoConverter;
 
-        public StoreController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher)
+        public StoreController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
+            IToContractConverter<ActiveStoreReadModel, ActiveStoreContract> activeStoreToContractConverter,
+            IToDomainConverter<UpdateStoreContract, StoreUpdate> storeUpdateConverter,
+            IToDomainConverter<CreateStoreContract, StoreCreationInfo> storeCreationInfoConverter)
         {
             this.queryDispatcher = queryDispatcher;
             this.commandDispatcher = commandDispatcher;
+            this.activeStoreToContractConverter = activeStoreToContractConverter;
+            this.storeUpdateConverter = storeUpdateConverter;
+            this.storeCreationInfoConverter = storeCreationInfoConverter;
         }
 
         [HttpGet]
@@ -32,7 +41,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         {
             var query = new AllActiveStoresQuery();
             var storeReadModels = await queryDispatcher.DispatchAsync(query, default);
-            var storeContracts = storeReadModels.Select(store => store.ToContract());
+            var storeContracts = activeStoreToContractConverter.ToContract(storeReadModels);
 
             return Ok(storeContracts);
         }
@@ -42,7 +51,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("create")]
         public async Task<IActionResult> CreateStore([FromBody] CreateStoreContract createStoreContract)
         {
-            var model = createStoreContract.ToDomain();
+            var model = storeCreationInfoConverter.ToDomain(createStoreContract);
             var command = new CreateStoreCommand(model);
 
             await commandDispatcher.DispatchAsync(command, default);
@@ -56,7 +65,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("update")]
         public async Task<IActionResult> UpdateStore([FromBody] UpdateStoreContract updateStoreContract)
         {
-            var model = updateStoreContract.ToDomain();
+            var model = storeUpdateConverter.ToDomain(updateStoreContract);
             var command = new UpdateStoreCommand(model);
 
             try

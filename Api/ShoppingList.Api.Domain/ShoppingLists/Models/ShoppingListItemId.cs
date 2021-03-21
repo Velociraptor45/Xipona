@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using System;
 using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
@@ -32,6 +33,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         public ShoppingListItemActualId Actual { get; }
         public ShoppingListItemOfflineId Offline { get; }
         public bool IsActualId => Actual != null;
+
+        public StoreItemId AsStoreItemId()
+        {
+            return IsActualId ?
+                new StoreItemId(Actual.Value) :
+                new StoreItemId(Offline.Value);
+        }
 
         public static bool operator ==(ShoppingListItemId left, ShoppingListItemId right)
         {

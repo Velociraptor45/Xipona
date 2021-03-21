@@ -5,15 +5,15 @@ using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Tests.Common.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Mocks;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -22,7 +22,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
     public class PutItemInBasketCommandHandlerTests
     {
         private readonly CommonFixture commonFixture;
-        private readonly ShoppingListItemFixture shoppingListItemFixture;
         private readonly ShoppingListFixture shoppingListFixture;
         private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
         private readonly StoreItemFixture storeItemFixture;
@@ -30,8 +29,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
         public PutItemInBasketCommandHandlerTests()
         {
             commonFixture = new CommonFixture();
-            shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-            shoppingListFixture = new ShoppingListFixture(shoppingListItemFixture, commonFixture);
+            shoppingListFixture = new ShoppingListFixture(commonFixture);
             storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
             storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
         }
@@ -59,7 +57,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            var shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
+            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
 
             var command = fixture.Create<PutItemInBasketCommand>();
             var handler = fixture.Create<PutItemInBasketCommandHandler>();
@@ -84,7 +82,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             var fixture = commonFixture.GetNewFixture();
 
             Mock<IShoppingList> listMock = new Mock<IShoppingList>();
-            var shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
+            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
 
             fixture.ConstructorArgumentFor<PutItemInBasketCommand, ShoppingListItemId>(
                 "itemId", new ShoppingListItemId(commonFixture.NextInt()));
@@ -104,11 +102,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
                     i => i.PutItemInBasket(
                         It.Is<ShoppingListItemId>(id => id == command.ItemId && id.IsActualId)),
                     Times.Once);
-                shoppingListRepositoryMock.Verify(
-                    i => i.StoreAsync(
-                        It.Is<IShoppingList>(list => list == listMock.Object),
-                        It.IsAny<CancellationToken>()),
-                    Times.Once);
+                shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
             }
         }
 
@@ -117,13 +111,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
-            var shoppingListRepositoryMock = fixture.Freeze<Mock<IShoppingListRepository>>();
-            var itemRepositoryMock = fixture.Freeze<Mock<IItemRepository>>();
+            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
+            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
 
             Mock<IShoppingList> listMock = new Mock<IShoppingList>();
 
             StoreItemId actualItemId = new StoreItemId(commonFixture.NextInt());
-            IStoreItem storeItem = storeItemFixture.GetStoreItem(actualItemId);
+            var storeItemBaseDefinition = StoreItemDefinition.FromId(actualItemId);
+            IStoreItem storeItem = storeItemFixture.CreateValid(storeItemBaseDefinition);
 
             var listItemIdOffline = new ShoppingListItemId(Guid.NewGuid());
             fixture.ConstructorArgumentFor<PutItemInBasketCommand, ShoppingListItemId>("itemId", listItemIdOffline);
@@ -140,20 +135,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                itemRepositoryMock.Verify(
-                    i => i.FindByAsync(
-                        It.Is<StoreItemId>(id => id.Offline.Value == listItemIdOffline.Offline.Value),
-                        It.IsAny<CancellationToken>()),
-                    Times.Once);
+                itemRepositoryMock.VerifyFindByAsync(new StoreItemId(listItemIdOffline.Offline.Value));
                 listMock.Verify(
                     i => i.PutItemInBasket(
                         It.Is<ShoppingListItemId>(id => id.Actual.Value == actualItemId.Actual.Value && id.IsActualId)),
                     Times.Once);
-                shoppingListRepositoryMock.Verify(
-                    i => i.StoreAsync(
-                        It.Is<IShoppingList>(list => list == listMock.Object),
-                        It.IsAny<CancellationToken>()),
-                    Times.Once);
+                shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
             }
         }
     }

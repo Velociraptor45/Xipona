@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItem
 {
     public class PutItemInBasketContract
     {
-        public int ShopingListId { get; set; }
+        public int ShoppingListId { get; set; }
         public ItemIdContract ItemId { get; set; }
     }
 }

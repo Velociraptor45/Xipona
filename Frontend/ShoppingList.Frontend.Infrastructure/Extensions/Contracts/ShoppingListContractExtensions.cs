@@ -9,7 +9,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contract
         public static ShoppingListRoot ToModel(this ShoppingListContract contract)
         {
             return new ShoppingListRoot(contract.Id, contract.CompletionDate, contract.Store.ToModel(),
-                contract.Items.Select(item => item.ToModel()));
+                contract.Sections.Select(section => section.ToModel()));
         }
     }
 }

@@ -1,0 +1,8 @@
+﻿.filter-result-outer-frame {
+    background-color: lightgray;
+}
+
+    .filter-result-outer-frame:hover {
+        background-color: aqua;
+        cursor: pointer;
+    }

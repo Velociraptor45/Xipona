@@ -1,11 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using System;
 using System.Linq;
 using System.Threading;
@@ -18,15 +17,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem
         private readonly IItemRepository itemRepository;
         private readonly IShoppingListRepository shoppingListRepository;
         private readonly ITransactionGenerator transactionGenerator;
-        private readonly ICommandDispatcher commandDispatcher;
 
         public DeleteItemCommandHandler(IItemRepository itemRepository, IShoppingListRepository shoppingListRepository,
-            ITransactionGenerator transactionGenerator, ICommandDispatcher commandDispatcher)
+            ITransactionGenerator transactionGenerator)
         {
             this.itemRepository = itemRepository;
             this.shoppingListRepository = shoppingListRepository;
             this.transactionGenerator = transactionGenerator;
-            this.commandDispatcher = commandDispatcher;
         }
 
         public async Task<bool> HandleAsync(DeleteItemCommand command, CancellationToken cancellationToken)
@@ -46,8 +43,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem
 
             foreach (var list in listsWithItem)
             {
-                var removeCommand = new RemoveItemFromShoppingListCommand(list.Id, item.Id.ToShoppingListItemId());
-                await commandDispatcher.DispatchAsync(removeCommand, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                list.RemoveItem(item.Id.ToShoppingListItemId());
+                await shoppingListRepository.StoreAsync(list, cancellationToken);
             }
 
             await transaction.CommitAsync(cancellationToken);

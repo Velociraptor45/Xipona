@@ -5,8 +5,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Index.Search
 {
     public class SearchBar
     {
-        private string input = "";
-
         public SearchBar()
         {
             ResetInput();
@@ -14,14 +12,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Index.Search
             Active = false;
         }
 
-        public string Input
-        {
-            get => input;
-            set
-            {
-                input = value;
-            }
-        }
+        public string Input { get; set; } = "";
 
         public bool Active { get; set; }
         public IEnumerable<ItemSearchResult> Options { get; set; }

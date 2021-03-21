@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
 using System;
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.AllActive
                 throw new ArgumentNullException(nameof(query));
             }
 
-            var results = await itemCategoryRepository.FindByAsync(false, cancellationToken);
+            var results = await itemCategoryRepository.FindActiveByAsync(cancellationToken);
 
             return results.Select(r => r.ToReadModel());
         }

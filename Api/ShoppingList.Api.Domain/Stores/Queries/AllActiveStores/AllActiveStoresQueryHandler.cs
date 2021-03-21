@@ -1,9 +1,10 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -25,17 +26,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores
         public async Task<IEnumerable<ActiveStoreReadModel>> HandleAsync(AllActiveStoresQuery query, CancellationToken cancellationToken)
         {
             var activeStores = (await storeRepository.GetAsync(cancellationToken)).ToList();
-            var itemPerStoreDict = new Dictionary<StoreId, IEnumerable<StoreItemReadModel>>();
+            var itemPerStoreDict = new Dictionary<ShoppingListStoreId, IEnumerable<StoreItemReadModel>>();
 
             foreach (var store in activeStores)
             {
-                var items = await itemRepository.FindByAsync(store.Id, cancellationToken);
-                itemPerStoreDict.Add(store.Id, items.Select(i => i.ToReadModel()));
+                var storeId = new ShoppingListStoreId(store.Id.Value);
+                var items = await itemRepository.FindByAsync(storeId, cancellationToken);
+                itemPerStoreDict.Add(storeId, items.Select(i => i.ToReadModel()));
             }
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return activeStores.Select(store => store.ToActiveStoreReadModel(itemPerStoreDict[store.Id]));
+            return activeStores.Select(store => store.ToActiveStoreReadModel(itemPerStoreDict[new ShoppingListStoreId(store.Id.Value)]));
         }
     }
 }

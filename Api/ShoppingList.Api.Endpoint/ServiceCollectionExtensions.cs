@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint
@@ -12,6 +14,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint
             services.AddTransient<ManufacturerController>();
             services.AddTransient<ItemController>();
             services.AddTransient<StoreController>();
+
+            var assembly = typeof(ServiceCollectionExtensions).Assembly;
+            services.AddInstancesOfGenericType(assembly, typeof(IToContractConverter<,>));
+            services.AddInstancesOfGenericType(assembly, typeof(IToDomainConverter<,>));
         }
     }
 }

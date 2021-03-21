@@ -26,12 +26,13 @@ namespace ProjectHermes.ShoppingList.Api.WebApp
                     webBuilder.UseKestrel(options =>
                         {
                             options.AddServerHeader = false;
-                            options.Listen(IPAddress.Any, 443, listenOptions =>
+                            IPAddress ipAddress = IPAddress.Parse(configuration["Kestrel:IP-Address"]);
+                            int port = int.Parse(configuration["Kestrel:Port"]);
+                            options.Listen(ipAddress, port, listenOptions =>
                             {
                                 listenOptions.UseHttps(GetCertificate(configuration));
                             });
                         });
-                    webBuilder.UseConfiguration(configuration);
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
                 });

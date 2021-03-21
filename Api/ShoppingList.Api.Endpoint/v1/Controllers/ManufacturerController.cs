@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
+using ProjectHermes.ShoppingList.Api.ApplicationServices;
+using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Commands.CreateManufacturer;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.AllActiveManufacturers;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.ManufacturerSearch;
-using ProjectHermes.ShoppingList.Api.Endpoint.Extensions.Manufacturer;
-using System.Linq;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
@@ -15,11 +16,14 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
     {
         private readonly IQueryDispatcher queryDispatcher;
         private readonly ICommandDispatcher commandDispatcher;
+        private readonly IToContractConverter<ManufacturerReadModel, ManufacturerContract> manufacturerContractConverter;
 
-        public ManufacturerController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher)
+        public ManufacturerController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
+            IToContractConverter<ManufacturerReadModel, ManufacturerContract> manufacturerContractConverter)
         {
             this.queryDispatcher = queryDispatcher;
             this.commandDispatcher = commandDispatcher;
+            this.manufacturerContractConverter = manufacturerContractConverter;
         }
 
         [HttpGet]
@@ -36,7 +40,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
 
             var query = new ManufacturerSearchQuery(searchInput);
             var manufacturerReadModels = await queryDispatcher.DispatchAsync(query, default);
-            var manufacturerContracts = manufacturerReadModels.Select(category => category.ToContract());
+            var manufacturerContracts = manufacturerContractConverter.ToContract(manufacturerReadModels);
 
             return Ok(manufacturerContracts);
         }
@@ -48,7 +52,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         {
             var query = new AllActiveManufacturersQuery();
             var readModels = await queryDispatcher.DispatchAsync(query, default);
-            var contracts = readModels.Select(readModel => readModel.ToActiveContract());
+            var contracts = manufacturerContractConverter.ToContract(readModels);
 
             return Ok(contracts);
         }

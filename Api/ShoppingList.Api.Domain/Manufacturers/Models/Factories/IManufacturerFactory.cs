@@ -1,6 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories
 {
     public interface IManufacturerFactory
     {
