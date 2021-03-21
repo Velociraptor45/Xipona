@@ -11,8 +11,8 @@ namespace ProjectHermes.ShoppingLists.Api.Infrastructure
         {
             var optionsBuilder = new DbContextOptionsBuilder<ShoppingContext>();
             optionsBuilder.UseMySql(
-                @"server=;port=15909;user id=root;pwd=;database=shoppinglist-development",
-                new MySqlServerVersion(new Version(0, 3, 1)));
+                @"server=192.168.178.92;port=15909;user id=root;pwd=;database=prd-shoppinglist",
+                new MySqlServerVersion(new Version(0, 4, 0)));
 
             return new ShoppingContext(optionsBuilder.Options);
         }
