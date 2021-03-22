@@ -33,8 +33,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
                 throw new ArgumentNullException(nameof(item));
             if (sectionId == null)
                 throw new ArgumentNullException(nameof(sectionId));
-            if (!item.Id.IsActualId)
-                throw new DomainException(new ActualIdRequiredReason(item.Id));
 
             var existingItem = Items.FirstOrDefault(it => it.Id == item.Id);
             if (existingItem != null)
@@ -54,8 +52,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
-            if (!itemId.IsActualId)
-                throw new DomainException(new ActualIdRequiredReason(itemId));
 
             IShoppingListSection section = shoppingListSections.Values.FirstOrDefault(s => s.ContainsItem(itemId));
             if (section == null)
@@ -73,8 +69,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
-            if (!itemId.IsActualId)
-                throw new DomainException(new ActualIdRequiredReason(itemId));
 
             IShoppingListSection section = shoppingListSections.Values.FirstOrDefault(s => s.ContainsItem(itemId));
             if (section == null)
@@ -92,8 +86,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
-            if (!itemId.IsActualId)
-                throw new DomainException(new ActualIdRequiredReason(itemId));
 
             IShoppingListSection section = shoppingListSections.Values.FirstOrDefault(s => s.ContainsItem(itemId));
             if (section == null)
@@ -111,8 +103,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
-            if (!itemId.IsActualId)
-                throw new DomainException(new ActualIdRequiredReason(itemId));
             if (quantity <= 0f)
                 throw new DomainException(new InvalidItemQuantityReason(quantity));
 

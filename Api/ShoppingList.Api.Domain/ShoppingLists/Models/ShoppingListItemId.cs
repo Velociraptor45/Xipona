@@ -1,83 +1,11 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using System;
-using System.Collections.Generic;
+﻿using ProjectHermes.ShoppingList.Api.Core;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
-    public class ShoppingListItemId
+    public class ShoppingListItemId : GenericPrimitive<int>
     {
-        public ShoppingListItemId(int id)
+        public ShoppingListItemId(int id) : base(id)
         {
-            Actual = new ShoppingListItemActualId(id);
-            Offline = null;
-        }
-
-        public ShoppingListItemId(Guid id)
-        {
-            Offline = new ShoppingListItemOfflineId(id);
-            Actual = null;
-        }
-
-        public ShoppingListItemId(ShoppingListItemActualId actual)
-        {
-            Actual = actual ?? throw new ArgumentNullException(nameof(actual));
-            Offline = null;
-        }
-
-        public ShoppingListItemId(ShoppingListItemOfflineId offline)
-        {
-            Offline = offline ?? throw new ArgumentNullException(nameof(offline));
-            Actual = null;
-        }
-
-        public ShoppingListItemActualId Actual { get; }
-        public ShoppingListItemOfflineId Offline { get; }
-        public bool IsActualId => Actual != null;
-
-        public StoreItemId AsStoreItemId()
-        {
-            return IsActualId ?
-                new StoreItemId(Actual.Value) :
-                new StoreItemId(Offline.Value);
-        }
-
-        public static bool operator ==(ShoppingListItemId left, ShoppingListItemId right)
-        {
-            if (left is null)
-            {
-                return right is null;
-            }
-
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(ShoppingListItemId left, ShoppingListItemId right)
-        {
-            if (left is null)
-            {
-                return !(right is null);
-            }
-
-            return !left.Equals(right);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is ShoppingListItemId id &&
-                   EqualityComparer<ShoppingListItemActualId>.Default.Equals(Actual, id.Actual) &&
-                   EqualityComparer<ShoppingListItemOfflineId>.Default.Equals(Offline, id.Offline);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Actual, Offline);
-        }
-
-        public override string ToString()
-        {
-            return IsActualId ?
-                Actual.Value.ToString() :
-                Offline.Value.ToString();
         }
     }
 }
