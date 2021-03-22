@@ -59,7 +59,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
                 .ToList();
 
             return storeItemFactory.Create(
-                new StoreItemId(source.Id),
+                new ItemId(source.Id),
                 source.Name,
                 source.Deleted,
                 source.Comment,

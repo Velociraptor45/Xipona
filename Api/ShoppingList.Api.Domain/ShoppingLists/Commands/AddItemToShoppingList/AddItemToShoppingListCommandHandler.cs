@@ -39,7 +39,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            StoreItemId itemId = command.ShoppingListItemId.ToStoreItemId();
+            ItemId itemId = command.ShoppingListItemId.ToStoreItemId();
             var storeItem = await itemRepository.FindByAsync(itemId, cancellationToken);
 
             if (storeItem == null)
@@ -48,16 +48,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
             cancellationToken.ThrowIfCancellationRequested();
 
             var priceAtStore = storeItem.Availabilities
-                        .FirstOrDefault(av => av.Store.Id == list.Store.Id)?
+                        .FirstOrDefault(av => av.Store.Id == list.StoreId)?
                         .Price;
 
             if (priceAtStore == null)
-                throw new DomainException(new ItemAtStoreNotAvailableReason(itemId, list.Store.Id));
+                throw new DomainException(new ItemAtStoreNotAvailableReason(itemId, list.StoreId));
 
-            IShoppingListItem listItem = shoppingListItemFactory.Create(storeItem, priceAtStore.Value,
-                isInBasket: false, command.Quantity);
+            IShoppingListItem listItem = shoppingListItemFactory.Create(command.ShoppingListItemId, isInBasket: false,
+                command.Quantity);
 
-            list.AddItem(listItem, command.SectionId); // todo extract this into service
+            list = list.AddItem(listItem, command.SectionId);
 
             await shoppingListRepository.StoreAsync(list, cancellationToken);
 

@@ -9,7 +9,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
     public interface IStoreItem
     {
-        StoreItemId Id { get; }
+        ItemId Id { get; }
         string Name { get; }
         bool IsDeleted { get; }
         string Comment { get; }

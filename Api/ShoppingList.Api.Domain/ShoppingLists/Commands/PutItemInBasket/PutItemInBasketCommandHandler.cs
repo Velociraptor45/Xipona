@@ -33,7 +33,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemIn
             if (shoppingList == null)
                 throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
 
-            ShoppingListItemId itemId = command.ItemId;
+            ItemId itemId = command.ItemId;
 
             if (!itemId.IsActualId)
             {

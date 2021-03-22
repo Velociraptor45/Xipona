@@ -1,8 +1,10 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
+﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
     public interface IShoppingListItem
     {
-        ShoppingListItemId Id { get; }
+        ItemId Id { get; }
         bool IsInBasket { get; }
         float Quantity { get; }
 

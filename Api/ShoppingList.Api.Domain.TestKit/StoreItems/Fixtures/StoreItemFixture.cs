@@ -26,7 +26,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             var fixture = commonFixture.GetNewFixture();
 
             if (definition.Id != null)
-                fixture.ConstructorArgumentFor<StoreItem, StoreItemId>("id", definition.Id);
+                fixture.ConstructorArgumentFor<StoreItem, ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.ItemId>("id", definition.Id);
             if (definition.IsDeleted.HasValue)
                 fixture.ConstructorArgumentFor<StoreItem, bool>("isDeleted", definition.IsDeleted.Value);
             if (definition.IsTemporary.HasValue)
@@ -78,7 +78,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             {
                 if (definition.Id == null)
                 {
-                    definition.Id = new StoreItemId(newIds.First());
+                    definition.Id = new ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.ItemId(newIds.First());
                     newIds.RemoveAt(0);
                 }
 

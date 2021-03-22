@@ -85,7 +85,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
                 result.Should().BeTrue();
                 shoppingListMock.Verify(
                     i => i.RemoveFromBasket(
-                        It.Is<ShoppingListItemId>(id => id == command.ItemId)),
+                        It.Is<ItemId>(id => id == command.ItemId)),
                     Times.Once);
                 shoppingListRepositoryMock.VerifyStoreAsyncOnce(shoppingListMock.Object);
             }

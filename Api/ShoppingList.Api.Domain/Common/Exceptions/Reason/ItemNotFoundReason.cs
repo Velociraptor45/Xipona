@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
 {
     public class ItemNotFoundReason : IReason
     {
-        public ItemNotFoundReason(StoreItemId id)
+        public ItemNotFoundReason(ItemId id)
         {
             Message = $"Item {id} not found.";
             ErrorCode = ErrorReasonCode.ItemNotFound;

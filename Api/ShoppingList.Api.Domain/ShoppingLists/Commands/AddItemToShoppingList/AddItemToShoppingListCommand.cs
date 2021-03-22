@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
 {
     public class AddItemToShoppingListCommand : ICommand<bool>
     {
-        public AddItemToShoppingListCommand(ShoppingListId shoppingListId, ShoppingListItemId shoppingListItemId,
+        public AddItemToShoppingListCommand(ShoppingListId shoppingListId, ItemId shoppingListItemId,
             ShoppingListSectionId sectionId, float quantity)
         {
             ShoppingListId = shoppingListId ?? throw new ArgumentNullException(nameof(shoppingListId));
@@ -16,7 +16,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
         }
 
         public ShoppingListId ShoppingListId { get; }
-        public ShoppingListItemId ShoppingListItemId { get; }
+        public ItemId ShoppingListItemId { get; }
         public ShoppingListSectionId SectionId { get; }
         public float Quantity { get; }
     }

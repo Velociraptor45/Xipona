@@ -87,7 +87,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             int collidingItemId = shoppingList.Items.ElementAt(collidingItemIndex).Id.Actual.Value;
 
             var collidingItem = shoppingListItemFixture.Create(
-                new ShoppingListItemId(collidingItemId));
+                new ItemId(collidingItemId));
             var sectionId = commonFixture.GetNewFixture().Create<ShoppingListSectionId>();
 
             // Act
@@ -211,7 +211,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Arrange
             var list = shoppingListFixture.CreateValid();
             var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
-            var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt(itemIdsToExclude));
+            var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
 
             // Act
             Action action = () => list.RemoveItem(shoppingListItemId);
@@ -300,7 +300,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Arrange
             var list = shoppingListFixture.CreateValid();
             var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
-            var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt(itemIdsToExclude));
+            var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
 
             // Act
             Action action = () => list.PutItemInBasket(shoppingListItemId);
@@ -388,7 +388,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Arrange
             var list = shoppingListFixture.CreateValid();
             var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
-            var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt(itemIdsToExclude));
+            var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
 
             // Act
             Action action = () => list.RemoveFromBasket(shoppingListItemId);
@@ -477,7 +477,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Arrange
             var list = shoppingListFixture.CreateValid();
             var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
-            var shoppingListItemId = new ShoppingListItemId(commonFixture.NextInt(itemIdsToExclude));
+            var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
 
             // Act
             Action action = () => list.ChangeItemQuantity(shoppingListItemId, commonFixture.NextFloat());

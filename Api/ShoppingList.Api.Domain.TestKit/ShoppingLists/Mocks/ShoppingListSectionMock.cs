@@ -48,14 +48,14 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
         public void SetupContainsItem(bool returnValue)
         {
             Setup(i => i.ContainsItem(
-                    It.IsAny<ShoppingListItemId>()))
+                    It.IsAny<ItemId>()))
                 .Returns(returnValue);
         }
 
-        public void SetupContainsItem(ShoppingListItemId itemId, bool returnValue)
+        public void SetupContainsItem(ItemId itemId, bool returnValue)
         {
             Setup(i => i.ContainsItem(
-                    It.Is<ShoppingListItemId>(id => id == itemId)))
+                    It.Is<ItemId>(id => id == itemId)))
                 .Returns(returnValue);
         }
 
@@ -66,52 +66,52 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
                 Times.Once);
         }
 
-        public void VerifyRemoveItemOnce(ShoppingListItemId id)
+        public void VerifyRemoveItemOnce(ItemId id)
         {
             Verify(i => i.RemoveItem(
-                    It.Is<ShoppingListItemId>(itemId => itemId == id)),
+                    It.Is<ItemId>(itemId => itemId == id)),
                 Times.Once);
         }
 
         public void VerifyRemoveItemNever()
         {
             Verify(i => i.RemoveItem(
-                    It.IsAny<ShoppingListItemId>()),
+                    It.IsAny<ItemId>()),
                 Times.Never);
         }
 
-        public void VerifyPutItemInBasketOnce(ShoppingListItemId id)
+        public void VerifyPutItemInBasketOnce(ItemId id)
         {
             Verify(i => i.PutItemInBasket(
-                    It.Is<ShoppingListItemId>(itemId => itemId == id)),
+                    It.Is<ItemId>(itemId => itemId == id)),
                 Times.Once);
         }
 
         public void VerifyPutItemInBasketNever()
         {
             Verify(i => i.PutItemInBasket(
-                    It.IsAny<ShoppingListItemId>()),
+                    It.IsAny<ItemId>()),
                 Times.Never);
         }
 
-        public void VerifyRemoveItemFromBasketOnce(ShoppingListItemId id)
+        public void VerifyRemoveItemFromBasketOnce(ItemId id)
         {
             Verify(i => i.RemoveItemFromBasket(
-                    It.Is<ShoppingListItemId>(itemId => itemId == id)),
+                    It.Is<ItemId>(itemId => itemId == id)),
                 Times.Once);
         }
 
         public void VerifyRemoveItemFromBasketNever()
         {
             Verify(i => i.RemoveItemFromBasket(
-                    It.IsAny<ShoppingListItemId>()),
+                    It.IsAny<ItemId>()),
                 Times.Never);
         }
 
-        public void VerifyChangeItemQuantityOnce(ShoppingListItemId id, float quantity)
+        public void VerifyChangeItemQuantityOnce(ItemId id, float quantity)
         {
             Verify(i => i.ChangeItemQuantity(
-                    It.Is<ShoppingListItemId>(itemId => itemId == id),
+                    It.Is<ItemId>(itemId => itemId == id),
                     It.Is<float>(qnt => qnt == quantity)),
                 Times.Once);
         }
@@ -119,7 +119,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
         public void VerifyChangeItemQuantityNever()
         {
             Verify(i => i.ChangeItemQuantity(
-                    It.IsAny<ShoppingListItemId>(),
+                    It.IsAny<ItemId>(),
                     It.IsAny<float>()),
                 Times.Never);
         }

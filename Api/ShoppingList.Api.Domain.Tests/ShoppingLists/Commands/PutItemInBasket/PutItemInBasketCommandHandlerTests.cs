@@ -84,8 +84,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             Mock<IShoppingList> listMock = new Mock<IShoppingList>();
             ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
 
-            fixture.ConstructorArgumentFor<PutItemInBasketCommand, ShoppingListItemId>(
-                "itemId", new ShoppingListItemId(commonFixture.NextInt()));
+            fixture.ConstructorArgumentFor<PutItemInBasketCommand, Domain.ShoppingLists.Models.ItemId>(
+                "itemId", new Domain.ShoppingLists.Models.ItemId(commonFixture.NextInt()));
             var command = fixture.Create<PutItemInBasketCommand>();
             var handler = fixture.Create<PutItemInBasketCommandHandler>();
 
@@ -100,7 +100,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
                 result.Should().BeTrue();
                 listMock.Verify(
                     i => i.PutItemInBasket(
-                        It.Is<ShoppingListItemId>(id => id == command.ItemId && id.IsActualId)),
+                        It.Is<Domain.ShoppingLists.Models.ItemId>(id => id == command.ItemId && id.IsActualId)),
                     Times.Once);
                 shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
             }
@@ -116,12 +116,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
 
             Mock<IShoppingList> listMock = new Mock<IShoppingList>();
 
-            StoreItemId actualItemId = new StoreItemId(commonFixture.NextInt());
+            Domain.StoreItems.Models.ItemId actualItemId = new Domain.StoreItems.Models.ItemId(commonFixture.NextInt());
             var storeItemBaseDefinition = StoreItemDefinition.FromId(actualItemId);
             IStoreItem storeItem = storeItemFixture.CreateValid(storeItemBaseDefinition);
 
             var listItemIdOffline = new ShoppingListItemId(Guid.NewGuid());
-            fixture.ConstructorArgumentFor<PutItemInBasketCommand, ShoppingListItemId>("itemId", listItemIdOffline);
+            fixture.ConstructorArgumentFor<PutItemInBasketCommand, Domain.ShoppingLists.Models.ItemId>("itemId", (Domain.ShoppingLists.Models.ItemId)listItemIdOffline);
             var command = fixture.Create<PutItemInBasketCommand>();
             var handler = fixture.Create<PutItemInBasketCommandHandler>();
 
@@ -138,7 +138,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
                 itemRepositoryMock.VerifyFindByAsync(new StoreItemId(listItemIdOffline.Offline.Value));
                 listMock.Verify(
                     i => i.PutItemInBasket(
-                        It.Is<ShoppingListItemId>(id => id.Actual.Value == actualItemId.Actual.Value && id.IsActualId)),
+                        It.Is<Domain.ShoppingLists.Models.ItemId>(id => id.Actual.Value == actualItemId.Actual.Value && id.IsActualId)),
                     Times.Once);
                 shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
             }

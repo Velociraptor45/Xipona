@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using System;
 using System.Collections.Generic;
 
@@ -14,13 +15,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         IShoppingList AddItem(IShoppingListItem item, ShoppingListSectionId sectionId);
 
-        IShoppingList RemoveItem(ShoppingListItemId itemId);
+        IShoppingList RemoveItem(ItemId itemId);
 
-        IShoppingList PutItemInBasket(ShoppingListItemId itemId);
+        IShoppingList PutItemInBasket(ItemId itemId);
 
-        IShoppingList RemoveFromBasket(ShoppingListItemId itemId);
+        IShoppingList RemoveFromBasket(ItemId itemId);
 
-        IShoppingList ChangeItemQuantity(ShoppingListItemId itemId, float quantity);
+        IShoppingList ChangeItemQuantity(ItemId itemId, float quantity);
 
         IShoppingList SetCompletionDate(DateTime completionDate);
 

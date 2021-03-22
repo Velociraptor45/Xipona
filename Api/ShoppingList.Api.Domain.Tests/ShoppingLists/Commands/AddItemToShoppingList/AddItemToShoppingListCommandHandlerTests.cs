@@ -83,7 +83,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
             ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
             var handler = fixture.Create<AddItemToShoppingListCommandHandler>();
 
-            fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, ShoppingListItemId>("shoppingListItemId",
+            fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, ItemId>("shoppingListItemId",
                 new ShoppingListItemId(Guid.NewGuid()));
             var command = fixture.Create<AddItemToShoppingListCommand>();
 
@@ -121,8 +121,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
             // Arrange
             var fixture = commonFixture.GetNewFixture();
 
-            fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, ShoppingListItemId>("shoppingListItemId",
-                new ShoppingListItemId(commonFixture.NextInt()));
+            fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, Domain.ShoppingLists.Models.ItemId>("shoppingListItemId",
+                new Domain.ShoppingLists.Models.ItemId(commonFixture.NextInt()));
             ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
             ShoppingListItemFactoryMock shoppingListItemFactoryMock = new ShoppingListItemFactoryMock(fixture);
             ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);

@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
 {
     public class ItemNotTemporaryReason : IReason
     {
-        public ItemNotTemporaryReason(StoreItemId id)
+        public ItemNotTemporaryReason(ItemId id)
         {
             Message = $"Item {id} is not temporary.";
         }

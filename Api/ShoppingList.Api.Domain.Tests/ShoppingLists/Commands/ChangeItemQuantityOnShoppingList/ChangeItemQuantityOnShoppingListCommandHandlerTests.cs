@@ -92,7 +92,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
                 result.Should().BeTrue();
                 listMock.Verify(
                     i => i.ChangeItemQuantity(
-                        It.Is<ShoppingListItemId>(id => id == command.ItemId),
+                        It.Is<ItemId>(id => id == command.ItemId),
                         It.Is<float>(q => q == command.Quantity)),
                     Times.Once);
                 shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);

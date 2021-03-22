@@ -5,13 +5,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
 {
     public class RemoveItemFromShoppingListCommand : ICommand<bool>
     {
-        public RemoveItemFromShoppingListCommand(ShoppingListId shoppingListId, ShoppingListItemId shoppingListItemId)
+        public RemoveItemFromShoppingListCommand(ShoppingListId shoppingListId, ItemId shoppingListItemId)
         {
             ShoppingListId = shoppingListId;
             ShoppingListItemId = shoppingListItemId;
         }
 
         public ShoppingListId ShoppingListId { get; }
-        public ShoppingListItemId ShoppingListItemId { get; }
+        public ItemId ShoppingListItemId { get; }
     }
 }

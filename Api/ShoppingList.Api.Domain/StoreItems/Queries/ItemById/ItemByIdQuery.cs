@@ -6,11 +6,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemById
 {
     public class ItemByIdQuery : IQuery<StoreItemReadModel>
     {
-        public ItemByIdQuery(StoreItemId itemId)
+        public ItemByIdQuery(ItemId itemId)
         {
             ItemId = itemId ?? throw new System.ArgumentNullException(nameof(itemId));
         }
 
-        public StoreItemId ItemId { get; }
+        public ItemId ItemId { get; }
     }
 }

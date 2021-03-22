@@ -100,7 +100,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             }
 
             return shoppingListItemFactory.Create(
-                new ShoppingListItemId(map.Item.Id),
+                new ItemId(map.Item.Id),
                 map.Item.Name,
                 map.Item.Deleted,
                 map.Item.Comment,

@@ -30,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
         #region public methods
 
-        public async Task<IStoreItem> FindByAsync(StoreItemId storeItemId, CancellationToken cancellationToken)
+        public async Task<IStoreItem> FindByAsync(Domain.StoreItems.Models.ItemId storeItemId, CancellationToken cancellationToken)
         {
             if (storeItemId is null)
                 throw new ArgumentNullException(nameof(storeItemId));
@@ -227,7 +227,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return predecessor;
         }
 
-        private async Task<Item> FindTrackedEntityBy(StoreItemId id)
+        private async Task<Item> FindTrackedEntityBy(Domain.StoreItems.Models.ItemId id)
         {
             return await dbContext.Items
                 .Include(item => item.AvailableAt)

@@ -18,7 +18,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
             SetupAvailabilities(storeItem.Availabilities);
         }
 
-        public void SetupId(StoreItemId returnValue)
+        public void SetupId(ItemId returnValue)
         {
             Setup(i => i.Id)
             .Returns(returnValue);

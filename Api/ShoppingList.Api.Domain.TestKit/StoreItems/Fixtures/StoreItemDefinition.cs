@@ -5,7 +5,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
 {
     public class StoreItemDefinition
     {
-        public StoreItemId Id { get; set; }
+        public ItemId Id { get; set; }
         public bool? IsDeleted { get; set; }
         public bool? IsTemporary { get; set; }
         public IEnumerable<IStoreItemAvailability> Availabilities { get; set; }
@@ -18,7 +18,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             };
         }
 
-        public static StoreItemDefinition FromId(StoreItemId id)
+        public static StoreItemDefinition FromId(ItemId id)
         {
             return new StoreItemDefinition
             {

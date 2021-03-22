@@ -13,7 +13,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
     {
         private readonly IEnumerable<ShortAvailability> availabilities;
 
-        public PermanentItem(StoreItemId id, string name, string comment, QuantityType quantityType,
+        public PermanentItem(ItemId id, string name, string comment, QuantityType quantityType,
             float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
             ManufacturerId manufacturerId, IEnumerable<ShortAvailability> availabilities)
         {
@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
 
         public IReadOnlyCollection<ShortAvailability> Availabilities => availabilities.ToList().AsReadOnly();
 
-        public StoreItemId Id { get; }
+        public ItemId Id { get; }
         public string Name { get; }
         public string Comment { get; }
         public QuantityType QuantityType { get; }

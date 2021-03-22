@@ -5,12 +5,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
 {
     public class ActualIdRequiredReason : IReason
     {
-        public ActualIdRequiredReason(StoreItemId id)
+        public ActualIdRequiredReason(StoreItems.Models.ItemId id)
         {
             Message = $"Store item needs to have an actual id instead of offline id {id.Offline}";
         }
 
-        public ActualIdRequiredReason(ShoppingListItemId id)
+        public ActualIdRequiredReason(ShoppingLists.Models.ItemId id)
         {
             Message = $"Shopping list item needs to have an actual id instead of offline id {id.Offline}";
         }

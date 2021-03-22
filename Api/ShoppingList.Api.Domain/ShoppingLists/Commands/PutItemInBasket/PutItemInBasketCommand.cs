@@ -6,13 +6,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemIn
 {
     public class PutItemInBasketCommand : ICommand<bool>
     {
-        public PutItemInBasketCommand(ShoppingListId shoppingListId, ShoppingListItemId itemId)
+        public PutItemInBasketCommand(ShoppingListId shoppingListId, ItemId itemId)
         {
             ShoppingListId = shoppingListId ?? throw new ArgumentNullException(nameof(shoppingListId));
             ItemId = itemId ?? throw new ArgumentNullException(nameof(itemId));
         }
 
         public ShoppingListId ShoppingListId { get; }
-        public ShoppingListItemId ItemId { get; }
+        public ItemId ItemId { get; }
     }
 }

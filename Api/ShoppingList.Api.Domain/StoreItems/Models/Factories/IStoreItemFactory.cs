@@ -16,6 +16,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
         IStoreItem Create(TemporaryItemCreation model, IStoreItemAvailability storeItemAvailability);
 
         IStoreItem Create(ItemUpdate itemUpdate, IItemCategory itemCategory, IManufacturer manufacturer, IStoreItem predecessor, IEnumerable<IStoreItemAvailability> storeItemAvailabilities);
-        IStoreItem Create(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary, QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, IItemCategory itemCategory, IManufacturer manufacturer, IStoreItem predecessor, IEnumerable<IStoreItemAvailability> availabilities);
+        IStoreItem Create(ItemId id, string name, bool isDeleted, string comment, bool isTemporary, QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, IItemCategory itemCategory, IManufacturer manufacturer, IStoreItem predecessor, IEnumerable<IStoreItemAvailability> availabilities);
     }
 }

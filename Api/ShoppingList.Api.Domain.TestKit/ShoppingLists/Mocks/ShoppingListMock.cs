@@ -31,10 +31,10 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
                 .Returns(returnValue);
         }
 
-        public void VerifyRemoveItemOnce(ShoppingListItemId itemId)
+        public void VerifyRemoveItemOnce(ItemId itemId)
         {
             Verify(i => i.RemoveItem(
-                    It.Is<ShoppingListItemId>(id => id == itemId)),
+                    It.Is<ItemId>(id => id == itemId)),
                 Times.Once);
         }
 

@@ -39,7 +39,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
 
             foreach (var id in uniqueIds)
             {
-                var baseDefinition = StoreItemDefinition.FromId(new StoreItemId(id));
+                var baseDefinition = StoreItemDefinition.FromId(new ItemId(id));
                 var storeItem = storeItemFixture.CreateValid(baseDefinition);
                 yield return new StoreItemMock(storeItem);
             }

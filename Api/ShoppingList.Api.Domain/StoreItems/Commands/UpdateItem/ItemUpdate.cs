@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
     {
         private readonly IEnumerable<ShortAvailability> availabilities;
 
-        public ItemUpdate(StoreItemId oldId, string name, string comment,
+        public ItemUpdate(ItemId oldId, string name, string comment,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
             IEnumerable<ShortAvailability> availabilities)
@@ -33,7 +33,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
             this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
         }
 
-        public StoreItemId OldId { get; }
+        public ItemId OldId { get; }
         public string Name { get; }
         public string Comment { get; }
         public QuantityType QuantityType { get; }

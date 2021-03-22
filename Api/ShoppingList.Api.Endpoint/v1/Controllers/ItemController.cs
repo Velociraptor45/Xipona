@@ -169,7 +169,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("delete/{itemId}")]
         public async Task<IActionResult> DeleteItem([FromRoute(Name = "itemId")] int itemId)
         {
-            var command = new DeleteItemCommand(new StoreItemId(itemId));
+            var command = new DeleteItemCommand(new Domain.StoreItems.Models.ItemId(itemId));
             await commandDispatcher.DispatchAsync(command, default);
 
             return Ok();
@@ -181,7 +181,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("{itemId}")]
         public async Task<IActionResult> Get([FromRoute(Name = "itemId")] int itemId)
         {
-            var query = new ItemByIdQuery(new StoreItemId(itemId));
+            var query = new ItemByIdQuery(new Domain.StoreItems.Models.ItemId(itemId));
             StoreItemReadModel result;
             try
             {

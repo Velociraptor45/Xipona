@@ -22,11 +22,11 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
             mock = fixture.Freeze<Mock<IItemRepository>>();
         }
 
-        public void SetupFindByAsync(StoreItemId storeItemId, IStoreItem returnValue)
+        public void SetupFindByAsync(ItemId storeItemId, IStoreItem returnValue)
         {
             mock
                 .Setup(i => i.FindByAsync(
-                    It.Is<StoreItemId>(id => id == storeItemId),
+                    It.Is<ItemId>(id => id == storeItemId),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(returnValue);
         }
@@ -40,11 +40,11 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
                 .ReturnsAsync(returnValue);
         }
 
-        public void VerifyFindByAsync(StoreItemId storeItemId)
+        public void VerifyFindByAsync(ItemId storeItemId)
         {
             mock.Verify(
                 i => i.FindByAsync(
-                        It.Is<StoreItemId>(id => id == storeItemId),
+                        It.Is<ItemId>(id => id == storeItemId),
                         It.IsAny<CancellationToken>()),
                     Times.Once);
         }

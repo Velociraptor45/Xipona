@@ -28,7 +28,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreIt
                 throw new ArgumentNullException(nameof(source));
 
             return new ItemModify(
-                new StoreItemId(source.Id),
+                new ItemId(source.Id),
                 source.Name,
                 source.Comment,
                 source.QuantityType.ToEnum<QuantityType>(),

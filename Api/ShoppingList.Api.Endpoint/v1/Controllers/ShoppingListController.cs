@@ -35,13 +35,13 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         private readonly IToContractConverter<ShoppingListReadModel, ShoppingListContract> shoppingListToContractConverter;
         private readonly IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeToContractConverter;
         private readonly IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketToContractConverter;
-        private readonly IToDomainConverter<ItemIdContract, ShoppingListItemId> shoppingListItemIdConverter;
+        private readonly IToDomainConverter<ItemIdContract, ItemId> shoppingListItemIdConverter;
 
         public ShoppingListController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
             IToContractConverter<ShoppingListReadModel, ShoppingListContract> shoppingListToContractConverter,
             IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeToContractConverter,
             IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketToContractConverter,
-            IToDomainConverter<ItemIdContract, ShoppingListItemId> shoppingListItemIdConverter)
+            IToDomainConverter<ItemIdContract, ItemId> shoppingListItemIdConverter)
         {
             this.queryDispatcher = queryDispatcher;
             this.commandDispatcher = commandDispatcher;
@@ -88,7 +88,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         public async Task<IActionResult> RemoveItemFromShoppingList(
             [FromBody] RemoveItemFromShoppingListContract contract)
         {
-            ShoppingListItemId itemId;
+            ItemId itemId;
             try
             {
                 itemId = shoppingListItemIdConverter.ToDomain(contract.ItemId);
@@ -118,7 +118,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("items/add")]
         public async Task<IActionResult> AddItemToShoppingList([FromBody] AddItemToShoppingListContract contract)
         {
-            ShoppingListItemId itemId;
+            ItemId itemId;
             try
             {
                 itemId = shoppingListItemIdConverter.ToDomain(contract.ItemId);
@@ -153,7 +153,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         public async Task<IActionResult> PutItemInBasket([FromBody] PutItemInBasketContract contract)
         {
             var command = new PutItemInBasketCommand(new ShoppingListId(contract.ShoppingListId),
-                new ShoppingListItemId(contract.ItemId.Actual.Value));
+                new ItemId(contract.ItemId.Actual.Value));
 
             try
             {
@@ -173,7 +173,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("items/remove-from-basket")]
         public async Task<IActionResult> RemoveItemFromBasket([FromBody] RemoveItemFromBasketContract contract)
         {
-            ShoppingListItemId itemId;
+            ItemId itemId;
             try
             {
                 itemId = shoppingListItemIdConverter.ToDomain(contract.ItemId);
@@ -203,7 +203,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         public async Task<IActionResult> ChangeItemQuantityOnShoppingList(
             [FromBody] ChangeItemQuantityOnShoppingListContract contract)
         {
-            ShoppingListItemId itemId;
+            ItemId itemId;
             try
             {
                 itemId = shoppingListItemIdConverter.ToDomain(contract.ItemId);

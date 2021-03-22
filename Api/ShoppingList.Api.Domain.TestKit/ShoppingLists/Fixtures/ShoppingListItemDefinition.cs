@@ -8,7 +8,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 {
     public class ShoppingListItemDefinition
     {
-        public ShoppingListItemId Id { get; set; }
+        public ItemId Id { get; set; }
         public string Name { get; set; }
         public bool? IsDeleted { get; set; }
         public string Comment { get; set; }
@@ -44,7 +44,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
         public static ShoppingListItemDefinition FromId(int id)
         {
-            return FromId(new ShoppingListItemId(id));
+            return FromId(new ItemId(id));
         }
 
         public static ShoppingListItemDefinition FromId(Guid id)
@@ -52,7 +52,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             return FromId(new ShoppingListItemId(id));
         }
 
-        public static ShoppingListItemDefinition FromId(ShoppingListItemId id)
+        public static ShoppingListItemDefinition FromId(ItemId id)
         {
             return new ShoppingListItemDefinition
             {

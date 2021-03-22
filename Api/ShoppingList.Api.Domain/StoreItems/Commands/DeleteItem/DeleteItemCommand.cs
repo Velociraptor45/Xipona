@@ -5,11 +5,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem
 {
     public class DeleteItemCommand : ICommand<bool>
     {
-        public DeleteItemCommand(StoreItemId itemId)
+        public DeleteItemCommand(ItemId itemId)
         {
             ItemId = itemId ?? throw new System.ArgumentNullException(nameof(itemId));
         }
 
-        public StoreItemId ItemId { get; }
+        public ItemId ItemId { get; }
     }
 }

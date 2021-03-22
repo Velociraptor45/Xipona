@@ -6,13 +6,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
 {
     public class RemoveItemFromBasketCommand : ICommand<bool>
     {
-        public RemoveItemFromBasketCommand(ShoppingListId shoppingListId, ShoppingListItemId itemId)
+        public RemoveItemFromBasketCommand(ShoppingListId shoppingListId, ItemId itemId)
         {
             ShoppingListId = shoppingListId ?? throw new ArgumentNullException(nameof(shoppingListId));
             ItemId = itemId ?? throw new ArgumentNullException(nameof(itemId));
         }
 
         public ShoppingListId ShoppingListId { get; }
-        public ShoppingListItemId ItemId { get; }
+        public ItemId ItemId { get; }
     }
 }

@@ -15,7 +15,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
     {
         private List<IStoreItemAvailability> availabilities;
 
-        public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
+        public StoreItem(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             IItemCategory itemCategory, IManufacturer manufacturer,
             IEnumerable<IStoreItemAvailability> availabilities)
@@ -37,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             Predecessor = null;
         }
 
-        public StoreItemId Id { get; }
+        public ItemId Id { get; }
         public string Name { get; private set; }
         public bool IsDeleted { get; private set; }
         public string Comment { get; private set; }

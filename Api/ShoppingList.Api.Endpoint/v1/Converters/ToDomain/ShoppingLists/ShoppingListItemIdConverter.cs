@@ -5,16 +5,16 @@ using System;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.ShoppingLists
 {
-    public class ShoppingListItemIdConverter : IToDomainConverter<ItemIdContract, ShoppingListItemId>
+    public class ShoppingListItemIdConverter : IToDomainConverter<ItemIdContract, ItemId>
     {
-        public ShoppingListItemId ToDomain(ItemIdContract source)
+        public ItemId ToDomain(ItemIdContract source)
         {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
             if (source.Actual != null)
             {
-                return new ShoppingListItemId(source.Actual.Value);
+                return new ItemId(source.Actual.Value);
             }
 
             if (source.Offline != null)

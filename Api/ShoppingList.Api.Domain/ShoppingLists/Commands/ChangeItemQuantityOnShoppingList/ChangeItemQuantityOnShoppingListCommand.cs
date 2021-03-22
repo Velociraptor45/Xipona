@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeIte
 {
     public class ChangeItemQuantityOnShoppingListCommand : ICommand<bool>
     {
-        public ChangeItemQuantityOnShoppingListCommand(ShoppingListId shoppingListId, ShoppingListItemId itemId,
+        public ChangeItemQuantityOnShoppingListCommand(ShoppingListId shoppingListId, ItemId itemId,
             float quantity)
         {
             ShoppingListId = shoppingListId ?? throw new ArgumentNullException(nameof(shoppingListId));
@@ -15,7 +15,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeIte
         }
 
         public ShoppingListId ShoppingListId { get; }
-        public ShoppingListItemId ItemId { get; }
+        public ItemId ItemId { get; }
         public float Quantity { get; }
     }
 }

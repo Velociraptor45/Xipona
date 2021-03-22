@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
@@ -9,15 +10,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         IShoppingListSection AddItem(IShoppingListItem item);
 
-        IShoppingListSection ChangeItemQuantity(ShoppingListItemId itemId, float quantity);
+        IShoppingListSection ChangeItemQuantity(ItemId itemId, float quantity);
 
-        bool ContainsItem(ShoppingListItemId itemId);
+        bool ContainsItem(ItemId itemId);
 
-        IShoppingListSection PutItemInBasket(ShoppingListItemId itemId);
+        IShoppingListSection PutItemInBasket(ItemId itemId);
 
-        IShoppingListSection RemoveItemFromBasket(ShoppingListItemId itemId);
+        IShoppingListSection RemoveItemFromBasket(ItemId itemId);
 
-        IShoppingListSection RemoveItem(ShoppingListItemId itemId);
+        IShoppingListSection RemoveItem(ItemId itemId);
 
         IShoppingListSection RemoveItemsInBasket();
 

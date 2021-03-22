@@ -1,6 +1,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using System;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             return new ShoppingList(Id, StoreId, CompletionDate, sections.Values);
         }
 
-        public IShoppingList RemoveItem(ShoppingListItemId itemId)
+        public IShoppingList RemoveItem(ItemId itemId)
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
@@ -66,7 +67,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             return new ShoppingList(Id, StoreId, CompletionDate, sections.Values);
         }
 
-        public IShoppingList PutItemInBasket(ShoppingListItemId itemId)
+        public IShoppingList PutItemInBasket(ItemId itemId)
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
@@ -83,7 +84,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             return new ShoppingList(Id, StoreId, CompletionDate, sections.Values);
         }
 
-        public IShoppingList RemoveFromBasket(ShoppingListItemId itemId)
+        public IShoppingList RemoveFromBasket(ItemId itemId)
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
@@ -100,7 +101,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             return new ShoppingList(Id, StoreId, CompletionDate, sections.Values);
         }
 
-        public IShoppingList ChangeItemQuantity(ShoppingListItemId itemId, float quantity)
+        public IShoppingList ChangeItemQuantity(ItemId itemId, float quantity)
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));

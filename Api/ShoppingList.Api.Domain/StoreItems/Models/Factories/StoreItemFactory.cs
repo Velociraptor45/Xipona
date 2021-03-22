@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
 {
     public class StoreItemFactory : IStoreItemFactory
     {
-        public IStoreItem Create(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
+        public IStoreItem Create(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             IItemCategory itemCategory, IManufacturer manufacturer, IStoreItem predecessor,
             IEnumerable<IStoreItemAvailability> availabilities)
@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
         public IStoreItem Create(ItemCreation itemCreation, IItemCategory itemCategory,
             IManufacturer manufacturer, IEnumerable<IStoreItemAvailability> storeItemAvailabilities)
         {
-            return new StoreItem(new StoreItemId(0),
+            return new StoreItem(new ItemId(0),
                 itemCreation.Name,
                 false,
                 itemCreation.Comment,
@@ -51,7 +51,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
         public IStoreItem Create(TemporaryItemCreation model, IStoreItemAvailability storeItemAvailability)
         {
             return new StoreItem(
-                new StoreItemId(model.ClientSideId),
+                new ItemId(model.ClientSideId),
                 model.Name,
                 false,
                 string.Empty,
@@ -67,7 +67,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
         public IStoreItem Create(ItemUpdate itemUpdate, IItemCategory itemCategory, IManufacturer manufacturer,
             IStoreItem predecessor, IEnumerable<IStoreItemAvailability> storeItemAvailabilities)
         {
-            var model = new StoreItem(new StoreItemId(0),
+            var model = new StoreItem(new ItemId(0),
                 itemUpdate.Name,
                 false,
                 itemUpdate.Comment,

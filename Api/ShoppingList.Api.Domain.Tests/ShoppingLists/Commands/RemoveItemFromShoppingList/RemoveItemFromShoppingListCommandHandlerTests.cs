@@ -118,12 +118,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             Mock<IStoreItem> itemMock = new Mock<IStoreItem>();
 
             //// test actual and offline id
-            ShoppingListItemId listItemId = isActualItemId ?
-                new ShoppingListItemId(commonFixture.NextInt()) :
+            ItemId listItemId = isActualItemId ?
+                new ItemId(commonFixture.NextInt()) :
                 new ShoppingListItemId(Guid.NewGuid());
 
-            fixture.ConstructorArgumentFor<RemoveItemFromShoppingListCommand, ShoppingListItemId>(
-                    "shoppingListItemId", listItemId);
+            fixture.ConstructorArgumentFor<RemoveItemFromShoppingListCommand, Domain.ShoppingLists.Models.ItemId>(
+                    "shoppingListItemId", (Domain.ShoppingLists.Models.ItemId)listItemId);
             var command = fixture.Create<RemoveItemFromShoppingListCommand>();
             var handler = fixture.Create<RemoveItemFromShoppingListCommandHandler>();
 
@@ -144,7 +144,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
 
                 listMock.Verify(
                     i => i.RemoveItem(
-                        It.Is<ShoppingListItemId>(id => id == command.ShoppingListItemId)),
+                        It.Is<Domain.ShoppingLists.Models.ItemId>(id => id == command.ShoppingListItemId)),
                     Times.Once);
 
                 if (isTemporaryItem)

@@ -62,7 +62,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return toModelConverter.ToDomain(entity);
         }
 
-        public async Task<IEnumerable<IShoppingList>> FindByAsync(StoreItemId storeItemId,
+        public async Task<IEnumerable<IShoppingList>> FindByAsync(Domain.StoreItems.Models.ItemId storeItemId,
             CancellationToken cancellationToken)
         {
             if (storeItemId is null)
@@ -77,7 +77,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return toModelConverter.ToDomain(entities);
         }
 
-        public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(StoreItemId storeItemId,
+        public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(Domain.StoreItems.Models.ItemId storeItemId,
             CancellationToken cancellationToken)
         {
             if (storeItemId is null)

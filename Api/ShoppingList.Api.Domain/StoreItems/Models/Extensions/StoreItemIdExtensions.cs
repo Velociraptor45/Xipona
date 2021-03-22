@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions
 {
     public static class StoreItemIdExtensions
     {
-        public static ShoppingListItemId ToShoppingListItemId(this StoreItemId storeItemId)
+        public static ShoppingLists.Models.ItemId ToShoppingListItemId(this ItemId storeItemId)
         {
             return storeItemId.IsActualId ?
                 new ShoppingListItemId(storeItemId.Actual.Value) :

@@ -33,10 +33,10 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
         public IShoppingListItem Create(int id)
         {
-            return Create(new ShoppingListItemId(id));
+            return Create(new ItemId(id));
         }
 
-        public IShoppingListItem Create(ShoppingListItemId id)
+        public IShoppingListItem Create(ItemId id)
         {
             var definition = new ShoppingListItemDefinition
             {
@@ -50,7 +50,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             var fixture = commonFixture.GetNewFixture();
 
             if (definition.Id != null)
-                fixture.ConstructorArgumentFor<ShoppingListItem, ShoppingListItemId>("id", definition.Id);
+                fixture.ConstructorArgumentFor<ShoppingListItem, ItemId>("id", definition.Id);
             if (definition.Name != null)
                 fixture.ConstructorArgumentFor<ShoppingListItem, string>("name", definition.Name);
             if (definition.IsDeleted.HasValue)
@@ -79,7 +79,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             return fixture.Create<ShoppingListItem>();
         }
 
-        public IEnumerable<IShoppingListItem> CreateMany(IEnumerable<ShoppingListItemId> ids)
+        public IEnumerable<IShoppingListItem> CreateMany(IEnumerable<ItemId> ids)
         {
             foreach (var id in ids)
                 yield return Create(id);
@@ -141,7 +141,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             foreach (var id in uniqueIds)
             {
                 var clone = definition.Clone();
-                clone.Id = new ShoppingListItemId(id);
+                clone.Id = new ItemId(id);
 
                 yield return Create(clone);
             }
@@ -161,7 +161,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             {
                 int id = uniqueIds[i];
                 var definition = definitionsList[i];
-                definition.Id ??= new ShoppingListItemId(id);
+                definition.Id ??= new ItemId(id);
                 yield return Create(definition);
             }
         }

@@ -23,12 +23,12 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
             mock = fixture.Freeze<Mock<IShoppingListRepository>>();
         }
 
-        public void SetupFindActiveByAsync(StoreItemId storeItemId,
+        public void SetupFindActiveByAsync(ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.ItemId storeItemId,
             IEnumerable<IShoppingList> returnValue)
         {
             mock
                 .Setup(i => i.FindActiveByAsync(
-                    It.Is<StoreItemId>(id => id == storeItemId),
+                    It.Is<ItemId>(id => id == storeItemId),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(returnValue));
         }
@@ -38,7 +38,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
         {
             mock
                 .Setup(i => i.FindActiveByAsync(
-                    It.IsAny<StoreItemId>(),
+                    It.IsAny<ItemId>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(returnValue);
         }
