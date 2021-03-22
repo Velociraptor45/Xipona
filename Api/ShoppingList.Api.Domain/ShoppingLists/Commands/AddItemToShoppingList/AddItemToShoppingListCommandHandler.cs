@@ -57,7 +57,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
             IShoppingListItem listItem = shoppingListItemFactory.Create(storeItem, priceAtStore.Value,
                 isInBasket: false, command.Quantity);
 
-            list.AddItem(listItem, command.SectionId);
+            list.AddItem(listItem, command.SectionId); // todo extract this into service
 
             await shoppingListRepository.StoreAsync(list, cancellationToken);
 

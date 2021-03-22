@@ -5,26 +5,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
     public interface IShoppingListSection
     {
         ShoppingListSectionId Id { get; }
-        string Name { get; }
-        int SortingIndex { get; }
+        public IReadOnlyCollection<IShoppingListItem> Items { get; }
 
-        public IReadOnlyCollection<IShoppingListItem> ShoppingListItems { get; }
-        bool IsDefaultSection { get; }
+        IShoppingListSection AddItem(IShoppingListItem item);
 
-        void AddItem(IShoppingListItem item);
-
-        void ChangeItemQuantity(ShoppingListItemId itemId, float quantity);
+        IShoppingListSection ChangeItemQuantity(ShoppingListItemId itemId, float quantity);
 
         bool ContainsItem(ShoppingListItemId itemId);
 
-        void PutItemInBasket(ShoppingListItemId itemId);
+        IShoppingListSection PutItemInBasket(ShoppingListItemId itemId);
 
-        void RemoveItemFromBasket(ShoppingListItemId itemId);
+        IShoppingListSection RemoveItemFromBasket(ShoppingListItemId itemId);
 
-        void RemoveItem(ShoppingListItemId itemId);
+        IShoppingListSection RemoveItem(ShoppingListItemId itemId);
 
-        void RemoveAllItemsInBasket();
+        IShoppingListSection RemoveItemsInBasket();
 
-        void RemoveAllItemsNotInBasket();
+        IShoppingListSection RemoveItemsNotInBasket();
     }
 }

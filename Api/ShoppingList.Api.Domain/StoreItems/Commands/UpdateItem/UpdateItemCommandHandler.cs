@@ -112,7 +112,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
                     var section = updatedItem.GetDefaultSectionForStore(list.Store.Id.AsStoreItemStoreId());
                     var updatedListItem = shoppingListItemFactory.Create(updatedItem, priceAtStore,
                         shoppingListItem.IsInBasket, shoppingListItem.Quantity);
-                    list.AddItem(updatedListItem, section.Id.ToShoppingListSectionId());
+                    list.AddItem(updatedListItem, section.Id.ToShoppingListSectionId()); // todo extract this into service
                 }
 
                 await shoppingListRepository.StoreAsync(list, cancellationToken);

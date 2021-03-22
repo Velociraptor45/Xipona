@@ -36,8 +36,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishSho
             cancellationToken.ThrowIfCancellationRequested();
 
             shoppingList.SetCompletionDate(command.CompletionDate);
-            var sections = shoppingList.GetSectionsWithItemsNotInBasket();
-            shoppingList.RemoveAllItemsNotInBasket();
+            var sections = shoppingList.RemoveItemsInBasket();
+            shoppingList.RemoveItemsNotInBasket();
 
             var nextShoppingList = shoppingListFactory.CreateNew(shoppingList.Store, sections, null);
 

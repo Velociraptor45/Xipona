@@ -27,7 +27,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
 
         public void SetupGetSectionsWithItemsNotInBasket(IEnumerable<IShoppingListSection> returnValue)
         {
-            Setup(i => i.GetSectionsWithItemsNotInBasket())
+            Setup(i => i.RemoveItemsInBasket())
                 .Returns(returnValue);
         }
 
@@ -55,13 +55,13 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
 
         public void VerifyGetSectionsWithItemsNotInBasketOnce()
         {
-            Verify(i => i.GetSectionsWithItemsNotInBasket(),
+            Verify(i => i.RemoveItemsInBasket(),
                 Times.Once);
         }
 
         public void VerifyRemoveAllItemsNotInBasketOnce()
         {
-            Verify(i => i.RemoveAllItemsNotInBasket(),
+            Verify(i => i.RemoveItemsNotInBasket(),
                 Times.Once);
         }
     }

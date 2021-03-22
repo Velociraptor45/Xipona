@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions
         public static ShoppingListSectionReadModel ToReadModel(this IShoppingListSection model)
         {
             return new ShoppingListSectionReadModel(model.Id, model.Name, model.SortingIndex, model.IsDefaultSection,
-                model.ShoppingListItems.Select(i => i.ToReadModel()));
+                model.Items.Select(i => i.ToReadModel()));
         }
     }
 }

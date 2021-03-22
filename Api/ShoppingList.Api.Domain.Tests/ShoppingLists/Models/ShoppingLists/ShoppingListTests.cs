@@ -237,7 +237,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var shoppingList = shoppingListFixture.Create(listDefinition);
 
             ShoppingListSectionMock chosenSection = commonFixture.ChooseRandom(sections);
-            IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSection.Object.ShoppingListItems);
+            IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSection.Object.Items);
 
             chosenSection.SetupContainsItem(chosenItem.Id, true);
 
@@ -326,7 +326,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var shoppingList = shoppingListFixture.Create(listDefinition);
 
             ShoppingListSectionMock chosenSection = commonFixture.ChooseRandom(sections);
-            IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSection.Object.ShoppingListItems);
+            IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSection.Object.Items);
             chosenSection.SetupContainsItem(chosenItem.Id, true);
 
             // Act
@@ -414,7 +414,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var shoppingList = shoppingListFixture.Create(listDefinition);
 
             ShoppingListSectionMock chosenSection = commonFixture.ChooseRandom(sections);
-            IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSection.Object.ShoppingListItems);
+            IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSection.Object.Items);
             chosenSection.SetupContainsItem(chosenItem.Id, true);
 
             // Act
@@ -521,7 +521,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var shoppingList = shoppingListFixture.Create(listDefinition);
 
             ShoppingListSectionMock chosenSection = commonFixture.ChooseRandom(sections);
-            IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSection.Object.ShoppingListItems);
+            IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSection.Object.Items);
             chosenSection.SetupContainsItem(chosenItem.Id, true);
 
             float quantity = commonFixture.NextFloat();

@@ -1,57 +1,31 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
     public class ShoppingListItem : IShoppingListItem
     {
-        public ShoppingListItem(ShoppingListItemId id, string name, bool isDeleted, string comment, bool isTemporary,
-            float pricePerQuantity, QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            IItemCategory itemCategory, IManufacturer manufacturer, bool isInBasket, float quantity)
+        public ShoppingListItem(ShoppingListItemId id, bool isInBasket, float quantity)
         {
             Id = id;
-            Name = name;
-            IsDeleted = isDeleted;
-            Comment = comment;
-            IsTemporary = isTemporary;
-            PricePerQuantity = pricePerQuantity;
-            QuantityType = quantityType;
-            QuantityInPacket = quantityInPacket;
-            QuantityTypeInPacket = quantityTypeInPacket;
-            ItemCategory = itemCategory;
-            Manufacturer = manufacturer;
             IsInBasket = isInBasket;
             Quantity = quantity;
         }
 
         public ShoppingListItemId Id { get; }
-        public string Name { get; }
-        public bool IsDeleted { get; }
-        public string Comment { get; }
-        public bool IsTemporary { get; }
-        public float PricePerQuantity { get; }
-        public QuantityType QuantityType { get; }
-        public float QuantityInPacket { get; }
-        public QuantityTypeInPacket QuantityTypeInPacket { get; }
-        public IItemCategory ItemCategory { get; }
-        public IManufacturer Manufacturer { get; }
-        public bool IsInBasket { get; private set; }
-        public float Quantity { get; private set; }
+        public bool IsInBasket { get; }
+        public float Quantity { get; }
 
-        public void PutInBasket()
+        public IShoppingListItem PutInBasket()
         {
-            IsInBasket = true;
+            return new ShoppingListItem(Id, true, Quantity);
         }
 
-        public void RemoveFromBasket()
+        public IShoppingListItem RemoveFromBasket()
         {
-            IsInBasket = false;
+            return new ShoppingListItem(Id, false, Quantity);
         }
 
-        public void ChangeQuantity(float quantity)
+        public IShoppingListItem ChangeQuantity(float quantity)
         {
-            Quantity = quantity;
+            return new ShoppingListItem(Id, IsInBasket, quantity);
         }
     }
 }

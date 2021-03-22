@@ -11,7 +11,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
             SetupId(section.Id);
             SetupName(section.Name);
             SetupSortingIndex(section.SortingIndex);
-            SetupItems(section.ShoppingListItems);
+            SetupItems(section.Items);
             SetupIsDefaultSection(section.IsDefaultSection);
         }
 
@@ -35,7 +35,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
 
         public void SetupItems(IReadOnlyCollection<IShoppingListItem> returnValue)
         {
-            Setup(i => i.ShoppingListItems)
+            Setup(i => i.Items)
                 .Returns(returnValue);
         }
 

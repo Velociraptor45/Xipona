@@ -33,7 +33,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
                 CompletionDate = source.CompletionDate,
                 StoreId = source.Store.Id.Value,
                 ItemsOnList = source.Sections.SelectMany(section =>
-                    section.ShoppingListItems.Select(item =>
+                    section.Items.Select(item =>
                         new ItemsOnList()
                         {
                             ShoppingListId = source.Id.Value,

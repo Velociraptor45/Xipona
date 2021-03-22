@@ -50,7 +50,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
                     IsDefaultSection = section.IsDefaultSection
                 };
 
-                foreach (var item in section.ShoppingListItems)
+                foreach (var item in section.Items)
                 {
                     var manufacturer = item.Manufacturer == null ? null : ManufacturerConverterTests.GetSource(item.Manufacturer);
                     var itemCategory = item.ItemCategory == null ? null : ItemCategoryConverterTests.GetSource(item.ItemCategory);

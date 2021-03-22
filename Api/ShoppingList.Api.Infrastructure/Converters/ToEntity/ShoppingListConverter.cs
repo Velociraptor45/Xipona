@@ -27,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
         {
             foreach (var section in source.Sections)
             {
-                foreach (var item in section.ShoppingListItems)
+                foreach (var item in section.Items)
                 {
                     yield return new ItemsOnList()
                     {
