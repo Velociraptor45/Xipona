@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using System;
 using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
@@ -6,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
     public interface IShoppingList
     {
         public ShoppingListId Id { get; }
-        public ShoppingListStoreId StoreId { get; }
+        public StoreId StoreId { get; }
         public DateTime? CompletionDate { get; }
         IReadOnlyCollection<IShoppingListSection> Sections { get; }
         public IReadOnlyCollection<IShoppingListItem> Items { get; }

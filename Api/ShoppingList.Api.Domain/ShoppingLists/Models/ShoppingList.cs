@@ -1,6 +1,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
     {
         private readonly Dictionary<ShoppingListSectionId, IShoppingListSection> shoppingListSections;
 
-        public ShoppingList(ShoppingListId id, ShoppingListStoreId storeId, DateTime? completionDate,
+        public ShoppingList(ShoppingListId id, StoreId storeId, DateTime? completionDate,
             IEnumerable<IShoppingListSection> sections)
         {
             Id = id;
@@ -21,7 +22,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         }
 
         public ShoppingListId Id { get; }
-        public ShoppingListStoreId StoreId { get; }
+        public StoreId StoreId { get; }
         public DateTime? CompletionDate { get; }
 
         public IReadOnlyCollection<IShoppingListSection> Sections => shoppingListSections.Values.ToList().AsReadOnly();
