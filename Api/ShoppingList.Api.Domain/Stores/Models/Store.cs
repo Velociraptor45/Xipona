@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Model
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models
 {
     public class Store : IStore
     {

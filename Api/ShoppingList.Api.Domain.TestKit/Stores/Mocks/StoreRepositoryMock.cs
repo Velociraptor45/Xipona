@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using Moq;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System.Collections.Generic;
 using System.Threading;

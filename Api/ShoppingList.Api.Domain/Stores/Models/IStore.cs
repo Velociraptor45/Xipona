@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Model
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models
 {
     public interface IStore
     {

@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
 {
@@ -26,7 +26,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
             return new StoreItemAvailability(storeItemStore, price, defaultSectionId);
         }
 
-        public IStoreItemAvailability Create(IStore store, float price, StoreSectionId defaultSectionId)
+        public IStoreItemAvailability Create(IStore store, float price, SectionId defaultSectionId)
         {
             var storeItemStore = storeItemStoreFactory.Create(store);
 

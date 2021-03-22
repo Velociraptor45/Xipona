@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Model
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models
 {
     public class StoreId : GenericPrimitive<int>
     {

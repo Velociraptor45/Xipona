@@ -2,7 +2,7 @@
 using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
 {
@@ -40,12 +40,12 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
                     .Returns(returnValue);
         }
 
-        public void SetupCreate(IStore store, float price, StoreSectionId sectionId, IStoreItemAvailability returnValue)
+        public void SetupCreate(IStore store, float price, SectionId sectionId, IStoreItemAvailability returnValue)
         {
             mock.Setup(i => i.Create(
                         It.Is<IStore>(s => s == store),
                         It.Is<float>(p => p == price),
-                        It.Is<StoreSectionId>(id => id == sectionId)))
+                        It.Is<SectionId>(id => id == sectionId)))
                     .Returns(returnValue);
         }
 
@@ -58,12 +58,12 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
                 Times.Once);
         }
 
-        public void VerifyCreateOnce(IStore store, float price, StoreSectionId sectionId)
+        public void VerifyCreateOnce(IStore store, float price, SectionId sectionId)
         {
             mock.Verify(i => i.Create(
                     It.Is<IStore>(s => s == store),
                     It.Is<float>(p => p == price),
-                    It.Is<StoreSectionId>(id => id == sectionId)),
+                    It.Is<SectionId>(id => id == sectionId)),
                 Times.Once);
         }
     }

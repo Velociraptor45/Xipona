@@ -1,5 +1,6 @@
 ﻿using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System;
 using System.Collections.Generic;
 
@@ -38,11 +39,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
                 Times.Once);
         }
 
-        public void VerifyAddItemOnce(IShoppingListItem listItem, ShoppingListSectionId sectionId)
+        public void VerifyAddItemOnce(IShoppingListItem listItem, SectionId sectionId)
         {
             Verify(i => i.AddItem(
                     It.Is<IShoppingListItem>(item => item == listItem),
-                    It.Is<ShoppingListSectionId>(id => id == sectionId)),
+                    It.Is<SectionId>(id => id == sectionId)),
                 Times.Once);
         }
 

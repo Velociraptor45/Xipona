@@ -1,8 +1,8 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Model
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models
 {
     public interface IStoreSection
     {
-        StoreSectionId Id { get; }
+        SectionId Id { get; }
         string Name { get; }
         int SortingIndex { get; }
         bool IsDefaultSection { get; }

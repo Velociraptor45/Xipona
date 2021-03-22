@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System;
 using System.Collections.Generic;
 
@@ -13,7 +14,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         IReadOnlyCollection<IShoppingListSection> Sections { get; }
         public IReadOnlyCollection<IShoppingListItem> Items { get; }
 
-        IShoppingList AddItem(IShoppingListItem item, ShoppingListSectionId sectionId);
+        IShoppingList AddItem(IShoppingListItem item, SectionId sectionId);
 
         IShoppingList RemoveItem(ItemId itemId);
 

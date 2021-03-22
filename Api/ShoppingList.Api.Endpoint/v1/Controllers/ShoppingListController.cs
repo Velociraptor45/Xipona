@@ -131,7 +131,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             var command = new AddItemToShoppingListCommand(
                 new ShoppingListId(contract.ShoppingListId),
                 itemId,
-                contract.SectionId.HasValue ? new ShoppingListSectionId(contract.SectionId.Value) : null,
+                contract.SectionId.HasValue ? new SectionId(contract.SectionId.Value) : null,
                 contract.Quantity);
 
             try

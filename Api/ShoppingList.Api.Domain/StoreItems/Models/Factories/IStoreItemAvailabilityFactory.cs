@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
 {
@@ -8,6 +8,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
 
         IStoreItemAvailability Create(IStore store, float price, StoreItemSectionId defaultSectionId);
 
-        IStoreItemAvailability Create(IStore store, float price, StoreSectionId defaultSectionId);
+        IStoreItemAvailability Create(IStore store, float price, SectionId defaultSectionId);
     }
 }

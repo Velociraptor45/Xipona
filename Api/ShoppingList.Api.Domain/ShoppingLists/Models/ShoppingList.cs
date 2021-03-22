@@ -2,7 +2,8 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
     public class ShoppingList : IShoppingList
     {
-        private readonly Dictionary<ShoppingListSectionId, IShoppingListSection> shoppingListSections;
+        private readonly Dictionary<SectionId, IShoppingListSection> shoppingListSections;
 
         public ShoppingList(ShoppingListId id, StoreId storeId, DateTime? completionDate,
             IEnumerable<IShoppingListSection> sections)
@@ -29,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         public IReadOnlyCollection<IShoppingListSection> Sections => shoppingListSections.Values.ToList().AsReadOnly();
         public IReadOnlyCollection<IShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
 
-        public IShoppingList AddItem(IShoppingListItem item, ShoppingListSectionId sectionId)
+        public IShoppingList AddItem(IShoppingListItem item, SectionId sectionId)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
@@ -43,7 +44,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (!shoppingListSections.ContainsKey(sectionId))
                 throw new DomainException(new SectionNotPartOfStoreReason(sectionId, StoreId));
 
-            var sections = new Dictionary<ShoppingListSectionId, IShoppingListSection>(shoppingListSections);
+            var sections = new Dictionary<SectionId, IShoppingListSection>(shoppingListSections);
             var section = sections[sectionId];
             sections[sectionId] = section.AddItem(item);
 
@@ -59,7 +60,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (section == null)
                 return this;
 
-            var sections = new Dictionary<ShoppingListSectionId, IShoppingListSection>(shoppingListSections)
+            var sections = new Dictionary<SectionId, IShoppingListSection>(shoppingListSections)
             {
                 [section.Id] = section.RemoveItem(itemId)
             };
@@ -76,7 +77,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
-            var sections = new Dictionary<ShoppingListSectionId, IShoppingListSection>(shoppingListSections)
+            var sections = new Dictionary<SectionId, IShoppingListSection>(shoppingListSections)
             {
                 [section.Id] = section.PutItemInBasket(itemId)
             };
@@ -93,7 +94,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
-            var sections = new Dictionary<ShoppingListSectionId, IShoppingListSection>(shoppingListSections)
+            var sections = new Dictionary<SectionId, IShoppingListSection>(shoppingListSections)
             {
                 [section.Id] = section.RemoveItemFromBasket(itemId)
             };
@@ -112,7 +113,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
-            var sections = new Dictionary<ShoppingListSectionId, IShoppingListSection>(shoppingListSections)
+            var sections = new Dictionary<SectionId, IShoppingListSection>(shoppingListSections)
             {
                 [section.Id] = section.ChangeItemQuantity(itemId, quantity)
             };
@@ -127,7 +128,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         public IShoppingList RemoveItemsInBasket()
         {
-            var sections = new Dictionary<ShoppingListSectionId, IShoppingListSection>(shoppingListSections);
+            var sections = new Dictionary<SectionId, IShoppingListSection>(shoppingListSections);
             foreach (var key in sections.Keys)
             {
                 sections[key] = sections[key].RemoveItemsInBasket();
@@ -138,7 +139,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         public IShoppingList RemoveItemsNotInBasket()
         {
-            var sections = new Dictionary<ShoppingListSectionId, IShoppingListSection>(shoppingListSections);
+            var sections = new Dictionary<SectionId, IShoppingListSection>(shoppingListSections);
             foreach (var key in sections.Keys)
             {
                 sections[key] = sections[key].RemoveItemsNotInBasket();

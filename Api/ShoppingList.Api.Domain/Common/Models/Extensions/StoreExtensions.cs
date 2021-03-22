@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
 using System.Collections.Generic;
 using System.Linq;
-using StoreModels = ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using StoreModels = ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions
 {

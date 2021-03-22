@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -17,9 +17,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             return new ShoppingLists.Models.ShoppingListStoreId(Value);
         }
 
-        public Stores.Model.StoreId AsStoreId()
+        public Stores.Models.StoreId AsStoreId()
         {
-            return new Stores.Model.StoreId(Value);
+            return new Stores.Models.StoreId(Value);
         }
 
         public bool Equals([AllowNull] ShoppingLists.Models.ShoppingListStoreId x, [AllowNull] ShoppingLists.Models.ShoppingListStoreId y)

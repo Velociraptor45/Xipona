@@ -75,7 +75,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
         public IShoppingListSection CreateSection(Section section, IEnumerable<IShoppingListItem> items)
         {
             return shoppingListSectionFactory.Create(
-                new ShoppingListSectionId(section.Id),
+                new SectionId(section.Id),
                 section.Name,
                 items,
                 section.SortIndex,

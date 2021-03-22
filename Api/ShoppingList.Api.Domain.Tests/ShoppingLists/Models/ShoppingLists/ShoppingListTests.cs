@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Fixtures;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
@@ -47,7 +48,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Arrange
             var fixure = commonFixture.GetNewFixture();
             var shoppingList = fixure.Create<DomainModels.ShoppingList>();
-            var sectionId = commonFixture.GetNewFixture().Create<ShoppingListSectionId>();
+            var sectionId = commonFixture.GetNewFixture().Create<SectionId>();
 
             // Act
             Action action = () => shoppingList.AddItem(null, sectionId);
@@ -65,7 +66,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             // Arrange
             var list = shoppingListFixture.CreateValid();
             var listItem = shoppingListItemFixture.Create(ShoppingListItemDefinition.FromId(Guid.NewGuid()));
-            var sectionId = commonFixture.GetNewFixture().Create<ShoppingListSectionId>();
+            var sectionId = commonFixture.GetNewFixture().Create<SectionId>();
 
             // Act
             Action action = () => list.AddItem(listItem, sectionId);
@@ -88,7 +89,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
 
             var collidingItem = shoppingListItemFixture.Create(
                 new ItemId(collidingItemId));
-            var sectionId = commonFixture.GetNewFixture().Create<ShoppingListSectionId>();
+            var sectionId = commonFixture.GetNewFixture().Create<SectionId>();
 
             // Act
             Action action = () => shoppingList.AddItem(collidingItem, sectionId);
@@ -133,7 +134,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             int sectionId = commonFixture.NextInt(exclude: existingSectionIds);
 
             // Act
-            Action action = () => shoppingList.AddItem(item, new ShoppingListSectionId(sectionId));
+            Action action = () => shoppingList.AddItem(item, new SectionId(sectionId));
 
             // Assert
             using (new AssertionScope())

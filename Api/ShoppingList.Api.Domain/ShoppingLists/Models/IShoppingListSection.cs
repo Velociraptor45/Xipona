@@ -1,11 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
     public interface IShoppingListSection
     {
-        ShoppingListSectionId Id { get; }
+        SectionId Id { get; }
         public IReadOnlyCollection<IShoppingListItem> Items { get; }
 
         IShoppingListSection AddItem(IShoppingListItem item);

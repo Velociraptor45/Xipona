@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using System;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
@@ -20,7 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
                 throw new ArgumentNullException(nameof(source));
 
             return storeSectionFactory.Create(
-                    new StoreSectionId(source.Id),
+                    new SectionId(source.Id),
                     source.Name,
                     source.SortIndex,
                     source.IsDefaultSection);

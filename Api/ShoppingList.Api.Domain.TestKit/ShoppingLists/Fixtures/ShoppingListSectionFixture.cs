@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Fixtures;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             var fixture = commonFixture.GetNewFixture();
 
             if (definition.Id != null)
-                fixture.ConstructorArgumentFor<ShoppingListSection, ShoppingListSectionId>("id", definition.Id);
+                fixture.ConstructorArgumentFor<ShoppingListSection, SectionId>("id", definition.Id);
             if (definition.Name != null)
                 fixture.ConstructorArgumentFor<IShoppingListSection, string>("name", definition.Name);
             if (definition.SortingIndex.HasValue)
@@ -49,7 +50,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             {
                 if (definition.Id == null)
                 {
-                    definition.Id = new ShoppingListSectionId(newIds.First());
+                    definition.Id = new SectionId(newIds.First());
                     newIds.RemoveAt(0);
                 }
 
@@ -79,7 +80,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             foreach (var id in uniqueIds)
             {
                 var clone = definition.Clone();
-                clone.Id = new ShoppingListSectionId(id);
+                clone.Id = new SectionId(id);
                 clonedDefinitions.Add(clone);
             }
 
@@ -102,7 +103,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             {
                 int id = uniqueIds[i];
                 var definition = definitionsList[i];
-                definition.Id ??= new ShoppingListSectionId(id);
+                definition.Id ??= new SectionId(id);
                 yield return Create(definition);
             }
         }

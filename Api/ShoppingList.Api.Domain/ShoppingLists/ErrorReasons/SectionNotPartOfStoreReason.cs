@@ -1,12 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons
 {
     public class SectionNotPartOfStoreReason : IReason
     {
-        public SectionNotPartOfStoreReason(ShoppingListSectionId sectionId, StoreId storeId)
+        public SectionNotPartOfStoreReason(SectionId sectionId, StoreId storeId)
         {
             Message = $"Section {sectionId} is not part of store {storeId}.";
         }

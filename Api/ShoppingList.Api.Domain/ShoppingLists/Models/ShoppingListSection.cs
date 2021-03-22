@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,13 +11,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
     {
         private readonly Dictionary<ItemId, IShoppingListItem> shoppingListItems;
 
-        public ShoppingListSection(ShoppingListSectionId id, IEnumerable<IShoppingListItem> shoppingListItems)
+        public ShoppingListSection(SectionId id, IEnumerable<IShoppingListItem> shoppingListItems)
         {
             Id = id;
             this.shoppingListItems = shoppingListItems.ToDictionary(i => i.Id);
         }
 
-        public ShoppingListSectionId Id { get; }
+        public SectionId Id { get; }
 
         public IReadOnlyCollection<IShoppingListItem> Items => shoppingListItems.Values.ToList().AsReadOnly();
 

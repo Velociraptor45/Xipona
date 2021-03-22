@@ -1,5 +1,6 @@
 ﻿using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System.Collections.Generic;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
@@ -15,7 +16,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
             SetupIsDefaultSection(section.IsDefaultSection);
         }
 
-        public void SetupId(ShoppingListSectionId returnValue)
+        public void SetupId(SectionId returnValue)
         {
             Setup(i => i.Id)
                 .Returns(returnValue);
