@@ -1,14 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId
 {
     public class ShoppingListItemReadModel
     {
-        public ShoppingListItemReadModel(ShoppingListItemActualId id, string name, bool isDeleted, string comment,
+        public ShoppingListItemReadModel(ItemId id, string name, bool isDeleted, string comment,
             bool isTemporary, float pricePerQuantity, QuantityTypeReadModel quantityType, float quantityInPacket,
             QuantityTypeInPacketReadModel quantityTypeInPacket,
             ItemCategoryReadModel itemCategory, ManufacturerReadModel manufacturer,
@@ -34,7 +34,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedMode
             Quantity = quantity;
         }
 
-        public ShoppingListItemActualId Id { get; }
+        public ItemId Id { get; }
         public string Name { get; }
         public bool IsDeleted { get; }
         public string Comment { get; }

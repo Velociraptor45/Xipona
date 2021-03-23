@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId
 {
     public class ShoppingListReadModel
     {
@@ -21,6 +21,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedMode
         public ShoppingListId Id { get; }
         public DateTime? CompletionDate { get; }
         public ShoppingListStoreReadModel Store { get; }
-        public IReadOnlyCollection<ShoppingListSectionReadModel> Sections { get => sections.ToList().AsReadOnly(); }
+        public IReadOnlyCollection<ShoppingListSectionReadModel> Sections => sections.ToList().AsReadOnly();
     }
 }

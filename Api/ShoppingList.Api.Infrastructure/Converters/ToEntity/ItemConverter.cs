@@ -23,8 +23,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
                 QuantityType = source.QuantityType.ToInt(),
                 QuantityInPacket = source.QuantityInPacket,
                 QuantityTypeInPacket = source.QuantityTypeInPacket.ToInt(),
-                ItemCategoryId = source.ItemCategory?.Id.Value,
-                ManufacturerId = source.Manufacturer?.Id.Value,
+                ItemCategoryId = source.ItemCategoryId?.Id.Value,
+                ManufacturerId = source.ManufacturerId?.Id.Value,
                 CreatedFrom = source.Id.Offline?.Value,
                 AvailableAt = source.Availabilities.Select(av => ToAvailableAt(av, source)).ToList(),
                 PredecessorId = source.Predecessor?.Id.Actual.Value
@@ -35,10 +35,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
         {
             return new AvailableAt()
             {
-                StoreId = availability.Store.Id.Value,
+                StoreId = availability.StoreId.Id.Value,
                 Price = availability.Price,
                 ItemId = source.Id.Actual?.Value ?? 0,
-                DefaultSectionId = availability.DefaultSection.Id.Value
+                DefaultSectionId = availability.DefaultSectionId.Id.Value
             };
         }
     }

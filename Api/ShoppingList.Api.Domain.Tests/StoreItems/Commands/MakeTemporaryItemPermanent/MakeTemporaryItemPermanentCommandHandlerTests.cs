@@ -259,7 +259,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             IManufacturer manufacturer = fixture.Create<IManufacturer>();
             StoreItemMock storeItemMock = storeItemMockFixture.Create(StoreItemDefinition.FromTemporary(true));
             List<IStoreItemAvailability> availabilities = storeItemMock.Object.Availabilities.ToList();
-            List<StoreId> storeIds = availabilities.Select(av => av.Store.Id.AsStoreId()).ToList();
+            List<StoreId> storeIds = availabilities.Select(av => av.StoreId.Id.AsStoreId()).ToList();
             var allStores = storeFixture.CreateManyValid(storeIds.Select(id => StoreDefinition.FromId(id))).ToList();
             allStores.Shuffle();
 
@@ -277,8 +277,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             {
                 var av = availabilities[i];
                 var store = stores[i];
-                storeRepositoryMock.SetupFindActiveByAsync(av.Store.Id.AsStoreId(), store);
-                availabilityFactoryMock.SetupCreate(store, av.Price, av.DefaultSection.Id, av);
+                storeRepositoryMock.SetupFindActiveByAsync(av.StoreId.Id.AsStoreId(), store);
+                availabilityFactoryMock.SetupCreate(store, av.Price, av.DefaultSectionId.Id, av);
             }
 
             itemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, storeItemMock.Object);

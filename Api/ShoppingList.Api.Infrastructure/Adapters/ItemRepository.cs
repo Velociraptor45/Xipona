@@ -83,6 +83,27 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return toModelConverter.ToDomain(entities);
         }
 
+        public async Task<IEnumerable<IStoreItem>> FindByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken)
+        {
+            if (itemIds == null)
+                throw new ArgumentNullException(nameof(itemIds));
+
+            var idList = itemIds.Select(id => id.Value).ToList();
+
+            var entities = await GetItemQuery()
+                .Where(item => idList.Contains(item.Id))
+                .ToListAsync();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var item in entities)
+            {
+                item.Predecessor = await LoadPredecessorsAsync(item);
+            }
+
+            return toModelConverter.ToDomain(entities);
+        }
+
         public async Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
             IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
             CancellationToken cancellationToken)

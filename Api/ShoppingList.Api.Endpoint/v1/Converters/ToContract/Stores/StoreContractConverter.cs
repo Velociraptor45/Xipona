@@ -5,7 +5,7 @@ using System;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Stores
 {
-    public class ActiveStoreContractConverter : IToContractConverter<ActiveStoreReadModel, ActiveStoreContract>
+    public class ActiveStoreContractConverter : IToContractConverter<StoreReadModel, ActiveStoreContract>
     {
         private readonly IToContractConverter<StoreSectionReadModel, StoreSectionContract> storeSectionContractConverter;
 
@@ -15,7 +15,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Store
             this.storeSectionContractConverter = storeSectionContractConverter;
         }
 
-        public ActiveStoreContract ToContract(ActiveStoreReadModel source)
+        public ActiveStoreContract ToContract(StoreReadModel source)
         {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));

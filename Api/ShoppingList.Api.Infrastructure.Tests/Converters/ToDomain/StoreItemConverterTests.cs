@@ -33,8 +33,8 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
 
         public static Item GetSource(IStoreItem destination, CommonFixture commonFixture)
         {
-            var itemCategory = ItemCategoryConverterTests.GetSource(destination.ItemCategory);
-            var manufacturer = ManufacturerConverterTests.GetSource(destination.Manufacturer);
+            var itemCategory = ItemCategoryConverterTests.GetSource(destination.ItemCategoryId);
+            var manufacturer = ManufacturerConverterTests.GetSource(destination.ManufacturerId);
             Item predecessor = null;
             if (destination.Predecessor != null)
                 predecessor = GetSource(destination.Predecessor, commonFixture);

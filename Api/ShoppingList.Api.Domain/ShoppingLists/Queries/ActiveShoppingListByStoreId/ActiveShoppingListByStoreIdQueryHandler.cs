@@ -1,9 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,10 +18,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShop
         : IQueryHandler<ActiveShoppingListByStoreIdQuery, ShoppingListReadModel>
     {
         private readonly IShoppingListRepository shoppingListRepository;
+        private readonly IStoreRepository storeRepository;
+        private readonly IItemRepository itemRepository;
+        private readonly IItemCategoryRepository itemCategoryRepository;
+        private readonly IManufacturerRepository manufacturerRepository;
 
-        public ActiveShoppingListByStoreIdQueryHandler(IShoppingListRepository shoppingListRepository)
+        public ActiveShoppingListByStoreIdQueryHandler(IShoppingListRepository shoppingListRepository,
+            IStoreRepository storeRepository, IItemRepository itemRepository, 
+            IItemCategoryRepository itemCategoryRepository, IManufacturerRepository manufacturerRepository)
         {
             this.shoppingListRepository = shoppingListRepository;
+            this.storeRepository = storeRepository;
+            this.itemRepository = itemRepository;
+            this.itemCategoryRepository = itemCategoryRepository;
+            this.manufacturerRepository = manufacturerRepository;
         }
 
         public async Task<ShoppingListReadModel> HandleAsync(ActiveShoppingListByStoreIdQuery query,
@@ -24,11 +39,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShop
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var listModel = await shoppingListRepository.FindActiveByAsync(query.StoreId, cancellationToken);
-            if (listModel == null)
+            var shoppingList = await shoppingListRepository.FindActiveByAsync(query.StoreId, cancellationToken);
+            if (shoppingList == null)
                 throw new DomainException(new ShoppingListNotFoundReason(query.StoreId));
 
-            return listModel.ToReadModel();
+            var ItemIds = shoppingList.Items.Select(i => i.Id);
+            var itemsDict = (await itemRepository.FindByAsync(ItemIds, cancellationToken))
+                .ToDictionary(i => i.Id);
+            IStore store = await storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
+
+            return shoppingList.ToReadModel(store, itemsDict);
         }
     }
 }

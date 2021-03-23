@@ -54,7 +54,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         {
             // Arrange
             IStoreItem storeItem = storeItemFixture.CreateValid();
-            var availabilityStoreIds = storeItem.Availabilities.Select(av => av.Store.Id.Value).ToList();
+            var availabilityStoreIds = storeItem.Availabilities.Select(av => av.StoreId.Id.Value).ToList();
 
             // Act
             StoreItemStoreId storeId = new StoreItemStoreId(commonFixture.NextInt(availabilityStoreIds));
@@ -72,7 +72,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         {
             // Arrange
             IStoreItem storeItem = storeItemFixture.CreateValid();
-            var availabilityStoreIds = storeItem.Availabilities.ToList().Select(av => av.Store.Id).ToList();
+            var availabilityStoreIds = storeItem.Availabilities.ToList().Select(av => av.StoreId.Id).ToList();
 
             // Act
             StoreItemStoreId chosenStoreId = commonFixture.ChooseRandom(availabilityStoreIds);
@@ -114,8 +114,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
                 storeItem.QuantityInPacket.Should().Be(permanentItem.QuantityInPacket);
                 storeItem.QuantityTypeInPacket.Should().Be(permanentItem.QuantityTypeInPacket);
                 storeItem.Availabilities.Should().BeEquivalentTo(availabilities);
-                storeItem.ItemCategory.Should().Be(itemCategory);
-                storeItem.Manufacturer.Should().Be(manufacturer);
+                storeItem.ItemCategoryId.Should().Be(itemCategory);
+                storeItem.ManufacturerId.Should().Be(manufacturer);
                 storeItem.IsTemporary.Should().BeFalse();
             }
         }
@@ -150,8 +150,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
                 storeItem.QuantityInPacket.Should().Be(itemModify.QuantityInPacket);
                 storeItem.QuantityTypeInPacket.Should().Be(itemModify.QuantityTypeInPacket);
                 storeItem.Availabilities.Should().BeEquivalentTo(availabilities);
-                storeItem.ItemCategory.Should().Be(itemCategory);
-                storeItem.Manufacturer.Should().Be(manufacturer);
+                storeItem.ItemCategoryId.Should().Be(itemCategory);
+                storeItem.ManufacturerId.Should().Be(manufacturer);
                 storeItem.IsTemporary.Should().Be(isTemporary);
             }
         }

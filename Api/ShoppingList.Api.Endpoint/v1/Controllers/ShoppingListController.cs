@@ -20,7 +20,6 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
 using System;
 using System.Threading.Tasks;
 

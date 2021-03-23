@@ -30,13 +30,13 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
 
         public static AvailableAt GetSource(IStoreItemAvailability destination, CommonFixture commonFixture)
         {
-            var store = StoreItemStoreConverterTests.GetSource(destination.Store, commonFixture);
+            var store = StoreItemStoreConverterTests.GetSource(destination.StoreId, commonFixture);
 
             return new AvailableAt
             {
                 Store = store,
                 Price = destination.Price,
-                DefaultSectionId = destination.DefaultSection.Id.Value
+                DefaultSectionId = destination.DefaultSectionId.Id.Value
             };
         }
 

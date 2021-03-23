@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores
 {
-    public class ActiveStoreReadModel
+    public class StoreReadModel
     {
-        public ActiveStoreReadModel(StoreId id, string name, IEnumerable<StoreItemReadModel> items,
+        public StoreReadModel(StoreId id, string name, IEnumerable<StoreItemReadModel> items,
             IEnumerable<StoreSectionReadModel> sections)
         {
             Id = id;

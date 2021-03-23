@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores
 {
-    public class AllActiveStoresQueryHandler : IQueryHandler<AllActiveStoresQuery, IEnumerable<ActiveStoreReadModel>>
+    public class AllActiveStoresQueryHandler : IQueryHandler<AllActiveStoresQuery, IEnumerable<StoreReadModel>>
     {
         private readonly IStoreRepository storeRepository;
         private readonly IItemRepository itemRepository;
@@ -23,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores
             this.itemRepository = itemRepository;
         }
 
-        public async Task<IEnumerable<ActiveStoreReadModel>> HandleAsync(AllActiveStoresQuery query, CancellationToken cancellationToken)
+        public async Task<IEnumerable<StoreReadModel>> HandleAsync(AllActiveStoresQuery query, CancellationToken cancellationToken)
         {
             var activeStores = (await storeRepository.GetAsync(cancellationToken)).ToList();
             var itemPerStoreDict = new Dictionary<ShoppingListStoreId, IEnumerable<StoreItemReadModel>>();

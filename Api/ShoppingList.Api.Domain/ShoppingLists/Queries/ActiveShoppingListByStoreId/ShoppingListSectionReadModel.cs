@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId
 {
     public class ShoppingListSectionReadModel
     {

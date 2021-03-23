@@ -19,9 +19,9 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures.Commands
         {
             var fixture = commonFixture.GetNewFixture();
 
-            fixture.ConstructorArgumentFor<ShortAvailability, StoreItemStoreId>("storeId", availability.Store.Id);
+            fixture.ConstructorArgumentFor<ShortAvailability, StoreItemStoreId>("storeId", availability.StoreId.Id);
             fixture.ConstructorArgumentFor<ShortAvailability, float>("price", availability.Price);
-            fixture.ConstructorArgumentFor<ShortAvailability, StoreItemSectionId>("storeItemSectionId", availability.DefaultSection.Id);
+            fixture.ConstructorArgumentFor<ShortAvailability, StoreItemSectionId>("storeItemSectionId", availability.DefaultSectionId.Id);
 
             return fixture.Create<ShortAvailability>();
         }

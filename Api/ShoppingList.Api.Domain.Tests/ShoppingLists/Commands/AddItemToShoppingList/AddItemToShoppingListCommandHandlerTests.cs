@@ -94,7 +94,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
             //setup StoreItem loaded from repository
             IStoreItem storeItem = storeItemFixture.CreateValidFor(listMock.Object);
             IStoreItemAvailability availability = storeItem.Availabilities
-                .Single(av => av.Store.Id == storeId.AsStoreItemStoreId());
+                .Single(av => av.StoreId.Id == storeId.AsStoreItemStoreId());
 
             IShoppingListItem listItem = shoppingListItemFixture.CreateValid();
 
@@ -136,7 +136,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
             //setup StoreItem loaded from repository
             IStoreItem storeItem = storeItemFixture.CreateValidFor(listMock.Object);
             IStoreItemAvailability availability = storeItem.Availabilities
-                .Single(av => av.Store.Id == storeId.AsStoreItemStoreId());
+                .Single(av => av.StoreId.Id == storeId.AsStoreItemStoreId());
 
             IShoppingListItem listItem = shoppingListItemFixture.CreateValid();
 

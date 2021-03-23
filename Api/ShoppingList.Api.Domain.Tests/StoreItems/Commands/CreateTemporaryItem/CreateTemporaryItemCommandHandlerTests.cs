@@ -124,7 +124,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
 
             IStoreItem storeItem = storeItemFixture.CreateValid();
             IStoreItemAvailability availability = commonFixture.ChooseRandom(storeItem.Availabilities);
-            StoreId storeId = availability.Store.Id.AsStoreId();
+            StoreId storeId = availability.StoreId.Id.AsStoreId();
 
             var handler = fixture.Create<CreateTemporaryItemCommandHandler>();
             var command = createTemporaryItemCommandFixture.Create(availability);

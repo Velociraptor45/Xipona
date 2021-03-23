@@ -152,15 +152,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             {
                 var av = availabilities[i];
                 var store = stores[i];
-                storeRepositoryMock.SetupFindActiveByAsync(av.Store.Id.AsStoreId(), store);
-                availabilityFactoryMock.SetupCreate(store, av.Price, av.DefaultSection.Id, av);
+                storeRepositoryMock.SetupFindActiveByAsync(av.StoreId.Id.AsStoreId(), store);
+                availabilityFactoryMock.SetupCreate(store, av.Price, av.DefaultSectionId.Id, av);
             }
 
             var handler = fixture.Create<CreateItemCommandHandler>();
             var command = createItemCommandFixture.GetCreateItemCommand(itemCategory.Id, manufacturer.Id, availabilities);
 
             // setup retrieving availability sections
-            var availabilitySections = availabilities.Select(av => av.DefaultSection);
+            var availabilitySections = availabilities.Select(av => av.DefaultSectionId);
             sectionReadRepositoryMock.SetupFindByAsync(availabilitySections);
 
             storeItemFactoryMock.SetupCreate(command.ItemCreation, itemCategory, manufacturer, availabilities, storeItem);
@@ -181,7 +181,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                     var av = availabilities[i];
                     var store = stores[i];
                     storeRepositoryMock.VerifyFindActiveByAsyncOnce(shortAv.StoreId.AsStoreId());
-                    availabilityFactoryMock.VerifyCreateOnce(store, shortAv.Price, av.DefaultSection.Id);
+                    availabilityFactoryMock.VerifyCreateOnce(store, shortAv.Price, av.DefaultSectionId.Id);
                 }
             }
         }
@@ -210,15 +210,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             {
                 var av = availabilities[i];
                 var store = stores[i];
-                storeRepositoryMock.SetupFindActiveByAsync(av.Store.Id.AsStoreId(), store);
-                availabilityFactoryMock.SetupCreate(store, av.Price, av.DefaultSection.Id, av);
+                storeRepositoryMock.SetupFindActiveByAsync(av.StoreId.Id.AsStoreId(), store);
+                availabilityFactoryMock.SetupCreate(store, av.Price, av.DefaultSectionId.Id, av);
             }
 
             var handler = fixture.Create<CreateItemCommandHandler>();
             var command = createItemCommandFixture.GetCreateItemCommand(itemCategory.Id, null, availabilities);
 
             // setup retrieving availability sections
-            var availabilitySections = availabilities.Select(av => av.DefaultSection);
+            var availabilitySections = availabilities.Select(av => av.DefaultSectionId);
             sectionReadRepositoryMock.SetupFindByAsync(availabilitySections);
 
             storeItemFactoryMock.SetupCreate(command.ItemCreation, itemCategory, null, availabilities, storeItem);
