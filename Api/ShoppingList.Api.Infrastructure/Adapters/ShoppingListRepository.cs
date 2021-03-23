@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using System;
 using System.Collections.Generic;
@@ -69,7 +69,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 throw new ArgumentNullException(nameof(storeItemId));
 
             List<Entities.ShoppingList> entities = await GetShoppingListQuery()
-                .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Actual.Value) != null)
+                .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Value) != null)
                 .ToListAsync();
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -84,7 +84,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 throw new ArgumentNullException(nameof(storeItemId));
 
             List<Entities.ShoppingList> entities = await GetShoppingListQuery()
-                .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Actual.Value) != null
+                .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Value) != null
                     && l.CompletionDate == null)
                 .ToListAsync();
 
@@ -93,7 +93,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return toModelConverter.ToDomain(entities);
         }
 
-        public async Task<IShoppingList> FindActiveByAsync(ShoppingListStoreId storeId, CancellationToken cancellationToken)
+        public async Task<IShoppingList> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
         {
             if (storeId == null)
                 throw new ArgumentNullException(nameof(storeId));

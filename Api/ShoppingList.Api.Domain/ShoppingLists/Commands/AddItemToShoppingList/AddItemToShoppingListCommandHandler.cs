@@ -2,10 +2,8 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using System;
 using System.Linq;
@@ -39,11 +37,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            ItemId itemId = command.ShoppingListItemId.ToStoreItemId();
-            var storeItem = await itemRepository.FindByAsync(itemId, cancellationToken);
+            var storeItem = await itemRepository.FindByAsync(command.ItemId, cancellationToken);
 
             if (storeItem == null)
-                throw new DomainException(new ItemNotFoundReason(itemId));
+                throw new DomainException(new ItemNotFoundReason(command.ItemId));
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -52,12 +49,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
                         .Price;
 
             if (priceAtStore == null)
-                throw new DomainException(new ItemAtStoreNotAvailableReason(itemId, list.StoreId));
+                throw new DomainException(new ItemAtStoreNotAvailableReason(command.ItemId, list.StoreId));
 
-            IShoppingListItem listItem = shoppingListItemFactory.Create(command.ShoppingListItemId, isInBasket: false,
+            IShoppingListItem listItem = shoppingListItemFactory.Create(command.ItemId, isInBasket: false,
                 command.Quantity);
 
-            list = list.AddItem(listItem, command.SectionId);
+            list.AddItem(listItem, command.SectionId);
 
             await shoppingListRepository.StoreAsync(list, cancellationToken);
 

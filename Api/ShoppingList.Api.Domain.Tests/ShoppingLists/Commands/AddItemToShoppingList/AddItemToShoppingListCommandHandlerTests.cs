@@ -100,7 +100,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
 
             shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
             shoppingListItemFactoryMock.SetupCreate(storeItem, availability.Price, false, command.Quantity, listItem);
-            itemRepositoryMock.SetupFindByAsync(command.ShoppingListItemId.AsStoreItemId(), storeItem);
+            itemRepositoryMock.SetupFindByAsync(command.ItemId.AsStoreItemId(), storeItem);
 
             // Act
             bool result = await handler.HandleAsync(command, default);
@@ -142,7 +142,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
 
             shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
             shoppingListItemFactoryMock.SetupCreate(storeItem, availability.Price, false, command.Quantity, listItem);
-            itemRepositoryMock.SetupFindByAsync(command.ShoppingListItemId.AsStoreItemId(), storeItem);
+            itemRepositoryMock.SetupFindByAsync(command.ItemId.AsStoreItemId(), storeItem);
 
             // Act
             bool result = await handler.HandleAsync(command, default);

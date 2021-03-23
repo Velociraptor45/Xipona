@@ -557,7 +557,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             DateTime completionDate = commonFixture.GetNewFixture().Create<DateTime>();
 
             // Act
-            shoppingList.SetCompletionDate(completionDate);
+            shoppingList.Finish(completionDate);
 
             // Assert
             using (new AssertionScope())
@@ -576,7 +576,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             DateTime completionDate = commonFixture.GetNewFixture().Create<DateTime>();
 
             // Act
-            shoppingList.SetCompletionDate(completionDate);
+            shoppingList.Finish(completionDate);
 
             // Assert
             using (new AssertionScope())

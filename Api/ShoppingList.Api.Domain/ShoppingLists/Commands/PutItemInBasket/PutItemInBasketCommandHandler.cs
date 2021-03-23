@@ -1,10 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using System;
 using System.Threading;
@@ -33,12 +31,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemIn
             if (shoppingList == null)
                 throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
 
-            ItemId itemId = command.ItemId;
-
-            if (!itemId.IsActualId)
+            ItemId itemId;
+            if (command.ItemId.IsActualId)
             {
-                itemId = (await itemRepository.FindByAsync(command.ItemId.ToStoreItemId(), cancellationToken))
-                    .Id.ToShoppingListItemId();
+                itemId = new ItemId(command.ItemId.ActualId.Value);
+            }
+            else
+            {
+                itemId = (await itemRepository.FindByAsync(new TemporaryItemId(command.ItemId.OfflineId.Value), cancellationToken))
+                    .Id;
             }
 
             shoppingList.PutItemInBasket(itemId);

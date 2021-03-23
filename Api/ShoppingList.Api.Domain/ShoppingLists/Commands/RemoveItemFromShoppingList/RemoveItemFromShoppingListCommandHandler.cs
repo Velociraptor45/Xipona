@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
@@ -16,12 +16,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
     {
         private readonly IShoppingListRepository shoppingListRepository;
         private readonly IItemRepository itemRepository;
+        private readonly ITransactionGenerator transactionGenerator;
 
         public RemoveItemFromShoppingListCommandHandler(IShoppingListRepository shoppingListRepository,
-            IItemRepository itemRepository)
+            IItemRepository itemRepository, ITransactionGenerator transactionGenerator)
         {
             this.shoppingListRepository = shoppingListRepository;
             this.itemRepository = itemRepository;
+            this.transactionGenerator = transactionGenerator;
         }
 
         public async Task<bool> HandleAsync(RemoveItemFromShoppingListCommand command, CancellationToken cancellationToken)
@@ -33,12 +35,27 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
             if (list == null)
                 throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
 
-            var storeItemId = command.ShoppingListItemId.ToStoreItemId();
-            IStoreItem item = await itemRepository.FindByAsync(storeItemId, cancellationToken);
-            if (item == null)
-                throw new DomainException(new ItemNotFoundReason(storeItemId));
+            IStoreItem item;
+            if (command.ItemId.IsActualId)
+            {
+                ItemId itemId = new ItemId(command.ItemId.ActualId.Value);
 
-            list.RemoveItem(command.ShoppingListItemId);
+                item = await itemRepository.FindByAsync(itemId, cancellationToken);
+                if (item == null)
+                    throw new DomainException(new ItemNotFoundReason(itemId));
+            }
+            else
+            {
+                TemporaryItemId itemId = new TemporaryItemId(command.ItemId.OfflineId.Value);
+
+                item = await itemRepository.FindByAsync(itemId, cancellationToken);
+                if (item == null)
+                    throw new DomainException(new ItemNotFoundReason(itemId));
+            }
+
+            using var transaction = await transactionGenerator.GenerateAsync(cancellationToken);
+
+            list.RemoveItem(item.Id);
             if (item.IsTemporary)
             {
                 item.Delete();
@@ -48,6 +65,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
             cancellationToken.ThrowIfCancellationRequested();
 
             await shoppingListRepository.StoreAsync(list, cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+
             return true;
         }
     }

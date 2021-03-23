@@ -2,9 +2,9 @@
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using System;
 using System.Collections.Generic;
@@ -30,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
         #region public methods
 
-        public async Task<IStoreItem> FindByAsync(Domain.StoreItems.Models.ItemId storeItemId, CancellationToken cancellationToken)
+        public async Task<IStoreItem> FindByAsync(ItemId storeItemId, CancellationToken cancellationToken)
         {
             if (storeItemId is null)
                 throw new ArgumentNullException(nameof(storeItemId));
@@ -38,9 +38,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             var itemEntity = await GetItemQuery()
-                .FirstOrDefaultAsync(item => storeItemId.IsActualId ?
-                    item.Id == storeItemId.Actual.Value :
-                    item.CreatedFrom == storeItemId.Offline.Value);
+                .FirstOrDefaultAsync(item => item.Id == storeItemId.Value);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -49,7 +47,24 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return toModelConverter.ToDomain(itemEntity);
         }
 
-        public async Task<IEnumerable<IStoreItem>> FindByAsync(ShoppingListStoreId storeId, CancellationToken cancellationToken)
+        public async Task<IStoreItem> FindByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
+        {
+            if (temporaryItemId is null)
+                throw new ArgumentNullException(nameof(temporaryItemId));
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var itemEntity = await GetItemQuery()
+                .FirstOrDefaultAsync(item => item.CreatedFrom.HasValue && item.CreatedFrom == temporaryItemId.Value);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
+
+            return toModelConverter.ToDomain(itemEntity);
+        }
+
+        public async Task<IEnumerable<IStoreItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
         {
             if (storeId == null)
                 throw new ArgumentNullException(nameof(storeId));
@@ -68,7 +83,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return toModelConverter.ToDomain(entities);
         }
 
-        public async Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<ShoppingListStoreId> storeIds,
+        public async Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
             IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
             CancellationToken cancellationToken)
         {
@@ -115,7 +130,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return toModelConverter.ToDomain(filteredResultByStore);
         }
 
-        public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, ShoppingListStoreId storeId,
+        public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, StoreId storeId,
             CancellationToken cancellationToken)
         {
             if (storeId == null)
@@ -227,7 +242,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             return predecessor;
         }
 
-        private async Task<Item> FindTrackedEntityBy(Domain.StoreItems.Models.ItemId id)
+        private async Task<Item> FindTrackedEntityBy(ItemId id)
         {
             return await dbContext.Items
                 .Include(item => item.AvailableAt)

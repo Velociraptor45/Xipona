@@ -49,7 +49,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
 
         public void VerifySetCompletionDateOnce(DateTime completionDate)
         {
-            Verify(i => i.SetCompletionDate(
+            Verify(i => i.Finish(
                     It.Is<DateTime>(date => date == completionDate)),
                 Times.Once);
         }

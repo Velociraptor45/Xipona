@@ -10,6 +10,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
             ErrorCode = ErrorReasonCode.ItemNotFound;
         }
 
+        public ItemNotFoundReason(TemporaryItemId id)
+        {
+            Message = $"Item {id} not found.";
+            ErrorCode = ErrorReasonCode.ItemNotFound;
+        }
+
         public string Message { get; }
 
         public ErrorReasonCode ErrorCode { get; }

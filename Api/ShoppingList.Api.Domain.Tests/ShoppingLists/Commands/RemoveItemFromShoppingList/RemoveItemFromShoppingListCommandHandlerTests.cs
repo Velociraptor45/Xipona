@@ -89,7 +89,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             var handler = fixture.Create<RemoveItemFromShoppingListCommandHandler>();
 
             shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
-            itemRepositoryMock.SetupFindByAsync(command.ShoppingListItemId.AsStoreItemId(), null);
+            itemRepositoryMock.SetupFindByAsync(command.ItemId.AsStoreItemId(), null);
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(command, default);
@@ -128,7 +128,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             var handler = fixture.Create<RemoveItemFromShoppingListCommandHandler>();
 
             shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
-            itemRepositoryMock.SetupFindByAsync(command.ShoppingListItemId.AsStoreItemId(), itemMock.Object);
+            itemRepositoryMock.SetupFindByAsync(command.ItemId.AsStoreItemId(), itemMock.Object);
 
             itemMock
                 .Setup(instance => instance.IsTemporary)
@@ -144,7 +144,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
 
                 listMock.Verify(
                     i => i.RemoveItem(
-                        It.Is<Domain.ShoppingLists.Models.ItemId>(id => id == command.ShoppingListItemId)),
+                        It.Is<Domain.ShoppingLists.Models.ItemId>(id => id == command.ItemId)),
                     Times.Once);
 
                 if (isTemporaryItem)
