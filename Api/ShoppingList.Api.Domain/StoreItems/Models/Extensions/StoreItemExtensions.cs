@@ -16,7 +16,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions
         public static ItemSearchReadModel ToItemSearchReadModel(this IStoreItem storeItem, ShoppingListStoreId storeId)
         {
             IStoreItemAvailability storeAvailability = storeItem.Availabilities
-                .FirstOrDefault(av => av.Store.Id == storeId);
+                .FirstOrDefault(av => av.StoreId.Id == storeId);
             if (storeAvailability == null)
                 throw new DomainException(new ItemAtStoreNotAvailableReason(storeItem.Id, storeId));
 
@@ -27,8 +27,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions
                 storeItem.Name,
                 storeItem.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                 storeAvailability.Price,
-                storeItem.Manufacturer.ToReadModel(),
-                storeItem.ItemCategory.ToReadModel(),
+                storeItem.ManufacturerId.ToReadModel(),
+                storeItem.ItemCategoryId.ToReadModel(),
                 defaultSection.ToReadModel());
         }
 
@@ -48,8 +48,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions
                 model.QuantityType.ToReadModel(),
                 model.QuantityInPacket,
                 model.QuantityTypeInPacket.ToReadModel(),
-                model.ItemCategory?.ToReadModel(),
-                model.Manufacturer?.ToReadModel(),
+                model.ItemCategoryId?.ToReadModel(),
+                model.ManufacturerId?.ToReadModel(),
                 model.Availabilities.Select(av => av.ToReadModel()));
         }
     }

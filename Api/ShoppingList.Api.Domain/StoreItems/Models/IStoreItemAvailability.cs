@@ -1,9 +1,11 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
     public interface IStoreItemAvailability
     {
-        IStoreItemStore Store { get; }
+        StoreId StoreId { get; }
         float Price { get; }
-        IStoreItemSection DefaultSection { get; }
+        SectionId DefaultSectionId { get; }
     }
 }

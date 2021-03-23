@@ -46,9 +46,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShop
             var ItemIds = shoppingList.Items.Select(i => i.Id);
             var itemsDict = (await itemRepository.FindByAsync(ItemIds, cancellationToken))
                 .ToDictionary(i => i.Id);
+
+            var itemCategoryIds = itemsDict.Values.Where(i => i.ItemCategoryId != null).Select(i => i.ItemCategoryId);
+            var itemCategoriesDict = (await itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
+                .ToDictionary(cat => cat.Id);
+                        
+            var manufacturerIds = itemsDict.Values.Where(i => i.ManufacturerId != null).Select(i => i.ManufacturerId);
+            var manufacturersDict = (await manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
+                .ToDictionary(man => man.Id);
+
             IStore store = await storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
 
-            return shoppingList.ToReadModel(store, itemsDict);
+            return shoppingList.ToReadModel(store, itemsDict, itemCategoriesDict, manufacturersDict);
         }
     }
 }

@@ -1,18 +1,19 @@
-﻿using System.Linq;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
     public class StoreItemAvailability : IStoreItemAvailability
     {
-        public StoreItemAvailability(IStoreItemStore store, float price, StoreItemSectionId defaultSectionId)
+        public StoreItemAvailability(StoreId storeId, float price, SectionId defaultSectionId)
         {
-            Store = store ?? throw new System.ArgumentNullException(nameof(store));
+            StoreId = storeId ?? throw new System.ArgumentNullException(nameof(storeId));
             Price = price;
-            DefaultSection = store.Sections.Single(s => s.Id == defaultSectionId); //todo add throwing domain exception
+            DefaultSectionId = defaultSectionId ?? throw new System.ArgumentNullException(nameof(defaultSectionId));
         }
 
-        public IStoreItemStore Store { get; }
+        public StoreId StoreId { get; }
         public float Price { get; }
-        public IStoreItemSection DefaultSection { get; }
+        public SectionId DefaultSectionId { get; }
     }
 }

@@ -10,12 +10,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
 {
     public interface IStoreItemFactory
     {
-        IStoreItem Create(ItemCreation itemCreation, IItemCategory itemCategory, IManufacturer manufacturer,
+        IStoreItem Create(ItemCreation itemCreation, ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
             IEnumerable<IStoreItemAvailability> storeItemAvailabilities);
 
         IStoreItem Create(TemporaryItemCreation model, IStoreItemAvailability storeItemAvailability);
 
-        IStoreItem Create(ItemUpdate itemUpdate, IItemCategory itemCategory, IManufacturer manufacturer, IStoreItem predecessor, IEnumerable<IStoreItemAvailability> storeItemAvailabilities);
-        IStoreItem Create(ItemId id, string name, bool isDeleted, string comment, bool isTemporary, QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, IItemCategory itemCategory, IManufacturer manufacturer, IStoreItem predecessor, IEnumerable<IStoreItemAvailability> availabilities);
+        IStoreItem Create(ItemUpdate itemUpdate, ItemCategoryId itemCategoryId, ManufacturerId manufacturerId, 
+            IStoreItem predecessor, IEnumerable<IStoreItemAvailability> storeItemAvailabilities);
+        IStoreItem Create(ItemId id, string name, bool isDeleted, string comment, bool isTemporary, 
+            QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, 
+            ItemCategoryId itemCategoryId, ManufacturerId manufacturerId, IStoreItem predecessor, 
+            IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId temporaryId);
     }
 }

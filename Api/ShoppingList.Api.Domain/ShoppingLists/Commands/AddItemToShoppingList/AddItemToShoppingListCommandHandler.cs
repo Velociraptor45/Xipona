@@ -45,7 +45,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
             cancellationToken.ThrowIfCancellationRequested();
 
             var priceAtStore = storeItem.Availabilities
-                        .FirstOrDefault(av => av.StoreId.Id == list.StoreId)?
+                        .FirstOrDefault(av => av.StoreId == list.StoreId)?
                         .Price;
 
             if (priceAtStore == null)

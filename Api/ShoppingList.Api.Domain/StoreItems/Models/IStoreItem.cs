@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
@@ -18,23 +19,21 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         float QuantityInPacket { get; }
         QuantityTypeInPacket QuantityTypeInPacket { get; }
 
-        IItemCategory ItemCategory { get; }
-        IManufacturer Manufacturer { get; }
+        ItemCategoryId ItemCategoryId { get; }
+        ManufacturerId ManufacturerId { get; }
         IStoreItem Predecessor { get; }
 
         IReadOnlyCollection<IStoreItemAvailability> Availabilities { get; }
 
         void Delete();
 
-        IStoreItemSection GetDefaultSectionForStore(StoreItemStoreId storeId);
+        SectionId GetDefaultSectionForStore(StoreId storeId);
 
-        bool IsAvailableInStore(StoreItemStoreId storeId);
+        bool IsAvailableInStore(StoreId storeId);
 
-        void MakePermanent(PermanentItem permanentItem, IItemCategory itemCategory, IManufacturer manufacturer,
-            IEnumerable<IStoreItemAvailability> availabilities);
+        void MakePermanent(PermanentItem permanentItem, IEnumerable<IStoreItemAvailability> availabilities);
 
-        void Modify(ItemModify itemChange, IItemCategory itemCategory, IManufacturer manufacturer,
-            IEnumerable<IStoreItemAvailability> availabilities);
+        void Modify(ItemModify itemChange, IEnumerable<IStoreItemAvailability> availabilities);
 
         void SetPredecessor(IStoreItem predecessor);
     }

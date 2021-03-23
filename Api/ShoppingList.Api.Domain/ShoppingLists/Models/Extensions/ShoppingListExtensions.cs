@@ -1,4 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -10,7 +12,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions
     public static class ShoppingListExtensions
     {
         public static ShoppingListReadModel ToReadModel(this IShoppingList model, IStore store,
-            Dictionary<ItemId, IStoreItem> storeItems)
+            Dictionary<ItemId, IStoreItem> storeItems, Dictionary<ItemCategoryId, IItemCategory> itemCategories,
+            Dictionary<ManufacturerId, IManufacturer> manufacturers)
         {
             List<ShoppingListSectionReadModel> sectionReadModels = new List<ShoppingListSectionReadModel>();
             foreach (var section in model.Sections)
@@ -26,12 +29,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions
                         storeItem.IsDeleted,
                         storeItem.Comment,
                         storeItem.IsTemporary,
-                        storeItem.Availabilities.First(av => av.StoreId.Id == store.Id).Price,
+                        storeItem.Availabilities.First(av => av.StoreId == store.Id).Price,
                         storeItem.QuantityType.ToReadModel(),
                         storeItem.QuantityInPacket,
                         storeItem.QuantityTypeInPacket.ToReadModel(),
-                        storeItem.ItemCategoryId?.ToReadModel(),
-                        storeItem.ManufacturerId?.ToReadModel(),
+                        storeItem.ItemCategoryId == null ? null : itemCategories[storeItem.ItemCategoryId].ToReadModel(),
+                        storeItem.ManufacturerId == null ? null : manufacturers[storeItem.ManufacturerId].ToReadModel(),
                         item.IsInBasket,
                         item.Quantity);
 

@@ -79,7 +79,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
             IEnumerable<IStoreItemAvailability> availabilities =
                 await GetStoreItemAvailabilities(command.ItemModify.Availabilities, cancellationToken);
             storeItem.Modify(command.ItemModify, itemCategory, manufacturer, availabilities);
-            var availableAtStores = storeItem.Availabilities.Select(av => av.Store);
+            var availableAtStores = storeItem.Availabilities.Select(av => av.StoreId);
 
             var shoppingListsWithItem = (await shoppingListRepository.FindByAsync(storeItem.Id, cancellationToken))
                 .Where(list => !availableAtStores.Any(store => store.Id == list.Store.Id.AsStoreItemStoreId()))

@@ -106,7 +106,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
                 if (updatedItem.IsAvailableInStore(list.Store.Id.AsStoreItemStoreId()))
                 {
                     var priceAtStore = updatedItem.Availabilities
-                        .First(av => av.Store.Id == list.Store.Id)
+                        .First(av => av.StoreId.Id == list.Store.Id)
                         .Price;
 
                     var section = updatedItem.GetDefaultSectionForStore(list.Store.Id.AsStoreItemStoreId());

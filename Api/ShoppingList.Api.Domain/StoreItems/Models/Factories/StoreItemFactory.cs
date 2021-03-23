@@ -12,8 +12,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
     {
         public IStoreItem Create(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            IItemCategory itemCategory, IManufacturer manufacturer, IStoreItem predecessor,
-            IEnumerable<IStoreItemAvailability> availabilities)
+            ItemCategoryId itemCategoryId, ManufacturerId manufacturerId, IStoreItem predecessor,
+            IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId temporaryId)
         {
             var item = new StoreItem(
                 id,
@@ -24,16 +24,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
                 quantityType,
                 quantityInPacket,
                 quantityTypeInPacket,
-                itemCategory,
-                manufacturer,
-                availabilities);
+                itemCategoryId,
+                manufacturerId,
+                availabilities,
+                temporaryId);
 
             item.SetPredecessor(predecessor);
             return item;
         }
 
-        public IStoreItem Create(ItemCreation itemCreation, IItemCategory itemCategory,
-            IManufacturer manufacturer, IEnumerable<IStoreItemAvailability> storeItemAvailabilities)
+        public IStoreItem Create(ItemCreation itemCreation, ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
+            IEnumerable<IStoreItemAvailability> storeItemAvailabilities)
         {
             return new StoreItem(new ItemId(0),
                 itemCreation.Name,
@@ -43,15 +44,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
                 itemCreation.QuantityType,
                 itemCreation.QuantityInPacket,
                 itemCreation.QuantityTypeInPacket,
-                itemCategory,
-                manufacturer,
-                storeItemAvailabilities);
+                itemCategoryId,
+                manufacturerId,
+                storeItemAvailabilities,
+                null);
         }
 
         public IStoreItem Create(TemporaryItemCreation model, IStoreItemAvailability storeItemAvailability)
         {
             return new StoreItem(
-                new ItemId(model.ClientSideId),
+                new ItemId(0),
                 model.Name,
                 false,
                 string.Empty,
@@ -61,10 +63,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
                 QuantityTypeInPacket.Unit,
                 null,
                 null,
-                new List<IStoreItemAvailability>() { storeItemAvailability });
+                new List<IStoreItemAvailability>() { storeItemAvailability },
+                new TemporaryItemId(model.ClientSideId));
         }
 
-        public IStoreItem Create(ItemUpdate itemUpdate, IItemCategory itemCategory, IManufacturer manufacturer,
+        public IStoreItem Create(ItemUpdate itemUpdate, ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
             IStoreItem predecessor, IEnumerable<IStoreItemAvailability> storeItemAvailabilities)
         {
             var model = new StoreItem(new ItemId(0),
@@ -75,9 +78,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
                 itemUpdate.QuantityType,
                 itemUpdate.QuantityInPacket,
                 itemUpdate.QuantityTypeInPacket,
-                itemCategory,
-                manufacturer,
-                storeItemAvailabilities);
+                itemCategoryId,
+                manufacturerId,
+                storeItemAvailabilities,
+                null);
             model.SetPredecessor(predecessor);
             return model;
         }
