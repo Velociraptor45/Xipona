@@ -14,7 +14,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions
             return new ShoppingListStoreReadModel(model.Id, model.Name);
         }
 
-        public static StoreReadModel ToActiveStoreReadModel(this IStore model,
+        public static StoreItemStoreReadModel ToStoreItemStoreReadModel(this IStore model)
+        {
+            return new StoreItemStoreReadModel(model.Id, model.Name, model.Sections.Select(s => s.ToReadModel()));
+        }
+
+        public static StoreReadModel ToStoreReadModel(this IStore model,
             IEnumerable<StoreItemReadModel> items)
         {
             return new StoreReadModel(model.Id, model.Name, items, model.Sections.Select(s => s.ToReadModel()));

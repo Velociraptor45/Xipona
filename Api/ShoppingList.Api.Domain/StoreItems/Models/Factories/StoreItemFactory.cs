@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
@@ -33,8 +34,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
             return item;
         }
 
-        public IStoreItem Create(ItemCreation itemCreation, ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
-            IEnumerable<IStoreItemAvailability> storeItemAvailabilities)
+        public IStoreItem Create(ItemCreation itemCreation)
         {
             return new StoreItem(new ItemId(0),
                 itemCreation.Name,
@@ -44,13 +44,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
                 itemCreation.QuantityType,
                 itemCreation.QuantityInPacket,
                 itemCreation.QuantityTypeInPacket,
-                itemCategoryId,
-                manufacturerId,
-                storeItemAvailabilities,
+                itemCreation.ItemCategoryId,
+                itemCreation.ManufacturerId,
+                itemCreation.Availabilities,
                 null);
         }
 
-        public IStoreItem Create(TemporaryItemCreation model, IStoreItemAvailability storeItemAvailability)
+        public IStoreItem Create(TemporaryItemCreation model)
         {
             return new StoreItem(
                 new ItemId(0),
@@ -63,25 +63,26 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
                 QuantityTypeInPacket.Unit,
                 null,
                 null,
-                new List<IStoreItemAvailability>() { storeItemAvailability },
+                model.Availability.ToMonoList(),
                 new TemporaryItemId(model.ClientSideId));
         }
 
-        public IStoreItem Create(ItemUpdate itemUpdate, ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
-            IStoreItem predecessor, IEnumerable<IStoreItemAvailability> storeItemAvailabilities)
+        public IStoreItem Create(ItemUpdate itemUpdate, IStoreItem predecessor)
         {
-            var model = new StoreItem(new ItemId(0),
+            var model = new StoreItem(
+                new ItemId(0),
                 itemUpdate.Name,
-                false,
+                isDeleted: false,
                 itemUpdate.Comment,
-                false,
+                isTemporary: false,
                 itemUpdate.QuantityType,
                 itemUpdate.QuantityInPacket,
                 itemUpdate.QuantityTypeInPacket,
-                itemCategoryId,
-                manufacturerId,
-                storeItemAvailabilities,
+                itemUpdate.ItemCategoryId,
+                itemUpdate.ManufacturerId,
+                itemUpdate.Availabilities,
                 null);
+
             model.SetPredecessor(predecessor);
             return model;
         }

@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels
     {
         private readonly IEnumerable<StoreItemAvailabilityReadModel> availabilities;
 
-        public StoreItemReadModel(StoreItemActualId id, string name, bool isDeleted, string comment, bool isTemporary,
+        public StoreItemReadModel(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityTypeReadModel quantityType, float quantityInPacket, QuantityTypeInPacketReadModel quantityTypeInPacket,
             ItemCategoryReadModel itemCategory, ManufacturerReadModel manufacturer,
             IEnumerable<StoreItemAvailabilityReadModel> availabilities)
@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels
             this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
         }
 
-        public StoreItemActualId Id { get; }
+        public ItemId Id { get; }
         public string Name { get; }
         public bool IsDeleted { get; }
         public string Comment { get; }

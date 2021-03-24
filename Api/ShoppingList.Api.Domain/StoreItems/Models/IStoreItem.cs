@@ -27,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 
         void Delete();
 
-        SectionId GetDefaultSectionForStore(StoreId storeId);
+        SectionId GetDefaultSectionIdForStore(StoreId storeId);
 
         bool IsAvailableInStore(StoreId storeId);
 

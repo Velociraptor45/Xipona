@@ -2,9 +2,13 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using System;
 using System.Linq;
@@ -24,13 +28,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain
             services.AddTransient<IStoreFactory, StoreFactory>();
             services.AddTransient<IShoppingListItemFactory, ShoppingListItemFactory>();
             services.AddTransient<IShoppingListFactory, ShoppingListFactory>();
-            services.AddTransient<IShoppingListStoreFactory, ShoppingListStoreFactory>();
             services.AddTransient<IStoreSectionFactory, StoreSectionFactory>();
 
-            services.AddTransient<IStoreItemSectionFactory, StoreItemSectionFactory>();
             services.AddTransient<IShoppingListSectionFactory, ShoppingListSectionFactory>();
 
-            services.AddTransient<IStoreItemStoreFactory, StoreItemStoreFactory>();
+            services.AddTransient<IAvailabilityValidationService, AvailabilityValidationService>();
+            services.AddTransient<IManufacturerValidationService, ManufacturerValidationService>();
+            services.AddTransient<IItemCategoryValidationService, ItemCategoryValidationService>();
+
+            services.AddTransient<IShoppingListUpdateService, ShoppingListUpdateService>();
         }
 
         public static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)

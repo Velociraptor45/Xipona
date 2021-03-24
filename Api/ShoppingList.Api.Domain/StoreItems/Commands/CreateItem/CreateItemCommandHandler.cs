@@ -50,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
             var availabilities = command.ItemCreation.Availabilities;
             await availabilityValidationService.Validate(availabilities, cancellationToken);
 
-            var storeItem = storeItemFactory.Create(command.ItemCreation, itemCategoryId, manufacturerId, availabilities);
+            var storeItem = storeItemFactory.Create(command.ItemCreation);
 
             await itemRepository.StoreAsync(storeItem, cancellationToken);
 

@@ -90,7 +90,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             this.availabilities = availabilities.ToList();
         }
 
-        public SectionId GetDefaultSectionForStore(StoreId storeId)
+        public SectionId GetDefaultSectionIdForStore(StoreId storeId)
         {
             var availability = availabilities.FirstOrDefault(av => av.StoreId == storeId);
             if (availability == null)

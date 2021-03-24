@@ -37,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return activeStores.Select(store => store.ToActiveStoreReadModel(itemPerStoreDict[new ShoppingListStoreId(store.Id.Value)]));
+            return activeStores.Select(store => store.ToStoreReadModel(itemPerStoreDict[new ShoppingListStoreId(store.Id.Value)]));
         }
     }
 }
