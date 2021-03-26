@@ -25,7 +25,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions
                 storeAvailability.Price,
                 manufacturer?.ToReadModel(),
                 itemCategory?.ToReadModel(),
-                defaultSection.ToItemSectionReadModel());
+                defaultSection.ToReadModel());
         }
 
         public static ItemFilterResultReadModel ToItemFilterResultReadModel(this IStoreItem model)

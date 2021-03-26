@@ -9,7 +9,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Shopp
     {
         public ShoppingListStoreContract ToContract(ShoppingListStoreReadModel source)
         {
-            return new ShoppingListStoreContract(source.Id.Value, source.Name, source.IsDeleted);
+            return new ShoppingListStoreContract(source.Id.Value, source.Name);
         }
     }
 }

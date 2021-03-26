@@ -5,7 +5,6 @@ using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
@@ -14,12 +13,12 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreIt
 {
     public class ItemUpdateConverter : IToDomainConverter<UpdateItemContract, ItemUpdate>
     {
-        private readonly IToDomainConverter<ItemAvailabilityContract, ShortAvailability> shortAvailabilityConverter;
+        private readonly IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> storeItemAvailabilityConverter;
 
         public ItemUpdateConverter(
-            IToDomainConverter<ItemAvailabilityContract, ShortAvailability> shortAvailabilityConverter)
+            IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> storeItemAvailabilityConverter)
         {
-            this.shortAvailabilityConverter = shortAvailabilityConverter;
+            this.storeItemAvailabilityConverter = storeItemAvailabilityConverter;
         }
 
         public ItemUpdate ToDomain(UpdateItemContract source)
@@ -38,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreIt
                 source.ManufacturerId.HasValue ?
                     new ManufacturerId(source.ManufacturerId.Value) :
                     null,
-                shortAvailabilityConverter.ToDomain(source.Availabilities));
+                storeItemAvailabilityConverter.ToDomain(source.Availabilities));
         }
     }
 }

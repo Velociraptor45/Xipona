@@ -1,8 +1,10 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
 using System;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.StoreItems
@@ -10,10 +12,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Store
     public class ItemSearchContractConverter :
         IToContractConverter<ItemSearchReadModel, ItemSearchContract>
     {
-        private readonly IToContractConverter<StoreItemSectionReadModel, StoreItemSectionContract> storeItemSectionContractConverter;
+        private readonly IToContractConverter<StoreSectionReadModel, StoreSectionContract> storeItemSectionContractConverter;
 
         public ItemSearchContractConverter(
-            IToContractConverter<StoreItemSectionReadModel, StoreItemSectionContract> storeItemSectionContractConverter)
+            IToContractConverter<StoreSectionReadModel, StoreSectionContract> storeItemSectionContractConverter)
         {
             this.storeItemSectionContractConverter = storeItemSectionContractConverter;
         }
