@@ -20,23 +20,22 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
             mock = fixture.Freeze<Mock<IShoppingListItemFactory>>();
         }
 
-        public void SetupCreate(IStoreItem storeItem, float price, bool isInBasket, float quantity,
+        public void SetupCreate(ItemId itemId, float price, bool isInBasket, float quantity,
             IShoppingListItem returnValue)
         {
             mock
-                .Setup(instance => instance.Create(It.Is<IStoreItem>(i => i.Id == storeItem.Id),
-                    It.Is<float>(p => p == price),
+                .Setup(instance => instance.Create(
+                    It.Is<ItemId>(id => id == itemId),
                     It.Is<bool>(b => b == isInBasket),
                     It.Is<float>(q => q == quantity)))
                 .Returns(returnValue);
         }
 
-        public void VerifyCreateOnce(IStoreItem storeItem, float price, bool isInBasket, float quantity)
+        public void VerifyCreateOnce(ItemId itemId, float price, bool isInBasket, float quantity)
         {
             mock
                 .Verify(i => i.Create(
-                        It.Is<IStoreItem>(item => item == storeItem),
-                        It.Is<float>(p => p == price),
+                        It.Is<ItemId>(id => id == itemId),
                         It.Is<bool>(inBasket => inBasket == isInBasket),
                         It.Is<float>(q => q == quantity)),
                     Times.Once);

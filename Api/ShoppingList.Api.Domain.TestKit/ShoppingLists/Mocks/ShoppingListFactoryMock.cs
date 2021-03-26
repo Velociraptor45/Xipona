@@ -2,9 +2,7 @@
 using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
 {
@@ -22,13 +20,10 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
             mock = fixture.Freeze<Mock<IShoppingListFactory>>();
         }
 
-        public void SetupCreate(IShoppingListStore store, IEnumerable<IShoppingListSection> sections,
-            DateTime? completionDate, IShoppingList returnValue)
+        public void SetupCreateNew(IStore store, IShoppingList returnValue)
         {
             mock.Setup(i => i.CreateNew(
-                    It.Is<IShoppingListStore>(s => s == store),
-                    It.Is<IEnumerable<IShoppingListSection>>(sec => sec.SequenceEqual(sections)),
-                    It.Is<DateTime?>(date => date == completionDate)))
+                    It.Is<IStore>(s => s == store)))
                 .Returns(returnValue);
         }
     }

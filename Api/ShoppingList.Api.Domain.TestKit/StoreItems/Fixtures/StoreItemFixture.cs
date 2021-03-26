@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,13 +13,13 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
     {
         private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
         private readonly CommonFixture commonFixture;
-        private readonly StoreItemStoreFixture storeItemStoreFixture;
+        private readonly StoreFixture storeFixture;
 
         public StoreItemFixture(StoreItemAvailabilityFixture storeItemAvailabilityFixture, CommonFixture commonFixture)
         {
             this.storeItemAvailabilityFixture = storeItemAvailabilityFixture;
             this.commonFixture = commonFixture;
-            storeItemStoreFixture = new StoreItemStoreFixture(commonFixture);
+            storeFixture = new StoreFixture(commonFixture);
         }
 
         public IStoreItem Create(StoreItemDefinition definition)
@@ -54,10 +55,10 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
 
         public IStoreItem CreateValidFor(IShoppingList shoppingList)
         {
-            var storeDefinition = StoreItemStoreDefinition.FromId(shoppingList.Store.Id.Value);
-            var store = storeItemStoreFixture.Create(storeDefinition);
+            var storeDefinition = StoreDefinition.FromId(shoppingList.StoreId);
+            var store = storeFixture.Create(storeDefinition);
 
-            var availabilities = storeItemAvailabilityFixture.CreateManyValidFor(store, 4);
+            var availabilities = storeItemAvailabilityFixture.CreateManyValidWith(store, 4);
             var definition = new StoreItemDefinition
             {
                 Availabilities = availabilities
@@ -70,7 +71,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
         {
             var existingIds = definitions
                 .Where(def => def.Id != null)
-                .Select(d => d.Id.Actual.Value); // todo implement this for offline ids
+                .Select(d => d.Id.Value);
             var newIdCount = definitions.ToList().Count - existingIds.ToList().Count;
             var newIds = commonFixture.NextUniqueInts(newIdCount, exclude: existingIds).ToList();
 

@@ -3,6 +3,7 @@ using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,12 +44,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
                 .ReturnsAsync(returnValue);
         }
 
-        public void SetupFindActiveByAsync(ShoppingListStoreId storeId,
-            IShoppingList returnValue)
+        public void SetupFindActiveByAsync(StoreId storeId, IShoppingList returnValue)
         {
             mock
                 .Setup(i => i.FindActiveByAsync(
-                    It.Is<ShoppingListStoreId>(id => id == storeId),
+                    It.Is<StoreId>(id => id == storeId),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(returnValue));
         }

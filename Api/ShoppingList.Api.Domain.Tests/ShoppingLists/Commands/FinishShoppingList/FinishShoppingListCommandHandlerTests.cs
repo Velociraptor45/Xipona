@@ -104,7 +104,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                listMock.VerifySetCompletionDateOnce(command.CompletionDate);
+                listMock.VerifyFinishOnce(command.CompletionDate);
                 listMock.VerifyGetSectionsWithItemsNotInBasketOnce();
                 listMock.VerifyRemoveAllItemsNotInBasketOnce();
                 transactionGeneratorMock.VerifyGenerateAsyncOnce();

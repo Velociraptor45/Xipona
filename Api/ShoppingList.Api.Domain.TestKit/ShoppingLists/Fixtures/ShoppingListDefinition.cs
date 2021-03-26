@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System;
 using System.Collections.Generic;
 
@@ -9,7 +10,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
         private DateTime? completionDate;
 
         public ShoppingListId Id { get; set; }
-        public IShoppingListStore Store { get; set; }
+        public StoreId StoreId { get; set; }
         public IEnumerable<IShoppingListSection> Sections { get; set; }
 
         public DateTime? CompletionDate
@@ -29,7 +30,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             return new ShoppingListDefinition
             {
                 Id = Id,
-                Store = Store,
+                StoreId = StoreId,
                 Sections = Sections,
                 CompletionDate = CompletionDate
             };

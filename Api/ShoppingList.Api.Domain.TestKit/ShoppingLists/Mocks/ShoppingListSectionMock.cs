@@ -1,5 +1,6 @@
 ﻿using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System.Collections.Generic;
 
@@ -10,10 +11,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
         public ShoppingListSectionMock(IShoppingListSection section)
         {
             SetupId(section.Id);
-            SetupName(section.Name);
-            SetupSortingIndex(section.SortingIndex);
             SetupItems(section.Items);
-            SetupIsDefaultSection(section.IsDefaultSection);
         }
 
         public void SetupId(SectionId returnValue)
@@ -22,27 +20,9 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
                 .Returns(returnValue);
         }
 
-        public void SetupName(string returnValue)
-        {
-            Setup(i => i.Name)
-                .Returns(returnValue);
-        }
-
-        public void SetupSortingIndex(int returnValue)
-        {
-            Setup(i => i.SortingIndex)
-                .Returns(returnValue);
-        }
-
         public void SetupItems(IReadOnlyCollection<IShoppingListItem> returnValue)
         {
             Setup(i => i.Items)
-                .Returns(returnValue);
-        }
-
-        public void SetupIsDefaultSection(bool returnValue)
-        {
-            Setup(i => i.IsDefaultSection)
                 .Returns(returnValue);
         }
 

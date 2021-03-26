@@ -1,9 +1,9 @@
 ﻿using AutoFixture;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Fixtures;
@@ -51,26 +51,10 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
             if (definition.Id != null)
                 fixture.ConstructorArgumentFor<ShoppingListItem, ItemId>("id", definition.Id);
-            if (definition.Name != null)
-                fixture.ConstructorArgumentFor<ShoppingListItem, string>("name", definition.Name);
-            if (definition.IsDeleted.HasValue)
-                fixture.ConstructorArgumentFor<ShoppingListItem, bool>("isDeleted", definition.IsDeleted.Value);
-            if (definition.Comment != null)
-                fixture.ConstructorArgumentFor<ShoppingListItem, string>("comment", definition.Comment);
-            if (definition.IsTemporary.HasValue)
-                fixture.ConstructorArgumentFor<ShoppingListItem, bool>("isTemporary", definition.IsTemporary.Value);
-            if (definition.PricePerQuantity.HasValue)
-                fixture.ConstructorArgumentFor<ShoppingListItem, float>("pricePerQuantity", definition.PricePerQuantity.Value);
-            if (definition.QuantityType.HasValue)
-                fixture.ConstructorArgumentFor<ShoppingListItem, QuantityType>("quantityType", definition.QuantityType.Value);
-            if (definition.QuantityInPacket.HasValue)
-                fixture.ConstructorArgumentFor<ShoppingListItem, float>("quantityInPacket", definition.QuantityInPacket.Value);
-            if (definition.QuantityTypeInPacket.HasValue)
-                fixture.ConstructorArgumentFor<ShoppingListItem, QuantityTypeInPacket>("quantityTypeInPacket", definition.QuantityTypeInPacket.Value);
-            if (definition.ItemCategory != null)
-                fixture.ConstructorArgumentFor<ShoppingListItem, IItemCategory>("itemCategory", definition.ItemCategory);
-            if (definition.Manufacturer != null)
-                fixture.ConstructorArgumentFor<ShoppingListItem, IManufacturer>("manufacturer", definition.Manufacturer);
+            if (definition.ItemCategoryId != null)
+                fixture.ConstructorArgumentFor<ShoppingListItem, ItemCategoryId>("itemCategory", definition.ItemCategoryId);
+            if (definition.ManufacturerId != null)
+                fixture.ConstructorArgumentFor<ShoppingListItem, ManufacturerId>("manufacturer", definition.ManufacturerId);
             if (definition.IsInBasket.HasValue)
                 fixture.ConstructorArgumentFor<ShoppingListItem, bool>("isInBasket", definition.IsInBasket.Value);
             if (definition.Quantity.HasValue)
@@ -87,23 +71,14 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
         public IShoppingListItem CreateUnique(IShoppingList shoppingList)
         {
-            var usedItemIds = shoppingList.Items.Select(i => i.Id.Actual.Value);
+            var usedItemIds = shoppingList.Items.Select(i => i.Id.Value);
             var itemId = commonFixture.NextInt(exclude: usedItemIds);
             return Create(itemId);
         }
 
         public IShoppingListItem CreateValid(ShoppingListItemDefinition baseDefinition)
         {
-            baseDefinition.IsDeleted ??= false;
-
-            if (baseDefinition.IsTemporary.HasValue)
-            {
-                if (baseDefinition.IsTemporary.Value)
-                    EnrichAsTemporaryItem(baseDefinition);
-                else
-                    EnrichAsPermanentItem(baseDefinition);
-            }
-            else if (baseDefinition.ItemCategory != null)
+            if (baseDefinition.ItemCategoryId != null)
             {
                 EnrichAsPermanentItem(baseDefinition);
             }
@@ -115,9 +90,6 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             {
                 EnrichAsTemporaryItem(baseDefinition);
             }
-
-            baseDefinition.QuantityType ??= commonFixture.ChooseRandom<QuantityType>();
-            baseDefinition.QuantityTypeInPacket ??= commonFixture.ChooseRandom<QuantityTypeInPacket>();
 
             return Create(baseDefinition);
         }
@@ -151,8 +123,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
         {
             var definitionsList = definitions.ToList();
             IEnumerable<int> existingIds = definitionsList
-                .Where(d => d.Id != null && d.Id.IsActualId)
-                .Select(d => d.Id.Actual.Value);
+                .Select(d => d.Id.Value);
             List<int> uniqueIds = commonFixture
                 .NextUniqueInts(definitionsList.Count, existingIds)
                 .ToList();
@@ -173,16 +144,14 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
         private void EnrichAsTemporaryItem(ShoppingListItemDefinition definition)
         {
-            definition.IsTemporary = true;
-            definition.Manufacturer = null;
-            definition.ItemCategory = null;
+            definition.ManufacturerId = null;
+            definition.ItemCategoryId = null;
         }
 
         private void EnrichAsPermanentItem(ShoppingListItemDefinition definition)
         {
-            definition.IsTemporary = true;
-            definition.Manufacturer ??= manufacturerFixture.Create();
-            definition.ItemCategory ??= itemCategoryFixture.GetItemCategory();
+            definition.ManufacturerId ??= new ManufacturerId(commonFixture.NextInt());
+            definition.ItemCategoryId ??= new ItemCategoryId(commonFixture.NextInt());
         }
     }
 }
