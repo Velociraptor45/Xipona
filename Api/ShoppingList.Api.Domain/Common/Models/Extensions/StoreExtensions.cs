@@ -2,7 +2,6 @@
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions
@@ -19,10 +18,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions
             return new StoreItemStoreReadModel(model.Id, model.Name, model.Sections.Select(s => s.ToReadModel()));
         }
 
-        public static StoreReadModel ToStoreReadModel(this IStore model,
-            IEnumerable<StoreItemReadModel> items)
+        public static StoreReadModel ToStoreReadModel(this IStore model, int itemCount)
         {
-            return new StoreReadModel(model.Id, model.Name, items, model.Sections.Select(s => s.ToReadModel()));
+            return new StoreReadModel(model.Id, model.Name, itemCount, model.Sections.Select(s => s.ToReadModel()));
         }
     }
 }

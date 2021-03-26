@@ -9,6 +9,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories
         IShoppingList Create(ShoppingListId id, StoreId storeId, DateTime? completionDate,
             IEnumerable<IShoppingListSection> sections);
 
-        IShoppingList CreateNew(StoreId storeId, IEnumerable<IShoppingListSection> sections);
+        IShoppingList CreateNew(IStore store);
     }
 }

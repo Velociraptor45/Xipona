@@ -23,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Store
             return new ActiveStoreContract(
                 source.Id.Value,
                 source.Name,
-                source.Items.Count,
+                source.ItemCount,
                 storeSectionContractConverter.ToContract(source.Sections));
         }
     }

@@ -12,6 +12,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons
 
         public string Message { get; }
 
-        public ErrorReasonCode ErrorCode => ErrorReasonCode.SectionNotPartOfStore;
+        public ErrorReasonCode ErrorCode => ErrorReasonCode.SectionInStoreNotFound;
     }
 }

@@ -1,22 +1,10 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using StoreModels = ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
 {
     public class StoreNotFoundReason : IReason
     {
-        public StoreNotFoundReason(ShoppingListStoreId id)
-        {
-            Message = $"Store {id.Value} not found.";
-        }
-
-        public StoreNotFoundReason(StoreItemStoreId id)
-        {
-            Message = $"Store {id.Value} not found.";
-        }
-
-        public StoreNotFoundReason(StoreModels.StoreId id)
+        public StoreNotFoundReason(StoreId id)
         {
             Message = $"Store {id.Value} not found.";
         }
