@@ -16,18 +16,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
     {
         private readonly IStoreItemFactory storeItemFactory;
         private readonly IToDomainConverter<AvailableAt, IStoreItemAvailability> storeItemAvailabilityConverter;
-        private readonly IToDomainConverter<Entities.Manufacturer, IManufacturer> manufacturerConverter;
-        private readonly IToDomainConverter<Entities.ItemCategory, IItemCategory> itemCategoryConverter;
 
         public StoreItemConverter(IStoreItemFactory storeItemFactory,
-            IToDomainConverter<AvailableAt, IStoreItemAvailability> storeItemAvailabilityConverter,
-            IToDomainConverter<Entities.Manufacturer, IManufacturer> manufacturerConverter,
-            IToDomainConverter<Entities.ItemCategory, IItemCategory> itemCategoryConverter)
+            IToDomainConverter<AvailableAt, IStoreItemAvailability> storeItemAvailabilityConverter)
         {
             this.storeItemFactory = storeItemFactory;
             this.storeItemAvailabilityConverter = storeItemAvailabilityConverter;
-            this.manufacturerConverter = manufacturerConverter;
-            this.itemCategoryConverter = itemCategoryConverter;
         }
 
         public IStoreItem ToDomain(Item source)
@@ -35,28 +29,18 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            IItemCategory itemCategory = null;
-            if (source.ItemCategoryId != null)
-            {
-                itemCategory = itemCategoryConverter.ToDomain(source.ItemCategory);
-            }
-
-            IManufacturer manufacturer = null;
-            if (source.ManufacturerId != null)
-            {
-                manufacturer = manufacturerConverter.ToDomain(source.Manufacturer);
-            }
-
             IStoreItem predecessor = null;
             if (source.PredecessorId != null)
             {
-                var converter = new StoreItemConverter(storeItemFactory, storeItemAvailabilityConverter,
-                    manufacturerConverter, itemCategoryConverter);
+                var converter = new StoreItemConverter(storeItemFactory, storeItemAvailabilityConverter);
                 predecessor = converter.ToDomain(source.Predecessor);
             }
 
             List<IStoreItemAvailability> availabilities = storeItemAvailabilityConverter.ToDomain(source.AvailableAt)
                 .ToList();
+            var itemCategoryId = source.ItemCategoryId.HasValue ? new ItemCategoryId(source.ItemCategoryId.Value) : null;
+            var manufacturerId = source.ManufacturerId.HasValue ? new ManufacturerId(source.ManufacturerId.Value) : null;
+            var temporaryId = source.CreatedFrom.HasValue ? new TemporaryItemId(source.CreatedFrom.Value) : null;
 
             return storeItemFactory.Create(
                 new ItemId(source.Id),
@@ -67,10 +51,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
                 source.QuantityType.ToEnum<QuantityType>(),
                 source.QuantityInPacket,
                 source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),
-                itemCategory,
-                manufacturer,
+                itemCategoryId,
+                manufacturerId,
                 predecessor,
-                availabilities);
+                availabilities,
+                temporaryId);
         }
     }
 }

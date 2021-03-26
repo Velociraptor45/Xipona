@@ -267,9 +267,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
         {
             return await dbContext.Items
                 .Include(item => item.AvailableAt)
-                .FirstOrDefaultAsync(i => id.IsActualId ?
-                    i.Id == id.Actual.Value :
-                    i.CreatedFrom == id.Offline.Value);
+                .FirstOrDefaultAsync(i => i.Id == id.Value);
         }
 
         private void UpdateOrAddAvailabilities(Item existing, Item updated)

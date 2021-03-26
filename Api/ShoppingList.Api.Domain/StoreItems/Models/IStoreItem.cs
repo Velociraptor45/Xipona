@@ -24,6 +24,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         IStoreItem Predecessor { get; }
 
         IReadOnlyCollection<IStoreItemAvailability> Availabilities { get; }
+        TemporaryItemId TemporaryId { get; }
 
         void Delete();
 
