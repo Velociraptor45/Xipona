@@ -10,10 +10,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemIn
         public PutItemInBasketCommand(ShoppingListId shoppingListId, OfflineTolerantItemId itemId)
         {
             ShoppingListId = shoppingListId ?? throw new ArgumentNullException(nameof(shoppingListId));
-            ItemId = itemId ?? throw new ArgumentNullException(nameof(itemId));
+            OfflineTolerantItemId = itemId ?? throw new ArgumentNullException(nameof(itemId));
         }
 
         public ShoppingListId ShoppingListId { get; }
-        public OfflineTolerantItemId ItemId { get; }
+        public OfflineTolerantItemId OfflineTolerantItemId { get; }
     }
 }

@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
@@ -92,7 +93,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
                 result.Should().BeTrue();
                 listMock.Verify(
                     i => i.ChangeItemQuantity(
-                        It.Is<ItemId>(id => id == command.OfflineTolerantItemId),
+                        It.Is<ItemId>(id => id == new ItemId(command.OfflineTolerantItemId.ActualId.Value)),
                         It.Is<float>(q => q == command.Quantity)),
                     Times.Once);
                 shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);

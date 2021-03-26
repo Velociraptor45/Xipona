@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromShoppingList;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
@@ -89,7 +90,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             var handler = fixture.Create<RemoveItemFromShoppingListCommandHandler>();
 
             shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
-            itemRepositoryMock.SetupFindByAsync(command.ItemId.AsStoreItemId(), null);
+            itemRepositoryMock.SetupFindByAsync(new ItemId(command.OfflineTolerantItemId.ActualId.Value), null);
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(command, default);
@@ -107,7 +108,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         [InlineData(false, false)]
         [InlineData(true, true)]
         [InlineData(false, true)]
-        public async Task HandleAsync_WithValidId_ShouldRemoveItemFromBasket(bool isActualItemId, bool isTemporaryItem)
+        public async Task HandleAsync_WithValidActualId_ShouldRemoveItemFromBasket(bool isActualItemId, bool isTemporaryItem)
         {
             // Arrange
             var fixture = commonFixture.GetNewFixture();
@@ -118,17 +119,21 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             Mock<IStoreItem> itemMock = new Mock<IStoreItem>();
 
             //// test actual and offline id
-            ItemId listItemId = isActualItemId ?
-                new ItemId(commonFixture.NextInt()) :
-                new ShoppingListItemId(Guid.NewGuid());
+            OfflineTolerantItemId offlineItemId = isActualItemId ?
+                new OfflineTolerantItemId(commonFixture.NextInt()) :
+                new OfflineTolerantItemId(Guid.NewGuid());
 
-            fixture.ConstructorArgumentFor<RemoveItemFromShoppingListCommand, Domain.ShoppingLists.Models.ItemId>(
-                    "shoppingListItemId", (Domain.ShoppingLists.Models.ItemId)listItemId);
+            fixture.ConstructorArgumentFor<RemoveItemFromShoppingListCommand, OfflineTolerantItemId>(
+                    "shoppingListItemId", offlineItemId);
             var command = fixture.Create<RemoveItemFromShoppingListCommand>();
             var handler = fixture.Create<RemoveItemFromShoppingListCommandHandler>();
 
             shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
-            itemRepositoryMock.SetupFindByAsync(command.ItemId.AsStoreItemId(), itemMock.Object);
+
+            if (isActualItemId)
+                itemRepositoryMock.SetupFindByAsync(new ItemId(command.OfflineTolerantItemId.ActualId.Value), itemMock.Object);
+            else
+                itemRepositoryMock.SetupFindByAsync(new TemporaryItemId(command.OfflineTolerantItemId.OfflineId.Value), itemMock.Object);
 
             itemMock
                 .Setup(instance => instance.IsTemporary)
@@ -144,7 +149,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
 
                 listMock.Verify(
                     i => i.RemoveItem(
-                        It.Is<Domain.ShoppingLists.Models.ItemId>(id => id == command.ItemId)),
+                        It.Is<ItemId>(id => id == itemMock.Object.Id)),
                     Times.Once);
 
                 if (isTemporaryItem)

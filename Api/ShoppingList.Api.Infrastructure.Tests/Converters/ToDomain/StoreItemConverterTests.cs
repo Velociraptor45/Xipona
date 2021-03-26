@@ -33,19 +33,17 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
 
         public static Item GetSource(IStoreItem destination, CommonFixture commonFixture)
         {
-            var itemCategory = ItemCategoryConverterTests.GetSource(destination.ItemCategoryId);
-            var manufacturer = ManufacturerConverterTests.GetSource(destination.ManufacturerId);
             Item predecessor = null;
             if (destination.Predecessor != null)
                 predecessor = GetSource(destination.Predecessor, commonFixture);
 
             var availabilities = destination.Availabilities
-                .Select(av => StoreItemAvailabilityConverterTests.GetSource(av, commonFixture))
+                .Select(av => StoreItemAvailabilityConverterTests.GetSource(av))
                 .ToList();
 
             return new Item
             {
-                Id = destination.Id.Actual.Value,
+                Id = destination.Id.Value,
                 Name = destination.Name,
                 Deleted = destination.IsDeleted,
                 Comment = destination.Comment,
@@ -53,10 +51,8 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
                 QuantityType = destination.QuantityType.ToInt(),
                 QuantityInPacket = destination.QuantityInPacket,
                 QuantityTypeInPacket = destination.QuantityTypeInPacket.ToInt(),
-                ItemCategoryId = itemCategory.Id,
-                ItemCategory = itemCategory,
-                ManufacturerId = manufacturer.Id,
-                Manufacturer = manufacturer,
+                ItemCategoryId = destination.ItemCategoryId?.Value,
+                ManufacturerId = destination.ManufacturerId?.Value,
                 PredecessorId = predecessor?.Id,
                 Predecessor = predecessor,
                 AvailableAt = availabilities

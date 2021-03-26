@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemInBasket;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
@@ -84,8 +85,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             Mock<IShoppingList> listMock = new Mock<IShoppingList>();
             ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
 
-            fixture.ConstructorArgumentFor<PutItemInBasketCommand, Domain.ShoppingLists.Models.ItemId>(
-                "itemId", new Domain.ShoppingLists.Models.ItemId(commonFixture.NextInt()));
+            fixture.ConstructorArgumentFor<PutItemInBasketCommand, ItemId>(
+                "itemId", new ItemId(commonFixture.NextInt()));
             var command = fixture.Create<PutItemInBasketCommand>();
             var handler = fixture.Create<PutItemInBasketCommandHandler>();
 
@@ -100,7 +101,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
                 result.Should().BeTrue();
                 listMock.Verify(
                     i => i.PutItemInBasket(
-                        It.Is<Domain.ShoppingLists.Models.ItemId>(id => id == command.ItemId && id.IsActualId)),
+                        It.Is<ItemId>(id => id == new ItemId(command.OfflineTolerantItemId.ActualId.Value))),
                     Times.Once);
                 shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
             }
@@ -116,17 +117,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
 
             Mock<IShoppingList> listMock = new Mock<IShoppingList>();
 
-            Domain.StoreItems.Models.ItemId actualItemId = new Domain.StoreItems.Models.ItemId(commonFixture.NextInt());
+            ItemId actualItemId = new ItemId(commonFixture.NextInt());
             var storeItemBaseDefinition = StoreItemDefinition.FromId(actualItemId);
             IStoreItem storeItem = storeItemFixture.CreateValid(storeItemBaseDefinition);
 
-            var listItemIdOffline = new ShoppingListItemId(Guid.NewGuid());
-            fixture.ConstructorArgumentFor<PutItemInBasketCommand, Domain.ShoppingLists.Models.ItemId>("itemId", (Domain.ShoppingLists.Models.ItemId)listItemIdOffline);
+            var offlineTolerantItemId = new OfflineTolerantItemId(Guid.NewGuid());
+            var temporaryItemId = new TemporaryItemId(offlineTolerantItemId.OfflineId.Value);
+            fixture.ConstructorArgumentFor<PutItemInBasketCommand, OfflineTolerantItemId>("itemId", offlineTolerantItemId);
             var command = fixture.Create<PutItemInBasketCommand>();
             var handler = fixture.Create<PutItemInBasketCommandHandler>();
 
             shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
-            itemRepositoryMock.SetupFindByAsync(new StoreItemId(listItemIdOffline.Offline.Value), storeItem);
+            itemRepositoryMock.SetupFindByAsync(temporaryItemId, storeItem);
 
             // Act
             bool result = await handler.HandleAsync(command, default);
@@ -135,10 +137,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                itemRepositoryMock.VerifyFindByAsync(new StoreItemId(listItemIdOffline.Offline.Value));
+                itemRepositoryMock.VerifyFindByAsync(temporaryItemId);
                 listMock.Verify(
                     i => i.PutItemInBasket(
-                        It.Is<Domain.ShoppingLists.Models.ItemId>(id => id.Actual.Value == actualItemId.Actual.Value && id.IsActualId)),
+                        It.Is<ItemId>(id => id.Value == actualItemId.Value)),
                     Times.Once);
                 shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
             }

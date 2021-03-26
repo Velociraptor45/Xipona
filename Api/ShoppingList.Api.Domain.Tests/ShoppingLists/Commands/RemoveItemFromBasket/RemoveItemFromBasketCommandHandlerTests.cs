@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
 using System;
@@ -85,7 +86,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
                 result.Should().BeTrue();
                 shoppingListMock.Verify(
                     i => i.RemoveFromBasket(
-                        It.Is<ItemId>(id => id == command.ItemId)),
+                        It.Is<ItemId>(id => id == new ItemId(command.OfflineTolerantItemId.ActualId.Value))),
                     Times.Once);
                 shoppingListRepositoryMock.VerifyStoreAsyncOnce(shoppingListMock.Object);
             }

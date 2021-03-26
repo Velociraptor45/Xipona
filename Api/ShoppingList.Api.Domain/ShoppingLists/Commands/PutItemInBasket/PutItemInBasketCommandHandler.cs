@@ -32,13 +32,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemIn
                 throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
 
             ItemId itemId;
-            if (command.ItemId.IsActualId)
+            if (command.OfflineTolerantItemId.IsActualId)
             {
-                itemId = new ItemId(command.ItemId.ActualId.Value);
+                itemId = new ItemId(command.OfflineTolerantItemId.ActualId.Value);
             }
             else
             {
-                itemId = (await itemRepository.FindByAsync(new TemporaryItemId(command.ItemId.OfflineId.Value), cancellationToken))
+                itemId = (await itemRepository.FindByAsync(new TemporaryItemId(command.OfflineTolerantItemId.OfflineId.Value), cancellationToken))
                     .Id;
             }
 

@@ -28,7 +28,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
         {
             return new Item
             {
-                Id = source.Id.Actual?.Value ?? 0,
+                Id = source.Id?.Value ?? 0,
                 Name = source.Name,
                 Deleted = source.IsDeleted,
                 Comment = source.Comment,
@@ -36,19 +36,19 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
                 QuantityType = source.QuantityType.ToInt(),
                 QuantityInPacket = source.QuantityInPacket,
                 QuantityTypeInPacket = source.QuantityTypeInPacket.ToInt(),
-                ItemCategoryId = source.ItemCategoryId?.Id.Value,
-                ManufacturerId = source.ManufacturerId?.Id.Value,
-                CreatedFrom = source.Id.Offline?.Value,
+                ItemCategoryId = source.ItemCategoryId?.Value,
+                ManufacturerId = source.ManufacturerId?.Value,
+                CreatedFrom = source.TemporaryId?.Value,
                 AvailableAt = source.Availabilities
                     .Select(av =>
                         new AvailableAt()
                         {
-                            StoreId = av.StoreId.Id.Value,
+                            StoreId = av.StoreId.Value,
                             Price = av.Price,
-                            ItemId = source.Id.Actual?.Value ?? 0,
-                            DefaultSectionId = av.DefaultSectionId.Id.Value
+                            ItemId = source.Id?.Value ?? 0,
+                            DefaultSectionId = av.DefaultSectionId.Value
                         }).ToList(),
-                PredecessorId = source.Predecessor?.Id.Actual.Value
+                PredecessorId = source.Predecessor?.Id.Value
             };
         }
 

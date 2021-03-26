@@ -9,10 +9,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
         public RemoveItemFromShoppingListCommand(ShoppingListId shoppingListId, OfflineTolerantItemId itemId)
         {
             ShoppingListId = shoppingListId;
-            ItemId = itemId;
+            OfflineTolerantItemId = itemId;
         }
 
         public ShoppingListId ShoppingListId { get; }
-        public OfflineTolerantItemId ItemId { get; }
+        public OfflineTolerantItemId OfflineTolerantItemId { get; }
     }
 }

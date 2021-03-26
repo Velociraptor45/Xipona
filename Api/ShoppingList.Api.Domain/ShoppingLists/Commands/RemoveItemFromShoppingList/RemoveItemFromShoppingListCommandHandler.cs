@@ -36,9 +36,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
                 throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
 
             IStoreItem item;
-            if (command.ItemId.IsActualId)
+            if (command.OfflineTolerantItemId.IsActualId)
             {
-                ItemId itemId = new ItemId(command.ItemId.ActualId.Value);
+                ItemId itemId = new ItemId(command.OfflineTolerantItemId.ActualId.Value);
 
                 item = await itemRepository.FindByAsync(itemId, cancellationToken);
                 if (item == null)
@@ -46,7 +46,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
             }
             else
             {
-                TemporaryItemId itemId = new TemporaryItemId(command.ItemId.OfflineId.Value);
+                TemporaryItemId itemId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId.Value);
 
                 item = await itemRepository.FindByAsync(itemId, cancellationToken);
                 if (item == null)

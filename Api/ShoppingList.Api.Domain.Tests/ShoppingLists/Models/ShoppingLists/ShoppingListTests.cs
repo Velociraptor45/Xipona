@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Fixtures;
 using ShoppingList.Api.Domain.TestKit.Shared;
@@ -61,34 +62,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         [Fact]
-        public void AddItem_WithItemWithOfflineId_ShouldThrowDomainException()
-        {
-            // Arrange
-            var list = shoppingListFixture.CreateValid();
-            var listItem = shoppingListItemFixture.Create(ShoppingListItemDefinition.FromId(Guid.NewGuid()));
-            var sectionId = commonFixture.GetNewFixture().Create<SectionId>();
-
-            // Act
-            Action action = () => list.AddItem(listItem, sectionId);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                action.Should().Throw<DomainException>()
-                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ActualIdRequired);
-            }
-        }
-
-        [Fact]
         public void AddItem_WithItemIdIsAlreadyOnList_ShouldThrowDomainException()
         {
             // Arrange
             var shoppingList = shoppingListFixture.CreateValid();
             int collidingItemIndex = commonFixture.NextInt(0, shoppingList.Items.Count);
-            int collidingItemId = shoppingList.Items.ElementAt(collidingItemIndex).Id.Actual.Value;
+            int collidingItemId = shoppingList.Items.ElementAt(collidingItemIndex).Id.Value;
 
-            var collidingItem = shoppingListItemFixture.Create(
-                new ItemId(collidingItemId));
+            var collidingItem = shoppingListItemFixture.Create(new ItemId(collidingItemId));
             var sectionId = commonFixture.GetNewFixture().Create<SectionId>();
 
             // Act
@@ -140,7 +121,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             using (new AssertionScope())
             {
                 action.Should().Throw<DomainException>()
-                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.SectionNotPartOfStore);
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.SectionInStoreNotFound);
             }
         }
 
@@ -190,28 +171,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         [Fact]
-        public void RemoveItem_WithOfflineId_ShouldThrowDomainException()
-        {
-            // Arrange
-            var list = shoppingListFixture.CreateValid();
-
-            // Act
-            Action action = () => list.RemoveItem(new ShoppingListItemId(Guid.NewGuid()));
-
-            // Assert
-            using (new AssertionScope())
-            {
-                action.Should().Throw<DomainException>()
-                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ActualIdRequired);
-            }
-        }
-
-        [Fact]
         public void RemoveItem_WithShoppingListItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
             var list = shoppingListFixture.CreateValid();
-            var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
+            var itemIdsToExclude = list.Items.Select(i => i.Id.Value);
             var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
 
             // Act
@@ -279,28 +243,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         [Fact]
-        public void PutItemInBasket_WithOfflineId_ShouldThrowDomainException()
-        {
-            // Arrange
-            var list = shoppingListFixture.CreateValid();
-
-            // Act
-            Action action = () => list.PutItemInBasket(new ShoppingListItemId(Guid.NewGuid()));
-
-            // Assert
-            using (new AssertionScope())
-            {
-                action.Should().Throw<DomainException>()
-                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ActualIdRequired);
-            }
-        }
-
-        [Fact]
         public void PutItemInBasket_WithShoppingListItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
             var list = shoppingListFixture.CreateValid();
-            var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
+            var itemIdsToExclude = list.Items.Select(i => i.Id.Value);
             var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
 
             // Act
@@ -367,28 +314,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         [Fact]
-        public void RemoveFromBasket_WithOfflineId_ShouldThrowDomainException()
-        {
-            // Arrange
-            var list = shoppingListFixture.CreateValid();
-
-            // Act
-            Action action = () => list.RemoveFromBasket(new ShoppingListItemId(Guid.NewGuid()));
-
-            // Assert
-            using (new AssertionScope())
-            {
-                action.Should().Throw<DomainException>()
-                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ActualIdRequired);
-            }
-        }
-
-        [Fact]
         public void RemoveFromBasket_WithShoppingListItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
             var list = shoppingListFixture.CreateValid();
-            var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
+            var itemIdsToExclude = list.Items.Select(i => i.Id.Value);
             var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
 
             // Act
@@ -455,29 +385,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         [Fact]
-        public void ChangeItemQuantity_WithOfflineId_ShouldThrowDomainException()
-        {
-            // Arrange
-            var list = shoppingListFixture.CreateValid();
-
-            // Act
-            Action action = () => list.ChangeItemQuantity(
-                new ShoppingListItemId(Guid.NewGuid()), commonFixture.NextFloat());
-
-            // Assert
-            using (new AssertionScope())
-            {
-                action.Should().Throw<DomainException>()
-                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ActualIdRequired);
-            }
-        }
-
-        [Fact]
         public void ChangeItemQuantity_WithShoppingListItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
             var list = shoppingListFixture.CreateValid();
-            var itemIdsToExclude = list.Items.Select(i => i.Id.Actual.Value);
+            var itemIdsToExclude = list.Items.Select(i => i.Id.Value);
             var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
 
             // Act

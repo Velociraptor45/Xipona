@@ -5,7 +5,6 @@ using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
 using ShoppingList.Api.Domain.TestKit.Common.Mocks;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
@@ -116,7 +115,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
                 {
                     foreach (var shoppingListMock in shoppingListMocks)
                     {
-                        shoppingListMock.VerifyRemoveItemOnce(storeItemMock.Object.Id.ToShoppingListItemId());
+                        shoppingListMock.VerifyRemoveItemOnce(storeItemMock.Object.Id);
                         shoppingListRepositoryMock.VerifyStoreAsyncOnce(shoppingListMock.Object);
                     }
                 }

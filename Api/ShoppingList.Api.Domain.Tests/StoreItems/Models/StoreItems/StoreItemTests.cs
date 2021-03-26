@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using System.Collections.Generic;
@@ -54,10 +55,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         {
             // Arrange
             IStoreItem storeItem = storeItemFixture.CreateValid();
-            var availabilityStoreIds = storeItem.Availabilities.Select(av => av.StoreId.Id.Value).ToList();
+            var availabilityStoreIds = storeItem.Availabilities.Select(av => av.StoreId.Value).ToList();
 
             // Act
-            StoreItemStoreId storeId = new StoreItemStoreId(commonFixture.NextInt(availabilityStoreIds));
+            StoreId storeId = new StoreId(commonFixture.NextInt(availabilityStoreIds));
             bool result = storeItem.IsAvailableInStore(storeId);
 
             // Assert
@@ -72,10 +73,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         {
             // Arrange
             IStoreItem storeItem = storeItemFixture.CreateValid();
-            var availabilityStoreIds = storeItem.Availabilities.ToList().Select(av => av.StoreId.Id).ToList();
+            var availabilityStoreIds = storeItem.Availabilities.Select(av => av.StoreId).ToList();
 
             // Act
-            StoreItemStoreId chosenStoreId = commonFixture.ChooseRandom(availabilityStoreIds);
+            StoreId chosenStoreId = commonFixture.ChooseRandom(availabilityStoreIds);
             bool result = storeItem.IsAvailableInStore(chosenStoreId);
 
             // Assert
@@ -103,7 +104,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
             List<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.CreateManyValid().ToList();
 
             // Act
-            storeItem.MakePermanent(permanentItem, itemCategory, manufacturer, availabilities);
+            storeItem.MakePermanent(permanentItem, availabilities);
 
             // Assert
             using (new AssertionScope())
@@ -139,7 +140,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
             IEnumerable<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.CreateManyValid().ToList();
 
             // Act
-            storeItem.Modify(itemModify, itemCategory, manufacturer, availabilities);
+            storeItem.Modify(itemModify, availabilities);
 
             // Assert
             using (new AssertionScope())

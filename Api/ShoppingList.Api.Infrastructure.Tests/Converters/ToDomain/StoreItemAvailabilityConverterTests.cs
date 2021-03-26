@@ -18,7 +18,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
             var commonFixture = new CommonFixture();
             var availabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
             var destination = availabilityFixture.CreateValid();
-            var source = GetSource(destination, commonFixture);
+            var source = GetSource(destination);
 
             return (source, destination);
         }
@@ -28,15 +28,13 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
             AddDependencies(serviceCollection);
         }
 
-        public static AvailableAt GetSource(IStoreItemAvailability destination, CommonFixture commonFixture)
+        public static AvailableAt GetSource(IStoreItemAvailability destination)
         {
-            var store = StoreItemStoreConverterTests.GetSource(destination.StoreId, commonFixture);
-
             return new AvailableAt
             {
-                Store = store,
+                StoreId = destination.StoreId.Value,
                 Price = destination.Price,
-                DefaultSectionId = destination.DefaultSectionId.Id.Value
+                DefaultSectionId = destination.DefaultSectionId.Value
             };
         }
 
@@ -44,8 +42,6 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
         {
             serviceCollection.AddInstancesOfGenericType(typeof(StoreItemAvailabilityConverter).Assembly, typeof(IToDomainConverter<,>));
             serviceCollection.AddInstancesOfNonGenericType(typeof(IStoreItemAvailabilityFactory).Assembly, typeof(IStoreItemAvailabilityFactory));
-
-            StoreItemStoreConverterTests.AddDependencies(serviceCollection);
         }
     }
 }
