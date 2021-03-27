@@ -33,53 +33,77 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
         public async Task AddItemToShoppingList(IShoppingList shoppingList, ItemId itemId, SectionId sectionId,
             float quantity, CancellationToken cancellationToken)
         {
-            IShoppingListItem item = await LoadItem(itemId, quantity, cancellationToken);
-            await AddToShoppingList(shoppingList, item, sectionId, cancellationToken);
+            if (shoppingList is null)
+                throw new ArgumentNullException(nameof(shoppingList));
+            if (itemId is null)
+                throw new ArgumentNullException(nameof(itemId));
+
+            IStoreItem storeItem = await LoadItem(itemId, cancellationToken);
+            await AddItemToShoppingList(shoppingList, storeItem, sectionId, quantity, cancellationToken);
         }
 
         public async Task AddItemToShoppingList(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
             SectionId sectionId, float quantity, CancellationToken cancellationToken)
         {
-            IShoppingListItem item = await LoadItem(temporaryItemId, quantity, cancellationToken);
-            await AddToShoppingList(shoppingList, item, sectionId, cancellationToken);
+            if (shoppingList is null)
+                throw new ArgumentNullException(nameof(shoppingList));
+            if (temporaryItemId is null)
+                throw new ArgumentNullException(nameof(temporaryItemId));
+
+            IStoreItem storeItem = await LoadItem(temporaryItemId, cancellationToken);
+            await AddItemToShoppingList(shoppingList, storeItem, sectionId, quantity, cancellationToken);
         }
 
-        private async Task<IShoppingListItem> LoadItem(ItemId itemId, float quantity, CancellationToken cancellationToken)
+        private async Task<IStoreItem> LoadItem(ItemId itemId, CancellationToken cancellationToken)
         {
             IStoreItem item = await itemRepository.FindByAsync(itemId, cancellationToken);
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(itemId));
 
-            return shoppingListItemFactory.Create(item.Id, false, quantity);
+            return item;
         }
 
-        private async Task<IShoppingListItem> LoadItem(TemporaryItemId temporaryItemId, float quantity,
-            CancellationToken cancellationToken)
+        private async Task<IStoreItem> LoadItem(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
         {
             IStoreItem item = await itemRepository.FindByAsync(temporaryItemId, cancellationToken);
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryItemId));
 
-            return shoppingListItemFactory.Create(item.Id, false, quantity);
+            return item;
         }
 
-        private async Task AddToShoppingList(IShoppingList shoppingList, IShoppingListItem item, SectionId sectionId,
+        private IShoppingListItem CreateShoppingListItem(ItemId itemId, float quantity)
+        {
+            return shoppingListItemFactory.Create(itemId, false, quantity);
+        }
+
+        private SectionId DetermineSection(IStoreItem storeItem, StoreId storeId)
+        {
+            var availability = storeItem.Availabilities.FirstOrDefault(av => av.StoreId == storeId);
+            if (availability == null)
+                throw new DomainException(new ItemAtStoreNotAvailableReason(storeItem.Id, storeId));
+
+            return availability.DefaultSectionId;
+        }
+
+        private async Task AddItemToShoppingList(IShoppingList shoppingList, IStoreItem storeItem,
+            SectionId sectionId, float quantity, CancellationToken cancellationToken)
+        {
+            if (sectionId == null)
+                sectionId = DetermineSection(storeItem, shoppingList.StoreId);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            IShoppingListItem shoppingListItem = CreateShoppingListItem(storeItem.Id, quantity);
+            await AddItemToShoppingList(shoppingList, shoppingListItem, sectionId, cancellationToken);
+        }
+
+        private async Task AddItemToShoppingList(IShoppingList shoppingList, IShoppingListItem item, SectionId sectionId,
             CancellationToken cancellationToken)
         {
-            if (shoppingList is null)
-                throw new ArgumentNullException(nameof(shoppingList));
-            if (item is null)
-                throw new ArgumentNullException(nameof(item));
-
             var store = await storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
             if (store == null)
                 throw new DomainException(new StoreNotFoundReason(shoppingList.StoreId));
-
-            if (sectionId == null)
-            {
-                // add to default section is no section is specified
-                sectionId = store.GetDefaultSection().Id;
-            }
 
             if (!store.ContainsSection(sectionId))
                 throw new DomainException(new SectionInStoreNotFoundReason(sectionId, store.Id));

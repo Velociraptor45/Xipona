@@ -37,6 +37,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain
             services.AddTransient<IItemCategoryValidationService, ItemCategoryValidationService>();
 
             services.AddTransient<IShoppingListUpdateService, ShoppingListUpdateService>();
+            services.AddTransient<IAddItemToShoppingListService, AddItemToShoppingListService>();
         }
 
         public static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)
