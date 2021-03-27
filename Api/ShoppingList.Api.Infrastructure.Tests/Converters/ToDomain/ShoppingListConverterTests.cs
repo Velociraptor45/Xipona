@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-using FluentAssertions.Execution;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -11,7 +9,6 @@ using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using System.Collections.Generic;
-using Xunit;
 
 using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 
@@ -56,6 +53,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
             return new Entities.ShoppingList
             {
                 Id = destination.Id.Value,
+                StoreId = destination.StoreId.Value,
                 ItemsOnList = itemsOnListMap,
                 CompletionDate = destination.CompletionDate
             };
@@ -67,26 +65,6 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
             serviceCollection.AddInstancesOfNonGenericType(typeof(IShoppingListFactory).Assembly, typeof(IShoppingListFactory));
             serviceCollection.AddInstancesOfNonGenericType(typeof(IShoppingListSectionFactory).Assembly, typeof(IShoppingListSectionFactory));
             serviceCollection.AddInstancesOfNonGenericType(typeof(IShoppingListItemFactory).Assembly, typeof(IShoppingListItemFactory));
-        }
-
-        [Fact]
-        public void ToDomain_WithEmptySection_ShouldConvertEntityToDomain()
-        {
-            // Arrange
-            var commonFixture = new CommonFixture();
-            var shoppingListFixture = new ShoppingListFixture(commonFixture);
-
-            var model = shoppingListFixture.CreateValidWithOneEmptySection();
-            var entity = GetSource(model);
-
-            // Act
-            var result = CreateConverter().ToDomain(entity);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                result.Should().BeEquivalentTo(model);
-            }
         }
     }
 }

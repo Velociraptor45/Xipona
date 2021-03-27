@@ -55,7 +55,8 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
                 ManufacturerId = destination.ManufacturerId?.Value,
                 PredecessorId = predecessor?.Id,
                 Predecessor = predecessor,
-                AvailableAt = availabilities
+                AvailableAt = availabilities,
+                CreatedFrom = destination.TemporaryId?.Value
             };
         }
 
