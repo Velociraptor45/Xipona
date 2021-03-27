@@ -96,6 +96,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             sections[section.Id] = section.ChangeItemQuantity(itemId, quantity);
         }
 
+        public void AddSection(IShoppingListSection section)
+        {
+            if (section is null)
+                throw new ArgumentNullException(nameof(section));
+
+            if (sections.ContainsKey(section.Id))
+                throw new DomainException(new SectionAlreadyInShoppingListReason(Id, section.Id));
+
+            sections.Add(section.Id, section);
+        }
+
         public IShoppingList Finish(DateTime completionDate)
         {
             CompletionDate = completionDate;

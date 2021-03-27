@@ -15,5 +15,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories
         {
             return new ShoppingListSection(storeSection.Id, Enumerable.Empty<IShoppingListItem>());
         }
+
+        public IShoppingListSection CreateEmpty(SectionId sectionId)
+        {
+            return new ShoppingListSection(sectionId, Enumerable.Empty<IShoppingListItem>());
+        }
     }
 }

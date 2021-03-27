@@ -7,5 +7,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories
     {
         IShoppingListSection Create(SectionId sectionId, IEnumerable<IShoppingListItem> shoppingListItems);
         IShoppingListSection CreateEmpty(IStoreSection storeSection);
+        IShoppingListSection CreateEmpty(SectionId sectionId);
     }
 }

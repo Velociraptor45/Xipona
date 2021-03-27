@@ -1,24 +1,33 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models
 {
     public class Store : IStore
     {
-        private readonly List<IStoreSection> sections;
+        private StoreSections sections;
 
         public Store(StoreId id, string name, bool isDeleted, IEnumerable<IStoreSection> sections)
         {
             Id = id;
             Name = name;
             IsDeleted = isDeleted;
-            this.sections = sections.ToList();
+            this.sections = new StoreSections(sections);
         }
 
         public StoreId Id { get; }
         public string Name { get; private set; }
         public bool IsDeleted { get; }
         public IReadOnlyCollection<IStoreSection> Sections => sections.AsReadOnly();
+
+        public IStoreSection GetDefaultSection()
+        {
+            return sections.GetDefaultSection();
+        }
+
+        public bool ContainsSection(SectionId sectionId)
+        {
+            return sections.Contains(sectionId);
+        }
 
         public void ChangeName(string name)
         {
@@ -27,8 +36,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models
 
         public void UpdateStores(IEnumerable<IStoreSection> storeSections)
         {
-            sections.Clear();
-            sections.AddRange(storeSections);
+            sections = new StoreSections(storeSections);
         }
     }
 }

@@ -10,6 +10,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models
         IReadOnlyCollection<IStoreSection> Sections { get; }
 
         void ChangeName(string name);
+        bool ContainsSection(SectionId sectionId);
+        IStoreSection GetDefaultSection();
         void UpdateStores(IEnumerable<IStoreSection> storeSections);
     }
 }

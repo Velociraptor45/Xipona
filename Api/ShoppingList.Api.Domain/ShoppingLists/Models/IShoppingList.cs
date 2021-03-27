@@ -24,5 +24,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         void ChangeItemQuantity(ItemId itemId, float quantity);
 
         IShoppingList Finish(DateTime completionDate);
+        void AddSection(IShoppingListSection section);
     }
 }
