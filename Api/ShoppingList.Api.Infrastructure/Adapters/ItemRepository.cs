@@ -242,11 +242,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
         private IQueryable<Item> GetItemQuery()
         {
             return dbContext.Items.AsNoTracking()
-                .Include(item => item.ItemCategory)
-                .Include(item => item.Manufacturer)
-                .Include(item => item.AvailableAt)
-                .ThenInclude(map => map.Store)
-                .ThenInclude(store => store.Sections);
+                .Include(item => item.AvailableAt);
         }
 
         private async Task<Item> LoadPredecessorsAsync(Item item)
