@@ -21,6 +21,7 @@
         ItemAlreadyInSection = 17,
         StoreItemSectionNotFound = 18,
         NoDefaultSectionSpecified = 19,
-        SectionAlreadyInShoppingList = 20
+        SectionAlreadyInShoppingList = 20,
+        MultipleAvailabilitiesForStore = 21
     }
 }
