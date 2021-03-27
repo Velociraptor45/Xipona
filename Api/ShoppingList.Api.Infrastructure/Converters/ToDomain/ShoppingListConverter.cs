@@ -40,14 +40,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
                 .ToDictionary(t => t.SectionId, t => t.Maps);
 
             List<IShoppingListSection> sectionModels = new List<IShoppingListSection>();
-            foreach (var section in source.Store.Sections)
+            foreach (var sectionId in itemMapsPerSection.Keys)
             {
-                List<IShoppingListItem> items = new List<IShoppingListItem>();
-                if (itemMapsPerSection.TryGetValue(section.Id, out var maps))
-                {
-                    items = maps.Select(map => shoppingListItemConverter.ToDomain(map)).ToList();
-                }
-                var sectionModel = CreateSection(section, items);
+                var maps = itemMapsPerSection[sectionId];
+                var items = maps.Select(map => shoppingListItemConverter.ToDomain(map)).ToList();
+                var sectionModel = CreateSection(sectionId, items);
                 sectionModels.Add(sectionModel);
             }
 
@@ -58,10 +55,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
                 sectionModels);
         }
 
-        public IShoppingListSection CreateSection(Section section, IEnumerable<IShoppingListItem> items)
+        public IShoppingListSection CreateSection(int sectionId, IEnumerable<IShoppingListItem> items)
         {
             return shoppingListSectionFactory.Create(
-                new SectionId(section.Id),
+                new SectionId(sectionId),
                 items);
         }
     }
