@@ -14,7 +14,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ActiveShoppingListByStoreId
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels
 {
     public class ShoppingListReadModelConversionService : IShoppingListReadModelConversionService
     {
@@ -34,6 +34,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversio
 
         public async Task<ShoppingListReadModel> ConvertAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
         {
+            if (shoppingList is null)
+                throw new System.ArgumentNullException(nameof(shoppingList));
+
             var ItemIds = shoppingList.Items.Select(i => i.Id);
             var itemsDict = (await itemRepository.FindByAsync(ItemIds, cancellationToken))
                 .ToDictionary(i => i.Id);

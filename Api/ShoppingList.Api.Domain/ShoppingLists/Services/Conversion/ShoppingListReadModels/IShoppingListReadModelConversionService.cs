@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShopping
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ActiveShoppingListByStoreId
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels
 {
     public interface IShoppingListReadModelConversionService
     {
