@@ -24,6 +24,14 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             };
         }
 
+        public static ShoppingListItemDefinition FromIsInBasket(bool isInBasket)
+        {
+            return new ShoppingListItemDefinition
+            {
+                IsInBasket = isInBasket
+            };
+        }
+
         public static ShoppingListItemDefinition FromId(int id)
         {
             return FromId(new ItemId(id));

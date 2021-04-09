@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -114,6 +115,15 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             baseDefinition.Items ??= shoppingListItemFixture.CreateManyValid(itemCount).ToList();
 
             return Create(baseDefinition);
+        }
+
+        public IShoppingListSection CreateValidWithItem(IShoppingListItem item)
+        {
+            var def = new ShoppingListSectionDefinition
+            {
+                Items = item.ToMonoList()
+            };
+            return CreateValid(def);
         }
 
         private void EnsurePresenceOfDefaultSection(IEnumerable<ShoppingListSectionDefinition> definitions)

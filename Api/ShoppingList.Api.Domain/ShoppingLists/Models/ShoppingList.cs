@@ -109,15 +109,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         public IShoppingList Finish(DateTime completionDate)
         {
+            if (CompletionDate != null)
+                throw new DomainException(new ShoppingListAlreadyFinishedReason(Id));
+
             CompletionDate = completionDate;
 
             var notInBasketSections = new Dictionary<SectionId, IShoppingListSection>(sections);
-            foreach (var key in notInBasketSections.Keys)
+            foreach (SectionId key in sections.Keys)
             {
-                notInBasketSections[key] = notInBasketSections[key].RemoveItemsNotInBasket();
+                notInBasketSections[key] = notInBasketSections[key].RemoveItemsInBasket();
             }
 
-            foreach (var key in sections.Keys)
+            foreach (SectionId key in notInBasketSections.Keys)
             {
                 sections[key] = sections[key].RemoveItemsNotInBasket();
             }

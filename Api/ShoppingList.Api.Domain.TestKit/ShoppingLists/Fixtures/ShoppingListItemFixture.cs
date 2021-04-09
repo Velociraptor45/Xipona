@@ -137,6 +137,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             }
         }
 
+        public IShoppingListItem CreateValidWithBasketStatus(bool isInBasket)
+        {
+            return CreateValid(ShoppingListItemDefinition.FromIsInBasket(isInBasket));
+        }
+
         public IModelFixture<IShoppingListItem, ShoppingListItemDefinition> AsModelFixture()
         {
             return this;

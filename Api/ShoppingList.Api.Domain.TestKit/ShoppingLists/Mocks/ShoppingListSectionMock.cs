@@ -12,6 +12,8 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
         {
             SetupId(section.Id);
             SetupItems(section.Items);
+            SetupOriginalRemoveItemsNotInBasket();
+            SetupOriginalRemoveItemsInBasket();
         }
 
         public void SetupId(SectionId returnValue)
@@ -38,6 +40,18 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
             Setup(i => i.ContainsItem(
                     It.Is<ItemId>(id => id == itemId)))
                 .Returns(returnValue);
+        }
+
+        public void SetupOriginalRemoveItemsNotInBasket()
+        {
+            Setup(i => i.RemoveItemsNotInBasket())
+                .Returns(Object.RemoveItemsNotInBasket());
+        }
+
+        public void SetupOriginalRemoveItemsInBasket()
+        {
+            Setup(i => i.RemoveItemsInBasket())
+                .Returns(Object.RemoveItemsInBasket());
         }
 
         public void VerifyAddItemOnce(IShoppingListItem item)
