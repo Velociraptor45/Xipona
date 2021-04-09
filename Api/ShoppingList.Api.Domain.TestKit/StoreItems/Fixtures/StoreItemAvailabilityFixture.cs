@@ -27,7 +27,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             var fixture = commonFixture.GetNewFixture();
 
             if (definition.StoreId != null)
-                fixture.ConstructorArgumentFor<StoreItemAvailability, StoreId>("store", definition.StoreId);
+                fixture.ConstructorArgumentFor<StoreItemAvailability, StoreId>("storeId", definition.StoreId);
             if (definition.Price.HasValue)
                 fixture.ConstructorArgumentFor<StoreItemAvailability, float>("price", definition.Price.Value);
             if (definition.DefaultSectionId != null)

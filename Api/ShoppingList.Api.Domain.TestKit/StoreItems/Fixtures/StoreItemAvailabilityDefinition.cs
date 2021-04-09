@@ -7,5 +7,13 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
         public StoreId StoreId { get; set; }
         public float? Price { get; set; }
         public SectionId DefaultSectionId { get; set; }
+
+        public static StoreItemAvailabilityDefinition FromStoreId(StoreId storeId)
+        {
+            return new StoreItemAvailabilityDefinition
+            {
+                StoreId = storeId
+            };
+        }
     }
 }

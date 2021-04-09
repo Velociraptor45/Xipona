@@ -111,7 +111,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
         public IShoppingListSection CreateValid(ShoppingListSectionDefinition baseDefinition)
         {
             var itemCount = commonFixture.NextInt(3, 5);
-            baseDefinition.Items = shoppingListItemFixture.CreateManyValid(itemCount).ToList();
+            baseDefinition.Items ??= shoppingListItemFixture.CreateManyValid(itemCount).ToList();
 
             return Create(baseDefinition);
         }

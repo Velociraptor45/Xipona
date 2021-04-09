@@ -1,5 +1,7 @@
 ﻿using AutoFixture;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
@@ -27,11 +29,15 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             var fixture = commonFixture.GetNewFixture();
 
             if (definition.Id != null)
-                fixture.ConstructorArgumentFor<StoreItem, ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.ItemId>("id", definition.Id);
+                fixture.ConstructorArgumentFor<StoreItem, ItemId>("id", definition.Id);
             if (definition.IsDeleted.HasValue)
                 fixture.ConstructorArgumentFor<StoreItem, bool>("isDeleted", definition.IsDeleted.Value);
             if (definition.IsTemporary.HasValue)
                 fixture.ConstructorArgumentFor<StoreItem, bool>("isTemporary", definition.IsTemporary.Value);
+            if (definition.UseItemCategoryId)
+                fixture.ConstructorArgumentFor<StoreItem, ItemCategoryId>("itemCategoryId", definition.ItemCategoryId);
+            if (definition.UseManufacturerId)
+                fixture.ConstructorArgumentFor<StoreItem, ManufacturerId>("manufacturerId", definition.ManufacturerId);
             if (definition.Availabilities != null)
                 fixture.ConstructorArgumentFor<StoreItem, IEnumerable<IStoreItemAvailability>>(
                     "availabilities", definition.Availabilities);

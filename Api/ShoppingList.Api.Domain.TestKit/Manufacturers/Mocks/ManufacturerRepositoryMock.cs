@@ -2,6 +2,8 @@
 using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,6 +28,15 @@ namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Mocks
             mock
                 .Setup(i => i.FindByAsync(
                     It.Is<ManufacturerId>(id => id == manufacturerId),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(returnValue));
+        }
+
+        public void SetupFindByAsync(IEnumerable<ManufacturerId> manufacturerIds, IEnumerable<IManufacturer> returnValue)
+        {
+            mock
+                .Setup(i => i.FindByAsync(
+                    It.Is<IEnumerable<ManufacturerId>>(ids => ids.SequenceEqual(manufacturerIds)),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(returnValue));
         }

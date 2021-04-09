@@ -30,7 +30,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             if (definition.Id != null)
                 fixture.ConstructorArgumentFor<ListModels.ShoppingList, ShoppingListId>("id", definition.Id);
             if (definition.StoreId != null)
-                fixture.ConstructorArgumentFor<ListModels.ShoppingList, StoreId>("store", definition.StoreId);
+                fixture.ConstructorArgumentFor<ListModels.ShoppingList, StoreId>("storeId", definition.StoreId);
             if (definition.Sections != null)
                 fixture.ConstructorArgumentFor<ListModels.ShoppingList, IEnumerable<IShoppingListSection>>("sections", definition.Sections);
             if (definition.UseCompletionDate)

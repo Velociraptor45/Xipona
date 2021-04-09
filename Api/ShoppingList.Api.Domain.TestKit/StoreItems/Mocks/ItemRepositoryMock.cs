@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
@@ -27,6 +28,15 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
             mock
                 .Setup(i => i.FindByAsync(
                     It.Is<ItemId>(id => id == itemId),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(returnValue);
+        }
+
+        public void SetupFindByAsync(IEnumerable<ItemId> itemIds, IEnumerable<IStoreItem> returnValue)
+        {
+            mock
+                .Setup(i => i.FindByAsync(
+                    It.Is<IEnumerable<ItemId>>(ids => ids.SequenceEqual(itemIds)),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(returnValue);
         }
