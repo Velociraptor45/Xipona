@@ -54,5 +54,13 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
                     It.Is<DateTime>(date => date == completionDate)),
                 Times.Once);
         }
+
+        public void VerifyChangeItemQuantityOnce(ItemId itemId, float quantity)
+        {
+            Verify(i => i.ChangeItemQuantity(
+                    itemId,
+                    quantity),
+                Times.Once);
+        }
     }
 }
