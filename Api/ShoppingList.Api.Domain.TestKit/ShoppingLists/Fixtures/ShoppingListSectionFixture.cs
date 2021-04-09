@@ -126,6 +126,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             return CreateValid(def);
         }
 
+        public IModelFixture<IShoppingListSection, ShoppingListSectionDefinition> AsModelFixture()
+        {
+            return this;
+        }
+
         private void EnsurePresenceOfDefaultSection(IEnumerable<ShoppingListSectionDefinition> definitions)
         {
             var definitionsList = definitions.ToList();

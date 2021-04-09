@@ -554,10 +554,61 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
 
         #endregion Finish
 
-        #region GetSectionsWithItemsNotInBasket
+        #region AddSection
 
-        // todo implement
+        [Fact]
+        public void AddSection_WithSectionIsNull_ShouldThrowArgumentNullException()
+        {
+            // Arrange
+            var fixure = commonFixture.GetNewFixture();
+            var shoppingList = fixure.Create<DomainModels.ShoppingList>();
 
-        #endregion GetSectionsWithItemsNotInBasket
+            // Act
+            Action action = () => shoppingList.AddSection(null);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                action.Should().Throw<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public void AddSection_WithSectionAlreadyInShoppingList_ShouldThrowDomainException()
+        {
+            IShoppingList shoppingList = shoppingListFixture.CreateValid();
+            IShoppingListSection section = commonFixture.ChooseRandom(shoppingList.Sections);
+
+            // Act
+            Action action = () => shoppingList.AddSection(section);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                action.Should().Throw<DomainException>()
+                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.SectionAlreadyInShoppingList);
+            }
+        }
+
+        [Fact]
+        public void AddSection_WithNewSection_ShouldThrowDomainException()
+        {
+            IShoppingList shoppingList = shoppingListFixture.CreateValid();
+            var existingSectionIds = shoppingList.Sections.Select(s => s.Id.Value);
+
+            var sectionDef = ShoppingListSectionDefinition.FromId(commonFixture.NextInt(existingSectionIds));
+            IShoppingListSection section = shoppingListSectionFixture.CreateValid(sectionDef);
+
+            // Act
+            shoppingList.AddSection(section);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                shoppingList.Sections.Should().Contain(section);
+            }
+        }
+
+        #endregion AddSection
     }
 }
