@@ -35,6 +35,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
             if (list == null)
                 throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
 
+            cancellationToken.ThrowIfCancellationRequested();
+
             IStoreItem item;
             if (command.OfflineTolerantItemId.IsActualId)
             {
@@ -52,6 +54,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
                 if (item == null)
                     throw new DomainException(new ItemNotFoundReason(itemId));
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             using var transaction = await transactionGenerator.GenerateAsync(cancellationToken);
 

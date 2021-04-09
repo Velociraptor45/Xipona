@@ -45,6 +45,11 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
             Verify(i => i.Delete(), Times.Once);
         }
 
+        public void VerifyDeleteNever()
+        {
+            Verify(i => i.Delete(), Times.Never);
+        }
+
         public void VerifyMakePermanentOnce(PermanentItem permanentItem,
             IEnumerable<IStoreItemAvailability> availabilities)
         {
