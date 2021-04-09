@@ -20,19 +20,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
 {
     public class ChangeItemQuantityOnShoppingListCommandHandlerTests
     {
-        private readonly CommonFixture commonFixture;
-        private readonly ShoppingListFixture shoppingListFixture;
-        private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
-        private readonly StoreItemFixture storeItemFixture;
-
-        public ChangeItemQuantityOnShoppingListCommandHandlerTests()
-        {
-            commonFixture = new CommonFixture();
-            shoppingListFixture = new ShoppingListFixture(commonFixture);
-            storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
-            storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
-        }
-
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {

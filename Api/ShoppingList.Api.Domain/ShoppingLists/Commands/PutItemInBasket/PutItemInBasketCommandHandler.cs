@@ -38,8 +38,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemIn
             }
             else
             {
-                itemId = (await itemRepository.FindByAsync(new TemporaryItemId(command.OfflineTolerantItemId.OfflineId.Value), cancellationToken))
-                    .Id;
+                var temporaryId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId.Value);
+                IStoreItem item = await itemRepository.FindByAsync(temporaryId, cancellationToken);
+
+                if (item == null)
+                    throw new DomainException(new ItemNotFoundReason(temporaryId));
+
+                itemId = item.Id;
             }
 
             shoppingList.PutItemInBasket(itemId);

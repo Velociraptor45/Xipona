@@ -40,6 +40,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
                 Times.Once);
         }
 
+        public void VerifyPutItemInBasketOnce(ItemId itemId)
+        {
+            Verify(i => i.PutItemInBasket(itemId), Times.Once);
+        }
+
         public void VerifyAddItemOnce(IShoppingListItem listItem, SectionId sectionId)
         {
             Verify(i => i.AddItem(
