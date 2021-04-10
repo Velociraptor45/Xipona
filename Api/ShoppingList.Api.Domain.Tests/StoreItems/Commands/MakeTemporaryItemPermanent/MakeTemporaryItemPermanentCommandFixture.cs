@@ -21,21 +21,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
         }
 
-        public MakeTemporaryItemPermanentCommand Create(ManufacturerId manufacturerId,
-            IEnumerable<IStoreItemAvailability> availabilities = null)
-        {
-            var fixture = commonFixture.GetNewFixture();
-
-            fixture.ConstructorArgumentFor<PermanentItem, ManufacturerId>("manufacturerId", manufacturerId);
-            if (availabilities != null)
-            {
-                fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<IStoreItemAvailability>>(
-                    "availabilities", availabilities);
-            }
-
-            return fixture.Create<MakeTemporaryItemPermanentCommand>();
-        }
-
         public MakeTemporaryItemPermanentCommand Create(ItemCategoryId itemCategoryId, ManufacturerId manufacturerId)
         {
             var fixture = commonFixture.GetNewFixture();
