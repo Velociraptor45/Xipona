@@ -1,14 +1,15 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -99,8 +100,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
             var definition = StoreItemDefinition.FromTemporary(true);
             IStoreItem storeItem = storeItemFixture.CreateValid(definition);
             PermanentItem permanentItem = fixture.Create<PermanentItem>();
-            IManufacturer manufacturer = fixture.Create<IManufacturer>();
-            IItemCategory itemCategory = fixture.Create<IItemCategory>();
             List<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.CreateManyValid().ToList();
 
             // Act
@@ -115,8 +114,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
                 storeItem.QuantityInPacket.Should().Be(permanentItem.QuantityInPacket);
                 storeItem.QuantityTypeInPacket.Should().Be(permanentItem.QuantityTypeInPacket);
                 storeItem.Availabilities.Should().BeEquivalentTo(availabilities);
-                storeItem.ItemCategoryId.Should().Be(itemCategory);
-                storeItem.ManufacturerId.Should().Be(manufacturer);
+                storeItem.ItemCategoryId.Should().Be(permanentItem.ItemCategoryId);
+                storeItem.ManufacturerId.Should().Be(permanentItem.ManufacturerId);
                 storeItem.IsTemporary.Should().BeFalse();
             }
         }
@@ -135,8 +134,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
             var definition = StoreItemDefinition.FromTemporary(isTemporary);
             IStoreItem storeItem = storeItemFixture.CreateValid(definition);
             ItemModify itemModify = fixture.Create<ItemModify>();
-            IManufacturer manufacturer = fixture.Create<IManufacturer>();
-            IItemCategory itemCategory = fixture.Create<IItemCategory>();
             IEnumerable<IStoreItemAvailability> availabilities = storeItemAvailabilityFixture.CreateManyValid().ToList();
 
             // Act
@@ -151,13 +148,53 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
                 storeItem.QuantityInPacket.Should().Be(itemModify.QuantityInPacket);
                 storeItem.QuantityTypeInPacket.Should().Be(itemModify.QuantityTypeInPacket);
                 storeItem.Availabilities.Should().BeEquivalentTo(availabilities);
-                storeItem.ItemCategoryId.Should().Be(itemCategory);
-                storeItem.ManufacturerId.Should().Be(manufacturer);
+                storeItem.ItemCategoryId.Should().Be(itemModify.ItemCategoryId);
+                storeItem.ManufacturerId.Should().Be(itemModify.ManufacturerId);
                 storeItem.IsTemporary.Should().Be(isTemporary);
             }
         }
 
         #endregion Modify
+
+        #region GetDefaultSectionIdForStore
+
+        [Fact]
+        public void GetDefaultSectionIdForStore_WithInvalidStoreId_ShouldThrowDomainException()
+        {
+            // Arrange
+            IStoreItem storeItem = storeItemFixture.CreateValid();
+            var allStoreIds = storeItem.Availabilities.Select(av => av.StoreId.Value);
+            var requestStoreId = new StoreId(commonFixture.NextInt(allStoreIds));
+
+            // Act
+            Action action = () => storeItem.GetDefaultSectionIdForStore(requestStoreId);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                action.Should().Throw<DomainException>()
+                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ItemAtStoreNotAvailable);
+            }
+        }
+
+        [Fact]
+        public void GetDefaultSectionIdForStore_WithValidStoreId_ShouldReturnSectionId()
+        {
+            // Arrange
+            IStoreItem storeItem = storeItemFixture.CreateValid();
+            var chosenAvailability = commonFixture.ChooseRandom(storeItem.Availabilities);
+
+            // Act
+            var result = storeItem.GetDefaultSectionIdForStore(chosenAvailability.StoreId);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                result.Should().BeEquivalentTo(chosenAvailability.DefaultSectionId);
+            }
+        }
+
+        #endregion GetDefaultSectionIdForStore
 
         #region SetPredecessor
 
@@ -179,11 +216,5 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
         }
 
         #endregion SetPredecessor
-
-        #region GetDefaultSectionForStore
-
-        // todo implement
-
-        #endregion GetDefaultSectionForStore
     }
 }
