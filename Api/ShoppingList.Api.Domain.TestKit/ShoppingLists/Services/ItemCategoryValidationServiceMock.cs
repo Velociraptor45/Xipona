@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
 using System.Threading;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
+namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services
 {
     public class ItemCategoryValidationServiceMock
     {

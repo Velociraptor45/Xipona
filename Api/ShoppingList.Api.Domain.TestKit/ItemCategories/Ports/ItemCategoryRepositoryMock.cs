@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Mocks
+namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Ports
 {
     public class ItemCategoryRepositoryMock
     {

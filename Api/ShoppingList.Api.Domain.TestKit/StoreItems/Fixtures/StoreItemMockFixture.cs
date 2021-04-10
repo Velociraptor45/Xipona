@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Mocks;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using System.Collections.Generic;
 using System.Linq;
 

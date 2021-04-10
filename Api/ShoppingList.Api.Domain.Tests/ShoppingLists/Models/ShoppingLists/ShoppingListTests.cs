@@ -9,7 +9,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Fixtures;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

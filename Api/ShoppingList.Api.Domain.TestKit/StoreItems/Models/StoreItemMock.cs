@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
+namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
 {
     public class StoreItemMock : Mock<IStoreItem>
     {

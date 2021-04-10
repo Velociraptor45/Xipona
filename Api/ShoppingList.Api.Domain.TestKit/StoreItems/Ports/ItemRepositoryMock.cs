@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
+namespace ShoppingList.Api.Domain.TestKit.StoreItems.Ports
 {
     public class ItemRepositoryMock
     {

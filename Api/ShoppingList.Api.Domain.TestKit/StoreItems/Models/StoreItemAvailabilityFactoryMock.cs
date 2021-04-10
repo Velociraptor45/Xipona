@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-namespace ShoppingList.Api.Domain.TestKit.StoreItems.Mocks
+namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
 {
     public class StoreItemAvailabilityFactoryMock
     {

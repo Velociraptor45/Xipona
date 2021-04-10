@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Domain.TestKit.Stores.Mocks
+namespace ShoppingList.Api.Domain.TestKit.Stores.Ports
 {
     public class StoreRepositoryMock
     {

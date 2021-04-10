@@ -9,7 +9,8 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishShoppin
 using ShoppingList.Api.Domain.TestKit.Common.Mocks;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

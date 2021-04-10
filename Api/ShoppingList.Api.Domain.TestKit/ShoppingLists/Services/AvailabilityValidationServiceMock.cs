@@ -5,7 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
+namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services
 {
     public class AvailabilityValidationServiceMock
     {

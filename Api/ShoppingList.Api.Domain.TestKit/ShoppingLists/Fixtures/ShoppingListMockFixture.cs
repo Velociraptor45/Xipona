@@ -1,5 +1,5 @@
 ﻿using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using System.Collections.Generic;
 using System.Linq;
 

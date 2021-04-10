@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Mocks
+namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Ports
 {
     public class ManufacturerRepositoryMock
     {

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
+namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports
 {
     public class ShoppingListRepositoryMock
     {
@@ -24,7 +24,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
             mock = fixture.Freeze<Mock<IShoppingListRepository>>();
         }
 
-        public void SetupFindActiveByAsync(ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.ItemId storeItemId,
+        public void SetupFindActiveByAsync(ItemId storeItemId,
             IEnumerable<IShoppingList> returnValue)
         {
             mock
@@ -60,7 +60,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks
                 .Setup(instance => instance.FindByAsync(
                     It.Is<ShoppingListId>(id => id == shoppingListId),
                     It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<IShoppingList>(returnValue));
+                .Returns(Task.FromResult(returnValue));
         }
 
         public void VerifyStoreAsyncOnce(IShoppingList shoppingList)
