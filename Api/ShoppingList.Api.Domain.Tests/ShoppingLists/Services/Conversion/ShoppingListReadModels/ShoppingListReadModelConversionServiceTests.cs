@@ -8,11 +8,11 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShopping
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Mocks;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Mocks;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
+using ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Mocks;
-using ShoppingList.Api.Domain.TestKit.Stores.Mocks;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
+using ShoppingList.Api.Domain.TestKit.Stores.Ports;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -2,17 +2,16 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.Shared;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ShoppingList.Api.Domain.TestKit.Common.Fixtures;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -21,29 +20,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
 {
     public class AddItemToShoppingListCommandHandlerTests
     {
-        private readonly CommonFixture commonFixture;
-        private readonly IModelFixture<IShoppingListItem, ShoppingListItemDefinition> shoppingListItemFixture;
-        private readonly ShoppingListFixture shoppingListFixture;
-        private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
-        private readonly StoreItemFixture storeItemFixture;
-        private readonly ShoppingListMockFixture shoppingListMockFixture;
-
-        public AddItemToShoppingListCommandHandlerTests()
-        {
-            commonFixture = new CommonFixture();
-            shoppingListItemFixture = new ShoppingListItemFixture(commonFixture).AsModelFixture();
-            shoppingListFixture = new ShoppingListFixture(commonFixture);
-            storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
-            storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
-            shoppingListMockFixture = new ShoppingListMockFixture(commonFixture, shoppingListFixture);
-        }
-
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
-            var handler = fixture.Create<AddItemToShoppingListCommandHandler>();
+            var local = new LocalFixture();
+            var handler = local.CreateCommandHandler();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(null, default);
@@ -58,39 +40,34 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
         [Fact]
         public async Task HandleAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
         {
-            // todo implement
-        }
+            // Arrange
+            var local = new LocalFixture();
+            var handler = local.CreateCommandHandler();
+            var command = local.CreateCommandWithOfflineId();
 
-        [Fact]
-        public async Task HandleAsync_WithInvalidStoreItemId_ShouldThrowDomainException()
-        {
-            // todo implement
-        }
+            local.ShoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, null);
 
-        [Fact]
-        public async Task HandleAsync_WithItemAtStoreNotAvailable_ShouldThrowDomainException()
-        {
-            // todo implement
+            // Act
+            Func<Task> function = async () => await handler.HandleAsync(command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                (await function.Should().ThrowAsync<DomainException>())
+                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ShoppingListNotFound);
+            }
         }
 
         [Fact]
         public async Task HandleAsync_WithOfflineId_ShouldAddItemToList()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
+            var local = new LocalFixture();
+            var handler = local.CreateCommandHandler();
+            var command = local.CreateCommandWithOfflineId();
 
-            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
-            AddItemToShoppingListServiceMock addItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(fixture);
-            var handler = fixture.Create<AddItemToShoppingListCommandHandler>();
-            var offlineTolerantItemId = new OfflineTolerantItemId(Guid.NewGuid());
-
-            fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, OfflineTolerantItemId>("itemId",
-                offlineTolerantItemId);
-            var command = fixture.Create<AddItemToShoppingListCommand>();
-
-            // setup ShoppingList
-            ShoppingListMock listMock = shoppingListMockFixture.Create();
-            shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
+            ShoppingListMock listMock = local.ShoppingListMockFixture.Create();
+            local.ShoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
 
             // Act
             bool result = await handler.HandleAsync(command, default);
@@ -99,9 +76,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
+                local.ShoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
 
-                addItemToShoppingListServiceMock.VerifyAddItemToShoppingListOnce(
+                local.AddItemToShoppingListServiceMock.VerifyAddItemToShoppingListOnce(
                     listMock.Object,
                     new TemporaryItemId(command.ItemId.OfflineId.Value),
                     command.SectionId,
@@ -113,19 +90,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
         public async Task HandleAsync_WithActualId_ShouldAddItemToList()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
-            var offlineTolerantItemId = new OfflineTolerantItemId(commonFixture.NextInt());
+            var local = new LocalFixture();
+            var handler = local.CreateCommandHandler();
+            var command = local.CreateCommandWithActualId();
 
-            fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, OfflineTolerantItemId>("itemId",
-                offlineTolerantItemId);
-            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
-            AddItemToShoppingListServiceMock addItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(fixture);
-            var handler = fixture.Create<AddItemToShoppingListCommandHandler>();
-            var command = fixture.Create<AddItemToShoppingListCommand>();
-
-            // setup ShoppingList
-            ShoppingListMock listMock = shoppingListMockFixture.Create();
-            shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
+            ShoppingListMock listMock = local.ShoppingListMockFixture.Create();
+            local.ShoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
 
             // Act
             bool result = await handler.HandleAsync(command, default);
@@ -134,13 +104,53 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
+                local.ShoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
 
-                addItemToShoppingListServiceMock.VerifyAddItemToShoppingListOnce(
+                local.AddItemToShoppingListServiceMock.VerifyAddItemToShoppingListOnce(
                     listMock.Object,
                     new ItemId(command.ItemId.ActualId.Value),
                     command.SectionId,
                     command.Quantity);
+            }
+        }
+
+        private sealed class LocalFixture
+        {
+            public Fixture Fixture { get; }
+            public ShoppingListMockFixture ShoppingListMockFixture { get; }
+            public ShoppingListRepositoryMock ShoppingListRepositoryMock { get; }
+            public CommonFixture CommonFixture { get; } = new CommonFixture();
+            public AddItemToShoppingListServiceMock AddItemToShoppingListServiceMock { get; }
+
+            public LocalFixture()
+            {
+                Fixture = CommonFixture.GetNewFixture();
+
+                ShoppingListMockFixture = new ShoppingListMockFixture(CommonFixture, new ShoppingListFixture(CommonFixture));
+
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
+                AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(Fixture);
+            }
+
+            public AddItemToShoppingListCommand CreateCommandWithActualId()
+            {
+                Fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, OfflineTolerantItemId>("itemId",
+                    new OfflineTolerantItemId(CommonFixture.NextInt()));
+
+                return Fixture.Create<AddItemToShoppingListCommand>();
+            }
+
+            public AddItemToShoppingListCommand CreateCommandWithOfflineId()
+            {
+                Fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, OfflineTolerantItemId>("itemId",
+                    new OfflineTolerantItemId(Guid.NewGuid()));
+
+                return Fixture.Create<AddItemToShoppingListCommand>();
+            }
+
+            public AddItemToShoppingListCommandHandler CreateCommandHandler()
+            {
+                return Fixture.Create<AddItemToShoppingListCommandHandler>();
             }
         }
     }
