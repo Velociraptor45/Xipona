@@ -14,14 +14,5 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         {
             this.commonFixture = commonFixture;
         }
-
-        public CreateTemporaryItemCommand Create(IStoreItemAvailability availability)
-        {
-            var fixture = commonFixture.GetNewFixture();
-
-            fixture.ConstructorArgumentFor<TemporaryItemCreation, IStoreItemAvailability>("availability", availability);
-
-            return fixture.Create<CreateTemporaryItemCommand>();
-        }
     }
 }

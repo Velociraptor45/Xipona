@@ -1,11 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,15 +12,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
     public class CreateTemporaryItemCommandHandler : ICommandHandler<CreateTemporaryItemCommand, bool>
     {
         private readonly IItemRepository itemRepository;
-        private readonly IStoreRepository storeRepository;
         private readonly IStoreItemFactory storeItemFactory;
+        private readonly IAvailabilityValidationService availabilityValidationService;
 
-        public CreateTemporaryItemCommandHandler(IItemRepository itemRepository, IStoreRepository storeRepository,
-            IStoreItemFactory storeItemFactory)
+        public CreateTemporaryItemCommandHandler(IItemRepository itemRepository, IStoreItemFactory storeItemFactory,
+            IAvailabilityValidationService availabilityValidationService)
         {
             this.itemRepository = itemRepository;
-            this.storeRepository = storeRepository;
             this.storeItemFactory = storeItemFactory;
+            this.availabilityValidationService = availabilityValidationService;
         }
 
         public async Task<bool> HandleAsync(CreateTemporaryItemCommand command, CancellationToken cancellationToken)
@@ -33,16 +31,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
             }
 
             var availability = command.TemporaryItemCreation.Availability;
-
-            var store = await storeRepository.FindByAsync(availability.StoreId, cancellationToken);
-            if (store == null || store.IsDeleted)
-                throw new DomainException(new StoreNotFoundReason(availability.StoreId));
-
-            if (!store.Sections.Any(s => s.Id == availability.DefaultSectionId))
-            {
-                throw new DomainException(
-                    new SectionInStoreNotFoundReason(availability.DefaultSectionId, availability.StoreId));
-            }
+            await availabilityValidationService.Validate(availability.ToMonoList(), cancellationToken);
 
             var storeItem = storeItemFactory.Create(command.TemporaryItemCreation);
 
