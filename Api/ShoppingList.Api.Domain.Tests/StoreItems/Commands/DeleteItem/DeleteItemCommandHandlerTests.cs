@@ -1,18 +1,15 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem;
 using ShoppingList.Api.Domain.TestKit.Common.Mocks;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Mocks;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,24 +19,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
 {
     public class DeleteItemCommandHandlerTests
     {
-        private readonly CommonFixture commonFixture;
-        private readonly StoreItemMockFixture storeItemMockFixture;
-
-        public DeleteItemCommandHandlerTests()
-        {
-            commonFixture = new CommonFixture();
-            var storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
-            var storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
-            storeItemMockFixture = new StoreItemMockFixture(commonFixture, storeItemFixture);
-        }
-
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
-
-            var handler = fixture.Create<DeleteItemCommandHandler>();
+            var local = new LocalFixture();
+            var handler = local.CreateCommandHandler();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(null, default);
@@ -55,14 +40,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
         public async Task HandleAsync_WithInvalidItemId_ShouldThrowDomainException()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
+            var local = new LocalFixture();
+            var handler = local.CreateCommandHandler();
+            var command = local.CreateCommand();
 
-            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
-
-            var command = fixture.Create<DeleteItemCommand>();
-            var handler = fixture.Create<DeleteItemCommandHandler>();
-
-            itemRepositoryMock.SetupFindByAsync(command.ItemId, null);
+            local.ItemRepositoryMock.SetupFindByAsync(command.ItemId, null);
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
@@ -81,21 +63,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
             List<ShoppingListMock> shoppingListMocks)
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
-
-            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
-            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
-            TransactionGeneratorMock transactionGeneratorMock = new TransactionGeneratorMock(fixture);
+            var local = new LocalFixture();
+            var handler = local.CreateCommandHandler();
+            var command = local.CreateCommand();
 
             TransactionMock transactionMock = new TransactionMock();
-            StoreItemMock storeItemMock = storeItemMockFixture.Create();
+            StoreItemMock storeItemMock = local.StoreItemMockFixture.Create();
 
-            var command = fixture.Create<DeleteItemCommand>();
-            var handler = fixture.Create<DeleteItemCommandHandler>();
-
-            itemRepositoryMock.SetupFindByAsync(command.ItemId, storeItemMock.Object);
-            shoppingListRepositoryMock.SetupFindActiveByAsync(storeItemMock.Object.Id, shoppingListMocks.Select(m => m.Object));
-            transactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
+            local.ItemRepositoryMock.SetupFindByAsync(command.ItemId, storeItemMock.Object);
+            local.ShoppingListRepositoryMock.SetupFindActiveByAsync(storeItemMock.Object.Id,
+                shoppingListMocks.Select(m => m.Object));
+            local.TransactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
 
             // Act
             var result = await handler.HandleAsync(command, default);
@@ -105,18 +83,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
             {
                 result.Should().BeTrue();
                 storeItemMock.VerifyDeleteOnce();
-                itemRepositoryMock.VerifyStoreAsyncOnce(storeItemMock.Object);
+                local.ItemRepositoryMock.VerifyStoreAsyncOnce(storeItemMock.Object);
 
                 if (!shoppingListMocks.Any())
                 {
-                    shoppingListRepositoryMock.VerifyStoreAsyncNever();
+                    local.ShoppingListRepositoryMock.VerifyStoreAsyncNever();
                 }
                 else
                 {
                     foreach (var shoppingListMock in shoppingListMocks)
                     {
                         shoppingListMock.VerifyRemoveItemOnce(storeItemMock.Object.Id);
-                        shoppingListRepositoryMock.VerifyStoreAsyncOnce(shoppingListMock.Object);
+                        local.ShoppingListRepositoryMock.VerifyStoreAsyncOnce(shoppingListMock.Object);
                     }
                 }
 
@@ -124,31 +102,36 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
             }
         }
 
-        private class HandleAsyncWithShoppingListsTestData : IEnumerable<object[]>
+        private sealed class LocalFixture
         {
-            public IEnumerator<object[]> GetEnumerator()
-            {
-                var commonFixture = new CommonFixture();
-                var shoppingListFixture = new ShoppingListFixture(commonFixture);
-                var shoppingListMockFixture = new ShoppingListMockFixture(commonFixture, shoppingListFixture);
+            public Fixture Fixture { get; }
+            public CommonFixture CommonFixture { get; } = new CommonFixture();
+            public StoreItemFixture StoreItemFixture { get; }
+            public StoreItemMockFixture StoreItemMockFixture { get; }
+            public ShoppingListRepositoryMock ShoppingListRepositoryMock { get; }
+            public ItemRepositoryMock ItemRepositoryMock { get; }
+            public TransactionGeneratorMock TransactionGeneratorMock { get; }
 
-                yield return new object[]
-                {
-                    shoppingListMockFixture.Create().ToMonoList()
-                };
-                yield return new object[]
-                {
-                    shoppingListMockFixture.CreateMany(3).ToList()
-                };
-                yield return new object[]
-                {
-                    new List<ShoppingListMock>()
-                };
+            public LocalFixture()
+            {
+                Fixture = CommonFixture.GetNewFixture();
+
+                StoreItemFixture = new StoreItemFixture(new StoreItemAvailabilityFixture(CommonFixture), CommonFixture);
+                StoreItemMockFixture = new StoreItemMockFixture(CommonFixture, StoreItemFixture);
+
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
+                ItemRepositoryMock = new ItemRepositoryMock(Fixture);
+                TransactionGeneratorMock = new TransactionGeneratorMock(Fixture);
             }
 
-            IEnumerator IEnumerable.GetEnumerator()
+            public DeleteItemCommand CreateCommand()
             {
-                return GetEnumerator();
+                return Fixture.Create<DeleteItemCommand>();
+            }
+
+            public DeleteItemCommandHandler CreateCommandHandler()
+            {
+                return Fixture.Create<DeleteItemCommandHandler>();
             }
         }
     }
