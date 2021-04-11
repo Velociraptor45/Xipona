@@ -77,20 +77,21 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
             return shoppingListItemFactory.Create(itemId, false, quantity);
         }
 
-        private SectionId DetermineSection(IStoreItem storeItem, StoreId storeId)
+        private void ValidateItemIsAvailableAtStore(IStoreItem storeItem, StoreId storeId,
+            out IStoreItemAvailability availability)
         {
-            var availability = storeItem.Availabilities.FirstOrDefault(av => av.StoreId == storeId);
+            availability = storeItem.Availabilities.FirstOrDefault(av => av.StoreId == storeId);
             if (availability == null)
                 throw new DomainException(new ItemAtStoreNotAvailableReason(storeItem.Id, storeId));
-
-            return availability.DefaultSectionId;
         }
 
-        private async Task AddItemToShoppingList(IShoppingList shoppingList, IStoreItem storeItem,
+        internal async Task AddItemToShoppingList(IShoppingList shoppingList, IStoreItem storeItem,
             SectionId sectionId, float quantity, CancellationToken cancellationToken)
         {
+            ValidateItemIsAvailableAtStore(storeItem, shoppingList.StoreId, out var availability);
+
             if (sectionId == null)
-                sectionId = DetermineSection(storeItem, shoppingList.StoreId);
+                sectionId = availability.DefaultSectionId;
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -98,8 +99,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
             await AddItemToShoppingList(shoppingList, shoppingListItem, sectionId, cancellationToken);
         }
 
-        private async Task AddItemToShoppingList(IShoppingList shoppingList, IShoppingListItem item, SectionId sectionId,
-            CancellationToken cancellationToken)
+        internal async Task AddItemToShoppingList(IShoppingList shoppingList, IShoppingListItem item,
+            SectionId sectionId, CancellationToken cancellationToken)
         {
             var store = await storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
             if (store == null)

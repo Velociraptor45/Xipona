@@ -17,6 +17,14 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Fixtures
             };
         }
 
+        public static StoreSectionDefinition FromId(SectionId id)
+        {
+            return new StoreSectionDefinition()
+            {
+                Id = id
+            };
+        }
+
         public StoreSectionDefinition Clone()
         {
             return new StoreSectionDefinition()
