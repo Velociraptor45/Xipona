@@ -6,6 +6,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services
 {
     public interface IItemCategoryValidationService
     {
-        Task Validate(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);
+        Task ValidateAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);
     }
 }

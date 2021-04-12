@@ -51,13 +51,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
             var itemCategoryId = command.ItemModify.ItemCategoryId;
             var manufacturerId = command.ItemModify.ManufacturerId;
 
-            await itemCategoryValidationService.Validate(itemCategoryId, cancellationToken);
+            await itemCategoryValidationService.ValidateAsync(itemCategoryId, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
             if (manufacturerId != null)
             {
-                await manufacturerValidationService.Validate(manufacturerId, cancellationToken);
+                await manufacturerValidationService.ValidateAsync(manufacturerId, cancellationToken);
             }
 
             cancellationToken.ThrowIfCancellationRequested();

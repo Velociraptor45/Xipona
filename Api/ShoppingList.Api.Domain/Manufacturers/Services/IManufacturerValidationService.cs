@@ -6,6 +6,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services
 {
     public interface IManufacturerValidationService
     {
-        Task Validate(ManufacturerId manufacturerId, CancellationToken cancellationToken);
+        Task ValidateAsync(ManufacturerId manufacturerId, CancellationToken cancellationToken);
     }
 }

@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,10 +17,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services
             this.itemCategoryRepository = itemCategoryRepository;
         }
 
-        public async Task Validate(ItemCategoryId itemCategoryId, CancellationToken cancellationToken)
+        public async Task ValidateAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken)
         {
             if (itemCategoryId is null)
-                throw new System.ArgumentNullException(nameof(itemCategoryId));
+                throw new ArgumentNullException(nameof(itemCategoryId));
 
             IItemCategory itemCategory = await itemCategoryRepository
                 .FindByAsync(itemCategoryId, cancellationToken);

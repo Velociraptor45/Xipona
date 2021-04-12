@@ -38,11 +38,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
             var itemCategoryId = command.ItemCreation.ItemCategoryId;
             var manufacturerId = command.ItemCreation.ManufacturerId;
 
-            await itemCategoryValidationService.Validate(itemCategoryId, cancellationToken);
+            await itemCategoryValidationService.ValidateAsync(itemCategoryId, cancellationToken);
 
             if (manufacturerId != null)
             {
-                await manufacturerValidationService.Validate(manufacturerId, cancellationToken);
+                await manufacturerValidationService.ValidateAsync(manufacturerId, cancellationToken);
             }
 
             cancellationToken.ThrowIfCancellationRequested();

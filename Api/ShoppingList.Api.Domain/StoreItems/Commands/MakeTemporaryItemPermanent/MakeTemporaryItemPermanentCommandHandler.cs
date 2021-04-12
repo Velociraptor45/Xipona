@@ -46,13 +46,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
             var itemCategoryId = command.PermanentItem.ItemCategoryId;
             var manufacturerId = command.PermanentItem.ManufacturerId;
 
-            await itemCategoryValidationService.Validate(itemCategoryId, cancellationToken);
+            await itemCategoryValidationService.ValidateAsync(itemCategoryId, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
             if (command.PermanentItem.ManufacturerId != null)
             {
-                await manufacturerValidationService.Validate(manufacturerId, cancellationToken);
+                await manufacturerValidationService.ValidateAsync(manufacturerId, cancellationToken);
             }
 
             var availabilities = command.PermanentItem.Availabilities;

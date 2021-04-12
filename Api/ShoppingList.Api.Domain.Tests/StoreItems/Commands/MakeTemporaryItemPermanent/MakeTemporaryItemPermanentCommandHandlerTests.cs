@@ -7,6 +7,8 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Services;
+using ShoppingList.Api.Domain.TestKit.Manufacturers.Services;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
@@ -105,8 +107,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                local.ItemCategoryValidationServiceMock.VerifyValidateOnce(command.PermanentItem.ItemCategoryId);
-                local.ManufacturerValidationServiceMock.VerifyValidateOnce(command.PermanentItem.ManufacturerId);
+                local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(command.PermanentItem.ItemCategoryId);
+                local.ManufacturerValidationServiceMock.VerifyValidateAsyncOnce(command.PermanentItem.ManufacturerId);
                 local.AvailabilityValidationServiceMock.VerifyValidateOnce(availabilities);
                 storeItemMock.VerifyMakePermanentOnce(command.PermanentItem, availabilities);
                 local.ItemRepositoryMock.VerifyStoreAsyncOnce(storeItemMock.Object);
@@ -134,8 +136,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                local.ItemCategoryValidationServiceMock.VerifyValidateOnce(command.PermanentItem.ItemCategoryId);
-                local.ManufacturerValidationServiceMock.VerifyValidateNever();
+                local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(command.PermanentItem.ItemCategoryId);
+                local.ManufacturerValidationServiceMock.VerifyValidateAsyncNever();
                 local.AvailabilityValidationServiceMock.VerifyValidateOnce(availabilities);
                 storeItemMock.VerifyMakePermanentOnce(command.PermanentItem, availabilities);
                 local.ItemRepositoryMock.VerifyStoreAsyncOnce(storeItemMock.Object);

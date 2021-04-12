@@ -6,6 +6,8 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Services;
+using ShoppingList.Api.Domain.TestKit.Manufacturers.Services;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
@@ -61,8 +63,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             {
                 result.Should().BeTrue();
                 local.ItemRepositoryMock.VerifyStoreAsyncOnce(storeItem);
-                local.ItemCategoryValidationServiceMock.VerifyValidateOnce(command.ItemCreation.ItemCategoryId);
-                local.ManufacturerValidationServiceMock.VerifyValidateOnce(command.ItemCreation.ManufacturerId);
+                local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(command.ItemCreation.ItemCategoryId);
+                local.ManufacturerValidationServiceMock.VerifyValidateAsyncOnce(command.ItemCreation.ManufacturerId);
                 local.AvailabilityValidationServiceMock.VerifyValidateOnce(availabilities);
             }
         }
@@ -89,8 +91,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             {
                 result.Should().BeTrue();
                 local.ItemRepositoryMock.VerifyStoreAsyncOnce(storeItem);
-                local.ItemCategoryValidationServiceMock.VerifyValidateOnce(command.ItemCreation.ItemCategoryId);
-                local.ManufacturerValidationServiceMock.VerifyValidateNever();
+                local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(command.ItemCreation.ItemCategoryId);
+                local.ManufacturerValidationServiceMock.VerifyValidateAsyncNever();
                 local.AvailabilityValidationServiceMock.VerifyValidateOnce(availabilities);
             }
         }

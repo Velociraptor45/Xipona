@@ -17,7 +17,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services
             this.manufacturerRepository = manufacturerRepository;
         }
 
-        public async Task Validate(ManufacturerId manufacturerId, CancellationToken cancellationToken)
+        public async Task ValidateAsync(ManufacturerId manufacturerId, CancellationToken cancellationToken)
         {
             if (manufacturerId is null)
                 throw new ArgumentNullException(nameof(manufacturerId));
