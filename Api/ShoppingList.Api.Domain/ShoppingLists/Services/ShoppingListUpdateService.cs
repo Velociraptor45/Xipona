@@ -22,6 +22,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
 
         public async Task ExchangeItemAsync(ItemId oldItemId, IStoreItem newItem, CancellationToken cancellationToken)
         {
+            if (oldItemId is null)
+                throw new System.ArgumentNullException(nameof(oldItemId));
+            if (newItem is null)
+                throw new System.ArgumentNullException(nameof(newItem));
+
             var shoppingListsWithOldItem = (await shoppingListRepository
                 .FindActiveByAsync(oldItemId, cancellationToken))
                 .ToList();

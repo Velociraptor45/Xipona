@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ShoppingList.Api.Domain.TestKit.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,17 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
         public ShoppingListMock(IShoppingList shoppingList)
         {
             SetupId(shoppingList.Id);
-            SetupStore(shoppingList.StoreId);
+            SetupStoreId(shoppingList.StoreId);
+            SetupItems(shoppingList.Items);
             SetupSections(shoppingList.Sections);
         }
+
+        public IShoppingListItem GetRandomItem(CommonFixture commonFixture)
+        {
+            return commonFixture.ChooseRandom(Object.Items);
+        }
+
+        #region Setup properties
 
         public void SetupId(ShoppingListId returnValue)
         {
@@ -23,10 +32,16 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
                 .Returns(returnValue);
         }
 
-        public void SetupStore(StoreId returnValue)
+        public void SetupStoreId(StoreId returnValue)
         {
             Setup(i => i.StoreId)
                 .Returns(returnValue);
+        }
+
+        public void SetupItems(IReadOnlyCollection<IShoppingListItem> items)
+        {
+            Setup(i => i.Items)
+                .Returns(items);
         }
 
         public void SetupSections(IEnumerable<IShoppingListSection> sections)
@@ -37,17 +52,23 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
                 .Returns(readonlySections);
         }
 
+        #endregion Setup properties
+
+        #region Setup methods
+
         public void SetupFinish(DateTime completionDate, IShoppingList returnValue)
         {
-            Setup(i => i.Finish(
-                It.Is<DateTime>(date => date == completionDate)))
+            Setup(i => i.Finish(completionDate))
                 .Returns(returnValue);
         }
 
+        #endregion Setup methods
+
+        #region Verify methods
+
         public void VerifyRemoveItemOnce(ItemId itemId)
         {
-            Verify(i => i.RemoveItem(
-                    It.Is<ItemId>(id => id == itemId)),
+            Verify(i => i.RemoveItem(itemId),
                 Times.Once);
         }
 
@@ -63,16 +84,21 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
 
         public void VerifyAddItemOnce(IShoppingListItem listItem, SectionId sectionId)
         {
-            Verify(i => i.AddItem(
-                    It.Is<IShoppingListItem>(item => item == listItem),
-                    It.Is<SectionId>(id => id == sectionId)),
+            Verify(i => i.AddItem(listItem, sectionId),
                 Times.Once);
+        }
+
+        public void VerifyAddItemNever()
+        {
+            Verify(i => i.AddItem(
+                    It.IsAny<IShoppingListItem>(),
+                    It.IsAny<SectionId>()),
+                Times.Never);
         }
 
         public void VerifyAddSectionOnce(IShoppingListSection section)
         {
-            Verify(i => i.AddSection(
-                    It.Is<IShoppingListSection>(s => s == section)),
+            Verify(i => i.AddSection(section),
                 Times.Once);
         }
 
@@ -85,17 +111,16 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
 
         public void VerifyFinishOnce(DateTime completionDate)
         {
-            Verify(i => i.Finish(
-                    It.Is<DateTime>(date => date == completionDate)),
+            Verify(i => i.Finish(completionDate),
                 Times.Once);
         }
 
         public void VerifyChangeItemQuantityOnce(ItemId itemId, float quantity)
         {
-            Verify(i => i.ChangeItemQuantity(
-                    itemId,
-                    quantity),
+            Verify(i => i.ChangeItemQuantity(itemId, quantity),
                 Times.Once);
         }
+
+        #endregion Verify methods
     }
 }
