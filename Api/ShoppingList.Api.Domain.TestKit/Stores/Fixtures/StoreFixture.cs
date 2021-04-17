@@ -125,7 +125,7 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Fixtures
 
         public IEnumerable<IStore> CreateManyValid(StoreDefinition baseDefinition, int count = 3)
         {
-            if (count <= 1)
+            if (count <= 0)
                 throw new ArgumentException($"{nameof(count)} must be greater than 0.");
 
             var uniqueStoreIds = commonFixture.NextUniqueInts(count);

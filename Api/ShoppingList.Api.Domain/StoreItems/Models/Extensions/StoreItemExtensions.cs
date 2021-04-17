@@ -32,31 +32,5 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions
         {
             return new ItemFilterResultReadModel(model.Id, model.Name);
         }
-
-        public static StoreItemReadModel ToReadModel(this IStoreItem model, IItemCategory itemCategory,
-            IManufacturer manufacturer, Dictionary<StoreId, IStore> stores)
-        {
-            var availabilityReadModels = new List<StoreItemAvailabilityReadModel>();
-            foreach (var av in model.Availabilities)
-            {
-                var store = stores[av.StoreId];
-                var section = store.Sections.First(s => s.Id == av.DefaultSectionId);
-
-                availabilityReadModels.Add(av.ToReadModel(store, section));
-            }
-
-            return new StoreItemReadModel(
-                model.Id,
-                model.Name,
-                model.IsDeleted,
-                model.Comment,
-                model.IsTemporary,
-                model.QuantityType.ToReadModel(),
-                model.QuantityInPacket,
-                model.QuantityTypeInPacket.ToReadModel(),
-                itemCategory?.ToReadModel(),
-                manufacturer?.ToReadModel(),
-                availabilityReadModels);
-        }
     }
 }
