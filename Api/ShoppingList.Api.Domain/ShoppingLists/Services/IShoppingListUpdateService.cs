@@ -6,6 +6,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
 {
     public interface IShoppingListUpdateService
     {
-        Task ExchangeItem(ItemId oldItemId, IStoreItem newItem, CancellationToken cancellationToken);
+        Task ExchangeItemAsync(ItemId oldItemId, IStoreItem newItem, CancellationToken cancellationToken);
     }
 }

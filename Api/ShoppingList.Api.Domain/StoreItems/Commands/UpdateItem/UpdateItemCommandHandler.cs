@@ -78,7 +78,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
             updatedItem = await itemRepository.StoreAsync(updatedItem, cancellationToken);
 
             // change existing item references on shopping lists
-            await shoppingListUpdateService.ExchangeItem(oldItem.Id, updatedItem, cancellationToken);
+            await shoppingListUpdateService.ExchangeItemAsync(oldItem.Id, updatedItem, cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);
 

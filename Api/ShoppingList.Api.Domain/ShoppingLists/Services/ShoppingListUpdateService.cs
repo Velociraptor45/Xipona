@@ -20,7 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
             this.shoppingListItemFactory = shoppingListItemFactory;
         }
 
-        public async Task ExchangeItem(ItemId oldItemId, IStoreItem newItem, CancellationToken cancellationToken)
+        public async Task ExchangeItemAsync(ItemId oldItemId, IStoreItem newItem, CancellationToken cancellationToken)
         {
             var shoppingListsWithOldItem = (await shoppingListRepository
                 .FindActiveByAsync(oldItemId, cancellationToken))
