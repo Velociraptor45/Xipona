@@ -56,7 +56,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
             }
 
             var availabilities = command.PermanentItem.Availabilities;
-            await availabilityValidationService.Validate(availabilities, cancellationToken);
+            await availabilityValidationService.ValidateAsync(availabilities, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 

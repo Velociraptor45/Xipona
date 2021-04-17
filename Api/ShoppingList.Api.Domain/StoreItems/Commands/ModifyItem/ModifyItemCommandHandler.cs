@@ -63,7 +63,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
             cancellationToken.ThrowIfCancellationRequested();
 
             var availabilities = command.ItemModify.Availabilities;
-            await availabilityValidationService.Validate(availabilities, cancellationToken);
+            await availabilityValidationService.ValidateAsync(availabilities, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 

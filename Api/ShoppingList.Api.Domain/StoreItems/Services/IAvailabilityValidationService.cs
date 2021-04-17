@@ -7,6 +7,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
 {
     public interface IAvailabilityValidationService
     {
-        Task Validate(IEnumerable<IStoreItemAvailability> availabilities, CancellationToken cancellationToken);
+        Task ValidateAsync(IEnumerable<IStoreItemAvailability> availabilities, CancellationToken cancellationToken);
     }
 }

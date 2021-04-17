@@ -48,7 +48,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
             cancellationToken.ThrowIfCancellationRequested();
 
             var availabilities = command.ItemCreation.Availabilities;
-            await availabilityValidationService.Validate(availabilities, cancellationToken);
+            await availabilityValidationService.ValidateAsync(availabilities, cancellationToken);
 
             var storeItem = storeItemFactory.Create(command.ItemCreation);
 

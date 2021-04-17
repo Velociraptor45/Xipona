@@ -68,7 +68,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
             cancellationToken.ThrowIfCancellationRequested();
 
             var availabilities = command.ItemUpdate.Availabilities;
-            await availabilityValidationService.Validate(availabilities, cancellationToken);
+            await availabilityValidationService.ValidateAsync(availabilities, cancellationToken);
 
             using ITransaction transaction = await transactionGenerator.GenerateAsync(cancellationToken);
             await itemRepository.StoreAsync(oldItem, cancellationToken);

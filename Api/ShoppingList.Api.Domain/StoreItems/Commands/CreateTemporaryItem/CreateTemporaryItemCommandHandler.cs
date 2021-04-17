@@ -31,7 +31,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
             }
 
             var availability = command.TemporaryItemCreation.Availability;
-            await availabilityValidationService.Validate(availability.ToMonoList(), cancellationToken);
+            await availabilityValidationService.ValidateAsync(availability.ToMonoList(), cancellationToken);
 
             var storeItem = storeItemFactory.Create(command.TemporaryItemCreation);
 

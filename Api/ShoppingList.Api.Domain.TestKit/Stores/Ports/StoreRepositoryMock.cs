@@ -3,8 +3,8 @@ using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ShoppingList.Api.Domain.TestKit.Stores.Ports
 {
@@ -27,14 +27,23 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Ports
             mock
                 .Setup(i => i.GetAsync(
                     It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(returnValue));
+                .ReturnsAsync(returnValue);
         }
 
         public void SetupFindByAsync(StoreId storeId, IStore returnValue)
         {
             mock
                 .Setup(i => i.FindByAsync(
-                    It.Is<StoreId>(id => id == storeId),
+                    storeId,
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(returnValue);
+        }
+
+        public void SetupFindByAsync(IEnumerable<StoreId> storeIds, IEnumerable<IStore> returnValue)
+        {
+            mock
+                .Setup(i => i.FindByAsync(
+                    It.Is<IEnumerable<StoreId>>(ids => ids.SequenceEqual(storeIds)),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(returnValue);
         }
@@ -43,7 +52,7 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Ports
         {
             mock
                 .Setup(i => i.FindActiveByAsync(
-                    It.Is<StoreId>(id => id == storeId),
+                    storeId,
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(returnValue);
         }
@@ -51,7 +60,7 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Ports
         public void VerifyFindActiveByAsyncOnce(StoreId storeId)
         {
             mock.Verify(i => i.FindActiveByAsync(
-                    It.Is<StoreId>(id => id == storeId),
+                    storeId,
                     It.IsAny<CancellationToken>()),
                 Times.Once);
         }
@@ -59,7 +68,7 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Ports
         public void VerifyFindByAsyncOnce(StoreId storeId)
         {
             mock.Verify(i => i.FindByAsync(
-                    It.Is<StoreId>(id => id == storeId),
+                    storeId,
                     It.IsAny<CancellationToken>()),
                 Times.Once);
         }

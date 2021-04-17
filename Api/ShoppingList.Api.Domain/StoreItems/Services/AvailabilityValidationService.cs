@@ -20,7 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
             this.storeRepository = storeRepository;
         }
 
-        public async Task Validate(IEnumerable<IStoreItemAvailability> availabilities, CancellationToken cancellationToken)
+        public async Task ValidateAsync(IEnumerable<IStoreItemAvailability> availabilities, CancellationToken cancellationToken)
         {
             if (availabilities is null)
                 throw new ArgumentNullException(nameof(availabilities));

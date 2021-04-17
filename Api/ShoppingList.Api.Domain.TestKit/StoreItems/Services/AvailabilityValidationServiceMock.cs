@@ -5,7 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services
+namespace ShoppingList.Api.Domain.TestKit.StoreItems.Services
 {
     public class AvailabilityValidationServiceMock
     {
@@ -23,7 +23,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services
 
         public void VerifyValidateOnce(IEnumerable<IStoreItemAvailability> availabilities)
         {
-            mock.Verify(i => i.Validate(
+            mock.Verify(i => i.ValidateAsync(
                     availabilities,
                     It.IsAny<CancellationToken>()),
                 Times.Once);
