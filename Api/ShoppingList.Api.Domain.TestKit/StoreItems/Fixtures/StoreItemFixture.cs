@@ -73,6 +73,16 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             return CreateValid(definition);
         }
 
+        public IEnumerable<IStoreItem> CreateMany(int count)
+        {
+            List<StoreItemDefinition> definitions = new List<StoreItemDefinition>();
+            for (int i = 0; i < count; i++)
+            {
+                definitions.Add(new StoreItemDefinition());
+            }
+            return CreateMany(definitions);
+        }
+
         public IEnumerable<IStoreItem> CreateMany(IEnumerable<StoreItemDefinition> definitions)
         {
             var existingIds = definitions
