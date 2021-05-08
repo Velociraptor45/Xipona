@@ -192,6 +192,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
+            foreach (var item in entities)
+            {
+                item.Predecessor = await LoadPredecessorsAsync(item);
+            }
+
             return toModelConverter.ToDomain(entities);
         }
 
@@ -217,6 +222,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 await dbContext.SaveChangesAsync();
 
                 var e = GetItemQuery().First(i => i.Id == newEntity.Id);
+                e.Predecessor = await LoadPredecessorsAsync(e);
                 return toModelConverter.ToDomain(e);
             }
             else
@@ -231,6 +237,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
                 await dbContext.SaveChangesAsync();
 
                 var e = GetItemQuery().First(i => i.Id == updatedEntity.Id);
+                e.Predecessor = await LoadPredecessorsAsync(e);
                 return toModelConverter.ToDomain(e);
             }
         }
