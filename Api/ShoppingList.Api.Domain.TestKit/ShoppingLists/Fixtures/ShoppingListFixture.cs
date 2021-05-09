@@ -115,5 +115,19 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
             return CreateValid(listDefinition);
         }
+
+        public IShoppingList CreateValidWith(ShoppingListItemDefinition itemDefinition)
+        {
+            var sections = shoppingListSectionFixture.CreateManyValid().ToList();
+            var section = shoppingListSectionFixture.CreateValidWith(itemDefinition);
+            sections.Add(section);
+
+            var listDef = new ShoppingListDefinition
+            {
+                Sections = sections
+            };
+
+            return CreateValid(listDef);
+        }
     }
 }

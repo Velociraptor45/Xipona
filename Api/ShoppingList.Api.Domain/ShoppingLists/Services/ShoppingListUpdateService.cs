@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System.Linq;
@@ -11,13 +10,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
     public class ShoppingListUpdateService : IShoppingListUpdateService
     {
         private readonly IShoppingListRepository shoppingListRepository;
-        private readonly IShoppingListItemFactory shoppingListItemFactory;
+        private readonly IAddItemToShoppingListService addItemToShoppingListService;
 
         public ShoppingListUpdateService(IShoppingListRepository shoppingListRepository,
-            IShoppingListItemFactory shoppingListItemFactory)
+            IAddItemToShoppingListService addItemToShoppingListService)
         {
             this.shoppingListRepository = shoppingListRepository;
-            this.shoppingListItemFactory = shoppingListItemFactory;
+            this.addItemToShoppingListService = addItemToShoppingListService;
         }
 
         public async Task ExchangeItemAsync(ItemId oldItemId, IStoreItem newItem, CancellationToken cancellationToken)
@@ -39,9 +38,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
                 if (newItem.IsAvailableInStore(list.StoreId))
                 {
                     var sectionId = newItem.GetDefaultSectionIdForStore(list.StoreId);
-                    var updatedListItem = shoppingListItemFactory.Create(newItem.Id, oldListItem.IsInBasket,
-                        oldListItem.Quantity);
-                    list.AddItem(updatedListItem, sectionId);
+                    await addItemToShoppingListService.AddItemToShoppingList(list, newItem.Id, sectionId,
+                        oldListItem.Quantity, cancellationToken);
+
+                    if (oldListItem.IsInBasket)
+                        list.PutItemInBasket(newItem.Id);
                 }
 
                 await shoppingListRepository.StoreAsync(list, cancellationToken);

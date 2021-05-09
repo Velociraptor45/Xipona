@@ -10,6 +10,7 @@ using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using System;
 using System.Linq;
@@ -87,7 +88,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            ShoppingListMock shoppingListMock = local.CreateShoppingListMock();
+            ShoppingListMock shoppingListMock = local.CreateShoppingListMockInBasket();
             ItemId oldItemId = local.CommonFixture.ChooseRandom(shoppingListMock.Object.Items).Id;
             IStoreItem newItem = local.CreateNewItemNotInStore(shoppingListMock.Object.StoreId);
 
@@ -106,24 +107,21 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         }
 
         [Fact]
-        public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingList_ShouldRemoveOldItemAndAddNewItem()
+        public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndInBasket_ShouldRemoveOldItemAndAddNewItem()
         {
             // Arrange
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            ShoppingListMock shoppingListMock = local.CreateShoppingListMock();
+            ShoppingListMock shoppingListMock = local.CreateShoppingListMockInBasket();
             var shopppingListStoreId = shoppingListMock.Object.StoreId;
 
-            IShoppingListItem oldShoppingListItem = shoppingListMock.GetRandomItem(local.CommonFixture);
+            IShoppingListItem oldShoppingListItem = shoppingListMock.GetRandomItem(local.CommonFixture, i => i.IsInBasket);
             ItemId oldItemId = oldShoppingListItem.Id;
 
             IStoreItem newItem = local.CreateNewItemForStore(shopppingListStoreId);
-            var newShoppingListItem = local.CreateShoppingListItem();
 
             local.ShoppingListRepositoryMock.SetupFindActiveByAsync(oldItemId, shoppingListMock.Object.ToMonoList());
-            local.ShoppingListItemFactoryMock
-                .SetupCreate(newItem.Id, oldShoppingListItem.IsInBasket, oldShoppingListItem.Quantity, newShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(oldItemId, newItem, default);
@@ -134,8 +132,43 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             using (new AssertionScope())
             {
                 shoppingListMock.VerifyRemoveItemOnce(oldItemId);
-                shoppingListMock.VerifyAddItemOnce(newShoppingListItem, sectionId);
                 local.ShoppingListRepositoryMock.VerifyStoreAsyncOnce(shoppingListMock.Object);
+                local.AddItemToShoppingListServiceMock.VerifyAddItemToShoppingListOnce(shoppingListMock.Object,
+                    newItem.Id, sectionId, oldShoppingListItem.Quantity);
+                shoppingListMock.VerifyPutItemInBasketOnce(newItem.Id);
+            }
+        }
+
+        [Fact]
+        public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndNotInBasket_ShouldRemoveOldItemAndAddNewItem()
+        {
+            // Arrange
+            var local = new LocalFixture();
+            var service = local.CreateService();
+
+            ShoppingListMock shoppingListMock = local.CreateShoppingListMockNotInBasket();
+            var shopppingListStoreId = shoppingListMock.Object.StoreId;
+
+            IShoppingListItem oldShoppingListItem = shoppingListMock.GetRandomItem(local.CommonFixture, i => !i.IsInBasket);
+            ItemId oldItemId = oldShoppingListItem.Id;
+
+            IStoreItem newItem = local.CreateNewItemForStore(shopppingListStoreId);
+
+            local.ShoppingListRepositoryMock.SetupFindActiveByAsync(oldItemId, shoppingListMock.Object.ToMonoList());
+
+            // Act
+            await service.ExchangeItemAsync(oldItemId, newItem, default);
+
+            // Assert
+            var sectionId = newItem.Availabilities.First(av => av.StoreId == shopppingListStoreId).DefaultSectionId;
+
+            using (new AssertionScope())
+            {
+                shoppingListMock.VerifyRemoveItemOnce(oldItemId);
+                local.ShoppingListRepositoryMock.VerifyStoreAsyncOnce(shoppingListMock.Object);
+                local.AddItemToShoppingListServiceMock.VerifyAddItemToShoppingListOnce(shoppingListMock.Object,
+                    newItem.Id, sectionId, oldShoppingListItem.Quantity);
+                shoppingListMock.VerifyPutItemInBasketNever();
             }
         }
 
@@ -151,7 +184,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             public StoreItemAvailabilityFixture StoreItemAvailabilityFixture { get; }
             public StoreItemFixture StoreItemFixture { get; }
             public ShoppingListRepositoryMock ShoppingListRepositoryMock { get; }
-            public ShoppingListItemFactoryMock ShoppingListItemFactoryMock { get; }
+            public AddItemToShoppingListServiceMock AddItemToShoppingListServiceMock { get; }
 
             public LocalFixture()
             {
@@ -164,7 +197,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 StoreItemFixture = new StoreItemFixture(StoreItemAvailabilityFixture, CommonFixture);
 
                 ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
-                ShoppingListItemFactoryMock = new ShoppingListItemFactoryMock(Fixture);
+                AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(Fixture);
             }
 
             public ShoppingListUpdateService CreateService()
@@ -206,9 +239,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 return ShoppingListItemFixture.AsModelFixture().CreateValid();
             }
 
-            public ShoppingListMock CreateShoppingListMock()
+            public ShoppingListMock CreateShoppingListMockInBasket()
             {
-                return ShoppingListMockFixture.Create();
+                var itemDef = ShoppingListItemDefinition.FromIsInBasket(true);
+                var list = ShoppingListFixture.CreateValidWith(itemDef);
+
+                return new ShoppingListMock(list);
+            }
+
+            public ShoppingListMock CreateShoppingListMockNotInBasket()
+            {
+                var itemDef = ShoppingListItemDefinition.FromIsInBasket(false);
+                var list = ShoppingListFixture.CreateValidWith(itemDef);
+
+                return new ShoppingListMock(list);
             }
         }
     }

@@ -24,6 +24,13 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
             return commonFixture.ChooseRandom(Object.Items);
         }
 
+        public IShoppingListItem GetRandomItem(CommonFixture commonFixture, Func<IShoppingListItem, bool> condition)
+        {
+            var filteredItems = Object.Items.Where(condition);
+
+            return commonFixture.ChooseRandom(filteredItems);
+        }
+
         #region Setup properties
 
         public void SetupId(ShoppingListId returnValue)
@@ -75,6 +82,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
         public void VerifyPutItemInBasketOnce(ItemId itemId)
         {
             Verify(i => i.PutItemInBasket(itemId), Times.Once);
+        }
+
+        public void VerifyPutItemInBasketNever()
+        {
+            Verify(i => i.PutItemInBasket(It.IsAny<ItemId>()), Times.Never);
         }
 
         public void VerifyRemoveItemFromBasketOnce(ItemId itemId)
