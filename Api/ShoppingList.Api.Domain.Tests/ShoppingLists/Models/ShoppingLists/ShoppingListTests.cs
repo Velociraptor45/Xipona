@@ -506,7 +506,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
 
             // Assert
             var expectedResult = new DomainModels.ShoppingList(
-                shoppingList.Id,
+                new ShoppingListId(0),
                 shoppingList.StoreId,
                 null,
                 new List<IShoppingListSection>
