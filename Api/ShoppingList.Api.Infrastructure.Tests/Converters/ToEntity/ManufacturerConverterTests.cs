@@ -6,7 +6,7 @@ using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Fixtures;
 using ShoppingList.Api.Domain.TestKit.Shared;
 
-using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
 {

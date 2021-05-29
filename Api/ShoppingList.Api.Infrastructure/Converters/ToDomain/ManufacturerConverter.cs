@@ -5,7 +5,7 @@ using System;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
 {
-    public class ManufacturerConverter : IToDomainConverter<Entities.Manufacturer, IManufacturer>
+    public class ManufacturerConverter : IToDomainConverter<Manufacturers.Entities.Manufacturer, IManufacturer>
     {
         private readonly IManufacturerFactory manufacturerFactory;
 
@@ -14,7 +14,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             this.manufacturerFactory = manufacturerFactory;
         }
 
-        public IManufacturer ToDomain(Entities.Manufacturer source)
+        public IManufacturer ToDomain(Manufacturers.Entities.Manufacturer source)
         {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));

@@ -1,0 +1,3 @@
+﻿dotnet ef migrations add <> --context ShoppingListContext --output-dir ./Migrations/ShoppingLists
+
+dotnet ef database update

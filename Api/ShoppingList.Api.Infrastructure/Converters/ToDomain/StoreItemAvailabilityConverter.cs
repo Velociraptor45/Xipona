@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using System;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain

@@ -3,14 +3,14 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
 {
-    public class ItemCategoryConverter : IToEntityConverter<IItemCategory, Entities.ItemCategory>
+    public class ItemCategoryConverter : IToEntityConverter<IItemCategory, ItemCategories.Entities.ItemCategory>
     {
-        public Entities.ItemCategory ToEntity(IItemCategory source)
+        public ItemCategories.Entities.ItemCategory ToEntity(IItemCategory source)
         {
             if (source is null)
                 throw new System.ArgumentNullException(nameof(source));
 
-            return new Entities.ItemCategory()
+            return new ItemCategories.Entities.ItemCategory()
             {
                 Id = source.Id.Value,
                 Name = source.Name,

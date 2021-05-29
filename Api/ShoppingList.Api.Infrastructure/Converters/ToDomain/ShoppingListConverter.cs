@@ -2,14 +2,14 @@
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
 {
-    public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, IShoppingList>
+    public class ShoppingListConverter : IToDomainConverter<ShoppingLists.Entities.ShoppingList, IShoppingList>
     {
         private readonly IShoppingListFactory shoppingListFactory;
         private readonly IShoppingListSectionFactory shoppingListSectionFactory;
@@ -24,7 +24,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             this.shoppingListItemConverter = shoppingListItemConverter;
         }
 
-        public IShoppingList ToDomain(Entities.ShoppingList source)
+        public IShoppingList ToDomain(ShoppingLists.Entities.ShoppingList source)
         {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));

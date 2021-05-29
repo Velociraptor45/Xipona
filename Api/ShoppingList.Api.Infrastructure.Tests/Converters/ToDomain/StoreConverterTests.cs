@@ -8,7 +8,7 @@ using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
 using System.Linq;
-using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
 {

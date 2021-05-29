@@ -1,20 +1,20 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
 {
-    public class ShoppingListConverter : IToEntityConverter<IShoppingList, Entities.ShoppingList>
+    public class ShoppingListConverter : IToEntityConverter<IShoppingList, ShoppingLists.Entities.ShoppingList>
     {
-        public Entities.ShoppingList ToEntity(IShoppingList source)
+        public ShoppingLists.Entities.ShoppingList ToEntity(IShoppingList source)
         {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            return new Entities.ShoppingList()
+            return new ShoppingLists.Entities.ShoppingList()
             {
                 Id = source.Id.Value,
                 CompletionDate = source.CompletionDate,
