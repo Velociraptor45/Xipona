@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using System;
 using System.Collections.Generic;
 using System.Linq;

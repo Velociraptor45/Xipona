@@ -1,30 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
     public interface IShoppingListSection
     {
-        ShoppingListSectionId Id { get; }
-        string Name { get; }
-        int SortingIndex { get; }
+        SectionId Id { get; }
+        public IReadOnlyCollection<IShoppingListItem> Items { get; }
 
-        public IReadOnlyCollection<IShoppingListItem> ShoppingListItems { get; }
-        bool IsDefaultSection { get; }
+        IShoppingListSection AddItem(IShoppingListItem item);
 
-        void AddItem(IShoppingListItem item);
+        IShoppingListSection ChangeItemQuantity(ItemId itemId, float quantity);
 
-        void ChangeItemQuantity(ShoppingListItemId itemId, float quantity);
+        bool ContainsItem(ItemId itemId);
 
-        bool ContainsItem(ShoppingListItemId itemId);
+        IShoppingListSection PutItemInBasket(ItemId itemId);
 
-        void PutItemInBasket(ShoppingListItemId itemId);
+        IShoppingListSection RemoveItemFromBasket(ItemId itemId);
 
-        void RemoveItemFromBasket(ShoppingListItemId itemId);
+        IShoppingListSection RemoveItem(ItemId itemId);
 
-        void RemoveItem(ShoppingListItemId itemId);
+        IShoppingListSection RemoveItemsInBasket();
 
-        void RemoveAllItemsInBasket();
-
-        void RemoveAllItemsNotInBasket();
+        IShoppingListSection RemoveItemsNotInBasket();
     }
 }

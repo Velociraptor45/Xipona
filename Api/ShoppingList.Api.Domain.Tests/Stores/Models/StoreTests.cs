@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
 using Xunit;

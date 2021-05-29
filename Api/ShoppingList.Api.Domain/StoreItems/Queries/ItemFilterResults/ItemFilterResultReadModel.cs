@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterRes
 {
     public class ItemFilterResultReadModel
     {
-        public ItemFilterResultReadModel(StoreItemActualId id, string ItemName)
+        public ItemFilterResultReadModel(ItemId id, string ItemName)
         {
             if (string.IsNullOrEmpty(ItemName))
             {
@@ -15,7 +15,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterRes
             this.ItemName = ItemName;
         }
 
-        public StoreItemActualId Id { get; }
+        public ItemId Id { get; }
         public string ItemName { get; }
     }
 }

@@ -59,7 +59,7 @@
 
         @if (searchBar.Active)
         {
-            <Button Type="@ButtonType.Primary" 
+            <Button Type="@ButtonType.Primary"
                     OnClick="@OnCreateNewTemporaryItem"
                     Class="d-flex align-items-center">
                 <Icon Type="plus"></Icon>
@@ -275,7 +275,7 @@
         {
             var result = await apiClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id);
             searchBar.Options = result;
-            Console.WriteLine($"{searchInput}: {result.ToList().Count}");
+            //Console.WriteLine($"{searchInput}: {result.ToList().Count}");
         }
         catch (Exception e)
         {
@@ -347,8 +347,9 @@
 
     private async void OnFinishListButtonClicked()
     {
-        var requst = new FinishListRequest(Guid.NewGuid(), shoppingList.Id);
-        await commandQueue.Enqueue(requst);
+        var request = new FinishListRequest(Guid.NewGuid(), shoppingList.Id);
+        await apiClient.FinishListAsync(request);
+        await LoadShoppingListAsync();
     }
     #endregion
 

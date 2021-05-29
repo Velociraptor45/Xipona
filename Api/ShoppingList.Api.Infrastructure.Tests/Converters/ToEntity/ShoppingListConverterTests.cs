@@ -31,13 +31,13 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
             {
                 Id = source.Id.Value,
                 CompletionDate = source.CompletionDate,
-                StoreId = source.Store.Id.Value,
+                StoreId = source.StoreId.Value,
                 ItemsOnList = source.Sections.SelectMany(section =>
-                    section.ShoppingListItems.Select(item =>
+                    section.Items.Select(item =>
                         new ItemsOnList()
                         {
                             ShoppingListId = source.Id.Value,
-                            ItemId = item.Id.Actual.Value,
+                            ItemId = item.Id.Value,
                             InBasket = item.IsInBasket,
                             Quantity = item.Quantity,
                             SectionId = section.Id.Value

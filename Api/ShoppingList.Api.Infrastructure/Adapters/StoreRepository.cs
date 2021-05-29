@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
 using System;
@@ -66,6 +66,24 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             return toDomainConverter.ToDomain(entity);
+        }
+
+        public async Task<IEnumerable<IStore>> FindByAsync(IEnumerable<StoreId> ids, CancellationToken cancellationToken)
+        {
+            if (ids == null)
+                throw new ArgumentNullException(nameof(ids));
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            List<int> idsList = ids.Select(id => id.Value).ToList();
+
+            var entities = await GetStoreQuery()
+                .Where(store => idsList.Contains(store.Id))
+                .ToListAsync(cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return toDomainConverter.ToDomain(entities);
         }
 
         public async Task<IStore> StoreAsync(IStore store, CancellationToken cancellationToken)

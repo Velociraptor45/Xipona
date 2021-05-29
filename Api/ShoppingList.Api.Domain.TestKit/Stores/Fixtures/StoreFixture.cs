@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using ProjectHermes.ShoppingList.Api.Core.Tests;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using System;
 using System.Collections.Generic;
@@ -125,7 +125,7 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Fixtures
 
         public IEnumerable<IStore> CreateManyValid(StoreDefinition baseDefinition, int count = 3)
         {
-            if (count <= 1)
+            if (count <= 0)
                 throw new ArgumentException($"{nameof(count)} must be greater than 0.");
 
             var uniqueStoreIds = commonFixture.NextUniqueInts(count);
@@ -149,7 +149,7 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Fixtures
             int defaultSectionId = commonFixture.NextUniqueInts(1, otherSectionIds).First();
             var defaultSectionDefinition = new StoreSectionDefinition()
             {
-                Id = new StoreSectionId(defaultSectionId),
+                Id = new SectionId(defaultSectionId),
                 IsDefaultSection = true
             };
             IStoreSection defaultSection = storeSectionFixture.Create(defaultSectionDefinition);

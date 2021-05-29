@@ -12,18 +12,17 @@ using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemById;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterResults;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -129,7 +128,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         public async Task<IActionResult> GetItemSearchResults([FromRoute(Name = "searchInput")] string searchInput,
             [FromRoute(Name = "storeId")] int storeId)
         {
-            var query = new ItemSearchQuery(searchInput, new ShoppingListStoreId(storeId));
+            var query = new ItemSearchQuery(searchInput, new StoreId(storeId));
 
             IEnumerable<ItemSearchReadModel> readModels;
             try
@@ -154,7 +153,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             [FromQuery] IEnumerable<int> manufacturerIds)
         {
             var query = new ItemFilterResultsQuery(
-                storeIds.Select(id => new ShoppingListStoreId(id)),
+                storeIds.Select(id => new StoreId(id)),
                 itemCategoryIds.Select(id => new ItemCategoryId(id)),
                 manufacturerIds.Select(id => new ManufacturerId(id)));
 
@@ -169,7 +168,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("delete/{itemId}")]
         public async Task<IActionResult> DeleteItem([FromRoute(Name = "itemId")] int itemId)
         {
-            var command = new DeleteItemCommand(new StoreItemId(itemId));
+            var command = new DeleteItemCommand(new Domain.StoreItems.Models.ItemId(itemId));
             await commandDispatcher.DispatchAsync(command, default);
 
             return Ok();
@@ -181,7 +180,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("{itemId}")]
         public async Task<IActionResult> Get([FromRoute(Name = "itemId")] int itemId)
         {
-            var query = new ItemByIdQuery(new StoreItemId(itemId));
+            var query = new ItemByIdQuery(new Domain.StoreItems.Models.ItemId(itemId));
             StoreItemReadModel result;
             try
             {

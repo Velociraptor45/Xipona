@@ -2,22 +2,13 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
-using System.Collections.Generic;
-using System.Linq;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,32 +17,27 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
     public class UpdateItemCommandHandler : ICommandHandler<UpdateItemCommand, bool>
     {
         private readonly IItemRepository itemRepository;
-        private readonly IItemCategoryRepository itemCategoryRepository;
-        private readonly IManufacturerRepository manufacturerRepository;
-        private readonly IShoppingListRepository shoppingListRepository;
         private readonly ITransactionGenerator transactionGenerator;
-        private readonly IShoppingListItemFactory shoppingListItemFactory;
-        private readonly IStoreItemAvailabilityFactory storeItemAvailabilityFactory;
         private readonly IStoreItemFactory storeItemFactory;
-        private readonly IStoreItemSectionReadRepository storeItemSectionReadRepository;
-        private readonly IStoreRepository storeRepository;
+        private readonly IItemCategoryValidationService itemCategoryValidationService;
+        private readonly IManufacturerValidationService manufacturerValidationService;
+        private readonly IAvailabilityValidationService availabilityValidationService;
+        private readonly IShoppingListUpdateService shoppingListUpdateService;
 
-        public UpdateItemCommandHandler(IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository,
-            IManufacturerRepository manufacturerRepository, IShoppingListRepository shoppingListRepository,
-            ITransactionGenerator transactionGenerator, IShoppingListItemFactory shoppingListItemFactory,
-            IStoreItemAvailabilityFactory storeItemAvailabilityFactory, IStoreItemFactory storeItemFactory,
-            IStoreItemSectionReadRepository storeItemSectionReadRepository, IStoreRepository storeRepository)
+        public UpdateItemCommandHandler(IItemRepository itemRepository,
+            ITransactionGenerator transactionGenerator, IStoreItemFactory storeItemFactory,
+            IItemCategoryValidationService itemCategoryValidationService,
+            IManufacturerValidationService manufacturerValidationService,
+            IAvailabilityValidationService availabilityValidationService,
+            IShoppingListUpdateService shoppingListUpdateService)
         {
             this.itemRepository = itemRepository;
-            this.itemCategoryRepository = itemCategoryRepository;
-            this.manufacturerRepository = manufacturerRepository;
-            this.shoppingListRepository = shoppingListRepository;
             this.transactionGenerator = transactionGenerator;
-            this.shoppingListItemFactory = shoppingListItemFactory;
-            this.storeItemAvailabilityFactory = storeItemAvailabilityFactory;
             this.storeItemFactory = storeItemFactory;
-            this.storeItemSectionReadRepository = storeItemSectionReadRepository;
-            this.storeRepository = storeRepository;
+            this.itemCategoryValidationService = itemCategoryValidationService;
+            this.manufacturerValidationService = manufacturerValidationService;
+            this.availabilityValidationService = availabilityValidationService;
+            this.shoppingListUpdateService = shoppingListUpdateService;
         }
 
         public async Task<bool> HandleAsync(UpdateItemCommand command, CancellationToken cancellationToken)
@@ -69,84 +55,34 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
 
             oldItem.Delete();
 
-            IItemCategory itemCategory = await itemCategoryRepository
-                .FindByAsync(command.ItemUpdate.ItemCategoryId, cancellationToken);
-            if (itemCategory == null)
-                throw new DomainException(new ItemCategoryNotFoundReason(command.ItemUpdate.ItemCategoryId));
+            var itemCategoryId = command.ItemUpdate.ItemCategoryId;
+            var manufacturerId = command.ItemUpdate.ManufacturerId;
 
-            IManufacturer manufacturer = null;
-            if (command.ItemUpdate.ManufacturerId != null)
+            await itemCategoryValidationService.ValidateAsync(itemCategoryId, cancellationToken);
+
+            if (manufacturerId != null)
             {
-                manufacturer = await manufacturerRepository
-                    .FindByAsync(command.ItemUpdate.ManufacturerId, cancellationToken);
-                if (manufacturer == null)
-                    throw new DomainException(new ManufacturerNotFoundReason(command.ItemUpdate.ManufacturerId));
+                await manufacturerValidationService.ValidateAsync(manufacturerId, cancellationToken);
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var availabilities = command.ItemUpdate.Availabilities;
+            await availabilityValidationService.ValidateAsync(availabilities, cancellationToken);
 
             using ITransaction transaction = await transactionGenerator.GenerateAsync(cancellationToken);
             await itemRepository.StoreAsync(oldItem, cancellationToken);
 
             // create new Item
-            IEnumerable<IStoreItemAvailability> availabilities =
-                await GetStoreItemAvailabilities(command.ItemUpdate.Availabilities, cancellationToken);
-            IStoreItem updatedItem = storeItemFactory
-                .Create(command.ItemUpdate, itemCategory, manufacturer, oldItem, availabilities);
+            IStoreItem updatedItem = storeItemFactory.Create(command.ItemUpdate, oldItem);
             updatedItem = await itemRepository.StoreAsync(updatedItem, cancellationToken);
 
             // change existing item references on shopping lists
-            var shoppingListsWithOldItem = (await shoppingListRepository
-                .FindActiveByAsync(command.ItemUpdate.OldId, cancellationToken))
-                .ToList();
-
-            foreach (var list in shoppingListsWithOldItem)
-            {
-                IShoppingListItem shoppingListItem = list.Items
-                    .First(i => i.Id == command.ItemUpdate.OldId.ToShoppingListItemId());
-                list.RemoveItem(shoppingListItem.Id);
-                if (updatedItem.IsAvailableInStore(list.Store.Id.AsStoreItemStoreId()))
-                {
-                    var priceAtStore = updatedItem.Availabilities
-                        .First(av => av.Store.Id == list.Store.Id)
-                        .Price;
-
-                    var section = updatedItem.GetDefaultSectionForStore(list.Store.Id.AsStoreItemStoreId());
-                    var updatedListItem = shoppingListItemFactory.Create(updatedItem, priceAtStore,
-                        shoppingListItem.IsInBasket, shoppingListItem.Quantity);
-                    list.AddItem(updatedListItem, section.Id.ToShoppingListSectionId());
-                }
-
-                await shoppingListRepository.StoreAsync(list, cancellationToken);
-            }
+            await shoppingListUpdateService.ExchangeItemAsync(oldItem.Id, updatedItem, cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);
 
             return true;
-        }
-
-        private async Task<IEnumerable<IStoreItemAvailability>> GetStoreItemAvailabilities(
-            IEnumerable<ShortAvailability> shortAvailabilities, CancellationToken cancellationToken)
-        {
-            var sectionIds = shortAvailabilities.Select(av => av.StoreItemSectionId);
-            var sections = (await storeItemSectionReadRepository.FindByAsync(sectionIds, cancellationToken))
-                .ToLookup(s => s.Id);
-
-            var availabilities = new List<IStoreItemAvailability>();
-            foreach (var shortAvailability in shortAvailabilities)
-            {
-                if (!sections.Contains(shortAvailability.StoreItemSectionId))
-                    throw new DomainException(new StoreItemSectionNotFoundReason(shortAvailability.StoreItemSectionId));
-
-                StoreId storeId = shortAvailability.StoreId.AsStoreId();
-                var store = await storeRepository.FindActiveByAsync(storeId, cancellationToken);
-                if (store == null)
-                    throw new DomainException(new StoreNotFoundReason(storeId));
-
-                var availability = storeItemAvailabilityFactory
-                    .Create(store, shortAvailability.Price, shortAvailability.StoreItemSectionId);
-                availabilities.Add(availability);
-            }
-
-            return availabilities;
         }
     }
 }

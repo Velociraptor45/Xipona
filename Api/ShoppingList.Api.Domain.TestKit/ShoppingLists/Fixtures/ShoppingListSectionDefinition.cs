@@ -1,11 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System.Collections.Generic;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 {
     public class ShoppingListSectionDefinition
     {
-        public ShoppingListSectionId Id { get; set; }
+        public SectionId Id { get; set; }
         public string Name { get; set; }
         public int? SortingIndex { get; set; }
         public bool? IsDefaultSection { get; set; }
@@ -33,10 +34,10 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
         public static ShoppingListSectionDefinition FromId(int id)
         {
-            return FromId(new ShoppingListSectionId(id));
+            return FromId(new SectionId(id));
         }
 
-        public static ShoppingListSectionDefinition FromId(ShoppingListSectionId id)
+        public static ShoppingListSectionDefinition FromId(SectionId id)
         {
             return new ShoppingListSectionDefinition
             {

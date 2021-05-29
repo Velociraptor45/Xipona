@@ -28,7 +28,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
             services.AddTransient<IManufacturerRepository, ManufacturerRepository>();
             services.AddTransient<IStoreRepository, StoreRepository>();
             services.AddScoped<ITransactionGenerator, TransactionGenerator>();
-            services.AddTransient<IStoreItemSectionReadRepository, StoreItemSectionReadRepository>();
 
             var assembly = typeof(ServiceCollectionExtensions).Assembly;
             services.AddInstancesOfGenericType(assembly, typeof(IToEntityConverter<,>));

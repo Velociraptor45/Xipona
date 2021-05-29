@@ -1,9 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,22 +12,25 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShop
         : IQueryHandler<ActiveShoppingListByStoreIdQuery, ShoppingListReadModel>
     {
         private readonly IShoppingListRepository shoppingListRepository;
+        private readonly IShoppingListReadModelConversionService shoppingListReadModelConversionService;
 
-        public ActiveShoppingListByStoreIdQueryHandler(IShoppingListRepository shoppingListRepository)
+        public ActiveShoppingListByStoreIdQueryHandler(IShoppingListRepository shoppingListRepository,
+            IShoppingListReadModelConversionService shoppingListReadModelConversionService)
         {
             this.shoppingListRepository = shoppingListRepository;
+            this.shoppingListReadModelConversionService = shoppingListReadModelConversionService;
         }
 
         public async Task<ShoppingListReadModel> HandleAsync(ActiveShoppingListByStoreIdQuery query,
             CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var listModel = await shoppingListRepository.FindActiveByAsync(query.StoreId, cancellationToken);
-            if (listModel == null)
+            var shoppingList = await shoppingListRepository.FindActiveByAsync(query.StoreId, cancellationToken);
+            if (shoppingList == null)
                 throw new DomainException(new ShoppingListNotFoundReason(query.StoreId));
 
-            return listModel.ToReadModel();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return await shoppingListReadModelConversionService.ConvertAsync(shoppingList, cancellationToken);
         }
     }
 }

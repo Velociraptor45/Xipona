@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Mocks;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -39,7 +39,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
 
             foreach (var id in uniqueIds)
             {
-                var baseDefinition = StoreItemDefinition.FromId(new StoreItemId(id));
+                var baseDefinition = StoreItemDefinition.FromId(new ItemId(id));
                 var storeItem = storeItemFixture.CreateValid(baseDefinition);
                 yield return new StoreItemMock(storeItem);
             }

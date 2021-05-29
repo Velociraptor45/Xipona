@@ -1,16 +1,15 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId
 {
     public class ActiveShoppingListByStoreIdQuery : IQuery<ShoppingListReadModel>
     {
-        public ActiveShoppingListByStoreIdQuery(ShoppingListStoreId storeId)
+        public ActiveShoppingListByStoreIdQuery(StoreId storeId)
         {
             StoreId = storeId;
         }
 
-        public ShoppingListStoreId StoreId { get; }
+        public StoreId StoreId { get; }
     }
 }

@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +16,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
     {
         private List<IStoreItemAvailability> availabilities;
 
-        public StoreItem(StoreItemId id, string name, bool isDeleted, string comment, bool isTemporary,
+        public StoreItem(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            IItemCategory itemCategory, IManufacturer manufacturer,
-            IEnumerable<IStoreItemAvailability> availabilities)
+            ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
+            IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId temporaryId)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Name = name;
@@ -28,8 +29,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
-            ItemCategory = itemCategory;
-            Manufacturer = manufacturer;
+            ItemCategoryId = itemCategoryId;
+            ManufacturerId = manufacturerId;
+            TemporaryId = temporaryId;
             this.availabilities = availabilities.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
 
             // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
@@ -37,7 +39,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             Predecessor = null;
         }
 
-        public StoreItemId Id { get; }
+        public ItemId Id { get; }
         public string Name { get; private set; }
         public bool IsDeleted { get; private set; }
         public string Comment { get; private set; }
@@ -46,9 +48,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         public float QuantityInPacket { get; private set; }
         public QuantityTypeInPacket QuantityTypeInPacket { get; private set; }
 
-        public IItemCategory ItemCategory { get; private set; }
-        public IManufacturer Manufacturer { get; private set; }
-        public IStoreItem Predecessor { get; private set; }
+        public ItemCategoryId ItemCategoryId { get; private set; }
+        public ManufacturerId ManufacturerId { get; private set; }
+        public TemporaryItemId TemporaryId { get; }
+        public IStoreItem Predecessor { get; private set; } // todo: change this to an IItemPredecessor model to satisfy DDD
 
         public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.AsReadOnly();
 
@@ -57,45 +60,43 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             IsDeleted = true;
         }
 
-        public bool IsAvailableInStore(StoreItemStoreId storeId)
+        public bool IsAvailableInStore(StoreId storeId)
         {
-            return Availabilities.FirstOrDefault(av => av.Store.Id == storeId) != null;
+            return Availabilities.Any(av => av.StoreId == storeId);
         }
 
-        public void MakePermanent(PermanentItem permanentItem, IItemCategory itemCategory, IManufacturer manufacturer,
-            IEnumerable<IStoreItemAvailability> availabilities)
+        public void MakePermanent(PermanentItem permanentItem, IEnumerable<IStoreItemAvailability> availabilities)
         {
             Name = permanentItem.Name;
             Comment = permanentItem.Comment;
             QuantityType = permanentItem.QuantityType;
             QuantityInPacket = permanentItem.QuantityInPacket;
             QuantityTypeInPacket = permanentItem.QuantityTypeInPacket;
-            ItemCategory = itemCategory;
-            Manufacturer = manufacturer;
+            ItemCategoryId = permanentItem.ItemCategoryId;
+            ManufacturerId = permanentItem.ManufacturerId;
             this.availabilities = availabilities.ToList();
             IsTemporary = false;
         }
 
-        public void Modify(ItemModify itemChange, IItemCategory itemCategory, IManufacturer manufacturer,
-            IEnumerable<IStoreItemAvailability> availabilities)
+        public void Modify(ItemModify itemChange, IEnumerable<IStoreItemAvailability> availabilities)
         {
             Name = itemChange.Name;
             Comment = itemChange.Comment;
             QuantityType = itemChange.QuantityType;
             QuantityInPacket = itemChange.QuantityInPacket;
             QuantityTypeInPacket = itemChange.QuantityTypeInPacket;
-            ItemCategory = itemCategory;
-            Manufacturer = manufacturer;
+            ItemCategoryId = itemChange.ItemCategoryId;
+            ManufacturerId = itemChange.ManufacturerId;
             this.availabilities = availabilities.ToList();
         }
 
-        public IStoreItemSection GetDefaultSectionForStore(StoreItemStoreId storeId)
+        public SectionId GetDefaultSectionIdForStore(StoreId storeId)
         {
-            var availability = availabilities.FirstOrDefault(av => av.Store.Id == storeId);
+            var availability = availabilities.FirstOrDefault(av => av.StoreId == storeId);
             if (availability == null)
                 throw new DomainException(new ItemAtStoreNotAvailableReason(Id, storeId));
 
-            return availability.DefaultSection;
+            return availability.DefaultSectionId;
         }
 
         public void SetPredecessor(IStoreItem predecessor)

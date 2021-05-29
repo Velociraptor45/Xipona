@@ -1,13 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,17 +12,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
     public class CreateTemporaryItemCommandHandler : ICommandHandler<CreateTemporaryItemCommand, bool>
     {
         private readonly IItemRepository itemRepository;
-        private readonly IStoreRepository storeRepository;
         private readonly IStoreItemFactory storeItemFactory;
-        private readonly IStoreItemAvailabilityFactory storeItemAvailabilityFactory;
+        private readonly IAvailabilityValidationService availabilityValidationService;
 
-        public CreateTemporaryItemCommandHandler(IItemRepository itemRepository, IStoreRepository storeRepository,
-            IStoreItemFactory storeItemFactory, IStoreItemAvailabilityFactory storeItemAvailabilityFactory)
+        public CreateTemporaryItemCommandHandler(IItemRepository itemRepository, IStoreItemFactory storeItemFactory,
+            IAvailabilityValidationService availabilityValidationService)
         {
             this.itemRepository = itemRepository;
-            this.storeRepository = storeRepository;
             this.storeItemFactory = storeItemFactory;
-            this.storeItemAvailabilityFactory = storeItemAvailabilityFactory;
+            this.availabilityValidationService = availabilityValidationService;
         }
 
         public async Task<bool> HandleAsync(CreateTemporaryItemCommand command, CancellationToken cancellationToken)
@@ -36,20 +30,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
                 throw new ArgumentNullException(nameof(command));
             }
 
-            ShortAvailability shortAvailability = command.TemporaryItemCreation.Availability;
+            var availability = command.TemporaryItemCreation.Availability;
+            await availabilityValidationService.ValidateAsync(availability.ToMonoList(), cancellationToken);
 
-            var store = await storeRepository.FindByAsync(shortAvailability.StoreId.AsStoreId(),
-                cancellationToken);
-            if (store == null || store.IsDeleted)
-                throw new DomainException(new StoreNotFoundReason(shortAvailability.StoreId));
-
-            // todo add domain exception
-            var defaultSection = store.Sections.Single(s => s.IsDefaultSection);
-
-            IStoreItemAvailability storeItemAvailability = storeItemAvailabilityFactory
-                    .Create(store, shortAvailability.Price, defaultSection.Id);
-
-            var storeItem = storeItemFactory.Create(command.TemporaryItemCreation, storeItemAvailability);
+            var storeItem = storeItemFactory.Create(command.TemporaryItemCreation);
 
             await itemRepository.StoreAsync(storeItem, cancellationToken);
             return true;

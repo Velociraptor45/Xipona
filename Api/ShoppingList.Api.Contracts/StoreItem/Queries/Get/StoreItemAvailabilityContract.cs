@@ -1,9 +1,11 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
+
+namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get
 {
     public class StoreItemAvailabilityContract
     {
         public StoreItemAvailabilityContract(StoreItemStoreContract store, float price,
-            StoreItemSectionContract defaultSection)
+            StoreSectionContract defaultSection)
         {
             Store = store;
             Price = price;
@@ -12,6 +14,6 @@
 
         public StoreItemStoreContract Store { get; }
         public float Price { get; }
-        public StoreItemSectionContract DefaultSection { get; }
+        public StoreSectionContract DefaultSection { get; }
     }
 }

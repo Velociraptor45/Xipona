@@ -6,9 +6,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contract
 {
     public static class StoreItemStoreContractExtensions
     {
-        public static StoreItemStore ToContract(this StoreItemStoreContract contrac)
+        public static StoreItemStore ToModel(this StoreItemStoreContract contrac)
         {
-            return new StoreItemStore(contrac.Id, contrac.Name, contrac.Sections.Select(s => s.ToContract()));
+            return new StoreItemStore(contrac.Id, contrac.Name, contrac.Sections.Select(s => s.ToStoreItemSectionModel()));
         }
     }
 }

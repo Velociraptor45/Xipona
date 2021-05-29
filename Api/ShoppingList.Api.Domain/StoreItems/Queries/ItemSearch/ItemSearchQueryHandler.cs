@@ -4,8 +4,9 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemSearchReadModels;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System;
 using System.Collections.Generic;
@@ -20,13 +21,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch
         private readonly IItemRepository itemRepository;
         private readonly IShoppingListRepository shoppingListRepository;
         private readonly IStoreRepository storeRepository;
+        private readonly IItemSearchReadModelConversionService itemSearchReadModelConversionService;
 
         public ItemSearchQueryHandler(IItemRepository itemRepository, IShoppingListRepository shoppingListRepository,
-            IStoreRepository storeRepository)
+            IStoreRepository storeRepository, IItemSearchReadModelConversionService itemSearchReadModelConversionService)
         {
             this.itemRepository = itemRepository;
             this.shoppingListRepository = shoppingListRepository;
             this.storeRepository = storeRepository;
+            this.itemSearchReadModelConversionService = itemSearchReadModelConversionService;
         }
 
         public async Task<IEnumerable<ItemSearchReadModel>> HandleAsync(ItemSearchQuery query, CancellationToken cancellationToken)
@@ -36,7 +39,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch
             if (string.IsNullOrWhiteSpace(query.SearchInput))
                 return Enumerable.Empty<ItemSearchReadModel>();
 
-            var store = await storeRepository.FindByAsync(new Stores.Model.StoreId(query.StoreId.Value), cancellationToken);
+            var store = await storeRepository.FindByAsync(new StoreId(query.StoreId.Value), cancellationToken);
             if (store == null)
                 throw new DomainException(new StoreNotFoundReason(query.StoreId));
 
@@ -47,10 +50,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch
             var itemIdsOnShoppingList = shoppingList.Items.Select(item => item.Id);
 
             var itemsNotOnShoppingList = storeItems
-                .Where(item => !itemIdsOnShoppingList.Contains(item.Id.ToShoppingListItemId()));
+                .Where(item => !itemIdsOnShoppingList.Contains(item.Id));
 
-            return itemsNotOnShoppingList
-                .Select(item => item.ToItemSearchReadModel(query.StoreId));
+            return await itemSearchReadModelConversionService.ConvertAsync(itemsNotOnShoppingList, store, cancellationToken);
         }
     }
 }

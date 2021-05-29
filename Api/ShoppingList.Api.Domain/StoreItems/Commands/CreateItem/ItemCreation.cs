@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +10,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
 {
     public class ItemCreation
     {
-        private readonly IEnumerable<ShortAvailability> availabilities;
+        private readonly IEnumerable<IStoreItemAvailability> availabilities;
 
         public ItemCreation(string name, string comment, QuantityType quantityType,
             float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
-            ManufacturerId manufacturerId, IEnumerable<ShortAvailability> availabilities)
+            ManufacturerId manufacturerId, IEnumerable<IStoreItemAvailability> availabilities)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -39,6 +39,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
         public ItemCategoryId ItemCategoryId { get; }
         public ManufacturerId ManufacturerId { get; }
 
-        public IReadOnlyCollection<ShortAvailability> Availabilities => availabilities.ToList().AsReadOnly();
+        public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
     }
 }

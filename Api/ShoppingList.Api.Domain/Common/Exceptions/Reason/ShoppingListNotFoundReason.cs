@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
 {
@@ -9,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
             Message = $"Shopping list {id.Value} not found.";
         }
 
-        public ShoppingListNotFoundReason(ShoppingListStoreId id)
+        public ShoppingListNotFoundReason(StoreId id)
         {
             Message = $"No active shopping list for store {id} found.";
         }

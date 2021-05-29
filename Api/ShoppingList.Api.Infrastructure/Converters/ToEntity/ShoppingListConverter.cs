@@ -18,7 +18,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
             {
                 Id = source.Id.Value,
                 CompletionDate = source.CompletionDate,
-                StoreId = source.Store.Id.Value,
+                StoreId = source.StoreId.Value,
                 ItemsOnList = CreateItemsOnListMap(source).ToList()
             };
         }
@@ -27,12 +27,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
         {
             foreach (var section in source.Sections)
             {
-                foreach (var item in section.ShoppingListItems)
+                foreach (var item in section.Items)
                 {
                     yield return new ItemsOnList()
                     {
                         ShoppingListId = source.Id.Value,
-                        ItemId = item.Id.Actual.Value,
+                        ItemId = item.Id.Value,
                         InBasket = item.IsInBasket,
                         Quantity = item.Quantity,
                         SectionId = section.Id.Value

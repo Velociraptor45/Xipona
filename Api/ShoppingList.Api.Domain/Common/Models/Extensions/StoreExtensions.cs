@@ -1,24 +1,26 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
-using System.Collections.Generic;
 using System.Linq;
-using StoreModels = ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions
 {
     public static class StoreExtensions
     {
-        public static ShoppingListStoreReadModel ToCommonStoreReadModel(this IShoppingListStore model)
+        public static ShoppingListStoreReadModel ToShoppingListStoreReadModel(this IStore model)
         {
-            return new ShoppingListStoreReadModel(model.Id, model.Name, model.IsDeleted);
+            return new ShoppingListStoreReadModel(model.Id, model.Name);
         }
 
-        public static ActiveStoreReadModel ToActiveStoreReadModel(this StoreModels.IStore model,
-            IEnumerable<StoreItemReadModel> items)
+        public static StoreItemStoreReadModel ToStoreItemStoreReadModel(this IStore model)
         {
-            return new ActiveStoreReadModel(model.Id, model.Name, items, model.Sections.Select(s => s.ToReadModel()));
+            return new StoreItemStoreReadModel(model.Id, model.Name, model.Sections.Select(s => s.ToReadModel()));
+        }
+
+        public static StoreReadModel ToStoreReadModel(this IStore model, int itemCount)
+        {
+            return new StoreReadModel(model.Id, model.Name, itemCount, model.Sections.Select(s => s.ToReadModel()));
         }
     }
 }

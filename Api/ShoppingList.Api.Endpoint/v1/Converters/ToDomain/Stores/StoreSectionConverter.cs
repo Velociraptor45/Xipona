@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using System;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Stores
@@ -21,7 +21,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Stores
                 throw new ArgumentNullException(nameof(source));
 
             return storeSectionFactory.Create(
-                new StoreSectionId(source.Id),
+                new SectionId(source.Id),
                 source.Name,
                 source.SortingIndex,
                 source.IsDefaultSection);

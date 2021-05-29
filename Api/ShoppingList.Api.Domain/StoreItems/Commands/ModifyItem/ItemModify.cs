@@ -1,7 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,12 +9,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
 {
     public class ItemModify
     {
-        private readonly IEnumerable<ShortAvailability> availabilities;
+        private readonly IEnumerable<IStoreItemAvailability> availabilities;
 
-        public ItemModify(StoreItemId id, string name, string comment,
+        public ItemModify(ItemId id, string name, string comment,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
-            IEnumerable<ShortAvailability> availabilities)
+            IEnumerable<IStoreItemAvailability> availabilities)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -33,7 +32,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
             this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
         }
 
-        public StoreItemId Id { get; }
+        public ItemId Id { get; }
         public string Name { get; }
         public string Comment { get; }
         public QuantityType QuantityType { get; }
@@ -42,6 +41,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
         public ItemCategoryId ItemCategoryId { get; }
         public ManufacturerId ManufacturerId { get; }
 
-        public IReadOnlyCollection<ShortAvailability> Availabilities => availabilities.ToList().AsReadOnly();
+        public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
     }
 }

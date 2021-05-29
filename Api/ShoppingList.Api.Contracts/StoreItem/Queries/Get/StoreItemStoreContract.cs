@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get
 {
     public class StoreItemStoreContract
     {
-        public StoreItemStoreContract(int id, string name, IEnumerable<StoreItemSectionContract> sections)
+        public StoreItemStoreContract(int id, string name, IEnumerable<StoreSectionContract> sections)
         {
             Id = id;
             Name = name;
@@ -14,6 +15,6 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get
 
         public int Id { get; }
         public string Name { get; }
-        public IReadOnlyCollection<StoreItemSectionContract> Sections { get; }
+        public IReadOnlyCollection<StoreSectionContract> Sections { get; }
     }
 }

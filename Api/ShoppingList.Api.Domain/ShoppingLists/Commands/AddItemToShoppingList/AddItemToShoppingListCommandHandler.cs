@@ -1,14 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,15 +13,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
     public class AddItemToShoppingListCommandHandler : ICommandHandler<AddItemToShoppingListCommand, bool>
     {
         private readonly IShoppingListRepository shoppingListRepository;
-        private readonly IItemRepository itemRepository;
-        private readonly IShoppingListItemFactory shoppingListItemFactory;
+        private readonly IAddItemToShoppingListService addItemToShoppingListService;
 
         public AddItemToShoppingListCommandHandler(IShoppingListRepository shoppingListRepository,
-            IItemRepository itemRepository, IShoppingListItemFactory shoppingListItemFactory)
+            IAddItemToShoppingListService addItemToShoppingListService)
         {
             this.shoppingListRepository = shoppingListRepository;
-            this.itemRepository = itemRepository;
-            this.shoppingListItemFactory = shoppingListItemFactory;
+            this.addItemToShoppingListService = addItemToShoppingListService;
         }
 
         public async Task<bool> HandleAsync(AddItemToShoppingListCommand command, CancellationToken cancellationToken)
@@ -39,25 +33,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            StoreItemId itemId = command.ShoppingListItemId.ToStoreItemId();
-            var storeItem = await itemRepository.FindByAsync(itemId, cancellationToken);
-
-            if (storeItem == null)
-                throw new DomainException(new ItemNotFoundReason(itemId));
+            if (command.ItemId.IsActualId)
+            {
+                var actualId = new ItemId(command.ItemId.ActualId.Value);
+                await addItemToShoppingListService.AddItemToShoppingList(list, actualId, command.SectionId, command.Quantity,
+                    cancellationToken);
+            }
+            else
+            {
+                var temporaryId = new TemporaryItemId(command.ItemId.OfflineId.Value);
+                await addItemToShoppingListService.AddItemToShoppingList(list, temporaryId, command.SectionId,
+                    command.Quantity, cancellationToken);
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
-
-            var priceAtStore = storeItem.Availabilities
-                        .FirstOrDefault(av => av.Store.Id == list.Store.Id)?
-                        .Price;
-
-            if (priceAtStore == null)
-                throw new DomainException(new ItemAtStoreNotAvailableReason(itemId, list.Store.Id));
-
-            IShoppingListItem listItem = shoppingListItemFactory.Create(storeItem, priceAtStore.Value,
-                isInBasket: false, command.Quantity);
-
-            list.AddItem(listItem, command.SectionId);
 
             await shoppingListRepository.StoreAsync(list, cancellationToken);
 
