@@ -212,7 +212,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
             }
         }
 
-        public class LocalFixture
+        private class LocalFixture
         {
             public Fixture Fixture { get; }
             public CommonFixture CommonFixture { get; } = new CommonFixture();

@@ -3,12 +3,12 @@ using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Converters.ToDomain;
 using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
 using System.Linq;
-using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
 {
