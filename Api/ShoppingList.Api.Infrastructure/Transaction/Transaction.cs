@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using System;
+using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,9 +9,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Transaction
 {
     public class Transaction : ITransaction
     {
-        private IDbContextTransaction transaction;
+        private DbTransaction transaction;
 
-        public Transaction(IDbContextTransaction transaction)
+        public Transaction(DbTransaction transaction)
         {
             this.transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
         }

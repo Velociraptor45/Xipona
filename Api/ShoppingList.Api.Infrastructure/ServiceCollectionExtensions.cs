@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using MySqlConnector;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
@@ -20,6 +21,9 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Transaction;
 using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure
 {
@@ -27,17 +31,42 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
     {
         public static void AddInfrastructure(this IServiceCollection services, string connectionString)
         {
-            // todo: use just one connection
+            var assembly = typeof(ServiceCollectionExtensions).Assembly;
+
+            services.AddScoped<DbConnection>(provider => new MySqlConnection(connectionString));
+
+            services.AddScoped<IList<DbContext>>(serviceProvider => GetAllDbContextInstances(serviceProvider).ToList());
+
             services.AddDbContext<ShoppingListContext>(
-                options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(0, 4, 0))));
+                (serviceProvider, options) =>
+                {
+                    var connection = serviceProvider.GetService<DbConnection>();
+                    options.UseMySql(connection, new MySqlServerVersion(new Version(0, 4, 0)));
+                });
             services.AddDbContext<ItemCategoryContext>(
-                options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(0, 4, 0))));
+                (serviceProvider, options) =>
+                {
+                    var connection = serviceProvider.GetService<DbConnection>();
+                    options.UseMySql(connection, new MySqlServerVersion(new Version(0, 4, 0)));
+                });
             services.AddDbContext<ManufacturerContext>(
-                options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(0, 4, 0))));
+                (serviceProvider, options) =>
+                {
+                    var connection = serviceProvider.GetService<DbConnection>();
+                    options.UseMySql(connection, new MySqlServerVersion(new Version(0, 4, 0)));
+                });
             services.AddDbContext<ItemContext>(
-                options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(0, 4, 0))));
+                (serviceProvider, options) =>
+                {
+                    var connection = serviceProvider.GetService<DbConnection>();
+                    options.UseMySql(connection, new MySqlServerVersion(new Version(0, 4, 0)));
+                });
             services.AddDbContext<StoreContext>(
-                options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(0, 4, 0))));
+                (serviceProvider, options) =>
+                {
+                    var connection = serviceProvider.GetService<DbConnection>();
+                    options.UseMySql(connection, new MySqlServerVersion(new Version(0, 4, 0)));
+                });
 
             services.AddTransient<IShoppingListRepository, ShoppingListRepository>();
             services.AddTransient<IItemRepository, ItemRepository>();
@@ -46,9 +75,28 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
             services.AddTransient<IStoreRepository, StoreRepository>();
             services.AddScoped<ITransactionGenerator, TransactionGenerator>();
 
-            var assembly = typeof(ServiceCollectionExtensions).Assembly;
             services.AddInstancesOfGenericType(assembly, typeof(IToEntityConverter<,>));
             services.AddInstancesOfGenericType(assembly, typeof(IToDomainConverter<,>));
+        }
+
+        private static IEnumerable<DbContext> GetAllDbContextInstances(IServiceProvider serviceProvider)
+        {
+            var types = GetAllDbContextTypes();
+            var instances = types.Select(serviceProvider.GetRequiredService);
+            foreach (var instance in instances)
+            {
+                yield return (DbContext)instance;
+            }
+        }
+
+        private static IEnumerable<Type> GetAllDbContextTypes()
+        {
+            // todo make this generic
+            yield return typeof(ShoppingListContext);
+            yield return typeof(ItemCategoryContext);
+            yield return typeof(ManufacturerContext);
+            yield return typeof(ItemContext);
+            yield return typeof(StoreContext);
         }
     }
 }

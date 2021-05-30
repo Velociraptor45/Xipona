@@ -1,5 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,19 +12,29 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Transaction
     public class TransactionGenerator : ITransactionGenerator
     {
         private readonly object lockObject = new object();
-        private readonly ShoppingListContext dbContext;
+        private readonly IList<DbContext> dbContexts;
+        private readonly DbConnection connection;
 
-        public TransactionGenerator(ShoppingListContext dbContext)
+        public TransactionGenerator(IList<DbContext> dbContexts, DbConnection connection)
         {
-            this.dbContext = dbContext;
+            this.dbContexts = dbContexts;
+            this.connection = connection;
         }
 
         public Task<ITransaction> GenerateAsync(CancellationToken cancellationToken)
         {
             lock (lockObject)
             {
-                var dbTransaction = dbContext.Database.BeginTransactionAsync(cancellationToken)
+                var dbTransaction = connection.BeginTransactionAsync(cancellationToken)
                     .GetAwaiter().GetResult();
+                foreach (var context in dbContexts)
+                {
+                    if (context.Database.CurrentTransaction != null)
+                        throw new InvalidOperationException("Transaction already open");
+
+                    context.Database.UseTransactionAsync(dbTransaction, cancellationToken)
+                        .GetAwaiter().GetResult();
+                }
                 return Task.FromResult(new Transaction(dbTransaction) as ITransaction);
             }
         }
