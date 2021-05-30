@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Migrations\ItemCategories\" />
     <Folder Include="Migrations\Manufacturers\" />
     <Folder Include="Migrations\StoreItems\" />
     <Folder Include="Migrations\Stores\" />

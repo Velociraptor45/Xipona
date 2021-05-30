@@ -221,11 +221,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
                 var newEntity = toEntityConverter.ToEntity(storeItem);
                 dbContext.Add(newEntity);
 
-                if (newEntity.Manufacturer != null)
-                    dbContext.Entry(newEntity.Manufacturer).State = EntityState.Unchanged;
-                if (newEntity.ItemCategory != null)
-                    dbContext.Entry(newEntity.ItemCategory).State = EntityState.Unchanged;
-
                 await dbContext.SaveChangesAsync();
 
                 var e = GetItemQuery().First(i => i.Id == newEntity.Id);

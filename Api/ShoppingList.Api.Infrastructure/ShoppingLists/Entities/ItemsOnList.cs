@@ -19,11 +19,5 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities
 
         [ForeignKey("ShoppingListId")]
         public ShoppingList ShoppingList { get; set; }
-
-        [ForeignKey("ItemId")]
-        public Item Item { get; set; }
-
-        [ForeignKey("SectionId")]
-        public Section Section { get; set; }
     }
 }

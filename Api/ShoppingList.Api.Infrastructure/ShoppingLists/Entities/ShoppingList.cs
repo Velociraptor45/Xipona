@@ -15,9 +15,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities
         public DateTime? CompletionDate { get; set; }
         public int StoreId { get; set; }
 
-        [ForeignKey("StoreId")]
-        public Store Store { get; set; }
-
         [InverseProperty("ShoppingList")]
         public ICollection<ItemsOnList> ItemsOnList { get; set; }
     }

@@ -21,11 +21,5 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities
 
         [ForeignKey("StoreId")]
         public Store Store { get; set; }
-
-        [InverseProperty("Section")]
-        public ICollection<AvailableAt> DefaultItemsInSection { get; set; }
-
-        [InverseProperty("Section")]
-        public ICollection<ItemsOnList> ActualItemsSections { get; set; }
     }
 }

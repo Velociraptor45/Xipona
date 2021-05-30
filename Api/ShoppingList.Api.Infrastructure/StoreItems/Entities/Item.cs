@@ -27,12 +27,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities
         public Guid? CreatedFrom { get; set; }
         public int? PredecessorId { get; set; }
 
-        [ForeignKey("ManufacturerId")]
-        public Manufacturer Manufacturer { get; set; }
-
-        [ForeignKey("ItemCategoryId")]
-        public ItemCategory ItemCategory { get; set; }
-
         [ForeignKey("PredecessorId")]
         public Item Predecessor { get; set; }
 
