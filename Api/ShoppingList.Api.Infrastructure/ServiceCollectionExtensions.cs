@@ -32,6 +32,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
         public static void AddInfrastructure(this IServiceCollection services, string connectionString)
         {
             var assembly = typeof(ServiceCollectionExtensions).Assembly;
+            var serverVersion = new MySqlServerVersion(new Version(0, 4, 0));
 
             services.AddScoped<DbConnection>(provider => new MySqlConnection(connectionString));
 
@@ -41,31 +42,31 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
                 (serviceProvider, options) =>
                 {
                     var connection = serviceProvider.GetService<DbConnection>();
-                    options.UseMySql(connection, new MySqlServerVersion(new Version(0, 4, 0)));
+                    options.UseMySql(connection, serverVersion);
                 });
             services.AddDbContext<ItemCategoryContext>(
                 (serviceProvider, options) =>
                 {
                     var connection = serviceProvider.GetService<DbConnection>();
-                    options.UseMySql(connection, new MySqlServerVersion(new Version(0, 4, 0)));
+                    options.UseMySql(connection, serverVersion);
                 });
             services.AddDbContext<ManufacturerContext>(
                 (serviceProvider, options) =>
                 {
                     var connection = serviceProvider.GetService<DbConnection>();
-                    options.UseMySql(connection, new MySqlServerVersion(new Version(0, 4, 0)));
+                    options.UseMySql(connection, serverVersion);
                 });
             services.AddDbContext<ItemContext>(
                 (serviceProvider, options) =>
                 {
                     var connection = serviceProvider.GetService<DbConnection>();
-                    options.UseMySql(connection, new MySqlServerVersion(new Version(0, 4, 0)));
+                    options.UseMySql(connection, serverVersion);
                 });
             services.AddDbContext<StoreContext>(
                 (serviceProvider, options) =>
                 {
                     var connection = serviceProvider.GetService<DbConnection>();
-                    options.UseMySql(connection, new MySqlServerVersion(new Version(0, 4, 0)));
+                    options.UseMySql(connection, serverVersion);
                 });
 
             services.AddTransient<IShoppingListRepository, ShoppingListRepository>();
