@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToDomain
 {
     public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
     {

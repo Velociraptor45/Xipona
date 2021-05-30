@@ -5,7 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using System;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToDomain
 {
     public class StoreItemAvailabilityConverter : IToDomainConverter<AvailableAt, IStoreItemAvailability>
     {

@@ -7,9 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Converters.ToDomain
 {
-    public class ShoppingListConverter : IToDomainConverter<ShoppingLists.Entities.ShoppingList, IShoppingList>
+    public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, IShoppingList>
     {
         private readonly IShoppingListFactory shoppingListFactory;
         private readonly IShoppingListSectionFactory shoppingListSectionFactory;
@@ -24,7 +24,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             this.shoppingListItemConverter = shoppingListItemConverter;
         }
 
-        public IShoppingList ToDomain(ShoppingLists.Entities.ShoppingList source)
+        public IShoppingList ToDomain(Entities.ShoppingList source)
         {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));

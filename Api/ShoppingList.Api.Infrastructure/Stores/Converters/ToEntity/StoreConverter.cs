@@ -3,9 +3,9 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Converters.ToEntity
 {
-    public class StoreConverter : IToEntityConverter<IStore, Stores.Entities.Store>
+    public class StoreConverter : IToEntityConverter<IStore, Entities.Store>
     {
         private readonly IToEntityConverter<IStoreSection, Section> sectionConverter;
 
@@ -14,12 +14,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
             this.sectionConverter = sectionConverter;
         }
 
-        public Stores.Entities.Store ToEntity(IStore source)
+        public Entities.Store ToEntity(IStore source)
         {
             if (source is null)
                 throw new System.ArgumentNullException(nameof(source));
 
-            return new Stores.Entities.Store()
+            return new Entities.Store()
             {
                 Id = source.Id.Value,
                 Name = source.Name,

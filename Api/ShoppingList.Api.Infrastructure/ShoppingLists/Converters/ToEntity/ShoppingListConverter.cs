@@ -5,16 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Converters.ToEntity
 {
-    public class ShoppingListConverter : IToEntityConverter<IShoppingList, ShoppingLists.Entities.ShoppingList>
+    public class ShoppingListConverter : IToEntityConverter<IShoppingList, Entities.ShoppingList>
     {
-        public ShoppingLists.Entities.ShoppingList ToEntity(IShoppingList source)
+        public Entities.ShoppingList ToEntity(IShoppingList source)
         {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            return new ShoppingLists.Entities.ShoppingList()
+            return new Entities.ShoppingList()
             {
                 Id = source.Id.Value,
                 CompletionDate = source.CompletionDate,

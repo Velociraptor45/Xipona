@@ -1,16 +1,16 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Converters.ToEntity
 {
-    public class ItemCategoryConverter : IToEntityConverter<IItemCategory, ItemCategories.Entities.ItemCategory>
+    public class ItemCategoryConverter : IToEntityConverter<IItemCategory, Entities.ItemCategory>
     {
-        public ItemCategories.Entities.ItemCategory ToEntity(IItemCategory source)
+        public Entities.ItemCategory ToEntity(IItemCategory source)
         {
             if (source is null)
                 throw new System.ArgumentNullException(nameof(source));
 
-            return new ItemCategories.Entities.ItemCategory()
+            return new Entities.ItemCategory()
             {
                 Id = source.Id.Value,
                 Name = source.Name,

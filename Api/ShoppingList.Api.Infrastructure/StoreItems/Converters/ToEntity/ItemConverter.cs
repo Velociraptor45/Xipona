@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToEntity
 {
     public class ItemConverter : IToEntityConverter<IStoreItem, Item>
     {

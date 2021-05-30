@@ -3,9 +3,9 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
 using System;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Converters.ToDomain
 {
-    public class ManufacturerConverter : IToDomainConverter<Manufacturers.Entities.Manufacturer, IManufacturer>
+    public class ManufacturerConverter : IToDomainConverter<Entities.Manufacturer, IManufacturer>
     {
         private readonly IManufacturerFactory manufacturerFactory;
 
@@ -14,7 +14,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain
             this.manufacturerFactory = manufacturerFactory;
         }
 
-        public IManufacturer ToDomain(Manufacturers.Entities.Manufacturer source)
+        public IManufacturer ToDomain(Entities.Manufacturer source)
         {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
