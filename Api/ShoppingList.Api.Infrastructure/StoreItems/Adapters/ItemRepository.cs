@@ -43,6 +43,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
+            if (itemEntity == null)
+                return null;
+
             itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
 
             return toModelConverter.ToDomain(itemEntity);
@@ -59,6 +62,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
                 .FirstOrDefaultAsync(item => item.CreatedFrom.HasValue && item.CreatedFrom == temporaryItemId.Value);
 
             cancellationToken.ThrowIfCancellationRequested();
+
+            if (itemEntity == null)
+                return null;
 
             itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
 
