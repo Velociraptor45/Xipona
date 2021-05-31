@@ -9,9 +9,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts
         public ItemContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ItemContext>();
-            optionsBuilder.UseMySql(
-                @"server=192.168.178.92;port=15906;user id=root;pwd=;database=dev-shoppinglist",
-                GetVersion());
+            optionsBuilder.UseMySql(GetDbConnectionString(), GetVersion());
 
             return new ItemContext(optionsBuilder.Options);
         }
