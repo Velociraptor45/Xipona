@@ -10,14 +10,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Contexts
     {
         protected string GetDbConnectionString()
         {
-            string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.User);
 
             var config = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../../ShoppingList.Api.WebApp/"))
+                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../ShoppingList.Api.WebApp/"))
                 .AddJsonFile($"appsettings.{env}.json", optional: false, true)
                 .Build();
 
-            return config["App:ConnectionStrings:Shopping-Database"];
+            return config["ConnectionStrings:Shopping-Database"];
         }
 
         protected MySqlServerVersion GetVersion()
