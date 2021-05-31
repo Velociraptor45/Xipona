@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
-using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Transaction
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions
 {
     public class TransactionGenerator : ITransactionGenerator
     {

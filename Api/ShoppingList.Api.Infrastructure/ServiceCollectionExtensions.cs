@@ -9,6 +9,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Adapters;
@@ -19,11 +20,11 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Transaction;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure
 {
@@ -31,8 +32,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
     {
         public static void AddInfrastructure(this IServiceCollection services, string connectionString)
         {
-            var assembly = typeof(ServiceCollectionExtensions).Assembly;
-            var serverVersion = new MySqlServerVersion(new Version(0, 4, 0));
+            var assembly = Assembly.GetExecutingAssembly();
+            var version = Assembly.GetEntryAssembly().GetName().Version;
+            var serverVersion = new MySqlServerVersion(new Version(version.Major, version.Minor, version.Build));
 
             services.AddScoped<DbConnection>(provider => new MySqlConnection(connectionString));
 
