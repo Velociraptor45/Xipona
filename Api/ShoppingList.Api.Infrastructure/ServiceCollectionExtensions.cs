@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure
 {
@@ -31,8 +32,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
     {
         public static void AddInfrastructure(this IServiceCollection services, string connectionString)
         {
-            var assembly = typeof(ServiceCollectionExtensions).Assembly;
-            var serverVersion = new MySqlServerVersion(new Version(0, 4, 0));
+            var assembly = Assembly.GetExecutingAssembly();
+            var version = Assembly.GetEntryAssembly().GetName().Version;
+            var serverVersion = new MySqlServerVersion(new Version(version.Major, version.Minor, version.Build));
 
             services.AddScoped<DbConnection>(provider => new MySqlConnection(connectionString));
 
