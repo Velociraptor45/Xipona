@@ -6,7 +6,7 @@ using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transaction
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions
 {
     public class TransactionGenerator : ITransactionGenerator
     {

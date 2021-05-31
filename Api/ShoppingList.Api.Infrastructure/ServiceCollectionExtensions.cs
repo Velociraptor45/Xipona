@@ -9,7 +9,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transaction;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Adapters;
