@@ -13,6 +13,20 @@
 @using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 
 <div>
+    @if (hasProcessingError)
+    {
+        <div class="d-flex p-2 mb-2 warning-bg">
+            <div>
+                An error occured while processing your requests. Any changes were discarded. Please reload the page.
+            </div>
+            <div class="ml-auto">
+                <Button Class="d-flex align-items-center justify-content-center"
+                        OnClick="@ReloadAfterProcessingErrorAsync"
+                        Icon="reload"
+                        Size="@ButtonSize.Small"></Button>
+            </div>
+        </div>
+    }
     <div class="mb-1 d-flex justify-content-end align-items-center">
         <div class="pr-2">
             <Switch Checked="@isDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="@OnDebugStateChanged" />
@@ -96,6 +110,7 @@
 </div>
 
 @code{
+    private bool hasProcessingError = false;
     private bool isDebug = false;
 
     private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListSection>());
@@ -116,7 +131,7 @@
         isDebug = Env.IsDevelopment();
 
         await itemPriceCalculationService.InitializeAsync();
-        commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed, AddToError);
+        commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed, OnApiProcessingError, AddToError);
 
         StateHasChanged();
     }
@@ -139,15 +154,14 @@
         }
     }
 
-    private int AddToError(string e)
+    private void AddToError(string e)
     {
         if (!isDebug)
-            return 0;
+            return;
 
         errorMsg.Add(e);
         Console.WriteLine(e);
         StateHasChanged();
-        return 0;
     }
 
     private void ResetEditMode()
@@ -222,6 +236,11 @@
         AddToError("Queue processed");
         notificationService.NotifySuccess("Sync successful", "Synchronization with the server was successful.");
         await LoadShoppingListAsync();
+    }
+
+    private void OnApiProcessingError()
+    {
+        hasProcessingError = true;
     }
 
     private async void OnSelectedStoreChanged(Store store)
@@ -352,6 +371,12 @@
         await LoadShoppingListAsync();
     }
     #endregion
+
+    private async Task ReloadAfterProcessingErrorAsync()
+    {
+        hasProcessingError = false;
+        await LoadShoppingListAsync();
+    }
 
     private RenderFragment GetButtonRenderFragment(Action<object[]> callback, object[] args, string label = "Retry")
     {

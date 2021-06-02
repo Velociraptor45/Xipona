@@ -8,7 +8,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
     {
         Task Enqueue(IApiRequest request);
 
-        void Initialize(Func<Task> firstRequestFailedCallback, Func<Task> allQueueItemsProcessedCallback,
-            Func<string, int> debugCallback);
+        void Initialize(
+            Func<Task> firstRequestFailedCallback,
+            Func<Task> allQueueItemsProcessedCallback,
+            Action apiProcessingErrorCallback,
+            Action<string> debugCallback);
     }
 }
