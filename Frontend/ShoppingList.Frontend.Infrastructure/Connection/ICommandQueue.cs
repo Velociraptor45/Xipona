@@ -12,6 +12,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             Func<Task> firstRequestFailedCallback,
             Func<Task> allQueueItemsProcessedCallback,
             Action apiProcessingErrorCallback,
-            Func<string, int> debugCallback);
+            Action<string> debugCallback);
     }
 }

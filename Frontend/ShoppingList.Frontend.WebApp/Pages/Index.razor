@@ -154,15 +154,14 @@
         }
     }
 
-    private int AddToError(string e)
+    private void AddToError(string e)
     {
         if (!isDebug)
-            return 0;
+            return;
 
         errorMsg.Add(e);
         Console.WriteLine(e);
         StateHasChanged();
-        return 0;
     }
 
     private void ResetEditMode()

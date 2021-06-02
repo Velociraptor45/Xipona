@@ -23,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         private Func<Task> FirstRequestFailedCallback;
         private Func<Task> AllQueueItemsProcessedCallback;
         private Action ApiProcessingErrorCallback;
-        private Func<string, int> DebugCallback;
+        private Action<string> DebugCallback;
 
         public CommandQueue(IApiClient commandClient)
         {
@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             Func<Task> firstRequestFailedCallback,
             Func<Task> allQueueItemsProcessedCallback,
             Action apiProcessingErrorCallback,
-            Func<string, int> debugCallback)
+            Action<string> debugCallback)
         {
             FirstRequestFailedCallback = firstRequestFailedCallback;
             AllQueueItemsProcessedCallback = allQueueItemsProcessedCallback;
