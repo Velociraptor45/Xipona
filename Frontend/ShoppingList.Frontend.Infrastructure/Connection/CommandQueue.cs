@@ -74,9 +74,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 {
                     await OnApiConnectionDied();
                 }
-                catch (ApiProcessingException)
+                catch (ApiProcessingException e)
                 {
                     OnApiProcessingError();
+                    DebugCallback.Invoke(e.InnerException.ToString());
                 }
             }
         }
@@ -138,8 +139,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 {
                     Console.WriteLine($"Encountered {e.GetType()} during request.");
 
-                    if (e.StatusCode != HttpStatusCode.BadRequest
-                        && e.StatusCode != HttpStatusCode.InternalServerError)
+                    if (e.StatusCode == HttpStatusCode.BadRequest
+                        || e.StatusCode == HttpStatusCode.InternalServerError)
                     {
                         throw new ApiProcessingException("An error occured while processing the request. See inner exception for more details.", e);
                     }
