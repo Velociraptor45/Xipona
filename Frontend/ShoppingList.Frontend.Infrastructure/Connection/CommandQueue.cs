@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
+﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using RestEase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -17,10 +18,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         private readonly IApiClient commandClient;
 
         private bool connectionAlive = true;
-        private readonly List<IApiRequest> queue = new List<IApiRequest>();
+        private readonly List<IApiRequest> queue = new();
 
         private Func<Task> FirstRequestFailedCallback;
         private Func<Task> AllQueueItemsProcessedCallback;
+        private Action ApiProcessingErrorCallback;
         private Func<string, int> DebugCallback;
 
         public CommandQueue(IApiClient commandClient)
@@ -29,12 +31,17 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             this.commandClient = commandClient;
         }
 
-        public void Initialize(Func<Task> firstRequestFailedCallback, Func<Task> allQueueItemsProcessedCallback,
+        public void Initialize(
+            Func<Task> firstRequestFailedCallback,
+            Func<Task> allQueueItemsProcessedCallback,
+            Action apiProcessingErrorCallback,
             Func<string, int> debugCallback)
         {
-            DebugCallback = debugCallback;
             FirstRequestFailedCallback = firstRequestFailedCallback;
             AllQueueItemsProcessedCallback = allQueueItemsProcessedCallback;
+            ApiProcessingErrorCallback = apiProcessingErrorCallback;
+            DebugCallback = debugCallback;
+
             try
             {
                 timer.Elapsed += async (s, e) =>
@@ -44,7 +51,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 };
                 timer.Start();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 DebugCallback.Invoke(e.ToString());
             }
@@ -66,6 +73,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 catch (ApiConnectionException)
                 {
                     await OnApiConnectionDied();
+                }
+                catch (ApiProcessingException)
+                {
+                    OnApiProcessingError();
                 }
             }
         }
@@ -94,6 +105,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 await OnApiConnectionDied();
                 return;
             }
+            catch (ApiProcessingException e)
+            {
+                OnApiProcessingError();
+                DebugCallback.Invoke(e.InnerException.ToString());
+                return;
+            }
             connectionAlive = true;
 
             await AllQueueItemsProcessedCallback.Invoke();
@@ -117,10 +134,22 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 {
                     await SendRequest(request);
                 }
-                catch (System.Exception e)
+                catch (ApiException e)
                 {
                     Console.WriteLine($"Encountered {e.GetType()} during request.");
-                    throw new ApiConnectionException("", e);
+
+                    if (e.StatusCode != HttpStatusCode.BadRequest
+                        && e.StatusCode != HttpStatusCode.InternalServerError)
+                    {
+                        throw new ApiProcessingException("An error occured while processing the request. See inner exception for more details.", e);
+                    }
+
+                    throw new ApiConnectionException("An api error occured while processing the request. See inner exception for more details.", e);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Encountered {e.GetType()} during request.");
+                    throw new ApiConnectionException("An unknown error occured. See inner exception for more details.", e);
                 }
 
                 lock (queue)
@@ -159,6 +188,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                         (AddItemToShoppingListRequest)request);
                     break;
             }
+        }
+
+        private void OnApiProcessingError()
+        {
+            lock (queue)
+            {
+                queue.Clear();
+            }
+            ApiProcessingErrorCallback.Invoke();
         }
 
         private async Task OnApiConnectionDied()
