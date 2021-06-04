@@ -23,7 +23,7 @@ services:
     ports:
       - "12489:443"
     depends_on:
-      - prd-ph-sl-db
+      - Database
     networks: 
       - prd-ph-shoppinglist
     restart: unless-stopped
@@ -36,7 +36,7 @@ services:
     ports: 
       - "14000:443"
     depends_on:
-      - prd-ph-sl-api
+      - Api
     networks: 
       - prd-ph-shoppinglist
     restart: unless-stopped

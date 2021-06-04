@@ -23,7 +23,7 @@ services:
     ports:
       - "12486:443"
     depends_on:
-      - dev-ph-sl-db
+      - Database
     networks:
       - dev-ph-shoppinglist
     restart: unless-stopped
@@ -36,7 +36,7 @@ services:
     ports:
       - "13997:443"
     depends_on:
-      - dev-ph-sl-api
+      - Api
     networks:
       - dev-ph-shoppinglist
     restart: unless-stopped
