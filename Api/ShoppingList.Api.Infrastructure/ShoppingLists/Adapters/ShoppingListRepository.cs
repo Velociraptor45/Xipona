@@ -59,6 +59,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
+            if (entity == null)
+                return null;
+
             return toModelConverter.ToDomain(entity);
         }
 
