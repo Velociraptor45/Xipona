@@ -3,6 +3,7 @@ version: "3.7"
 services:  
   Database:
     image: jsurf/rpi-mariadb
+    container_name: dev-ph-sl-db
     environment:
       MYSQL_ROOT_PASSWORD: 
       MYSQL_DATABASE: dev-shoppinglist
@@ -12,30 +13,33 @@ services:
       - dev-ph-shoppinglist
     volumes:
       - dev-ph-shoppinglist-database:/var/lib/mysql
-    restart: 
-      always
+    restart: unless-stopped
 
   Api:
     image:
+    container_name: dev-ph-sl-api
     environment:
       ASPNETCORE_ENVIRONMENT: Development
     ports:
       - "12486:443"
+    depends_on:
+      - dev-ph-sl-db
     networks:
       - dev-ph-shoppinglist
-    restart:
-      always
+    restart: unless-stopped
 
   Frontend:
     image: 
+    container_name: dev-ph-sl-frontend
     environment:
       ASPNETCORE_ENVIRONMENT: Development
     ports:
       - "13997:443"
+    depends_on:
+      - dev-ph-sl-api
     networks:
       - dev-ph-shoppinglist
-    restart:
-      always
+    restart: unless-stopped
 
 
 volumes:
