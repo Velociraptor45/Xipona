@@ -8,8 +8,6 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common
 @using ProjectHermes.ShoppingList.Frontend.Models;
-@using ProjectHermes.ShoppingList.Frontend.Models.Index;
-@using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
 @using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 
 <div>
@@ -21,13 +19,9 @@
         <div class="pr-2">
             <Switch Checked="@isDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="@OnDebugStateChanged" />
         </div>
-        <Select Class="min-w-100 max-w-200 mr-3"
-                DataSource="availableStores.Stores"
-                @bind-Value="availableStores.SelectedStoreId"
-                ValueName="@nameof(Store.Id)"
-                LabelName="@nameof(Store.Name)"
-                OnSelectedItemChanged="OnSelectedStoreChanged">
-        </Select>
+        <StoreSelect OnSelectedStoreChangedAsync="@OnSelectedStoreChangedAsync"
+                     CreateRenderFragment="@GetButtonRenderFragment"
+                     ErrorCallback="AddToError"></StoreSelect>
         <Button Class="mr-1 d-flex align-items-center"
                 OnClick="@OnShowBasketItemsChangeButtonClicked"
                 Disabled="@(!shoppingList?.AnyItemInBasket ?? true)">
@@ -47,7 +41,7 @@
     </div>
     <!--search bar-->
     <ItemSearchBar ShoppingList="@shoppingList"
-                   ReloadShoppingListAsync="@LoadShoppingListAsync"
+                   ReloadShoppingListAsync="@ReloadShoppingList"
                    UpdateParentState="@StateHasChanged"
                    CreateRenderFragment="@GetButtonRenderFragment"
                    ErrorCallback="AddToError"></ItemSearchBar>
@@ -84,9 +78,6 @@
     private bool isDebug = false;
 
     private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListSection>());
-    private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>(), 0);
-
-    private SearchBar searchBar = new SearchBar();
 
     private bool isInEditMode = false;
     private bool showItemsInBasket = true;
@@ -106,24 +97,6 @@
         StateHasChanged();
     }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
-        try
-        {
-            await LoadPage();
-        }
-        catch (Exception e)
-        {
-            notificationService.NotifyError("Page loading failed", e.Message,
-                GetAsyncButtonRenderFragment(
-                    async (items) => await LoadPage(),
-                    new object[0]));
-            AddToError(e.ToString());
-            return;
-        }
-    }
-
     private void AddToError(string e)
     {
         if (!isDebug)
@@ -141,25 +114,16 @@
 
     #region Loading
 
-    private async Task LoadPage()
+    private async Task ReloadShoppingList()
     {
-        await LoadAvailableStoresAsync();
+        await LoadShoppingListAsync(shoppingList.Store.Id);
     }
 
-    private async Task LoadAvailableStoresAsync()
-    {
-        List<Store> stores = (await apiClient.GetAllActiveStoresAsync())
-            .ToList();
-
-        availableStores = new AvailableStores(stores, stores.FirstOrDefault()?.Id ?? 0);
-        Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
-    }
-
-    private async Task LoadShoppingListAsync()
+    private async Task LoadShoppingListAsync(int storeId)
     {
         try
         {
-            shoppingList = await apiClient.GetActiveShoppingListByStoreIdAsync(availableStores.SelectedStoreId);
+            shoppingList = await apiClient.GetActiveShoppingListByStoreIdAsync(storeId);
             Console.WriteLine($"Loaded shopping list with {shoppingList.Items.Count} items");
         }
         catch (Exception e)
@@ -188,7 +152,7 @@
     {
         AddToError("Queue processed");
         notificationService.NotifySuccess("Sync successful", "Synchronization with the server was successful.");
-        await LoadShoppingListAsync();
+        await ReloadShoppingList();
     }
 
     private void OnApiProcessingError()
@@ -196,13 +160,10 @@
         hasProcessingError = true;
     }
 
-    private async void OnSelectedStoreChanged(Store store)
+    private async Task OnSelectedStoreChangedAsync(Store store)
     {
-        if (store == null)
-            return;
-
         ResetEditMode();
-        await LoadShoppingListAsync();
+        await LoadShoppingListAsync(store.Id);
     }
 
     private void OnEditModeButtonClicked()
@@ -251,14 +212,14 @@
     {
         var request = new FinishListRequest(Guid.NewGuid(), shoppingList.Id);
         await apiClient.FinishListAsync(request);
-        await LoadShoppingListAsync();
+        await ReloadShoppingList();
     }
     #endregion
 
     private async Task ReloadAfterProcessingErrorAsync()
     {
         hasProcessingError = false;
-        await LoadShoppingListAsync();
+        await ReloadShoppingList();
     }
 
     private RenderFragment GetButtonRenderFragment(Action<object[]> callback, object[] args, string label = "Retry")
