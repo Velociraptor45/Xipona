@@ -6,26 +6,16 @@
 @inject IWebAssemblyHostEnvironment Env;
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common
 @using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Index;
 @using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
 @using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
-@using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 
 <div>
     @if (hasProcessingError)
     {
-        <div class="d-flex p-2 mb-2 warning-bg">
-            <div>
-                An error occured while processing your requests. Any changes were discarded. Please reload the page.
-            </div>
-            <div class="ml-auto">
-                <Button Class="d-flex align-items-center justify-content-center"
-                        OnClick="@ReloadAfterProcessingErrorAsync"
-                        Icon="reload"
-                        Size="@ButtonSize.Small"></Button>
-            </div>
-        </div>
+        <ProcessingError ReloadCallback="@ReloadAfterProcessingErrorAsync"></ProcessingError>
     }
     <div class="mb-1 d-flex justify-content-end align-items-center">
         <div class="pr-2">
@@ -56,31 +46,11 @@
         </Button>
     </div>
     <!--search bar-->
-    <div class="mb-2 d-flex">
-        <Select OnFocus="OnSearchBarFocusIn"
-                Class="@(searchBar.Active ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
-                DataSource="searchBar.Options"
-                TItem="@ItemSearchResult"
-                TItemValue="@int"
-                ValueName="@nameof(ItemSearchResult.ItemId)"
-                LabelName="@nameof(ItemSearchResult.DisplayValue)"
-                AutoClearSearchValue="true"
-                AllowClear="true"
-                OnSearch="OnSearch"
-                EnableSearch
-                OnSelectedItemChanged="OnSearchItemSelected">
-        </Select>
-
-        @if (searchBar.Active)
-        {
-            <Button Type="@ButtonType.Primary"
-                    OnClick="@OnCreateNewTemporaryItem"
-                    Class="d-flex align-items-center">
-                <Icon Type="plus"></Icon>
-            </Button>
-            <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
-        }
-    </div>
+    <ItemSearchBar ShoppingList="@shoppingList"
+                   ReloadShoppingListAsync="@LoadShoppingListAsync"
+                   UpdateParentState="@StateHasChanged"
+                   CreateRenderFragment="@GetButtonRenderFragment"
+                   ErrorCallback="AddToError"></ItemSearchBar>
     <div>
         @foreach (var section in shoppingList.Sections.Where(s => s.Items.Any()))
         {
@@ -94,7 +64,7 @@
         }
     </div>
     <div class="d-flex justify-content-end">
-        <Button Type="primary"
+        <Button Type="@ButtonType.Primary"
                 OnClick="@OnFinishListButtonClicked"
                 Class="mr-2"
                 Disabled="@(!shoppingList?.AnyItemInBasket ?? true)">
@@ -207,23 +177,6 @@
         isDebug = active;
     }
 
-    private void OnCreateNewTemporaryItem()
-    {
-        // ugly
-        var quantityType = new QuantityType(0, "", 1, "€", "x", 1);
-        var quantityTypeInPacket = new QuantityTypeInPacket(0, "", "");
-        var item = new ShoppingListItem(new ItemId(Guid.NewGuid()), searchBar.Input, true, 1f, quantityType, 1,
-        quantityTypeInPacket, "", "", false, 1);
-
-        var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId.Value, item.Name, shoppingList.Store.Id, item.PricePerQuantity);
-        var addRequest = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id, item.Quantity, null);
-        commandQueue.Enqueue(createRequest);
-        commandQueue.Enqueue(addRequest);
-
-        shoppingList.AddItem(item, shoppingList.DefaultSectionId);
-        StateHasChanged();
-    }
-
     private Task OnConnectionFailed()
     {
         AddToError("Connection failed");
@@ -261,76 +214,6 @@
     private void OnShowBasketItemsChangeButtonClicked()
     {
         showItemsInBasket = !showItemsInBasket;
-        StateHasChanged();
-    }
-
-    private void OnSearchBarFocusIn()
-    {
-        searchBar.Active = true;
-        StateHasChanged();
-    }
-
-    private void OnSearchBarCancleButtonClicked()
-    {
-        searchBar.Active = false;
-        StateHasChanged();
-    }
-
-    private async void OnSearch(string searchInput)
-    {
-        if (shoppingList.Store == null)
-            return;
-
-        if (string.IsNullOrWhiteSpace(searchInput))
-        {
-            searchBar.Options = Enumerable.Empty<ItemSearchResult>();
-            return;
-        }
-
-        searchInput = searchInput.Trim();
-        searchBar.Input = searchInput;
-
-        try
-        {
-            var result = await apiClient.GetItemSearchResultsAsync(searchInput, shoppingList.Store.Id);
-            searchBar.Options = result;
-            //Console.WriteLine($"{searchInput}: {result.ToList().Count}");
-        }
-        catch (Exception e)
-        {
-            notificationService.NotifyError("Search for items failed", e.Message,
-                GetButtonRenderFragment(
-                    (items) => OnSearch((string)items[0]),
-                    new object[] { searchInput }));
-            AddToError(e.ToString());
-            return;
-        }
-        StateHasChanged();
-    }
-
-    private async void OnSearchItemSelected(ItemSearchResult item)
-    {
-        if (item == null)
-            return;
-
-        var request = new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingList.Id, new ItemId(item.ItemId), 1,
-            item.DefaultSectionId); //todo default item quantity
-
-        try
-        {
-            await apiClient.AddItemToShoppingListAsync(request);
-        }
-        catch (Exception e)
-        {
-            notificationService.NotifyError("Adding item failed", e.Message);
-            AddToError(e.ToString());
-            return;
-        }
-
-        searchBar.ResetInput();
-        searchBar.ResetOptions();
-
-        await LoadShoppingListAsync();
         StateHasChanged();
     }
 
