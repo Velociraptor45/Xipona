@@ -1,0 +1,132 @@
+﻿@inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
+@inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.ICommandQueue commandQueue;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Service.IShoppingListNotificationService notificationService;
+@using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+@using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+
+<div class="mb-2 d-flex">
+    <Select OnFocus="OnSearchBarFocusIn"
+            Class="@(searchBar.Active ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
+            DataSource="searchBar.Options"
+            TItem="@ItemSearchResult"
+            TItemValue="@int"
+            ValueName="@nameof(ItemSearchResult.ItemId)"
+            LabelName="@nameof(ItemSearchResult.DisplayValue)"
+            AutoClearSearchValue="true"
+            AllowClear="true"
+            OnSearch="OnSearch"
+            EnableSearch
+            OnSelectedItemChanged="OnSearchItemSelected">
+    </Select>
+
+    @if (searchBar.Active)
+    {
+        <Button Type="@ButtonType.Primary"
+                OnClick="@OnCreateNewTemporaryItem"
+                Class="d-flex align-items-center">
+            <Icon Type="plus"></Icon>
+        </Button>
+        <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
+    }
+</div>
+
+@code {
+    [Parameter] public ShoppingListRoot ShoppingList { get; set; }
+    [Parameter] public Func<Task> ReloadShoppingListAsync { get; set; }
+    [Parameter] public Action UpdateParentState { get; set; }
+    [Parameter] public Func<Action<object[]>, object[], string, RenderFragment> CreateRenderFragment { get; set; }
+    [Parameter] public Action<string> ErrorCallback { get; set; }
+
+    private SearchBar searchBar = new SearchBar();
+
+    private async void OnSearch(string searchInput)
+    {
+        if (ShoppingList.Store == null)
+            return;
+
+        if (string.IsNullOrWhiteSpace(searchInput))
+        {
+            searchBar.Options = Enumerable.Empty<ItemSearchResult>();
+            return;
+        }
+
+        searchInput = searchInput.Trim();
+        searchBar.Input = searchInput;
+
+        try
+        {
+            var result = await apiClient.GetItemSearchResultsAsync(searchInput, ShoppingList.Store.Id);
+            searchBar.Options = result;
+            //Console.WriteLine($"{searchInput}: {result.ToList().Count}");
+        }
+        catch (Exception e)
+        {
+            notificationService.NotifyError("Search for items failed", e.Message,
+                CreateRenderFragment(
+                    (items) => OnSearch((string)items[0]),
+                    new object[] { searchInput },
+                    "Retry"));
+            ErrorCallback(e.ToString());
+            return;
+        }
+        StateHasChanged();
+    }
+
+    private void OnCreateNewTemporaryItem()
+    {
+        // ugly
+        var quantityType = new QuantityType(0, "", 1, "€", "x", 1);
+        var quantityTypeInPacket = new QuantityTypeInPacket(0, "", "");
+        var item = new ShoppingListItem(new ItemId(Guid.NewGuid()), searchBar.Input, true, 1f, quantityType, 1,
+        quantityTypeInPacket, "", "", false, 1);
+
+        var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId.Value, item.Name, ShoppingList.Store.Id,
+            item.PricePerQuantity, ShoppingList.DefaultSectionId);
+        var addRequest = new AddItemToShoppingListRequest(Guid.NewGuid(), ShoppingList.Id, item.Id, item.Quantity, null);
+        commandQueue.Enqueue(createRequest);
+        commandQueue.Enqueue(addRequest);
+
+        ShoppingList.AddItem(item, ShoppingList.DefaultSectionId);
+        UpdateParentState();
+    }
+
+    private async void OnSearchItemSelected(ItemSearchResult item)
+    {
+        if (item == null)
+            return;
+
+        var request = new AddItemToShoppingListRequest(Guid.NewGuid(), ShoppingList.Id, new ItemId(item.ItemId), 1,
+            item.DefaultSectionId); //todo default item quantity
+
+        try
+        {
+            await apiClient.AddItemToShoppingListAsync(request);
+        }
+        catch (Exception e)
+        {
+            notificationService.NotifyError("Adding item failed", e.Message);
+            ErrorCallback(e.ToString());
+            return;
+        }
+
+        searchBar.ResetInput();
+        searchBar.ResetOptions();
+
+        await ReloadShoppingListAsync();
+        UpdateParentState();
+    }
+
+    private void OnSearchBarCancleButtonClicked()
+    {
+        searchBar.Active = false;
+        StateHasChanged();
+    }
+
+    private void OnSearchBarFocusIn()
+    {
+        searchBar.Active = true;
+        StateHasChanged();
+    }
+}
