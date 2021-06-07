@@ -15,7 +15,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests
                 Availability = new ItemAvailabilityContract
                 {
                     StoreId = request.StoreId,
-                    Price = request.Price
+                    Price = request.Price,
+                    DefaultSectionId = request.DefaultSectionId
                 }
             };
         }
