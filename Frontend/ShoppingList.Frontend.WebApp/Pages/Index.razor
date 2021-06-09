@@ -8,6 +8,7 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common
 @using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.Index;
 @using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 
 <div>
@@ -17,7 +18,7 @@
     }
     <div class="mb-1 d-flex justify-content-end align-items-center">
         <div class="pr-2">
-            <Switch Checked="@isDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="@OnDebugStateChanged" />
+            <Switch Checked="@errorReceiver.IsDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="() => errorReceiver.ToggleDebugState()" />
         </div>
         <StoreSelect OnSelectedStoreChangedAsync="@OnSelectedStoreChangedAsync"
                      CreateRenderFragment="@GetButtonRenderFragment"
@@ -40,11 +41,9 @@
         </Button>
     </div>
     <!--search bar-->
-    <ItemSearchBar ShoppingList="@shoppingList"
-                   ReloadShoppingListAsync="@ReloadShoppingList"
-                   UpdateParentState="@StateHasChanged"
-                   CreateRenderFragment="@GetButtonRenderFragment"
-                   ErrorCallback="AddToError"></ItemSearchBar>
+    <ItemSearchBar ReloadShoppingListAsync="@ReloadShoppingList"
+                   ErrorReceiver="@errorReceiver"
+                   Page="@state"></ItemSearchBar>
     <div>
         @foreach (var section in shoppingList.Sections.Where(s => s.Items.Any()))
         {
@@ -66,48 +65,43 @@
         </Button>
     </div>
     <div>
-        @foreach (var s in errorMsg)
+        @foreach (var msg in errorReceiver.Stack)
         {
-            <div>@s</div>
+            <div>@msg</div>
         }
     </div>
 </div>
 
 @code{
     private bool hasProcessingError = false;
-    private bool isDebug = false;
 
     private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListSection>());
+
+    private ShoppingListState state;
+    private ErrorReceiver errorReceiver;
 
     private bool isInEditMode = false;
     private bool showItemsInBasket = true;
 
-    private List<string> errorMsg = new List<string>();
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        isDebug = Env.IsDevelopment();
 
         await itemPriceCalculationService.InitializeAsync();
         commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed, OnApiProcessingError, AddToError);
+
+        state = new ShoppingListState(shoppingList, true, false);
+        errorReceiver = new ErrorReceiver(isDebug: Env.IsDevelopment(),
+            (action, args, label) => GetButtonRenderFragment(action, args, label));
+
+        state.StateChanged += () => StateHasChanged();
+        state.ReloadRequestedAsync += async () => await ReloadShoppingList();
 
         StateHasChanged();
     }
 
     private void AddToError(string e)
     {
-        if (!isDebug)
-            return;
-
-        errorMsg.Add(e);
-        Console.WriteLine(e);
-        StateHasChanged();
-    }
-
-    private void ResetEditMode()
-    {
-        isInEditMode = false;
     }
 
     #region Loading
@@ -121,34 +115,28 @@
     {
         try
         {
-            shoppingList = await apiClient.GetActiveShoppingListByStoreIdAsync(storeId);
+            var shoppingList = await apiClient.GetActiveShoppingListByStoreIdAsync(storeId);
+            state.ChangeList(shoppingList);
             Console.WriteLine($"Loaded shopping list with {shoppingList.Items.Count} items");
         }
         catch (Exception e)
         {
             throw;
         }
-
-        StateHasChanged();
     }
     #endregion
 
     #region Callbacks
-    private void OnDebugStateChanged(bool active)
-    {
-        isDebug = active;
-    }
-
     private Task OnConnectionFailed()
     {
-        AddToError("Connection failed");
+        errorReceiver.Log("Connection failed");
         notificationService.NotifyWarning("Connection interrupted", "Connection to the server was interrupted.");
         return Task.CompletedTask;
     }
 
     private async Task OnQueueProcessed()
     {
-        AddToError("Queue processed");
+        errorReceiver.Log("Queue processed");
         notificationService.NotifySuccess("Sync successful", "Synchronization with the server was successful.");
         await ReloadShoppingList();
     }
@@ -160,7 +148,7 @@
 
     private async Task OnSelectedStoreChangedAsync(Store store)
     {
-        ResetEditMode();
+        state.ResetItemEditMode();
         await LoadShoppingListAsync(store.Id);
     }
 
