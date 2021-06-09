@@ -20,9 +20,7 @@
         <div class="pr-2">
             <Switch Checked="@errorReceiver.IsDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="() => errorReceiver.ToggleDebugState()" />
         </div>
-        <StoreSelect OnSelectedStoreChangedAsync="@OnSelectedStoreChangedAsync"
-                     CreateRenderFragment="@GetButtonRenderFragment"
-                     ErrorCallback="AddToError"></StoreSelect>
+        <StoreSelect Page="@state" ErrorReceiver="@errorReceiver"></StoreSelect>
         <Button Class="mr-1 d-flex align-items-center"
                 OnClick="@OnShowBasketItemsChangeButtonClicked"
                 Disabled="@(!shoppingList?.AnyItemInBasket ?? true)">
@@ -94,8 +92,9 @@
         errorReceiver = new ErrorReceiver(isDebug: Env.IsDevelopment(),
             (action, args, label) => GetButtonRenderFragment(action, args, label));
 
+        errorReceiver.StateChanged += () => StateHasChanged();
         state.StateChanged += () => StateHasChanged();
-        state.ReloadRequestedAsync += async () => await ReloadShoppingList();
+        state.ReloadRequestedAsync += async (storeId) => await LoadShoppingListAsync(storeId);
 
         StateHasChanged();
     }

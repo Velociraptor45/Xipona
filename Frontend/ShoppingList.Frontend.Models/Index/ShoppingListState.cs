@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Index
     public class ShoppingListState
     {
         public Action StateChanged { get; set; }
-        public Func<Task> ReloadRequestedAsync { get; set; }
+        public Func<int, Task> ReloadRequestedAsync { get; set; }
         public ShoppingListRoot ShoppingList { get; private set; }
         public bool ItemsInBasketVisible { get; private set; }
         public bool ItemsInEditMode { get; private set; }
@@ -47,9 +47,20 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Index
             StateChanged();
         }
 
+        public async Task ChangeStoreAsync(int storeId)
+        {
+            ResetItemEditMode();
+            await RequestReloadAsync(storeId);
+        }
+
         public async Task RequestReloadAsync()
         {
-            await ReloadRequestedAsync();
+            await RequestReloadAsync(ShoppingList.Store.Id);
+        }
+
+        public async Task RequestReloadAsync(int storeId)
+        {
+            await ReloadRequestedAsync(storeId);
             StateChanged();
         }
     }
