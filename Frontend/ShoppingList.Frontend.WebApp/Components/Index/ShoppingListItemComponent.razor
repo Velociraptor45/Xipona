@@ -1,6 +1,6 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models;
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Service;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
 
 <li class="list-style-non py-2 mb-1 @(Item.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
     @if (IsInEditMode)

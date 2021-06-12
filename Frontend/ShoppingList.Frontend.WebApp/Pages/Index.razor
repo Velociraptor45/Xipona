@@ -1,8 +1,8 @@
 ﻿@page "/"
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.ICommandQueue commandQueue;
-@inject ProjectHermes.ShoppingList.Frontend.WebApp.Service.IShoppingListNotificationService notificationService;
-@inject ProjectHermes.ShoppingList.Frontend.WebApp.Service.IItemPriceCalculationService itemPriceCalculationService;
+@inject Models.Common.Services.IShoppingListNotificationService notificationService;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.IItemPriceCalculationService itemPriceCalculationService;
 @inject IWebAssemblyHostEnvironment Env;
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
@@ -12,7 +12,7 @@
 @using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 
 <div>
-    @if (hasProcessingError)
+    @if (errorReceiver.ApiHasProcessingError)
     {
         <ProcessingError ReloadCallback="@ReloadAfterProcessingErrorAsync"></ProcessingError>
     }
@@ -39,7 +39,7 @@
         </Button>
     </div>
     <!--search bar-->
-    <ItemSearchBar ReloadShoppingListAsync="@ReloadShoppingList"
+    <ItemSearchBar ReloadShoppingListAsync="@ReloadShoppingListAsync"
                    ErrorReceiver="@errorReceiver"
                    Page="@state"></ItemSearchBar>
     <div>
@@ -71,8 +71,6 @@
 </div>
 
 @code{
-    private bool hasProcessingError = false;
-
     private ShoppingListRoot shoppingList = new ShoppingListRoot(0, null, null, Enumerable.Empty<ShoppingListSection>());
 
     private ShoppingListState state;
@@ -86,26 +84,24 @@
         await base.OnInitializedAsync();
 
         await itemPriceCalculationService.InitializeAsync();
-        commandQueue.Initialize(OnConnectionFailed, OnQueueProcessed, OnApiProcessingError, AddToError);
 
         state = new ShoppingListState(shoppingList, true, false);
         errorReceiver = new ErrorReceiver(isDebug: Env.IsDevelopment(),
-            (action, args, label) => GetButtonRenderFragment(action, args, label));
+            (action, args, label) => GetButtonRenderFragment(action, args, label),
+            notificationService);
+        commandQueue.Initialize(errorReceiver);
 
         errorReceiver.StateChanged += () => StateHasChanged();
+        errorReceiver.QueueProcessed += async () => await ReloadShoppingListAsync();
         state.StateChanged += () => StateHasChanged();
         state.ReloadRequestedAsync += async (storeId) => await LoadShoppingListAsync(storeId);
 
         StateHasChanged();
     }
 
-    private void AddToError(string e)
-    {
-    }
-
     #region Loading
 
-    private async Task ReloadShoppingList()
+    private async Task ReloadShoppingListAsync()
     {
         await LoadShoppingListAsync(shoppingList.Store.Id);
     }
@@ -126,30 +122,6 @@
     #endregion
 
     #region Callbacks
-    private Task OnConnectionFailed()
-    {
-        errorReceiver.Log("Connection failed");
-        notificationService.NotifyWarning("Connection interrupted", "Connection to the server was interrupted.");
-        return Task.CompletedTask;
-    }
-
-    private async Task OnQueueProcessed()
-    {
-        errorReceiver.Log("Queue processed");
-        notificationService.NotifySuccess("Sync successful", "Synchronization with the server was successful.");
-        await ReloadShoppingList();
-    }
-
-    private void OnApiProcessingError()
-    {
-        hasProcessingError = true;
-    }
-
-    private async Task OnSelectedStoreChangedAsync(Store store)
-    {
-        state.ResetItemEditMode();
-        await LoadShoppingListAsync(store.Id);
-    }
 
     private void OnEditModeButtonClicked()
     {
@@ -197,14 +169,14 @@
     {
         var request = new FinishListRequest(Guid.NewGuid(), shoppingList.Id);
         await apiClient.FinishListAsync(request);
-        await ReloadShoppingList();
+        await ReloadShoppingListAsync();
     }
     #endregion
 
     private async Task ReloadAfterProcessingErrorAsync()
     {
-        hasProcessingError = false;
-        await ReloadShoppingList();
+        errorReceiver.ResolveProcessingError();
+        await ReloadShoppingListAsync();
     }
 
     private RenderFragment GetButtonRenderFragment(Action<object[]> callback, object[] args, string label = "Retry")
