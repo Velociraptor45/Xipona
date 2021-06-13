@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using ProjectHermes.ShoppingList.Frontend.Models.Common;
+using ProjectHermes.ShoppingList.Frontend.Models.Common.Error;
 using ProjectHermes.ShoppingList.Frontend.Models.Common.Services;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Index
 {
-    public class ErrorReceiver : ICommandQueueErrorHandler, IDebugHandler
+    public class ErrorReceiver : ICommandQueueErrorHandler, IDebugHandler, IRetryFragmentCreator
     {
         private readonly List<string> stack = new List<string>();
         private readonly Func<Action<object[]>, object[], string, RenderFragment> createRenderFragment;
