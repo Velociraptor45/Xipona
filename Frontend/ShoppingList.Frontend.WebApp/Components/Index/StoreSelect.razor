@@ -17,10 +17,8 @@
 
     private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>(), 0);
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
-        await base.OnParametersSetAsync();
-
         try
         {
             await LoadAvailableStoresAsync();
@@ -32,6 +30,8 @@
             ErrorReceiver.Log(e.ToString());
             return;
         }
+
+        await base.OnInitializedAsync();
     }
 
     private async Task LoadAvailableStoresAsync()
