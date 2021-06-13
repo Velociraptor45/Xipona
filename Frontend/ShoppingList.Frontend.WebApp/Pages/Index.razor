@@ -45,12 +45,7 @@
             Finish List
         </Button>
     </div>
-    <div>
-        @foreach (var msg in errorReceiver.Stack)
-        {
-            <div>@msg</div>
-        }
-    </div>
+    <ErrorStack ErrorReceiver="@errorReceiver"></ErrorStack>
 </div>
 
 @code{

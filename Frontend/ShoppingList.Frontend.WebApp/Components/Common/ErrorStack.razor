@@ -1,0 +1,12 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Index;
+
+<div>
+    @foreach (var msg in ErrorReceiver.Stack)
+    {
+        <div>@msg</div>
+    }
+</div>
+
+@code {
+    [Parameter] public ErrorReceiver ErrorReceiver { get; set; }
+}
