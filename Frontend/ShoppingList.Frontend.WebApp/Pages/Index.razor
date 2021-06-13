@@ -24,7 +24,7 @@
         <Button Class="mr-1 d-flex align-items-center"
                 OnClick="@OnShowBasketItemsChangeButtonClicked"
                 Disabled="@(!shoppingList?.AnyItemInBasket ?? true)">
-            @if (showItemsInBasket)
+            @if (state.ItemsInBasketVisible)
             {
                 <Icon Type="eye" />
             }
@@ -45,13 +45,7 @@
     <div>
         @foreach (var section in shoppingList.Sections.Where(s => s.Items.Any()))
         {
-            <Section Model="@section"
-                     ShowItemsInBasket="@showItemsInBasket"
-                     ItemBasketStatusChangedCallback="@OnItemBasketStatusChangedAsync"
-                     ItemQuantityChangedCallback="@OnItemQuantityChangedAsync"
-                     ItemRemovedCallback="@OnItemRemovedFromListAsync"
-                     IsInEditMode="@isInEditMode"
-                     ItemPriceCalculationService="@itemPriceCalculationService"></Section>
+            <Section Model="@section"></Section>
         }
     </div>
     <div class="d-flex justify-content-end">
@@ -76,27 +70,30 @@
     private ShoppingListState state;
     private ErrorReceiver errorReceiver;
 
-    private bool isInEditMode = false;
-    private bool showItemsInBasket = true;
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
         await itemPriceCalculationService.InitializeAsync();
 
-        state = new ShoppingListState(shoppingList, true, false);
-        errorReceiver = new ErrorReceiver(isDebug: Env.IsDevelopment(),
-            (action, args, label) => GetButtonRenderFragment(action, args, label),
-            notificationService);
-        commandQueue.Initialize(errorReceiver);
-
         errorReceiver.StateChanged += () => StateHasChanged();
         errorReceiver.QueueProcessed += async () => await ReloadShoppingListAsync();
         state.StateChanged += () => StateHasChanged();
         state.ReloadRequestedAsync += async (storeId) => await LoadShoppingListAsync(storeId);
 
+        commandQueue.Initialize(errorReceiver);
+
         StateHasChanged();
+    }
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        state = new ShoppingListState(shoppingList, true, false);
+        errorReceiver = new ErrorReceiver(isDebug: Env.IsDevelopment(),
+            (action, args, label) => GetButtonRenderFragment(action, args, label),
+            notificationService);
+
+        return base.SetParametersAsync(parameters);
     }
 
     #region Loading
@@ -125,44 +122,14 @@
 
     private void OnEditModeButtonClicked()
     {
-        isInEditMode = !isInEditMode;
+        state.ToggleItemEditMode();
         StateHasChanged();
     }
 
     private void OnShowBasketItemsChangeButtonClicked()
     {
-        showItemsInBasket = !showItemsInBasket;
+        state.ToggleItemsInBasketVisible();
         StateHasChanged();
-    }
-
-    private async Task OnItemBasketStatusChangedAsync(ShoppingListItem item)
-    {
-        if (item.IsInBasket)
-        {
-            item.RemoveFromBasket();
-            var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), shoppingList.Id, item.Id);
-            await commandQueue.Enqueue(request);
-        }
-        else
-        {
-            item.PutInBasket();
-            var request = new PutItemInBasketRequest(Guid.NewGuid(), shoppingList.Id, item.Id);
-            await commandQueue.Enqueue(request);
-        }
-    }
-
-    private async Task OnItemRemovedFromListAsync(ShoppingListItem item)
-    {
-        shoppingList.Remove(item.Id);
-        var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id);
-        await commandQueue.Enqueue(request);
-    }
-
-    private async Task OnItemQuantityChangedAsync(ShoppingListItem item)
-    {
-        var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), shoppingList.Id, item.Id,
-        item.Quantity);
-        await commandQueue.Enqueue(request);
     }
 
     private async void OnFinishListButtonClicked()
@@ -182,10 +149,5 @@
     private RenderFragment GetButtonRenderFragment(Action<object[]> callback, object[] args, string label = "Retry")
     {
         return@<Button Type="@ButtonType.Primary" OnClick="() => callback(args)">@label</Button>;
-}
-
-private RenderFragment GetAsyncButtonRenderFragment(Func<object[], Task> callback, object[] args, string label = "Retry")
-{
-return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback(args)">@label</Button>;
 }
 }

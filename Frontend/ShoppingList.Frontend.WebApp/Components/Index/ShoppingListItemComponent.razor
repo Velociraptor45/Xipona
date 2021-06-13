@@ -1,14 +1,18 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models;
-@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
+@using ProjectHermes.ShoppingList.Frontend.Models.Index;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 
-<li class="list-style-non py-2 mb-1 @(Item.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
-    @if (IsInEditMode)
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager;
+@inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.ICommandQueue commandQueue;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.IItemPriceCalculationService itemPriceCalculationService;
+
+<li class="list-style-non py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
+    @if (State.ItemsInEditMode)
     {
         <div class="d-flex flex-column ml-2">
             <div class="d-flex">
                 <!-- upper row -->
-                <div class="h3 pl-1">@Item.Name</div>
+                <div class="h3 pl-1">@Model.Name</div>
                 <Button Danger="true"
                         Icon="close"
                         Class="mr-2 ml-auto d-flex align-items-center justify-content-center"
@@ -19,24 +23,24 @@
                 <div class="d-flex">
                     <div class="d-flex">
                         <div class="d-flex mr-3">
-                            <AntDesign.InputNumber Value="@Item.Quantity" Min="1f"
+                            <AntDesign.InputNumber Value="@Model.Quantity" Min="1f"
                                                    ValueChanged="@(async (float d) => await OnQuantityInputValueChangedAsync(d))">
                             </AntDesign.InputNumber>
-                            <span>@Item.QuantityType.QuantityLabel</span>
+                            <span>@Model.QuantityType.QuantityLabel</span>
                         </div>
                         <div class="d-flex">
                             <Button Class="d-flex align-items-center justify-content-center" Icon="plus"
-                                    OnClick="OnIncrementQuantityButtonClicked"></Button>
+                                    OnClick="OnIncrementQuantityButtonClickedAsync"></Button>
                             <Button Class="d-flex align-items-center justify-content-center" Icon="minus"
-                                    OnClick="OnDecrementQuantityButtonClicked"></Button>
+                                    OnClick="OnDecrementQuantityButtonClickedAsync"></Button>
                         </div>
                     </div>
-                    @if (Item.IsTemporary)
+                    @if (Model.IsTemporary)
                     {
                         <div class="px-2 m-0 ml-auto">
                             <Button Icon="download"
                                     OnClick="@OnMakeItemPermanentButtonClicked"
-                                    Disabled="@(Item.Id.ActualId == null)">
+                                    Disabled="@(Model.Id.ActualId == null)">
                             </Button>
                         </div>
                     }
@@ -48,12 +52,12 @@
     {
         <div class="d-flex">
             <div class="m-0">
-                <span>@Item.Quantity</span><span>@Item.QuantityType.QuantityLabel</span>
+                <span>@Model.Quantity</span><span>@Model.QuantityType.QuantityLabel</span>
             </div>
             <div class="m-0 pl-2">
-                @Item.Name
+                @Model.Name
             </div>
-            @if (!Item.IsTemporary)
+            @if (!Model.IsTemporary)
             {
                 <div class="px-2 m-0 align-self-center ml-auto">
                     <span>@(String.Format("{0:0.00}", CalculatePrice()))</span>
@@ -65,16 +69,8 @@
 </li>
 
 @code{
-    [Parameter] public ShoppingListItem Item { get; set; }
-
-    [Parameter] public EventCallback<ShoppingListItem> ItemBasketStatusChangedCallback { get; set; }
-    [Parameter] public EventCallback<ShoppingListItem> ItemQuantityChangedCallback { get; set; }
-    [Parameter] public EventCallback<ShoppingListItem> ItemRemovedCallback { get; set; }
-    [Parameter] public EventCallback<ShoppingListItem> MakeItemPermanentCallback { get; set; }
-
-    [Parameter] public bool IsInEditMode { get; set; }
-
-    [Parameter] public IItemPriceCalculationService ItemPriceCalculationService { get; set; }
+    [Parameter] public ShoppingListState State { get; set; }
+    [Parameter] public ShoppingListItem Model { get; set; }
 
     protected override void OnInitialized()
     {
@@ -82,45 +78,65 @@
         StateHasChanged();
     }
 
-    private async void OnItemClickedAsync()
+    private async Task OnItemClickedAsync()
     {
-        if (IsInEditMode)
+        if (State.ItemsInEditMode)
             return;
 
-        await ItemBasketStatusChangedCallback.InvokeAsync(Item);
-        StateHasChanged();
+        if (Model.IsInBasket)
+        {
+            Model.RemoveFromBasket();
+            var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
+            await commandQueue.Enqueue(request);
+        }
+        else
+        {
+            Model.PutInBasket();
+            var request = new PutItemInBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
+            await commandQueue.Enqueue(request);
+        }
+        await State.RequestReloadAsync();
     }
 
     private float CalculatePrice()
     {
-        return ItemPriceCalculationService.CalculatePrice(Item.QuantityType.Id, Item.PricePerQuantity, Item.Quantity);
+        return itemPriceCalculationService.CalculatePrice(Model.QuantityType.Id, Model.PricePerQuantity, Model.Quantity);
     }
 
     private async Task OnQuantityInputValueChangedAsync(float quantity)
     {
-        Item.Quantity = quantity;
-        await ItemQuantityChangedCallback.InvokeAsync(Item);
+        Model.Quantity = quantity;
+        await SendQuantityChangedRequestAsync();
     }
 
     private async Task OnRemoveItemButtonClickedAsync()
     {
-        await ItemRemovedCallback.InvokeAsync(Item);
+        State.ShoppingList.Remove(Model.Id);
+        var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
+        await commandQueue.Enqueue(request);
     }
 
-    private async void OnIncrementQuantityButtonClicked()
+    private async Task OnIncrementQuantityButtonClickedAsync()
     {
-        Item.Quantity += Item.QuantityType.DefaultQuantity;
-        await ItemQuantityChangedCallback.InvokeAsync(Item);
+        Model.Quantity += Model.QuantityType.DefaultQuantity;
+        await SendQuantityChangedRequestAsync();
     }
 
-    private async void OnDecrementQuantityButtonClicked()
+    private async Task OnDecrementQuantityButtonClickedAsync()
     {
-        Item.Quantity -= Item.QuantityType.DefaultQuantity;
-        await ItemQuantityChangedCallback.InvokeAsync(Item);
+        Model.Quantity -= Model.QuantityType.DefaultQuantity;
+        await SendQuantityChangedRequestAsync();
+    }
+
+    private async Task SendQuantityChangedRequestAsync()
+    {
+        var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id,
+            Model.Quantity);
+        await commandQueue.Enqueue(request);
     }
 
     private void OnMakeItemPermanentButtonClicked()
     {
-        navigationManager.NavigateTo($"items/{Item.Id.ActualId.Value}");
+        navigationManager.NavigateTo($"items/{Model.Id.ActualId.Value}");
     }
 }
