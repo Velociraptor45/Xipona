@@ -1,0 +1,24 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Index;
+
+<Button Class="mr-1 d-flex align-items-center"
+        OnClick="@OnShowBasketItemsChangeButtonClickedAsync"
+        Disabled="@(!State.ShoppingList?.AnyItemInBasket ?? true)">
+    @if (State.ItemsInBasketVisible)
+    {
+        <Icon Type="eye" />
+    }
+    else
+    {
+        <Icon Type="eye-invisible" />
+    }
+</Button>
+
+@code {
+    [Parameter] public ShoppingListState State { get; set; }
+
+    private async Task OnShowBasketItemsChangeButtonClickedAsync()
+    {
+        State.ToggleItemsInBasketVisible();
+        await State.RequestReloadAsync();
+    }
+}

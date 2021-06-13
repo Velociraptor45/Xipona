@@ -21,24 +21,12 @@
             <Switch Checked="@errorReceiver.IsDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="() => errorReceiver.ToggleDebugState()" />
         </div>
         <StoreSelect Page="@state" ErrorReceiver="@errorReceiver"></StoreSelect>
-        <Button Class="mr-1 d-flex align-items-center"
-                OnClick="@OnShowBasketItemsChangeButtonClicked"
-                Disabled="@(!state.ShoppingList?.AnyItemInBasket ?? true)">
-            @if (state.ItemsInBasketVisible)
-            {
-                <Icon Type="eye" />
-            }
-            else
-            {
-                <Icon Type="eye-invisible" />
-            }
-        </Button>
+        <ItemVisiblityButton State="@state"></ItemVisiblityButton>
         <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
                 Disabled="@(state.ShoppingList?.Store == null)">
             <Icon Type="edit" />
         </Button>
     </div>
-    <!--search bar-->
     <ItemSearchBar ReloadShoppingListAsync="@ReloadShoppingListAsync"
                    ErrorReceiver="@errorReceiver"
                    Page="@state"></ItemSearchBar>
@@ -128,12 +116,6 @@
     private void OnEditModeButtonClicked()
     {
         state.ToggleItemEditMode();
-        StateHasChanged();
-    }
-
-    private void OnShowBasketItemsChangeButtonClicked()
-    {
-        state.ToggleItemsInBasketVisible();
         StateHasChanged();
     }
 
