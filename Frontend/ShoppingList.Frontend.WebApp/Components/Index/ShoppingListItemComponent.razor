@@ -72,12 +72,6 @@
     [Parameter] public ShoppingListState State { get; set; }
     [Parameter] public ShoppingListItem Model { get; set; }
 
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        StateHasChanged();
-    }
-
     private async Task OnItemClickedAsync()
     {
         if (State.ItemsInEditMode)
