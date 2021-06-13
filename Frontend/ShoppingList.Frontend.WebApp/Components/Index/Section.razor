@@ -18,8 +18,8 @@
         <ul class="pl-3">
             @foreach (var item in Model.Items.Where(item => State.ItemsInBasketVisible || !item.IsInBasket))
             {
-                <ShoppingListItemComponent State="@State"
-                                           Model="@item"></ShoppingListItemComponent>
+                <Item State="@State"
+                      Model="@item"></Item>
             }
         </ul>
     }
