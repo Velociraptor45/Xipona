@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Index
 {
-    public class ErrorReceiver : ICommandQueueErrorHandler
+    public class ErrorReceiver : ICommandQueueErrorHandler, IDebugHandler
     {
         private readonly List<string> stack = new List<string>();
         private readonly Func<Action<object[]>, object[], string, RenderFragment> createRenderFragment;
@@ -40,6 +40,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Index
 
         public void Log(string content)
         {
+            if (!IsDebug)
+                return;
+
             stack.Add(content);
             Console.WriteLine(content);
             StateChanged();

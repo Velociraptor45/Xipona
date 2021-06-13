@@ -8,6 +8,7 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common
 @using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.Common;
 @using ProjectHermes.ShoppingList.Frontend.Models.Index;
 @using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 
@@ -17,9 +18,7 @@
         <ProcessingError ReloadCallback="@ReloadAfterProcessingErrorAsync"></ProcessingError>
     }
     <div class="mb-1 d-flex justify-content-end align-items-center">
-        <div class="pr-2">
-            <Switch Checked="@errorReceiver.IsDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="() => errorReceiver.ToggleDebugState()" />
-        </div>
+        <DebugSwitch DebugHandler="@((IDebugHandler)errorReceiver)"></DebugSwitch>
         <StoreSelect Page="@state" ErrorReceiver="@errorReceiver"></StoreSelect>
         <ItemVisiblityButton State="@state"></ItemVisiblityButton>
         <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
