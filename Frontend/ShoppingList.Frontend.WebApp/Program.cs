@@ -37,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddTransient<IShoppingListApiClient, ShoppingListApiClient>();
             builder.Services.AddTransient<IShoppingListNotificationService, ShoppingListNotificationService>();
             builder.Services.AddTransient<IApiClient, ApiClient>();
-            builder.Services.AddTransient<ICommandQueue, CommandQueue>();
+            builder.Services.AddScoped<ICommandQueue, CommandQueue>();
 
             builder.Services.AddTransient<ITemporaryItemCreationService, TemporaryItemCreationService>();
 

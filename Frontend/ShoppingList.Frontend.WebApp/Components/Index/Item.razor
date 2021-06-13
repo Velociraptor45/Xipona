@@ -89,7 +89,6 @@
             var request = new PutItemInBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
             await commandQueue.Enqueue(request);
         }
-        await State.RequestReloadAsync();
     }
 
     private float CalculatePrice()

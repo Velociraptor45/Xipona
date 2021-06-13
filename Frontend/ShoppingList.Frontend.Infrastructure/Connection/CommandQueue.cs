@@ -31,6 +31,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public void Initialize(ICommandQueueErrorHandler errorHandler)
         {
+            this.errorHandler = errorHandler;
+
             try
             {
                 timer.Elapsed += async (s, e) =>
@@ -61,7 +63,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 }
                 catch (ApiConnectionException)
                 {
-                    await OnApiConnectionDied();
+                    OnApiConnectionDied();
                 }
                 catch (ApiProcessingException e)
                 {
@@ -92,7 +94,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             }
             catch (ApiConnectionException)
             {
-                await OnApiConnectionDied();
+                OnApiConnectionDied();
                 return;
             }
             catch (ApiProcessingException e)
@@ -189,7 +191,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             errorHandler.OnApiProcessingError();
         }
 
-        private async Task OnApiConnectionDied()
+        private void OnApiConnectionDied()
         {
             connectionAlive = false;
             errorHandler.OnConnectionFailed();
