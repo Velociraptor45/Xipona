@@ -66,7 +66,9 @@
     }
     else
     {
-        <ItemEditor StoreItem="@currentlyEditedItem"
+        <ItemEditor State="@state"
+                    ErrorHandler="@errorHandler"
+                    StoreItem="@currentlyEditedItem"
                     Stores="@stores"
                     Manufacturers="@manufacturers"
                     ItemCategories="@itemCategories"
@@ -99,12 +101,26 @@
 
     private StoreItem currentlyEditedItem = null;
 
-    protected async override Task OnInitializedAsync()
+    private ItemsState state;
+    private ItemsErrorHandler errorHandler;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
+        await base.SetParametersAsync(parameters);
         await InitialLoad();
 
-        await base.OnInitializedAsync();
+        state.ManufacturerCreated += async () => await LoadManufacturerListAsync();
+
+        errorHandler = new ItemsErrorHandler((func, args, label) => GetButtonRenderFragment(func, args, label));
+
     }
+
+    //protected async override Task OnInitializedAsync()
+    //{
+    //    await InitialLoad();
+
+    //    await base.OnInitializedAsync();
+    //}
 
     protected override async Task OnParametersSetAsync()
     {
@@ -134,6 +150,14 @@
                     new object[0]));
             return;
         }
+
+        state = new ItemsState(
+            stores,
+            itemCategories,
+            manufacturers,
+            quantityTypes,
+            quantityTypesInPacket);
+        StateHasChanged();
     }
 
     private async Task OnLoadButtonClickedAsync()
@@ -161,7 +185,7 @@
         StateHasChanged();
     }
 
-    private async Task LoadManufacturerList()
+    private async Task LoadManufacturerListAsync()
     {
         try
         {
@@ -171,10 +195,12 @@
         {
             notificationService.NotifyError("Loading manufacturers failed", e.Message,
                 GetButtonRenderFragment(
-                    async (items) => await LoadManufacturerList(),
+                    async (items) => await LoadManufacturerListAsync(),
                     new object[0]));
             return;
         }
+        state.UpdateManufacturers(manufacturers);
+        StateHasChanged();
     }
 
     private async Task OnItemClickedAsync(int itemId)
@@ -308,7 +334,7 @@
                     new object[] { name }));
             return;
         }
-        await LoadManufacturerList();
+        await LoadManufacturerListAsync();
         StateHasChanged();
     }
 
