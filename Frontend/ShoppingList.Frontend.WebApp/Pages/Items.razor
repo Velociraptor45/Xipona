@@ -79,9 +79,7 @@
                     CreateItemCallback="@OnItemCreatedAsync"
                     DeleteItemCallback="@OnItemDeletedAsync"
                     MakeTemporaryItemPermanentCallback="@OnMakeTemporaryItemPermanentAsync"
-                    LeaveEditorCallback="@OnLeaveEditor"
-                    ManufacturerCreatedCallback="@OnNewManufacturerCreated"
-                    ItemCategoryCreatedCallback="@OnNewItemCategoryCreated"></ItemEditor>
+                    LeaveEditorCallback="@OnLeaveEditor"></ItemEditor>
     }
 </div>
 
@@ -110,17 +108,11 @@
         await InitialLoad();
 
         state.ManufacturerCreated += async () => await LoadManufacturerListAsync();
+        state.ItemCategoryCreated += async () => await LoadItemCategoryListAsync();
 
         errorHandler = new ItemsErrorHandler((func, args, label) => GetButtonRenderFragment(func, args, label));
 
     }
-
-    //protected async override Task OnInitializedAsync()
-    //{
-    //    await InitialLoad();
-
-    //    await base.OnInitializedAsync();
-    //}
 
     protected override async Task OnParametersSetAsync()
     {
@@ -193,13 +185,27 @@
         }
         catch (Exception e)
         {
-            notificationService.NotifyError("Loading manufacturers failed", e.Message,
-                GetButtonRenderFragment(
-                    async (items) => await LoadManufacturerListAsync(),
-                    new object[0]));
+            var fragment = errorHandler.CreateAsyncRetryFragment(async (items) => await LoadManufacturerListAsync(), new object[0]);
+            notificationService.NotifyError("Loading manufacturers failed", e.Message, fragment);
             return;
         }
         state.UpdateManufacturers(manufacturers);
+        StateHasChanged();
+    }
+
+    private async Task LoadItemCategoryListAsync()
+    {
+        try
+        {
+            itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
+        }
+        catch (Exception e)
+        {
+            var fragment = errorHandler.CreateAsyncRetryFragment(async (items) => await LoadItemCategoryListAsync(), new object[0]);
+            notificationService.NotifyError("Loading manufacturers failed", e.Message, fragment);
+            return;
+        }
+        state.UpdateItemCategories(itemCategories);
         StateHasChanged();
     }
 
@@ -318,42 +324,6 @@
             new StoreItem(0, "", false, "", false,
                 new QuantityType(0, "", 0, "", "", 0), 0,
                 new QuantityTypeInPacket(0, "", ""), 1, 1, new List<StoreItemAvailability>());
-    }
-
-    private async Task OnNewManufacturerCreated(string name)
-    {
-        try
-        {
-            await apiClient.CreateManufacturerAsync(name);
-        }
-        catch (Exception e)
-        {
-            notificationService.NotifyError("Creating manufacturer failed", e.Message,
-                GetButtonRenderFragment(
-                    async (items) => await OnNewManufacturerCreated((string)items[0]),
-                    new object[] { name }));
-            return;
-        }
-        await LoadManufacturerListAsync();
-        StateHasChanged();
-    }
-
-    private async Task OnNewItemCategoryCreated(string name)
-    {
-        try
-        {
-            await apiClient.CreateItemCategoryAsync(name);
-            itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
-        }
-        catch (Exception e)
-        {
-            notificationService.NotifyError("Creating item category failed", e.Message,
-                GetButtonRenderFragment(
-                    async (items) => await OnNewItemCategoryCreated((string)items[0]),
-                    new object[] { name }));
-            return;
-        }
-        StateHasChanged();
     }
 
     private void OnLeaveEditor()

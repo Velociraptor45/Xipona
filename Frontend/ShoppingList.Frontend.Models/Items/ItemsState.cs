@@ -20,7 +20,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
             this.stores = stores.ToList();
             this.itemCategories = itemCategories.ToList();
             this.manufacturers = manufacturers.ToList();
-            //this.items = items.ToList();
             this.quantityTypes = quantityTypes.ToList();
             this.quantityTypesInPacket = quantityTypesInPacket.ToList();
         }
@@ -33,10 +32,16 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         public IReadOnlyCollection<QuantityTypeInPacket> QuantityTypesInPacket => quantityTypesInPacket.AsReadOnly();
 
         public Func<Task> ManufacturerCreated { get; set; }
+        public Func<Task> ItemCategoryCreated { get; set; }
 
         public void UpdateManufacturers(IEnumerable<Manufacturer> manufacturers)
         {
             this.manufacturers = manufacturers.ToList();
+        }
+
+        public void UpdateItemCategories(IEnumerable<ItemCategory> itemCategories)
+        {
+            this.itemCategories = itemCategories.ToList();
         }
     }
 }

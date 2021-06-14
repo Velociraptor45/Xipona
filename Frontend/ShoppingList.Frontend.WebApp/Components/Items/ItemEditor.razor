@@ -22,38 +22,12 @@
     </div>
     <Divider Class="my-3"></Divider>
     <div class="d-flex pb-2">
-        <div>
-            <div class="font-weight-bold">Category</div>
-            <SingleSelect TItem="ItemCategory"
-                          TValue="int"
-                          ValueName="@nameof(ItemCategory.Id)"
-                          LabelName="@nameof(ItemCategory.Name)"
-                          DataSource="@ItemCategories"
-                          OnItemAdded="@ItemCategoryCreatedCallback"
-                          OnItemChanged="@OnItemCategoryChanged"
-                          Placeholder="Item Category"
-                          DefaultValue="@StoreItem.ItemCategoryId.GetValueOrDefault()"
-                          CanAddItem="true">
-            </SingleSelect>
-        </div>
-        <div class="ml-3">
-            <div class="font-weight-bold">Manufacturer</div>
-            @*<SingleSelect TItem="Manufacturer"
-                              TValue="int"
-                              ValueName="@nameof(Manufacturer.Id)"
-                              LabelName="@nameof(Manufacturer.Name)"
-                              DataSource="@Manufacturers"
-                              OnItemChanged="@OnManfacturerChanged"
-                              OnItemAdded="@ManufacturerCreatedCallback"
-                              Placeholder="Manufacturer"
-                              DefaultValue="@StoreItem.ManufacturerId.GetValueOrDefault()"
-                              CanAddItem="true"
-                              AllowClear="true">
-                </SingleSelect>*@
-            <ManufacturerSelect State="@State"
-                                Item="@StoreItem"
-                                FragmentCreator="@ErrorHandler"></ManufacturerSelect>
-        </div>
+        <ItemCategorySelect State="@State"
+                            Item="@StoreItem"
+                            FragmentCreator="@ErrorHandler"></ItemCategorySelect>
+        <ManufacturerSelect State="@State"
+                            Item="@StoreItem"
+                            FragmentCreator="@ErrorHandler"></ManufacturerSelect>
     </div>
     <div class="d-flex flex-column py-2">
         <SingleSelect Class="max-w-200"
@@ -145,15 +119,6 @@
     [Parameter] public EventCallback<StoreItem> MakeTemporaryItemPermanentCallback { get; set; }
     [Parameter] public EventCallback<int> DeleteItemCallback { get; set; }
     [Parameter] public EventCallback LeaveEditorCallback { get; set; }
-    [Parameter] public Func<string, Task> ManufacturerCreatedCallback { get; set; }
-    [Parameter] public Func<string, Task> ItemCategoryCreatedCallback { get; set; }
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        //State.ManufacturerCreated += () => { StateHasChanged(); return Task.CompletedTask; };
-    }
 
     private int GetIndex(StoreItemAvailability av)
     {
@@ -209,16 +174,6 @@
     private async Task OnBackButtonClickedAsync()
     {
         await LeaveEditorCallback.InvokeAsync(null);
-    }
-
-    private void OnManfacturerChanged(Manufacturer manufacturer)
-    {
-        StoreItem.ManufacturerId = manufacturer?.Id;
-    }
-
-    private void OnItemCategoryChanged(ItemCategory itemCategory)
-    {
-        StoreItem.ItemCategoryId = itemCategory.Id;
     }
 
     private void OnQuantityTypeChanged(QuantityType quantityType)

@@ -5,18 +5,21 @@
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
 @inject ProjectHermes.ShoppingList.Frontend.Models.Common.Services.IShoppingListNotificationService notificationService;
 
-<SingleSelect TItem="Manufacturer"
-              TValue="int"
-              ValueName="@nameof(Manufacturer.Id)"
-              LabelName="@nameof(Manufacturer.Name)"
-              DataSource="@State.Manufacturers.ToList()"
-              OnItemChanged="@OnManfacturerChanged"
-              OnItemAdded="@OnNewManufacturerCreated"
-              Placeholder="Manufacturer"
-              DefaultValue="@Item.ManufacturerId.GetValueOrDefault()"
-              CanAddItem="true"
-              AllowClear="true">
-</SingleSelect>
+<div class="ml-3">
+    <div class="font-weight-bold">Manufacturer</div>
+    <SingleSelect TItem="Manufacturer"
+                  TValue="int"
+                  ValueName="@nameof(Manufacturer.Id)"
+                  LabelName="@nameof(Manufacturer.Name)"
+                  DataSource="@State.Manufacturers.ToList()"
+                  OnItemChanged="@OnManfacturerChanged"
+                  OnItemAdded="@OnNewManufacturerCreated"
+                  Placeholder="Manufacturer"
+                  DefaultValue="@Item.ManufacturerId.GetValueOrDefault()"
+                  CanAddItem="true"
+                  AllowClear="true">
+    </SingleSelect>
+</div>
 
 @code {
     [Parameter] public StoreItem Item { get; set; }
