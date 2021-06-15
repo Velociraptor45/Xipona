@@ -5,7 +5,7 @@
     <div class="max-w-60">
         <Input @bind-Value="@availability.PricePerQuantity" />
     </div>
-    <div class="mr-2">@(Item.QuantityType.PriceLabel)</div>
+    <div class="mr-2">@(State.EditedItem.QuantityType.PriceLabel)</div>
     <Select Class="mr-2"
             DataSource="State.Stores.ToList()"
             TItem="Store"
@@ -32,7 +32,6 @@
 </div>
 
 @code {
-    [Parameter] public StoreItem Item { get; set; }
     [Parameter] public ItemsState State { get; set; }
     [Parameter] public int ComponentIndex { get; set; }
 
@@ -41,7 +40,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        availability = Item.Availabilities[ComponentIndex];
+        availability = State.EditedItem.Availabilities[ComponentIndex];
     }
 
     private void OnStoreChanged(Store store)
@@ -55,7 +54,7 @@
 
     private void OnRemoveStoreButtonClicked()
     {
-        Item.Availabilities.RemoveAt(ComponentIndex);
+        State.EditedItem.Availabilities.RemoveAt(ComponentIndex);
         State.StateChanged();
     }
 

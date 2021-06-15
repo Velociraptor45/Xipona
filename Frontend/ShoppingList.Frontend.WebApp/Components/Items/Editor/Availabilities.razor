@@ -6,7 +6,6 @@
         {
             <div class="pb-1">
                 <Availablity State="@State"
-                             Item="@Item"
                              ComponentIndex="i"></Availablity>
             </div>
         }
@@ -14,7 +13,5 @@
 </div>
 
 @code {
-    [Parameter] public StoreItem Item { get; set; }
     [Parameter] public ItemsState State { get; set; }
-
 }

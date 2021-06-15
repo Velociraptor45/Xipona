@@ -8,11 +8,11 @@
                   ValueName="@nameof(QuantityType.Id)"
                   LabelName="@nameof(QuantityType.Name)"
                   Placeholder="QuantityType"
-                  DefaultValue="@Item.QuantityType.Id"
+                  DefaultValue="@State.EditedItem.QuantityType.Id"
                   DataSource="@State.QuantityTypes.ToList()"
                   OnItemChanged="@OnQuantityTypeChanged">
     </SingleSelect>
-    @if (Item.QuantityType.Id == 0)
+    @if (State.EditedItem.QuantityType.Id == 0)
     {
         <div class="ml-4 mt-1 d-flex">
             <SingleSelect Class="max-w-100"
@@ -21,31 +21,30 @@
                           ValueName="@nameof(QuantityTypeInPacket.Id)"
                           LabelName="@nameof(QuantityTypeInPacket.Name)"
                           Placeholder="QuantityInPacketType"
-                          DefaultValue="@Item.QuantityInPacketType.Id"
+                          DefaultValue="@State.EditedItem.QuantityInPacketType.Id"
                           DataSource="@State.QuantityTypesInPacket.ToList()"
                           OnItemChanged="@OnQuantityInPacketTypeChanged">
             </SingleSelect>
             <div class="ml-2 d-flex">
                 <div class="max-w-50">
-                    <Input @bind-Value="@Item.QuantityInPacket" />
+                    <Input @bind-Value="@State.EditedItem.QuantityInPacket" />
                 </div>
-                <div class="mt-1">@Item.QuantityInPacketType.QuantityLabel</div>
+                <div class="mt-1">@State.EditedItem.QuantityInPacketType.QuantityLabel</div>
             </div>
         </div>
     }
 </div>
 
 @code {
-    [Parameter] public StoreItem Item { get; set; }
     [Parameter] public ItemsState State { get; set; }
 
     private void OnQuantityTypeChanged(QuantityType quantityType)
     {
-        Item.QuantityType = quantityType;
+        State.EditedItem.QuantityType = quantityType;
     }
 
     private void OnQuantityInPacketTypeChanged(QuantityTypeInPacket quantityTypeInPacket)
     {
-        Item.QuantityInPacketType = quantityTypeInPacket;
+        State.EditedItem.QuantityInPacketType = quantityTypeInPacket;
     }
 }

@@ -15,20 +15,19 @@
                   OnItemChanged="@OnManfacturerChanged"
                   OnItemAdded="@OnNewManufacturerCreated"
                   Placeholder="Manufacturer"
-                  DefaultValue="@Item.ManufacturerId.GetValueOrDefault()"
+                  DefaultValue="@State.EditedItem.ManufacturerId.GetValueOrDefault()"
                   CanAddItem="true"
                   AllowClear="true">
     </SingleSelect>
 </div>
 
 @code {
-    [Parameter] public StoreItem Item { get; set; }
     [Parameter] public ItemsState State { get; set; }
     [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
 
     private void OnManfacturerChanged(Manufacturer manufacturer)
     {
-        Item.ManufacturerId = manufacturer?.Id;
+        State.EditedItem.ManufacturerId = manufacturer?.Id;
     }
 
     private async Task OnNewManufacturerCreated(string name)

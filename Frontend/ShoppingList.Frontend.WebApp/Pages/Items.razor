@@ -1,14 +1,16 @@
 ﻿@page "/items"
 @page "/items/{ItemId:int}"
-@inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
-@inject ProjectHermes.ShoppingList.Frontend.Models.Common.Services.IShoppingListNotificationService notificationService;
+
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Editor;
 @using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Items;
-@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+
+@inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
+@inject ProjectHermes.ShoppingList.Frontend.Models.Common.Services.IShoppingListNotificationService notificationService;
 
 <div>
-    @if (currentlyEditedItem == null)
+    @if (state.IsInEditMode)
     {
         <div class="d-flex">
             <div class="h4">Items</div>
@@ -67,14 +69,7 @@
     else
     {
         <ItemEditor State="@state"
-                    ErrorHandler="@errorHandler"
-                    Item="@currentlyEditedItem"
-                    UpdateItemCallback="@OnItemUpdatedAsync"
-                    ModifyItemCallback="@OnItemModifiedAsync"
-                    CreateItemCallback="@OnItemCreatedAsync"
-                    DeleteItemCallback="@OnItemDeletedAsync"
-                    MakeTemporaryItemPermanentCallback="@OnMakeTemporaryItemPermanentAsync"
-                    LeaveEditorCallback="@OnLeaveEditor"></ItemEditor>
+                    ErrorHandler="@errorHandler"></ItemEditor>
     }
 </div>
 
@@ -84,8 +79,6 @@
     private Select<int, Store> storeSelectRef;
     private Select<int, ItemCategory> itemCategoriesSelectRef;
     private Select<int, Manufacturer> manufacturersSelectRef;
-
-    private StoreItem currentlyEditedItem = null;
 
     private ItemsState state;
     private ItemsErrorHandler errorHandler;
@@ -133,10 +126,8 @@
         }
         catch (Exception e)
         {
-            notificationService.NotifyError("Page loading failed", e.Message,
-                GetButtonRenderFragment(
-                    async (items) => await InitialLoad(),
-                    new object[0]));
+            var fragment = errorHandler.CreateAsyncRetryFragment(async (items) => await InitialLoad(), new object[0]);
+            notificationService.NotifyError("Page loading failed", e.Message, fragment);
             return;
         }
         StateHasChanged();
@@ -160,10 +151,8 @@
         }
         catch (Exception e)
         {
-            notificationService.NotifyError("Item loading failed", e.Message,
-                GetButtonRenderFragment(
-                    async (items) => await OnLoadButtonClickedAsync(),
-                    new object[0]));
+            var fragment = errorHandler.CreateAsyncRetryFragment(async (items) => await OnLoadButtonClickedAsync(), new object[0]);
+            notificationService.NotifyError("Item loading failed", e.Message, fragment);
             return;
         }
         StateHasChanged();
@@ -205,127 +194,26 @@
     {
         try
         {
-            currentlyEditedItem = await apiClient.GetItemByIdAsync(itemId);
+            var item = await apiClient.GetItemByIdAsync(itemId);
+            state.EnterEditor(item);
         }
         catch (Exception e)
         {
-            notificationService.NotifyError("Loading item failed", e.Message,
-                GetButtonRenderFragment(
-                    async (items) => await OnItemClickedAsync((int)items[0]),
-                    new object[] { itemId }));
+            var fragment = errorHandler.CreateAsyncRetryFragment(async (items) => await OnItemClickedAsync((int)items[0]), new object[] { itemId });
+            notificationService.NotifyError("Loading item failed", e.Message, fragment);
             return;
         }
-    }
-
-    private async Task OnItemUpdatedAsync(StoreItem storeItem)
-    {
-        var request = new UpdateItemRequest(Guid.NewGuid(), storeItem);
-        try
-        {
-            await apiClient.UpdateItemAsync(request);
-        }
-        catch (Exception e)
-        {
-            notificationService.NotifyError("Updating item failed", e.Message,
-                GetButtonRenderFragment(
-                    async (items) => await OnItemUpdatedAsync((StoreItem)items[0]),
-                    new object[] { storeItem }));
-            return;
-        }
-        LeaveEditor();
-    }
-
-    private async Task OnItemModifiedAsync(StoreItem storeItem)
-    {
-        var request = new ModifyItemRequest(Guid.NewGuid(), storeItem);
-        try
-        {
-            await apiClient.ModifyItemAsync(request);
-        }
-        catch (Exception e)
-        {
-            notificationService.NotifyError("Modifying item failed", e.Message,
-                GetButtonRenderFragment(
-                    async (items) => await OnItemModifiedAsync((StoreItem)items[0]),
-                    new object[] { storeItem }));
-            return;
-        }
-        LeaveEditor();
-    }
-
-    private async Task OnItemDeletedAsync(int itemId)
-    {
-        var request = new DeleteItemRequest(Guid.NewGuid(), itemId);
-        try
-        {
-            await apiClient.DeleteItemAsync(request);
-        }
-        catch (Exception e)
-        {
-            notificationService.NotifyError("Deleting item failed", e.Message,
-                GetButtonRenderFragment(
-                    async (items) => await OnItemDeletedAsync((int)items[0]),
-                    new object[] { itemId }));
-            return;
-        }
-        LeaveEditor();
-    }
-
-    private async Task OnItemCreatedAsync(StoreItem storeItem)
-    {
-        var request = new CreateItemRequest(Guid.NewGuid(), storeItem);
-        try
-        {
-            await apiClient.CreateItemAsync(request);
-        }
-        catch (Exception e)
-        {
-            notificationService.NotifyError("Creating item failed", e.Message,
-                GetButtonRenderFragment(
-                    async (items) => await OnItemCreatedAsync((StoreItem)items[0]),
-                    new object[] { storeItem }));
-            return;
-        }
-        LeaveEditor();
-    }
-
-    private async Task OnMakeTemporaryItemPermanentAsync(StoreItem storeItem)
-    {
-        var request = new MakeTemporaryItemPermanentRequest(storeItem.Id, storeItem.Name, storeItem.Comment,
-            storeItem.QuantityType.Id, storeItem.QuantityInPacket, storeItem.QuantityInPacketType.Id,
-            storeItem.ItemCategoryId.Value, storeItem.ManufacturerId, storeItem.Availabilities);
-        try
-        {
-            await apiClient.MakeTemporaryItemPermanent(request);
-        }
-        catch (Exception e)
-        {
-            notificationService.NotifyError("Creating item failed", e.Message,
-                GetButtonRenderFragment(
-                    async (items) => await OnMakeTemporaryItemPermanentAsync((StoreItem)items[0]),
-                    new object[] { storeItem }));
-            return;
-        }
-        LeaveEditor();
     }
 
     private void OnCreateItemButtonClicked()
     {
         // ugly
-        currentlyEditedItem =
+        var item =
             new StoreItem(0, "", false, "", false,
                 new QuantityType(0, "", 0, "", "", 0), 0,
                 new QuantityTypeInPacket(0, "", ""), 1, 1, new List<StoreItemAvailability>());
-    }
 
-    private void OnLeaveEditor()
-    {
-        LeaveEditor();
-    }
-
-    private void LeaveEditor()
-    {
-        currentlyEditedItem = null;
+        state.EnterEditor(item);
     }
 
     private RenderFragment GetButtonRenderFragment(Func<object[], Task> callback, object[] args, string label = "Retry")

@@ -15,19 +15,18 @@
                   OnItemAdded="@OnNewItemCategoryCreated"
                   OnItemChanged="@OnItemCategoryChanged"
                   Placeholder="Item Category"
-                  DefaultValue="@Item.ItemCategoryId.GetValueOrDefault()"
+                  DefaultValue="@State.EditedItem.ItemCategoryId.GetValueOrDefault()"
                   CanAddItem="true">
     </SingleSelect>
 </div>
 
 @code {
-    [Parameter] public StoreItem Item { get; set; }
     [Parameter] public ItemsState State { get; set; }
     [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
 
     private void OnItemCategoryChanged(ItemCategory itemCategory)
     {
-        Item.ItemCategoryId = itemCategory.Id;
+        State.EditedItem.ItemCategoryId = itemCategory.Id;
     }
 
     private async Task OnNewItemCategoryCreated(string name)

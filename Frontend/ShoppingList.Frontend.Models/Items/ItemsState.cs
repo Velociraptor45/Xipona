@@ -35,6 +35,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         public Func<Task> ItemCategoryCreated { get; set; }
 
         public Action StateChanged { get; set; }
+        public StoreItem EditedItem { get; private set; } = null;
+        public bool IsInEditMode => EditedItem != null;
 
         public void UpdateManufacturers(IEnumerable<Manufacturer> manufacturers)
         {
@@ -49,6 +51,19 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         public void UpdateItems(IEnumerable<ItemFilterResult> items)
         {
             this.items = items.ToList();
+            StateChanged();
+        }
+
+        public void EnterEditor(StoreItem item)
+        {
+            EditedItem = item;
+            StateChanged();
+        }
+
+        public void LeaveEditor()
+        {
+            EditedItem = null;
+            StateChanged();
         }
     }
 }

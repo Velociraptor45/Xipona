@@ -1,0 +1,184 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+
+@inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
+@inject ProjectHermes.ShoppingList.Frontend.Models.Common.Services.IShoppingListNotificationService notificationService;
+
+<div class="px-2">
+    <div class="d-flex">
+        <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+            <Icon Type="arrow-left"></Icon>
+        </Button>
+        <div class="mx-3">
+            <Input @bind-Value="@State.EditedItem.Name" />
+        </div>
+        @if (State.EditedItem.Id != 0)
+        {
+            <Button Danger="true"
+                    Class="ml-auto"
+                    OnClick="@OnDeleteButtonClickedAsync">
+                Delete
+            </Button>
+        }
+    </div>
+    <Divider Class="my-3"></Divider>
+    <div class="d-flex pb-2">
+        <ItemCategorySelect State="@State"
+                            FragmentCreator="@ErrorHandler"></ItemCategorySelect>
+        <ManufacturerSelect State="@State"
+                            FragmentCreator="@ErrorHandler"></ManufacturerSelect>
+    </div>
+    <Quantity State="@State"></Quantity>
+    <div class="mt-3 d-flex justify-content-start align-items-center">
+        <div class="font-weight-bold mr-2">Stores</div>
+        <Button class="d-flex align-items-center" OnClick="OnAddStoreButtonClicked"
+                Disabled="@(GetNotRegisteredStore(State.EditedItem) == null)">
+            <Icon Type="plus"></Icon>
+        </Button>
+    </div>
+    <Availabilities State="@State"></Availabilities>
+    <div class="pb-2 pt-4">
+        <TextArea Placeholder="Comment" MinRows="2" @bind-Value="@State.EditedItem.Comment"></TextArea>
+    </div>
+    <div class="d-flex justify-content-end">
+        @if (State.EditedItem.Id == 0)
+        {
+            <Button OnClick="@OnCreateButtonClickedAsync">Create</Button>
+        }
+        else if (State.EditedItem.IsTemporary)
+        {
+            <Button OnClick="@OnMakePermanentButtonClickedAsync">Make Permanent</Button>
+        }
+        else
+        {
+            <Button OnClick="@OnUpdateButtonClickedAsync">Update</Button>
+            <Button Class="ml-2" OnClick="@OnModifyButtonClickedAsync">Modify</Button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public ItemsState State { get; set; }
+    [Parameter] public ItemsErrorHandler ErrorHandler { get; set; }
+
+    private void OnAddStoreButtonClicked()
+    {
+        var availableStore = GetNotRegisteredStore(State.EditedItem);
+        if (availableStore == null)
+            return;
+
+        State.EditedItem.Availabilities.Add(
+            new StoreItemAvailability(availableStore, 1, GetSectionForStoreId(availableStore.Id)));
+
+        StateHasChanged();
+    }
+
+    private async Task OnUpdateButtonClickedAsync()
+    {
+        var request = new UpdateItemRequest(Guid.NewGuid(), State.EditedItem);
+        try
+        {
+            await apiClient.UpdateItemAsync(request);
+        }
+        catch (Exception e)
+        {
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async (_) => await OnUpdateButtonClickedAsync(), new object[0]);
+            notificationService.NotifyError("Updating item failed", e.Message, fragment);
+            return;
+        }
+        State.LeaveEditor();
+    }
+
+    private async Task OnModifyButtonClickedAsync()
+    {
+        var request = new ModifyItemRequest(Guid.NewGuid(), State.EditedItem);
+        try
+        {
+            await apiClient.ModifyItemAsync(request);
+        }
+        catch (Exception e)
+        {
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async (_) => await OnModifyButtonClickedAsync(), new object[0]);
+            notificationService.NotifyError("Modifying item failed", e.Message, fragment);
+            return;
+        }
+        State.LeaveEditor();
+    }
+
+    private async Task OnCreateButtonClickedAsync()
+    {
+        var request = new CreateItemRequest(Guid.NewGuid(), State.EditedItem);
+        try
+        {
+            await apiClient.CreateItemAsync(request);
+        }
+        catch (Exception e)
+        {
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async (_) => await OnCreateButtonClickedAsync(), new object[0]);
+            notificationService.NotifyError("Creating item failed", e.Message, fragment);
+            return;
+        }
+        State.LeaveEditor();
+    }
+
+    private async Task OnMakePermanentButtonClickedAsync()
+    {
+        if (!State.EditedItem.ItemCategoryId.HasValue)
+            return;
+
+        var item = State.EditedItem;
+        var request = new MakeTemporaryItemPermanentRequest(item.Id, item.Name, item.Comment,
+            item.QuantityType.Id, item.QuantityInPacket, item.QuantityInPacketType.Id,
+            item.ItemCategoryId.Value, item.ManufacturerId, item.Availabilities);
+        try
+        {
+            await apiClient.MakeTemporaryItemPermanent(request);
+        }
+        catch (Exception e)
+        {
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async (_) => await OnMakePermanentButtonClickedAsync(), new object[0]);
+            notificationService.NotifyError("Creating item failed", e.Message, fragment);
+            return;
+        }
+        State.LeaveEditor();
+    }
+
+    private async Task OnDeleteButtonClickedAsync()
+    {
+        var request = new DeleteItemRequest(Guid.NewGuid(), State.EditedItem.Id);
+        try
+        {
+            await apiClient.DeleteItemAsync(request);
+        }
+        catch (Exception e)
+        {
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async (_) => await OnDeleteButtonClickedAsync(), new object[0]);
+            notificationService.NotifyError("Deleting item failed", e.Message, fragment);
+            return;
+        }
+        State.LeaveEditor();
+    }
+
+    private void OnBackButtonClicked()
+    {
+        State.LeaveEditor();
+    }
+
+    private StoreItemStore GetNotRegisteredStore(StoreItem storeItem)
+    {
+        var registeredStoreIds = storeItem.Availabilities.Select(av => av.Store.Id).OrderBy(id => id);
+        var allStoreIds = State.Stores.Select(s => s.Id).OrderBy(id => id);
+
+        if (allStoreIds.SequenceEqual(registeredStoreIds))
+            return null;
+
+        var availableStoreId = allStoreIds.Except(registeredStoreIds).First();
+        return State.Stores.Single(s => s.Id == availableStoreId).AsStoreItemStore();
+    }
+
+    private StoreItemSection GetSectionForStoreId(int storeId)
+    {
+        var section = State.Stores.Single(s => s.Id == storeId).Sections.Single(s => s.IsDefaultSection);
+        return section.AsStoreItemSection();
+    }
+}
