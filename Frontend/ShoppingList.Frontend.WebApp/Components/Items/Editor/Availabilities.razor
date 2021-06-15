@@ -1,0 +1,20 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
+
+<div class="d-flex flex-row py-2">
+    <div>
+        @for (int i = 0; i < Item.Availabilities.Count; i++)
+        {
+            <div class="pb-1">
+                <Availablity State="@State"
+                             Item="@Item"
+                             ComponentIndex="i"></Availablity>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public StoreItem Item { get; set; }
+    [Parameter] public ItemsState State { get; set; }
+
+}

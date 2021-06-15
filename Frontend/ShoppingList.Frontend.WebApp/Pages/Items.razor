@@ -110,6 +110,8 @@
         state.ManufacturerCreated += async () => await LoadManufacturerListAsync();
         state.ItemCategoryCreated += async () => await LoadItemCategoryListAsync();
 
+        state.StateChanged += () => StateHasChanged();
+
         errorHandler = new ItemsErrorHandler((func, args, label) => GetButtonRenderFragment(func, args, label));
 
     }

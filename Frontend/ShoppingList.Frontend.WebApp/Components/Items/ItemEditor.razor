@@ -29,39 +29,8 @@
                             Item="@StoreItem"
                             FragmentCreator="@ErrorHandler"></ManufacturerSelect>
     </div>
-    <div class="d-flex flex-column py-2">
-        <SingleSelect Class="max-w-200"
-                      TItem="QuantityType"
-                      TValue="int"
-                      ValueName="@nameof(QuantityType.Id)"
-                      LabelName="@nameof(QuantityType.Name)"
-                      Placeholder="QuantityType"
-                      DefaultValue="@StoreItem.QuantityType.Id"
-                      DataSource="@QuantityTypes"
-                      OnItemChanged="@OnQuantityTypeChanged">
-        </SingleSelect>
-        @if (StoreItem.QuantityType.Id == 0)
-        {
-            <div class="ml-4 mt-1 d-flex">
-                <SingleSelect Class="max-w-100"
-                              TItem="QuantityTypeInPacket"
-                              TValue="int"
-                              ValueName="@nameof(QuantityTypeInPacket.Id)"
-                              LabelName="@nameof(QuantityTypeInPacket.Name)"
-                              Placeholder="QuantityInPacketType"
-                              DefaultValue="@StoreItem.QuantityInPacketType.Id"
-                              DataSource="@QuantityTypesInPacket"
-                              OnItemChanged="@OnQuantityInPacketTypeChanged">
-                </SingleSelect>
-                <div class="ml-2 d-flex">
-                    <div class="max-w-50">
-                        <Input @bind-Value="@StoreItem.QuantityInPacket" />
-                    </div>
-                    <div class="mt-1">@StoreItem.QuantityInPacketType.QuantityLabel</div>
-                </div>
-            </div>
-        }
-    </div>
+    <Quantity State="@State"
+              Item="@StoreItem"></Quantity>
     <div class="mt-3 d-flex justify-content-start align-items-center">
         <div class="font-weight-bold mr-2">Stores</div>
         <Button class="d-flex align-items-center" OnClick="OnAddStoreButtonClicked"
@@ -69,19 +38,8 @@
             <Icon Type="plus"></Icon>
         </Button>
     </div>
-    <div class="d-flex flex-row py-2">
-        <!-- availabilities -->
-        <div>
-            @for (int i = 0; i < StoreItem.Availabilities.Count; i++)
-            {
-                <Availablity ComponentIndex="i"
-                             Availability="@StoreItem.Availabilities[i]"
-                             PriceLabel="@StoreItem.QuantityType.PriceLabel"
-                             Stores="@Stores"
-                             OnRemoveAvailabilityCallback="@OnRemoveAvailabilityButtonClicked"></Availablity>
-            }
-        </div>
-    </div>
+    <Availabilities State="@State"
+                    Item="@StoreItem"></Availabilities>
     <div class="pb-2 pt-4">
         <TextArea Placeholder="Comment" MinRows="2" @bind-Value="@StoreItem.Comment"></TextArea>
     </div>
@@ -137,12 +95,6 @@
         StateHasChanged();
     }
 
-    private void OnRemoveAvailabilityButtonClicked(int availabilityIndex)
-    {
-        StoreItem.Availabilities.RemoveAt(availabilityIndex);
-        StateHasChanged();
-    }
-
     private async Task OnUpdateButtonClickedAsync()
     {
         await UpdateItemCallback.InvokeAsync(StoreItem);
@@ -176,20 +128,10 @@
         await LeaveEditorCallback.InvokeAsync(null);
     }
 
-    private void OnQuantityTypeChanged(QuantityType quantityType)
-    {
-        StoreItem.QuantityType = quantityType;
-    }
-
-    private void OnQuantityInPacketTypeChanged(QuantityTypeInPacket quantityTypeInPacket)
-    {
-        StoreItem.QuantityInPacketType = quantityTypeInPacket;
-    }
-
     private StoreItemStore GetNotRegisteredStore(StoreItem storeItem)
     {
-        var registeredStoreIds = storeItem.Availabilities.Select(av => av.Store.Id);
-        var allStoreIds = Stores.Select(s => s.Id);
+        var registeredStoreIds = storeItem.Availabilities.Select(av => av.Store.Id).OrderBy(id => id);
+        var allStoreIds = Stores.Select(s => s.Id).OrderBy(id => id);
 
         if (allStoreIds.SequenceEqual(registeredStoreIds))
             return null;

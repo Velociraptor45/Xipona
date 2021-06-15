@@ -34,6 +34,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         public Func<Task> ManufacturerCreated { get; set; }
         public Func<Task> ItemCategoryCreated { get; set; }
 
+        public Action StateChanged { get; set; }
+
         public void UpdateManufacturers(IEnumerable<Manufacturer> manufacturers)
         {
             this.manufacturers = manufacturers.ToList();
