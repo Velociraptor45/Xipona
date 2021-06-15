@@ -45,5 +45,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         {
             this.itemCategories = itemCategories.ToList();
         }
+
+        public void UpdateItems(IEnumerable<ItemFilterResult> items)
+        {
+            this.items = items.ToList();
+        }
     }
 }

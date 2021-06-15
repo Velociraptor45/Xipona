@@ -22,7 +22,7 @@
                     Store
                 </div>
                 <Select Mode="tags"
-                        DataSource="@stores"
+                        DataSource="@state.Stores.ToList()"
                         TItem="Store"
                         TItemValue="int"
                         ValueName="@nameof(Store.Id)"
@@ -34,7 +34,7 @@
                     Category
                 </div>
                 <Select Mode="tags"
-                        DataSource="@itemCategories"
+                        DataSource="@state.ItemCategories.ToList()"
                         TItem="ItemCategory"
                         TItemValue="int"
                         ValueName="@nameof(ItemCategory.Id)"
@@ -46,7 +46,7 @@
                     Manufacturer
                 </div>
                 <Select Mode="tags"
-                        DataSource="@manufacturers"
+                        DataSource="@state.Manufacturers.ToList()"
                         TItem="Manufacturer"
                         TItemValue="int"
                         ValueName="@nameof(Manufacturer.Id)"
@@ -57,7 +57,7 @@
         </div>
         <div>
             <!-- result item list -->
-            @foreach (var item in items)
+            @foreach (var item in state.Items.ToList())
             {
                 <ItemFilterResultComponent Item="@item"
                                            OnClickCallback="@OnItemClickedAsync"></ItemFilterResultComponent>
@@ -68,12 +68,7 @@
     {
         <ItemEditor State="@state"
                     ErrorHandler="@errorHandler"
-                    StoreItem="@currentlyEditedItem"
-                    Stores="@stores"
-                    Manufacturers="@manufacturers"
-                    ItemCategories="@itemCategories"
-                    QuantityTypes="@quantityTypes"
-                    QuantityTypesInPacket="@quantityTypesInPacket"
+                    Item="@currentlyEditedItem"
                     UpdateItemCallback="@OnItemUpdatedAsync"
                     ModifyItemCallback="@OnItemModifiedAsync"
                     CreateItemCallback="@OnItemCreatedAsync"
@@ -85,13 +80,6 @@
 
 @code {
     [Parameter] public int? ItemId { get; set; }
-
-    private List<Store> stores = new List<Store>();
-    private List<ItemCategory> itemCategories = new List<ItemCategory>();
-    private List<Manufacturer> manufacturers = new List<Manufacturer>();
-    private List<ItemFilterResult> items = new List<ItemFilterResult>();
-    private List<QuantityType> quantityTypes = new List<QuantityType>();
-    private List<QuantityTypeInPacket> quantityTypesInPacket = new List<QuantityTypeInPacket>();
 
     private Select<int, Store> storeSelectRef;
     private Select<int, ItemCategory> itemCategoriesSelectRef;
@@ -130,11 +118,18 @@
     {
         try
         {
-            stores = (await apiClient.GetAllActiveStoresAsync()).ToList();
-            manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
-            itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
-            quantityTypes = (await apiClient.GetAllQuantityTypesAsync()).ToList();
-            quantityTypesInPacket = (await apiClient.GetAllQuantityTypesInPacketAsync()).ToList();
+            var stores = (await apiClient.GetAllActiveStoresAsync()).ToList();
+            var manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
+            var itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
+            var quantityTypes = (await apiClient.GetAllQuantityTypesAsync()).ToList();
+            var quantityTypesInPacket = (await apiClient.GetAllQuantityTypesInPacketAsync()).ToList();
+
+            state = new ItemsState(
+                stores,
+                itemCategories,
+                manufacturers,
+                quantityTypes,
+                quantityTypesInPacket);
         }
         catch (Exception e)
         {
@@ -144,13 +139,6 @@
                     new object[0]));
             return;
         }
-
-        state = new ItemsState(
-            stores,
-            itemCategories,
-            manufacturers,
-            quantityTypes,
-            quantityTypesInPacket);
         StateHasChanged();
     }
 
@@ -162,11 +150,13 @@
         try
         {
 
-            items = (await apiClient.GetItemFilterResultAsync(
+            var items = (await apiClient.GetItemFilterResultAsync(
                     stores,
                     itemCategories,
                     manufacturers))
                 .ToList();
+
+            state.UpdateItems(items);
         }
         catch (Exception e)
         {
@@ -183,7 +173,8 @@
     {
         try
         {
-            manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
+            var manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
+            state.UpdateManufacturers(manufacturers);
         }
         catch (Exception e)
         {
@@ -191,7 +182,6 @@
             notificationService.NotifyError("Loading manufacturers failed", e.Message, fragment);
             return;
         }
-        state.UpdateManufacturers(manufacturers);
         StateHasChanged();
     }
 
@@ -199,7 +189,8 @@
     {
         try
         {
-            itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
+            var itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
+            state.UpdateItemCategories(itemCategories);
         }
         catch (Exception e)
         {
@@ -207,7 +198,6 @@
             notificationService.NotifyError("Loading manufacturers failed", e.Message, fragment);
             return;
         }
-        state.UpdateItemCategories(itemCategories);
         StateHasChanged();
     }
 
