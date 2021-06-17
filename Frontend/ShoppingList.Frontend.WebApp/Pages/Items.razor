@@ -2,7 +2,6 @@
 @page "/items/{ItemId:int}"
 
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Editor;
 @using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Items;
 
@@ -10,7 +9,7 @@
 @inject ProjectHermes.ShoppingList.Frontend.Models.Common.Services.IShoppingListNotificationService notificationService;
 
 <div>
-    @if (state.IsInEditMode)
+    @if (!(state?.IsInEditMode ?? false))
     {
         <div class="d-flex">
             <div class="h4">Items</div>
@@ -24,7 +23,7 @@
                     Store
                 </div>
                 <Select Mode="tags"
-                        DataSource="@state.Stores.ToList()"
+                        DataSource="@state?.Stores.ToList()"
                         TItem="Store"
                         TItemValue="int"
                         ValueName="@nameof(Store.Id)"
@@ -36,7 +35,7 @@
                     Category
                 </div>
                 <Select Mode="tags"
-                        DataSource="@state.ItemCategories.ToList()"
+                        DataSource="@state?.ItemCategories.ToList()"
                         TItem="ItemCategory"
                         TItemValue="int"
                         ValueName="@nameof(ItemCategory.Id)"
@@ -48,7 +47,7 @@
                     Manufacturer
                 </div>
                 <Select Mode="tags"
-                        DataSource="@state.Manufacturers.ToList()"
+                        DataSource="@state?.Manufacturers.ToList()"
                         TItem="Manufacturer"
                         TItemValue="int"
                         ValueName="@nameof(Manufacturer.Id)"
@@ -59,7 +58,7 @@
         </div>
         <div>
             <!-- result item list -->
-            @foreach (var item in state.Items.ToList())
+            @foreach (var item in state?.Items.ToList() ?? Enumerable.Empty<ItemFilterResult>())
             {
                 <ItemFilterResultComponent Item="@item"
                                            OnClickCallback="@OnItemClickedAsync"></ItemFilterResultComponent>
@@ -83,9 +82,9 @@
     private ItemsState state;
     private ItemsErrorHandler errorHandler;
 
-    public override async Task SetParametersAsync(ParameterView parameters)
+    protected override async Task OnInitializedAsync()
     {
-        await base.SetParametersAsync(parameters);
+        errorHandler = new ItemsErrorHandler((func, args, label) => GetButtonRenderFragment(func, args, label));
         await InitialLoad();
 
         state.ManufacturerCreated += async () => await LoadManufacturerListAsync();
@@ -93,8 +92,7 @@
 
         state.StateChanged += () => StateHasChanged();
 
-        errorHandler = new ItemsErrorHandler((func, args, label) => GetButtonRenderFragment(func, args, label));
-
+        await base.OnInitializedAsync();
     }
 
     protected override async Task OnParametersSetAsync()
@@ -111,11 +109,11 @@
     {
         try
         {
-            var stores = (await apiClient.GetAllActiveStoresAsync()).ToList();
-            var manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
-            var itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
-            var quantityTypes = (await apiClient.GetAllQuantityTypesAsync()).ToList();
-            var quantityTypesInPacket = (await apiClient.GetAllQuantityTypesInPacketAsync()).ToList();
+            var stores = await apiClient.GetAllActiveStoresAsync();
+            var manufacturers = await apiClient.GetAllActiveManufacturersAsync();
+            var itemCategories = await apiClient.GetAllActiveItemCategoriesAsync();
+            var quantityTypes = await apiClient.GetAllQuantityTypesAsync();
+            var quantityTypesInPacket = await apiClient.GetAllQuantityTypesInPacketAsync();
 
             state = new ItemsState(
                 stores,
@@ -130,7 +128,6 @@
             notificationService.NotifyError("Page loading failed", e.Message, fragment);
             return;
         }
-        StateHasChanged();
     }
 
     private async Task OnLoadButtonClickedAsync()

@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         private readonly List<Store> stores;
         private List<ItemCategory> itemCategories;
         private List<Manufacturer> manufacturers;
-        private List<ItemFilterResult> items;
+        private List<ItemFilterResult> items = new();
         private readonly List<QuantityType> quantityTypes;
         private readonly List<QuantityTypeInPacket> quantityTypesInPacket;
 
@@ -51,19 +51,19 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         public void UpdateItems(IEnumerable<ItemFilterResult> items)
         {
             this.items = items.ToList();
-            StateChanged();
+            StateChanged?.Invoke();
         }
 
         public void EnterEditor(StoreItem item)
         {
             EditedItem = item;
-            StateChanged();
+            StateChanged?.Invoke();
         }
 
         public void LeaveEditor()
         {
             EditedItem = null;
-            StateChanged();
+            StateChanged?.Invoke();
         }
     }
 }
