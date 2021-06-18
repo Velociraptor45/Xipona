@@ -7,16 +7,16 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
 {
     public class ItemsErrorHandler : IAsyncRetryFragmentCreator
     {
-        private readonly Func<Func<object[], Task>, object[], string, RenderFragment> createAsyncRenderFragment;
+        private readonly Func<Func<Task>, string, RenderFragment> createAsyncRenderFragment;
 
-        public ItemsErrorHandler(Func<Func<object[], Task>, object[], string, RenderFragment> createAsyncRenderFragment)
+        public ItemsErrorHandler(Func<Func<Task>, string, RenderFragment> createAsyncRenderFragment)
         {
             this.createAsyncRenderFragment = createAsyncRenderFragment;
         }
 
-        public RenderFragment CreateAsyncRetryFragment(Func<object[], Task> func, object[] args)
+        public RenderFragment CreateAsyncRetryFragment(Func<Task> func)
         {
-            return createAsyncRenderFragment(func, args, "Retry");
+            return createAsyncRenderFragment(func, "Retry");
         }
     }
 }

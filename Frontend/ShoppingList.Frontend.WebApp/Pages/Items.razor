@@ -84,7 +84,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        errorHandler = new ItemsErrorHandler((func, args, label) => GetButtonRenderFragment(func, args, label));
+        errorHandler = new ItemsErrorHandler((func, label) => GetButtonRenderFragment(func, label));
         await InitialLoad();
 
         state.ManufacturerCreated += async () => await LoadManufacturerListAsync();
@@ -124,7 +124,7 @@
         }
         catch (Exception e)
         {
-            var fragment = errorHandler.CreateAsyncRetryFragment(async (items) => await InitialLoad(), new object[0]);
+            var fragment = errorHandler.CreateAsyncRetryFragment(async () => await InitialLoad());
             notificationService.NotifyError("Page loading failed", e.Message, fragment);
             return;
         }
@@ -135,23 +135,9 @@
         var stores = storeSelectRef.Values;
         var itemCategories = itemCategoriesSelectRef.Values;
         var manufacturers = manufacturersSelectRef.Values;
-        try
-        {
 
-            var items = (await apiClient.GetItemFilterResultAsync(
-                    stores,
-                    itemCategories,
-                    manufacturers))
-                .ToList();
+        //state.UpdateItems(items);
 
-            state.UpdateItems(items);
-        }
-        catch (Exception e)
-        {
-            var fragment = errorHandler.CreateAsyncRetryFragment(async (items) => await OnLoadButtonClickedAsync(), new object[0]);
-            notificationService.NotifyError("Item loading failed", e.Message, fragment);
-            return;
-        }
         StateHasChanged();
     }
 
@@ -164,7 +150,7 @@
         }
         catch (Exception e)
         {
-            var fragment = errorHandler.CreateAsyncRetryFragment(async (items) => await LoadManufacturerListAsync(), new object[0]);
+            var fragment = errorHandler.CreateAsyncRetryFragment(async () => await LoadManufacturerListAsync());
             notificationService.NotifyError("Loading manufacturers failed", e.Message, fragment);
             return;
         }
@@ -180,7 +166,7 @@
         }
         catch (Exception e)
         {
-            var fragment = errorHandler.CreateAsyncRetryFragment(async (items) => await LoadItemCategoryListAsync(), new object[0]);
+            var fragment = errorHandler.CreateAsyncRetryFragment(async () => await LoadItemCategoryListAsync());
             notificationService.NotifyError("Loading manufacturers failed", e.Message, fragment);
             return;
         }
@@ -196,7 +182,7 @@
         }
         catch (Exception e)
         {
-            var fragment = errorHandler.CreateAsyncRetryFragment(async (items) => await OnItemClickedAsync((int)items[0]), new object[] { itemId });
+            var fragment = errorHandler.CreateAsyncRetryFragment(async () => await OnItemClickedAsync(itemId));
             notificationService.NotifyError("Loading item failed", e.Message, fragment);
             return;
         }
@@ -207,8 +193,8 @@
         state.EnterEditorForNewItem();
     }
 
-    private RenderFragment GetButtonRenderFragment(Func<object[], Task> callback, object[] args, string label = "Retry")
+    private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")
     {
-        return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback(args)">@label</Button>;
+        return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
 }
 }

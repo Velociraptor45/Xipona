@@ -12,7 +12,7 @@
                   ValueName="@nameof(ItemCategory.Id)"
                   LabelName="@nameof(ItemCategory.Name)"
                   DataSource="@State.ItemCategories.ToList()"
-                  OnItemAdded="@OnNewItemCategoryCreated"
+                  OnItemAdded="@OnNewItemCategoryCreatedAsync"
                   OnItemChanged="@OnItemCategoryChanged"
                   Placeholder="Item Category"
                   DefaultValue="@State.EditedItem.ItemCategoryId.GetValueOrDefault()"
@@ -29,7 +29,7 @@
         State.EditedItem.ItemCategoryId = itemCategory.Id;
     }
 
-    private async Task OnNewItemCategoryCreated(string name)
+    private async Task OnNewItemCategoryCreatedAsync(string name)
     {
         try
         {
@@ -37,7 +37,7 @@
         }
         catch (Exception e)
         {
-            var fragment = FragmentCreator.CreateAsyncRetryFragment(async (items) => await OnNewItemCategoryCreated((string)items[0]), new[] { name });
+            var fragment = FragmentCreator.CreateAsyncRetryFragment(async () => await OnNewItemCategoryCreatedAsync(name));
             notificationService.NotifyError("Creating item category failed", e.Message, fragment);
             return;
         }

@@ -38,7 +38,7 @@
         }
         catch (Exception e)
         {
-            var fragment = FragmentCreator.CreateAsyncRetryFragment(async (items) => await OnNewManufacturerCreated((string)items[0]), new[] { name });
+            var fragment = FragmentCreator.CreateAsyncRetryFragment(async () => await OnNewManufacturerCreated(name));
             notificationService.NotifyError("Creating manufacturer failed", e.Message, fragment);
             return;
         }

@@ -6,6 +6,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Common.Error
 {
     public interface IAsyncRetryFragmentCreator
     {
-        RenderFragment CreateAsyncRetryFragment(Func<object[], Task> func, object[] args);
+        RenderFragment CreateAsyncRetryFragment(Func<Task> func);
     }
 }

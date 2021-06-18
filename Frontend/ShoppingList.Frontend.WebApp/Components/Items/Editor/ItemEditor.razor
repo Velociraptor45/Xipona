@@ -63,7 +63,7 @@
         }
         catch (Exception e)
         {
-            var fragment = ErrorHandler.CreateAsyncRetryFragment(async (_) => await OnUpdateButtonClickedAsync(), new object[0]);
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnUpdateButtonClickedAsync());
             notificationService.NotifyError("Updating item failed", e.Message, fragment);
             return;
         }
@@ -79,7 +79,7 @@
         }
         catch (Exception e)
         {
-            var fragment = ErrorHandler.CreateAsyncRetryFragment(async (_) => await OnModifyButtonClickedAsync(), new object[0]);
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnModifyButtonClickedAsync());
             notificationService.NotifyError("Modifying item failed", e.Message, fragment);
             return;
         }
@@ -95,7 +95,7 @@
         }
         catch (Exception e)
         {
-            var fragment = ErrorHandler.CreateAsyncRetryFragment(async (_) => await OnCreateButtonClickedAsync(), new object[0]);
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnCreateButtonClickedAsync());
             notificationService.NotifyError("Creating item failed", e.Message, fragment);
             return;
         }
@@ -117,7 +117,7 @@
         }
         catch (Exception e)
         {
-            var fragment = ErrorHandler.CreateAsyncRetryFragment(async (_) => await OnMakePermanentButtonClickedAsync(), new object[0]);
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnMakePermanentButtonClickedAsync());
             notificationService.NotifyError("Creating item failed", e.Message, fragment);
             return;
         }
@@ -133,7 +133,7 @@
         }
         catch (Exception e)
         {
-            var fragment = ErrorHandler.CreateAsyncRetryFragment(async (_) => await OnDeleteButtonClickedAsync(), new object[0]);
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnDeleteButtonClickedAsync());
             notificationService.NotifyError("Deleting item failed", e.Message, fragment);
             return;
         }
