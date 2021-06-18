@@ -54,6 +54,17 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
             StateChanged?.Invoke();
         }
 
+        public void EnterEditorForNewItem()
+        {
+            // todo: ugly
+            var item =
+                new StoreItem(0, "", false, "", false,
+                    new QuantityType(0, "", 0, "", "", 0), 0,
+                    new QuantityTypeInPacket(0, "", ""), null, null, new List<StoreItemAvailability>());
+
+            EnterEditor(item);
+        }
+
         public void EnterEditor(StoreItem item)
         {
             EditedItem = item;
