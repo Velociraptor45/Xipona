@@ -41,11 +41,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         public void UpdateManufacturers(IEnumerable<Manufacturer> manufacturers)
         {
             this.manufacturers = manufacturers.ToList();
+            StateChanged?.Invoke();
         }
 
         public void UpdateItemCategories(IEnumerable<ItemCategory> itemCategories)
         {
             this.itemCategories = itemCategories.ToList();
+            StateChanged?.Invoke();
         }
 
         public void UpdateItems(IEnumerable<ItemFilterResult> items)

@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Models.Common.Services;
 using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -42,6 +43,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddTransient<ITemporaryItemCreationService, TemporaryItemCreationService>();
 
             builder.Services.AddScoped<IItemPriceCalculationService, ItemPriceCalculationService>();
+
+            builder.Services.AddTransient<IItemsPageLoadingService, ItemsPageLoadingService>();
         }
     }
 }

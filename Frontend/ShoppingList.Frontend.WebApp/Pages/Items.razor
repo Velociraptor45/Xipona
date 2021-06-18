@@ -2,11 +2,13 @@
 @page "/items/{ItemId:int}"
 
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Editor;
 @using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Items;
 
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
 @inject ProjectHermes.ShoppingList.Frontend.Models.Common.Services.IShoppingListNotificationService notificationService;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items.IItemsPageLoadingService loadingService;
 
 <div>
     @if (!(state?.IsInEditMode ?? false))
@@ -85,12 +87,7 @@
     protected override async Task OnInitializedAsync()
     {
         errorHandler = new ItemsErrorHandler((func, label) => GetButtonRenderFragment(func, label));
-        await InitialLoad();
-
-        state.ManufacturerCreated += async () => await LoadManufacturerListAsync();
-        state.ItemCategoryCreated += async () => await LoadItemCategoryListAsync();
-
-        state.StateChanged += () => StateHasChanged();
+        await InitialLoadAsync();
 
         await base.OnInitializedAsync();
     }
@@ -105,87 +102,58 @@
         await base.OnParametersSetAsync();
     }
 
-    private async Task InitialLoad()
+    private async Task InitialLoadAsync()
     {
-        try
-        {
-            var stores = await apiClient.GetAllActiveStoresAsync();
-            var manufacturers = await apiClient.GetAllActiveManufacturersAsync();
-            var itemCategories = await apiClient.GetAllActiveItemCategoriesAsync();
-            var quantityTypes = await apiClient.GetAllQuantityTypesAsync();
-            var quantityTypesInPacket = await apiClient.GetAllQuantityTypesInPacketAsync();
+        state = await loadingService.LoadInitialPageState(async () => await InitialLoadAsync(), errorHandler);
+        SetupState();
+    }
 
-            state = new ItemsState(
-                stores,
-                itemCategories,
-                manufacturers,
-                quantityTypes,
-                quantityTypesInPacket);
-        }
-        catch (Exception e)
-        {
-            var fragment = errorHandler.CreateAsyncRetryFragment(async () => await InitialLoad());
-            notificationService.NotifyError("Page loading failed", e.Message, fragment);
-            return;
-        }
+    private void SetupState()
+    {
+        state.ManufacturerCreated += async () => await LoadManufacturerListAsync();
+        state.ItemCategoryCreated += async () => await LoadItemCategoryListAsync();
+
+        state.StateChanged += () => StateHasChanged();
     }
 
     private async Task OnLoadButtonClickedAsync()
     {
-        var stores = storeSelectRef.Values;
-        var itemCategories = itemCategoriesSelectRef.Values;
-        var manufacturers = manufacturersSelectRef.Values;
+        var storeIds = storeSelectRef.Values;
+        var itemCategoryIds = itemCategoriesSelectRef.Values;
+        var manufacturerIds = manufacturersSelectRef.Values;
 
-        //state.UpdateItems(items);
+        var items = await loadingService.LoadItemsAsync(storeIds, itemCategoryIds, manufacturerIds, errorHandler);
+        if (items == null)
+            return;
 
-        StateHasChanged();
+        state.UpdateItems(items);
     }
 
     private async Task LoadManufacturerListAsync()
     {
-        try
-        {
-            var manufacturers = (await apiClient.GetAllActiveManufacturersAsync()).ToList();
-            state.UpdateManufacturers(manufacturers);
-        }
-        catch (Exception e)
-        {
-            var fragment = errorHandler.CreateAsyncRetryFragment(async () => await LoadManufacturerListAsync());
-            notificationService.NotifyError("Loading manufacturers failed", e.Message, fragment);
+        var manufacturers = await loadingService.LoadManufacturersAsync(errorHandler);
+        if (manufacturers == null)
             return;
-        }
-        StateHasChanged();
+
+        state.UpdateManufacturers(manufacturers);
     }
 
     private async Task LoadItemCategoryListAsync()
     {
-        try
-        {
-            var itemCategories = (await apiClient.GetAllActiveItemCategoriesAsync()).ToList();
-            state.UpdateItemCategories(itemCategories);
-        }
-        catch (Exception e)
-        {
-            var fragment = errorHandler.CreateAsyncRetryFragment(async () => await LoadItemCategoryListAsync());
-            notificationService.NotifyError("Loading manufacturers failed", e.Message, fragment);
+        var itemCategories = await loadingService.LoadItemCategoriesAsync(errorHandler);
+        if (itemCategories == null)
             return;
-        }
-        StateHasChanged();
+
+        state.UpdateItemCategories(itemCategories);
     }
 
     private async Task OnItemClickedAsync(int itemId)
     {
-        try
-        {
-            var item = await apiClient.GetItemByIdAsync(itemId);
-            state.EnterEditor(item);
-        }
-        catch (Exception e)
-        {
-            var fragment = errorHandler.CreateAsyncRetryFragment(async () => await OnItemClickedAsync(itemId));
-            notificationService.NotifyError("Loading item failed", e.Message, fragment);
+        var item = await loadingService.LoadItemAsync(itemId, errorHandler);
+        if (item == null)
             return;
-        }
+
+        state.EnterEditor(item);
     }
 
     private void OnCreateItemButtonClicked()
