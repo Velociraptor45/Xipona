@@ -3,7 +3,6 @@
 
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Filter;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Editor;
-@using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Items;
 
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items.IItemsPageLoadingService loadingService;
@@ -11,74 +10,16 @@
 <div>
     @if (!(state?.IsInEditMode ?? false))
     {
-        <div class="d-flex">
-            <div class="h4">Items</div>
-            <Button @onclick="OnCreateItemButtonClicked" Class="d-flex align-items-center ml-auto">
-                <Icon Type="plus"></Icon>
-            </Button>
-        </div>
-        <div>
-            <div class="d-flex py-1">
-                <div class="mr-2 align-self-center">
-                    Store
-                </div>
-                <Select Mode="tags"
-                        DataSource="@state?.Stores.ToList()"
-                        TItem="Store"
-                        TItemValue="int"
-                        ValueName="@nameof(Store.Id)"
-                        LabelName="@nameof(Store.Name)"
-                        @ref="@storeSelectRef"></Select>
-            </div>
-            <div class="d-flex py-1">
-                <div class="mr-2 align-self-center">
-                    Category
-                </div>
-                <Select Mode="tags"
-                        DataSource="@state?.ItemCategories.ToList()"
-                        TItem="ItemCategory"
-                        TItemValue="int"
-                        ValueName="@nameof(ItemCategory.Id)"
-                        LabelName="@nameof(ItemCategory.Name)"
-                        @ref="@itemCategoriesSelectRef"></Select>
-            </div>
-            <div class="d-flex py-1">
-                <div class="mr-2 align-self-center">
-                    Manufacturer
-                </div>
-                <Select Mode="tags"
-                        DataSource="@state?.Manufacturers.ToList()"
-                        TItem="Manufacturer"
-                        TItemValue="int"
-                        ValueName="@nameof(Manufacturer.Id)"
-                        LabelName="@nameof(Manufacturer.Name)"
-                        @ref="@manufacturersSelectRef"></Select>
-            </div>
-            <Button @onclick="@OnLoadButtonClickedAsync">Load</Button>
-        </div>
-        <div>
-            <!-- result item list -->
-            @foreach (var item in state?.Items.ToList() ?? Enumerable.Empty<ItemFilterResult>())
-            {
-                <FilterResult State="@state"
-                              FragmentCreator="@errorHandler"
-                              Item="@item"></FilterResult>
-            }
-        </div>
+        <ItemFilter State="@state" FragmentCreator="@errorHandler"></ItemFilter>
     }
     else
     {
-        <ItemEditor State="@state"
-                    ErrorHandler="@errorHandler"></ItemEditor>
+        <ItemEditor State="@state" ErrorHandler="@errorHandler"></ItemEditor>
     }
 </div>
 
 @code {
     [Parameter] public int? ItemId { get; set; }
-
-    private Select<int, Store> storeSelectRef;
-    private Select<int, ItemCategory> itemCategoriesSelectRef;
-    private Select<int, Manufacturer> manufacturersSelectRef;
 
     private ItemsState state;
     private ItemsErrorHandler errorHandler;
@@ -115,19 +56,6 @@
         state.StateChanged += () => StateHasChanged();
     }
 
-    private async Task OnLoadButtonClickedAsync()
-    {
-        var storeIds = storeSelectRef.Values;
-        var itemCategoryIds = itemCategoriesSelectRef.Values;
-        var manufacturerIds = manufacturersSelectRef.Values;
-
-        var items = await loadingService.LoadItemsAsync(storeIds, itemCategoryIds, manufacturerIds, errorHandler);
-        if (items == null)
-            return;
-
-        state.UpdateItems(items);
-    }
-
     private async Task LoadManufacturerListAsync()
     {
         var manufacturers = await loadingService.LoadManufacturersAsync(errorHandler);
@@ -153,11 +81,6 @@
             return;
 
         state.EnterEditor(item);
-    }
-
-    private void OnCreateItemButtonClicked()
-    {
-        state.EnterEditorForNewItem();
     }
 
     private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")
