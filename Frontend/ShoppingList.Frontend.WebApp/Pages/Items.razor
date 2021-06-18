@@ -6,8 +6,6 @@
 @using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Items;
 
-@inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
-@inject ProjectHermes.ShoppingList.Frontend.Models.Common.Services.IShoppingListNotificationService notificationService;
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items.IItemsPageLoadingService loadingService;
 
 <div>
@@ -62,8 +60,9 @@
             <!-- result item list -->
             @foreach (var item in state?.Items.ToList() ?? Enumerable.Empty<ItemFilterResult>())
             {
-                <FilterResult Item="@item"
-                              OnClickCallback="@OnItemClickedAsync"></FilterResult>
+                <FilterResult State="@state"
+                              FragmentCreator="@errorHandler"
+                              Item="@item"></FilterResult>
             }
         </div>
     }
