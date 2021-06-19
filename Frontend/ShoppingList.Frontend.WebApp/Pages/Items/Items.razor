@@ -10,16 +10,19 @@
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items
 
-<div>
-    @if (!(state?.IsInEditMode ?? false))
-    {
-        <ItemFilter State="@state" FragmentCreator="@errorHandler"></ItemFilter>
-    }
-    else
-    {
-        <ItemEditor State="@state" ErrorHandler="@errorHandler"></ItemEditor>
-    }
-</div>
+@if (state != null)
+{
+    <div>
+        @if (!state.IsInEditMode)
+        {
+            <ItemFilter State="@state" FragmentCreator="@errorHandler"></ItemFilter>
+        }
+        else
+        {
+            <ItemEditor State="@state" ErrorHandler="@errorHandler"></ItemEditor>
+        }
+    </div>
+}
 
 @code {
     [Parameter] public int? ItemId { get; set; }

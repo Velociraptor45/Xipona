@@ -16,7 +16,7 @@
             Store
         </div>
         <Select Mode="tags"
-                DataSource="@State?.Stores.ToList()"
+                DataSource="@State.Stores.ToList()"
                 TItem="Store"
                 TItemValue="int"
                 ValueName="@nameof(Store.Id)"
@@ -28,7 +28,7 @@
             Category
         </div>
         <Select Mode="tags"
-                DataSource="@State?.ItemCategories.ToList()"
+                DataSource="@State.ItemCategories.ToList()"
                 TItem="ItemCategory"
                 TItemValue="int"
                 ValueName="@nameof(ItemCategory.Id)"
@@ -40,7 +40,7 @@
             Manufacturer
         </div>
         <Select Mode="tags"
-                DataSource="@State?.Manufacturers.ToList()"
+                DataSource="@State.Manufacturers.ToList()"
                 TItem="Manufacturer"
                 TItemValue="int"
                 ValueName="@nameof(Manufacturer.Id)"
@@ -51,7 +51,7 @@
 </div>
 <div>
     <!-- result item list -->
-    @foreach (var item in State?.Items.ToList() ?? Enumerable.Empty<ItemFilterResult>())
+    @foreach (var item in State.Items.ToList())
     {
         <FilterResult State="@State"
                       FragmentCreator="@FragmentCreator"
