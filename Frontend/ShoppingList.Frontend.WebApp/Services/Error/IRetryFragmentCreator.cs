@@ -5,6 +5,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
 {
     public interface IRetryFragmentCreator
     {
-        RenderFragment CreateRetryFragment(Action<object[]> action, object[] args);
+        RenderFragment CreateRetryFragment(Action action);
     }
 }

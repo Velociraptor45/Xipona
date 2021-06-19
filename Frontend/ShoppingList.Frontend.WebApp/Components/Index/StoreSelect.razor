@@ -27,7 +27,7 @@
         }
         catch (Exception e)
         {
-            var fragment = ErrorHandler.CreateRetryFragment(async (items) => await LoadAvailableStoresAsync(), new object[0]);
+            var fragment = ErrorHandler.CreateRetryFragment(async () => await LoadAvailableStoresAsync());
             notificationService.NotifyError("Page loading failed", e.Message, fragment);
             ErrorHandler.Log(e.ToString());
             return;

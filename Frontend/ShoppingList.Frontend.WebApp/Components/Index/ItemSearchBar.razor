@@ -62,7 +62,7 @@
         }
         catch (Exception e)
         {
-            var fragment = ErrorHandler.CreateRetryFragment((items) => OnSearch((string)items[0]), new[] { searchInput });
+            var fragment = ErrorHandler.CreateRetryFragment(() => OnSearch(searchInput));
             notificationService.NotifyError("Search for items failed", e.Message, fragment);
 
             ErrorHandler.Log(e.ToString());

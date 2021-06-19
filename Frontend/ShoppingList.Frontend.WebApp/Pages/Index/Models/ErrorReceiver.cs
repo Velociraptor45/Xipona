@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
     public class ErrorHandler : ICommandQueueErrorHandler, IDebugHandler, IRetryFragmentCreator
     {
         private readonly List<string> stack = new List<string>();
-        private readonly Func<Action<object[]>, object[], string, RenderFragment> createRenderFragment;
+        private readonly Func<Action, string, RenderFragment> createRenderFragment;
         private readonly IShoppingListNotificationService notificationService;
 
         public Action StateChanged { get; set; }
@@ -20,7 +20,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
         public bool ApiHasProcessingError { get; private set; }
 
         public ErrorHandler(bool isDebug,
-            Func<Action<object[]>, object[], string, RenderFragment> CreateRenderFragment,
+            Func<Action, string, RenderFragment> CreateRenderFragment,
             IShoppingListNotificationService notificationService)
         {
             IsDebug = isDebug;
@@ -33,9 +33,9 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
             IsDebug = !IsDebug;
         }
 
-        public RenderFragment CreateRetryFragment(Action<object[]> action, object[] args)
+        public RenderFragment CreateRetryFragment(Action action)
         {
-            return createRenderFragment(action, args, "Retry");
+            return createRenderFragment(action, "Retry");
         }
 
         public void Log(string content)
