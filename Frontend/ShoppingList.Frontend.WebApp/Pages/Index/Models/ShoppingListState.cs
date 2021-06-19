@@ -22,7 +22,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
         public void ToggleItemEditMode()
         {
             ItemsInEditMode = !ItemsInEditMode;
-            StateChanged();
+            StateChanged?.Invoke();
         }
 
         public void ResetItemEditMode()
@@ -33,19 +33,19 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
         public void ToggleItemsInBasketVisible()
         {
             ItemsInBasketVisible = !ItemsInBasketVisible;
-            StateChanged();
+            StateChanged?.Invoke();
         }
 
         public void AddItemToList(ShoppingListItem item, int sectionId)
         {
             ShoppingList.AddItem(item, sectionId);
-            StateChanged();
+            StateChanged?.Invoke();
         }
 
         public void ChangeList(ShoppingListRoot list)
         {
             ShoppingList = list;
-            StateChanged();
+            StateChanged?.Invoke();
         }
 
         public async Task ChangeStoreAsync(int storeId)
@@ -62,7 +62,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
         public async Task RequestReloadAsync(int storeId)
         {
             await ReloadRequestedAsync(storeId);
-            StateChanged();
+            StateChanged?.Invoke();
         }
     }
 }

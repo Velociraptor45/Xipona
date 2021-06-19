@@ -3,8 +3,8 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
 
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager;
-@inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.ICommandQueue commandQueue;
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.IItemPriceCalculationService itemPriceCalculationService;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListCommunicationService communicationService;
 
 <li class="list-style-non py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
     @if (State.ItemsInEditMode)
@@ -81,13 +81,13 @@
         {
             Model.RemoveFromBasket();
             var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
-            await commandQueue.Enqueue(request);
+            await communicationService.EnqueueAsync(request);
         }
         else
         {
             Model.PutInBasket();
             var request = new PutItemInBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
-            await commandQueue.Enqueue(request);
+            await communicationService.EnqueueAsync(request);
         }
     }
 
@@ -105,8 +105,9 @@
     private async Task OnRemoveItemButtonClickedAsync()
     {
         State.ShoppingList.Remove(Model.Id);
-        var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
-        await commandQueue.Enqueue(request);
+        var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
+        await communicationService.EnqueueAsync(request);
+        State.StateChanged?.Invoke();
     }
 
     private async Task OnIncrementQuantityButtonClickedAsync()
@@ -125,7 +126,7 @@
     {
         var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id,
             Model.Quantity);
-        await commandQueue.Enqueue(request);
+        await communicationService.EnqueueAsync(request);
     }
 
     private void OnMakeItemPermanentButtonClicked()

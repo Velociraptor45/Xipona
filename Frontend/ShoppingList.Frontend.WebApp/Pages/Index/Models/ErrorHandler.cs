@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
 {
-    public class ErrorHandler : ICommandQueueErrorHandler, IDebugHandler, IRetryFragmentCreator
+    public class ErrorHandler : ICommandQueueErrorHandler, IDebugHandler, IRetryFragmentCreator, IAsyncRetryFragmentCreator
     {
         private readonly List<string> stack = new List<string>();
         private readonly Func<Action, string, RenderFragment> createRenderFragment;
+        private readonly Func<Func<Task>, string, RenderFragment> createAsyncRenderFragment;
         private readonly IShoppingListNotificationService notificationService;
 
         public Action StateChanged { get; set; }
@@ -20,11 +21,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
         public bool ApiHasProcessingError { get; private set; }
 
         public ErrorHandler(bool isDebug,
-            Func<Action, string, RenderFragment> CreateRenderFragment,
+            Func<Action, string, RenderFragment> createRenderFragment,
+            Func<Func<Task>, string, RenderFragment> createAsyncRenderFragment,
             IShoppingListNotificationService notificationService)
         {
             IsDebug = isDebug;
-            createRenderFragment = CreateRenderFragment;
+            this.createRenderFragment = createRenderFragment;
+            this.createAsyncRenderFragment = createAsyncRenderFragment;
             this.notificationService = notificationService;
         }
 
@@ -36,6 +39,11 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
         public RenderFragment CreateRetryFragment(Action action)
         {
             return createRenderFragment(action, "Retry");
+        }
+
+        public RenderFragment CreateAsyncRetryFragment(Func<Task> func)
+        {
+            return createAsyncRenderFragment(func, "Retry");
         }
 
         public void Log(string content)

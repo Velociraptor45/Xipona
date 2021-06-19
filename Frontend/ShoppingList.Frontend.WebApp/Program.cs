@@ -10,6 +10,7 @@ using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp
 {
@@ -45,6 +46,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
             builder.Services.AddScoped<IItemPriceCalculationService, ItemPriceCalculationService>();
 
+            builder.Services.AddTransient<IShoppingListCommunicationService, ShoppingListCommunicationService>();
             builder.Services.AddTransient<IItemsPageLoadingService, ItemsPageLoadingService>();
             builder.Services.AddTransient<IStoresPageCommunicationService, StoresPageCommunicationService>();
         }
