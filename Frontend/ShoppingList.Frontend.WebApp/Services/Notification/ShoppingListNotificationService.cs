@@ -1,7 +1,7 @@
 ﻿using AntDesign;
 using Microsoft.AspNetCore.Components;
 
-namespace ProjectHermes.ShoppingList.Frontend.WebApp.Service
+namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
 {
     public class ShoppingListNotificationService : IShoppingListNotificationService
     {

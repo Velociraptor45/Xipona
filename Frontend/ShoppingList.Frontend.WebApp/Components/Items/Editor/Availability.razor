@@ -3,14 +3,14 @@
 
 <div class="d-flex flex-row align-items-center">
     <div class="max-w-60">
-        <Input @bind-Value="@Availability.PricePerQuantity" />
+        <Input @bind-Value="@availability.PricePerQuantity" />
     </div>
-    <div class="mr-2">@PriceLabel</div>
+    <div class="mr-2">@(State.EditedItem.QuantityType.PriceLabel)</div>
     <Select Class="mr-2"
-            DataSource="Stores"
+            DataSource="State.Stores.ToList()"
             TItem="Store"
             TItemValue="int"
-            DefaultValue="Availability.Store.Id"
+            DefaultValue="availability.Store.Id"
             ValueName="@nameof(Store.Id)"
             LabelName="@nameof(Store.Name)"
             OnSelectedItemChanged="@OnStoreChanged">
@@ -19,12 +19,12 @@
                   TValue="int"
                   ValueName="@nameof(StoreItemSection.Id)"
                   LabelName="@nameof(StoreItemSection.Name)"
-                  DataSource="@Availability.Store.Sections.ToList()"
+                  DataSource="@availability.Store.Sections.ToList()"
                   OnItemChanged="OnDefaultSectionChanged"
-                  DefaultValue="@Availability.DefaultSection.Id"></SingleSelect>
+                  DefaultValue="@availability.DefaultSection.Id"></SingleSelect>
     <div class="ml-2">
         <Button Class="d-flex align-items-center"
-                OnClick="@OnRemoveStoreButtonClickedAsync"
+                OnClick="@OnRemoveStoreButtonClicked"
                 Danger="true">
             <Icon Type="minus"></Icon>
         </Button>
@@ -32,29 +32,34 @@
 </div>
 
 @code {
+    [Parameter] public ItemsState State { get; set; }
     [Parameter] public int ComponentIndex { get; set; }
-    [Parameter] public StoreItemAvailability Availability { get; set; }
-    [Parameter] public string PriceLabel { get; set; }
-    [Parameter] public List<Store> Stores { get; set; }
 
-    [Parameter] public EventCallback<int> OnRemoveAvailabilityCallback { get; set; }
+    private StoreItemAvailability availability;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        availability = State.EditedItem.Availabilities[ComponentIndex];
+    }
 
     private void OnStoreChanged(Store store)
     {
-        Availability.Store = store.AsStoreItemStore();
+        availability.Store = store.AsStoreItemStore();
 
         var defaultSection = store.Sections.Single(s => s.IsDefaultSection);
-        Availability.ChangeDefaultSection(defaultSection.AsStoreItemSection());
+        availability.ChangeDefaultSection(defaultSection.AsStoreItemSection());
         StateHasChanged();
     }
 
-    private async Task OnRemoveStoreButtonClickedAsync()
+    private void OnRemoveStoreButtonClicked()
     {
-        await OnRemoveAvailabilityCallback.InvokeAsync(ComponentIndex);
+        State.EditedItem.Availabilities.RemoveAt(ComponentIndex);
+        State.StateChanged();
     }
 
     private void OnDefaultSectionChanged(StoreItemSection section)
     {
-        Availability.ChangeDefaultSection(section);
+        availability.ChangeDefaultSection(section);
     }
 }

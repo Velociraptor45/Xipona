@@ -1,0 +1,87 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.Items;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
+
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items.IItemsPageLoadingService loadingService;
+
+<div class="d-flex">
+    <div class="h4">Items</div>
+    <Button @onclick="OnCreateItemButtonClicked" Class="d-flex align-items-center ml-auto">
+        <Icon Type="plus"></Icon>
+    </Button>
+</div>
+<div>
+    <div class="d-flex py-1">
+        <div class="mr-2 align-self-center">
+            Store
+        </div>
+        <Select Mode="tags"
+                DataSource="@State.Stores.ToList()"
+                TItem="Store"
+                TItemValue="int"
+                ValueName="@nameof(Store.Id)"
+                LabelName="@nameof(Store.Name)"
+                @ref="@storeSelectRef"></Select>
+    </div>
+    <div class="d-flex py-1">
+        <div class="mr-2 align-self-center">
+            Category
+        </div>
+        <Select Mode="tags"
+                DataSource="@State.ItemCategories.ToList()"
+                TItem="ItemCategory"
+                TItemValue="int"
+                ValueName="@nameof(ItemCategory.Id)"
+                LabelName="@nameof(ItemCategory.Name)"
+                @ref="@itemCategoriesSelectRef"></Select>
+    </div>
+    <div class="d-flex py-1">
+        <div class="mr-2 align-self-center">
+            Manufacturer
+        </div>
+        <Select Mode="tags"
+                DataSource="@State.Manufacturers.ToList()"
+                TItem="Manufacturer"
+                TItemValue="int"
+                ValueName="@nameof(Manufacturer.Id)"
+                LabelName="@nameof(Manufacturer.Name)"
+                @ref="@manufacturersSelectRef"></Select>
+    </div>
+    <Button @onclick="@OnLoadButtonClickedAsync">Load</Button>
+</div>
+<div>
+    <!-- result item list -->
+    @foreach (var item in State.Items.ToList())
+    {
+        <FilterResult State="@State"
+                      FragmentCreator="@FragmentCreator"
+                      Item="@item"></FilterResult>
+    }
+</div>
+
+@code {
+    [Parameter] public ItemsState State { get; set; }
+    [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
+
+    private Select<int, Store> storeSelectRef;
+    private Select<int, ItemCategory> itemCategoriesSelectRef;
+    private Select<int, Manufacturer> manufacturersSelectRef;
+
+    private void OnCreateItemButtonClicked()
+    {
+        State.EnterEditorForNewItem();
+    }
+
+    private async Task OnLoadButtonClickedAsync()
+    {
+        var storeIds = storeSelectRef.Values;
+        var itemCategoryIds = itemCategoriesSelectRef.Values;
+        var manufacturerIds = manufacturersSelectRef.Values;
+
+        var items = await loadingService.LoadItemsAsync(storeIds, itemCategoryIds, manufacturerIds, FragmentCreator);
+        if (items == null)
+            return;
+
+        State.UpdateItems(items);
+    }
+}

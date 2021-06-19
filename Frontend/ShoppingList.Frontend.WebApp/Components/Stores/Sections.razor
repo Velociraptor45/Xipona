@@ -1,0 +1,44 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Models;
+
+<div class="my-3">
+    <div class="d-flex align-items-center">
+        <div>
+            Sections
+        </div>
+        <div class="ml-2">
+            <Button Icon="plus"
+                    Class="align-items-center justify-content-center d-flex"
+                    OnClick="@OnAddSectionButtonClicked"></Button>
+        </div>
+    </div>
+    @foreach (var section in State.EditedStore.Sections)
+    {
+        <Section State="@State" Model="@section"></Section>
+    }
+</div>
+
+<div>
+    Default Section:
+    <SingleSelect TItem="StoreSection"
+                  TValue="StoreSectionId"
+                  ValueName="@nameof(StoreSection.Id)"
+                  LabelName="@nameof(StoreSection.Name)"
+                  DefaultValue="@State.EditedStore.Sections.First(s => s.IsDefaultSection).Id"
+                  DataSource="@State.EditedStore.Sections.ToList()"
+                  OnItemChanged="OnDefaultSectionChanged"></SingleSelect>
+</div>
+
+@code {
+    [Parameter] public StoresState State { get; set; }
+
+    private void OnDefaultSectionChanged(StoreSection section)
+    {
+        State.EditedStore.ChangeDefaultSection(section.Id.FrontendId);
+    }
+
+    private void OnAddSectionButtonClicked()
+    {
+        State.EditedStore.AddSection();
+    }
+}

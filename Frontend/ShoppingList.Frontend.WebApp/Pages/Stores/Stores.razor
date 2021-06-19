@@ -1,0 +1,96 @@
+﻿@page "/Stores"
+
+@using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Stores;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Models;
+
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services.IStoresPageCommunicationService communicationService;
+
+@namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores
+
+@if (state != null)
+{
+    <div>
+        @if (!state.IsInEditMode)
+        {
+            <div class="d-flex">
+                <div class="h4">Stores</div>
+                <Button @onclick="@OnCreateStoreButtonClicked" Class="d-flex align-items-center ml-auto">
+                    <Icon Type="plus"></Icon>
+                </Button>
+            </div>
+            <div>
+                <ol class="pl-0">
+                    @foreach (var store in state.Stores.OrderBy(s => s.Name))
+                    {
+                        <StoreListItem State="@state" Store="@store"></StoreListItem>
+                    }
+                </ol>
+            </div>
+        }
+        else
+        {
+            <StoreEditor State="@state" FragmentCreator="@errorHandler"></StoreEditor>
+        }
+    </div>
+}
+
+@code {
+    private StoresState state;
+    private ErrorHandler errorHandler;
+
+    protected override async Task OnInitializedAsync()
+    {
+        errorHandler = new ErrorHandler((func, label) => GetButtonRenderFragment(func, label));
+        await CreatePageState();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task CreatePageState()
+    {
+        var stores = await communicationService.LoadStores(async () => await CreatePageState(), errorHandler);
+        if (stores == null)
+            return;
+
+        state = new StoresState(stores);
+        state.StoreChanged += async () => await ReloadStores();
+        state.StateChanged += () => StateHasChanged();
+
+        StateHasChanged();
+    }
+
+    private void OnCreateStoreButtonClicked()
+    {
+        state.EnterEditorForNewStore();
+    }
+
+    private async Task OnStoreCreatedAsync(Store store)
+    {
+        var request = new CreateStoreRequest(Guid.NewGuid(), store);
+
+        var creationResult = await communicationService.CreateStoreAsync(
+            request, async () => await OnStoreCreatedAsync(store), errorHandler);
+        if (!creationResult)
+            return;
+
+        await state.LeaveEditorAsync();
+
+        await ReloadStores();
+    }
+
+    private async Task ReloadStores()
+    {
+        var stores = await communicationService.LoadStores(async () => await ReloadStores(), errorHandler);
+        if (stores == null)
+            return;
+
+        state.UpdateStores(stores);
+    }
+
+    private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")
+    {
+        return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
+}
+}

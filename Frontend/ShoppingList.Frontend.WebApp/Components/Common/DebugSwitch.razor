@@ -1,0 +1,10 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
+
+<div class="pr-2">
+    <Switch Checked="@DebugHandler.IsDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="() => DebugHandler.ToggleDebugState()" />
+</div>
+
+@code {
+    [Parameter] public IDebugHandler DebugHandler { get; set; }
+
+}

@@ -9,6 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.WebAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.Infrastructure", "ShoppingList.Frontend.Infrastructure\ShoppingList.Frontend.Infrastructure.csproj", "{96C61D18-7462-4B57-8672-2C5851423AD6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01_Execution", "01_Execution", "{206327FE-BECF-482F-B81B-41FBFD9BCF45}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02_Integration", "02_Integration", "{2C5E395D-BFD8-4091-8075-6505D12D675A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03_Domain", "03_Domain", "{49182B40-8923-466B-BC25-8DC743CD4695}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +36,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2349EA1E-E53C-426F-889D-90148AF86FF9} = {49182B40-8923-466B-BC25-8DC743CD4695}
+		{21E57D9E-231D-4899-B65A-95F1DACD8423} = {206327FE-BECF-482F-B81B-41FBFD9BCF45}
+		{96C61D18-7462-4B57-8672-2C5851423AD6} = {2C5E395D-BFD8-4091-8075-6505D12D675A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0798AF8-B771-4324-B367-501339CD7290}

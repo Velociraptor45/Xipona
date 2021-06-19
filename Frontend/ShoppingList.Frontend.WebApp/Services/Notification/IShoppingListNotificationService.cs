@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace ProjectHermes.ShoppingList.Frontend.WebApp.Service
+namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
 {
     public interface IShoppingListNotificationService
     {

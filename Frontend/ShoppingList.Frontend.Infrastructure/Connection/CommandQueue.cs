@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using RestEase;
 using System;
 using System.Collections.Generic;
@@ -20,10 +21,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         private bool connectionAlive = true;
         private readonly List<IApiRequest> queue = new();
 
-        private Func<Task> FirstRequestFailedCallback;
-        private Func<Task> AllQueueItemsProcessedCallback;
-        private Action ApiProcessingErrorCallback;
-        private Action<string> DebugCallback;
+        private ICommandQueueErrorHandler errorHandler;
 
         public CommandQueue(IApiClient commandClient)
         {
@@ -31,16 +29,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             this.commandClient = commandClient;
         }
 
-        public void Initialize(
-            Func<Task> firstRequestFailedCallback,
-            Func<Task> allQueueItemsProcessedCallback,
-            Action apiProcessingErrorCallback,
-            Action<string> debugCallback)
+        public void Initialize(ICommandQueueErrorHandler errorHandler)
         {
-            FirstRequestFailedCallback = firstRequestFailedCallback;
-            AllQueueItemsProcessedCallback = allQueueItemsProcessedCallback;
-            ApiProcessingErrorCallback = apiProcessingErrorCallback;
-            DebugCallback = debugCallback;
+            this.errorHandler = errorHandler;
 
             try
             {
@@ -53,7 +44,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             }
             catch (Exception e)
             {
-                DebugCallback.Invoke(e.ToString());
+                errorHandler.Log(e.ToString());
             }
         }
 
@@ -72,12 +63,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 }
                 catch (ApiConnectionException)
                 {
-                    await OnApiConnectionDied();
+                    OnApiConnectionDied();
                 }
                 catch (ApiProcessingException e)
                 {
                     OnApiProcessingError();
-                    DebugCallback.Invoke(e.InnerException.ToString());
+                    errorHandler.Log(e.InnerException.ToString());
                 }
             }
         }
@@ -103,18 +94,18 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             }
             catch (ApiConnectionException)
             {
-                await OnApiConnectionDied();
+                OnApiConnectionDied();
                 return;
             }
             catch (ApiProcessingException e)
             {
                 OnApiProcessingError();
-                DebugCallback.Invoke(e.InnerException.ToString());
+                errorHandler.Log(e.InnerException.ToString());
                 return;
             }
             connectionAlive = true;
 
-            await AllQueueItemsProcessedCallback.Invoke();
+            await errorHandler.OnQueueProcessedAsync();
         }
 
         private async Task ProcessQueue()
@@ -197,13 +188,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             {
                 queue.Clear();
             }
-            ApiProcessingErrorCallback.Invoke();
+            errorHandler.OnApiProcessingError();
         }
 
-        private async Task OnApiConnectionDied()
+        private void OnApiConnectionDied()
         {
             connectionAlive = false;
-            await FirstRequestFailedCallback.Invoke();
+            errorHandler.OnConnectionFailed();
         }
     }
 }

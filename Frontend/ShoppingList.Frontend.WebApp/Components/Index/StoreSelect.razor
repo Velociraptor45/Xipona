@@ -1,0 +1,48 @@
+﻿@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListCommunicationService communicationService;
+
+@using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.Index;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
+
+<Select Class="min-w-100 max-w-200 mr-3"
+        DataSource="availableStores.Stores"
+        @bind-Value="availableStores.SelectedStoreId"
+        ValueName="@nameof(Store.Id)"
+        LabelName="@nameof(Store.Name)"
+        OnSelectedItemChanged="OnSelectionChanged">
+</Select>
+
+@code {
+    [Parameter] public ShoppingListState Page { get; set; }
+    [Parameter] public ErrorHandler ErrorHandler { get; set; }
+
+    private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>(), 0);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAvailableStoresAsync();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task LoadAvailableStoresAsync()
+    {
+        var stores = await communicationService.LoadAllActiveStoresAsync(
+            async () => await LoadAvailableStoresAsync(), ErrorHandler);
+        if (stores == null)
+            return;
+
+        List<Store> storesList = stores.ToList();
+
+        availableStores = new AvailableStores(storesList, storesList.FirstOrDefault()?.Id ?? 0);
+        Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
+    }
+
+    private async void OnSelectionChanged(Store store)
+    {
+        if (store == null)
+            return;
+
+        await Page.ChangeStoreAsync(store.Id);
+    }
+}

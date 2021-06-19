@@ -1,0 +1,109 @@
+﻿@inject ProjectHermes.ShoppingList.Frontend.Models.Index.Services.ITemporaryItemCreationService temporaryItemCreationService;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListCommunicationService communicationService;
+
+@using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+
+<div class="mb-2 d-flex">
+    <Select OnFocus="OnSearchBarFocusIn"
+            Class="@(searchBar.Active ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
+            DataSource="searchBar.Options"
+            TItem="@ItemSearchResult"
+            TItemValue="@int"
+            ValueName="@nameof(ItemSearchResult.ItemId)"
+            LabelName="@nameof(ItemSearchResult.DisplayValue)"
+            AutoClearSearchValue="true"
+            AllowClear="true"
+            OnSearch="(s) => OnSearch(s)"
+            EnableSearch
+            OnSelectedItemChanged="(item) => OnSearchItemSelected(item)">
+    </Select>
+
+    @if (searchBar.Active)
+    {
+        <Button Type="@ButtonType.Primary"
+                OnClick="@OnCreateNewTemporaryItem"
+                Class="d-flex align-items-center">
+            <Icon Type="plus"></Icon>
+        </Button>
+        <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
+    }
+</div>
+
+@code {
+    [Parameter] public Func<Task> ReloadShoppingListAsync { get; set; }
+    [Parameter] public ShoppingListState State { get; set; }
+    [Parameter] public ErrorHandler ErrorHandler { get; set; }
+
+    private SearchBar searchBar = new SearchBar();
+
+    private async Task OnSearch(string searchInput)
+    {
+        if (State.ShoppingList.Store == null)
+            return;
+
+        if (string.IsNullOrWhiteSpace(searchInput))
+        {
+            searchBar.ResetOptions();
+            return;
+        }
+
+        searchInput = searchInput.Trim();
+        searchBar.Input = searchInput;
+
+        var result = await communicationService.LoadItemSearchResultAsync(searchInput, State.ShoppingList.Store.Id,
+            async () => await OnSearch(searchInput), ErrorHandler);
+        if (result == null)
+            return;
+
+        searchBar.Options = result;
+        //Console.WriteLine($"{searchInput}: {result.ToList().Count}");
+
+        StateHasChanged();
+    }
+
+    private async void OnCreateNewTemporaryItem()
+    {
+        var item = temporaryItemCreationService.Create(searchBar.Input);
+
+        var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId.Value, item.Name, State.ShoppingList.Store.Id,
+            item.PricePerQuantity, State.ShoppingList.DefaultSectionId);
+        var addRequest = new AddItemToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, item.Id, item.Quantity, null);
+        await communicationService.EnqueueAsync(createRequest);
+        await communicationService.EnqueueAsync(addRequest);
+
+        State.AddItemToList(item, State.ShoppingList.DefaultSectionId);
+    }
+
+    private async Task OnSearchItemSelected(ItemSearchResult item)
+    {
+        if (item == null)
+            return;
+
+        var request = new AddItemToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, new ItemId(item.ItemId), 1,
+            item.DefaultSectionId); //todo default item quantity
+
+        var result = await communicationService.AddItemToShoppingListAsync(request, async () => await OnSearchItemSelected(item), ErrorHandler);
+        if (!result)
+            return;
+
+        searchBar.ResetInput();
+        searchBar.ResetOptions();
+
+        await State.RequestReloadAsync();
+    }
+
+    private void OnSearchBarCancleButtonClicked()
+    {
+        searchBar.Active = false;
+        StateHasChanged();
+    }
+
+    private void OnSearchBarFocusIn()
+    {
+        searchBar.Active = true;
+        StateHasChanged();
+    }
+}

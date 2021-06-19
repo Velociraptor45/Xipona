@@ -1,0 +1,136 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
+
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.IItemPriceCalculationService itemPriceCalculationService;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListCommunicationService communicationService;
+
+<li class="list-style-non py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
+    @if (State.ItemsInEditMode)
+    {
+        <div class="d-flex flex-column ml-2">
+            <div class="d-flex">
+                <!-- upper row -->
+                <div class="h3 pl-1">@Model.Name</div>
+                <Button Danger="true"
+                        Icon="close"
+                        Class="mr-2 ml-auto d-flex align-items-center justify-content-center"
+                        OnClick="@OnRemoveItemButtonClickedAsync"></Button>
+            </div>
+            <div>
+                <!-- lower row -->
+                <div class="d-flex">
+                    <div class="d-flex">
+                        <div class="d-flex mr-3">
+                            <AntDesign.InputNumber Value="@Model.Quantity" Min="1f"
+                                                   ValueChanged="@(async (float d) => await OnQuantityInputValueChangedAsync(d))">
+                            </AntDesign.InputNumber>
+                            <span>@Model.QuantityType.QuantityLabel</span>
+                        </div>
+                        <div class="d-flex">
+                            <Button Class="d-flex align-items-center justify-content-center" Icon="plus"
+                                    OnClick="OnIncrementQuantityButtonClickedAsync"></Button>
+                            <Button Class="d-flex align-items-center justify-content-center" Icon="minus"
+                                    OnClick="OnDecrementQuantityButtonClickedAsync"></Button>
+                        </div>
+                    </div>
+                    @if (Model.IsTemporary)
+                    {
+                        <div class="px-2 m-0 ml-auto">
+                            <Button Icon="download"
+                                    OnClick="@OnMakeItemPermanentButtonClicked"
+                                    Disabled="@(Model.Id.ActualId == null)">
+                            </Button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex">
+            <div class="m-0">
+                <span>@Model.Quantity</span><span>@Model.QuantityType.QuantityLabel</span>
+            </div>
+            <div class="m-0 pl-2">
+                @Model.Name
+            </div>
+            @if (!Model.IsTemporary)
+            {
+                <div class="px-2 m-0 align-self-center ml-auto">
+                    <span>@(String.Format("{0:0.00}", CalculatePrice()))</span>
+                    <span>€</span>
+                </div>
+            }
+        </div>
+    }
+</li>
+
+@code{
+    [Parameter] public ShoppingListState State { get; set; }
+    [Parameter] public ShoppingListItem Model { get; set; }
+
+    private async Task OnItemClickedAsync()
+    {
+        if (State.ItemsInEditMode)
+            return;
+
+        if (Model.IsInBasket)
+        {
+            Model.RemoveFromBasket();
+            var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
+            await communicationService.EnqueueAsync(request);
+        }
+        else
+        {
+            Model.PutInBasket();
+            var request = new PutItemInBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
+            await communicationService.EnqueueAsync(request);
+        }
+    }
+
+    private float CalculatePrice()
+    {
+        return itemPriceCalculationService.CalculatePrice(Model.QuantityType.Id, Model.PricePerQuantity, Model.Quantity);
+    }
+
+    private async Task OnQuantityInputValueChangedAsync(float quantity)
+    {
+        Model.Quantity = quantity;
+        await SendQuantityChangedRequestAsync();
+    }
+
+    private async Task OnRemoveItemButtonClickedAsync()
+    {
+        State.ShoppingList.Remove(Model.Id);
+        var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
+        await communicationService.EnqueueAsync(request);
+        State.StateChanged?.Invoke();
+    }
+
+    private async Task OnIncrementQuantityButtonClickedAsync()
+    {
+        Model.Quantity += Model.QuantityType.DefaultQuantity;
+        await SendQuantityChangedRequestAsync();
+    }
+
+    private async Task OnDecrementQuantityButtonClickedAsync()
+    {
+        Model.Quantity -= Model.QuantityType.DefaultQuantity;
+        await SendQuantityChangedRequestAsync();
+    }
+
+    private async Task SendQuantityChangedRequestAsync()
+    {
+        var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id,
+            Model.Quantity);
+        await communicationService.EnqueueAsync(request);
+    }
+
+    private void OnMakeItemPermanentButtonClicked()
+    {
+        navigationManager.NavigateTo($"items/{Model.Id.ActualId.Value}");
+    }
+}

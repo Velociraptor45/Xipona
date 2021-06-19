@@ -1,5 +1,5 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Service;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
 
 <div>
     <div class="py-2 mb-1 pl-1 d-flex align-items-center cursor-pointer @GetBackgroundColor() @GetFontColor()" @onclick="OnSectionClicked">
@@ -16,30 +16,18 @@
     @if (Model.IsExpanded)
     {
         <ul class="pl-3">
-            @foreach (var item in Model.Items.Where(item => ShowItemsInBasket || !item.IsInBasket))
+            @foreach (var item in Model.Items.Where(item => State.ItemsInBasketVisible || !item.IsInBasket))
             {
-                <ShoppingListItemComponent Item="@item"
-                                           ItemBasketStatusChangedCallback="@ItemBasketStatusChangedCallback"
-                                           ItemQuantityChangedCallback="@ItemQuantityChangedCallback"
-                                           ItemRemovedCallback="@ItemRemovedCallback"
-                                           IsInEditMode="@IsInEditMode"
-                                           ItemPriceCalculationService="@ItemPriceCalculationService"></ShoppingListItemComponent>
+                <Item State="@State"
+                      Model="@item"></Item>
             }
         </ul>
     }
 </div>
 
 @code {
+    [Parameter] public ShoppingListState State { get; set; }
     [Parameter] public ShoppingListSection Model { get; set; }
-    [Parameter] public bool ShowItemsInBasket { get; set; }
-
-    [Parameter] public EventCallback<ShoppingListItem> ItemBasketStatusChangedCallback { get; set; }
-    [Parameter] public EventCallback<ShoppingListItem> ItemQuantityChangedCallback { get; set; }
-    [Parameter] public EventCallback<ShoppingListItem> ItemRemovedCallback { get; set; }
-    [Parameter] public EventCallback<ShoppingListItem> MakeItemPermanentCallback { get; set; }
-
-    [Parameter] public bool IsInEditMode { get; set; }
-    [Parameter] public IItemPriceCalculationService ItemPriceCalculationService { get; set; }
 
     private void OnSectionClicked()
     {

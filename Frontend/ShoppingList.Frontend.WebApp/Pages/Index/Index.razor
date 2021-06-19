@@ -1,0 +1,139 @@
+﻿@page "/"
+
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification.IShoppingListNotificationService notificationService;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.IItemPriceCalculationService itemPriceCalculationService;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListCommunicationService communicationService;
+@inject IWebAssemblyHostEnvironment Env;
+
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common;
+@using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+
+@namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index
+
+<div>
+    @if (errorHandler.ApiHasProcessingError)
+    {
+        <ProcessingError ReloadCallback="@ReloadAfterProcessingErrorAsync"></ProcessingError>
+    }
+    <div class="mb-1 d-flex justify-content-end align-items-center">
+        <DebugSwitch DebugHandler="@errorHandler"></DebugSwitch>
+        <StoreSelect Page="@state" ErrorHandler="@errorHandler"></StoreSelect>
+        <ItemVisiblityButton State="@state"></ItemVisiblityButton>
+        <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
+                Disabled="@(state.ShoppingList?.Store == null)">
+            <Icon Type="edit" />
+        </Button>
+    </div>
+    <ItemSearchBar ReloadShoppingListAsync="@ReloadShoppingListAsync"
+                   ErrorHandler="@errorHandler"
+                   State="@state"></ItemSearchBar>
+    <div>
+        @foreach (var section in GetNonEmptySections())
+        {
+            <Section State="@state"
+                     Model="@section"></Section>
+        }
+    </div>
+    <div class="d-flex justify-content-end">
+        <Button Type="@ButtonType.Primary"
+                OnClick="@OnFinishListButtonClicked"
+                Class="mr-2"
+                Disabled="@(!state.ShoppingList?.AnyItemInBasket ?? true)">
+            Finish List
+        </Button>
+    </div>
+    <ErrorStack ErrorHandler="@errorHandler"></ErrorStack>
+</div>
+
+@code{
+    private ShoppingListState state;
+    private ErrorHandler errorHandler;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await itemPriceCalculationService.InitializeAsync();
+
+        errorHandler.StateChanged += () => StateHasChanged();
+        errorHandler.QueueProcessed += async () => await ReloadShoppingListAsync();
+        state.StateChanged += () => StateHasChanged();
+        state.ReloadRequestedAsync += async (storeId) => await LoadShoppingListAsync(storeId);
+
+        communicationService.InitializeCommandQueue(errorHandler);
+
+        StateHasChanged();
+    }
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        state = new ShoppingListState(null, true, false);
+        errorHandler = new ErrorHandler(isDebug: Env.IsDevelopment(),
+            (action, label) => GetButtonRenderFragment(action, label),
+            (func, label) => GetAsyncButtonRenderFragment(func, label),
+            notificationService);
+
+        return base.SetParametersAsync(parameters);
+    }
+
+    #region Loading
+
+    private async Task ReloadShoppingListAsync()
+    {
+        await LoadShoppingListAsync(state.ShoppingList.Store.Id);
+    }
+
+    private async Task LoadShoppingListAsync(int storeId)
+    {
+        var shoppingList = await communicationService.LoadActiveShoppingListAsync(storeId,
+            async () => await LoadShoppingListAsync(storeId), errorHandler);
+        if (shoppingList == null)
+            return;
+
+        state.ChangeList(shoppingList);
+    }
+    #endregion
+
+    private IEnumerable<ShoppingListSection> GetNonEmptySections()
+    {
+        return state.ShoppingList?.Sections.Where(s => s.Items.Any()) ?? Enumerable.Empty<ShoppingListSection>();
+    }
+
+    #region Callbacks
+
+    private void OnEditModeButtonClicked()
+    {
+        state.ToggleItemEditMode();
+    }
+
+    private async Task OnFinishListButtonClicked()
+    {
+        var request = new FinishListRequest(Guid.NewGuid(), state.ShoppingList.Id);
+        bool result = await communicationService.FinishListAsync(request, async () => await OnFinishListButtonClicked(), errorHandler);
+        if (!result)
+            return;
+
+        await ReloadShoppingListAsync();
+    }
+    #endregion
+
+    private async Task ReloadAfterProcessingErrorAsync()
+    {
+        errorHandler.ResolveProcessingError();
+        await ReloadShoppingListAsync();
+    }
+
+    private RenderFragment GetButtonRenderFragment(Action callback, string label = "Retry")
+    {
+        return@<Button Type="@ButtonType.Primary" OnClick="() => callback()">@label</Button>;
+}
+
+private RenderFragment GetAsyncButtonRenderFragment(Func<Task> callback, string label = "Retry")
+{
+return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
+}
+}
