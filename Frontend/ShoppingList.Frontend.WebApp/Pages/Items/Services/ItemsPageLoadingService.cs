@@ -1,13 +1,13 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Models;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using ProjectHermes.ShoppingList.Frontend.Models.Items;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 
-namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items
+namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 {
     public class ItemsPageLoadingService : IItemsPageLoadingService
     {

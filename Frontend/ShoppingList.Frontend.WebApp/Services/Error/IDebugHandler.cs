@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.ShoppingList.Frontend.Models.Common
+﻿namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
 {
     public interface IDebugHandler
     {

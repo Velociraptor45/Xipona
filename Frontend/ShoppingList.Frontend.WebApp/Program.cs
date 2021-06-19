@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
-using ProjectHermes.ShoppingList.Frontend.Models.Common.Services;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services;

@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Common.Error;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

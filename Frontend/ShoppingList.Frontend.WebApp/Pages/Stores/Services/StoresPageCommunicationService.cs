@@ -1,11 +1,11 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Common.Error;
-using ProjectHermes.ShoppingList.Frontend.Models.Common.Services;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
 {

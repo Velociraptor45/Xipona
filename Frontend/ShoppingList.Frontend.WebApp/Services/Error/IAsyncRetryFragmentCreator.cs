@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Common.Error
+namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
 {
     public interface IAsyncRetryFragmentCreator
     {

@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
-using ProjectHermes.ShoppingList.Frontend.Models.Common;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using RestEase;
 using System;
 using System.Collections.Generic;

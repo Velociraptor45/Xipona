@@ -1,16 +1,20 @@
 ﻿@page "/"
+
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
 @inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.ICommandQueue commandQueue;
-@inject Models.Common.Services.IShoppingListNotificationService notificationService;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification.IShoppingListNotificationService notificationService;
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.IItemPriceCalculationService itemPriceCalculationService;
 @inject IWebAssemblyHostEnvironment Env;
+
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common;
 @using ProjectHermes.ShoppingList.Frontend.Models;
-@using ProjectHermes.ShoppingList.Frontend.Models.Common;
-@using ProjectHermes.ShoppingList.Frontend.Models.Index;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+
+@namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index
 
 <div>
     @if (errorReceiver.ApiHasProcessingError)

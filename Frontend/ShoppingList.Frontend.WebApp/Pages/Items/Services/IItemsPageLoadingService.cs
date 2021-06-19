@@ -5,11 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items
+namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 {
     public interface IItemsPageLoadingService
     {
         Task<ItemsState> LoadInitialPageState(Func<Task> OnFailureCallback, IAsyncRetryFragmentCreator fragmentCreator);
+
         Task<StoreItem> LoadItemAsync(int itemId, IAsyncRetryFragmentCreator fragmentCreator);
 
         Task<IEnumerable<ItemCategory>> LoadItemCategoriesAsync(IAsyncRetryFragmentCreator fragmentCreator);

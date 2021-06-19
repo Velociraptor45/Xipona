@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using ProjectHermes.ShoppingList.Frontend.Models.Common.Error;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using System;
 using System.Threading.Tasks;
 

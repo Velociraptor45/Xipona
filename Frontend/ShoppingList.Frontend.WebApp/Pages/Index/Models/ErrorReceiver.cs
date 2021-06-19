@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
-using ProjectHermes.ShoppingList.Frontend.Models.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Common.Error;
-using ProjectHermes.ShoppingList.Frontend.Models.Common.Services;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Index
+namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
 {
     public class ErrorReceiver : ICommandQueueErrorHandler, IDebugHandler, IRetryFragmentCreator
     {

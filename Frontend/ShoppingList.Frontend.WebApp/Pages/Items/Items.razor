@@ -3,9 +3,12 @@
 
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Filter;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Editor;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Items;
 
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items.IItemsPageLoadingService loadingService;
+
+@namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items
 
 <div>
     @if (!(state?.IsInEditMode ?? false))

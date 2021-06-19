@@ -1,7 +1,8 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Frontend.Models;
+using System;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Index
+namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
 {
     public class ShoppingListState
     {
