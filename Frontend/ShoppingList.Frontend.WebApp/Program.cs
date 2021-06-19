@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Models.Common.Services;
 using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items;
 using System;
@@ -45,6 +46,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddScoped<IItemPriceCalculationService, ItemPriceCalculationService>();
 
             builder.Services.AddTransient<IItemsPageLoadingService, ItemsPageLoadingService>();
+            builder.Services.AddTransient<IStoresPageCommunicationService, StoresPageCommunicationService>();
         }
     }
 }

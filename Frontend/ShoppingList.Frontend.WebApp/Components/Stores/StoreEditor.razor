@@ -1,96 +1,65 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models;
+﻿@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+@using ProjectHermes.ShoppingList.Frontend.Models.Common.Error;
 
-<div class="px-2">
-    <div class="d-flex">
-        <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClickedAsync">
-            <Icon Type="arrow-left"></Icon>
-        </Button>
-        <div class="mx-3">
-            <Input @bind-Value="@Store.Name" />
-        </div>
-    </div>
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services.IStoresPageCommunicationService communicationService;
 
-    <div class="my-3">
-        <div class="d-flex align-items-center">
-            <div>
-                Sections
-            </div>
-            <div class="ml-2">
-                <Button Icon="plus"
-                        Class="align-items-center justify-content-center d-flex"
-                        OnClick="@OnAddSectionButtonClicked"></Button>
+@if (State.IsInEditMode)
+{
+    <div class="px-2">
+        <div class="d-flex">
+            <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClickedAsync">
+                <Icon Type="arrow-left"></Icon>
+            </Button>
+            <div class="mx-3">
+                <Input @bind-Value="@State.EditedStore.Name" />
             </div>
         </div>
-        @foreach (var section in Store.Sections)
-        {
-            <Section Model="@section"
-                     ParentModel="@Store"
-                     StateChangedCallback="@OnStateChanged"
-                     OnSectionRemovedCallback="@OnSectionRemoved"></Section>
-        }
-    </div>
 
-    <div>
-        Default Section:
-        <SingleSelect TItem="StoreSection"
-                      TValue="StoreSectionId"
-                      ValueName="@nameof(StoreSection.Id)"
-                      LabelName="@nameof(StoreSection.Name)"
-                      DefaultValue="@Store.Sections.First(s => s.IsDefaultSection).Id"
-                      DataSource="@Store.Sections.ToList()"
-                      OnItemChanged="OnDefaultSectionChanged"></SingleSelect>
-    </div>
+        <Sections State="@State"></Sections>
 
-    <div class="d-flex justify-content-end mt-2">
-        @if (Store.Id == 0)
-        {
-            <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
-        }
-        else
-        {
-            <Button @onclick="@OnSaveButtonClickedAsync">Save</Button>
-        }
+        <div class="d-flex justify-content-end mt-2">
+            @if (State.EditedStore.Id == 0)
+            {
+                <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
+            }
+            else
+            {
+                <Button @onclick="@OnSaveButtonClickedAsync">Save</Button>
+            }
+        </div>
     </div>
-</div>
+}
 
 @code {
-    [Parameter] public Store Store { get; set; }
-    [Parameter] public EventCallback<Store> CreateStoreCallback { get; set; }
-    [Parameter] public EventCallback<Store> SaveStoreCallback { get; set; }
-    [Parameter] public EventCallback LeaveEditorCallback { get; set; }
+    [Parameter] public StoresState State { get; set; }
+    [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
 
     private async Task OnBackButtonClickedAsync()
     {
-        await LeaveEditorCallback.InvokeAsync(null);
+        await State.LeaveEditorAsync();
     }
 
     private async Task OnCreateButtonClickedAsync()
     {
-        await CreateStoreCallback.InvokeAsync(Store);
+        var request = new CreateStoreRequest(Guid.NewGuid(), State.EditedStore);
+
+        var result = await communicationService.CreateStoreAsync(request, async () => await OnCreateButtonClickedAsync(), FragmentCreator);
+        if (!result)
+            return;
+
+        await State.LeaveEditorAsync();
     }
 
     private async Task OnSaveButtonClickedAsync()
     {
-        await SaveStoreCallback.InvokeAsync(Store);
-    }
+        var request = new ModifyStoreRequest(Guid.NewGuid(), State.EditedStore.Id, State.EditedStore.Name, State.EditedStore.Sections);
 
-    private void OnDefaultSectionChanged(StoreSection section)
-    {
-        Store.ChangeDefaultSection(section.Id.FrontendId);
-    }
+        var result = await communicationService.SaveStoreAsync(request, async () => await OnSaveButtonClickedAsync(), FragmentCreator);
 
-    private void OnAddSectionButtonClicked()
-    {
-        Store.AddSection();
-    }
+        if (!result)
+            return;
 
-    private void OnSectionRemoved(StoreSection section)
-    {
-        Store.Sections.Remove(section);
-    }
-
-    private void OnStateChanged()
-    {
-        StateHasChanged();
+        await State.LeaveEditorAsync();
     }
 }
