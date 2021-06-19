@@ -36,7 +36,7 @@
 @code {
     [Parameter] public Func<Task> ReloadShoppingListAsync { get; set; }
     [Parameter] public ShoppingListState Page { get; set; }
-    [Parameter] public ErrorReceiver ErrorReceiver { get; set; }
+    [Parameter] public ErrorHandler ErrorHandler { get; set; }
 
     private SearchBar searchBar = new SearchBar();
 
@@ -62,10 +62,10 @@
         }
         catch (Exception e)
         {
-            var fragment = ErrorReceiver.CreateRetryFragment((items) => OnSearch((string)items[0]), new[] { searchInput });
+            var fragment = ErrorHandler.CreateRetryFragment((items) => OnSearch((string)items[0]), new[] { searchInput });
             notificationService.NotifyError("Search for items failed", e.Message, fragment);
 
-            ErrorReceiver.Log(e.ToString());
+            ErrorHandler.Log(e.ToString());
             return;
         }
         StateHasChanged();
@@ -99,7 +99,7 @@
         catch (Exception e)
         {
             notificationService.NotifyError("Adding item failed", e.Message);
-            ErrorReceiver.Log(e.ToString());
+            ErrorHandler.Log(e.ToString());
             return;
         }
 

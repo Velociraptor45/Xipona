@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
 {
-    public class ErrorReceiver : ICommandQueueErrorHandler, IDebugHandler, IRetryFragmentCreator
+    public class ErrorHandler : ICommandQueueErrorHandler, IDebugHandler, IRetryFragmentCreator
     {
         private readonly List<string> stack = new List<string>();
         private readonly Func<Action<object[]>, object[], string, RenderFragment> createRenderFragment;
@@ -19,7 +19,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
         public bool IsDebug { get; private set; }
         public bool ApiHasProcessingError { get; private set; }
 
-        public ErrorReceiver(bool isDebug,
+        public ErrorHandler(bool isDebug,
             Func<Action<object[]>, object[], string, RenderFragment> CreateRenderFragment,
             IShoppingListNotificationService notificationService)
         {

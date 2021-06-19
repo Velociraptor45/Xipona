@@ -17,13 +17,13 @@
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index
 
 <div>
-    @if (errorReceiver.ApiHasProcessingError)
+    @if (errorHandler.ApiHasProcessingError)
     {
         <ProcessingError ReloadCallback="@ReloadAfterProcessingErrorAsync"></ProcessingError>
     }
     <div class="mb-1 d-flex justify-content-end align-items-center">
-        <DebugSwitch DebugHandler="@((IDebugHandler)errorReceiver)"></DebugSwitch>
-        <StoreSelect Page="@state" ErrorReceiver="@errorReceiver"></StoreSelect>
+        <DebugSwitch DebugHandler="@errorHandler"></DebugSwitch>
+        <StoreSelect Page="@state" ErrorHandler="@errorHandler"></StoreSelect>
         <ItemVisiblityButton State="@state"></ItemVisiblityButton>
         <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
                 Disabled="@(state.ShoppingList?.Store == null)">
@@ -31,7 +31,7 @@
         </Button>
     </div>
     <ItemSearchBar ReloadShoppingListAsync="@ReloadShoppingListAsync"
-                   ErrorReceiver="@errorReceiver"
+                   ErrorHandler="@errorHandler"
                    Page="@state"></ItemSearchBar>
     <div>
         @foreach (var section in GetNonEmptySections())
@@ -48,12 +48,12 @@
             Finish List
         </Button>
     </div>
-    <ErrorStack ErrorReceiver="@errorReceiver"></ErrorStack>
+    <ErrorStack ErrorHandler="@errorHandler"></ErrorStack>
 </div>
 
 @code{
     private ShoppingListState state;
-    private ErrorReceiver errorReceiver;
+    private ErrorHandler errorHandler;
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,12 +61,12 @@
 
         await itemPriceCalculationService.InitializeAsync();
 
-        errorReceiver.StateChanged += () => StateHasChanged();
-        errorReceiver.QueueProcessed += async () => await ReloadShoppingListAsync();
+        errorHandler.StateChanged += () => StateHasChanged();
+        errorHandler.QueueProcessed += async () => await ReloadShoppingListAsync();
         state.StateChanged += () => StateHasChanged();
         state.ReloadRequestedAsync += async (storeId) => await LoadShoppingListAsync(storeId);
 
-        commandQueue.Initialize(errorReceiver);
+        commandQueue.Initialize(errorHandler);
 
         StateHasChanged();
     }
@@ -74,7 +74,7 @@
     public override Task SetParametersAsync(ParameterView parameters)
     {
         state = new ShoppingListState(null, true, false);
-        errorReceiver = new ErrorReceiver(isDebug: Env.IsDevelopment(),
+        errorHandler = new ErrorHandler(isDebug: Env.IsDevelopment(),
             (action, args, label) => GetButtonRenderFragment(action, args, label),
             notificationService);
 
@@ -127,7 +127,7 @@
 
     private async Task ReloadAfterProcessingErrorAsync()
     {
-        errorReceiver.ResolveProcessingError();
+        errorHandler.ResolveProcessingError();
         await ReloadShoppingListAsync();
     }
 

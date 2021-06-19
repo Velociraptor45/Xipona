@@ -15,7 +15,7 @@
 
 @code {
     [Parameter] public ShoppingListState Page { get; set; }
-    [Parameter] public ErrorReceiver ErrorReceiver { get; set; }
+    [Parameter] public ErrorHandler ErrorHandler { get; set; }
 
     private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>(), 0);
 
@@ -27,9 +27,9 @@
         }
         catch (Exception e)
         {
-            var fragment = ErrorReceiver.CreateRetryFragment(async (items) => await LoadAvailableStoresAsync(), new object[0]);
+            var fragment = ErrorHandler.CreateRetryFragment(async (items) => await LoadAvailableStoresAsync(), new object[0]);
             notificationService.NotifyError("Page loading failed", e.Message, fragment);
-            ErrorReceiver.Log(e.ToString());
+            ErrorHandler.Log(e.ToString());
             return;
         }
 

@@ -25,11 +25,11 @@
     [Parameter] public int? ItemId { get; set; }
 
     private ItemsState state;
-    private ItemsErrorHandler errorHandler;
+    private ErrorHandler errorHandler;
 
     protected override async Task OnInitializedAsync()
     {
-        errorHandler = new ItemsErrorHandler((func, label) => GetButtonRenderFragment(func, label));
+        errorHandler = new ErrorHandler((func, label) => GetButtonRenderFragment(func, label));
         await InitialLoadAsync();
 
         await base.OnInitializedAsync();
