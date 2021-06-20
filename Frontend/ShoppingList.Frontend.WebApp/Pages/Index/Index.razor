@@ -1,7 +1,7 @@
 ﻿@page "/"
 
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification.IShoppingListNotificationService notificationService;
-@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.IItemPriceCalculationService itemPriceCalculationService;
+@inject ProjectHermes.ShoppingList.Frontend.Models.Index.Services.IItemPriceCalculationService itemPriceCalculationService;
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListCommunicationService communicationService;
 @inject IWebAssemblyHostEnvironment Env;
 
@@ -14,40 +14,59 @@
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index
 
-<div>
-    @if (errorHandler.ApiHasProcessingError)
-    {
-        <ProcessingError ReloadCallback="@ReloadAfterProcessingErrorAsync"></ProcessingError>
-    }
-    <div class="mb-1 d-flex justify-content-end align-items-center">
-        <DebugSwitch DebugHandler="@errorHandler"></DebugSwitch>
-        <StoreSelect Page="@state" ErrorHandler="@errorHandler"></StoreSelect>
-        <ItemVisiblityButton State="@state"></ItemVisiblityButton>
-        <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
-                Disabled="@(state.ShoppingList?.Store == null)">
-            <Icon Type="edit" />
-        </Button>
-    </div>
-    <ItemSearchBar ReloadShoppingListAsync="@ReloadShoppingListAsync"
-                   ErrorHandler="@errorHandler"
-                   State="@state"></ItemSearchBar>
+@if (state != null)
+{
     <div>
-        @foreach (var section in GetNonEmptySections())
+        @if (errorHandler.ApiHasProcessingError)
         {
-            <Section State="@state"
-                     Model="@section"></Section>
+            <ProcessingError ReloadCallback="@ReloadAfterProcessingErrorAsync"></ProcessingError>
         }
+        <div class="mb-1 d-flex justify-content-end align-items-center">
+            <DebugSwitch DebugHandler="@errorHandler"></DebugSwitch>
+            <StoreSelect Page="@state" ErrorHandler="@errorHandler"></StoreSelect>
+            <ItemVisiblityButton State="@state"></ItemVisiblityButton>
+            <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
+                    Disabled="@(state.ShoppingList?.Store == null)">
+                <Icon Type="edit" />
+            </Button>
+        </div>
+        <ItemSearchBar ReloadShoppingListAsync="@ReloadShoppingListAsync"
+                       ErrorHandler="@errorHandler"
+                       State="@state"></ItemSearchBar>
+        <div>
+            @foreach (var section in GetNonEmptySections())
+            {
+                <Section State="@state"
+                         Model="@section"></Section>
+            }
+        </div>
+        @if (state.ShoppingList != null)
+        {
+            <div class="d-flex align-items-end flex-column px-2">
+                <div class="d-flex border-top pt-1">
+                    <div class="d-flex">
+                        <span>@GetInBasketPrice()</span>
+                        <span>€</span>
+                    </div>
+                    <span class="px-1">/</span>
+                    <div class="d-flex">
+                        <span>@GetTotalListPrice()</span>
+                        <span>€</span>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="d-flex justify-content-end mt-2">
+            <Button Type="@ButtonType.Primary"
+                    OnClick="@OnFinishListButtonClicked"
+                    Class="mr-2"
+                    Disabled="@(!state.ShoppingList?.AnyItemInBasket ?? true)">
+                Finish List
+            </Button>
+        </div>
+        <ErrorStack ErrorHandler="@errorHandler"></ErrorStack>
     </div>
-    <div class="d-flex justify-content-end">
-        <Button Type="@ButtonType.Primary"
-                OnClick="@OnFinishListButtonClicked"
-                Class="mr-2"
-                Disabled="@(!state.ShoppingList?.AnyItemInBasket ?? true)">
-            Finish List
-        </Button>
-    </div>
-    <ErrorStack ErrorHandler="@errorHandler"></ErrorStack>
-</div>
+}
 
 @code{
     private ShoppingListState state;
@@ -120,6 +139,18 @@
         await ReloadShoppingListAsync();
     }
     #endregion
+
+    private string GetTotalListPrice()
+    {
+        var price = state.ShoppingList.GetTotalPrice(itemPriceCalculationService);
+        return String.Format("{0:0.00}", price);
+    }
+
+    private string GetInBasketPrice()
+    {
+        var price = state.ShoppingList.GetInBasketPrice(itemPriceCalculationService);
+        return String.Format("{0:0.00}", price);
+    }
 
     private async Task ReloadAfterProcessingErrorAsync()
     {

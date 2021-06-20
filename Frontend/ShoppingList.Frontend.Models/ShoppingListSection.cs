@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
+using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -52,6 +53,16 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         public void Close()
         {
             IsExpanded = false;
+        }
+
+        public float GetTotalPrice(IItemPriceCalculationService priceCalculationService)
+        {
+            return Items.Where(i => !i.IsTemporary).Sum(i => i.GetTotalPrice(priceCalculationService));
+        }
+
+        public float GetInBasketPrice(IItemPriceCalculationService priceCalculationService)
+        {
+            return Items.Where(i => i.IsInBasket && !i.IsTemporary).Sum(i => i.GetTotalPrice(priceCalculationService));
         }
     }
 }
