@@ -1,26 +1,22 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Moq;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Mocks;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Mocks;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Services;
+using ShoppingList.Api.Domain.TestKit.Manufacturers.Services;
 using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Mocks;
-using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
-using ShoppingList.Api.Domain.TestKit.Stores.Mocks;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -28,30 +24,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
 {
     public class CreateItemCommandHandlerTests
     {
-        private readonly CommonFixture commonFixture;
-        private readonly StoreFixture storeFixture;
-        private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
-        private readonly StoreItemSectionFixture storeItemSectionFixture;
-        private readonly StoreItemFixture storeItemFixture;
-        private readonly CreateItemCommandFixture createItemCommandFixture;
-
-        public CreateItemCommandHandlerTests()
-        {
-            commonFixture = new CommonFixture();
-            storeFixture = new StoreFixture(commonFixture);
-            storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
-            storeItemSectionFixture = new StoreItemSectionFixture(commonFixture);
-            storeItemFixture = new StoreItemFixture(new StoreItemAvailabilityFixture(commonFixture), commonFixture);
-            createItemCommandFixture = new CreateItemCommandFixture(commonFixture);
-        }
-
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
-
-            var handler = fixture.Create<CreateItemCommandHandler>();
+            var local = new LocalFixture();
+            var handler = local.CreateCommandHandler();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(null, default);
@@ -64,108 +42,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         }
 
         [Fact]
-        public async Task HandleAsync_WithInvalidItemCategoryId_ShouldThrowDomainException()
+        public async Task HandleAsync_WithValidDataAndManufacturerId_ShouldCreateItem()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
+            var local = new LocalFixture();
 
-            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
-            var handler = fixture.Create<CreateItemCommandHandler>();
-            var command = fixture.Create<CreateItemCommand>();
-
-            itemCategoryRepositoryMock.SetupFindByAsync(command.ItemCreation.ItemCategoryId, null);
-
-            // Act
-            Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                (await action.Should().ThrowAsync<DomainException>())
-                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemCategoryNotFound);
-            }
-        }
-
-        [Fact]
-        public async Task HandleAsync_WithInvalidManufacturerId_ShouldThrowDomainException()
-        {
-            // Arrange
-            var fixture = commonFixture.GetNewFixture();
-
-            ManufacturerRepositoryMock manufacturerRepositoryMock = new ManufacturerRepositoryMock(fixture);
-            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
-
-            ManufacturerId manufacturerId = new ManufacturerId(commonFixture.NextInt());
-            IItemCategory itemCategory = fixture.Create<ItemCategory>();
-
-            var handler = fixture.Create<CreateItemCommandHandler>();
-            var command = createItemCommandFixture.GetCreateItemCommand(itemCategory.Id, manufacturerId);
-
-            manufacturerRepositoryMock.SetupFindByAsync(manufacturerId, null);
-            itemCategoryRepositoryMock.SetupFindByAsync(itemCategory.Id, itemCategory);
-
-            // Act
-            Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                (await action.Should().ThrowAsync<DomainException>())
-                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ManufacturerNotFound);
-            }
-        }
-
-        [Fact]
-        public async Task HandleAsync_WithInvalidStoreStoreIdFromAvailability_ShouldThrowDomainException()
-        {
-            // todo implement
-        }
-
-        [Fact]
-        public async Task HandleAsync_WithInvalidStoreItemSection_ShouldThrowDomainException()
-        {
-            // todo implement
-        }
-
-        [Fact]
-        public async Task HandleAsync_WithValidDataAndFilledManufacturerId_ShouldCreateItem()
-        {
-            // Arrange
-            var fixture = commonFixture.GetNewFixture();
-
-            StoreItemFactoryMock storeItemFactoryMock = new StoreItemFactoryMock(fixture);
-            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
-            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
-            ManufacturerRepositoryMock manufacturerRepositoryMock = new ManufacturerRepositoryMock(fixture);
-            StoreItemAvailabilityFactoryMock availabilityFactoryMock = new StoreItemAvailabilityFactoryMock(fixture);
-            StoreItemSectionReadRepositoryMock sectionReadRepositoryMock = new StoreItemSectionReadRepositoryMock(fixture);
-            StoreRepositoryMock storeRepositoryMock = new StoreRepositoryMock(fixture);
-
-            IManufacturer manufacturer = fixture.Create<Manufacturer>();
-            IItemCategory itemCategory = fixture.Create<ItemCategory>();
-            IStoreItem storeItem = storeItemFixture.CreateValid();
+            IStoreItem storeItem = local.StoreItemFixture.CreateValid();
             List<IStoreItemAvailability> availabilities = storeItem.Availabilities.ToList();
 
-            // setup availability creation
-            List<IStore> stores = storeFixture.GetStores(availabilities.Count).ToList();
-            for (int i = 0; i < availabilities.Count; i++)
-            {
-                var av = availabilities[i];
-                var store = stores[i];
-                storeRepositoryMock.SetupFindActiveByAsync(av.Store.Id.AsStoreId(), store);
-                availabilityFactoryMock.SetupCreate(store, av.Price, av.DefaultSection.Id, av);
-            }
+            var handler = local.CreateCommandHandler();
+            var command = local.CreateCommand(availabilities);
 
-            var handler = fixture.Create<CreateItemCommandHandler>();
-            var command = createItemCommandFixture.GetCreateItemCommand(itemCategory.Id, manufacturer.Id, availabilities);
-
-            // setup retrieving availability sections
-            var availabilitySections = availabilities.Select(av => av.DefaultSection);
-            sectionReadRepositoryMock.SetupFindByAsync(availabilitySections);
-
-            storeItemFactoryMock.SetupCreate(command.ItemCreation, itemCategory, manufacturer, availabilities, storeItem);
-            itemCategoryRepositoryMock.SetupFindByAsync(itemCategory.Id, itemCategory);
-            manufacturerRepositoryMock.SetupFindByAsync(manufacturer.Id, manufacturer);
+            local.StoreItemFactoryMock.SetupCreate(command.ItemCreation, storeItem);
 
             // Act
             var result = await handler.HandleAsync(command, default);
@@ -174,15 +62,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                itemRepositoryMock.VerifyStoreAsyncOnce(storeItem);
-                for (int i = 0; i < availabilities.Count; i++)
-                {
-                    var shortAv = command.ItemCreation.Availabilities.ElementAt(i);
-                    var av = availabilities[i];
-                    var store = stores[i];
-                    storeRepositoryMock.VerifyFindActiveByAsyncOnce(shortAv.StoreId.AsStoreId());
-                    availabilityFactoryMock.VerifyCreateOnce(store, shortAv.Price, av.DefaultSection.Id);
-                }
+                local.ItemRepositoryMock.VerifyStoreAsyncOnce(storeItem);
+                local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(command.ItemCreation.ItemCategoryId);
+                local.ManufacturerValidationServiceMock.VerifyValidateAsyncOnce(command.ItemCreation.ManufacturerId);
+                local.AvailabilityValidationServiceMock.VerifyValidateOnce(availabilities);
             }
         }
 
@@ -190,39 +73,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         public async Task HandleAsync_WithValidDataAndManufacturerIdNull_ShouldCreateItem()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
+            var local = new LocalFixture();
 
-            StoreItemFactoryMock storeItemFactoryMock = new StoreItemFactoryMock(fixture);
-            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
-            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
-            Mock<IManufacturerRepository> manufacturerRepositoryMock = fixture.Freeze<Mock<IManufacturerRepository>>();
-            StoreItemAvailabilityFactoryMock availabilityFactoryMock = new StoreItemAvailabilityFactoryMock(fixture);
-            StoreItemSectionReadRepositoryMock sectionReadRepositoryMock = new StoreItemSectionReadRepositoryMock(fixture);
-            StoreRepositoryMock storeRepositoryMock = new StoreRepositoryMock(fixture);
-
-            IItemCategory itemCategory = fixture.Create<ItemCategory>();
-            IStoreItem storeItem = storeItemFixture.CreateValid();
+            IStoreItem storeItem = local.StoreItemFixture.CreateValid();
             List<IStoreItemAvailability> availabilities = storeItem.Availabilities.ToList();
 
-            // setup availability creation
-            List<IStore> stores = storeFixture.GetStores(availabilities.Count).ToList();
-            for (int i = 0; i < availabilities.Count; i++)
-            {
-                var av = availabilities[i];
-                var store = stores[i];
-                storeRepositoryMock.SetupFindActiveByAsync(av.Store.Id.AsStoreId(), store);
-                availabilityFactoryMock.SetupCreate(store, av.Price, av.DefaultSection.Id, av);
-            }
+            var handler = local.CreateCommandHandler();
+            var command = local.CreateCommandWithoutManufacturerId(availabilities);
 
-            var handler = fixture.Create<CreateItemCommandHandler>();
-            var command = createItemCommandFixture.GetCreateItemCommand(itemCategory.Id, null, availabilities);
-
-            // setup retrieving availability sections
-            var availabilitySections = availabilities.Select(av => av.DefaultSection);
-            sectionReadRepositoryMock.SetupFindByAsync(availabilitySections);
-
-            storeItemFactoryMock.SetupCreate(command.ItemCreation, itemCategory, null, availabilities, storeItem);
-            itemCategoryRepositoryMock.SetupFindByAsync(itemCategory.Id, itemCategory);
+            local.StoreItemFactoryMock.SetupCreate(command.ItemCreation, storeItem);
 
             // Act
             var result = await handler.HandleAsync(command, default);
@@ -231,12 +90,67 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                manufacturerRepositoryMock.Verify(
-                    i => i.FindByAsync(
-                        It.IsAny<ManufacturerId>(),
-                        It.IsAny<CancellationToken>()),
-                    Times.Never);
-                itemRepositoryMock.VerifyStoreAsyncOnce(storeItem);
+                local.ItemRepositoryMock.VerifyStoreAsyncOnce(storeItem);
+                local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(command.ItemCreation.ItemCategoryId);
+                local.ManufacturerValidationServiceMock.VerifyValidateAsyncNever();
+                local.AvailabilityValidationServiceMock.VerifyValidateOnce(availabilities);
+            }
+        }
+
+        private sealed class LocalFixture
+        {
+            public Fixture Fixture { get; }
+            public CommonFixture CommonFixture { get; } = new CommonFixture();
+            public StoreItemFixture StoreItemFixture { get; }
+            public ShoppingListMockFixture ShoppingListMockFixture { get; }
+            public ItemCategoryFixture ItemCategoryFixture { get; }
+            public ItemRepositoryMock ItemRepositoryMock { get; }
+            public StoreItemFactoryMock StoreItemFactoryMock { get; }
+            public ItemCategoryValidationServiceMock ItemCategoryValidationServiceMock { get; }
+            public ManufacturerValidationServiceMock ManufacturerValidationServiceMock { get; }
+            public AvailabilityValidationServiceMock AvailabilityValidationServiceMock { get; }
+
+            public LocalFixture()
+            {
+                Fixture = CommonFixture.GetNewFixture();
+
+                StoreItemFixture = new StoreItemFixture(new StoreItemAvailabilityFixture(CommonFixture), CommonFixture);
+                ShoppingListMockFixture = new ShoppingListMockFixture(CommonFixture, new ShoppingListFixture(CommonFixture));
+                ItemCategoryFixture = new ItemCategoryFixture(CommonFixture);
+
+                ItemRepositoryMock = new ItemRepositoryMock(Fixture);
+                StoreItemFactoryMock = new StoreItemFactoryMock(Fixture);
+                ItemCategoryValidationServiceMock = new ItemCategoryValidationServiceMock(Fixture);
+                ManufacturerValidationServiceMock = new ManufacturerValidationServiceMock(Fixture);
+                AvailabilityValidationServiceMock = new AvailabilityValidationServiceMock(Fixture);
+            }
+
+            public CreateItemCommand CreateCommand()
+            {
+                return Fixture.Create<CreateItemCommand>();
+            }
+
+            public CreateItemCommand CreateCommand(IEnumerable<IStoreItemAvailability> availabilities)
+            {
+                Fixture.ConstructorArgumentFor<ItemCreation, IEnumerable<IStoreItemAvailability>>(
+                    "availabilities", availabilities);
+
+                return Fixture.Create<CreateItemCommand>();
+            }
+
+            public CreateItemCommand CreateCommandWithoutManufacturerId(
+                IEnumerable<IStoreItemAvailability> availabilities)
+            {
+                Fixture.ConstructorArgumentFor<ItemCreation, ManufacturerId>("manufacturerId", null);
+                Fixture.ConstructorArgumentFor<ItemCreation, IEnumerable<IStoreItemAvailability>>(
+                    "availabilities", availabilities);
+
+                return Fixture.Create<CreateItemCommand>();
+            }
+
+            public CreateItemCommandHandler CreateCommandHandler()
+            {
+                return Fixture.Create<CreateItemCommandHandler>();
             }
         }
     }

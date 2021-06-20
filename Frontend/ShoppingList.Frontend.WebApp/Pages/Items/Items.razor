@@ -1,0 +1,96 @@
+﻿@page "/items"
+@page "/items/{ItemId:int}"
+
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Filter;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Editor;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.Items;
+
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items.IItemsPageLoadingService loadingService;
+
+@namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items
+
+@if (state != null)
+{
+    <div>
+        @if (!state.IsInEditMode)
+        {
+            <ItemFilter State="@state" FragmentCreator="@errorHandler"></ItemFilter>
+        }
+        else
+        {
+            <ItemEditor State="@state" ErrorHandler="@errorHandler"></ItemEditor>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public int? ItemId { get; set; }
+
+    private ItemsState state;
+    private ErrorHandler errorHandler;
+
+    protected override async Task OnInitializedAsync()
+    {
+        errorHandler = new ErrorHandler((func, label) => GetButtonRenderFragment(func, label));
+        await InitialLoadAsync();
+
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ItemId.HasValue)
+        {
+            await OnItemClickedAsync(ItemId.Value);
+        }
+
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task InitialLoadAsync()
+    {
+        state = await loadingService.LoadInitialPageState(async () => await InitialLoadAsync(), errorHandler);
+        SetupState();
+    }
+
+    private void SetupState()
+    {
+        state.ManufacturerCreated += async () => await LoadManufacturerListAsync();
+        state.ItemCategoryCreated += async () => await LoadItemCategoryListAsync();
+
+        state.StateChanged += () => StateHasChanged();
+    }
+
+    private async Task LoadManufacturerListAsync()
+    {
+        var manufacturers = await loadingService.LoadManufacturersAsync(errorHandler);
+        if (manufacturers == null)
+            return;
+
+        state.UpdateManufacturers(manufacturers);
+    }
+
+    private async Task LoadItemCategoryListAsync()
+    {
+        var itemCategories = await loadingService.LoadItemCategoriesAsync(errorHandler);
+        if (itemCategories == null)
+            return;
+
+        state.UpdateItemCategories(itemCategories);
+    }
+
+    private async Task OnItemClickedAsync(int itemId)
+    {
+        var item = await loadingService.LoadItemAsync(itemId, errorHandler);
+        if (item == null)
+            return;
+
+        state.EnterEditor(item);
+    }
+
+    private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")
+    {
+        return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
+}
+}

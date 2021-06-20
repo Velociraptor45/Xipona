@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Fixtures
             var fixture = commonFixture.GetNewFixture();
 
             if (definition.Id != null)
-                fixture.ConstructorArgumentFor<StoreSection, StoreSectionId>("id", definition.Id);
+                fixture.ConstructorArgumentFor<StoreSection, SectionId>("id", definition.Id);
             if (definition.Name != null)
                 fixture.ConstructorArgumentFor<StoreSection, string>("name", definition.Name);
             if (definition.SortingIndex != null)
@@ -44,7 +44,7 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Fixtures
             {
                 if (definition.Id == null)
                 {
-                    definition.Id = new StoreSectionId(newIds.First());
+                    definition.Id = new SectionId(newIds.First());
                     newIds.RemoveAt(0);
                 }
 

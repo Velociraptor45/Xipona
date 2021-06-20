@@ -1,11 +1,11 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch
 {
     public class ItemSearchContract
     {
         public ItemSearchContract(int id, string name, int defaultQuantity, float price,
-            string itemCategoryName, string manufacturerName, StoreItemSectionContract defaultSection)
+            string itemCategoryName, string manufacturerName, StoreSectionContract defaultSection)
         {
             Id = id;
             Name = name;
@@ -22,6 +22,6 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch
         public float Price { get; }
         public string ItemCategoryName { get; }
         public string ManufacturerName { get; }
-        public StoreItemSectionContract DefaultSection { get; }
+        public StoreSectionContract DefaultSection { get; }
     }
 }

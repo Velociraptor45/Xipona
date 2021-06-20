@@ -1,9 +1,11 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels
 {
     public class StoreItemAvailabilityReadModel
     {
         public StoreItemAvailabilityReadModel(StoreItemStoreReadModel store, float price,
-            StoreItemSectionReadModel defaultSection)
+            StoreSectionReadModel defaultSection)
         {
             Store = store;
             Price = price;
@@ -12,6 +14,6 @@
 
         public StoreItemStoreReadModel Store { get; }
         public float Price { get; }
-        public StoreItemSectionReadModel DefaultSection { get; }
+        public StoreSectionReadModel DefaultSection { get; }
     }
 }

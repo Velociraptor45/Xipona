@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
+using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models
 {
@@ -33,6 +34,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         public bool IsInBasket { get; set; }
         public float Quantity { get; set; }
 
+        public float TotalPrice => PricePerQuantity * Quantity;
+
         public void PutInBasket()
         {
             IsInBasket = true;
@@ -46,6 +49,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         public void ChangeQuantity(float quantity)
         {
             Quantity = quantity;
+        }
+
+        public float GetTotalPrice(IItemPriceCalculationService priceCalculationService)
+        {
+            return priceCalculationService.CalculatePrice(QuantityType.Id, PricePerQuantity, Quantity);
         }
     }
 }

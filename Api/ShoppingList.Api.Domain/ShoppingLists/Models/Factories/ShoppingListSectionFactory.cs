@@ -1,20 +1,24 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories
 {
     public class ShoppingListSectionFactory : IShoppingListSectionFactory
     {
-        public IShoppingListSection Create(ShoppingListSectionId sectionId, string name, IEnumerable<IShoppingListItem> shoppingListItems,
-            int sortingIndex, bool isDefaultSection)
+        public IShoppingListSection Create(SectionId sectionId, IEnumerable<IShoppingListItem> shoppingListItems)
         {
-            return new ShoppingListSection(sectionId, name, shoppingListItems, sortingIndex, isDefaultSection);
+            return new ShoppingListSection(sectionId, shoppingListItems);
         }
 
-        public IShoppingListSection Create(IStoreSection storeSection, IEnumerable<IShoppingListItem> items)
+        public IShoppingListSection CreateEmpty(IStoreSection storeSection)
         {
-            return new ShoppingListSection(storeSection.Id.AsShoppingListSectionId(), storeSection.Name, items,
-                storeSection.SortingIndex, storeSection.IsDefaultSection);
+            return new ShoppingListSection(storeSection.Id, Enumerable.Empty<IShoppingListItem>());
+        }
+
+        public IShoppingListSection CreateEmpty(SectionId sectionId)
+        {
+            return new ShoppingListSection(sectionId, Enumerable.Empty<IShoppingListItem>());
         }
     }
 }

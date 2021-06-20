@@ -3,8 +3,8 @@ using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToDomain;
+using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
@@ -18,7 +18,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
             var commonFixture = new CommonFixture();
             var availabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
             var destination = availabilityFixture.CreateValid();
-            var source = GetSource(destination, commonFixture);
+            var source = GetSource(destination);
 
             return (source, destination);
         }
@@ -28,15 +28,13 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
             AddDependencies(serviceCollection);
         }
 
-        public static AvailableAt GetSource(IStoreItemAvailability destination, CommonFixture commonFixture)
+        public static AvailableAt GetSource(IStoreItemAvailability destination)
         {
-            var store = StoreItemStoreConverterTests.GetSource(destination.Store, commonFixture);
-
             return new AvailableAt
             {
-                Store = store,
+                StoreId = destination.StoreId.Value,
                 Price = destination.Price,
-                DefaultSectionId = destination.DefaultSection.Id.Value
+                DefaultSectionId = destination.DefaultSectionId.Value
             };
         }
 
@@ -44,8 +42,6 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
         {
             serviceCollection.AddInstancesOfGenericType(typeof(StoreItemAvailabilityConverter).Assembly, typeof(IToDomainConverter<,>));
             serviceCollection.AddInstancesOfNonGenericType(typeof(IStoreItemAvailabilityFactory).Assembly, typeof(IStoreItemAvailabilityFactory));
-
-            StoreItemStoreConverterTests.AddDependencies(serviceCollection);
         }
     }
 }

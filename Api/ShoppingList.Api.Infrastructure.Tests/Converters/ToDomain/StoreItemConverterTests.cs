@@ -3,8 +3,8 @@ using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToDomain;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToDomain;
+using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
@@ -33,19 +33,17 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
 
         public static Item GetSource(IStoreItem destination, CommonFixture commonFixture)
         {
-            var itemCategory = ItemCategoryConverterTests.GetSource(destination.ItemCategory);
-            var manufacturer = ManufacturerConverterTests.GetSource(destination.Manufacturer);
             Item predecessor = null;
             if (destination.Predecessor != null)
                 predecessor = GetSource(destination.Predecessor, commonFixture);
 
             var availabilities = destination.Availabilities
-                .Select(av => StoreItemAvailabilityConverterTests.GetSource(av, commonFixture))
+                .Select(av => StoreItemAvailabilityConverterTests.GetSource(av))
                 .ToList();
 
             return new Item
             {
-                Id = destination.Id.Actual.Value,
+                Id = destination.Id.Value,
                 Name = destination.Name,
                 Deleted = destination.IsDeleted,
                 Comment = destination.Comment,
@@ -53,13 +51,12 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
                 QuantityType = destination.QuantityType.ToInt(),
                 QuantityInPacket = destination.QuantityInPacket,
                 QuantityTypeInPacket = destination.QuantityTypeInPacket.ToInt(),
-                ItemCategoryId = itemCategory.Id,
-                ItemCategory = itemCategory,
-                ManufacturerId = manufacturer.Id,
-                Manufacturer = manufacturer,
+                ItemCategoryId = destination.ItemCategoryId?.Value,
+                ManufacturerId = destination.ManufacturerId?.Value,
                 PredecessorId = predecessor?.Id,
                 Predecessor = predecessor,
-                AvailableAt = availabilities
+                AvailableAt = availabilities,
+                CreatedFrom = destination.TemporaryId?.Value
             };
         }
 

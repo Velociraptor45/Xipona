@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Model;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Stores

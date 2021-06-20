@@ -1,14 +1,13 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Converters.ToEntity;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Converters.ToEntity;
 using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using System.Linq;
 
-using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Entities;
+using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
 {
@@ -31,13 +30,13 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
             {
                 Id = source.Id.Value,
                 CompletionDate = source.CompletionDate,
-                StoreId = source.Store.Id.Value,
+                StoreId = source.StoreId.Value,
                 ItemsOnList = source.Sections.SelectMany(section =>
-                    section.ShoppingListItems.Select(item =>
-                        new ItemsOnList()
+                    section.Items.Select(item =>
+                        new Entities.ItemsOnList()
                         {
                             ShoppingListId = source.Id.Value,
-                            ItemId = item.Id.Actual.Value,
+                            ItemId = item.Id.Value,
                             InBasket = item.IsInBasket,
                             Quantity = item.Quantity,
                             SectionId = section.Id.Value

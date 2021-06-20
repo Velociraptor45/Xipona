@@ -1,0 +1,12 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
+
+<div>
+    @foreach (var msg in ErrorHandler.Stack)
+    {
+        <div>@msg</div>
+    }
+</div>
+
+@code {
+    [Parameter] public ErrorHandler ErrorHandler { get; set; }
+}

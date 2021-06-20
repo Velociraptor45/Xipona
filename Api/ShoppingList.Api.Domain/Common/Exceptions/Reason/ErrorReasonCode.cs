@@ -3,7 +3,6 @@
     public enum ErrorReasonCode
     {
         ItemNotFound = 0,
-        ActualIdRequired = 1,
         InvalidItemQuantity = 2,
         ItemAlreadyOnShoppingList = 3,
         ItemAtStoreNotAvailable = 4,
@@ -18,9 +17,11 @@
         TemporaryItemNotModifyable = 13,
         TemporaryItemNotUpdateable = 14,
         ItemNotInSection = 15,
-        SectionNotPartOfStore = 16,
+        SectionInStoreNotFound = 16,
         ItemAlreadyInSection = 17,
         StoreItemSectionNotFound = 18,
         NoDefaultSectionSpecified = 19,
+        SectionAlreadyInShoppingList = 20,
+        MultipleAvailabilitiesForStore = 21
     }
 }

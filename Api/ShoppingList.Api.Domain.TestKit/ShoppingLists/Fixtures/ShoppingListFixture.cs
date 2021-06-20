@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Fixtures;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using System;
@@ -14,13 +15,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
     public class ShoppingListFixture : IModelFixture<IShoppingList, ShoppingListDefinition>
     {
         private readonly ShoppingListSectionFixture shoppingListSectionFixture;
-        private readonly ShoppingListStoreFixture shoppingListStoreFixture;
         private readonly CommonFixture commonFixture;
 
         public ShoppingListFixture(CommonFixture commonFixture)
         {
-            this.shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture);
-            shoppingListStoreFixture = new ShoppingListStoreFixture(commonFixture);
+            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture);
             this.commonFixture = commonFixture;
         }
 
@@ -30,8 +29,8 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
             if (definition.Id != null)
                 fixture.ConstructorArgumentFor<ListModels.ShoppingList, ShoppingListId>("id", definition.Id);
-            if (definition.Store != null)
-                fixture.ConstructorArgumentFor<ListModels.ShoppingList, IShoppingListStore>("store", definition.Store);
+            if (definition.StoreId != null)
+                fixture.ConstructorArgumentFor<ListModels.ShoppingList, StoreId>("storeId", definition.StoreId);
             if (definition.Sections != null)
                 fixture.ConstructorArgumentFor<ListModels.ShoppingList, IEnumerable<IShoppingListSection>>("sections", definition.Sections);
             if (definition.UseCompletionDate)
@@ -86,7 +85,6 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
         public IShoppingList CreateValid(ShoppingListDefinition baseDefinition)
         {
-            baseDefinition.Store ??= shoppingListStoreFixture.CreateValid();
             baseDefinition.Sections ??= shoppingListSectionFixture.CreateManyValid();
             baseDefinition.CompletionDate = null;
 
@@ -116,6 +114,20 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             };
 
             return CreateValid(listDefinition);
+        }
+
+        public IShoppingList CreateValidWith(ShoppingListItemDefinition itemDefinition)
+        {
+            var sections = shoppingListSectionFixture.CreateManyValid().ToList();
+            var section = shoppingListSectionFixture.CreateValidWith(itemDefinition);
+            sections.Add(section);
+
+            var listDef = new ShoppingListDefinition
+            {
+                Sections = sections
+            };
+
+            return CreateValid(listDef);
         }
     }
 }

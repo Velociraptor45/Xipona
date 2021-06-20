@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.ShoppingLists
 {
@@ -9,7 +9,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Shopp
     {
         public ShoppingListStoreContract ToContract(ShoppingListStoreReadModel source)
         {
-            return new ShoppingListStoreContract(source.Id.Value, source.Name, source.IsDeleted);
+            return new ShoppingListStoreContract(source.Id.Value, source.Name);
         }
     }
 }

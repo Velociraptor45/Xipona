@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using System;
 using System.Threading;
@@ -14,14 +14,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishSho
     {
         private readonly IShoppingListRepository shoppingListRepository;
         private readonly ITransactionGenerator transactionGenerator;
-        private readonly IShoppingListFactory shoppingListFactory;
 
         public FinishShoppingListCommandHandler(IShoppingListRepository shoppingListRepository,
-            ITransactionGenerator transactionGenerator, IShoppingListFactory shoppingListFactory)
+            ITransactionGenerator transactionGenerator)
         {
             this.shoppingListRepository = shoppingListRepository;
             this.transactionGenerator = transactionGenerator;
-            this.shoppingListFactory = shoppingListFactory;
         }
 
         public async Task<bool> HandleAsync(FinishShoppingListCommand command, CancellationToken cancellationToken)
@@ -35,11 +33,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishSho
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            shoppingList.SetCompletionDate(command.CompletionDate);
-            var sections = shoppingList.GetSectionsWithItemsNotInBasket();
-            shoppingList.RemoveAllItemsNotInBasket();
-
-            var nextShoppingList = shoppingListFactory.CreateNew(shoppingList.Store, sections, null);
+            IShoppingList nextShoppingList = shoppingList.Finish(command.CompletionDate);
 
             cancellationToken.ThrowIfCancellationRequested();
 

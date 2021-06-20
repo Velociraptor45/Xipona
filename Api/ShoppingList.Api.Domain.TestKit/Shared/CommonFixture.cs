@@ -1,5 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoMoq;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,7 @@ namespace ShoppingList.Api.Domain.TestKit.Shared
         public Fixture GetNewFixture()
         {
             var fixture = new Fixture();
+            fixture.Customizations.Add(new EnumSpecimenBuilder<QuantityType>(this));
             fixture.Customize(new AutoMoqCustomization { ConfigureMembers = true });
             return fixture;
         }

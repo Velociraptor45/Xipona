@@ -25,8 +25,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterRes
                 throw new System.ArgumentNullException(nameof(query));
             }
 
-            var storeItems = await itemRepository.FindPermanentByAsync(query.StoreIds, query.ItemCategoriesIds, query.ManufacturerIds,
-                cancellationToken);
+            var storeItems = await itemRepository.FindPermanentByAsync(query.StoreIds, query.ItemCategoriesIds,
+                    query.ManufacturerIds, cancellationToken);
 
             return storeItems
                 .Where(model => !model.IsDeleted)

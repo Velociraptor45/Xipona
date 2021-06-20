@@ -4,7 +4,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using System.Linq;
 using System.Threading;
@@ -51,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.DeleteIt
                 var lists = await shoppingListRepository.FindActiveByAsync(item.Id, cancellationToken);
                 foreach (var list in lists)
                 {
-                    list.RemoveItem(item.Id.ToShoppingListItemId());
+                    list.RemoveItem(item.Id);
                     await shoppingListRepository.StoreAsync(list, cancellationToken);
                 }
                 item.Delete();

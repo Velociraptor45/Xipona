@@ -9,9 +9,9 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishShoppin
 using ShoppingList.Api.Domain.TestKit.Common.Mocks;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Mocks;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -81,20 +81,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
 
             TransactionGeneratorMock transactionGeneratorMock = new TransactionGeneratorMock(fixture);
             ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
-            ShoppingListFactoryMock shoppingListFactoryMock = new ShoppingListFactoryMock(fixture);
             Mock<ITransaction> transactionMock = new Mock<ITransaction>();
 
             ShoppingListMock listMock = shoppingListMockFixture.Create();
             ShoppingListMock remainingListMock = shoppingListMockFixture.Create();
 
-            var remainingSections = shoppingListSectionFixture.CreateManyValid(5).ToList();
-            listMock.SetupGetSectionsWithItemsNotInBasket(remainingSections);
-
             var command = fixture.Create<FinishShoppingListCommand>();
             var handler = fixture.Create<FinishShoppingListCommandHandler>();
 
+            listMock.SetupFinish(command.CompletionDate, remainingListMock.Object);
+
             shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
-            shoppingListFactoryMock.SetupCreate(listMock.Object.Store, remainingSections, null, remainingListMock.Object);
             transactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
 
             // Act
@@ -104,9 +101,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                listMock.VerifySetCompletionDateOnce(command.CompletionDate);
-                listMock.VerifyGetSectionsWithItemsNotInBasketOnce();
-                listMock.VerifyRemoveAllItemsNotInBasketOnce();
+                listMock.VerifyFinishOnce(command.CompletionDate);
                 transactionGeneratorMock.VerifyGenerateAsyncOnce();
                 shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
                 shoppingListRepositoryMock.VerifyStoreAsyncOnce(remainingListMock.Object);

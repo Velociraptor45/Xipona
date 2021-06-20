@@ -1,6 +1,8 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,128 +11,121 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
     public class ShoppingList : IShoppingList
     {
-        private readonly List<IShoppingListSection> sections;
+        private readonly Dictionary<SectionId, IShoppingListSection> sections;
 
-        public ShoppingList(ShoppingListId id, IShoppingListStore store, IEnumerable<IShoppingListSection> sections, DateTime? completionDate)
+        public ShoppingList(ShoppingListId id, StoreId storeId, DateTime? completionDate,
+            IEnumerable<IShoppingListSection> sections)
         {
             Id = id;
-            Store = store;
-            this.sections = sections.ToList();
+            StoreId = storeId;
             CompletionDate = completionDate;
+            this.sections = sections.ToDictionary(s => s.Id);
         }
 
         public ShoppingListId Id { get; }
-        public IShoppingListStore Store { get; }
-        public IReadOnlyCollection<IShoppingListItem> Items => Sections.SelectMany(s => s.ShoppingListItems).ToList().AsReadOnly();
+        public StoreId StoreId { get; }
         public DateTime? CompletionDate { get; private set; }
-        public IReadOnlyCollection<IShoppingListSection> Sections => sections.AsReadOnly();
 
-        public void AddItem(IShoppingListItem item, ShoppingListSectionId sectionId)
+        public IReadOnlyCollection<IShoppingListSection> Sections => sections.Values.ToList().AsReadOnly();
+        public IReadOnlyCollection<IShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
+
+        public void AddItem(IShoppingListItem item, SectionId sectionId)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
-            if (!item.Id.IsActualId)
-                throw new DomainException(new ActualIdRequiredReason(item.Id));
+            if (sectionId == null)
+                throw new ArgumentNullException(nameof(sectionId));
 
-            var existingItem = Items.FirstOrDefault(it => it.Id == item.Id);
-            if (existingItem != null)
+            if (Items.Any(it => it.Id == item.Id))
                 throw new DomainException(new ItemAlreadyOnShoppingListReason(item.Id, Id));
 
-            IShoppingListSection section;
-            if (sectionId == null)
-            {
-                section = Sections.SingleOrDefault(s => s.IsDefaultSection);
-                if (section == null)
-                    throw new DomainException(new NoDefaultSectionSpecifiedReason(Store.Id));
-            }
-            else
-            {
-                section = sections.SingleOrDefault(s => s.Id == sectionId);
-                if (section == null)
-                    throw new DomainException(new SectionNotPartOfStoreReason(sectionId, Store.Id));
-            }
+            if (!sections.ContainsKey(sectionId))
+                throw new DomainException(new SectionNotPartOfStoreReason(sectionId, StoreId));
 
-            section.AddItem(item);
+            var section = sections[sectionId];
+            sections[sectionId] = section.AddItem(item);
         }
 
-        public void RemoveItem(ShoppingListItemId id)
-        {
-            if (id == null)
-                throw new ArgumentNullException(nameof(id));
-            if (!id.IsActualId)
-                throw new DomainException(new ActualIdRequiredReason(id));
-
-            IShoppingListSection section = sections.FirstOrDefault(s => s.ContainsItem(id));
-            if (section == null)
-                throw new DomainException(new ItemNotOnShoppingListReason(Id, id));
-
-            section.RemoveItem(id);
-        }
-
-        public void PutItemInBasket(ShoppingListItemId itemId)
+        public void RemoveItem(ItemId itemId)
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
-            if (!itemId.IsActualId)
-                throw new DomainException(new ActualIdRequiredReason(itemId));
 
-            IShoppingListSection section = sections.FirstOrDefault(s => s.ContainsItem(itemId));
+            IShoppingListSection section = sections.Values.FirstOrDefault(s => s.ContainsItem(itemId));
+            if (section == null)
+                return;
+
+            sections[section.Id] = section.RemoveItem(itemId);
+        }
+
+        public void PutItemInBasket(ItemId itemId)
+        {
+            if (itemId == null)
+                throw new ArgumentNullException(nameof(itemId));
+
+            IShoppingListSection section = sections.Values.FirstOrDefault(s => s.ContainsItem(itemId));
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
-            section.PutItemInBasket(itemId);
+            sections[section.Id] = section.PutItemInBasket(itemId);
         }
 
-        public void RemoveFromBasket(ShoppingListItemId itemId)
+        public void RemoveFromBasket(ItemId itemId)
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
-            if (!itemId.IsActualId)
-                throw new DomainException(new ActualIdRequiredReason(itemId));
 
-            IShoppingListSection section = sections.FirstOrDefault(s => s.ContainsItem(itemId));
+            IShoppingListSection section = sections.Values.FirstOrDefault(s => s.ContainsItem(itemId));
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
-            section.RemoveItemFromBasket(itemId);
+            sections[section.Id] = section.RemoveItemFromBasket(itemId);
         }
 
-        public void ChangeItemQuantity(ShoppingListItemId itemId, float quantity)
+        public void ChangeItemQuantity(ItemId itemId, float quantity)
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
-            if (!itemId.IsActualId)
-                throw new DomainException(new ActualIdRequiredReason(itemId));
             if (quantity <= 0f)
                 throw new DomainException(new InvalidItemQuantityReason(quantity));
 
-            IShoppingListSection section = sections.FirstOrDefault(s => s.ContainsItem(itemId));
+            IShoppingListSection section = sections.Values.FirstOrDefault(s => s.ContainsItem(itemId));
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
-            section.ChangeItemQuantity(itemId, quantity);
+            sections[section.Id] = section.ChangeItemQuantity(itemId, quantity);
         }
 
-        public void SetCompletionDate(DateTime completionDate)
+        public void AddSection(IShoppingListSection section)
         {
+            if (section is null)
+                throw new ArgumentNullException(nameof(section));
+
+            if (sections.ContainsKey(section.Id))
+                throw new DomainException(new SectionAlreadyInShoppingListReason(Id, section.Id));
+
+            sections.Add(section.Id, section);
+        }
+
+        public IShoppingList Finish(DateTime completionDate)
+        {
+            if (CompletionDate != null)
+                throw new DomainException(new ShoppingListAlreadyFinishedReason(Id));
+
             CompletionDate = completionDate;
-        }
 
-        public IEnumerable<IShoppingListSection> GetSectionsWithItemsNotInBasket()
-        {
-            foreach (var section in sections)
+            var notInBasketSections = new Dictionary<SectionId, IShoppingListSection>(sections);
+            foreach (SectionId key in sections.Keys)
             {
-                section.RemoveAllItemsInBasket();
-                yield return section;
+                notInBasketSections[key] = notInBasketSections[key].RemoveItemsInBasket();
             }
-        }
 
-        public void RemoveAllItemsNotInBasket()
-        {
-            foreach (var section in sections)
+            foreach (SectionId key in notInBasketSections.Keys)
             {
-                section.RemoveAllItemsInBasket();
+                sections[key] = sections[key].RemoveItemsNotInBasket();
             }
+
+            return new ShoppingList(new ShoppingListId(0), StoreId, null, notInBasketSections.Values);
         }
     }
 }

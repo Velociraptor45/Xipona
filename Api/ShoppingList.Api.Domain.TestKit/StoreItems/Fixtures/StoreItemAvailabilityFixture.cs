@@ -2,7 +2,9 @@
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,62 +14,54 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
     public class StoreItemAvailabilityFixture
     {
         private readonly CommonFixture commonFixture;
-        private readonly StoreItemStoreFixture storeItemStoreFixture;
+        private readonly StoreFixture storeFixture;
 
         public StoreItemAvailabilityFixture(CommonFixture commonFixture)
         {
             this.commonFixture = commonFixture;
-            storeItemStoreFixture = new StoreItemStoreFixture(commonFixture);
+            storeFixture = new StoreFixture(commonFixture);
         }
 
         public IStoreItemAvailability Create(StoreItemAvailabilityDefinition definition)
         {
             var fixture = commonFixture.GetNewFixture();
 
-            if (definition.Store != null)
-                fixture.ConstructorArgumentFor<StoreItemAvailability, IStoreItemStore>("store", definition.Store);
+            if (definition.StoreId != null)
+                fixture.ConstructorArgumentFor<StoreItemAvailability, StoreId>("storeId", definition.StoreId);
             if (definition.Price.HasValue)
                 fixture.ConstructorArgumentFor<StoreItemAvailability, float>("price", definition.Price.Value);
             if (definition.DefaultSectionId != null)
-                fixture.ConstructorArgumentFor<StoreItemAvailability, StoreItemSectionId>("defaultSectionId", definition.DefaultSectionId);
+                fixture.ConstructorArgumentFor<StoreItemAvailability, SectionId>("defaultSectionId", definition.DefaultSectionId);
 
             return fixture.Create<StoreItemAvailability>();
         }
 
         public IStoreItemAvailability CreateValid()
         {
-            var store = storeItemStoreFixture.CreateValid();
-            var defaultSection = commonFixture.ChooseRandom(store.Sections);
-
-            var definition = new StoreItemAvailabilityDefinition
-            {
-                Store = store,
-                DefaultSectionId = defaultSection.Id
-            };
-            return Create(definition);
+            return Create(new StoreItemAvailabilityDefinition());
         }
 
-        public IStoreItemAvailability CreateValidFor(IStoreItemStore store)
+        public IStoreItemAvailability CreateValidFor(IStore store)
         {
             var definition = new StoreItemAvailabilityDefinition
             {
-                Store = store,
+                StoreId = store.Id,
                 DefaultSectionId = commonFixture.ChooseRandom(store.Sections).Id
             };
 
             return Create(definition);
         }
 
-        public IEnumerable<IStoreItemAvailability> CreateManyValid(int count = 3, IEnumerable<StoreItemStoreId> excludedStoreIds = null)
+        public IEnumerable<IStoreItemAvailability> CreateManyValid(int count = 3)
         {
-            List<IStoreItemStore> stores = storeItemStoreFixture.CreateManyValid(count, excludedStoreIds).ToList();
+            List<IStore> stores = storeFixture.CreateManyValid(count).ToList();
             foreach (var store in stores)
             {
                 var defaultSection = commonFixture.ChooseRandom(store.Sections);
 
                 var definition = new StoreItemAvailabilityDefinition
                 {
-                    Store = store,
+                    StoreId = store.Id,
                     DefaultSectionId = defaultSection.Id
                 };
 
@@ -75,7 +69,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             }
         }
 
-        public IEnumerable<IStoreItemAvailability> CreateManyValidFor(IStoreItemStore store, int count = 3)
+        public IEnumerable<IStoreItemAvailability> CreateManyValidWith(IStore store, int count = 3)
         {
             if (count <= 0)
                 throw new ArgumentException($"{nameof(count)} must be greater than 0");

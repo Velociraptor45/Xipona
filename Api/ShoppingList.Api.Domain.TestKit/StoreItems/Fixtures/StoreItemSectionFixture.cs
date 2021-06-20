@@ -1,5 +1,5 @@
 ﻿using AutoFixture;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using System;
 using System.Collections.Generic;
@@ -16,15 +16,15 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             this.commonFixture = commonFixture;
         }
 
-        public IEnumerable<IStoreItemSection> CreateMany(IEnumerable<int> ids)
+        public IEnumerable<IStoreSection> CreateMany(IEnumerable<int> ids)
         {
             if (ids is null)
                 throw new ArgumentNullException(nameof(ids));
 
-            return CreateMany(ids.Select(ids => new StoreItemSectionId(ids)));
+            return CreateMany(ids.Select(ids => new SectionId(ids)));
         }
 
-        public IEnumerable<IStoreItemSection> CreateMany(IEnumerable<StoreItemSectionId> ids)
+        public IEnumerable<IStoreSection> CreateMany(IEnumerable<SectionId> ids)
         {
             if (ids is null)
                 throw new ArgumentNullException(nameof(ids));
@@ -35,23 +35,23 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures
             }
         }
 
-        public IEnumerable<IStoreItemSection> CreateManyValid(int count = 3)
+        public IEnumerable<IStoreSection> CreateManyValid(int count = 3)
         {
             var uniqueIds = commonFixture.NextUniqueInts(count);
             return CreateMany(uniqueIds);
         }
 
-        public IStoreItemSection Create(int id)
+        public IStoreSection Create(int id)
         {
-            return Create(new StoreItemSectionId(id));
+            return Create(new SectionId(id));
         }
 
-        public IStoreItemSection Create(StoreItemSectionId id)
+        public IStoreSection Create(SectionId id)
         {
             var fixture = commonFixture.GetNewFixture();
 
             fixture.Inject(id);
-            return fixture.Create<IStoreItemSection>();
+            return fixture.Create<IStoreSection>();
         }
     }
 }

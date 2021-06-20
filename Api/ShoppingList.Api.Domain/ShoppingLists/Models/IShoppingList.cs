@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using System;
 using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
@@ -6,25 +8,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
     public interface IShoppingList
     {
         public ShoppingListId Id { get; }
-        public IShoppingListStore Store { get; }
-        public IReadOnlyCollection<IShoppingListItem> Items { get; }
+        public StoreId StoreId { get; }
         public DateTime? CompletionDate { get; }
         IReadOnlyCollection<IShoppingListSection> Sections { get; }
+        public IReadOnlyCollection<IShoppingListItem> Items { get; }
 
-        void AddItem(IShoppingListItem item, ShoppingListSectionId sectionId);
+        void AddItem(IShoppingListItem item, SectionId sectionId);
 
-        void RemoveItem(ShoppingListItemId id);
+        void RemoveItem(ItemId itemId);
 
-        void PutItemInBasket(ShoppingListItemId itemId);
+        void PutItemInBasket(ItemId itemId);
 
-        void RemoveFromBasket(ShoppingListItemId itemId);
+        void RemoveFromBasket(ItemId itemId);
 
-        void ChangeItemQuantity(ShoppingListItemId itemId, float quantity);
+        void ChangeItemQuantity(ItemId itemId, float quantity);
 
-        void SetCompletionDate(DateTime completionDate);
-
-        IEnumerable<IShoppingListSection> GetSectionsWithItemsNotInBasket();
-
-        void RemoveAllItemsNotInBasket();
+        IShoppingList Finish(DateTime completionDate);
+        void AddSection(IShoppingListSection section);
     }
 }

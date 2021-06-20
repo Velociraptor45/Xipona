@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
-using System;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
@@ -8,7 +8,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
     {
         Task Enqueue(IApiRequest request);
 
-        void Initialize(Func<Task> firstRequestFailedCallback, Func<Task> allQueueItemsProcessedCallback,
-            Func<string, int> debugCallback);
+        void Initialize(ICommandQueueErrorHandler errorHandler);
     }
 }

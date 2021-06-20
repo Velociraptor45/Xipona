@@ -18,12 +18,12 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
     {
         private readonly IQueryDispatcher queryDispatcher;
         private readonly ICommandDispatcher commandDispatcher;
-        private readonly IToContractConverter<ActiveStoreReadModel, ActiveStoreContract> activeStoreToContractConverter;
+        private readonly IToContractConverter<StoreReadModel, ActiveStoreContract> activeStoreToContractConverter;
         private readonly IToDomainConverter<UpdateStoreContract, StoreUpdate> storeUpdateConverter;
         private readonly IToDomainConverter<CreateStoreContract, StoreCreationInfo> storeCreationInfoConverter;
 
         public StoreController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
-            IToContractConverter<ActiveStoreReadModel, ActiveStoreContract> activeStoreToContractConverter,
+            IToContractConverter<StoreReadModel, ActiveStoreContract> activeStoreToContractConverter,
             IToDomainConverter<UpdateStoreContract, StoreUpdate> storeUpdateConverter,
             IToDomainConverter<CreateStoreContract, StoreCreationInfo> storeCreationInfoConverter)
         {

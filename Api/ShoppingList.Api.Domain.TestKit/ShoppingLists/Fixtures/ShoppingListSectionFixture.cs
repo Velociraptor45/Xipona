@@ -1,6 +1,8 @@
 ﻿using AutoFixture;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Fixtures;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using System.Collections.Generic;
@@ -24,7 +26,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             var fixture = commonFixture.GetNewFixture();
 
             if (definition.Id != null)
-                fixture.ConstructorArgumentFor<ShoppingListSection, ShoppingListSectionId>("id", definition.Id);
+                fixture.ConstructorArgumentFor<ShoppingListSection, SectionId>("id", definition.Id);
             if (definition.Name != null)
                 fixture.ConstructorArgumentFor<IShoppingListSection, string>("name", definition.Name);
             if (definition.SortingIndex.HasValue)
@@ -49,7 +51,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             {
                 if (definition.Id == null)
                 {
-                    definition.Id = new ShoppingListSectionId(newIds.First());
+                    definition.Id = new SectionId(newIds.First());
                     newIds.RemoveAt(0);
                 }
 
@@ -79,7 +81,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             foreach (var id in uniqueIds)
             {
                 var clone = definition.Clone();
-                clone.Id = new ShoppingListSectionId(id);
+                clone.Id = new SectionId(id);
                 clonedDefinitions.Add(clone);
             }
 
@@ -102,7 +104,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
             {
                 int id = uniqueIds[i];
                 var definition = definitionsList[i];
-                definition.Id ??= new ShoppingListSectionId(id);
+                definition.Id ??= new SectionId(id);
                 yield return Create(definition);
             }
         }
@@ -110,9 +112,38 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
         public IShoppingListSection CreateValid(ShoppingListSectionDefinition baseDefinition)
         {
             var itemCount = commonFixture.NextInt(3, 5);
-            baseDefinition.Items = shoppingListItemFixture.CreateManyValid(itemCount).ToList();
+            baseDefinition.Items ??= shoppingListItemFixture.CreateManyValid(itemCount).ToList();
 
             return Create(baseDefinition);
+        }
+
+        public IShoppingListSection CreateValidWithItem(IShoppingListItem item)
+        {
+            var def = new ShoppingListSectionDefinition
+            {
+                Items = item.ToMonoList()
+            };
+            return CreateValid(def);
+        }
+
+        public IShoppingListSection CreateValidWith(ShoppingListItemDefinition itemDefinition)
+        {
+            // todo: check for ItemId
+            var items = shoppingListItemFixture.CreateManyValid().ToList();
+            var item = shoppingListItemFixture.CreateValid(itemDefinition);
+            items.Add(item);
+
+            var sectionDef = new ShoppingListSectionDefinition
+            {
+                Items = items
+            };
+
+            return CreateValid(sectionDef);
+        }
+
+        public IModelFixture<IShoppingListSection, ShoppingListSectionDefinition> AsModelFixture()
+        {
+            return this;
         }
 
         private void EnsurePresenceOfDefaultSection(IEnumerable<ShoppingListSectionDefinition> definitions)

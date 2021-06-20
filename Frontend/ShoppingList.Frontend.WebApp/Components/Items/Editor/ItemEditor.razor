@@ -1,0 +1,148 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
+
+@inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification.IShoppingListNotificationService notificationService;
+
+<div class="px-2">
+    <div class="d-flex">
+        <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+            <Icon Type="arrow-left"></Icon>
+        </Button>
+        <div class="mx-3">
+            <Input @bind-Value="@State.EditedItem.Name" />
+        </div>
+        @if (State.EditedItem.Id != 0)
+        {
+            <Button Danger="true"
+                    Class="ml-auto"
+                    OnClick="@OnDeleteButtonClickedAsync">
+                Delete
+            </Button>
+        }
+    </div>
+    <Divider Class="my-3"></Divider>
+    <div class="d-flex pb-2">
+        <ItemCategorySelect State="@State"
+                            FragmentCreator="@ErrorHandler"></ItemCategorySelect>
+        <ManufacturerSelect State="@State"
+                            FragmentCreator="@ErrorHandler"></ManufacturerSelect>
+    </div>
+    <Quantity State="@State"></Quantity>
+    <Availabilities State="@State"></Availabilities>
+    <div class="pb-2 pt-4">
+        <TextArea Placeholder="Comment" MinRows="2" @bind-Value="@State.EditedItem.Comment"></TextArea>
+    </div>
+    <div class="d-flex justify-content-end">
+        @if (State.EditedItem.Id == 0)
+        {
+            <Button OnClick="@OnCreateButtonClickedAsync">Create</Button>
+        }
+        else if (State.EditedItem.IsTemporary)
+        {
+            <Button OnClick="@OnMakePermanentButtonClickedAsync">Make Permanent</Button>
+        }
+        else
+        {
+            <Button OnClick="@OnUpdateButtonClickedAsync">Update</Button>
+            <Button Class="ml-2" OnClick="@OnModifyButtonClickedAsync">Modify</Button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public ItemsState State { get; set; }
+    [Parameter] public ErrorHandler ErrorHandler { get; set; }
+
+    private async Task OnUpdateButtonClickedAsync()
+    {
+        var request = new UpdateItemRequest(Guid.NewGuid(), State.EditedItem);
+        try
+        {
+            await apiClient.UpdateItemAsync(request);
+        }
+        catch (Exception e)
+        {
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnUpdateButtonClickedAsync());
+            notificationService.NotifyError("Updating item failed", e.Message, fragment);
+            return;
+        }
+        State.LeaveEditor();
+    }
+
+    private async Task OnModifyButtonClickedAsync()
+    {
+        var request = new ModifyItemRequest(Guid.NewGuid(), State.EditedItem);
+        try
+        {
+            await apiClient.ModifyItemAsync(request);
+        }
+        catch (Exception e)
+        {
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnModifyButtonClickedAsync());
+            notificationService.NotifyError("Modifying item failed", e.Message, fragment);
+            return;
+        }
+        State.LeaveEditor();
+    }
+
+    private async Task OnCreateButtonClickedAsync()
+    {
+        var request = new CreateItemRequest(Guid.NewGuid(), State.EditedItem);
+        try
+        {
+            await apiClient.CreateItemAsync(request);
+        }
+        catch (Exception e)
+        {
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnCreateButtonClickedAsync());
+            notificationService.NotifyError("Creating item failed", e.Message, fragment);
+            return;
+        }
+        State.LeaveEditor();
+    }
+
+    private async Task OnMakePermanentButtonClickedAsync()
+    {
+        if (!State.EditedItem.ItemCategoryId.HasValue)
+            return;
+
+        var item = State.EditedItem;
+        var request = new MakeTemporaryItemPermanentRequest(item.Id, item.Name, item.Comment,
+            item.QuantityType.Id, item.QuantityInPacket, item.QuantityInPacketType.Id,
+            item.ItemCategoryId.Value, item.ManufacturerId, item.Availabilities);
+        try
+        {
+            await apiClient.MakeTemporaryItemPermanent(request);
+        }
+        catch (Exception e)
+        {
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnMakePermanentButtonClickedAsync());
+            notificationService.NotifyError("Creating item failed", e.Message, fragment);
+            return;
+        }
+        State.LeaveEditor();
+    }
+
+    private async Task OnDeleteButtonClickedAsync()
+    {
+        var request = new DeleteItemRequest(Guid.NewGuid(), State.EditedItem.Id);
+        try
+        {
+            await apiClient.DeleteItemAsync(request);
+        }
+        catch (Exception e)
+        {
+            var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnDeleteButtonClickedAsync());
+            notificationService.NotifyError("Deleting item failed", e.Message, fragment);
+            return;
+        }
+        State.LeaveEditor();
+    }
+
+    private void OnBackButtonClicked()
+    {
+        State.LeaveEditor();
+    }
+}

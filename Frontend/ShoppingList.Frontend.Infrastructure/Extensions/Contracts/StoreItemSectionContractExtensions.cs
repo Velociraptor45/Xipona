@@ -5,7 +5,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contract
 {
     public static class StoreItemSectionContractExtensions
     {
-        public static StoreItemSection ToContract(this StoreItemSectionContract contract)
+        public static StoreItemSection ToModel(this StoreItemSectionContract contract)
         {
             return new StoreItemSection(contract.Id, contract.Name, contract.SortingIndex);
         }
