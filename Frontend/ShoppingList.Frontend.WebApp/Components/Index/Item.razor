@@ -3,7 +3,7 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
 
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager;
-@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.IItemPriceCalculationService itemPriceCalculationService;
+@inject             Models.Index.Services.IItemPriceCalculationService itemPriceCalculationService;
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListCommunicationService communicationService;
 
 <li class="list-style-non py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
@@ -89,6 +89,7 @@
             var request = new PutItemInBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
             await communicationService.EnqueueAsync(request);
         }
+        State.StateChanged?.Invoke();
     }
 
     private float CalculatePrice()
@@ -100,6 +101,7 @@
     {
         Model.Quantity = quantity;
         await SendQuantityChangedRequestAsync();
+        State.StateChanged?.Invoke();
     }
 
     private async Task OnRemoveItemButtonClickedAsync()
@@ -114,12 +116,14 @@
     {
         Model.Quantity += Model.QuantityType.DefaultQuantity;
         await SendQuantityChangedRequestAsync();
+        State.StateChanged?.Invoke();
     }
 
     private async Task OnDecrementQuantityButtonClickedAsync()
     {
         Model.Quantity -= Model.QuantityType.DefaultQuantity;
         await SendQuantityChangedRequestAsync();
+        State.StateChanged?.Invoke();
     }
 
     private async Task SendQuantityChangedRequestAsync()
