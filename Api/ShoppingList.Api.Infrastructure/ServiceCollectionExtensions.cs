@@ -36,7 +36,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
             var version = Assembly.GetEntryAssembly().GetName().Version;
             var serverVersion = new MySqlServerVersion(new Version(version.Major, version.Minor, version.Build));
 
-            services.AddScoped<DbConnection>(provider => new MySqlConnection(connectionString));
+            services.AddScoped<DbConnection>(provider =>
+            {
+                var connection = new MySqlConnection(connectionString);
+                connection.Open();
+                return connection;
+            });
 
             services.AddScoped<IList<DbContext>>(serviceProvider => GetAllDbContextInstances(serviceProvider).ToList());
 
