@@ -24,12 +24,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
 {
     public class MakeTemporaryItemPermanentCommandHandlerTests
     {
+        private readonly LocalFixture _local;
+
+        public MakeTemporaryItemPermanentCommandHandlerTests()
+        {
+            _local = new LocalFixture();
+        }
+
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
+            var handler = _local.CreateCommandHandler();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(null, default);
@@ -45,14 +51,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         public async Task HandleAsync_WithInvalidItemId_ShouldThrowDomainException()
         {
             // Arrange
-            var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
-            var command = local.CreateCommand();
+            var handler = _local.CreateCommandHandler();
+            _local.SetupCommand();
 
-            local.ItemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, null);
+            _local.ItemRepositoryMock.SetupFindByAsync(_local.Command.PermanentItem.Id, null);
 
             // Act
-            Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
+            Func<Task<bool>> action = async () => await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
@@ -66,17 +71,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         public async Task HandleAsync_WithNonTemporaryItem_ShouldThrowDomainException()
         {
             // Arrange
-            var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
-            var command = local.CreateCommand();
+            var handler = _local.CreateCommandHandler();
+            _local.SetupCommand();
+            _local.SetupStoreItemMock(StoreItemMother.Initial().Create());
 
-            var baseDefinition = StoreItemDefinition.FromTemporary(false);
-            IStoreItem storeItem = local.StoreItemFixture.CreateValid(baseDefinition);
-
-            local.ItemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, storeItem);
+            _local.ItemRepositoryMock.SetupFindByAsync(_local.Command.PermanentItem.Id, _local.StoreItemMock.Object);
 
             // Act
-            Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
+            Func<Task<bool>> action = async () => await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
@@ -90,28 +92,26 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         public async Task HandleAsync_WithValidDataAndManufacturerId_ShouldMakeTemporaryItemPermanent()
         {
             // Arrange
-            var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
+            var handler = _local.CreateCommandHandler();
+            _local.SetupStoreItemMock(StoreItemMother.InitialTemporary().Create());
 
-            StoreItemMock storeItemMock = local.StoreItemMockFixture.Create(StoreItemDefinition.FromTemporary(true));
-            List<IStoreItemAvailability> availabilities = storeItemMock.Object.Availabilities.ToList();
+            List<IStoreItemAvailability> availabilities = _local.StoreItemMock.Object.Availabilities.ToList();
+            _local.SetupCommand(availabilities);
 
-            var command = local.CreateCommand(availabilities);
-
-            local.ItemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, storeItemMock.Object);
+            _local.ItemRepositoryMock.SetupFindByAsync(_local.Command.PermanentItem.Id, _local.StoreItemMock.Object);
 
             // Act
-            var result = await handler.HandleAsync(command, default);
+            var result = await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(command.PermanentItem.ItemCategoryId);
-                local.ManufacturerValidationServiceMock.VerifyValidateAsyncOnce(command.PermanentItem.ManufacturerId);
-                local.AvailabilityValidationServiceMock.VerifyValidateOnce(availabilities);
-                storeItemMock.VerifyMakePermanentOnce(command.PermanentItem, availabilities);
-                local.ItemRepositoryMock.VerifyStoreAsyncOnce(storeItemMock.Object);
+                _local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(_local.Command.PermanentItem.ItemCategoryId);
+                _local.ManufacturerValidationServiceMock.VerifyValidateAsyncOnce(_local.Command.PermanentItem.ManufacturerId);
+                _local.AvailabilityValidationServiceMock.VerifyValidateOnce(availabilities);
+                _local.StoreItemMock.VerifyMakePermanentOnce(_local.Command.PermanentItem, availabilities);
+                _local.ItemRepositoryMock.VerifyStoreAsyncOnce(_local.StoreItemMock.Object);
             }
         }
 
@@ -119,28 +119,26 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         public async Task HandleAsync_WithValidDataAndManufacturerIdIsNull_ShouldMakeTemporaryItemPermanent()
         {
             // Arrange
-            var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
+            var handler = _local.CreateCommandHandler();
+            _local.SetupStoreItemMock(StoreItemMother.InitialTemporary().Create());
 
-            StoreItemMock storeItemMock = local.StoreItemMockFixture.Create(StoreItemDefinition.FromTemporary(true));
-            List<IStoreItemAvailability> availabilities = storeItemMock.Object.Availabilities.ToList();
+            List<IStoreItemAvailability> availabilities = _local.StoreItemMock.Object.Availabilities.ToList();
+            _local.SetupCommandWithoutManufacturerId(availabilities);
 
-            var command = local.CreateCommandWithoutManufacturerId(availabilities);
-
-            local.ItemRepositoryMock.SetupFindByAsync(command.PermanentItem.Id, storeItemMock.Object);
+            _local.ItemRepositoryMock.SetupFindByAsync(_local.Command.PermanentItem.Id, _local.StoreItemMock.Object);
 
             // Act
-            var result = await handler.HandleAsync(command, default);
+            var result = await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(command.PermanentItem.ItemCategoryId);
-                local.ManufacturerValidationServiceMock.VerifyValidateAsyncNever();
-                local.AvailabilityValidationServiceMock.VerifyValidateOnce(availabilities);
-                storeItemMock.VerifyMakePermanentOnce(command.PermanentItem, availabilities);
-                local.ItemRepositoryMock.VerifyStoreAsyncOnce(storeItemMock.Object);
+                _local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(_local.Command.PermanentItem.ItemCategoryId);
+                _local.ManufacturerValidationServiceMock.VerifyValidateAsyncNever();
+                _local.AvailabilityValidationServiceMock.VerifyValidateOnce(availabilities);
+                _local.StoreItemMock.VerifyMakePermanentOnce(_local.Command.PermanentItem, availabilities);
+                _local.ItemRepositoryMock.VerifyStoreAsyncOnce(_local.StoreItemMock.Object);
             }
         }
 
@@ -149,19 +147,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             public Fixture Fixture { get; }
             public CommonFixture CommonFixture { get; } = new CommonFixture();
             public StoreItemFixture StoreItemFixture { get; }
-            public StoreItemMockFixture StoreItemMockFixture { get; }
             public ItemRepositoryMock ItemRepositoryMock { get; }
             public StoreItemFactoryMock StoreItemFactoryMock { get; }
             public ItemCategoryValidationServiceMock ItemCategoryValidationServiceMock { get; }
             public ManufacturerValidationServiceMock ManufacturerValidationServiceMock { get; }
             public AvailabilityValidationServiceMock AvailabilityValidationServiceMock { get; }
+            public StoreItemMock StoreItemMock { get; private set; }
+            public MakeTemporaryItemPermanentCommand Command { get; private set; }
 
             public LocalFixture()
             {
                 Fixture = CommonFixture.GetNewFixture();
 
                 StoreItemFixture = new StoreItemFixture(new StoreItemAvailabilityFixture(CommonFixture), CommonFixture);
-                StoreItemMockFixture = new StoreItemMockFixture(CommonFixture, StoreItemFixture);
 
                 ItemRepositoryMock = new ItemRepositoryMock(Fixture);
                 StoreItemFactoryMock = new StoreItemFactoryMock(Fixture);
@@ -170,32 +168,37 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
                 AvailabilityValidationServiceMock = new AvailabilityValidationServiceMock(Fixture);
             }
 
-            public MakeTemporaryItemPermanentCommand CreateCommand()
+            public void SetupCommand()
             {
-                return Fixture.Create<MakeTemporaryItemPermanentCommand>();
+                Command = Fixture.Create<MakeTemporaryItemPermanentCommand>();
             }
 
-            public MakeTemporaryItemPermanentCommand CreateCommand(IEnumerable<IStoreItemAvailability> availabilities)
+            public void SetupCommand(IEnumerable<IStoreItemAvailability> availabilities)
             {
                 Fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<IStoreItemAvailability>>(
                     "availabilities", availabilities);
 
-                return Fixture.Create<MakeTemporaryItemPermanentCommand>();
+                Command = Fixture.Create<MakeTemporaryItemPermanentCommand>();
             }
 
-            public MakeTemporaryItemPermanentCommand CreateCommandWithoutManufacturerId(
+            public void SetupCommandWithoutManufacturerId(
                 IEnumerable<IStoreItemAvailability> availabilities)
             {
                 Fixture.ConstructorArgumentFor<PermanentItem, ManufacturerId>("manufacturerId", null);
                 Fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<IStoreItemAvailability>>(
                     "availabilities", availabilities);
 
-                return Fixture.Create<MakeTemporaryItemPermanentCommand>();
+                Command = Fixture.Create<MakeTemporaryItemPermanentCommand>();
             }
 
             public MakeTemporaryItemPermanentCommandHandler CreateCommandHandler()
             {
                 return Fixture.Create<MakeTemporaryItemPermanentCommandHandler>();
+            }
+
+            public void SetupStoreItemMock(IStoreItem storeItem)
+            {
+                StoreItemMock = new StoreItemMock(storeItem);
             }
         }
     }
