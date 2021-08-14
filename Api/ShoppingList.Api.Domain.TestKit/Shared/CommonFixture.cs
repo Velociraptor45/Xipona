@@ -1,6 +1,8 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoMoq;
+using AutoFixture.Kernel;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
 using System;
 using System.Collections.Generic;
@@ -10,12 +12,13 @@ namespace ShoppingList.Api.Domain.TestKit.Shared
 {
     public class CommonFixture
     {
-        private readonly Random random = new Random();
+        private static readonly Random random = new Random();
 
         public Fixture GetNewFixture()
         {
             var fixture = new Fixture();
-            fixture.Customizations.Add(new EnumSpecimenBuilder<QuantityType>(this));
+            fixture.Customizations.Add(new EnumSpecimenBuilder<QuantityType>());
+            fixture.Customizations.Add(new TypeRelay(typeof(IStoreItemAvailability), typeof(StoreItemAvailability)));
             fixture.Customize(new AutoMoqCustomization { ConfigureMembers = true });
             return fixture;
         }

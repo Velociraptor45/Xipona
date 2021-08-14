@@ -2,12 +2,12 @@
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ShoppingList.Api.Core.TestKit;
+using ShoppingList.Api.Domain.TestKit.Common;
 using System.Collections.Generic;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
 {
-    public class StoreItemBuilder : TestBuilderBase<StoreItem>
+    public class StoreItemBuilder : DomainTestBuilderBase<StoreItem>
     {
         public StoreItemBuilder WithId(ItemId id)
         {
