@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoMoq;
-using AutoFixture.Kernel;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
+using System.Collections.Generic;
 
 namespace ShoppingList.Api.Core.TestKit
 {
@@ -20,6 +20,11 @@ namespace ShoppingList.Api.Core.TestKit
         public TModel Create()
         {
             return this.Create<TModel>();
+        }
+
+        public IEnumerable<TModel> CreateMany(int count)
+        {
+            return this.CreateMany<TModel>(count);
         }
     }
 }
