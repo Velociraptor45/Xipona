@@ -36,6 +36,11 @@
                 .WithSections(new ShoppingListSectionBuilder().CreateMany(count));
         }
 
+        public static ShoppingListBuilder NoSections()
+        {
+            return Sections(0);
+        }
+
         public static ShoppingListBuilder Completed()
         {
             return new ShoppingListBuilder();
