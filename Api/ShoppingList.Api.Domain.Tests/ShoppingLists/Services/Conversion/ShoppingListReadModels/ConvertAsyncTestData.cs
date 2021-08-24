@@ -10,12 +10,11 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTyp
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Fixtures;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
-using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
+using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,31 +23,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
 {
     public class ConvertAsyncTestData : IEnumerable<object[]>
     {
-        private readonly CommonFixture commonFixture;
-        private readonly ManufacturerFixture manufaturerFixture;
-        private readonly ItemCategoryFixture itemCategoryFixture;
-        private readonly StoreFixture storeFixture;
-        private readonly StoreItemAvailabilityFixture storeItemAvailabilityFixture;
-        private readonly StoreItemFixture storeItemFixture;
-        private readonly ShoppingListFixture shoppingListFixture;
-        private readonly ShoppingListSectionFixture shoppingListSectionFixture;
-        private readonly ShoppingListItemFixture shoppingListItemFixture;
-
-        public ConvertAsyncTestData()
-        {
-            commonFixture = new CommonFixture();
-            manufaturerFixture = new ManufacturerFixture(commonFixture);
-            itemCategoryFixture = new ItemCategoryFixture(commonFixture);
-            storeFixture = new StoreFixture(commonFixture);
-
-            storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
-            storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
-
-            shoppingListFixture = new ShoppingListFixture(commonFixture);
-            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture);
-            shoppingListItemFixture = new ShoppingListItemFixture(commonFixture);
-        }
-
         public IEnumerator<object[]> GetEnumerator()
         {
             yield return NoItemCategory();
@@ -65,26 +39,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
 
         private object[] NoItemCategory()
         {
-            IStore store = storeFixture.CreateValid();
+            IStore store = StoreMother.Initial().Create();
             var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
-            IManufacturer manufacturer = manufaturerFixture.Create();
+            IManufacturer manufacturer = ManufacturerMother.NotDeleted().Create();
 
-            var avavilabilityDef = new StoreItemAvailabilityDefinition
-            {
-                StoreId = store.Id,
-                DefaultSectionId = store.Sections.First().Id
-            };
-            var availability = storeItemAvailabilityFixture.Create(avavilabilityDef);
+            var availability = GetAvailabilityFrom(store);
 
-            var itemDef = new StoreItemDefinition
-            {
-                Id = list.Sections.First().Items.First().Id,
-                ItemCategoryId = null,
-                ManufacturerId = manufacturer.Id,
-                Availabilities = availability.ToMonoList()
-            };
-
-            IStoreItem item = storeItemFixture.Create(itemDef);
+            IStoreItem item = new StoreItemBuilder()
+                .WithoutItemCategoryId()
+                .WithManufacturerId(manufacturer.Id)
+                .WithId(list.Sections.First().Items.First().Id)
+                .WithAvailabilities(availability.ToMonoList())
+                .Create();
             var listReadModel = ToSimpleReadModel(list, store, item, null, manufacturer);
 
             return new object[]
@@ -100,26 +66,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
 
         private object[] NoManufacturer()
         {
-            IStore store = storeFixture.CreateValid();
+            IStore store = StoreMother.Initial().Create();
             var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
-            IItemCategory itemCategory = itemCategoryFixture.GetItemCategory();
+            IItemCategory itemCategory = ItemCategoryMother.NotDeleted().Create();
 
-            var avavilabilityDef = new StoreItemAvailabilityDefinition
-            {
-                StoreId = store.Id,
-                DefaultSectionId = store.Sections.First().Id
-            };
-            var availability = storeItemAvailabilityFixture.Create(avavilabilityDef);
+            var availability = GetAvailabilityFrom(store);
+            IStoreItem item = new StoreItemBuilder()
+                .WithItemCategoryId(itemCategory.Id)
+                .WithoutManufacturerId()
+                .WithAvailabilities(availability.ToMonoList())
+                .WithId(list.Sections.First().Items.First().Id)
+                .Create();
 
-            var itemDef = new StoreItemDefinition
-            {
-                Id = list.Sections.First().Items.First().Id,
-                ItemCategoryId = itemCategory.Id,
-                ManufacturerId = null,
-                Availabilities = availability.ToMonoList()
-            };
-
-            IStoreItem item = storeItemFixture.Create(itemDef);
             var listReadModel = ToSimpleReadModel(list, store, item, itemCategory, null);
 
             return new object[]
@@ -135,25 +93,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
 
         private object[] NeitherItemCategoryNorManufacturer()
         {
-            IStore store = storeFixture.CreateValid();
+            IStore store = StoreMother.Initial().Create();
             var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
 
-            var avavilabilityDef = new StoreItemAvailabilityDefinition
-            {
-                StoreId = store.Id,
-                DefaultSectionId = store.Sections.First().Id
-            };
-            var availability = storeItemAvailabilityFixture.Create(avavilabilityDef);
-
-            var itemDef = new StoreItemDefinition
-            {
-                Id = list.Sections.First().Items.First().Id,
-                ItemCategoryId = null,
-                ManufacturerId = null,
-                Availabilities = availability.ToMonoList()
-            };
-
-            IStoreItem item = storeItemFixture.Create(itemDef);
+            var availability = GetAvailabilityFrom(store);
+            IStoreItem item = StoreItemMother.InitialTemporary()
+                .WithAvailabilities(availability.ToMonoList())
+                .WithId(list.Sections.First().Items.First().Id)
+                .Create();
             var listReadModel = ToSimpleReadModel(list, store, item, null, null);
 
             return new object[]
@@ -169,27 +116,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
 
         private object[] WithItemCategoryAndManufacturer()
         {
-            IStore store = storeFixture.CreateValid();
+            IStore store = StoreMother.Initial().Create();
             var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
-            IManufacturer manufacturer = manufaturerFixture.Create();
-            IItemCategory itemCategory = itemCategoryFixture.GetItemCategory();
+            IManufacturer manufacturer = ManufacturerMother.NotDeleted().Create();
+            IItemCategory itemCategory = ItemCategoryMother.NotDeleted().Create();
 
-            var avavilabilityDef = new StoreItemAvailabilityDefinition
-            {
-                StoreId = store.Id,
-                DefaultSectionId = store.Sections.First().Id
-            };
-            var availability = storeItemAvailabilityFixture.Create(avavilabilityDef);
-
-            var itemDef = new StoreItemDefinition
-            {
-                Id = list.Sections.First().Items.First().Id,
-                ItemCategoryId = itemCategory.Id,
-                ManufacturerId = manufacturer.Id,
-                Availabilities = availability.ToMonoList()
-            };
-
-            IStoreItem item = storeItemFixture.Create(itemDef);
+            var availability = GetAvailabilityFrom(store);
+            IStoreItem item = new StoreItemBuilder()
+                .WithItemCategoryId(itemCategory.Id)
+                .WithManufacturerId(manufacturer.Id)
+                .WithAvailabilities(availability.ToMonoList())
+                .WithId(list.Sections.First().Items.First().Id)
+                .Create();
             var listReadModel = ToSimpleReadModel(list, store, item, itemCategory, manufacturer);
 
             return new object[]
@@ -205,13 +143,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
 
         private object[] EmptyList()
         {
-            IStore store = storeFixture.CreateValid();
-            var listDef = new ShoppingListDefinition
-            {
-                StoreId = store.Id,
-                Sections = Enumerable.Empty<IShoppingListSection>()
-            };
-            var list = shoppingListFixture.Create(listDef);
+            IStore store = StoreMother.Initial().Create();
+            var list = ShoppingListMother.NoSections().WithStoreId(store.Id).Create();
             var listReadModel = ToSimpleReadModel(list, store, null, null, null);
 
             return new object[]
@@ -227,19 +160,21 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
 
         private IShoppingList GetShoppingListContainingOneItem(StoreId storeId, SectionId sectionId)
         {
-            var sectionDef = new ShoppingListSectionDefinition
-            {
-                Id = sectionId,
-                Items = shoppingListItemFixture.AsModelFixture().CreateValid().ToMonoList(),
-            };
-            var section = shoppingListSectionFixture.CreateValid(sectionDef);
+            var section = ShoppingListSectionMother.OneItemInBasket()
+                .WithId(sectionId)
+                .Create();
+            return new ShoppingListBuilder()
+                .WithStoreId(storeId)
+                .WithSection(section)
+                .Create();
+        }
 
-            var listDef = new ShoppingListDefinition
-            {
-                StoreId = storeId,
-                Sections = section.ToMonoList()
-            };
-            return shoppingListFixture.CreateValid(listDef);
+        private IStoreItemAvailability GetAvailabilityFrom(IStore store)
+        {
+            return new StoreItemAvailabilityBuilder()
+                .WithStoreId(store.Id)
+                .WithDefaultSectionId(store.Sections.First().Id)
+                .Create();
         }
 
         private ShoppingListReadModel ToSimpleReadModel(IShoppingList list, IStore store, IStoreItem item,
