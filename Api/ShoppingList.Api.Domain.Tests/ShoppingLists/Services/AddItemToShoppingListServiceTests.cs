@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -9,11 +8,10 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
-using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Ports;
 using System;
 using System.Linq;
@@ -24,6 +22,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 {
     public class AddItemToShoppingListServiceTests
     {
+        private readonly LocalFixture _local;
+
+        public AddItemToShoppingListServiceTests()
+        {
+            _local = new LocalFixture();
+        }
+
         #region ItemId
 
         [Fact]
@@ -33,12 +38,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var itemId = new ItemId(local.CommonFixture.NextInt());
-            var sectionId = new SectionId(local.CommonFixture.NextInt());
-            var quantity = local.CommonFixture.NextFloat();
+            local.SetupStoreItem();
+            local.SetupSectionId();
+            local.SetupQuantity();
 
             // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(null, itemId, sectionId, quantity, default);
+            Func<Task> function = async () =>
+                await service.AddItemToShoppingList(null, local.StoreItem.Id, local.SectionId, local.Quantity, default);
 
             // Assert
             using (new AssertionScope())
@@ -54,13 +60,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var shoppingList = local.ShoppingListFixture.AsModelFixture().CreateValid();
-            var sectionId = new SectionId(local.CommonFixture.NextInt());
-            var quantity = local.CommonFixture.NextFloat();
+            local.SetupShoppingListMock();
+            local.SetupStoreItemNull();
+            local.SetupSectionId();
+            local.SetupQuantity();
 
             // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(shoppingList, (ItemId)null,
-                sectionId, quantity, default);
+            Func<Task> function = async () => await service.AddItemToShoppingList(
+                local.ShoppingListMock.Object, local.StoreItem?.Id, local.SectionId, local.Quantity, default);
 
             // Assert
             using (new AssertionScope())
@@ -76,16 +83,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var shoppingList = local.ShoppingListFixture.AsModelFixture().CreateValid();
-            var itemId = new ItemId(local.CommonFixture.NextInt());
-            var sectionId = new SectionId(local.CommonFixture.NextInt());
-            var quantity = local.CommonFixture.NextFloat();
+            local.SetupShoppingListMock();
+            local.SetupStoreItem();
+            local.SetupSectionId();
+            local.SetupQuantity();
 
-            local.ItemRepositoryMock.SetupFindByAsync(itemId, null);
+            local.SetupFindingNoItem();
 
             // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(shoppingList, itemId,
-                sectionId, quantity, default);
+            Func<Task> function = async () => await service.AddItemToShoppingList(
+                local.ShoppingListMock.Object, local.StoreItem.Id, local.SectionId, local.Quantity, default);
 
             // Assert
             using (new AssertionScope())
@@ -102,27 +109,27 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var storeItem = local.StoreItemFixture.CreateValid();
-            var shoppingListMock = local.CreateValidShoppingListMock(storeItem);
-            var shoppingListItem = local.ShoppingListItemFixture.AsModelFixture().CreateValid();
+            local.SetupStoreItem();
+            local.SetupShoppingListMockMatchingStoreItem();
+            local.SetupShoppingListItem();
 
-            SectionId sectionId = local.CommonFixture.ChooseRandom(shoppingListMock.Object.Sections).Id;
-            var store = local.CreateStore(shoppingListMock.Object, sectionId);
+            local.SetupSectionIdMatchingShoppingList();
+            local.SetupStore();
+            local.SetupQuantity();
 
-            float quantity = local.CommonFixture.NextFloat();
-
-            local.ItemRepositoryMock.SetupFindByAsync(storeItem.Id, storeItem);
-            local.ShoppingListItemFactoryMock.SetupCreate(storeItem.Id, false, quantity, shoppingListItem);
-            local.StoreRepositoryMock.SetupFindByAsync(store.Id, store);
+            local.SetupFindingItem();
+            local.SetupCreatingShoppingListItem();
+            local.SetupFindingStore();
 
             // Act
-            await service.AddItemToShoppingList(shoppingListMock.Object, storeItem.Id, sectionId, quantity, default);
+            await service.AddItemToShoppingList(
+                local.ShoppingListMock.Object, local.StoreItem.Id, local.SectionId, local.Quantity, default);
 
             // Assert
             using (new AssertionScope())
             {
-                shoppingListMock.VerifyAddSectionNever();
-                shoppingListMock.VerifyAddItemOnce(shoppingListItem, sectionId);
+                local.VerifyAddSectionNever();
+                local.VerifyAddItemOnce();
             }
         }
 
@@ -137,13 +144,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var temporaryItemId = new TemporaryItemId(Guid.NewGuid());
-            var sectionId = new SectionId(local.CommonFixture.NextInt());
-            var quantity = local.CommonFixture.NextFloat();
+            local.SetupTemporaryStoreItem();
+            local.SetupSectionId();
+            local.SetupQuantity();
 
             // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(null, temporaryItemId, sectionId,
-                quantity, default);
+            Func<Task> function = async () => await service.AddItemToShoppingList(null, local.StoreItem.TemporaryId,
+                local.SectionId, local.Quantity, default);
 
             // Assert
             using (new AssertionScope())
@@ -159,13 +166,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var shoppingList = local.ShoppingListFixture.AsModelFixture().CreateValid();
-            var sectionId = new SectionId(local.CommonFixture.NextInt());
-            var quantity = local.CommonFixture.NextFloat();
+            local.SetupShoppingListMock();
+            local.SetupTemporaryStoreItemNull();
+            local.SetupSectionId();
+            local.SetupQuantity();
 
             // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(shoppingList,
-                (TemporaryItemId)null, sectionId, quantity, default);
+            Func<Task> function = async () => await service.AddItemToShoppingList(local.ShoppingListMock.Object,
+                local.StoreItem?.TemporaryId, local.SectionId, local.Quantity, default);
 
             // Assert
             using (new AssertionScope())
@@ -181,16 +189,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var shoppingList = local.ShoppingListFixture.AsModelFixture().CreateValid();
-            var temporaryItemId = new TemporaryItemId(Guid.NewGuid());
-            var sectionId = new SectionId(local.CommonFixture.NextInt());
-            var quantity = local.CommonFixture.NextFloat();
+            local.SetupShoppingListMock();
+            local.SetupTemporaryStoreItem();
+            local.SetupSectionId();
+            local.SetupQuantity();
 
-            local.ItemRepositoryMock.SetupFindByAsync(temporaryItemId, null);
+            local.SetupFindingNoItemWithTemporaryId();
 
             // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(shoppingList, temporaryItemId,
-                sectionId, quantity, default);
+            Func<Task> function = async () => await service.AddItemToShoppingList(local.ShoppingListMock.Object,
+                local.StoreItem.TemporaryId, local.SectionId, local.Quantity, default);
 
             // Assert
             using (new AssertionScope())
@@ -207,27 +215,27 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var storeItem = local.StoreItemFixture.CreateValid();
-            var shoppingListMock = local.CreateValidShoppingListMock(storeItem);
-            var shoppingListItem = local.ShoppingListItemFixture.AsModelFixture().CreateValid();
+            local.SetupTemporaryStoreItem();
+            local.SetupShoppingListMockMatchingStoreItem();
+            local.SetupShoppingListItem();
 
-            SectionId sectionId = local.CommonFixture.ChooseRandom(shoppingListMock.Object.Sections).Id;
-            var store = local.CreateStore(shoppingListMock.Object, sectionId);
+            local.SetupSectionIdMatchingShoppingList();
+            local.SetupStore();
+            local.SetupQuantity();
 
-            float quantity = local.CommonFixture.NextFloat();
-
-            local.ItemRepositoryMock.SetupFindByAsync(storeItem.TemporaryId, storeItem);
-            local.ShoppingListItemFactoryMock.SetupCreate(storeItem.Id, false, quantity, shoppingListItem);
-            local.StoreRepositoryMock.SetupFindByAsync(store.Id, store);
+            local.SetupFindingItemWithTemporaryId();
+            local.SetupCreatingShoppingListItem();
+            local.SetupFindingStore();
 
             // Act
-            await service.AddItemToShoppingList(shoppingListMock.Object, storeItem.TemporaryId, sectionId, quantity, default);
+            await service.AddItemToShoppingList(local.ShoppingListMock.Object, local.StoreItem.TemporaryId,
+                local.SectionId, local.Quantity, default);
 
             // Assert
             using (new AssertionScope())
             {
-                shoppingListMock.VerifyAddSectionNever();
-                shoppingListMock.VerifyAddItemOnce(shoppingListItem, sectionId);
+                local.VerifyAddSectionNever();
+                local.VerifyAddItemOnce();
             }
         }
 
@@ -242,15 +250,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var storeItem = local.StoreItemFixture.CreateValid();
-            var shoppingListMock = local.CreateShoppingListMockWithIncompatibleStore(storeItem);
+            local.SetupStoreItem();
+            local.SetupShoppingListMockNotMatchingStoreItem();
 
-            var sectionId = new SectionId(local.CommonFixture.NextInt());
-            var quantity = local.CommonFixture.NextFloat();
+            local.SetupSectionId();
+            local.SetupQuantity();
 
             // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(shoppingListMock.Object, storeItem,
-                sectionId, quantity, default);
+            Func<Task> function = async () => await service.AddItemToShoppingList(local.ShoppingListMock.Object,
+                local.StoreItem, local.SectionId, local.Quantity, default);
 
             // Assert
             using (new AssertionScope())
@@ -267,25 +275,25 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var storeItem = local.StoreItemFixture.CreateValid();
-            var shoppingListMock = local.CreateValidShoppingListMock(storeItem);
-            var shoppingListItem = local.ShoppingListItemFixture.AsModelFixture().CreateValid();
+            local.SetupStoreItem();
+            local.SetupShoppingListMockMatchingStoreItem();
+            local.SetupShoppingListItem();
 
-            SectionId sectionId = storeItem.GetDefaultSectionIdForStore(shoppingListMock.Object.StoreId);
-            var store = local.CreateStore(shoppingListMock.Object, sectionId);
+            local.SetupSectionIdMatchingShoppingList();
+            local.SetupStore();
+            local.SetupQuantity();
 
-            float quantity = local.CommonFixture.NextFloat();
-
-            local.ShoppingListItemFactoryMock.SetupCreate(storeItem.Id, false, quantity, shoppingListItem);
-            local.StoreRepositoryMock.SetupFindByAsync(store.Id, store);
+            local.SetupCreatingShoppingListItem();
+            local.SetupFindingStore();
 
             // Act
-            await service.AddItemToShoppingList(shoppingListMock.Object, storeItem, sectionId: null, quantity, default);
+            await service.AddItemToShoppingList(
+                local.ShoppingListMock.Object, local.StoreItem, local.SectionId, local.Quantity, default);
 
             // Assert
             using (new AssertionScope())
             {
-                shoppingListMock.VerifyAddItemOnce(shoppingListItem, sectionId);
+                local.VerifyAddItemOnce();
             }
         }
 
@@ -300,16 +308,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var shoppingList = local.ShoppingListFixture.AsModelFixture().CreateValid();
-            var shoppingListItem = local.ShoppingListItemFixture.AsModelFixture().CreateValid();
+            local.SetupShoppingListMock();
+            local.SetupShoppingListItem();
+            local.SetupSectionId();
 
-            SectionId sectionId = local.CommonFixture.ChooseRandom(shoppingList.Sections).Id;
-
-            local.StoreRepositoryMock.SetupFindByAsync(shoppingList.StoreId, null);
+            local.SetupFindingNoStore();
 
             // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(shoppingList, shoppingListItem,
-                sectionId, default);
+            Func<Task> function = async () => await service.AddItemToShoppingList(local.ShoppingListMock.Object,
+                local.ShoppingListItem, local.SectionId, default);
 
             // Assert
             using (new AssertionScope())
@@ -326,17 +333,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var shoppingList = local.ShoppingListFixture.AsModelFixture().CreateValid();
-            var shoppingListItem = local.ShoppingListItemFixture.AsModelFixture().CreateValid();
+            local.SetupShoppingListMock();
+            local.SetupShoppingListItem();
+            local.SetupSectionId();
+            local.SetupStoreNotMatchingSectionId();
 
-            var store = local.StoreFixture.CreateValid();
-            SectionId sectionId = local.CreateSectionIdNotInStore(store);
-
-            local.StoreRepositoryMock.SetupFindByAsync(shoppingList.StoreId, store);
+            local.SetupFindingStore();
 
             // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(shoppingList, shoppingListItem,
-                sectionId, default);
+            Func<Task> function = async () => await service.AddItemToShoppingList(local.ShoppingListMock.Object,
+                local.ShoppingListItem, local.SectionId, default);
 
             // Assert
             using (new AssertionScope())
@@ -353,26 +359,25 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var shoppingListMock = local.ShoppingListMockFixture.Create();
-            var shoppingListItem = local.ShoppingListItemFixture.AsModelFixture().CreateValid();
+            local.SetupShoppingListMock();
+            local.SetupShoppingListItem();
+            local.SetupSectionId();
+            local.SetupStore();
+            local.SetupEmptyShoppingListSection();
 
-            SectionId sectionId = local.CreateSectionIdNotOnList(shoppingListMock.Object);
-            var store = local.CreateStore(shoppingListMock.Object, sectionId);
-
-            var shoppingListSection = local.CreateSection(sectionId);
-
-            local.StoreRepositoryMock.SetupFindByAsync(store.Id, store);
-            local.ShoppingListSectionFactoryMock.SetupCreateEmpty(sectionId, shoppingListSection);
+            local.SetupFindingStore();
+            local.SetupCreatingEmptyShoppingListSection();
 
             // Act
-            await service.AddItemToShoppingList(shoppingListMock.Object, shoppingListItem, sectionId, default);
+            await service.AddItemToShoppingList(local.ShoppingListMock.Object,
+                local.ShoppingListItem, local.SectionId, default);
 
             // Assert
             using (new AssertionScope())
             {
-                local.ShoppingListSectionFactoryMock.VerifyCreateEmptyOnce(sectionId);
-                shoppingListMock.VerifyAddSectionOnce(shoppingListSection);
-                shoppingListMock.VerifyAddItemOnce(shoppingListItem, sectionId);
+                local.VerifyCreatingEmptyShoppingListSectionOnce();
+                local.VerifyAddSectionOnce();
+                local.VerifyAddItemOnce();
             }
         }
 
@@ -383,22 +388,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var shoppingListMock = local.ShoppingListMockFixture.Create();
-            var shoppingListItem = local.ShoppingListItemFixture.AsModelFixture().CreateValid();
+            local.SetupShoppingListMock();
+            local.SetupShoppingListItem();
+            local.SetupSectionIdMatchingShoppingList();
+            local.SetupStore();
 
-            SectionId sectionId = local.CommonFixture.ChooseRandom(shoppingListMock.Object.Sections).Id;
-            var store = local.CreateStore(shoppingListMock.Object, sectionId);
-
-            local.StoreRepositoryMock.SetupFindByAsync(store.Id, store);
+            local.SetupFindingStore();
 
             // Act
-            await service.AddItemToShoppingList(shoppingListMock.Object, shoppingListItem, sectionId, default);
+            await service.AddItemToShoppingList(local.ShoppingListMock.Object,
+                local.ShoppingListItem, local.SectionId, default);
 
             // Assert
             using (new AssertionScope())
             {
-                shoppingListMock.VerifyAddSectionNever();
-                shoppingListMock.VerifyAddItemOnce(shoppingListItem, sectionId);
+                local.VerifyAddSectionNever();
+                local.VerifyAddItemOnce();
             }
         }
 
@@ -407,32 +412,23 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         private class LocalFixture
         {
             public Fixture Fixture { get; }
-            public ShoppingListFixture ShoppingListFixture { get; }
-            public ShoppingListMockFixture ShoppingListMockFixture { get; }
             public CommonFixture CommonFixture { get; } = new CommonFixture();
-            public ShoppingListSectionFixture ShoppingListSectionFixture { get; }
-            public ShoppingListItemFixture ShoppingListItemFixture { get; }
-            public StoreItemAvailabilityFixture StoreItemAvailabilityFixture { get; }
-            public StoreItemFixture StoreItemFixture { get; }
-            public StoreSectionFixture StoreSectionFixture { get; }
-            public StoreFixture StoreFixture { get; }
             public ShoppingListSectionFactoryMock ShoppingListSectionFactoryMock { get; }
             public StoreRepositoryMock StoreRepositoryMock { get; }
             public ItemRepositoryMock ItemRepositoryMock { get; }
             public ShoppingListItemFactoryMock ShoppingListItemFactoryMock { get; }
 
+            public ShoppingListMock ShoppingListMock { get; private set; }
+            public SectionId SectionId { get; private set; }
+            public float Quantity { get; private set; }
+            public IStoreItem StoreItem { get; private set; }
+            public IShoppingListItem ShoppingListItem { get; private set; }
+            public IStore Store { get; private set; }
+            public IShoppingListSection ShoppingListSection { get; private set; }
+
             public LocalFixture()
             {
                 Fixture = CommonFixture.GetNewFixture();
-
-                ShoppingListFixture = new ShoppingListFixture(CommonFixture);
-                ShoppingListMockFixture = new ShoppingListMockFixture(CommonFixture, ShoppingListFixture);
-                ShoppingListSectionFixture = new ShoppingListSectionFixture(CommonFixture);
-                ShoppingListItemFixture = new ShoppingListItemFixture(CommonFixture);
-                StoreItemAvailabilityFixture = new StoreItemAvailabilityFixture(CommonFixture);
-                StoreItemFixture = new StoreItemFixture(StoreItemAvailabilityFixture, CommonFixture);
-                StoreSectionFixture = new StoreSectionFixture(CommonFixture);
-                StoreFixture = new StoreFixture(CommonFixture);
 
                 ShoppingListSectionFactoryMock = new ShoppingListSectionFactoryMock(Fixture);
                 StoreRepositoryMock = new StoreRepositoryMock(Fixture);
@@ -445,62 +441,155 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 return Fixture.Create<AddItemToShoppingListService>();
             }
 
-            public ShoppingListMock CreateValidShoppingListMock(IStoreItem storeItem)
+            public void SetupShoppingListMock()
             {
-                var storeId = CommonFixture.ChooseRandom(storeItem.Availabilities).StoreId;
-
-                var listDef = new ShoppingListDefinition
-                {
-                    StoreId = storeId
-                };
-                var list = ShoppingListFixture.CreateValid(listDef);
-                return new ShoppingListMock(list);
+                ShoppingListMock = new ShoppingListMock(ShoppingListMother.Sections(3).Create());
             }
 
-            public ShoppingListMock CreateShoppingListMockWithIncompatibleStore(IStoreItem storeItem)
+            public void SetupShoppingListMockMatchingStoreItem()
             {
-                var storeIds = storeItem.Availabilities.Select(av => av.StoreId.Value);
+                var storeId = CommonFixture.ChooseRandom(StoreItem.Availabilities).StoreId;
 
-                var listDef = new ShoppingListDefinition
-                {
-                    StoreId = new StoreId(CommonFixture.NextInt(storeIds))
-                };
-                var list = ShoppingListFixture.CreateValid(listDef);
-                return new ShoppingListMock(list);
+                var list = ShoppingListMother.Sections(3).WithStoreId(storeId).Create();
+                ShoppingListMock = new ShoppingListMock(list);
             }
 
-            public IStore CreateStore(IShoppingList shoppingList, SectionId sectionId)
+            public void SetupShoppingListMockNotMatchingStoreItem()
             {
-                var sectionDef = StoreSectionDefinition.FromId(sectionId);
-                var section = StoreSectionFixture.Create(sectionDef);
+                var excludedStoreIds = StoreItem.Availabilities.Select(av => av.StoreId.Value);
+                var storeId = new StoreId(CommonFixture.NextInt(excludedStoreIds));
 
-                var storeDef = new StoreDefinition
-                {
-                    Id = shoppingList.StoreId,
-                    Sections = section.ToMonoList()
-                };
-                return StoreFixture.CreateValid(storeDef);
+                var list = ShoppingListMother.Sections(3).WithStoreId(storeId).Create();
+                ShoppingListMock = new ShoppingListMock(list);
             }
 
-            public SectionId CreateSectionIdNotInStore(IStore store)
+            public void SetupShoppingListItem()
             {
-                var sectionIds = store.Sections.Select(s => s.Id.Value);
-
-                return new SectionId(CommonFixture.NextInt(sectionIds));
+                ShoppingListItem = ShoppingListItemMother.InBasket().Create();
             }
 
-            public SectionId CreateSectionIdNotOnList(IShoppingList shoppingList)
+            public void SetupStoreItem()
             {
-                var sectinIds = shoppingList.Sections.Select(s => s.Id.Value);
-
-                return new SectionId(CommonFixture.NextInt(sectinIds));
+                StoreItem = StoreItemMother.Initial().Create();
             }
 
-            public IShoppingListSection CreateSection(SectionId sectionId)
+            public void SetupStoreItemNull()
             {
-                var sectionDef = ShoppingListSectionDefinition.FromId(sectionId);
-                return ShoppingListSectionFixture.CreateValid(sectionDef);
+                StoreItem = null;
             }
+
+            public void SetupTemporaryStoreItem()
+            {
+                StoreItem = StoreItemMother.InitialTemporary().Create();
+            }
+
+            public void SetupTemporaryStoreItemNull()
+            {
+                StoreItem = null;
+            }
+
+            public void SetupSectionId()
+            {
+                SectionId = new SectionId(CommonFixture.NextInt());
+            }
+
+            public void SetupSectionIdMatchingShoppingList()
+            {
+                SectionId = CommonFixture.ChooseRandom(ShoppingListMock.Object.Sections).Id;
+            }
+
+            public void SetupQuantity()
+            {
+                Quantity = CommonFixture.NextFloat();
+            }
+
+            public void SetupStore()
+            {
+                var section = StoreSectionMother.Default().WithId(SectionId).Create();
+
+                Store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSection(section).Create();
+            }
+
+            public void SetupStoreNotMatchingSectionId()
+            {
+                var sectionId = new SectionId(CommonFixture.NextInt(SectionId.Value));
+                var section = StoreSectionMother.Default().WithId(sectionId).Create();
+
+                Store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSection(section).Create();
+            }
+
+            public void SetupEmptyShoppingListSection()
+            {
+                ShoppingListSection = ShoppingListSectionMother.Empty().WithId(SectionId).Create();
+            }
+
+            #region Mock Setup
+
+            public void SetupFindingNoItem()
+            {
+                ItemRepositoryMock.SetupFindByAsync(StoreItem.Id, null);
+            }
+
+            public void SetupFindingNoItemWithTemporaryId()
+            {
+                ItemRepositoryMock.SetupFindByAsync(StoreItem.TemporaryId, null);
+            }
+
+            public void SetupFindingItem()
+            {
+                ItemRepositoryMock.SetupFindByAsync(StoreItem.Id, StoreItem);
+            }
+
+            public void SetupFindingItemWithTemporaryId()
+            {
+                ItemRepositoryMock.SetupFindByAsync(StoreItem.TemporaryId, StoreItem);
+            }
+
+            public void SetupCreatingShoppingListItem()
+            {
+                ShoppingListItemFactoryMock.SetupCreate(StoreItem.Id, false, Quantity, ShoppingListItem);
+            }
+
+            public void SetupFindingStore()
+            {
+                StoreRepositoryMock.SetupFindByAsync(Store.Id, Store);
+            }
+
+            public void SetupFindingNoStore()
+            {
+                StoreRepositoryMock.SetupFindByAsync(ShoppingListMock.Object.StoreId, null);
+            }
+
+            public void SetupCreatingEmptyShoppingListSection()
+            {
+                ShoppingListSectionFactoryMock.SetupCreateEmpty(SectionId, ShoppingListSection);
+            }
+
+            #endregion Mock Setup
+
+            #region Verify
+
+            public void VerifyAddSectionNever()
+            {
+                ShoppingListMock.VerifyAddSectionNever();
+            }
+
+            public void VerifyAddSectionOnce()
+            {
+                ShoppingListMock.VerifyAddSectionOnce(ShoppingListSection);
+            }
+
+            public void VerifyAddItemOnce()
+            {
+                ShoppingListMock.VerifyAddItemOnce(ShoppingListItem, SectionId);
+            }
+
+            public void VerifyCreatingEmptyShoppingListSectionOnce()
+            {
+                ShoppingListSectionFactoryMock.VerifyCreateEmptyOnce(SectionId);
+            }
+
+            #endregion Verify
         }
     }
 }
