@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
@@ -71,6 +72,11 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
         {
             FillContructorWith("availabilities", availabilities);
             return this;
+        }
+
+        public StoreItemBuilder WithAvailability(IStoreItemAvailability availability)
+        {
+            return WithAvailabilities(availability.ToMonoList());
         }
 
         public StoreItemBuilder WithTemporaryId(TemporaryItemId temporaryId)
