@@ -5,12 +5,9 @@ using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Services;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Services;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services;
@@ -24,12 +21,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
 {
     public class CreateItemCommandHandlerTests
     {
+        private readonly LocalFixture _local;
+
+        public CreateItemCommandHandlerTests()
+        {
+            _local = new LocalFixture();
+        }
+
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
+            var handler = _local.CreateCommandHandler();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(null, default);
@@ -37,86 +40,205 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             // Assert
             using (new AssertionScope())
             {
-                await action.Should().ThrowAsync<ArgumentNullException>();
+                await action.Should().ThrowExactlyAsync<ArgumentNullException>();
             }
         }
 
+        #region WithManufacturerId
+
         [Fact]
-        public async Task HandleAsync_WithValidDataAndManufacturerId_ShouldCreateItem()
+        public async Task HandleAsync_WithManufacturerId_ShouldReturnTrue()
         {
             // Arrange
-            var local = new LocalFixture();
-
-            IStoreItem storeItem = local.StoreItemFixture.CreateValid();
-            List<IStoreItemAvailability> availabilities = storeItem.Availabilities.ToList();
-
-            var handler = local.CreateCommandHandler();
-            var command = local.CreateCommand(availabilities);
-
-            local.StoreItemFactoryMock.SetupCreate(command.ItemCreation, storeItem);
+            _local.SetupWithManufacturerId();
+            var handler = _local.CreateCommandHandler();
 
             // Act
-            var result = await handler.HandleAsync(command, default);
+            var result = await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                local.ItemRepositoryMock.VerifyStoreAsyncOnce(storeItem);
-                local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(command.ItemCreation.ItemCategoryId);
-                local.ManufacturerValidationServiceMock.VerifyValidateAsyncOnce(command.ItemCreation.ManufacturerId);
-                local.AvailabilityValidationServiceMock.VerifyValidateOnce(availabilities);
             }
         }
 
         [Fact]
-        public async Task HandleAsync_WithValidDataAndManufacturerIdNull_ShouldCreateItem()
+        public async Task HandleAsync_WithManufacturerId_ShouldStoreItem()
         {
             // Arrange
-            var local = new LocalFixture();
-
-            IStoreItem storeItem = local.StoreItemFixture.CreateValid();
-            List<IStoreItemAvailability> availabilities = storeItem.Availabilities.ToList();
-
-            var handler = local.CreateCommandHandler();
-            var command = local.CreateCommandWithoutManufacturerId(availabilities);
-
-            local.StoreItemFactoryMock.SetupCreate(command.ItemCreation, storeItem);
+            _local.SetupWithManufacturerId();
+            var handler = _local.CreateCommandHandler();
 
             // Act
-            var result = await handler.HandleAsync(command, default);
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyStoreingItem();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithManufacturerId_ShouldValidateItemCategory()
+        {
+            // Arrange
+            _local.SetupWithManufacturerId();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyValidateItemCategoryOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithManufacturerId_ShouldValidateManufacturer()
+        {
+            // Arrange
+            _local.SetupWithManufacturerId();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyValidateManufacturerOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithManufacturerId_ShouldValidateAvailabilities()
+        {
+            // Arrange
+            _local.SetupWithManufacturerId();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyValidateAvailabilitiesOnce();
+            }
+        }
+
+        #endregion WithManufacturerId
+
+        #region WithManufacturerIdNull
+
+        [Fact]
+        public async Task HandleAsync_WithManufacturerIdNull_ShouldReturnTrue()
+        {
+            // Arrange
+            _local.SetupWithManufacturerIdNull();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            var result = await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                local.ItemRepositoryMock.VerifyStoreAsyncOnce(storeItem);
-                local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(command.ItemCreation.ItemCategoryId);
-                local.ManufacturerValidationServiceMock.VerifyValidateAsyncNever();
-                local.AvailabilityValidationServiceMock.VerifyValidateOnce(availabilities);
             }
         }
+
+        [Fact]
+        public async Task HandleAsync_WithManufacturerIdNull_ShouldStoreItem()
+        {
+            // Arrange
+            _local.SetupWithManufacturerIdNull();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyStoreingItem();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithManufacturerIdNull_ShouldValidateItemCategory()
+        {
+            // Arrange
+            _local.SetupWithManufacturerIdNull();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyValidateItemCategoryOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithManufacturerIdNull_ShouldNotValidateManufacturer()
+        {
+            // Arrange
+            _local.SetupWithManufacturerIdNull();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyValidateManufacturerNever();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithManufacturerIdNull_ShouldValidateAvailabilities()
+        {
+            // Arrange
+            _local.SetupWithManufacturerIdNull();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyValidateAvailabilitiesOnce();
+            }
+        }
+
+        #endregion WithManufacturerIdNull
 
         private sealed class LocalFixture
         {
             public Fixture Fixture { get; }
             public CommonFixture CommonFixture { get; } = new CommonFixture();
-            public StoreItemFixture StoreItemFixture { get; }
-            public ShoppingListMockFixture ShoppingListMockFixture { get; }
-            public ItemCategoryFixture ItemCategoryFixture { get; }
             public ItemRepositoryMock ItemRepositoryMock { get; }
             public StoreItemFactoryMock StoreItemFactoryMock { get; }
             public ItemCategoryValidationServiceMock ItemCategoryValidationServiceMock { get; }
             public ManufacturerValidationServiceMock ManufacturerValidationServiceMock { get; }
             public AvailabilityValidationServiceMock AvailabilityValidationServiceMock { get; }
+            public IStoreItem StoreItem { get; private set; }
+            public CreateItemCommand Command { get; private set; }
+            public ManufacturerId ManufacturerId { get; private set; }
+            public List<IStoreItemAvailability> Availabilities { get; private set; }
 
             public LocalFixture()
             {
                 Fixture = CommonFixture.GetNewFixture();
-
-                StoreItemFixture = new StoreItemFixture(new StoreItemAvailabilityFixture(CommonFixture), CommonFixture);
-                ShoppingListMockFixture = new ShoppingListMockFixture(CommonFixture, new ShoppingListFixture(CommonFixture));
-                ItemCategoryFixture = new ItemCategoryFixture(CommonFixture);
 
                 ItemRepositoryMock = new ItemRepositoryMock(Fixture);
                 StoreItemFactoryMock = new StoreItemFactoryMock(Fixture);
@@ -125,33 +247,99 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                 AvailabilityValidationServiceMock = new AvailabilityValidationServiceMock(Fixture);
             }
 
-            public CreateItemCommand CreateCommand()
+            public void SetupCommand()
             {
-                return Fixture.Create<CreateItemCommand>();
-            }
-
-            public CreateItemCommand CreateCommand(IEnumerable<IStoreItemAvailability> availabilities)
-            {
+                Fixture.ConstructorArgumentFor<ItemCreation, ManufacturerId>("manufacturerId", ManufacturerId);
                 Fixture.ConstructorArgumentFor<ItemCreation, IEnumerable<IStoreItemAvailability>>(
-                    "availabilities", availabilities);
+                    "availabilities", Availabilities);
 
-                return Fixture.Create<CreateItemCommand>();
-            }
-
-            public CreateItemCommand CreateCommandWithoutManufacturerId(
-                IEnumerable<IStoreItemAvailability> availabilities)
-            {
-                Fixture.ConstructorArgumentFor<ItemCreation, ManufacturerId>("manufacturerId", null);
-                Fixture.ConstructorArgumentFor<ItemCreation, IEnumerable<IStoreItemAvailability>>(
-                    "availabilities", availabilities);
-
-                return Fixture.Create<CreateItemCommand>();
+                Command = Fixture.Create<CreateItemCommand>();
             }
 
             public CreateItemCommandHandler CreateCommandHandler()
             {
                 return Fixture.Create<CreateItemCommandHandler>();
             }
+
+            public void SetupManufacturerId()
+            {
+                ManufacturerId = new ManufacturerId(CommonFixture.NextInt());
+            }
+
+            public void SetupManufacturerIdNull()
+            {
+                ManufacturerId = null;
+            }
+
+            public void SetupAvailabilities()
+            {
+                Availabilities = StoreItem.Availabilities.ToList();
+            }
+
+            public void SetupStoreItem()
+            {
+                StoreItem = StoreItemMother.Initial().Create();
+            }
+
+            public void SetupStoreItemFactoryCreate()
+            {
+                StoreItemFactoryMock.SetupCreate(Command.ItemCreation, StoreItem);
+            }
+
+            #region Verify
+
+            public void VerifyValidateAvailabilitiesOnce()
+            {
+                AvailabilityValidationServiceMock.VerifyValidateOnce(Availabilities);
+            }
+
+            public void VerifyValidateManufacturerOnce()
+            {
+                ManufacturerValidationServiceMock.VerifyValidateAsyncOnce(Command.ItemCreation.ManufacturerId);
+            }
+
+            public void VerifyValidateManufacturerNever()
+            {
+                ManufacturerValidationServiceMock.VerifyValidateAsyncNever();
+            }
+
+            public void VerifyValidateItemCategoryOnce()
+            {
+                ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(Command.ItemCreation.ItemCategoryId);
+            }
+
+            public void VerifyStoreingItem()
+            {
+                ItemRepositoryMock.VerifyStoreAsyncOnce(StoreItem);
+            }
+
+            #endregion Verify
+
+            #region Aggregates
+
+            public void SetupWithManufacturerIdNull()
+            {
+                SetupStoreItem();
+                SetupAvailabilities();
+
+                SetupManufacturerIdNull();
+                SetupCommand();
+
+                SetupStoreItemFactoryCreate();
+            }
+
+            public void SetupWithManufacturerId()
+            {
+                SetupStoreItem();
+                SetupAvailabilities();
+
+                SetupManufacturerId();
+                SetupCommand();
+
+                SetupStoreItemFactoryCreate();
+            }
+
+            #endregion Aggregates
         }
     }
 }
