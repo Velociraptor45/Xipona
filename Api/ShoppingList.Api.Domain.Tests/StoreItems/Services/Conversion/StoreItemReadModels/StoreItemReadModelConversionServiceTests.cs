@@ -3,7 +3,6 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using ProjectHermes.ShoppingList.Api.Core.Attributes;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
@@ -16,13 +15,14 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.StoreItemReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
+using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
-using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Ports;
 using System;
 using System.Linq;
@@ -57,23 +57,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var item = local.CreateItem();
-            var availability = item.Availabilities.First();
-            var manufacturer = local.CreateManufacturer(item.ManufacturerId);
-            var store = local.CreateStore(availability.StoreId, availability.DefaultSectionId);
-
-            local.ItemCategoryRepositoryMock.SetupFindByAsync(item.ItemCategoryId, null);
-            local.ManufacturerRepositoryMock.SetupFindByAsync(item.ManufacturerId, manufacturer);
-            local.StoreRepositoryMock.SetupFindByAsync(availability.StoreId.ToMonoList(), store.ToMonoList());
+            local.SetupItem();
+            local.SetupManufacturer();
+            local.SetupStore();
+            local.SetupFindingNoItemCategory();
+            local.SetupFindingManufacturer();
+            local.SetupFindingStore();
 
             // Act
-            Func<Task<StoreItemReadModel>> function = async () => await service.ConvertAsync(item, default);
+            Func<Task<StoreItemReadModel>> function = async () => await service.ConvertAsync(local.StoreItem, default);
 
             // Assert
             using (new AssertionScope())
             {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ItemCategoryNotFound);
+                await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemCategoryNotFound);
             }
         }
 
@@ -84,23 +81,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var item = local.CreateItem();
-            var availability = item.Availabilities.First();
-            var itemCategory = local.CreateItemCategory(item.ItemCategoryId);
-            var store = local.CreateStore(availability.StoreId, availability.DefaultSectionId);
-
-            local.ItemCategoryRepositoryMock.SetupFindByAsync(item.ItemCategoryId, itemCategory);
-            local.ManufacturerRepositoryMock.SetupFindByAsync(item.ManufacturerId, null);
-            local.StoreRepositoryMock.SetupFindByAsync(availability.StoreId.ToMonoList(), store.ToMonoList());
+            local.SetupItem();
+            local.SetupItemCategory();
+            local.SetupStore();
+            local.SetupFindingItemCategory();
+            local.SetupFindingNoManufacturer();
+            local.SetupFindingStore();
 
             // Act
-            Func<Task<StoreItemReadModel>> function = async () => await service.ConvertAsync(item, default);
+            Func<Task<StoreItemReadModel>> function = async () => await service.ConvertAsync(local.StoreItem, default);
 
             // Assert
             using (new AssertionScope())
             {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ManufacturerNotFound);
+                await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ManufacturerNotFound);
             }
         }
 
@@ -111,19 +105,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var item = local.CreateItemWithoutItemCategory();
-            var availability = item.Availabilities.First();
-            var manufacturer = local.CreateManufacturer(item.ManufacturerId);
-            var store = local.CreateStore(availability.StoreId, availability.DefaultSectionId);
-
-            local.ManufacturerRepositoryMock.SetupFindByAsync(item.ManufacturerId, manufacturer);
-            local.StoreRepositoryMock.SetupFindByAsync(availability.StoreId.ToMonoList(), store.ToMonoList());
+            local.SetupItemWithoutItemCategory();
+            local.SetupManufacturer();
+            local.SetupStore();
+            local.SetupFindingManufacturer();
+            local.SetupFindingStore();
 
             // Act
-            var result = await service.ConvertAsync(item, default);
+            var result = await service.ConvertAsync(local.StoreItem, default);
 
             // Assert
-            var expected = local.ToSimpleReadModel(item, null, manufacturer, store);
+            var expected = local.CreateSimpleReadModel();
 
             using (new AssertionScope())
             {
@@ -138,19 +130,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var item = local.CreateItemWithoutManufacturer();
-            var availability = item.Availabilities.First();
-            var itemCategory = local.CreateItemCategory(item.ItemCategoryId);
-            var store = local.CreateStore(availability.StoreId, availability.DefaultSectionId);
-
-            local.ItemCategoryRepositoryMock.SetupFindByAsync(item.ItemCategoryId, itemCategory);
-            local.StoreRepositoryMock.SetupFindByAsync(availability.StoreId.ToMonoList(), store.ToMonoList());
+            local.SetupItemWithoutManufacturer();
+            local.SetupItemCategory();
+            local.SetupStore();
+            local.SetupFindingItemCategory();
+            local.SetupFindingStore();
 
             // Act
-            var result = await service.ConvertAsync(item, default);
+            var result = await service.ConvertAsync(local.StoreItem, default);
 
             // Assert
-            var expected = local.ToSimpleReadModel(item, itemCategory, null, store);
+            var expected = local.CreateSimpleReadModel();
 
             using (new AssertionScope())
             {
@@ -165,17 +155,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var item = local.CreateItemWithNeitherItemCategoryNorManufacturer();
-            var availability = item.Availabilities.First();
-            var store = local.CreateStore(availability.StoreId, availability.DefaultSectionId);
-
-            local.StoreRepositoryMock.SetupFindByAsync(availability.StoreId.ToMonoList(), store.ToMonoList());
+            local.SetupItemWithNeitherItemCategoryNorManufacturer();
+            local.SetupStore();
+            local.SetupFindingStore();
 
             // Act
-            var result = await service.ConvertAsync(item, default);
+            var result = await service.ConvertAsync(local.StoreItem, default);
 
             // Assert
-            var expected = local.ToSimpleReadModel(item, null, null, store);
+            var expected = local.CreateSimpleReadModel();
 
             using (new AssertionScope())
             {
@@ -190,21 +178,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var item = local.CreateItem();
-            var availability = item.Availabilities.First();
-            var itemCategory = local.CreateItemCategory(item.ItemCategoryId);
-            var manufacturer = local.CreateManufacturer(item.ManufacturerId);
-            var store = local.CreateStore(availability.StoreId, availability.DefaultSectionId);
+            local.SetupItem();
+            local.SetupItemCategory();
+            local.SetupManufacturer();
+            local.SetupStore();
 
-            local.ItemCategoryRepositoryMock.SetupFindByAsync(item.ItemCategoryId, itemCategory);
-            local.ManufacturerRepositoryMock.SetupFindByAsync(item.ManufacturerId, manufacturer);
-            local.StoreRepositoryMock.SetupFindByAsync(availability.StoreId.ToMonoList(), store.ToMonoList());
+            local.SetupFindingItemCategory();
+            local.SetupFindingManufacturer();
+            local.SetupFindingStore();
 
             // Act
-            var result = await service.ConvertAsync(item, default);
+            var result = await service.ConvertAsync(local.StoreItem, default);
 
             // Assert
-            var expected = local.ToSimpleReadModel(item, itemCategory, manufacturer, store);
+            var expected = local.CreateSimpleReadModel();
 
             using (new AssertionScope())
             {
@@ -216,26 +203,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
         {
             public Fixture Fixture { get; }
             public CommonFixture CommonFixture { get; } = new CommonFixture();
-            public StoreItemAvailabilityFixture StoreItemAvailabilityFixture { get; }
-            public StoreItemFixture StoreItemFixture { get; }
-            public StoreSectionFixture StoreSectionFixture { get; }
-            public StoreFixture StoreFixture { get; }
-            public ItemCategoryFixture ItemCategoryFixture { get; }
-            public ManufacturerFixture ManufacturerFixture { get; }
             public ItemCategoryRepositoryMock ItemCategoryRepositoryMock { get; }
             public ManufacturerRepositoryMock ManufacturerRepositoryMock { get; }
             public StoreRepositoryMock StoreRepositoryMock { get; }
 
+            public IStoreItem StoreItem { get; private set; }
+            public IStore Store { get; private set; }
+            public ManufacturerId ManufacturerId => StoreItem.ManufacturerId;
+            public ItemCategoryId ItemCategoryId => StoreItem.ItemCategoryId;
+            public IItemCategory ItemCategory { get; private set; }
+            public IManufacturer Manufacturer { get; private set; }
+
             public LocalFixture()
             {
                 Fixture = CommonFixture.GetNewFixture();
-
-                StoreItemAvailabilityFixture = new StoreItemAvailabilityFixture(CommonFixture);
-                StoreItemFixture = new StoreItemFixture(StoreItemAvailabilityFixture, CommonFixture);
-                StoreSectionFixture = new StoreSectionFixture(CommonFixture);
-                StoreFixture = new StoreFixture(CommonFixture);
-                ItemCategoryFixture = new ItemCategoryFixture(CommonFixture);
-                ManufacturerFixture = new ManufacturerFixture(CommonFixture);
 
                 ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(Fixture);
                 ManufacturerRepositoryMock = new ManufacturerRepositoryMock(Fixture);
@@ -247,83 +228,77 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
                 return Fixture.Create<StoreItemReadModelConversionService>();
             }
 
-            public IStoreItem CreateItem()
+            public void SetupItem()
             {
-                var itemCategoryId = new ItemCategoryId(CommonFixture.NextInt());
-                var manufacturerId = new ManufacturerId(CommonFixture.NextInt());
-                return CreateItem(itemCategoryId, manufacturerId);
+                StoreItem = StoreItemMother.Initial()
+                    .WithAvailability(StoreItemAvailabilityMother.Initial().Create())
+                    .Create();
             }
 
-            public IStoreItem CreateItemWithoutItemCategory()
+            public void SetupItemWithoutItemCategory()
             {
-                var manufacturerId = new ManufacturerId(CommonFixture.NextInt());
-                return CreateItem(null, manufacturerId);
+                StoreItem = StoreItemMother.Initial()
+                    .WithAvailability(StoreItemAvailabilityMother.Initial().Create())
+                    .WithoutItemCategoryId().Create();
             }
 
-            public IStoreItem CreateItemWithoutManufacturer()
+            public void SetupItemWithoutManufacturer()
             {
-                var itemCategoryId = new ItemCategoryId(CommonFixture.NextInt());
-                return CreateItem(itemCategoryId, null);
+                StoreItem = StoreItemMother.InitialWithoutManufacturer()
+                    .WithAvailability(StoreItemAvailabilityMother.Initial().Create())
+                    .Create();
             }
 
-            public IStoreItem CreateItemWithNeitherItemCategoryNorManufacturer()
+            public void SetupItemWithNeitherItemCategoryNorManufacturer()
             {
-                return CreateItem(null, null);
+                StoreItem = StoreItemMother.InitialTemporary()
+                    .WithAvailability(StoreItemAvailabilityMother.Initial().Create())
+                    .Create();
             }
 
-            private IStoreItem CreateItem(ItemCategoryId itemCategoryId, ManufacturerId manufacturerId)
+            public void SetupStore()
             {
-                var def = new StoreItemDefinition
-                {
-                    ItemCategoryId = itemCategoryId,
-                    ManufacturerId = manufacturerId,
-                    Availabilities = StoreItemAvailabilityFixture.CreateManyValid(1)
-                };
-
-                return StoreItemFixture.CreateValid(def);
+                var availability = StoreItem.Availabilities.First();
+                var section = StoreSectionMother.Default()
+                    .WithId(availability.DefaultSectionId)
+                    .Create();
+                Store = StoreMother.Initial()
+                    .WithId(availability.StoreId)
+                    .WithSection(section)
+                    .Create();
             }
 
-            public IStore CreateStore(StoreId storeId, SectionId sectionId)
+            public void SetupItemCategory()
             {
-                var sectionDef = StoreSectionDefinition.FromId(sectionId);
-
-                var storeDef = new StoreDefinition
-                {
-                    Id = storeId,
-                    Sections = StoreSectionFixture.CreateMany(sectionDef, 1)
-                };
-                return StoreFixture.CreateValid(storeDef);
+                ItemCategory = ItemCategoryMother.NotDeleted()
+                    .WithId(ItemCategoryId)
+                    .Create();
             }
 
-            public IItemCategory CreateItemCategory(ItemCategoryId itemCategoryId)
+            public void SetupManufacturer()
             {
-                return ItemCategoryFixture.GetItemCategory(itemCategoryId);
+                Manufacturer = ManufacturerMother.NotDeleted()
+                    .WithId(ManufacturerId)
+                    .Create();
             }
 
-            public IManufacturer CreateManufacturer(ManufacturerId manufacturerId)
+            public StoreItemReadModel CreateSimpleReadModel()
             {
-                var def = ManufacturerDefinition.FromId(manufacturerId);
-                return ManufacturerFixture.Create(def);
-            }
-
-            public StoreItemReadModel ToSimpleReadModel(IStoreItem item, IItemCategory itemCategory,
-                IManufacturer manufacturer, IStore store)
-            {
-                var manufacturerReadModel = manufacturer == null
+                var manufacturerReadModel = this.Manufacturer == null
                 ? null
                 : new ManufacturerReadModel(
-                    manufacturer.Id,
-                    manufacturer.Name,
-                    manufacturer.IsDeleted);
+                    Manufacturer.Id,
+                    Manufacturer.Name,
+                    Manufacturer.IsDeleted);
 
-                var itemCategoryReadModel = itemCategory == null
+                var itemCategoryReadModel = ItemCategory == null
                     ? null
                     : new ItemCategoryReadModel(
-                        itemCategory.Id,
-                        itemCategory.Name,
-                        itemCategory.IsDeleted);
+                        ItemCategory.Id,
+                        ItemCategory.Name,
+                        ItemCategory.IsDeleted);
 
-                var section = store.Sections.First();
+                var section = Store.Sections.First();
                 var storeSectionReadModel = new StoreSectionReadModel(
                     section.Id,
                     section.Name,
@@ -331,38 +306,67 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
                     section.IsDefaultSection);
 
                 var storeReadModel = new StoreItemStoreReadModel(
-                    store.Id,
-                    store.Name,
+                    Store.Id,
+                    Store.Name,
                     storeSectionReadModel.ToMonoList());
 
-                var availability = item.Availabilities.First();
+                var availability = StoreItem.Availabilities.First();
                 var availabilityReadModel = new StoreItemAvailabilityReadModel(
                     storeReadModel,
                     availability.Price,
                     storeSectionReadModel);
 
                 return new StoreItemReadModel(
-                    item.Id,
-                    item.Name,
-                    item.IsDeleted,
-                    item.Comment,
-                    item.IsTemporary,
+                    StoreItem.Id,
+                    StoreItem.Name,
+                    StoreItem.IsDeleted,
+                    StoreItem.Comment,
+                    StoreItem.IsTemporary,
                     new QuantityTypeReadModel(
-                        (int)item.QuantityType,
-                        item.QuantityType.ToString(),
-                        item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-                        item.QuantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
-                        item.QuantityType.GetAttribute<QuantityLabelAttribute>().QuantityLabel,
-                        item.QuantityType.GetAttribute<QuantityNormalizerAttribute>().Value),
-                    item.QuantityInPacket,
+                        (int)StoreItem.QuantityType,
+                        StoreItem.QuantityType.ToString(),
+                        StoreItem.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                        StoreItem.QuantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                        StoreItem.QuantityType.GetAttribute<QuantityLabelAttribute>().QuantityLabel,
+                        StoreItem.QuantityType.GetAttribute<QuantityNormalizerAttribute>().Value),
+                    StoreItem.QuantityInPacket,
                     new QuantityTypeInPacketReadModel(
-                        (int)item.QuantityTypeInPacket,
-                        item.QuantityTypeInPacket.ToString(),
-                        item.QuantityTypeInPacket.GetAttribute<QuantityLabelAttribute>().QuantityLabel),
+                        (int)StoreItem.QuantityTypeInPacket,
+                        StoreItem.QuantityTypeInPacket.ToString(),
+                        StoreItem.QuantityTypeInPacket.GetAttribute<QuantityLabelAttribute>().QuantityLabel),
                     itemCategoryReadModel,
                     manufacturerReadModel,
                     availabilityReadModel.ToMonoList());
             }
+
+            #region Mock Setup
+
+            public void SetupFindingItemCategory()
+            {
+                ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategoryId, ItemCategory);
+            }
+
+            public void SetupFindingNoItemCategory()
+            {
+                ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategoryId, null);
+            }
+
+            public void SetupFindingManufacturer()
+            {
+                ManufacturerRepositoryMock.SetupFindByAsync(ManufacturerId, Manufacturer);
+            }
+
+            public void SetupFindingNoManufacturer()
+            {
+                ManufacturerRepositoryMock.SetupFindByAsync(ManufacturerId, null);
+            }
+
+            public void SetupFindingStore()
+            {
+                StoreRepositoryMock.SetupFindByAsync(Store.Id.ToMonoList(), Store.ToMonoList());
+            }
+
+            #endregion Mock Setup
         }
     }
 }

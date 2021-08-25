@@ -13,5 +13,12 @@ namespace ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions
             return (await assertion.ThrowAsync<DomainException>())
                     .Where(e => e.Reason.ErrorCode == code);
         }
+
+        public static async Task<ExceptionAssertions<DomainException>> ThrowDomainExceptionAsync<T>(
+            this GenericAsyncFunctionAssertions<T> assertion, ErrorReasonCode code)
+        {
+            return (await assertion.ThrowAsync<DomainException>())
+                    .Where(e => e.Reason.ErrorCode == code);
+        }
     }
 }
