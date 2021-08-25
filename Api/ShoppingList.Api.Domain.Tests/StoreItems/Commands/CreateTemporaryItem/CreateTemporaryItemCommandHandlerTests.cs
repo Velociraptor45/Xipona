@@ -6,7 +6,6 @@ using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services;
@@ -18,12 +17,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
 {
     public class CreateTemporaryItemCommandHandlerTests
     {
+        private readonly LocalFixture _local;
+
+        public CreateTemporaryItemCommandHandlerTests()
+        {
+            _local = new LocalFixture();
+        }
+
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
+            var handler = _local.CreateCommandHandler();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(null, default);
@@ -35,65 +40,138 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             }
         }
 
+        #region WithValidData
+
         [Fact]
-        public async Task HandleAsync_WithValidData_ShouldStoreItem()
+        public async Task HandleAsync_WithValidData_ShouldReturnTrue()
         {
             // Arrange
-            var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
-
-            IStoreItem storeItem = local.StoreItemFixture.CreateValid();
-            IStoreItemAvailability availability = local.CommonFixture.ChooseRandom(storeItem.Availabilities);
-
-            var command = local.CreateCommand(availability);
-            local.StoreItemFactoryMock.SetupCreate(command.TemporaryItemCreation, storeItem);
+            var handler = _local.CreateCommandHandler();
+            _local.SetupWithValidData();
 
             // Act
-            var result = await handler.HandleAsync(command, default);
+            var result = await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                local.AvailabilityValidationServiceMock.VerifyValidateOnce(
-                    command.TemporaryItemCreation.Availability.ToMonoList());
-                local.ItemRepositoryMock.VerifyStoreAsyncOnce(storeItem);
             }
         }
+
+        [Fact]
+        public async Task HandleAsync_WithValidData_ShouldValidateAvailabilities()
+        {
+            // Arrange
+            var handler = _local.CreateCommandHandler();
+            _local.SetupWithValidData();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyValidatingAvailabilities();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithValidData_ShouldStoreItem()
+        {
+            // Arrange
+            var handler = _local.CreateCommandHandler();
+            _local.SetupWithValidData();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyStoringItem();
+            }
+        }
+
+        #endregion WithValidData
 
         private sealed class LocalFixture
         {
             public Fixture Fixture { get; }
             public CommonFixture CommonFixture { get; } = new CommonFixture();
-            public StoreItemFixture StoreItemFixture { get; }
             public ItemRepositoryMock ItemRepositoryMock { get; }
             public StoreItemFactoryMock StoreItemFactoryMock { get; }
             public AvailabilityValidationServiceMock AvailabilityValidationServiceMock { get; }
 
+            public CreateTemporaryItemCommand Command { get; private set; }
+            public IStoreItem StoreItem { get; private set; }
+            public IStoreItemAvailability Availability { get; private set; }
+
             public LocalFixture()
             {
                 Fixture = CommonFixture.GetNewFixture();
-
-                StoreItemFixture = new StoreItemFixture(new StoreItemAvailabilityFixture(CommonFixture), CommonFixture);
 
                 ItemRepositoryMock = new ItemRepositoryMock(Fixture);
                 StoreItemFactoryMock = new StoreItemFactoryMock(Fixture);
                 AvailabilityValidationServiceMock = new AvailabilityValidationServiceMock(Fixture);
             }
 
-            public CreateTemporaryItemCommand CreateCommand(IStoreItemAvailability availability)
+            public void SetupCommand()
             {
-                var fixture = CommonFixture.GetNewFixture();
-
-                fixture.ConstructorArgumentFor<TemporaryItemCreation, IStoreItemAvailability>("availability", availability);
-
-                return fixture.Create<CreateTemporaryItemCommand>();
+                Fixture.ConstructorArgumentFor<TemporaryItemCreation, IStoreItemAvailability>("availability", Availability);
+                Command = Fixture.Create<CreateTemporaryItemCommand>();
             }
 
             public CreateTemporaryItemCommandHandler CreateCommandHandler()
             {
                 return Fixture.Create<CreateTemporaryItemCommandHandler>();
             }
+
+            public void SetupStoreItem()
+            {
+                StoreItem = StoreItemMother.Initial().Create();
+            }
+
+            public void SetupRandomAvailability()
+            {
+                Availability = CommonFixture.ChooseRandom(StoreItem.Availabilities);
+            }
+
+            #region Mock Setup
+
+            public void SetupCreatingStoreItem()
+            {
+                StoreItemFactoryMock.SetupCreate(Command.TemporaryItemCreation, StoreItem);
+            }
+
+            #endregion Mock Setup
+
+            #region Verify
+
+            public void VerifyValidatingAvailabilities()
+            {
+                AvailabilityValidationServiceMock.VerifyValidateOnce(
+                    Command.TemporaryItemCreation.Availability.ToMonoList());
+            }
+
+            public void VerifyStoringItem()
+            {
+                ItemRepositoryMock.VerifyStoreAsyncOnce(StoreItem);
+            }
+
+            #endregion Verify
+
+            #region Aggregates
+
+            public void SetupWithValidData()
+            {
+                SetupStoreItem();
+                SetupRandomAvailability();
+                SetupCommand();
+                SetupCreatingStoreItem();
+            }
+
+            #endregion Aggregates
         }
     }
 }
