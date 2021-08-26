@@ -1,20 +1,17 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.DeleteItemCategory;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Common.Mocks;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using System;
@@ -27,32 +24,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
 {
     public class DeleteItemCategoryCommandHandlerTests
     {
-        private readonly CommonFixture commonFixture;
-        private readonly ItemCategoryMockFixture itemCategoryMockFixtur;
-        private readonly StoreItemMockFixture storeItemMockFixture;
-        private readonly ShoppingListMockFixture shoppingListMockFixture;
+        private readonly LocalFixture _local;
 
         public DeleteItemCategoryCommandHandlerTests()
         {
-            commonFixture = new CommonFixture();
-            var shoppingListFixture = new ShoppingListFixture(commonFixture);
-            var storeItemAvailabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
-            var storeItemFixture = new StoreItemFixture(storeItemAvailabilityFixture, commonFixture);
-            var itemCategoryFixture = new ItemCategoryFixture(commonFixture);
-            itemCategoryMockFixtur = new ItemCategoryMockFixture(commonFixture, itemCategoryFixture);
-            storeItemMockFixture = new StoreItemMockFixture(commonFixture, storeItemFixture);
-            shoppingListMockFixture = new ShoppingListMockFixture(commonFixture, shoppingListFixture);
+            _local = new LocalFixture();
         }
 
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
-            var handler = fixture.Create<DeleteItemCategoryCommandHandler>();
+            _local.SetupCommandNull();
+            var handler = _local.CreateCommandHandler();
 
             // Act
-            Func<Task<bool>> action = async () => await handler.HandleAsync(null, default);
+            Func<Task<bool>> action = async () => await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
@@ -65,168 +52,617 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         public async Task HandleAsync_WithInvalidItemCategoryId_ShouldThrowDomainException()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
+            _local.SetupCommand();
+            _local.SetupFindingNoItemCategory();
 
-            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
-
-            var command = fixture.Create<DeleteItemCategoryCommand>();
-            var handler = fixture.Create<DeleteItemCategoryCommandHandler>();
-
-            itemCategoryRepositoryMock.SetupFindByAsync(command.ItemCategoryId, null);
+            var handler = _local.CreateCommandHandler();
 
             // Act
-            Func<Task<bool>> action = async () => await handler.HandleAsync(command, default);
+            Func<Task<bool>> action = async () => await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
             {
-                (await action.Should().ThrowAsync<DomainException>())
-                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemCategoryNotFound);
+                await action.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemCategoryNotFound);
             }
         }
 
+        #region WithNoItemsOfItemCategory
+
         [Fact]
-        public async Task HandleAsync_WithNoItemsOfItemCategory_ShouldNotStoreAnyItemsAndDeleteItemCategory()
+        public async Task HandleAsync_WithNoItemsOfItemCategory_ShouldReturnTrue()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
-
-            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
-            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
-            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
-            TransactionGeneratorMock transactionGeneratorMock = new TransactionGeneratorMock(fixture);
-
-            ItemCategoryMock itemCategoryMock = itemCategoryMockFixtur.Create();
-            TransactionMock transactionMock = new TransactionMock();
-
-            var command = fixture.Create<DeleteItemCategoryCommand>();
-            var handler = fixture.Create<DeleteItemCategoryCommandHandler>();
-
-            itemCategoryRepositoryMock.SetupFindByAsync(command.ItemCategoryId, itemCategoryMock.Object);
-            itemRepositoryMock.SetupFindActiveByAsync(command.ItemCategoryId, Enumerable.Empty<IStoreItem>());
-            transactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
+            _local.SetupWithNoItemsOfItemCategory();
+            var handler = _local.CreateCommandHandler();
 
             // Act
-            var result = await handler.HandleAsync(command, default);
+            var result = await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                itemCategoryMock.VerifyDeleteOnce();
-
-                shoppingListRepositoryMock.VerifyStoreAsyncNever();
-                itemRepositoryMock.VerifyStoreAsyncNever();
-                itemCategoryRepositoryMock.VerifyStoreAsyncOnce(itemCategoryMock.Object);
-
-                transactionMock.VerifyCommitAsyncOnce();
             }
         }
 
         [Fact]
-        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnNoActiveShoppingLists_ShouldStoreItemsButNoShoppingListsAndDeleteItemCategory()
+        public async Task HandleAsync_WithNoItemsOfItemCategory_ShouldDeleteItemCategory()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
-
-            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
-            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
-            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
-            TransactionGeneratorMock transactionGeneratorMock = new TransactionGeneratorMock(fixture);
-
-            ItemCategoryMock itemCategoryMock = itemCategoryMockFixtur.Create();
-            List<StoreItemMock> storeItemMocks = storeItemMockFixture.CreateMany(3).ToList();
-            TransactionMock transactionMock = new TransactionMock();
-
-            var command = fixture.Create<DeleteItemCategoryCommand>();
-            var handler = fixture.Create<DeleteItemCategoryCommandHandler>();
-
-            itemCategoryRepositoryMock.SetupFindByAsync(command.ItemCategoryId, itemCategoryMock.Object);
-            itemRepositoryMock.SetupFindActiveByAsync(command.ItemCategoryId, storeItemMocks.Select(m => m.Object));
-            shoppingListRepositoryMock.SetupFindActiveByAsync(Enumerable.Empty<IShoppingList>());
-            transactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
+            _local.SetupWithNoItemsOfItemCategory();
+            var handler = _local.CreateCommandHandler();
 
             // Act
-            var result = await handler.HandleAsync(command, default);
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyDeleteItemCategoryOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithNoItemsOfItemCategory_ShouldStoreNoShopppingList()
+        {
+            // Arrange
+            _local.SetupWithNoItemsOfItemCategory();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyStoringNoShoppingList();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithNoItemsOfItemCategory_ShouldStoreNoItem()
+        {
+            // Arrange
+            _local.SetupWithNoItemsOfItemCategory();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyStoringNoItem();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithNoItemsOfItemCategory_ShouldStoreItemCategory()
+        {
+            // Arrange
+            _local.SetupWithNoItemsOfItemCategory();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyStoringItemCategoryOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithNoItemsOfItemCategory_ShouldCommitTransaction()
+        {
+            // Arrange
+            _local.SetupWithNoItemsOfItemCategory();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyCommittingTransactionOnce();
+            }
+        }
+
+        #endregion WithNoItemsOfItemCategory
+
+        #region WithSomeItemsOfItemCategoryOnNoActiveShoppingLists
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnNoActiveShoppingLists_ShouldReturnTrue()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            var result = await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                itemCategoryMock.VerifyDeleteOnce();
+            }
+        }
 
-                shoppingListRepositoryMock.VerifyStoreAsyncNever();
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnNoActiveShoppingLists_ShouldDeleteItemCategory()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
 
-                foreach (var storeItemMock in storeItemMocks)
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyDeleteItemCategoryOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnNoActiveShoppingLists_ShouldStoreNoShoppingList()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyStoringNoShoppingList();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnNoActiveShoppingLists_ShouldDeleteAllItems()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyDeletingAllItemsOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnNoActiveShoppingLists_ShouldStoreAllItems()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyStoringAllItemsOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnNoActiveShoppingLists_ShouldStoreItemCategory()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyStoringItemCategoryOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnNoActiveShoppingLists_ShouldCommitTransaction()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyCommittingTransactionOnce();
+            }
+        }
+
+        #endregion WithSomeItemsOfItemCategoryOnNoActiveShoppingLists
+
+        #region WithSomeItemsOfItemCategoryOnActiveShoppingLists
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnActiveShoppingLists_ShouldReturnTrue()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            var result = await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                result.Should().BeTrue();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnActiveShoppingLists_ShouldStoreDeleteItemCategory()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyDeleteItemCategoryOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnActiveShoppingLists_ShouldDeleteAllItems()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyDeletingAllItemsOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnActiveShoppingLists_ShouldStoreAllItems()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyStoringAllItemsOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnActiveShoppingLists_ShouldRemoveItemFromShoppingLists()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyRemovingItemFromAllShoppingListsOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnActiveShoppingLists_ShouldStoreAllShoppingLists()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyStoringAllShoppingListsOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnActiveShoppingLists_ShouldStoreItemCategory()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyStoringItemCategoryOnce();
+            }
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnActiveShoppingLists_ShouldCommitTransaction()
+        {
+            // Arrange
+            _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
+            var handler = _local.CreateCommandHandler();
+
+            // Act
+            await handler.HandleAsync(_local.Command, default);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                _local.VerifyCommittingTransactionOnce();
+            }
+        }
+
+        #endregion WithSomeItemsOfItemCategoryOnActiveShoppingLists
+
+        private class LocalFixture
+        {
+            public Fixture Fixture { get; }
+            public CommonFixture CommonFixture { get; } = new CommonFixture();
+            public ItemCategoryRepositoryMock ItemCategoryRepositoryMock { get; }
+            public ItemRepositoryMock ItemRepositoryMock { get; }
+            public ShoppingListRepositoryMock ShoppingListRepositoryMock { get; }
+            public TransactionGeneratorMock TransactionGeneratorMock { get; }
+
+            public DeleteItemCategoryCommand Command { get; private set; }
+            public TransactionMock TransactionMock { get; private set; }
+            public ItemCategoryMock ItemCategoryMock { get; private set; }
+            public List<StoreItemMock> StoreItemMocks { get; private set; }
+
+            public Dictionary<StoreItemMock, List<ShoppingListMock>> ShoppingListDict { get; } =
+                new Dictionary<StoreItemMock, List<ShoppingListMock>>();
+
+            public LocalFixture()
+            {
+                Fixture = CommonFixture.GetNewFixture();
+                ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(Fixture);
+                ItemRepositoryMock = new ItemRepositoryMock(Fixture);
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
+                TransactionGeneratorMock = new TransactionGeneratorMock(Fixture);
+            }
+
+            public DeleteItemCategoryCommandHandler CreateCommandHandler()
+            {
+                return Fixture.Create<DeleteItemCategoryCommandHandler>();
+            }
+
+            public void SetupCommand()
+            {
+                Command = Fixture.Create<DeleteItemCategoryCommand>();
+            }
+
+            public void SetupCommandNull()
+            {
+                Command = null;
+            }
+
+            public void SetupItemCategoryMock()
+            {
+                ItemCategoryMock = new ItemCategoryMock(ItemCategoryMother.NotDeleted().Create());
+            }
+
+            public void SetupTransactionMock()
+            {
+                TransactionMock = new TransactionMock();
+            }
+
+            public void SetupStoreItemMocks()
+            {
+                StoreItemMocks = StoreItemMother.Initial()
+                    .CreateMany(2)
+                    .Select(i => new StoreItemMock(i))
+                    .ToList();
+            }
+
+            public void SetupShoppingListDict()
+            {
+                foreach (var storeItemMock in StoreItemMocks)
                 {
-                    storeItemMock.VerifyDeleteOnce();
-
-                    itemRepositoryMock.VerifyStoreAsyncOnce(storeItemMock.Object);
+                    int amount = CommonFixture.NextInt(1, 5);
+                    var listMocks = ShoppingListMother.Sections(3)
+                        .CreateMany(amount)
+                        .Select(list => new ShoppingListMock(list))
+                        .ToList();
+                    ShoppingListDict.Add(storeItemMock, listMocks);
                 }
-
-                itemCategoryRepositoryMock.VerifyStoreAsyncOnce(itemCategoryMock.Object);
-                transactionMock.VerifyCommitAsyncOnce();
-            }
-        }
-
-        [Fact]
-        public async Task HandleAsync_WithSomeItemsOfItemCategoryOnActiveShoppingLists_ShouldStoreItemsAndShoppingListsAndDeleteItemCategory()
-        {
-            // Arrange
-            var fixture = commonFixture.GetNewFixture();
-
-            ItemCategoryRepositoryMock itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
-            ItemRepositoryMock itemRepositoryMock = new ItemRepositoryMock(fixture);
-            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
-            TransactionGeneratorMock transactionGeneratorMock = new TransactionGeneratorMock(fixture);
-
-            ItemCategoryMock itemCategoryMock = itemCategoryMockFixtur.Create();
-            var storeItemMocks = storeItemMockFixture.CreateMany(2).ToList();
-            var shoppingLists = new Dictionary<StoreItemMock, List<ShoppingListMock>>();
-            foreach (var storeItemMock in storeItemMocks)
-            {
-                int amount = commonFixture.NextInt(1, 5);
-                var listMocks = shoppingListMockFixture.CreateMany(amount).ToList();
-                shoppingLists.Add(storeItemMock, listMocks);
-
-                shoppingListRepositoryMock.SetupFindActiveByAsync(storeItemMock.Object.Id,
-                    listMocks.Select(m => m.Object));
             }
 
-            TransactionMock transactionMock = new TransactionMock();
+            #region Mock Setup
 
-            var command = fixture.Create<DeleteItemCategoryCommand>();
-            var handler = fixture.Create<DeleteItemCategoryCommandHandler>();
-
-            itemCategoryRepositoryMock.SetupFindByAsync(command.ItemCategoryId, itemCategoryMock.Object);
-            itemRepositoryMock.SetupFindActiveByAsync(command.ItemCategoryId, storeItemMocks.Select(m => m.Object));
-            transactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
-
-            // Act
-            var result = await handler.HandleAsync(command, default);
-
-            // Assert
-            using (new AssertionScope())
+            public void SetupFindingShoppingLists()
             {
-                result.Should().BeTrue();
-                itemCategoryMock.VerifyDeleteOnce();
+                foreach (var storeItemMock in ShoppingListDict.Keys)
+                {
+                    var lists = ShoppingListDict[storeItemMock].Select(m => m.Object);
 
-                foreach (var storeItemMock in storeItemMocks)
+                    ShoppingListRepositoryMock.SetupFindActiveByAsync(storeItemMock.Object.Id, lists);
+                }
+            }
+
+            public void SetupFindingNoShoppingLists()
+            {
+                foreach (var storeItemMock in StoreItemMocks)
+                {
+                    ShoppingListRepositoryMock.SetupFindActiveByAsync(storeItemMock.Object.Id,
+                        Enumerable.Empty<IShoppingList>());
+                }
+            }
+
+            public void SetupFindingItemCategory()
+            {
+                ItemCategoryRepositoryMock.SetupFindByAsync(Command.ItemCategoryId, ItemCategoryMock.Object);
+            }
+
+            public void SetupFindingNoItemCategory()
+            {
+                ItemCategoryRepositoryMock.SetupFindByAsync(Command.ItemCategoryId, null);
+            }
+
+            public void SetupFindingItems()
+            {
+                ItemRepositoryMock.SetupFindActiveByAsync(Command.ItemCategoryId, StoreItemMocks.Select(m => m.Object));
+            }
+
+            public void SetupFindingNoItems()
+            {
+                ItemRepositoryMock.SetupFindActiveByAsync(Command.ItemCategoryId, Enumerable.Empty<IStoreItem>());
+            }
+
+            public void SetupGeneratingTransaction()
+            {
+                TransactionGeneratorMock.SetupGenerateAsync(TransactionMock.Object);
+            }
+
+            #endregion Mock Setup
+
+            #region Verify
+
+            public void VerifyDeleteItemCategoryOnce()
+            {
+                ItemCategoryMock.VerifyDeleteOnce();
+            }
+
+            public void VerifyDeletingAllItemsOnce()
+            {
+                foreach (var storeItemMock in ShoppingListDict.Keys)
                 {
                     storeItemMock.VerifyDeleteOnce();
-                    itemRepositoryMock.VerifyStoreAsyncOnce(storeItemMock.Object);
+                }
+            }
 
-                    IEnumerable<ShoppingListMock> affiliatedShoppingListMocks = shoppingLists[storeItemMock];
+            public void VerifyStoringAllItemsOnce()
+            {
+                foreach (var storeItemMock in ShoppingListDict.Keys)
+                {
+                    ItemRepositoryMock.VerifyStoreAsyncOnce(storeItemMock.Object);
+                }
+            }
+
+            public void VerifyStoringNoItem()
+            {
+                ItemRepositoryMock.VerifyStoreAsyncNever();
+            }
+
+            public void VerifyStoringAllShoppingListsOnce()
+            {
+                foreach (var storeItemMock in ShoppingListDict.Keys)
+                {
+                    IEnumerable<ShoppingListMock> affiliatedShoppingListMocks = ShoppingListDict[storeItemMock];
+                    foreach (var listMock in affiliatedShoppingListMocks)
+                    {
+                        ShoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
+                    }
+                }
+            }
+
+            public void VerifyStoringNoShoppingList()
+            {
+                ShoppingListRepositoryMock.VerifyStoreAsyncNever();
+            }
+
+            public void VerifyRemovingItemFromAllShoppingListsOnce()
+            {
+                foreach (var storeItemMock in ShoppingListDict.Keys)
+                {
+                    IEnumerable<ShoppingListMock> affiliatedShoppingListMocks = ShoppingListDict[storeItemMock];
                     foreach (var listMock in affiliatedShoppingListMocks)
                     {
                         listMock.VerifyRemoveItemOnce(storeItemMock.Object.Id);
-                        shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
                     }
                 }
-
-                itemCategoryRepositoryMock.VerifyStoreAsyncOnce(itemCategoryMock.Object);
-                transactionMock.VerifyCommitAsyncOnce();
             }
+
+            public void VerifyStoringItemCategoryOnce()
+            {
+                ItemCategoryRepositoryMock.VerifyStoreAsyncOnce(ItemCategoryMock.Object);
+            }
+
+            public void VerifyCommittingTransactionOnce()
+            {
+                TransactionMock.VerifyCommitAsyncOnce();
+            }
+
+            #endregion Verify
+
+            #region Aggregates
+
+            public void SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists()
+            {
+                SetupCommand();
+                SetupItemCategoryMock();
+                SetupStoreItemMocks();
+                SetupShoppingListDict();
+                SetupFindingShoppingLists();
+                SetupTransactionMock();
+                SetupFindingItemCategory();
+                SetupFindingItems();
+                SetupGeneratingTransaction();
+            }
+
+            public void SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists()
+            {
+                SetupCommand();
+                SetupItemCategoryMock();
+                SetupStoreItemMocks();
+                SetupTransactionMock();
+                SetupFindingItemCategory();
+                SetupFindingItems();
+                SetupFindingNoShoppingLists();
+                SetupGeneratingTransaction();
+            }
+
+            public void SetupWithNoItemsOfItemCategory()
+            {
+                SetupCommand();
+                SetupItemCategoryMock();
+                SetupTransactionMock();
+                SetupFindingItemCategory();
+                SetupFindingNoItems();
+                SetupGeneratingTransaction();
+            }
+
+            #endregion Aggregates
         }
     }
 }
