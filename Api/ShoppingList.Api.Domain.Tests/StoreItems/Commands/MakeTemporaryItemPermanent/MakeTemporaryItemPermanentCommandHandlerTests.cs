@@ -10,7 +10,6 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Services;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Services;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services;
@@ -146,7 +145,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         {
             public Fixture Fixture { get; }
             public CommonFixture CommonFixture { get; } = new CommonFixture();
-            public StoreItemFixture StoreItemFixture { get; }
             public ItemRepositoryMock ItemRepositoryMock { get; }
             public StoreItemFactoryMock StoreItemFactoryMock { get; }
             public ItemCategoryValidationServiceMock ItemCategoryValidationServiceMock { get; }
@@ -158,8 +156,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             public LocalFixture()
             {
                 Fixture = CommonFixture.GetNewFixture();
-
-                StoreItemFixture = new StoreItemFixture(new StoreItemAvailabilityFixture(CommonFixture), CommonFixture);
 
                 ItemRepositoryMock = new ItemRepositoryMock(Fixture);
                 StoreItemFactoryMock = new StoreItemFactoryMock(Fixture);
