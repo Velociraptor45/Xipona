@@ -7,12 +7,11 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Common.Mocks;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using System;
@@ -23,15 +22,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
 {
     public class RemoveItemFromShoppingListCommandHandlerTests
     {
+        private readonly LocalFixture _local;
+
+        public RemoveItemFromShoppingListCommandHandlerTests()
+        {
+            _local = new LocalFixture();
+        }
+
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
+            var handler = _local.CreateCommandHandler();
+            _local.SetupCommandNull();
 
             // Act
-            Func<Task> function = async () => await handler.HandleAsync(null, default);
+            Func<Task> function = async () => await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
@@ -44,14 +50,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         public async Task HandleAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
         {
             // Arrange
-            var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
-            var command = local.CreateCommandWithOfflineId();
-
-            local.ShoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, null);
+            var handler = _local.CreateCommandHandler();
+            _local.SetupCommandWithOfflineId();
+            _local.SetupFindingNoShoppingList();
 
             // Act
-            Func<Task> function = async () => await handler.HandleAsync(command, default);
+            Func<Task> function = async () => await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
@@ -65,23 +69,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         public async Task HandleAsync_WithInvalidActualItemId_ShouldThrowDomainException()
         {
             // Arrange
-            var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
-            var command = local.CreateCommandWithActualId();
+            var handler = _local.CreateCommandHandler();
+            _local.SetupCommandWithActualId();
 
-            ShoppingListMock listMock = local.ShoppingListMockFixture.Create();
-
-            local.ShoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
-            local.ItemRepositoryMock.SetupFindByAsync(new ItemId(command.OfflineTolerantItemId.ActualId.Value), null);
+            _local.SetupShoppingListMock();
+            _local.SetupFindingShoppingList();
+            _local.SetupFindingNoItemByActualId();
 
             // Act
-            Func<Task> function = async () => await handler.HandleAsync(command, default);
+            Func<Task> function = async () => await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
             {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound);
+                await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemNotFound);
             }
         }
 
@@ -89,24 +90,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         public async Task HandleAsync_WithInvalidOfflineId_ShouldThrowDomainException()
         {
             // Arrange
-            var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
-            var command = local.CreateCommandWithOfflineId();
+            var handler = _local.CreateCommandHandler();
+            _local.SetupCommandWithOfflineId();
 
-            var temporaryItemId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId.Value);
-            ShoppingListMock listMock = local.ShoppingListMockFixture.Create();
-
-            local.ShoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
-            local.ItemRepositoryMock.SetupFindByAsync(temporaryItemId, null);
+            _local.SetupShoppingListMock();
+            _local.SetupFindingShoppingList();
+            _local.SetupFindingNoItemByTemporaryId();
 
             // Act
-            Func<Task> function = async () => await handler.HandleAsync(command, default);
+            Func<Task> function = async () => await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
             {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound);
+                await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemNotFound);
             }
         }
 
@@ -118,49 +115,51 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         public async Task HandleAsync_WithValidActualId_ShouldRemoveItemFromBasket(bool isActualItemId, bool isTemporaryItem)
         {
             // Arrange
-            var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
-            var command = isActualItemId ? local.CreateCommandWithActualId() : local.CreateCommandWithOfflineId();
+            var handler = _local.CreateCommandHandler();
 
-            ShoppingListMock listMock = local.ShoppingListMockFixture.Create();
-
-            var storeItem = local.StoreItemFixture.Create(StoreItemDefinition.FromTemporary(isTemporaryItem));
-            StoreItemMock itemMock = new StoreItemMock(storeItem);
-
-            local.ShoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
+            if (isTemporaryItem)
+                _local.SetupTemporaryItemMock();
+            else
+                _local.SetupItemMock();
 
             if (isActualItemId)
-                local.ItemRepositoryMock.SetupFindByAsync(new ItemId(command.OfflineTolerantItemId.ActualId.Value), itemMock.Object);
+            {
+                _local.SetupCommandWithActualId();
+                _local.SetupFindingItemByActualId();
+            }
             else
-                local.ItemRepositoryMock.SetupFindByAsync(new TemporaryItemId(command.OfflineTolerantItemId.OfflineId.Value), itemMock.Object);
+            {
+                _local.SetupCommandWithOfflineId();
+                _local.SetupFindingItemByTemporaryId();
+            }
 
-            TransactionMock transactionMock = new TransactionMock();
-            local.TransactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
+            _local.SetupShoppingListMock();
+            _local.SetupFindingShoppingList();
+            _local.SetupTransactionMock();
+            _local.SetupGeneratingTransaction();
 
             // Act
-            bool result = await handler.HandleAsync(command, default);
+            bool result = await handler.HandleAsync(_local.Command, default);
 
             // Assert
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
+                _local.VerifyRemoveItemOnce();
+                _local.VerifyGenerateTransactionOnce();
+                _local.VerifyStoreShoppingListOnce();
+                _local.VerifyCommitTransactionOnce();
 
-                listMock.VerifyRemoveItemOnce(itemMock.Object.Id);
-
-                local.TransactionGeneratorMock.VerifyGenerateAsyncOnce();
                 if (isTemporaryItem)
                 {
-                    itemMock.VerifyDeleteOnce();
-                    local.ItemRepositoryMock.VerifyStoreAsyncOnce(itemMock.Object);
+                    _local.VerifyDeleteItemOnce();
+                    _local.VerifyStoreItemOnce();
                 }
                 else
                 {
-                    itemMock.VerifyDeleteNever();
-                    local.ItemRepositoryMock.VerifyStoreAsyncNever();
+                    _local.VerifyDeleteItemNever();
+                    _local.VerifyStoreItemNever();
                 }
-
-                local.ShoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
-                transactionMock.VerifyCommitAsyncOnce();
             }
         }
 
@@ -168,46 +167,159 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         {
             public Fixture Fixture { get; }
             public CommonFixture CommonFixture { get; } = new CommonFixture();
-            public StoreItemFixture StoreItemFixture { get; }
-            public ShoppingListMockFixture ShoppingListMockFixture { get; }
+
             public ShoppingListRepositoryMock ShoppingListRepositoryMock { get; }
             public ItemRepositoryMock ItemRepositoryMock { get; }
             public TransactionGeneratorMock TransactionGeneratorMock { get; }
 
+            public RemoveItemFromShoppingListCommand Command { get; private set; }
+            public StoreItemMock ItemMock { get; private set; }
+            public ShoppingListMock ShoppingListMock { get; private set; }
+            public TransactionMock TransactionMock { get; private set; }
+
             public LocalFixture()
             {
                 Fixture = CommonFixture.GetNewFixture();
-
-                StoreItemFixture = new StoreItemFixture(new StoreItemAvailabilityFixture(CommonFixture), CommonFixture);
-                ShoppingListMockFixture = new ShoppingListMockFixture(CommonFixture, new ShoppingListFixture(CommonFixture));
 
                 ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
                 ItemRepositoryMock = new ItemRepositoryMock(Fixture);
                 TransactionGeneratorMock = new TransactionGeneratorMock(Fixture);
             }
 
-            public RemoveItemFromShoppingListCommand CreateCommandWithActualId()
+            public void SetupCommandWithActualId()
             {
-                var offlineTolerantItemId = new OfflineTolerantItemId(CommonFixture.NextInt());
-                Fixture.ConstructorArgumentFor<RemoveItemFromShoppingListCommand, OfflineTolerantItemId>("itemId",
-                    offlineTolerantItemId);
-
-                return Fixture.Create<RemoveItemFromShoppingListCommand>();
+                SetupCommand(new OfflineTolerantItemId(CommonFixture.NextInt()));
             }
 
-            public RemoveItemFromShoppingListCommand CreateCommandWithOfflineId()
+            public void SetupCommandWithOfflineId()
             {
-                var offlineTolerantItemId = new OfflineTolerantItemId(Guid.NewGuid());
-                Fixture.ConstructorArgumentFor<RemoveItemFromShoppingListCommand, OfflineTolerantItemId>("itemId",
-                    offlineTolerantItemId);
+                SetupCommand(new OfflineTolerantItemId(Guid.NewGuid()));
+            }
 
-                return Fixture.Create<RemoveItemFromShoppingListCommand>();
+            private void SetupCommand(OfflineTolerantItemId id)
+            {
+                Fixture.ConstructorArgumentFor<RemoveItemFromShoppingListCommand, OfflineTolerantItemId>("itemId", id);
+
+                Command = Fixture.Create<RemoveItemFromShoppingListCommand>();
+            }
+
+            public void SetupCommandNull()
+            {
+                Command = null;
             }
 
             public RemoveItemFromShoppingListCommandHandler CreateCommandHandler()
             {
                 return Fixture.Create<RemoveItemFromShoppingListCommandHandler>();
             }
+
+            public void SetupTemporaryItemMock()
+            {
+                var item = StoreItemMother.InitialTemporary().Create();
+                ItemMock = new StoreItemMock(item);
+            }
+
+            public void SetupItemMock()
+            {
+                var item = StoreItemMother.Initial().Create();
+                ItemMock = new StoreItemMock(item);
+            }
+
+            public void SetupShoppingListMock()
+            {
+                ShoppingListMock = new ShoppingListMock(ShoppingListMother.Sections(3).Create());
+            }
+
+            public void SetupTransactionMock()
+            {
+                TransactionMock = new TransactionMock();
+            }
+
+            #region Mock Setup
+
+            public void SetupFindingItemByActualId()
+            {
+                ItemRepositoryMock.SetupFindByAsync(new ItemId(Command.OfflineTolerantItemId.ActualId.Value),
+                    ItemMock.Object);
+            }
+
+            public void SetupFindingNoItemByActualId()
+            {
+                ItemRepositoryMock.SetupFindByAsync(new ItemId(Command.OfflineTolerantItemId.ActualId.Value), null);
+            }
+
+            public void SetupFindingItemByTemporaryId()
+            {
+                ItemRepositoryMock.SetupFindByAsync(new TemporaryItemId(Command.OfflineTolerantItemId.OfflineId.Value),
+                    ItemMock.Object);
+            }
+
+            public void SetupFindingNoItemByTemporaryId()
+            {
+                ItemRepositoryMock.SetupFindByAsync(new TemporaryItemId(Command.OfflineTolerantItemId.OfflineId.Value),
+                    null);
+            }
+
+            public void SetupFindingShoppingList()
+            {
+                ShoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, ShoppingListMock.Object);
+            }
+
+            public void SetupFindingNoShoppingList()
+            {
+                ShoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, null);
+            }
+
+            public void SetupGeneratingTransaction()
+            {
+                TransactionGeneratorMock.SetupGenerateAsync(TransactionMock.Object);
+            }
+
+            #endregion Mock Setup
+
+            #region Verify
+
+            public void VerifyRemoveItemOnce()
+            {
+                ShoppingListMock.VerifyRemoveItemOnce(ItemMock.Object.Id);
+            }
+
+            public void VerifyGenerateTransactionOnce()
+            {
+                TransactionGeneratorMock.VerifyGenerateAsyncOnce();
+            }
+
+            public void VerifyDeleteItemOnce()
+            {
+                ItemMock.VerifyDeleteOnce();
+            }
+
+            public void VerifyDeleteItemNever()
+            {
+                ItemMock.VerifyDeleteNever();
+            }
+
+            public void VerifyStoreItemOnce()
+            {
+                ItemRepositoryMock.VerifyStoreAsyncOnce(ItemMock.Object);
+            }
+
+            public void VerifyStoreItemNever()
+            {
+                ItemRepositoryMock.VerifyStoreAsyncNever();
+            }
+
+            public void VerifyStoreShoppingListOnce()
+            {
+                ShoppingListRepositoryMock.VerifyStoreAsyncOnce(ShoppingListMock.Object);
+            }
+
+            public void VerifyCommitTransactionOnce()
+            {
+                TransactionMock.VerifyCommitAsyncOnce();
+            }
+
+            #endregion Verify
         }
     }
 }
