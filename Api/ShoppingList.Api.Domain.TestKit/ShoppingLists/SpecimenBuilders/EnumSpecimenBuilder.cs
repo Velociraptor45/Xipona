@@ -10,9 +10,9 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders
     {
         private readonly CommonFixture commonFixture;
 
-        public EnumSpecimenBuilder(CommonFixture commonFixture)
+        public EnumSpecimenBuilder()
         {
-            this.commonFixture = commonFixture;
+            commonFixture = new CommonFixture();
         }
 
         public object Create(object request, ISpecimenContext context)

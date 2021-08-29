@@ -5,8 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Converters.ToDomain;
 using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using System.Linq;
 using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities;
 
@@ -16,11 +15,8 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
     {
         protected override (Entities.Store, IStore) CreateTestObjects()
         {
-            var commonFixture = new CommonFixture();
-            var storeFixture = new StoreFixture(commonFixture);
-
-            var destination = storeFixture.CreateValid();
-            var source = GetSource(destination, commonFixture);
+            var destination = StoreMother.Sections(3).Create();
+            var source = GetSource(destination);
 
             return (source, destination);
         }
@@ -30,10 +26,10 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
             AddDependencies(serviceCollection);
         }
 
-        public static Entities.Store GetSource(IStore destination, CommonFixture commonFixture)
+        public static Entities.Store GetSource(IStore destination)
         {
             var sections = destination.Sections
-                .Select(s => StoreSectionConverterTests.GetSource(s, commonFixture))
+                .Select(s => StoreSectionConverterTests.GetSource(s))
                 .ToList();
 
             return new Entities.Store

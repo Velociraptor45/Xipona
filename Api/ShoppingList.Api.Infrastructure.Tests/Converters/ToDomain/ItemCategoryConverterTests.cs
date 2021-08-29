@@ -5,8 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Converters.ToDomain;
 using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
-using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
@@ -15,10 +14,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
     {
         protected override (Entities.ItemCategory, IItemCategory) CreateTestObjects()
         {
-            var commonFixture = new CommonFixture();
-            var domainFixture = new ItemCategoryFixture(commonFixture);
-
-            var destination = domainFixture.GetItemCategory();
+            var destination = new ItemCategoryBuilder().Create();
             var source = GetSource(destination);
 
             return (source, destination);

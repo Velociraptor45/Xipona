@@ -22,14 +22,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
     {
         private readonly CommonFixture commonFixture;
         private readonly ShoppingListMockFixture shoppingListMockFixture;
-        private readonly ShoppingListSectionFixture shoppingListSectionFixture;
 
         public FinishShoppingListCommandHandlerTests()
         {
             commonFixture = new CommonFixture();
-            shoppingListSectionFixture = new ShoppingListSectionFixture(commonFixture);
-            var shoppingListFixture = new ShoppingListFixture(commonFixture);
-            shoppingListMockFixture = new ShoppingListMockFixture(commonFixture, shoppingListFixture);
+            shoppingListMockFixture = new ShoppingListMockFixture();
         }
 
         [Fact]

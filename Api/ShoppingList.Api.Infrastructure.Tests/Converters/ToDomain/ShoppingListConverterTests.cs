@@ -6,8 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Converters.ToDomain;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using System.Collections.Generic;
 
 using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities;
@@ -18,10 +17,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
     {
         protected override (Entities.ShoppingList, IShoppingList) CreateTestObjects()
         {
-            var commonFixture = new CommonFixture();
-            var shoppingListFixture = new ShoppingListFixture(commonFixture).AsModelFixture();
-
-            var destination = shoppingListFixture.CreateValid();
+            var destination = ShoppingListMother.ThreeSections().Create();
             var source = GetSource(destination);
 
             return (source, destination);

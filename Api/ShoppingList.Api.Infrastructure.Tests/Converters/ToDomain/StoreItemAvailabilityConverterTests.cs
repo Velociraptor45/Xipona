@@ -6,8 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToDomain;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
 {
@@ -15,9 +14,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
     {
         protected override (AvailableAt, IStoreItemAvailability) CreateTestObjects()
         {
-            var commonFixture = new CommonFixture();
-            var availabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
-            var destination = availabilityFixture.CreateValid();
+            var destination = StoreItemAvailabilityMother.Initial().Create();
             var source = GetSource(destination);
 
             return (source, destination);

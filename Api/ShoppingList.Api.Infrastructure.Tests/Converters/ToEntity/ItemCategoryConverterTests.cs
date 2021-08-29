@@ -3,8 +3,7 @@ using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Converters.ToEntity;
 using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
-using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 
 using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities;
 
@@ -14,10 +13,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
     {
         protected override (IItemCategory, Entities.ItemCategory) CreateTestObjects()
         {
-            var commonFixture = new CommonFixture();
-            var domainFixture = new ItemCategoryFixture(commonFixture);
-
-            var source = domainFixture.GetItemCategory();
+            var source = new ItemCategoryBuilder().Create();
             var destination = ToDomain.ItemCategoryConverterTests.GetSource(source);
 
             return (source, destination);

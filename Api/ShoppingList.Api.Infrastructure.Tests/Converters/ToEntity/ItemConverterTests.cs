@@ -4,8 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToEntity;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using System.Linq;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
@@ -14,11 +13,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
     {
         protected override (IStoreItem, Item) CreateTestObjects()
         {
-            var commonFixture = new CommonFixture();
-            var availabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
-            var storeItemFixture = new StoreItemFixture(availabilityFixture, commonFixture);
-
-            var source = storeItemFixture.CreateValid();
+            var source = StoreItemMother.Initial().Create();
             var destination = GetDestination(source);
 
             return (source, destination);

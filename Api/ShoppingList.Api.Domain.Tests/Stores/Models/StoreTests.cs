@@ -3,7 +3,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using Xunit;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Stores.Models
@@ -11,12 +11,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Stores.Models
     public class StoreTests
     {
         private readonly CommonFixture commonFixture;
-        private readonly StoreFixture storeFixture;
 
         public StoreTests()
         {
             commonFixture = new CommonFixture();
-            storeFixture = new StoreFixture(commonFixture);
         }
 
         [Fact]
@@ -24,7 +22,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Stores.Models
         {
             // Arrange
             string newName = commonFixture.GetNewFixture().Create<string>();
-            IStore store = storeFixture.GetStore();
+            IStore store = StoreMother.Sections(3).Create();
 
             // Act
             store.ChangeName(newName);

@@ -1,11 +1,11 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
+using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using System;
@@ -39,19 +39,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services
             // Arrange
             var local = new LocalFixture();
             var service = local.CreateService();
-
-            var itemCategoryId = new ItemCategoryId(local.CommonFixture.NextInt());
-
-            local.ItemCategoryRepositoryMock.SetupFindByAsync(itemCategoryId, null);
+            local.SetupItemCategory();
+            local.SetupFindingNoItemCategory();
 
             // Act
-            Func<Task> function = async () => await service.ValidateAsync(itemCategoryId, default);
+            Func<Task> function = async () => await service.ValidateAsync(local.ItemCategory.Id, default);
 
             // Assert
             using (new AssertionScope())
             {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ItemCategoryNotFound);
+                await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemCategoryNotFound);
             }
         }
 
@@ -62,12 +59,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var itemCategory = local.CreateItemCategory();
-
-            local.ItemCategoryRepositoryMock.SetupFindByAsync(itemCategory.Id, itemCategory);
+            local.SetupItemCategory();
+            local.SetupFindingItemCategory();
 
             // Act
-            Func<Task> function = async () => await service.ValidateAsync(itemCategory.Id, default);
+            Func<Task> function = async () => await service.ValidateAsync(local.ItemCategory.Id, default);
 
             // Assert
             using (new AssertionScope())
@@ -81,15 +77,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services
             public Fixture Fixture { get; }
             public CommonFixture CommonFixture { get; } = new CommonFixture();
             public ItemCategoryRepositoryMock ItemCategoryRepositoryMock { get; }
-            public ItemCategoryFixture ItemCategoryFixture { get; }
+            public ItemCategory ItemCategory { get; private set; }
 
             public LocalFixture()
             {
                 Fixture = CommonFixture.GetNewFixture();
 
                 ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(Fixture);
-
-                ItemCategoryFixture = new ItemCategoryFixture(CommonFixture);
             }
 
             public ItemCategoryValidationService CreateService()
@@ -97,9 +91,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services
                 return Fixture.Create<ItemCategoryValidationService>();
             }
 
-            public IItemCategory CreateItemCategory()
+            public void SetupItemCategory()
             {
-                return ItemCategoryFixture.GetItemCategory();
+                ItemCategory = new ItemCategoryBuilder().Create();
+            }
+
+            public void SetupFindingItemCategory()
+            {
+                ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategory.Id, ItemCategory);
+            }
+
+            public void SetupFindingNoItemCategory()
+            {
+                ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategory.Id, null);
             }
         }
     }

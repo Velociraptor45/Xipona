@@ -1,11 +1,11 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Fixtures;
+using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
+using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using System;
@@ -40,18 +40,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Manufacturers.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var manufacturerId = new ManufacturerId(local.CommonFixture.NextInt());
-
-            local.ManufacturerRepositoryMock.SetupFindByAsync(manufacturerId, null);
+            local.SetupManufacturer();
+            local.SetupFindingNoManufacturer();
 
             // Act
-            Func<Task> function = async () => await service.ValidateAsync(manufacturerId, default);
+            Func<Task> function = async () => await service.ValidateAsync(local.Manufacturer.Id, default);
 
             // Assert
             using (new AssertionScope())
             {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ManufacturerNotFound);
+                await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ManufacturerNotFound);
             }
         }
 
@@ -62,12 +60,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Manufacturers.Services
             var local = new LocalFixture();
             var service = local.CreateService();
 
-            var manufacturer = local.CreateManufacturer();
-
-            local.ManufacturerRepositoryMock.SetupFindByAsync(manufacturer.Id, manufacturer);
+            local.SetupManufacturer();
+            local.SetupFindingManufacturer();
 
             // Act
-            Func<Task> function = async () => await service.ValidateAsync(manufacturer.Id, default);
+            Func<Task> function = async () => await service.ValidateAsync(local.Manufacturer.Id, default);
 
             // Assert
             using (new AssertionScope())
@@ -81,15 +78,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Manufacturers.Services
             public Fixture Fixture { get; }
             public CommonFixture CommonFixture { get; } = new CommonFixture();
             public ManufacturerRepositoryMock ManufacturerRepositoryMock { get; }
-            public ManufacturerFixture ManufacturerFixture { get; }
+
+            public Manufacturer Manufacturer { get; private set; }
 
             public LocalFixture()
             {
                 Fixture = CommonFixture.GetNewFixture();
 
                 ManufacturerRepositoryMock = new ManufacturerRepositoryMock(Fixture);
-
-                ManufacturerFixture = new ManufacturerFixture(CommonFixture);
             }
 
             public ManufacturerValidationService CreateService()
@@ -97,10 +93,24 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Manufacturers.Services
                 return Fixture.Create<ManufacturerValidationService>();
             }
 
-            public IManufacturer CreateManufacturer()
+            public void SetupManufacturer()
             {
-                return ManufacturerFixture.Create();
+                Manufacturer = new ManufacturerBuilder().Create();
             }
+
+            #region Mock Setup
+
+            public void SetupFindingManufacturer()
+            {
+                ManufacturerRepositoryMock.SetupFindByAsync(Manufacturer.Id, Manufacturer);
+            }
+
+            public void SetupFindingNoManufacturer()
+            {
+                ManufacturerRepositoryMock.SetupFindByAsync(Manufacturer.Id, null);
+            }
+
+            #endregion Mock Setup
         }
     }
 }
