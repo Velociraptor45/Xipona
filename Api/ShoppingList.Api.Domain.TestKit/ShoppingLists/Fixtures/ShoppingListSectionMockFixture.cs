@@ -13,7 +13,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
 
         public IEnumerable<ShoppingListSectionMock> CreateMany(int count)
         {
-            var sections = new ShoppingListSectionBuilder().CreateMany(3);
+            var sections = new ShoppingListSectionBuilder().CreateMany(count);
             return sections.Select(s => new ShoppingListSectionMock(s));
         }
     }
