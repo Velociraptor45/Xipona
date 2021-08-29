@@ -13,8 +13,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
         public IEnumerator<object[]> GetEnumerator()
         {
             var commonFixture = new CommonFixture();
-            var shoppingListFixture = new ShoppingListFixture(commonFixture);
-            var shoppingListMockFixture = new ShoppingListMockFixture(commonFixture, shoppingListFixture);
+            var shoppingListMockFixture = new ShoppingListMockFixture();
 
             yield return new object[]
             {

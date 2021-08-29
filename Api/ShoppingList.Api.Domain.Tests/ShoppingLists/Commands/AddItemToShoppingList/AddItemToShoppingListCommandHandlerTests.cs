@@ -2,11 +2,11 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
@@ -53,8 +53,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
             // Assert
             using (new AssertionScope())
             {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ShoppingListNotFound);
+                await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListNotFound);
             }
         }
 
@@ -117,16 +116,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
         private sealed class LocalFixture
         {
             public Fixture Fixture { get; }
-            public ShoppingListMockFixture ShoppingListMockFixture { get; }
-            public ShoppingListRepositoryMock ShoppingListRepositoryMock { get; }
             public CommonFixture CommonFixture { get; } = new CommonFixture();
+            public ShoppingListMockFixture ShoppingListMockFixture { get; }
+
+            public ShoppingListRepositoryMock ShoppingListRepositoryMock { get; }
             public AddItemToShoppingListServiceMock AddItemToShoppingListServiceMock { get; }
 
             public LocalFixture()
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ShoppingListMockFixture = new ShoppingListMockFixture(CommonFixture, new ShoppingListFixture(CommonFixture));
+                ShoppingListMockFixture = new ShoppingListMockFixture();
 
                 ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
                 AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(Fixture);
