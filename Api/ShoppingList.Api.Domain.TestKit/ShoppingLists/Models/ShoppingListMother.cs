@@ -23,6 +23,13 @@
                 .WithoutCompletionDate();
         }
 
+        public static ShoppingListBuilder OneSectionWithOneItemInBasketAndOneNot()
+        {
+            return new ShoppingListBuilder()
+                .WithSection(ShoppingListSectionMother.OneItemInBasketAndOneNot().Create())
+                .WithoutCompletionDate();
+        }
+
         public static ShoppingListBuilder OneEmptySection()
         {
             return new ShoppingListBuilder()
@@ -33,7 +40,13 @@
         public static ShoppingListBuilder Sections(int count)
         {
             return new ShoppingListBuilder()
-                .WithSections(new ShoppingListSectionBuilder().CreateMany(count));
+                .WithSections(new ShoppingListSectionBuilder().CreateMany(count))
+                .WithoutCompletionDate();
+        }
+
+        public static ShoppingListBuilder ThreeSections()
+        {
+            return Sections(3);
         }
 
         public static ShoppingListBuilder NoSections()
