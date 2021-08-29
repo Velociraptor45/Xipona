@@ -5,8 +5,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Fixtures;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Fixtures;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,14 +14,10 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
     public class ShoppingListItemFixture : IModelFixture<IShoppingListItem, ShoppingListItemDefinition>
     {
         private readonly CommonFixture commonFixture;
-        private readonly ManufacturerFixture manufacturerFixture;
-        private readonly ItemCategoryFixture itemCategoryFixture;
 
         public ShoppingListItemFixture(CommonFixture commonFixture)
         {
             this.commonFixture = commonFixture;
-            manufacturerFixture = new ManufacturerFixture(commonFixture);
-            itemCategoryFixture = new ItemCategoryFixture(commonFixture);
         }
 
         public IShoppingListItem Create()

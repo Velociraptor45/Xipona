@@ -3,9 +3,7 @@ using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Converters.ToEntity;
 using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Fixtures;
-using ShoppingList.Api.Domain.TestKit.Shared;
-
+using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
@@ -14,10 +12,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
     {
         protected override (IManufacturer, Entities.Manufacturer) CreateTestObjects()
         {
-            var commonFixture = new CommonFixture();
-            var domainFixture = new ManufacturerFixture(commonFixture);
-
-            var source = domainFixture.Create();
+            var source = new ManufacturerBuilder().Create();
             var destination = ToDomain.ManufacturerConverterTests.GetSource(source);
 
             return (source, destination);
