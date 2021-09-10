@@ -14,7 +14,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels
 
         public StoreItemReadModel(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityTypeReadModel quantityType, float quantityInPacket, QuantityTypeInPacketReadModel quantityTypeInPacket,
-            ItemCategoryReadModel itemCategory, ManufacturerReadModel manufacturer,
+            ItemCategoryReadModel? itemCategory, ManufacturerReadModel? manufacturer,
             IEnumerable<StoreItemAvailabilityReadModel> availabilities)
         {
             if (string.IsNullOrEmpty(name))
@@ -43,8 +43,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels
         public QuantityTypeReadModel QuantityType { get; }
         public float QuantityInPacket { get; }
         public QuantityTypeInPacketReadModel QuantityTypeInPacket { get; }
-        public ItemCategoryReadModel ItemCategory { get; }
-        public ManufacturerReadModel Manufacturer { get; }
+        public ItemCategoryReadModel? ItemCategory { get; }
+        public ManufacturerReadModel? Manufacturer { get; }
 
         public IReadOnlyCollection<StoreItemAvailabilityReadModel> Availabilities => availabilities.ToList().AsReadOnly();
     }

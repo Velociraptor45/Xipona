@@ -41,11 +41,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversio
             var itemsDict = (await itemRepository.FindByAsync(ItemIds, cancellationToken))
                 .ToDictionary(i => i.Id);
 
-            var itemCategoryIds = itemsDict.Values.Where(i => i.ItemCategoryId != null).Select(i => i.ItemCategoryId);
+            var itemCategoryIds = itemsDict.Values.Where(i => i.ItemCategoryId != null).Select(i => i.ItemCategoryId!);
             var itemCategoriesDict = (await itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
                 .ToDictionary(cat => cat.Id);
 
-            var manufacturerIds = itemsDict.Values.Where(i => i.ManufacturerId != null).Select(i => i.ManufacturerId);
+            var manufacturerIds = itemsDict.Values.Where(i => i.ManufacturerId != null).Select(i => i.ManufacturerId!);
             var manufacturersDict = (await manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
                 .ToDictionary(man => man.Id);
 

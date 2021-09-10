@@ -17,7 +17,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
 
         public ItemNotFoundReason(OfflineTolerantItemId id)
         {
-            string s = id.IsActualId ? id.ActualId.Value.ToString() : id.OfflineId.Value.ToString();
+            string s = id.IsActualId ? id.ActualId!.Value.ToString() : id.OfflineId!.Value.ToString();
             Message = $"Item {s} not found.";
         }
 
