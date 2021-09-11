@@ -27,6 +27,9 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices
             var service = serviceProvider.GetService(serviceType);
             var method = serviceType.GetMethod("HandleAsync");
 
+            if (method is null)
+                throw new InvalidOperationException("Method 'HandleAsync' not found.");
+
             if (!(method.Invoke(service, new object[] { command, cancellationToken }) is Task<T> task))
             {
                 throw new InvalidOperationException();
