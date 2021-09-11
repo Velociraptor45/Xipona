@@ -1,6 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,6 +7,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities
 {
     public class Item
     {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
+        public Item()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        {
+            AvailableAt ??= new List<AvailableAt>();
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -28,7 +34,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities
         public int? PredecessorId { get; set; }
 
         [ForeignKey("PredecessorId")]
-        public Item Predecessor { get; set; }
+        public Item? Predecessor { get; set; }
 
         [InverseProperty("Item")]
         public ICollection<AvailableAt> AvailableAt { get; set; }

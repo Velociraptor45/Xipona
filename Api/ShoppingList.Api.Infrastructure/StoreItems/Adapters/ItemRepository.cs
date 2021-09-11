@@ -31,7 +31,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
 
         #region public methods
 
-        public async Task<IStoreItem> FindByAsync(ItemId storeItemId, CancellationToken cancellationToken)
+        public async Task<IStoreItem?> FindByAsync(ItemId storeItemId, CancellationToken cancellationToken)
         {
             if (storeItemId is null)
                 throw new ArgumentNullException(nameof(storeItemId));
@@ -51,7 +51,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
             return toModelConverter.ToDomain(itemEntity);
         }
 
-        public async Task<IStoreItem> FindByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
+        public async Task<IStoreItem?> FindByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
         {
             if (temporaryItemId is null)
                 throw new ArgumentNullException(nameof(temporaryItemId));
@@ -116,17 +116,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
             CancellationToken cancellationToken)
         {
             if (storeIds is null)
-            {
                 throw new ArgumentNullException(nameof(storeIds));
-            }
             else if (itemCategoriesIds is null)
-            {
                 throw new ArgumentNullException(nameof(itemCategoriesIds));
-            }
             else if (manufacturerIds is null)
-            {
                 throw new ArgumentNullException(nameof(manufacturerIds));
-            }
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -137,9 +131,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
             var result = await GetItemQuery()
                 .Where(item =>
                     !item.IsTemporary
-                    && itemCategoryIdLists.Contains(item.ItemCategoryId.Value)
+                    && itemCategoryIdLists.Contains(item.ItemCategoryId!.Value)
                     && (!item.ManufacturerId.HasValue && !manufacturerIdLists.Any()
-                        || manufacturerIdLists.Contains(item.ManufacturerId.Value)))
+                        || manufacturerIdLists.Contains(item.ManufacturerId!.Value)))
                 .ToListAsync();
 
             // filtering by store
@@ -185,9 +179,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
             CancellationToken cancellationToken)
         {
             if (itemCategoryId is null)
-            {
                 throw new ArgumentNullException(nameof(itemCategoryId));
-            }
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -207,9 +199,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
             return toModelConverter.ToDomain(entities);
         }
 
-        public async Task<IStoreItem> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken)
+        public async Task<IStoreItem?> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken)
         {
-            if (storeItem == null)
+            if (storeItem is null)
                 throw new ArgumentNullException(nameof(storeItem));
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -254,7 +246,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
                 .Include(item => item.AvailableAt);
         }
 
-        private async Task<Item> LoadPredecessorsAsync(Item item)
+        private async Task<Item?> LoadPredecessorsAsync(Item item)
         {
             if (item.PredecessorId == null)
                 return null;
@@ -277,7 +269,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
 
         private void UpdateOrAddAvailabilities(Item existing, Item updated)
         {
-            foreach (var availability in updated.AvailableAt)
+            foreach (var availability in updated.AvailableAt!)
             {
                 var exisitingAvailability = existing.AvailableAt
                     .FirstOrDefault(av => av.Id == availability.Id);

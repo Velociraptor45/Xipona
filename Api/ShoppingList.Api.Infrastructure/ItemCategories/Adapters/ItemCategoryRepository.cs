@@ -38,7 +38,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Adapters
             return toModelConverter.ToDomain(itemCategoryEntities);
         }
 
-        public async Task<IItemCategory> FindByAsync(ItemCategoryId id, CancellationToken cancellationToken)
+        public async Task<IItemCategory?> FindByAsync(ItemCategoryId id, CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));

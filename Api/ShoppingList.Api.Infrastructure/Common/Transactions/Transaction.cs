@@ -8,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions
 {
     public class Transaction : ITransaction
     {
-        private DbTransaction transaction;
+        private DbTransaction? transaction;
 
         public Transaction(DbTransaction transaction)
         {
@@ -21,20 +21,18 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions
 
             try
             {
-                await transaction.CommitAsync(cancellationToken);
+                await transaction!.CommitAsync(cancellationToken);
             }
             finally
             {
                 try
                 {
-                    transaction.Dispose();
+                    transaction!.Dispose();
                 }
-#pragma warning disable S2486 // Generic exceptions should not be ignored
                 catch (Exception)
                 {
                     // todo log
                 }
-#pragma warning restore S2486 // Generic exceptions should not be ignored
 
                 transaction = null;
             }
@@ -46,20 +44,18 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions
 
             try
             {
-                await transaction.RollbackAsync(cancellationToken);
+                await transaction!.RollbackAsync(cancellationToken);
             }
             finally
             {
                 try
                 {
-                    transaction.Dispose();
+                    transaction!.Dispose();
                 }
-#pragma warning disable S2486 // Generic exceptions should not be ignored
                 catch (Exception)
                 {
                     // todo log
                 }
-#pragma warning restore S2486 // Generic exceptions should not be ignored
 
                 transaction = null;
             }

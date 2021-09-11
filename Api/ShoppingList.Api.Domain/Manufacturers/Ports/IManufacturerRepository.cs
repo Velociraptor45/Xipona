@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports
 {
     public interface IManufacturerRepository
     {
-        Task<IManufacturer> FindByAsync(ManufacturerId id, CancellationToken cancellationToken);
+        Task<IManufacturer?> FindByAsync(ManufacturerId id, CancellationToken cancellationToken);
 
         Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput, CancellationToken cancellationToken);
 

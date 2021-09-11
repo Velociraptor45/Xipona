@@ -37,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters
             return toDomainConverter.ToDomain(storeEntities);
         }
 
-        public async Task<IStore> FindActiveByAsync(StoreId id, CancellationToken cancellationToken)
+        public async Task<IStore?> FindActiveByAsync(StoreId id, CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
@@ -56,7 +56,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters
             return toDomainConverter.ToDomain(entity);
         }
 
-        public async Task<IStore> FindByAsync(StoreId id, CancellationToken cancellationToken)
+        public async Task<IStore?> FindByAsync(StoreId id, CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));

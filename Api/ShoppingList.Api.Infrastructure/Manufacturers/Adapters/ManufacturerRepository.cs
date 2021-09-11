@@ -38,7 +38,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Adapters
             return toModelConverter.ToDomain(manufacturerEntities);
         }
 
-        public async Task<IManufacturer> FindByAsync(ManufacturerId id,
+        public async Task<IManufacturer?> FindByAsync(ManufacturerId id,
             CancellationToken cancellationToken)
         {
             if (id == null)

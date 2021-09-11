@@ -32,8 +32,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
     {
         public static void AddInfrastructure(this IServiceCollection services, string connectionString)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var version = Assembly.GetEntryAssembly().GetName().Version;
+            var assembly = Assembly.GetExecutingAssembly()!;
+            var version = Assembly.GetEntryAssembly()!.GetName().Version!;
             var serverVersion = new MySqlServerVersion(new Version(version.Major, version.Minor, version.Build));
 
             services.AddScoped<DbConnection>(provider =>
