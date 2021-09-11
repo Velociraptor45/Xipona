@@ -36,7 +36,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
 
             foreach (var availability in availabilitiesList)
             {
-                if (!storesDict.TryGetValue(availability.StoreId, out IStore store))
+                if (!storesDict.TryGetValue(availability.StoreId, out IStore? store))
                     throw new DomainException(new StoreNotFoundReason(availability.StoreId));
                 if (!store.ContainsSection(availability.DefaultSectionId))
                     throw new DomainException(new SectionInStoreNotFoundReason(availability.DefaultSectionId, store.Id));

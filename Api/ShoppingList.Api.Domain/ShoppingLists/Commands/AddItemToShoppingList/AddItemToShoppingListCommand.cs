@@ -9,7 +9,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
     public class AddItemToShoppingListCommand : ICommand<bool>
     {
         public AddItemToShoppingListCommand(ShoppingListId shoppingListId, OfflineTolerantItemId itemId,
-            SectionId sectionId, float quantity)
+            SectionId? sectionId, float quantity)
         {
             ShoppingListId = shoppingListId ?? throw new ArgumentNullException(nameof(shoppingListId));
             ItemId = itemId ?? throw new ArgumentNullException(nameof(itemId));
@@ -19,7 +19,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
 
         public ShoppingListId ShoppingListId { get; }
         public OfflineTolerantItemId ItemId { get; }
-        public SectionId SectionId { get; }
+        public SectionId? SectionId { get; }
         public float Quantity { get; }
     }
 }

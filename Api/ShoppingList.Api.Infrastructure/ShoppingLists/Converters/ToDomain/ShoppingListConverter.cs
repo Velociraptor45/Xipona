@@ -30,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Converters
                 throw new ArgumentNullException(nameof(source));
 
             var itemMapsPerSection = source.ItemsOnList.GroupBy(
-                map => map.SectionId.Value,
+                map => map.SectionId,
                 map => map,
                 (sectionId, maps) => new
                 {

@@ -47,7 +47,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
                 throw new System.ArgumentNullException(nameof(command));
             }
 
-            IStoreItem oldItem = await itemRepository.FindByAsync(command.ItemUpdate.OldId, cancellationToken);
+            IStoreItem? oldItem = await itemRepository.FindByAsync(command.ItemUpdate.OldId, cancellationToken);
             if (oldItem == null)
                 throw new DomainException(new ItemNotFoundReason(command.ItemUpdate.OldId));
             if (oldItem.IsTemporary)

@@ -29,11 +29,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            IStoreItem predecessor = null;
+            IStoreItem? predecessor = null;
             if (source.PredecessorId != null)
             {
                 var converter = new StoreItemConverter(storeItemFactory, storeItemAvailabilityConverter);
-                predecessor = converter.ToDomain(source.Predecessor);
+                predecessor = converter.ToDomain(source.Predecessor!);
             }
 
             List<IStoreItemAvailability> availabilities = storeItemAvailabilityConverter.ToDomain(source.AvailableAt)

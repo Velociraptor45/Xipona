@@ -34,12 +34,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemIn
             ItemId itemId;
             if (command.OfflineTolerantItemId.IsActualId)
             {
-                itemId = new ItemId(command.OfflineTolerantItemId.ActualId.Value);
+                itemId = new ItemId(command.OfflineTolerantItemId.ActualId!.Value);
             }
             else
             {
-                var temporaryId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId.Value);
-                IStoreItem item = await itemRepository.FindByAsync(temporaryId, cancellationToken);
+                var temporaryId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId!.Value);
+                IStoreItem? item = await itemRepository.FindByAsync(temporaryId, cancellationToken);
 
                 if (item == null)
                     throw new DomainException(new ItemNotFoundReason(temporaryId));

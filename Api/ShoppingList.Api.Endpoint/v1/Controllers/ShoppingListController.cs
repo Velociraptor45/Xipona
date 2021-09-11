@@ -153,8 +153,16 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("items/put-in-basket")]
         public async Task<IActionResult> PutItemInBasket([FromBody] PutItemInBasketContract contract)
         {
-            var command = new PutItemInBasketCommand(new ShoppingListId(contract.ShoppingListId),
-                new OfflineTolerantItemId(contract.ItemId.Actual.Value));
+            if (contract.ItemId.Actual is null && contract.ItemId.Offline is null)
+                return BadRequest("At least one item id must be specified");
+
+            OfflineTolerantItemId itemId;
+            if (contract.ItemId.Actual != null)
+                itemId = new OfflineTolerantItemId(contract.ItemId.Actual.Value);
+            else
+                itemId = new OfflineTolerantItemId(contract.ItemId.Offline!.Value);
+
+            var command = new PutItemInBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId);
 
             try
             {

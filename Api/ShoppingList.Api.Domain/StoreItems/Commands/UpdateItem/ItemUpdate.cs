@@ -13,7 +13,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
 
         public ItemUpdate(ItemId oldId, string name, string comment,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
+            ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
             IEnumerable<IStoreItemAvailability> availabilities)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -39,7 +39,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
         public float QuantityInPacket { get; }
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
         public ItemCategoryId ItemCategoryId { get; }
-        public ManufacturerId ManufacturerId { get; }
+        public ManufacturerId? ManufacturerId { get; }
 
         public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
     }

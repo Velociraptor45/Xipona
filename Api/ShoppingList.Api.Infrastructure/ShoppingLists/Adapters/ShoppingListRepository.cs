@@ -31,7 +31,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
 
         public async Task StoreAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
         {
-            if (shoppingList == null)
+            if (shoppingList is null)
                 throw new ArgumentNullException(nameof(shoppingList));
 
             if (shoppingList.Id.Value <= 0)
@@ -49,9 +49,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
             await StoreModifiedListAsync(listEntity, shoppingList, cancellationToken);
         }
 
-        public async Task<IShoppingList> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)
+        public async Task<IShoppingList?> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)
         {
-            if (id == null)
+            if (id is null)
                 throw new ArgumentNullException(nameof(id));
 
             var entity = await GetShoppingListQuery()
@@ -96,9 +96,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
             return toModelConverter.ToDomain(entities);
         }
 
-        public async Task<IShoppingList> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
+        public async Task<IShoppingList?> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
         {
-            if (storeId == null)
+            if (storeId is null)
                 throw new ArgumentNullException(nameof(storeId));
 
             var entity = await GetShoppingListQuery()

@@ -35,11 +35,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeIte
             ItemId itemId;
             if (command.OfflineTolerantItemId.IsActualId)
             {
-                itemId = new ItemId(command.OfflineTolerantItemId.ActualId.Value);
+                itemId = new ItemId(command.OfflineTolerantItemId.ActualId!.Value);
             }
             else
             {
-                var temporaryId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId.Value);
+                var temporaryId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId!.Value);
                 var item = await itemRepository.FindByAsync(temporaryId, cancellationToken);
 
                 if (item == null)

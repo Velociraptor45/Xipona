@@ -35,13 +35,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
 
             if (command.ItemId.IsActualId)
             {
-                var actualId = new ItemId(command.ItemId.ActualId.Value);
+                var actualId = new ItemId(command.ItemId.ActualId!.Value);
                 await addItemToShoppingListService.AddItemToShoppingList(list, actualId, command.SectionId, command.Quantity,
                     cancellationToken);
             }
             else
             {
-                var temporaryId = new TemporaryItemId(command.ItemId.OfflineId.Value);
+                var temporaryId = new TemporaryItemId(command.ItemId.OfflineId!.Value);
                 await addItemToShoppingListService.AddItemToShoppingList(list, temporaryId, command.SectionId,
                     command.Quantity, cancellationToken);
             }

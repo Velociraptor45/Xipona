@@ -22,7 +22,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services
             if (manufacturerId is null)
                 throw new ArgumentNullException(nameof(manufacturerId));
 
-            IManufacturer manufacturer = await manufacturerRepository
+            IManufacturer? manufacturer = await manufacturerRepository
                     .FindByAsync(manufacturerId, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();

@@ -1,4 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
@@ -41,15 +43,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversio
             var itemsDict = (await itemRepository.FindByAsync(ItemIds, cancellationToken))
                 .ToDictionary(i => i.Id);
 
-            var itemCategoryIds = itemsDict.Values.Where(i => i.ItemCategoryId != null).Select(i => i.ItemCategoryId);
+            var itemCategoryIds = itemsDict.Values.Where(i => i.ItemCategoryId != null).Select(i => i.ItemCategoryId!);
             var itemCategoriesDict = (await itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
                 .ToDictionary(cat => cat.Id);
 
-            var manufacturerIds = itemsDict.Values.Where(i => i.ManufacturerId != null).Select(i => i.ManufacturerId);
+            var manufacturerIds = itemsDict.Values.Where(i => i.ManufacturerId != null).Select(i => i.ManufacturerId!);
             var manufacturersDict = (await manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
                 .ToDictionary(man => man.Id);
 
-            IStore store = await storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
+            IStore? store = await storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
+            if (store is null)
+                throw new DomainException(new StoreNotFoundReason(shoppingList.StoreId));
 
             return ToReadModel(shoppingList, store, itemsDict, itemCategoriesDict, manufacturersDict);
         }

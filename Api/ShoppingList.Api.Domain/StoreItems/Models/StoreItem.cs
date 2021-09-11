@@ -18,8 +18,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 
         public StoreItem(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            ItemCategoryId itemCategoryId, ManufacturerId manufacturerId,
-            IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId temporaryId)
+            ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
+            IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId? temporaryId)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Name = name;
@@ -48,10 +48,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         public float QuantityInPacket { get; private set; }
         public QuantityTypeInPacket QuantityTypeInPacket { get; private set; }
 
-        public ItemCategoryId ItemCategoryId { get; private set; }
-        public ManufacturerId ManufacturerId { get; private set; }
-        public TemporaryItemId TemporaryId { get; }
-        public IStoreItem Predecessor { get; private set; } // todo: change this to an IItemPredecessor model to satisfy DDD
+        public ItemCategoryId? ItemCategoryId { get; private set; }
+        public ManufacturerId? ManufacturerId { get; private set; }
+        public TemporaryItemId? TemporaryId { get; }
+        public IStoreItem? Predecessor { get; private set; } // todo: change this to an IItemPredecessor model to satisfy DDD
 
         public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.AsReadOnly();
 

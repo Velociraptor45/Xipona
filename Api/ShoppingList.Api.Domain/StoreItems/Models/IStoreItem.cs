@@ -19,12 +19,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         float QuantityInPacket { get; }
         QuantityTypeInPacket QuantityTypeInPacket { get; }
 
-        ItemCategoryId ItemCategoryId { get; }
-        ManufacturerId ManufacturerId { get; }
-        IStoreItem Predecessor { get; }
+        ItemCategoryId? ItemCategoryId { get; }
+        ManufacturerId? ManufacturerId { get; }
+        IStoreItem? Predecessor { get; }
 
         IReadOnlyCollection<IStoreItemAvailability> Availabilities { get; }
-        TemporaryItemId TemporaryId { get; }
+        TemporaryItemId? TemporaryId { get; }
 
         void Delete();
 

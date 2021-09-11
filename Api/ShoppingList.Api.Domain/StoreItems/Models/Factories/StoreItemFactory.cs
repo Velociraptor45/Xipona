@@ -13,8 +13,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
     {
         public IStoreItem Create(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            ItemCategoryId itemCategoryId, ManufacturerId manufacturerId, IStoreItem predecessor,
-            IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId temporaryId)
+            ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
+            IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId? temporaryId)
         {
             var item = new StoreItem(
                 id,
@@ -30,7 +30,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
                 availabilities,
                 temporaryId);
 
-            item.SetPredecessor(predecessor);
+            if (predecessor != null)
+                item.SetPredecessor(predecessor);
+
             return item;
         }
 

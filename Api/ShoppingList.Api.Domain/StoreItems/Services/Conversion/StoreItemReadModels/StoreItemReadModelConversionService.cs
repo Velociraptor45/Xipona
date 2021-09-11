@@ -36,8 +36,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.S
             if (item is null)
                 throw new System.ArgumentNullException(nameof(item));
 
-            IItemCategory itemCategory = null;
-            IManufacturer manufacturer = null;
+            IItemCategory? itemCategory = null;
+            IManufacturer? manufacturer = null;
 
             if (item.ItemCategoryId != null)
             {
@@ -59,8 +59,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.S
             return ToReadModel(item, itemCategory, manufacturer, storeDict);
         }
 
-        public StoreItemReadModel ToReadModel(IStoreItem model, IItemCategory itemCategory,
-            IManufacturer manufacturer, Dictionary<StoreId, IStore> stores)
+        public StoreItemReadModel ToReadModel(IStoreItem model, IItemCategory? itemCategory,
+            IManufacturer? manufacturer, Dictionary<StoreId, IStore> stores)
         {
             var availabilityReadModels = new List<StoreItemAvailabilityReadModel>();
             foreach (var av in model.Availabilities)

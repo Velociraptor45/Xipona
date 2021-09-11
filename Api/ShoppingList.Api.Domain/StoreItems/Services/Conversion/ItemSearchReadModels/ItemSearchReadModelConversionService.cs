@@ -32,14 +32,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.I
         {
             var itemCategoryIds = items
                 .Where(i => i.ItemCategoryId != null)
-                .Select(i => i.ItemCategoryId)
+                .Select(i => i.ItemCategoryId!)
                 .Distinct();
             var itemCategoryDict = (await itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
                 .ToDictionary(i => i.Id);
 
             var manufacturerIds = items
                 .Where(i => i.ManufacturerId != null)
-                .Select(i => i.ManufacturerId)
+                .Select(i => i.ManufacturerId!)
                 .Distinct();
             var manufaturerDict = (await manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
                 .ToDictionary(m => m.Id);
@@ -47,8 +47,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.I
             return items
                 .Select(item =>
                 {
-                    IManufacturer manufacturer = item.ManufacturerId == null ? null : manufaturerDict[item.ManufacturerId];
-                    IItemCategory itemCategory = item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId];
+                    IManufacturer? manufacturer = item.ManufacturerId == null ? null : manufaturerDict[item.ManufacturerId];
+                    IItemCategory? itemCategory = item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId];
 
                     IStoreItemAvailability storeAvailability = item.Availabilities
                         .Single(av => av.StoreId == store.Id);

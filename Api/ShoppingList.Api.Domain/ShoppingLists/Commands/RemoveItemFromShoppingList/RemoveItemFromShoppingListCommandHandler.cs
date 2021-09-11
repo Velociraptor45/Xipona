@@ -37,10 +37,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            IStoreItem item;
+            IStoreItem? item;
             if (command.OfflineTolerantItemId.IsActualId)
             {
-                ItemId itemId = new ItemId(command.OfflineTolerantItemId.ActualId.Value);
+                ItemId itemId = new ItemId(command.OfflineTolerantItemId.ActualId!.Value);
 
                 item = await itemRepository.FindByAsync(itemId, cancellationToken);
                 if (item == null)
@@ -48,7 +48,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
             }
             else
             {
-                TemporaryItemId itemId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId.Value);
+                TemporaryItemId itemId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId!.Value);
 
                 item = await itemRepository.FindByAsync(itemId, cancellationToken);
                 if (item == null)

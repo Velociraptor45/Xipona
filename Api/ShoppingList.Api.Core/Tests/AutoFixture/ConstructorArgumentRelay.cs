@@ -19,7 +19,7 @@ namespace ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture
         {
             if (context == null)
                 throw new ArgumentNullException("context");
-            ParameterInfo parameter = request as ParameterInfo;
+            ParameterInfo? parameter = request as ParameterInfo;
             if (parameter == null)
                 return new NoSpecimen();
             if (parameter.Member.DeclaringType != typeof(TTarget) ||
@@ -27,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture
                 parameter.ParameterType != typeof(TValueType) ||
                 parameter.Name != _paramName)
                 return new NoSpecimen();
-            return _value;
+            return _value!;
         }
     }
 }

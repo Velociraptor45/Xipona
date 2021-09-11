@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShop
         public ShoppingListItemReadModel(ItemId id, string name, bool isDeleted, string comment,
             bool isTemporary, float pricePerQuantity, QuantityTypeReadModel quantityType, float quantityInPacket,
             QuantityTypeInPacketReadModel quantityTypeInPacket,
-            ItemCategoryReadModel itemCategory, ManufacturerReadModel manufacturer,
+            ItemCategoryReadModel? itemCategory, ManufacturerReadModel? manufacturer,
             bool isInBasket, float quantity)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -43,8 +43,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShop
         public QuantityTypeReadModel QuantityType { get; }
         public float QuantityInPacket { get; }
         public QuantityTypeInPacketReadModel QuantityTypeInPacket { get; }
-        public ItemCategoryReadModel ItemCategory { get; }
-        public ManufacturerReadModel Manufacturer { get; }
+        public ItemCategoryReadModel? ItemCategory { get; }
+        public ManufacturerReadModel? Manufacturer { get; }
         public bool IsInBasket { get; }
         public float Quantity { get; }
     }
