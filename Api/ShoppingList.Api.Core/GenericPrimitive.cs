@@ -13,7 +13,10 @@ namespace ProjectHermes.ShoppingList.Api.Core
             Value = value;
         }
 
-        public static bool operator ==(GenericPrimitive<T> left, GenericPrimitive<T> right)
+#pragma warning disable S3875 // "operator==" should not be overloaded on reference types
+
+        public static bool operator ==(GenericPrimitive<T>? left, GenericPrimitive<T>? right)
+#pragma warning restore S3875 // "operator==" should not be overloaded on reference types
         {
             if (left is null)
             {
@@ -23,7 +26,7 @@ namespace ProjectHermes.ShoppingList.Api.Core
             return left.Value.Equals(right?.Value);
         }
 
-        public static bool operator !=(GenericPrimitive<T> left, GenericPrimitive<T> right)
+        public static bool operator !=(GenericPrimitive<T>? left, GenericPrimitive<T>? right)
         {
             if (left is null)
             {
@@ -33,7 +36,7 @@ namespace ProjectHermes.ShoppingList.Api.Core
             return !left.Value.Equals(right?.Value);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is GenericPrimitive<T> primitive &&
                    EqualityComparer<T>.Default.Equals(Value, primitive.Value);

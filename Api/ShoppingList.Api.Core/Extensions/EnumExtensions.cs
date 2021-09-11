@@ -9,9 +9,13 @@ namespace ProjectHermes.ShoppingList.Api.Core.Extensions
             where TAttribute : Attribute
         {
             var type = value.GetType();
-            var name = Enum.GetName(type, value);
-            return type.GetField(name)
+            var name = Enum.GetName(type, value)!;
+            var attribute = type.GetField(name)!
                 .GetCustomAttribute<TAttribute>();
+            if (attribute is null)
+                throw new InvalidOperationException($"Attribute {name} on enum {value} of {type} not found.");
+
+            return attribute;
         }
 
         public static int ToInt<T>(this T value)
