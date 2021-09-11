@@ -1,4 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
@@ -49,7 +51,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversio
             var manufacturersDict = (await manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
                 .ToDictionary(man => man.Id);
 
-            IStore store = await storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
+            IStore? store = await storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
+            if (store is null)
+                throw new DomainException(new StoreNotFoundReason(shoppingList.StoreId));
 
             return ToReadModel(shoppingList, store, itemsDict, itemCategoriesDict, manufacturersDict);
         }

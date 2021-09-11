@@ -39,7 +39,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
             else
             {
                 var temporaryId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId!.Value);
-                IStoreItem item = await itemRepository.FindByAsync(temporaryId, cancellationToken);
+                IStoreItem? item = await itemRepository.FindByAsync(temporaryId, cancellationToken);
 
                 if (item == null)
                     throw new DomainException(new ItemNotFoundReason(temporaryId));

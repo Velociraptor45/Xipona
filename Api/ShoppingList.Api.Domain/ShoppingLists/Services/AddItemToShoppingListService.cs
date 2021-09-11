@@ -30,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
             this.shoppingListItemFactory = shoppingListItemFactory;
         }
 
-        public async Task AddItemToShoppingList(IShoppingList shoppingList, ItemId itemId, SectionId sectionId,
+        public async Task AddItemToShoppingList(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
             float quantity, CancellationToken cancellationToken)
         {
             if (shoppingList is null)
@@ -43,7 +43,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
         }
 
         public async Task AddItemToShoppingList(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
-            SectionId sectionId, float quantity, CancellationToken cancellationToken)
+            SectionId? sectionId, float quantity, CancellationToken cancellationToken)
         {
             if (shoppingList is null)
                 throw new ArgumentNullException(nameof(shoppingList));
@@ -56,7 +56,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
 
         private async Task<IStoreItem> LoadItem(ItemId itemId, CancellationToken cancellationToken)
         {
-            IStoreItem item = await itemRepository.FindByAsync(itemId, cancellationToken);
+            IStoreItem? item = await itemRepository.FindByAsync(itemId, cancellationToken);
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(itemId));
 
@@ -65,7 +65,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
 
         private async Task<IStoreItem> LoadItem(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
         {
-            IStoreItem item = await itemRepository.FindByAsync(temporaryItemId, cancellationToken);
+            IStoreItem? item = await itemRepository.FindByAsync(temporaryItemId, cancellationToken);
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryItemId));
 
@@ -86,7 +86,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
         }
 
         internal async Task AddItemToShoppingList(IShoppingList shoppingList, IStoreItem storeItem,
-            SectionId sectionId, float quantity, CancellationToken cancellationToken)
+            SectionId? sectionId, float quantity, CancellationToken cancellationToken)
         {
             ValidateItemIsAvailableAtStore(storeItem, shoppingList.StoreId, out var availability);
 

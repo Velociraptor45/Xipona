@@ -16,6 +16,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports
 
         Task<IStoreItem?> FindByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken);
 
+        Task<IEnumerable<IStoreItem>> FindByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken);
+
         Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
             IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
             CancellationToken cancellationToken);
@@ -24,8 +26,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports
 
         Task<IEnumerable<IStoreItem>> FindActiveByAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);
 
-        Task<IStoreItem?> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken);
-
-        Task<IEnumerable<IStoreItem>> FindByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken);
+        Task<IStoreItem> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken);
     }
 }

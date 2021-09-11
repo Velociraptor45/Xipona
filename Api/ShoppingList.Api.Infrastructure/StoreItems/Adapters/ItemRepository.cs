@@ -199,7 +199,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
             return toModelConverter.ToDomain(entities);
         }
 
-        public async Task<IStoreItem?> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken)
+        public async Task<IStoreItem> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken)
         {
             if (storeItem is null)
                 throw new ArgumentNullException(nameof(storeItem));

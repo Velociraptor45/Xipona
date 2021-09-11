@@ -37,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
                 throw new ArgumentNullException(nameof(command));
             }
 
-            IStoreItem storeItem = await itemRepository.FindByAsync(command.PermanentItem.Id, cancellationToken);
+            IStoreItem? storeItem = await itemRepository.FindByAsync(command.PermanentItem.Id, cancellationToken);
             if (storeItem == null)
                 throw new DomainException(new ItemNotFoundReason(command.PermanentItem.Id));
             if (!storeItem.IsTemporary)
@@ -50,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (command.PermanentItem.ManufacturerId != null)
+            if (manufacturerId != null)
             {
                 await manufacturerValidationService.ValidateAsync(manufacturerId, cancellationToken);
             }

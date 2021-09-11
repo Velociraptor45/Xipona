@@ -37,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            IStoreItem item;
+            IStoreItem? item;
             if (command.OfflineTolerantItemId.IsActualId)
             {
                 ItemId itemId = new ItemId(command.OfflineTolerantItemId.ActualId!.Value);

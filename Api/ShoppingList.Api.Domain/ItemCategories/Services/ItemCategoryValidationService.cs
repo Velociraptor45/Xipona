@@ -22,7 +22,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services
             if (itemCategoryId is null)
                 throw new ArgumentNullException(nameof(itemCategoryId));
 
-            IItemCategory itemCategory = await itemCategoryRepository
+            IItemCategory? itemCategory = await itemCategoryRepository
                 .FindByAsync(itemCategoryId, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
