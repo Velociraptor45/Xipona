@@ -2,6 +2,3 @@
 
 # S4457: Parameter validation in "async"/"await" methods should be wrapped
 dotnet_diagnostic.S4457.severity = none
-
-# Default severity for analyzer diagnostics with category 'Major Code Smell'
-dotnet_analyzer_diagnostic.category-Major Code Smell.severity = none
