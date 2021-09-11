@@ -34,11 +34,11 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Shopp
             if (source is null)
                 throw new System.ArgumentNullException(nameof(source));
 
-            ItemCategoryContract itemCategoryContract = null;
+            ItemCategoryContract? itemCategoryContract = null;
             if (source.ItemCategory != null)
                 itemCategoryContract = itemCategoryContractConverter.ToContract(source.ItemCategory);
 
-            ManufacturerContract manufacturerContract = null;
+            ManufacturerContract? manufacturerContract = null;
             if (source.Manufacturer != null)
                 manufacturerContract = manufacturerContractConverter.ToContract(source.Manufacturer);
 

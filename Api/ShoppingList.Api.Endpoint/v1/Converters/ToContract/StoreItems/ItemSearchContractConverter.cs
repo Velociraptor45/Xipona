@@ -1,9 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
 using System;
 
@@ -30,7 +28,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Store
                 source.Name,
                 source.DefaultQuantity,
                 source.Price,
-                source.ItemCategory.Name,
+                source.ItemCategory?.Name ?? "",
                 source.Manufacturer?.Name ?? "",
                 storeItemSectionContractConverter.ToContract(source.DefaultSection));
         }
