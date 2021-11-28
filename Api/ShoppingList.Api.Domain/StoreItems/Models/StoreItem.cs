@@ -43,7 +43,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 
         public StoreItem(ItemId id, string name, bool isDeleted, string comment,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
+            ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
             IEnumerable<IItemType> itemTypes)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));

@@ -22,7 +22,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
             IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId? temporaryId);
 
         IStoreItem Create(ItemId id, string name, bool isDeleted, string comment, QuantityType quantityType,
-            float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId? itemCategoryId,
+            float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
             ManufacturerId? manufacturerId, IStoreItem? predecessor, IEnumerable<IItemType> itemTypes);
     }
 }

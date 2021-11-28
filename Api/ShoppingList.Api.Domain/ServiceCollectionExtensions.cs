@@ -11,11 +11,15 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemSearchReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.StoreItemReadModels;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemCreation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
+using System;
 using System.Reflection;
+using System.Threading;
 
 namespace ProjectHermes.ShoppingList.Api.Domain
 {
@@ -49,6 +53,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain
             services.AddTransient<IStoreItemReadModelConversionService, StoreItemReadModelConversionService>();
 
             services.AddTransient<IItemTypeFactory, ItemTypeFactory>();
+
+            // services
+            services.AddTransient<Func<CancellationToken, IItemCreationService>>(provider =>
+            {
+                var itemRepository = provider.GetRequiredService<IItemRepository>();
+                return (cancellationToken) => new ItemCreationService(itemRepository, cancellationToken);
+            });
         }
 
         public static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)

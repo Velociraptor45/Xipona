@@ -38,7 +38,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
 
         public IStoreItem Create(ItemId id, string name, bool isDeleted, string comment,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-            ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
+            ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
             IEnumerable<IItemType> itemTypes)
         {
             var item = new StoreItem(

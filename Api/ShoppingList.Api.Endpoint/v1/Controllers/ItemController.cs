@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
@@ -18,6 +20,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryI
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemById;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterResults;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
@@ -39,6 +42,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         private readonly IToContractConverter<ItemSearchReadModel, ItemSearchContract> itemSearchContractConverter;
         private readonly IToContractConverter<ItemFilterResultReadModel, ItemFilterResultContract> itemFilterResultContractConverter;
         private readonly IToDomainConverter<CreateItemContract, ItemCreation> itemCreationConverter;
+        private readonly IToDomainConverter<CreateItemWithTypesContract, IStoreItem> _createItemWithTypesConverter;
         private readonly IToDomainConverter<ModifyItemContract, ItemModify> itemModifyConverter;
         private readonly IToDomainConverter<MakeTemporaryItemPermanentContract, PermanentItem> permanentItemConverter;
         private readonly IToDomainConverter<CreateTemporaryItemContract, TemporaryItemCreation> temporaryItemConverter;
@@ -49,6 +53,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             IToContractConverter<ItemSearchReadModel, ItemSearchContract> itemSearchContractConverter,
             IToContractConverter<ItemFilterResultReadModel, ItemFilterResultContract> itemFilterResultContractConverter,
             IToDomainConverter<CreateItemContract, ItemCreation> itemCreationConverter,
+            IToDomainConverter<CreateItemWithTypesContract, IStoreItem> createItemWithTypesConverter,
             IToDomainConverter<ModifyItemContract, ItemModify> itemModifyConverter,
             IToDomainConverter<MakeTemporaryItemPermanentContract, PermanentItem> permanentItemConverter,
             IToDomainConverter<CreateTemporaryItemContract, TemporaryItemCreation> temporaryItemConverter,
@@ -60,6 +65,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             this.itemSearchContractConverter = itemSearchContractConverter;
             this.itemFilterResultContractConverter = itemFilterResultContractConverter;
             this.itemCreationConverter = itemCreationConverter;
+            _createItemWithTypesConverter = createItemWithTypesConverter;
             this.itemModifyConverter = itemModifyConverter;
             this.permanentItemConverter = permanentItemConverter;
             this.temporaryItemConverter = temporaryItemConverter;
@@ -73,6 +79,19 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         {
             var model = itemCreationConverter.ToDomain(createItemContract);
             var command = new CreateItemCommand(model);
+
+            await commandDispatcher.DispatchAsync(command, default);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [Route("create")]
+        public async Task<IActionResult> CreateItemWithTypes([FromBody] CreateItemWithTypesContract contract)
+        {
+            var model = _createItemWithTypesConverter.ToDomain(contract);
+            var command = new CreateItemWithTypesCommand(model);
 
             await commandDispatcher.DispatchAsync(command, default);
 
