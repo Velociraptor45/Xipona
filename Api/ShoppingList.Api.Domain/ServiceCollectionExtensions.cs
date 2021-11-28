@@ -47,6 +47,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain
             services.AddTransient<IShoppingListReadModelConversionService, ShoppingListReadModelConversionService>();
             services.AddTransient<IItemSearchReadModelConversionService, ItemSearchReadModelConversionService>();
             services.AddTransient<IStoreItemReadModelConversionService, StoreItemReadModelConversionService>();
+
+            services.AddTransient<IItemTypeFactory, ItemTypeFactory>();
         }
 
         public static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)

@@ -14,7 +14,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
     public class StoreItem : IStoreItem
     {
-        private List<IStoreItemAvailability> availabilities;
+        private List<IStoreItemAvailability> _availabilities;
+        private readonly List<IItemType> _itemTypes;
 
         public StoreItem(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
@@ -32,7 +33,32 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
             TemporaryId = temporaryId;
-            this.availabilities = availabilities.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
+            _itemTypes = new List<IItemType>();
+            _availabilities = availabilities.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
+
+            // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
+            // https://github.com/AutoFixture/AutoFixture/issues/1108
+            Predecessor = null;
+        }
+
+        public StoreItem(ItemId id, string name, bool isDeleted, string comment,
+            QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+            ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
+            IEnumerable<IItemType> itemTypes)
+        {
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Name = name;
+            IsDeleted = isDeleted;
+            Comment = comment;
+            IsTemporary = false;
+            QuantityType = quantityType;
+            QuantityInPacket = quantityInPacket;
+            QuantityTypeInPacket = quantityTypeInPacket;
+            ItemCategoryId = itemCategoryId;
+            ManufacturerId = manufacturerId;
+            TemporaryId = null;
+            _itemTypes = itemTypes?.ToList() ?? throw new ArgumentNullException(nameof(itemTypes));
+            _availabilities = new List<IStoreItemAvailability>();
 
             // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
             // https://github.com/AutoFixture/AutoFixture/issues/1108
@@ -52,8 +78,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         public ManufacturerId? ManufacturerId { get; private set; }
         public TemporaryItemId? TemporaryId { get; }
         public IStoreItem? Predecessor { get; private set; } // todo: change this to an IItemPredecessor model to satisfy DDD
+        public IReadOnlyCollection<IItemType> ItemTypes => _itemTypes.AsReadOnly();
 
-        public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.AsReadOnly();
+        public IReadOnlyCollection<IStoreItemAvailability> Availabilities => _availabilities.AsReadOnly();
+
+        public bool HasItemTypes => _itemTypes.Any();
 
         public void Delete()
         {
@@ -74,7 +103,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             QuantityTypeInPacket = permanentItem.QuantityTypeInPacket;
             ItemCategoryId = permanentItem.ItemCategoryId;
             ManufacturerId = permanentItem.ManufacturerId;
-            this.availabilities = availabilities.ToList();
+            this._availabilities = availabilities.ToList();
             IsTemporary = false;
         }
 
@@ -87,12 +116,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             QuantityTypeInPacket = itemChange.QuantityTypeInPacket;
             ItemCategoryId = itemChange.ItemCategoryId;
             ManufacturerId = itemChange.ManufacturerId;
-            this.availabilities = availabilities.ToList();
+            this._availabilities = availabilities.ToList();
         }
 
         public SectionId GetDefaultSectionIdForStore(StoreId storeId)
         {
-            var availability = availabilities.FirstOrDefault(av => av.StoreId == storeId);
+            var availability = _availabilities.FirstOrDefault(av => av.StoreId == storeId);
             if (availability == null)
                 throw new DomainException(new ItemAtStoreNotAvailableReason(Id, storeId));
 

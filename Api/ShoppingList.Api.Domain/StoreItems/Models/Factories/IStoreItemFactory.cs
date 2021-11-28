@@ -20,5 +20,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
             IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId? temporaryId);
+
+        IStoreItem Create(ItemId id, string name, bool isDeleted, string comment, QuantityType quantityType,
+            float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId? itemCategoryId,
+            ManufacturerId? manufacturerId, IStoreItem? predecessor, IEnumerable<IItemType> itemTypes);
     }
 }

@@ -36,6 +36,29 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
             return item;
         }
 
+        public IStoreItem Create(ItemId id, string name, bool isDeleted, string comment,
+            QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+            ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
+            IEnumerable<IItemType> itemTypes)
+        {
+            var item = new StoreItem(
+                id,
+                name,
+                isDeleted,
+                comment,
+                quantityType,
+                quantityInPacket,
+                quantityTypeInPacket,
+                itemCategoryId,
+                manufacturerId,
+                itemTypes);
+
+            if (predecessor != null)
+                item.SetPredecessor(predecessor);
+
+            return item;
+        }
+
         public IStoreItem Create(ItemCreation itemCreation)
         {
             return new StoreItem(new ItemId(0),
