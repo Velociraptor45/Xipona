@@ -14,14 +14,20 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
 {
     public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
     {
-        private readonly IStoreItemFactory storeItemFactory;
-        private readonly IToDomainConverter<AvailableAt, IStoreItemAvailability> storeItemAvailabilityConverter;
+        private readonly IStoreItemFactory _storeItemFactory;
+        private readonly IItemTypeFactory _itemTypeFactory;
+        private readonly IToDomainConverter<AvailableAt, IStoreItemAvailability> _storeItemAvailabilityConverter;
+        private readonly IToDomainConverter<ItemTypeAvailableAt, IStoreItemAvailability> _itemTypeAvailabilityConverter;
 
         public StoreItemConverter(IStoreItemFactory storeItemFactory,
-            IToDomainConverter<AvailableAt, IStoreItemAvailability> storeItemAvailabilityConverter)
+            IItemTypeFactory itemTypeFactory,
+            IToDomainConverter<AvailableAt, IStoreItemAvailability> storeItemAvailabilityConverter,
+            IToDomainConverter<ItemTypeAvailableAt, IStoreItemAvailability> itemTypeAvailabilityConverter)
         {
-            this.storeItemFactory = storeItemFactory;
-            this.storeItemAvailabilityConverter = storeItemAvailabilityConverter;
+            _storeItemFactory = storeItemFactory;
+            _itemTypeFactory = itemTypeFactory;
+            _storeItemAvailabilityConverter = storeItemAvailabilityConverter;
+            _itemTypeAvailabilityConverter = itemTypeAvailabilityConverter;
         }
 
         public IStoreItem ToDomain(Item source)
@@ -32,17 +38,42 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
             IStoreItem? predecessor = null;
             if (source.PredecessorId != null)
             {
-                var converter = new StoreItemConverter(storeItemFactory, storeItemAvailabilityConverter);
+                var converter = new StoreItemConverter(_storeItemFactory, _itemTypeFactory,
+                    _storeItemAvailabilityConverter, _itemTypeAvailabilityConverter);
                 predecessor = converter.ToDomain(source.Predecessor!);
             }
-
-            List<IStoreItemAvailability> availabilities = storeItemAvailabilityConverter.ToDomain(source.AvailableAt)
-                .ToList();
             var itemCategoryId = source.ItemCategoryId.HasValue ? new ItemCategoryId(source.ItemCategoryId.Value) : null;
             var manufacturerId = source.ManufacturerId.HasValue ? new ManufacturerId(source.ManufacturerId.Value) : null;
             var temporaryId = source.CreatedFrom.HasValue ? new TemporaryItemId(source.CreatedFrom.Value) : null;
 
-            return storeItemFactory.Create(
+            if (source.ItemTypes.Any())
+            {
+                var itemTypes = new List<IItemType>();
+                foreach (var type in source.ItemTypes)
+                {
+                    var typeAvailabilities = _itemTypeAvailabilityConverter.ToDomain(type.AvailableAt);
+                    var domainType = _itemTypeFactory.Create(new ItemTypeId(type.Id), type.Name, typeAvailabilities);
+                    itemTypes.Add(domainType);
+                }
+
+                return _storeItemFactory.Create(
+                    new ItemId(source.Id),
+                    source.Name,
+                    source.Deleted,
+                    source.Comment,
+                    source.QuantityType.ToEnum<QuantityType>(),
+                    source.QuantityInPacket,
+                    source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),
+                    itemCategoryId,
+                    manufacturerId,
+                    predecessor,
+                    itemTypes);
+            }
+
+            List<IStoreItemAvailability> availabilities = _storeItemAvailabilityConverter.ToDomain(source.AvailableAt)
+                .ToList();
+
+            return _storeItemFactory.Create(
                 new ItemId(source.Id),
                 source.Name,
                 source.Deleted,
