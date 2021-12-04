@@ -16,8 +16,8 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint
             services.AddTransient<StoreController>();
 
             var assembly = typeof(ServiceCollectionExtensions).Assembly;
-            services.AddInstancesOfGenericType(assembly, typeof(IToContractConverter<,>));
-            services.AddInstancesOfGenericType(assembly, typeof(IToDomainConverter<,>));
+            services.AddImplementationOfGenericType(assembly, typeof(IToContractConverter<,>));
+            services.AddImplementationOfGenericType(assembly, typeof(IToDomainConverter<,>));
         }
     }
 }

@@ -49,7 +49,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
 
         protected override void SetupServiceCollection()
         {
-            serviceCollection.AddInstancesOfGenericType(typeof(ItemConverter).Assembly, typeof(IToEntityConverter<,>));
+            serviceCollection.AddImplementationOfGenericType(typeof(ItemConverter).Assembly, typeof(IToEntityConverter<,>));
         }
     }
 }

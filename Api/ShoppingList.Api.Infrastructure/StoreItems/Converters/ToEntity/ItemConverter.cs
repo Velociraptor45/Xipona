@@ -49,7 +49,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
             {
                 Id = itemType.Id.Value,
                 ItemId = source.Id.Value,
-                Name = source.Name,
+                Name = itemType.Name,
                 AvailableAt = itemType.Availabilities.Select(av => ToItemTypeAvailableAt(av, itemType)).ToList()
             };
         }

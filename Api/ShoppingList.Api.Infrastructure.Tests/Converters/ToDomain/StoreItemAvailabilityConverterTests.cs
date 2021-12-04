@@ -37,8 +37,8 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
 
         public static void AddDependencies(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddInstancesOfGenericType(typeof(StoreItemAvailabilityConverter).Assembly, typeof(IToDomainConverter<,>));
-            serviceCollection.AddInstancesOfNonGenericType(typeof(IStoreItemAvailabilityFactory).Assembly, typeof(IStoreItemAvailabilityFactory));
+            serviceCollection.AddImplementationOfGenericType(typeof(StoreItemAvailabilityConverter).Assembly, typeof(IToDomainConverter<,>));
+            serviceCollection.AddImplementationOfNonGenericType(typeof(IStoreItemAvailabilityFactory).Assembly, typeof(IStoreItemAvailabilityFactory));
         }
     }
 }

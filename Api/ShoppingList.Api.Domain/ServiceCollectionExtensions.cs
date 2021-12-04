@@ -29,7 +29,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain
         {
             var assembly = typeof(ServiceCollectionExtensions).Assembly;
             services.AddHandlersForAssembly(assembly);
-            services.AddInstancesOfGenericType(assembly, typeof(IToReadModelConverter<,>));
+            services.AddImplementationOfGenericType(assembly, typeof(IToReadModelConverter<,>));
 
             services.AddTransient<IItemCategoryFactory, ItemCategoryFactory>();
             services.AddTransient<IManufacturerFactory, ManufacturerFactory>();
@@ -62,22 +62,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain
             });
         }
 
-        public static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)
+        private static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)
         {
             services.AddQueryHandlersForAssembly(assembly);
             services.AddCommandHandlersForAssembly(assembly);
         }
 
-        public static void AddQueryHandlersForAssembly(this IServiceCollection services, Assembly assembly)
+        private static void AddQueryHandlersForAssembly(this IServiceCollection services, Assembly assembly)
         {
             var handlerType = typeof(IQueryHandler<,>);
-            services.AddInstancesOfGenericType(assembly, handlerType);
+            services.AddImplementationOfGenericType(assembly, handlerType);
         }
 
-        public static void AddCommandHandlersForAssembly(this IServiceCollection services, Assembly assembly)
+        private static void AddCommandHandlersForAssembly(this IServiceCollection services, Assembly assembly)
         {
             var handlerType = typeof(ICommandHandler<,>);
-            services.AddInstancesOfGenericType(assembly, handlerType);
+            services.AddImplementationOfGenericType(assembly, handlerType);
         }
     }
 }

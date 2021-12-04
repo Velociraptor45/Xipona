@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Core.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddInstancesOfGenericType(this IServiceCollection services, Assembly assembly,
+        public static void AddImplementationOfGenericType(this IServiceCollection services, Assembly assembly,
             Type type)
         {
             var assemblyTypes = assembly
@@ -29,7 +29,7 @@ namespace ProjectHermes.ShoppingList.Api.Core.Extensions
             }
         }
 
-        public static void AddInstancesOfNonGenericType(this IServiceCollection services, Assembly assembly,
+        public static void AddImplementationOfNonGenericType(this IServiceCollection services, Assembly assembly,
             Type type)
         {
             var assemblyTypes = assembly

@@ -87,7 +87,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
 
         [HttpPost]
         [ProducesResponseType(200)]
-        [Route("create")]
+        [Route("create-with-type")]
         public async Task<IActionResult> CreateItemWithTypes([FromBody] CreateItemWithTypesContract contract)
         {
             var model = _createItemWithTypesConverter.ToDomain(contract);
