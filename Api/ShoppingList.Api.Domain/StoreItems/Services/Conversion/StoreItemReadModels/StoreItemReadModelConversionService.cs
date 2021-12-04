@@ -62,13 +62,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.S
         public StoreItemReadModel ToReadModel(IStoreItem model, IItemCategory? itemCategory,
             IManufacturer? manufacturer, Dictionary<StoreId, IStore> stores)
         {
-            var availabilityReadModels = new List<StoreItemAvailabilityReadModel>();
-            foreach (var av in model.Availabilities)
-            {
-                var store = stores[av.StoreId];
-                var section = store.Sections.First(s => s.Id == av.DefaultSectionId);
+            var availabilityReadModels = ToAvailabilityReadModel(model.Availabilities, stores).ToList();
 
-                availabilityReadModels.Add(av.ToReadModel(store, section));
+            var itemTypeReadModels = new List<ItemTypeReadModel>();
+            foreach (var itemType in model.ItemTypes)
+            {
+                var itemTypeReadModel = new ItemTypeReadModel(itemType.Id, itemType.Name,
+                    ToAvailabilityReadModel(itemType.Availabilities, stores));
+                itemTypeReadModels.Add(itemTypeReadModel);
             }
 
             return new StoreItemReadModel(
@@ -82,7 +83,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.S
                 model.QuantityTypeInPacket.ToReadModel(),
                 itemCategory?.ToReadModel(),
                 manufacturer?.ToReadModel(),
-                availabilityReadModels);
+                availabilityReadModels,
+                itemTypeReadModels);
+        }
+
+        private IEnumerable<StoreItemAvailabilityReadModel> ToAvailabilityReadModel(
+            IEnumerable<IStoreItemAvailability> availabilities, Dictionary<StoreId, IStore> stores)
+        {
+            foreach (var av in availabilities)
+            {
+                var store = stores[av.StoreId];
+                var section = store.Sections.First(s => s.Id == av.DefaultSectionId);
+
+                yield return av.ToReadModel(store, section);
+            }
         }
     }
 }
