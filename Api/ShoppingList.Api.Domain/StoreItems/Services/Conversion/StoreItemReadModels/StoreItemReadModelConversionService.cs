@@ -52,7 +52,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.S
                     throw new DomainException(new ManufacturerNotFoundReason(item.ManufacturerId));
             }
 
-            var storeIds = item.Availabilities.Select(av => av.StoreId);
+            var storeIds = item.Availabilities.Select(av => av.StoreId).ToList();
+            storeIds.AddRange(item.ItemTypes.SelectMany(t => t.Availabilities.Select(av => av.StoreId)));
             var storeDict = (await storeRepository.FindByAsync(storeIds, cancellationToken))
                 .ToDictionary(store => store.Id);
 
