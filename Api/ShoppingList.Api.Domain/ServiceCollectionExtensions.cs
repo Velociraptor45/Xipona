@@ -16,6 +16,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemSearchReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.StoreItemReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemCreation;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using System;
 using System.Reflection;
@@ -59,6 +60,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain
             {
                 var itemRepository = provider.GetRequiredService<IItemRepository>();
                 return (cancellationToken) => new ItemCreationService(itemRepository, cancellationToken);
+            });
+
+            services.AddTransient<Func<CancellationToken, IItemModificationService>>(provider =>
+            {
+                var itemRepository = provider.GetRequiredService<IItemRepository>();
+                return (cancellationToken) => new ItemModificationService(itemRepository, cancellationToken);
             });
         }
 

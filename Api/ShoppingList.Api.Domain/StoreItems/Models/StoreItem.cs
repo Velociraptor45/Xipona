@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
     public class StoreItem : IStoreItem
     {
         private List<IStoreItemAvailability> _availabilities;
-        private readonly List<IItemType> _itemTypes;
+        private List<IItemType> _itemTypes;
 
         public StoreItem(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
@@ -117,6 +118,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             ItemCategoryId = itemChange.ItemCategoryId;
             ManufacturerId = itemChange.ManufacturerId;
             this._availabilities = availabilities.ToList();
+        }
+
+        public void Modify(ItemWithTypesModification modification)
+        {
+            Name = modification.Name;
+            Comment = modification.Comment;
+            QuantityType = modification.QuantityType;
+            QuantityInPacket = modification.QuantityInPacket;
+            QuantityTypeInPacket = modification.QuantityTypeInPacket;
+            ItemCategoryId = modification.ItemCategoryId;
+            ManufacturerId = modification.ManufacturerId;
+            _itemTypes = modification.ItemTypes.ToList();
         }
 
         public SectionId GetDefaultSectionIdForStore(StoreId storeId)
