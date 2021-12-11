@@ -268,6 +268,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
         {
             return await dbContext.Items
                 .Include(item => item.AvailableAt)
+                .Include(item => item.ItemTypes)
+                .ThenInclude(itemType => itemType.AvailableAt)
                 .FirstOrDefaultAsync(i => i.Id == id.Value);
         }
 
@@ -338,7 +340,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
             foreach (var availability in updated.AvailableAt!)
             {
                 var exisitingAvailability = existing.AvailableAt
-                    .FirstOrDefault(av => av.Id == availability.Id);
+                    .FirstOrDefault(av =>
+                        av.ItemTypeId == availability.ItemTypeId
+                        && av.StoreId == availability.StoreId);
 
                 if (exisitingAvailability == null)
                 {
@@ -346,6 +350,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
                 }
                 else
                 {
+                    availability.Id = exisitingAvailability.Id;
                     dbContext.Entry(exisitingAvailability).CurrentValues.SetValues(availability);
                 }
             }
