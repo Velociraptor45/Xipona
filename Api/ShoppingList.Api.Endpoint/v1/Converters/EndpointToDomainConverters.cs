@@ -17,12 +17,29 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters
         {
         }
 
+        public IEnumerable<TDomain> ToDomain<TContract, TDomain>(IEnumerable<TContract> contract)
+        {
+            if (contract is null)
+                throw new ArgumentNullException(nameof(contract));
+
+            var typedConverter = GetConverter<TContract, TDomain>();
+
+            return typedConverter.ToDomain(contract);
+        }
+
         public TDomain ToDomain<TContract, TDomain>(TContract contract)
         {
             if (contract == null)
                 throw new ArgumentNullException(nameof(contract));
 
-            var domainType = contract.GetType();
+            var typedConverter = GetConverter<TContract, TDomain>();
+
+            return typedConverter.ToDomain(contract);
+        }
+
+        private IToDomainConverter<TContract, TDomain> GetConverter<TContract, TDomain>()
+        {
+            var domainType = typeof(TContract);
             var contractType = typeof(TDomain);
 
             if (!TryGetValue((domainType, contractType), out var converter))
@@ -34,7 +51,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters
             if (typedConverter == null)
                 throw new InvalidOperationException($"Registered converter for {contractType} to {domainType} does not convert said types.");
 
-            return typedConverter.ToDomain(contract);
+            return typedConverter;
         }
     }
 }

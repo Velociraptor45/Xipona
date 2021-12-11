@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters
 {
@@ -22,7 +23,23 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters
             return _toDomainConverters.ToDomain<TContract, TDomain>(contract);
         }
 
+        public IEnumerable<TDomain> ToDomain<TContract, TDomain>(IEnumerable<TContract> contract)
+        {
+            if (contract == null)
+                throw new ArgumentNullException(nameof(contract));
+
+            return _toDomainConverters.ToDomain<TContract, TDomain>(contract);
+        }
+
         public TContract ToContract<TDomain, TContract>(TDomain domain)
+        {
+            if (domain == null)
+                throw new ArgumentNullException(nameof(domain));
+
+            return _toContractConverters.ToContract<TDomain, TContract>(domain);
+        }
+
+        public IEnumerable<TContract> ToContract<TDomain, TContract>(IEnumerable<TDomain> domain)
         {
             if (domain == null)
                 throw new ArgumentNullException(nameof(domain));

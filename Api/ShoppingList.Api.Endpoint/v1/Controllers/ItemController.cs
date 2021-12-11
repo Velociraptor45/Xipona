@@ -12,7 +12,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
-using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
@@ -42,43 +41,13 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
     {
         private readonly IQueryDispatcher _queryDispatcher;
         private readonly ICommandDispatcher _commandDispatcher;
-        private readonly IToContractConverter<StoreItemReadModel, StoreItemContract> _storeItemContractConverter;
-        private readonly IToContractConverter<ItemSearchReadModel, ItemSearchContract> _itemSearchContractConverter;
-        private readonly IToContractConverter<ItemFilterResultReadModel, ItemFilterResultContract> _itemFilterResultContractConverter;
-        private readonly IToDomainConverter<CreateItemContract, ItemCreation> _itemCreationConverter;
-        private readonly IToDomainConverter<CreateItemWithTypesContract, IStoreItem> _createItemWithTypesConverter;
-        private readonly IToDomainConverter<ModifyItemContract, ItemModify> _itemModifyConverter;
-        private readonly IToDomainConverter<ModifyItemWithTypesContract, ItemWithTypesModification> _modifyItemWithTypesConverter;
-        private readonly IToDomainConverter<MakeTemporaryItemPermanentContract, PermanentItem> _permanentItemConverter;
-        private readonly IToDomainConverter<CreateTemporaryItemContract, TemporaryItemCreation> _temporaryItemConverter;
-        private readonly IToDomainConverter<UpdateItemContract, ItemUpdate> _itemUpdateConverter;
         private readonly IEndpointConverters _converters;
 
         public ItemController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
-            IToContractConverter<StoreItemReadModel, StoreItemContract> storeItemContractConverter,
-            IToContractConverter<ItemSearchReadModel, ItemSearchContract> itemSearchContractConverter,
-            IToContractConverter<ItemFilterResultReadModel, ItemFilterResultContract> itemFilterResultContractConverter,
-            IToDomainConverter<CreateItemContract, ItemCreation> itemCreationConverter,
-            IToDomainConverter<CreateItemWithTypesContract, IStoreItem> createItemWithTypesConverter,
-            IToDomainConverter<ModifyItemContract, ItemModify> itemModifyConverter,
-            IToDomainConverter<ModifyItemWithTypesContract, ItemWithTypesModification> modifyItemWithTypesConverter,
-            IToDomainConverter<MakeTemporaryItemPermanentContract, PermanentItem> permanentItemConverter,
-            IToDomainConverter<CreateTemporaryItemContract, TemporaryItemCreation> temporaryItemConverter,
-            IToDomainConverter<UpdateItemContract, ItemUpdate> itemUpdateConverter,
             IEndpointConverters converters)
         {
             _queryDispatcher = queryDispatcher;
             _commandDispatcher = commandDispatcher;
-            _storeItemContractConverter = storeItemContractConverter;
-            _itemSearchContractConverter = itemSearchContractConverter;
-            _itemFilterResultContractConverter = itemFilterResultContractConverter;
-            _itemCreationConverter = itemCreationConverter;
-            _createItemWithTypesConverter = createItemWithTypesConverter;
-            _itemModifyConverter = itemModifyConverter;
-            _modifyItemWithTypesConverter = modifyItemWithTypesConverter;
-            _permanentItemConverter = permanentItemConverter;
-            _temporaryItemConverter = temporaryItemConverter;
-            _itemUpdateConverter = itemUpdateConverter;
             _converters = converters;
         }
 
@@ -87,7 +56,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("create")]
         public async Task<IActionResult> CreateItem([FromBody] CreateItemContract createItemContract)
         {
-            var model = _itemCreationConverter.ToDomain(createItemContract);
+            var model = _converters.ToDomain<CreateItemContract, ItemCreation>(createItemContract);
             var command = new CreateItemCommand(model);
 
             await _commandDispatcher.DispatchAsync(command, default);
@@ -100,7 +69,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("create-with-type")]
         public async Task<IActionResult> CreateItemWithTypes([FromBody] CreateItemWithTypesContract contract)
         {
-            var model = _createItemWithTypesConverter.ToDomain(contract);
+            var model = _converters.ToDomain<CreateItemWithTypesContract, IStoreItem>(contract);
             var command = new CreateItemWithTypesCommand(model);
 
             await _commandDispatcher.DispatchAsync(command, default);
@@ -114,7 +83,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("modify-with-type")]
         public async Task<IActionResult> ModifyItemWithTypes([FromBody] ModifyItemWithTypesContract contract)
         {
-            var model = _modifyItemWithTypesConverter.ToDomain(contract);
+            var model = _converters.ToDomain<ModifyItemWithTypesContract, ItemWithTypesModification>(contract);
             var command = new ModifyItemWithTypesCommand(model);
 
             try
@@ -135,7 +104,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("modify")]
         public async Task<IActionResult> ModifyItem([FromBody] ModifyItemContract modifyItemContract)
         {
-            var model = _itemModifyConverter.ToDomain(modifyItemContract);
+            var model = _converters.ToDomain<ModifyItemContract, ItemModify>(modifyItemContract);
             var command = new ModifyItemCommand(model);
 
             try
@@ -156,7 +125,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("update")]
         public async Task<IActionResult> UpdateItem([FromBody] UpdateItemContract updateItemContract)
         {
-            var model = _itemUpdateConverter.ToDomain(updateItemContract);
+            var model = _converters.ToDomain<UpdateItemContract, ItemUpdate>(updateItemContract);
             var command = new UpdateItemCommand(model);
 
             try
@@ -190,7 +159,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest(e.Reason);
             }
 
-            var contracts = _itemSearchContractConverter.ToContract(readModels);
+            var contracts = _converters.ToContract<ItemSearchReadModel, ItemSearchContract>(readModels);
 
             return Ok(contracts);
         }
@@ -208,7 +177,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 manufacturerIds.Select(id => new ManufacturerId(id)));
 
             var readModels = await _queryDispatcher.DispatchAsync(query, default);
-            var contracts = _itemFilterResultContractConverter.ToContract(readModels);
+            var contracts = _converters.ToContract<ItemFilterResultReadModel, ItemFilterResultContract>(readModels);
 
             return Ok(contracts);
         }
@@ -241,7 +210,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest(e.Reason);
             }
 
-            var contract = _storeItemContractConverter.ToContract(result);
+            var contract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(result);
 
             return Ok(contract);
         }
@@ -251,7 +220,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("create/temporary")]
         public async Task<IActionResult> CreateTemporaryItem([FromBody] CreateTemporaryItemContract contract)
         {
-            var model = _temporaryItemConverter.ToDomain(contract);
+            var model = _converters.ToDomain<CreateTemporaryItemContract, TemporaryItemCreation>(contract);
             var command = new CreateTemporaryItemCommand(model);
             try
             {
@@ -271,7 +240,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("make-temporary-item-permanent")]
         public async Task<IActionResult> MakeTemporaryItemPermanent([FromBody] MakeTemporaryItemPermanentContract contract)
         {
-            var model = _permanentItemConverter.ToDomain(contract);
+            var model = _converters.ToDomain<MakeTemporaryItemPermanentContract, PermanentItem>(contract);
             var command = new MakeTemporaryItemPermanentCommand(model);
             try
             {
