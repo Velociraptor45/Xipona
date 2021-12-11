@@ -35,6 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain
 
             services.AddTransient<IItemCategoryFactory, ItemCategoryFactory>();
             services.AddTransient<IManufacturerFactory, ManufacturerFactory>();
+
             services.AddTransient<IStoreItemFactory, StoreItemFactory>();
             services.AddTransient<IStoreItemAvailabilityFactory, StoreItemAvailabilityFactory>();
             services.AddTransient<IStoreFactory, StoreFactory>();
@@ -66,7 +67,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain
             services.AddTransient<Func<CancellationToken, IItemModificationService>>(provider =>
             {
                 var itemRepository = provider.GetRequiredService<IItemRepository>();
-                return (cancellationToken) => new ItemModificationService(itemRepository, cancellationToken);
+                var validatorDelegat = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
+                return (cancellationToken) => new ItemModificationService(itemRepository, validatorDelegat,
+                    cancellationToken);
             });
 
             services.AddTransient<Func<CancellationToken, IValidator>>(provider =>

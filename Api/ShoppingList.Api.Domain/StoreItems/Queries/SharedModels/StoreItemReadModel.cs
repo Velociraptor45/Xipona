@@ -33,7 +33,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels
             Manufacturer = manufacturer;
             Availabilities = availabilities?.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
             ItemTypes = itemTypes?.ToList() ?? throw new ArgumentNullException(nameof(itemTypes));
-            ;
         }
 
         public ItemId Id { get; }

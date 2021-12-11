@@ -4,8 +4,10 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
@@ -36,7 +38,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         void MakePermanent(PermanentItem permanentItem, IEnumerable<IStoreItemAvailability> availabilities);
 
         void Modify(ItemModify itemChange, IEnumerable<IStoreItemAvailability> availabilities);
-        void Modify(ItemWithTypesModification modification);
+
+        Task ModifyAsync(ItemWithTypesModification modification, IValidator validator);
+
         void SetPredecessor(IStoreItem predecessor);
     }
 }

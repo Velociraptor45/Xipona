@@ -336,7 +336,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
                         StoreItem.QuantityTypeInPacket.GetAttribute<QuantityLabelAttribute>().QuantityLabel),
                     itemCategoryReadModel,
                     manufacturerReadModel,
-                    availabilityReadModel.ToMonoList());
+                    availabilityReadModel.ToMonoList(),
+                    null); //todo
             }
 
             #region Mock Setup

@@ -61,7 +61,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
 
         public IStoreItem Create(ItemCreation itemCreation)
         {
-            return new StoreItem(new ItemId(0),
+            return new StoreItem(
+                new ItemId(0),
                 itemCreation.Name,
                 false,
                 itemCreation.Comment,

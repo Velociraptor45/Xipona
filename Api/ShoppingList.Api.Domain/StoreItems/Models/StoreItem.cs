@@ -6,10 +6,12 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
@@ -104,7 +106,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             QuantityTypeInPacket = permanentItem.QuantityTypeInPacket;
             ItemCategoryId = permanentItem.ItemCategoryId;
             ManufacturerId = permanentItem.ManufacturerId;
-            this._availabilities = availabilities.ToList();
+            _availabilities = availabilities.ToList();
             IsTemporary = false;
         }
 
@@ -117,11 +119,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             QuantityTypeInPacket = itemChange.QuantityTypeInPacket;
             ItemCategoryId = itemChange.ItemCategoryId;
             ManufacturerId = itemChange.ManufacturerId;
-            this._availabilities = availabilities.ToList();
+            _availabilities = availabilities.ToList();
         }
 
-        public void Modify(ItemWithTypesModification modification)
+        public async Task ModifyAsync(ItemWithTypesModification modification, IValidator validator)
         {
+            if (modification is null)
+                throw new ArgumentNullException(nameof(modification));
+
+            if (_availabilities.Any())
+                throw new DomainException(new CannotModifyItemAsItemWithTypesReason(Id));
+
+            var availabilities = modification.ItemTypes.SelectMany(t => t.Availabilities);
+            await validator.ValidateAsync(availabilities);
+
             Name = modification.Name;
             Comment = modification.Comment;
             QuantityType = modification.QuantityType;

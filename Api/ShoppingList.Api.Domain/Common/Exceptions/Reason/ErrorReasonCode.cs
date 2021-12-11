@@ -22,6 +22,7 @@
         StoreItemSectionNotFound = 18,
         NoDefaultSectionSpecified = 19,
         SectionAlreadyInShoppingList = 20,
-        MultipleAvailabilitiesForStore = 21
+        MultipleAvailabilitiesForStore = 21,
+        CannotModifyItemAsItemWithTypes = 22
     }
 }

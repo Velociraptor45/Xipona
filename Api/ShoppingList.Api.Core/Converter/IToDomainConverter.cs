@@ -3,7 +3,10 @@ using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Core.Converter
 {
-    public interface IToDomainConverter<in TSource, out TDestination>
+    public interface IToDomainConverter : IConverter
+    { }
+
+    public interface IToDomainConverter<in TSource, out TDestination> : IToDomainConverter
     {
         TDestination ToDomain(TSource source);
 
