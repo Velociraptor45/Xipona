@@ -72,9 +72,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
             return item;
         }
 
-        private IShoppingListItem CreateShoppingListItem(ItemId itemId, float quantity)
+        private IShoppingListItem CreateShoppingListItem(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
         {
-            return shoppingListItemFactory.Create(itemId, false, quantity);
+            return shoppingListItemFactory.Create(itemId, itemTypeId, false, quantity);
         }
 
         private void ValidateItemIsAvailableAtStore(IStoreItem storeItem, StoreId storeId,
@@ -88,6 +88,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
         internal async Task AddItemToShoppingList(IShoppingList shoppingList, IStoreItem storeItem,
             SectionId? sectionId, float quantity, CancellationToken cancellationToken)
         {
+            if (storeItem.HasItemTypes)
+                throw new DomainException(new CannotAddTypedItemToShoppingListWithoutTypeIdReason(storeItem.Id));
+
             ValidateItemIsAvailableAtStore(storeItem, shoppingList.StoreId, out var availability);
 
             if (sectionId == null)
@@ -95,7 +98,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            IShoppingListItem shoppingListItem = CreateShoppingListItem(storeItem.Id, quantity);
+            IShoppingListItem shoppingListItem = CreateShoppingListItem(storeItem.Id, null, quantity);
             await AddItemToShoppingList(shoppingList, shoppingListItem, sectionId, cancellationToken);
         }
 

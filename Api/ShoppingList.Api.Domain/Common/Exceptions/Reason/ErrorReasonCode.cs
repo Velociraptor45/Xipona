@@ -23,6 +23,7 @@
         NoDefaultSectionSpecified = 19,
         SectionAlreadyInShoppingList = 20,
         MultipleAvailabilitiesForStore = 21,
-        CannotModifyItemAsItemWithTypes = 22
+        CannotModifyItemAsItemWithTypes = 22,
+        CannotAddTypedItemToShoppingListWithoutTypeIdReason = 23
     }
 }
