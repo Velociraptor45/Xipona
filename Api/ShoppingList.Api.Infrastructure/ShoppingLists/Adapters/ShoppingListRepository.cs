@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
 using System;
@@ -14,17 +15,17 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
 {
     public class ShoppingListRepository : IShoppingListRepository
     {
-        private readonly ShoppingListContext dbContext;
-        private readonly IToDomainConverter<Entities.ShoppingList, IShoppingList> toModelConverter;
-        private readonly IToEntityConverter<IShoppingList, Entities.ShoppingList> toEntityConverter;
+        private readonly ShoppingListContext _dbContext;
+        private readonly IToDomainConverter<Entities.ShoppingList, IShoppingList> _toDomainConverter;
+        private readonly IToEntityConverter<IShoppingList, Entities.ShoppingList> _toEntityConverter;
 
         public ShoppingListRepository(ShoppingListContext dbContext,
-            IToDomainConverter<Entities.ShoppingList, IShoppingList> toModelConverter,
+            IToDomainConverter<Entities.ShoppingList, IShoppingList> toDomainConverter,
             IToEntityConverter<IShoppingList, Entities.ShoppingList> toEntityConverter)
         {
-            this.dbContext = dbContext;
-            this.toModelConverter = toModelConverter;
-            this.toEntityConverter = toEntityConverter;
+            _dbContext = dbContext;
+            _toDomainConverter = toDomainConverter;
+            _toEntityConverter = toEntityConverter;
         }
 
         #region public methods
@@ -62,10 +63,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
             if (entity == null)
                 return null;
 
-            return toModelConverter.ToDomain(entity);
+            return _toDomainConverter.ToDomain(entity);
         }
 
-        public async Task<IEnumerable<IShoppingList>> FindByAsync(Domain.StoreItems.Models.ItemId storeItemId,
+        public async Task<IEnumerable<IShoppingList>> FindByAsync(ItemId storeItemId,
             CancellationToken cancellationToken)
         {
             if (storeItemId is null)
@@ -77,10 +78,24 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return toModelConverter.ToDomain(entities);
+            return _toDomainConverter.ToDomain(entities);
         }
 
-        public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(Domain.StoreItems.Models.ItemId storeItemId,
+        public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(ItemTypeId typeId,
+            CancellationToken cancellationToken)
+        {
+            if (typeId is null)
+                throw new ArgumentNullException(nameof(typeId));
+
+            var entities = await GetShoppingListQuery()
+                .Where(l => l.CompletionDate == null
+                    && l.ItemsOnList.Any(i => i.ItemTypeId.HasValue && i.ItemTypeId == typeId.Value))
+                .ToListAsync(cancellationToken);
+
+            return _toDomainConverter.ToDomain(entities);
+        }
+
+        public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(ItemId storeItemId,
             CancellationToken cancellationToken)
         {
             if (storeItemId is null)
@@ -93,7 +108,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return toModelConverter.ToDomain(entities);
+            return _toDomainConverter.ToDomain(entities);
         }
 
         public async Task<IShoppingList?> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
@@ -110,7 +125,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
             if (entity == null)
                 return null;
 
-            return toModelConverter.ToDomain(entity);
+            return _toDomainConverter.ToDomain(entity);
         }
 
         #endregion public methods
@@ -120,10 +135,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
         private async Task StoreModifiedListAsync(Entities.ShoppingList existingShoppingListEntity,
             IShoppingList shoppingList, CancellationToken cancellationToken)
         {
-            var shoppingListEntityToStore = toEntityConverter.ToEntity(shoppingList);
+            var shoppingListEntityToStore = _toEntityConverter.ToEntity(shoppingList);
             var onListMappings = existingShoppingListEntity.ItemsOnList.ToDictionary(map => map.ItemId);
 
-            dbContext.Entry(shoppingListEntityToStore).State = EntityState.Modified;
+            _dbContext.Entry(shoppingListEntityToStore).State = EntityState.Modified;
             foreach (var map in shoppingListEntityToStore.ItemsOnList)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -131,40 +146,40 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
                 {
                     // mapping was modified
                     map.Id = existingMapping.Id;
-                    dbContext.Entry(map).State = EntityState.Modified;
+                    _dbContext.Entry(map).State = EntityState.Modified;
                     onListMappings.Remove(map.ItemId);
                 }
                 else
                 {
                     // mapping was added
-                    dbContext.Entry(map).State = EntityState.Added;
+                    _dbContext.Entry(map).State = EntityState.Added;
                 }
             }
 
             // mapping was deleted
             foreach (var map in onListMappings.Values)
             {
-                dbContext.Entry(map).State = EntityState.Deleted;
+                _dbContext.Entry(map).State = EntityState.Deleted;
             }
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
 
         private async Task StoreAsNewListAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
         {
-            var entity = toEntityConverter.ToEntity(shoppingList);
+            var entity = _toEntityConverter.ToEntity(shoppingList);
 
-            dbContext.Entry(entity).State = EntityState.Added;
+            _dbContext.Entry(entity).State = EntityState.Added;
             foreach (var onListMap in entity.ItemsOnList)
             {
-                dbContext.Entry(onListMap).State = EntityState.Added;
+                _dbContext.Entry(onListMap).State = EntityState.Added;
             }
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
 
         private async Task<Entities.ShoppingList> FindEntityByIdAsync(ShoppingListId id)
@@ -175,7 +190,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
 
         private IQueryable<Entities.ShoppingList> GetShoppingListQuery()
         {
-            return dbContext.ShoppingLists.AsNoTracking()
+            return _dbContext.ShoppingLists.AsNoTracking()
                 .Include(l => l.ItemsOnList);
         }
 

@@ -9,12 +9,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 {
     public class ShoppingListSection : IShoppingListSection
     {
-        private readonly Dictionary<ItemId, IShoppingListItem> _shoppingListItems;
+        private readonly Dictionary<(ItemId, ItemTypeId?), IShoppingListItem> _shoppingListItems;
 
         public ShoppingListSection(SectionId id, IEnumerable<IShoppingListItem> shoppingListItems)
         {
             Id = id;
-            _shoppingListItems = shoppingListItems.ToDictionary(i => i.Id);
+            _shoppingListItems = shoppingListItems.ToDictionary(i => (i.Id, i.TypeId));
         }
 
         public SectionId Id { get; }
@@ -23,63 +23,73 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         public IShoppingListSection RemoveItem(ItemId itemId)
         {
-            if (!_shoppingListItems.ContainsKey(itemId))
+            return RemoveItem(itemId, null);
+        }
+
+        public IShoppingListSection RemoveItem(ItemId itemId, ItemTypeId? itemTypeId)
+        {
+            if (!_shoppingListItems.ContainsKey((itemId, itemTypeId)))
                 return this;
 
-            var items = new Dictionary<ItemId, IShoppingListItem>(_shoppingListItems);
-            items.Remove(itemId);
+            var items = new Dictionary<(ItemId, ItemTypeId?), IShoppingListItem>(_shoppingListItems);
+            items.Remove((itemId, itemTypeId));
 
             return new ShoppingListSection(Id, items.Values);
         }
 
         public bool ContainsItem(ItemId itemId)
         {
-            return _shoppingListItems.ContainsKey(itemId);
+            return ContainsItem(itemId, null);
+        }
+
+        public bool ContainsItem(ItemId itemId, ItemTypeId? itemTypeId)
+        {
+            return _shoppingListItems.ContainsKey((itemId, itemTypeId));
         }
 
         public IShoppingListSection AddItem(IShoppingListItem item)
         {
-            var items = new Dictionary<ItemId, IShoppingListItem>(_shoppingListItems);
+            var items = new Dictionary<(ItemId, ItemTypeId?), IShoppingListItem>(_shoppingListItems);
 
-            if (items.ContainsKey(item.Id))
+            if (items.ContainsKey((item.Id, null)))
                 throw new DomainException(new ItemAlreadyInSectionReason(item.Id, Id));
 
-            items.Add(item.Id, item);
+            items.Add((item.Id, null), item);
             return new ShoppingListSection(Id, items.Values);
         }
 
         public IShoppingListSection PutItemInBasket(ItemId itemId)
         {
-            if (!_shoppingListItems.ContainsKey(itemId))
+            if (!_shoppingListItems.ContainsKey((itemId, null)))
                 throw new DomainException(new ItemNotInSectionReason(itemId, Id));
 
-            var items = new Dictionary<ItemId, IShoppingListItem>(_shoppingListItems);
-            var item = items[itemId];
-            items[itemId] = item.PutInBasket();
+            var items = new Dictionary<(ItemId, ItemTypeId?), IShoppingListItem>(_shoppingListItems);
+            var item = items[(itemId, null)];
+            items[(itemId, null)] = item.PutInBasket();
 
             return new ShoppingListSection(Id, items.Values);
         }
 
         public IShoppingListSection RemoveItemFromBasket(ItemId itemId)
         {
-            if (!_shoppingListItems.ContainsKey(itemId))
+            if (!_shoppingListItems.ContainsKey((itemId, null)))
                 throw new DomainException(new ItemNotInSectionReason(itemId, Id));
 
-            var items = new Dictionary<ItemId, IShoppingListItem>(_shoppingListItems);
-            var item = items[itemId];
-            items[itemId] = item.RemoveFromBasket();
+            var items = new Dictionary<(ItemId, ItemTypeId?), IShoppingListItem>(_shoppingListItems);
+            var item = items[(itemId, null)];
+            items[(itemId, null)] = item.RemoveFromBasket();
 
             return new ShoppingListSection(Id, items.Values);
         }
 
         public IShoppingListSection ChangeItemQuantity(ItemId itemId, float quantity)
         {
-            if (!_shoppingListItems.ContainsKey(itemId))
+            if (!_shoppingListItems.ContainsKey((itemId, null)))
                 throw new DomainException(new ItemNotInSectionReason(itemId, Id));
 
-            var items = new Dictionary<ItemId, IShoppingListItem>(_shoppingListItems);
-            var item = items[itemId];
-            items[itemId] = item.ChangeQuantity(quantity);
+            var items = new Dictionary<(ItemId, ItemTypeId?), IShoppingListItem>(_shoppingListItems);
+            var item = items[(itemId, null)];
+            items[(itemId, null)] = item.ChangeQuantity(quantity);
 
             return new ShoppingListSection(Id, items.Values);
         }

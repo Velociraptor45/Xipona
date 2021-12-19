@@ -48,14 +48,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         public void RemoveItem(ItemId itemId)
         {
-            if (itemId == null)
+            RemoveItem(itemId, null);
+        }
+
+        public void RemoveItem(ItemId itemId, ItemTypeId? itemTypeId)
+        {
+            if (itemId is null)
                 throw new ArgumentNullException(nameof(itemId));
 
-            IShoppingListSection section = _sections.Values.FirstOrDefault(s => s.ContainsItem(itemId));
+            IShoppingListSection section = _sections.Values.FirstOrDefault(s => s.ContainsItem(itemId, itemTypeId));
             if (section == null)
                 return;
 
-            _sections[section.Id] = section.RemoveItem(itemId);
+            _sections[section.Id] = section.RemoveItem(itemId, itemTypeId);
         }
 
         public void PutItemInBasket(ItemId itemId)

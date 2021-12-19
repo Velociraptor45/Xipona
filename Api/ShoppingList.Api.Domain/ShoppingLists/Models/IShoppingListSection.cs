@@ -15,11 +15,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         bool ContainsItem(ItemId itemId);
 
+        bool ContainsItem(ItemId itemId, ItemTypeId? itemTypeId);
+
         IShoppingListSection PutItemInBasket(ItemId itemId);
 
         IShoppingListSection RemoveItemFromBasket(ItemId itemId);
 
         IShoppingListSection RemoveItem(ItemId itemId);
+
+        IShoppingListSection RemoveItem(ItemId itemId, ItemTypeId? itemTypeId);
 
         IShoppingListSection RemoveItemsInBasket();
 
