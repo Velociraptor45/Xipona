@@ -8,17 +8,20 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Converters
 {
     public class ShoppingListItemConverter : IToDomainConverter<ItemsOnList, IShoppingListItem>
     {
-        private readonly IShoppingListItemFactory shoppingListItemFactory;
+        private readonly IShoppingListItemFactory _shoppingListItemFactory;
 
         public ShoppingListItemConverter(IShoppingListItemFactory shoppingListItemFactory)
         {
-            this.shoppingListItemFactory = shoppingListItemFactory;
+            _shoppingListItemFactory = shoppingListItemFactory;
         }
 
         public IShoppingListItem ToDomain(ItemsOnList source)
         {
-            return shoppingListItemFactory.Create(
+            var itemTypeId = source.ItemTypeId.HasValue ? new ItemTypeId(source.ItemTypeId.Value) : null;
+
+            return _shoppingListItemFactory.Create(
                 new ItemId(source.ItemId),
+                itemTypeId,
                 source.InBasket,
                 source.Quantity);
         }
