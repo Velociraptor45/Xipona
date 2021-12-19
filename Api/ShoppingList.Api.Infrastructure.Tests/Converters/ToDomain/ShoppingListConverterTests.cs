@@ -39,6 +39,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
                     {
                         SectionId = section.Id.Value,
                         ItemId = item.Id.Value,
+                        ItemTypeId = item.TypeId?.Value,
                         InBasket = item.IsInBasket,
                         Quantity = item.Quantity
                     };

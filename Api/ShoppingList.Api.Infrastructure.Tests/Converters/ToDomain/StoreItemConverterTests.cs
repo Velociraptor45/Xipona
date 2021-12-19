@@ -36,6 +36,10 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
                 .Select(av => StoreItemAvailabilityConverterTests.GetSource(av))
                 .ToList();
 
+            var itemTypes = destination.ItemTypes
+                .Select(t => ItemTypeConverterTests.GetSource(t))
+                .ToList();
+
             return new Item
             {
                 Id = destination.Id.Value,
@@ -51,7 +55,8 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
                 PredecessorId = predecessor?.Id,
                 Predecessor = predecessor,
                 AvailableAt = availabilities,
-                CreatedFrom = destination.TemporaryId?.Value
+                CreatedFrom = destination.TemporaryId?.Value,
+                ItemTypes = itemTypes
             };
         }
 
@@ -63,6 +68,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
             StoreItemAvailabilityConverterTests.AddDependencies(serviceCollection);
             ManufacturerConverterTests.AddDependencies(serviceCollection);
             ItemCategoryConverterTests.AddDependencies(serviceCollection);
+            ItemTypeConverterTests.AddDependencies(serviceCollection);
         }
     }
 }

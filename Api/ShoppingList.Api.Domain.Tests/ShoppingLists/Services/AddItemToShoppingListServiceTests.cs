@@ -470,7 +470,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
             public void SetupStoreItem()
             {
-                StoreItem = StoreItemMother.Initial().Create();
+                StoreItem = StoreItemMother.Initial().WithoutTypeId().Create();
             }
 
             public void SetupStoreItemNull()
@@ -547,7 +547,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
             public void SetupCreatingShoppingListItem()
             {
-                ShoppingListItemFactoryMock.SetupCreate(StoreItem.Id, false, Quantity, ShoppingListItem);
+                ShoppingListItemFactoryMock.SetupCreate(StoreItem.Id, null, false, Quantity, ShoppingListItem);
             }
 
             public void SetupFindingStore()

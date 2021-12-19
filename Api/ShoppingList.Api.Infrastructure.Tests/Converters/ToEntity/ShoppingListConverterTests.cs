@@ -33,6 +33,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
                         {
                             ShoppingListId = source.Id.Value,
                             ItemId = item.Id.Value,
+                            ItemTypeId = item.TypeId?.Value,
                             InBasket = item.IsInBasket,
                             Quantity = item.Quantity,
                             SectionId = section.Id.Value

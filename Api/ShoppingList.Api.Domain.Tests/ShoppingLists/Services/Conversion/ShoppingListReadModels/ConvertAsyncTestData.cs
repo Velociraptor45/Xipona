@@ -50,6 +50,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
                 .WithManufacturerId(manufacturer.Id)
                 .WithId(list.Sections.First().Items.First().Id)
                 .WithAvailabilities(availability.ToMonoList())
+                .AsItem()
                 .Create();
             var listReadModel = ToSimpleReadModel(list, store, item, null, manufacturer);
 
@@ -76,6 +77,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
                 .WithoutManufacturerId()
                 .WithAvailabilities(availability.ToMonoList())
                 .WithId(list.Sections.First().Items.First().Id)
+                .AsItem()
                 .Create();
 
             var listReadModel = ToSimpleReadModel(list, store, item, itemCategory, null);
@@ -127,6 +129,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
                 .WithManufacturerId(manufacturer.Id)
                 .WithAvailabilities(availability.ToMonoList())
                 .WithId(list.Sections.First().Items.First().Id)
+                .AsItem()
                 .Create();
             var listReadModel = ToSimpleReadModel(list, store, item, itemCategory, manufacturer);
 

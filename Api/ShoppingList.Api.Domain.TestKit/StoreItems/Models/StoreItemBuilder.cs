@@ -1,8 +1,10 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+﻿using AutoFixture.Kernel;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ShoppingList.Api.Core.TestKit.AutoFixture.Selectors;
 using ShoppingList.Api.Domain.TestKit.Common;
 using System.Collections.Generic;
 
@@ -10,6 +12,12 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
 {
     public class StoreItemBuilder : DomainTestBuilderBase<StoreItem>
     {
+        public StoreItemBuilder AsItem()
+        {
+            Customize<StoreItem>(c => c.FromFactory(new MethodInvoker(new ItemConstrutorQuery())));
+            return this;
+        }
+
         public StoreItemBuilder WithId(ItemId id)
         {
             FillContructorWith("id", id);
@@ -83,6 +91,22 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
         {
             FillContructorWith("temporaryId", temporaryId);
             return this;
+        }
+
+        public StoreItemBuilder WithoutTemporaryId()
+        {
+            return WithTemporaryId(null);
+        }
+
+        public StoreItemBuilder WithTypeId(ItemTypeId typeId)
+        {
+            FillContructorWith("typeId", typeId);
+            return this;
+        }
+
+        public StoreItemBuilder WithoutTypeId()
+        {
+            return WithTypeId(null);
         }
     }
 }
