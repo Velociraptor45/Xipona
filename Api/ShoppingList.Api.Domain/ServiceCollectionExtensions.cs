@@ -8,6 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
@@ -67,9 +68,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain
             services.AddTransient<Func<CancellationToken, IItemModificationService>>(provider =>
             {
                 var itemRepository = provider.GetRequiredService<IItemRepository>();
+                var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
                 var validatorDelegat = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
                 return (cancellationToken) => new ItemModificationService(itemRepository, validatorDelegat,
-                    cancellationToken);
+                    shoppingListRepository, cancellationToken);
             });
 
             services.AddTransient<Func<CancellationToken, IValidator>>(provider =>
