@@ -13,7 +13,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         }
 
         public int Id { get; }
-        public string Name { get; }
+        public string Name { get; set; }
         public List<StoreItemAvailability> Availabilities { get; }
 
         public IEnumerable<StoreItemStore> GetNotRegisteredStores(IEnumerable<Store> stores)

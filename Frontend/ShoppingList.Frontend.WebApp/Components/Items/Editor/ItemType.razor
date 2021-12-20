@@ -4,7 +4,9 @@
 @using Models = ProjectHermes.ShoppingList.Frontend.Models.Items;
 
 <div class="itemType p-2 mb-2" style="background-color: #b96a6a">
-    <div class="name font-weight-bold">@itemType.Name</div>
+    <div class="name font-weight-bold max-w-200">
+        <Input @bind-Value="@State.EditedItem.ItemTypes[ComponentIndex].Name"></Input>
+    </div>
     <div class="availabilities">
         <ItemTypeAvailabilities State="State" ItemTypeIndex="ComponentIndex"></ItemTypeAvailabilities>
     </div>
