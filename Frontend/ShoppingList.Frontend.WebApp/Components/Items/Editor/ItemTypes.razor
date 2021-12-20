@@ -1,0 +1,16 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
+
+<div class="pt-2 pb-2">Types</div>
+
+<div id="itemTypes" class="pl-4">
+    @for(int i = 0; i < State.EditedItem.ItemTypes.Count; i++)
+    {
+        <ItemType State="State" ComponentIndex="i"></ItemType>
+    }
+</div>
+
+@code {
+    [Parameter] public ItemsState State { get; set; }
+}

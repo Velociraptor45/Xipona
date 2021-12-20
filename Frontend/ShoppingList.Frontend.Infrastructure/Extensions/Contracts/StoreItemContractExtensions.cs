@@ -19,7 +19,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contract
                 contract.QuantityTypeInPacket.ToModel(),
                 contract.ItemCategory?.Id,
                 contract.Manufacturer?.Id,
-                contract.Availabilities.Select(av => av.ToModel()));
+                contract.Availabilities.Select(av => av.ToModel()),
+                contract.ItemTypes.Select(CreateItemType));
+        }
+
+        private static ItemType CreateItemType(ItemTypeContract contract)
+        {
+            return new ItemType(contract.Id, contract.Name, contract.Availabilities.Select(av => av.ToModel()));
         }
     }
 }

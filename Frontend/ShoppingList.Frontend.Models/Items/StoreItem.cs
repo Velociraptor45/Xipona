@@ -7,7 +7,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
     {
         public StoreItem(int id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityInPacketType,
-            int? itemCategoryId, int? manufacturerId, IEnumerable<StoreItemAvailability> availabilities)
+            int? itemCategoryId, int? manufacturerId, IEnumerable<StoreItemAvailability> availabilities,
+            IEnumerable<ItemType> itemTypes)
         {
             Id = id;
             Name = name;
@@ -19,7 +20,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
             QuantityInPacketType = quantityInPacketType;
             ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
+            ItemTypes = itemTypes.ToList();
             Availabilities = availabilities.ToList();
+            CanHaveTypes = id == 0 || ItemTypes.Count > 0;
         }
 
         public int Id { get; }
@@ -32,7 +35,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         public QuantityTypeInPacket QuantityInPacketType { get; set; }
         public int? ItemCategoryId { get; set; }
         public int? ManufacturerId { get; set; }
+        public List<ItemType> ItemTypes { get; set; }
         public List<StoreItemAvailability> Availabilities { get; set; }
+
+        public bool CanHaveTypes { get; }
 
         public IEnumerable<StoreItemStore> GetNotRegisteredStores(IEnumerable<Store> stores)
         {

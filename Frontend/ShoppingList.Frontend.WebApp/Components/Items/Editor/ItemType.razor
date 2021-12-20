@@ -1,0 +1,24 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
+@using Models = ProjectHermes.ShoppingList.Frontend.Models.Items;
+
+<div class="itemType p-2 mb-2" style="background-color: #b96a6a">
+    <div class="name font-weight-bold">@itemType.Name</div>
+    <div class="availabilities">
+        <ItemTypeAvailabilities State="State" ItemTypeIndex="ComponentIndex"></ItemTypeAvailabilities>
+    </div>
+</div>
+
+@code {
+    [Parameter] public ItemsState State { get; set; }
+    [Parameter] public int ComponentIndex { get; set; }
+
+    private Models.ItemType itemType;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        itemType = State.EditedItem.ItemTypes[ComponentIndex];
+    }
+}

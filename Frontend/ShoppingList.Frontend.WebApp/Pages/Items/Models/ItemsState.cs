@@ -62,7 +62,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
             var item =
                 new StoreItem(0, "", false, "", false,
                     new QuantityType(0, "", 0, "", "", 0), 0,
-                    new QuantityTypeInPacket(0, "", ""), null, null, new List<StoreItemAvailability>());
+                    new QuantityTypeInPacket(0, "", ""), null, null,
+                    new List<StoreItemAvailability>(),
+                    new List<ItemType>());
 
             EnterEditor(item);
         }
