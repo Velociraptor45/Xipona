@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Items
@@ -22,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
             ManufacturerId = manufacturerId;
             ItemTypes = itemTypes.ToList();
             Availabilities = availabilities.ToList();
-            CanHaveTypes = id == 0 || ItemTypes.Count > 0;
+            SetItemMode();
         }
 
         public int Id { get; }
@@ -37,8 +38,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         public int? ManufacturerId { get; set; }
         public List<ItemType> ItemTypes { get; set; }
         public List<StoreItemAvailability> Availabilities { get; set; }
-
-        public bool CanHaveTypes { get; }
+        public ItemMode ItemMode { get; private set; }
 
         public IEnumerable<StoreItemStore> GetNotRegisteredStores(IEnumerable<Store> stores)
         {
@@ -50,6 +50,17 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
 
             var availableStoreIds = allStoreIds.Except(registeredStoreIds).ToList();
             return stores.Where(s => availableStoreIds.Contains(s.Id)).Select(s => s.AsStoreItemStore());
+        }
+
+        private void SetItemMode()
+        {
+            if (Id == 0)
+            {
+                ItemMode = ItemMode.NotDefined;
+                return;
+            }
+
+            ItemMode = ItemTypes.Count > 0 ? ItemMode.WithTypes : ItemMode.WithoutTypes;
         }
     }
 }

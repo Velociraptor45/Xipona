@@ -30,8 +30,16 @@
                             FragmentCreator="@ErrorHandler"></ManufacturerSelect>
     </div>
     <Quantity State="@State"></Quantity>
-    <Availabilities State="@State"></Availabilities>
-    <ItemTypes State="State"></ItemTypes>
+    @if (State.EditedItem.ItemMode == ItemMode.WithoutTypes
+        || (!State.EditedItem.ItemTypes.Any() && State.EditedItem.ItemMode == ItemMode.NotDefined))
+    {
+        <Availabilities State="@State"></Availabilities>
+    }
+    @if (State.EditedItem.ItemMode == ItemMode.WithTypes
+        || (!State.EditedItem.Availabilities.Any() && State.EditedItem.ItemMode == ItemMode.NotDefined))
+    {
+        <ItemTypes State="State"></ItemTypes>
+    }
     <div class="pb-2 pt-4">
         <TextArea Placeholder="Comment" MinRows="2" @bind-Value="@State.EditedItem.Comment"></TextArea>
     </div>

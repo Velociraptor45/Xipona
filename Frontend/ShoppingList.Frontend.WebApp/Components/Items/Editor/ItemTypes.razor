@@ -30,6 +30,6 @@
         State.EditedItem.ItemTypes.Add(
             new Models.ItemType(0, "New type", Enumerable.Empty<StoreItemAvailability>()));
 
-        StateHasChanged();
+        State.StateChanged();
     }
 }
