@@ -80,7 +80,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Route("modify-with-type")]
+        [Route("modify-with-types")]
         public async Task<IActionResult> ModifyItemWithTypes([FromBody] ModifyItemWithTypesContract contract)
         {
             var model = _converters.ToDomain<ModifyItemWithTypesContract, ItemWithTypesModification>(contract);
