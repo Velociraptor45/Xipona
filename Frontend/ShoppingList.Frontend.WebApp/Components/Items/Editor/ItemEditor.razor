@@ -74,6 +74,24 @@
 
     private async Task OnModifyButtonClickedAsync()
     {
+        if(State.EditedItem.ItemTypes.Any())
+        {
+            var withTypesRequest = new ModifyItemWithTypesRequest(Guid.NewGuid(), State.EditedItem);
+            try
+            {
+                await apiClient.ModifyItemWithTypesAsync(withTypesRequest);
+            }
+            catch(Exception e)
+            {
+                var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnModifyButtonClickedAsync());
+                notificationService.NotifyError("Modifying item with type failed", e.Message, fragment);
+                return;
+            }
+
+            State.LeaveEditor();
+            return;
+        }
+
         var request = new ModifyItemRequest(Guid.NewGuid(), State.EditedItem);
         try
         {
