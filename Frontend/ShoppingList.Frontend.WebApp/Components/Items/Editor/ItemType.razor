@@ -2,8 +2,17 @@
 @using Models = ProjectHermes.ShoppingList.Frontend.Models.Items;
 
 <div class="itemType p-2 mb-2" style="background-color: #b96a6a">
-    <div class="name font-weight-bold max-w-200">
-        <Input @bind-Value="@State.EditedItem.ItemTypes[ComponentIndex].Name"></Input>
+    <div class="d-flex">
+        <div class="name max-w-200">
+            <Input @bind-Value="@State.EditedItem.ItemTypes[ComponentIndex].Name"></Input>
+        </div>
+        <div class="ml-2 ml-auto">
+            <Button Class="d-flex align-items-center"
+                    OnClick="@OnRemoveItemTypeButtonClicked"
+                    Danger="true">
+                <Icon Type="minus"></Icon>
+            </Button>
+        </div>
     </div>
     <div class="availabilities">
         <ItemTypeAvailabilities State="State" ItemTypeIndex="ComponentIndex"></ItemTypeAvailabilities>
@@ -20,5 +29,11 @@
     {
         base.OnInitialized();
         itemType = State.EditedItem.ItemTypes[ComponentIndex];
+    }
+
+    private void OnRemoveItemTypeButtonClicked()
+    {
+        State.EditedItem.ItemTypes.RemoveAt(ComponentIndex);
+        State.StateChanged();
     }
 }

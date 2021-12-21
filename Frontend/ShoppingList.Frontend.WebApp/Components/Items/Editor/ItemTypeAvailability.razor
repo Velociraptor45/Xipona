@@ -56,7 +56,6 @@
     private void OnRemoveStoreButtonClicked()
     {
         State.EditedItem.ItemTypes[ItemTypeIndex].Availabilities.RemoveAt(ComponentIndex);
-        Console.WriteLine($"Remove on index {ComponentIndex}");
         State.StateChanged();
     }
 

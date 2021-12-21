@@ -19,6 +19,12 @@
 @code {
     [Parameter] public ItemsState State { get; set; }
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        State.StateChanged += () => StateHasChanged();
+    }
+
     private void OnAddItemTypeButtonClicked()
     {
         State.EditedItem.ItemTypes.Add(
