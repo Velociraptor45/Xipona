@@ -54,8 +54,8 @@
         }
         else
         {
-            <Button OnClick="@OnUpdateButtonClickedAsync">Update</Button>
-            <Button Class="ml-2" OnClick="@OnModifyButtonClickedAsync">Modify</Button>
+            <Button Disabled="@ShouldDisableChangeButton()" OnClick="@OnUpdateButtonClickedAsync">Update</Button>
+            <Button Disabled="@ShouldDisableChangeButton()" Class="ml-2" OnClick="@OnModifyButtonClickedAsync">Modify</Button>
         }
     </div>
 </div>
@@ -166,6 +166,11 @@
             return;
         }
         State.LeaveEditor();
+    }
+
+    private bool ShouldDisableChangeButton()
+    {
+        return State.EditedItem.IsItemWithTypes && !State.EditedItem.ItemTypes.Any();
     }
 
     private void OnBackButtonClicked()

@@ -40,6 +40,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         public List<StoreItemAvailability> Availabilities { get; set; }
         public ItemMode ItemMode { get; private set; }
 
+        public bool IsItemWithTypes => ItemMode == ItemMode.WithTypes;
+
         public IEnumerable<StoreItemStore> GetNotRegisteredStores(IEnumerable<Store> stores)
         {
             var registeredStoreIds = Availabilities.Select(av => av.Store.Id).OrderBy(id => id);
