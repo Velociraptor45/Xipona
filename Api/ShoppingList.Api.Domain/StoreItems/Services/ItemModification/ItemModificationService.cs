@@ -50,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModifica
 
                 // only remove item type from shopping list if it's not available anymore in respective store
                 var availableStoreIds = type.Availabilities.Select(av => av.StoreId).ToList();
-                var listsToRemoveItemFrom = (await _shoppingListRepository.FindActiveByAsync(type.Id, _cancellationToken))
+                var listsToRemoveItemFrom = (await _shoppingListRepository.FindByAsync(type.Id, _cancellationToken))
                     .Where(list => !availableStoreIds.Any(storeId => list.StoreId == storeId));
                 await RemoveItemTypeFromShoppingList(listsToRemoveItemFrom, item, type);
             }
@@ -58,7 +58,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModifica
             foreach (var type in itemTypesBefore.Values)
             {
                 // remove all types from shopping lists that don't exist anymore
-                var listsToRemoveItemFrom = await _shoppingListRepository.FindActiveByAsync(type.Id, _cancellationToken);
+                var listsToRemoveItemFrom = await _shoppingListRepository.FindByAsync(type.Id, _cancellationToken);
                 await RemoveItemTypeFromShoppingList(listsToRemoveItemFrom, item, type);
             }
 

@@ -73,7 +73,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
                 throw new ArgumentNullException(nameof(storeItemId));
 
             List<Entities.ShoppingList> entities = await GetShoppingListQuery()
-                .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Value) != null)
+                .Where(l => l.ItemsOnList.Any(i => i.ItemId == storeItemId.Value))
                 .ToListAsync();
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -81,15 +81,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
             return _toDomainConverter.ToDomain(entities);
         }
 
-        public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(ItemTypeId typeId,
+        public async Task<IEnumerable<IShoppingList>> FindByAsync(ItemTypeId typeId,
             CancellationToken cancellationToken)
         {
             if (typeId is null)
                 throw new ArgumentNullException(nameof(typeId));
 
             var entities = await GetShoppingListQuery()
-                .Where(l => l.CompletionDate == null
-                    && l.ItemsOnList.Any(i => i.ItemTypeId.HasValue && i.ItemTypeId == typeId.Value))
+                .Where(l => l.ItemsOnList.Any(i => i.ItemTypeId.HasValue && i.ItemTypeId == typeId.Value))
                 .ToListAsync(cancellationToken);
 
             return _toDomainConverter.ToDomain(entities);
