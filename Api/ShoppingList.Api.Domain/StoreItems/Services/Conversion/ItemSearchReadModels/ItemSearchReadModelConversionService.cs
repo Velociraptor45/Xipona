@@ -30,21 +30,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.I
         public async Task<IEnumerable<ItemSearchReadModel>> ConvertAsync(IEnumerable<IStoreItem> items,
             IStore store, CancellationToken cancellationToken)
         {
-            var itemCategoryIds = items
-                .Where(i => i.ItemCategoryId != null)
-                .Select(i => i.ItemCategoryId!)
-                .Distinct();
-            var itemCategoryDict = (await itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
-                .ToDictionary(i => i.Id);
+            var itemsList = items.ToList();
 
-            var manufacturerIds = items
-                .Where(i => i.ManufacturerId != null)
-                .Select(i => i.ManufacturerId!)
-                .Distinct();
-            var manufaturerDict = (await manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
-                .ToDictionary(m => m.Id);
+            var itemCategoryDict = await GetItemCategories(itemsList, cancellationToken);
+            var manufaturerDict = await GetManufacturers(itemsList, cancellationToken);
 
-            return items
+            return itemsList
                 .Select(item =>
                 {
                     IManufacturer? manufacturer = item.ManufacturerId == null ? null : manufaturerDict[item.ManufacturerId];
@@ -57,6 +48,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.I
 
                     return new ItemSearchReadModel(
                         item.Id,
+                        null,
                         item.Name,
                         item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                         storeAvailability.Price,
@@ -64,6 +56,67 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.I
                         itemCategory?.ToReadModel(),
                         section.ToReadModel());
                 });
+        }
+
+        public async Task<IEnumerable<ItemSearchReadModel>> ConvertAsync(
+            IEnumerable<(IStoreItem, IEnumerable<ItemTypeId>)> itemTypes, IStore store,
+            CancellationToken cancellationToken)
+        {
+            var itemTypesList = itemTypes.ToList();
+            var itemsList = itemTypesList.Select(t => t.Item1);
+
+            var itemCategoryDict = await GetItemCategories(itemsList, cancellationToken);
+            var manufaturerDict = await GetManufacturers(itemsList, cancellationToken);
+
+            return itemTypesList.SelectMany(tuple =>
+            {
+                var item = tuple.Item1;
+
+                IManufacturer? manufacturer = item.ManufacturerId == null ? null : manufaturerDict[item.ManufacturerId];
+                IItemCategory? itemCategory = item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId];
+
+                var itemTypeIdsSet = tuple.Item2.ToHashSet();
+                var requiredItemTypes = item.ItemTypes.Where(t => itemTypeIdsSet.Contains(t.Id));
+                return requiredItemTypes.Select(type =>
+                {
+                    IStoreItemAvailability storeAvailability = type.Availabilities
+                        .Single(av => av.StoreId == store.Id);
+
+                    var section = store.Sections.Single(s => s.Id == storeAvailability.DefaultSectionId);
+
+                    return new ItemSearchReadModel(
+                        item.Id,
+                        type.Id,
+                        $"{item.Name} {type.Name}",
+                        item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                        storeAvailability.Price,
+                        manufacturer?.ToReadModel(),
+                        itemCategory?.ToReadModel(),
+                        section.ToReadModel());
+                });
+            });
+        }
+
+        private async Task<Dictionary<ManufacturerId, IManufacturer>> GetManufacturers(IEnumerable<IStoreItem> items,
+            CancellationToken cancellationToken)
+        {
+            var manufacturerIds = items
+                .Where(i => i.ManufacturerId != null)
+                .Select(i => i.ManufacturerId!)
+                .Distinct();
+            return (await manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
+                .ToDictionary(m => m.Id);
+        }
+
+        private async Task<Dictionary<ItemCategoryId, IItemCategory>> GetItemCategories(IEnumerable<IStoreItem> items,
+            CancellationToken cancellationToken)
+        {
+            var itemCategoryIds = items
+                .Where(i => i.ItemCategoryId != null)
+                .Select(i => i.ItemCategoryId!)
+                .Distinct();
+            return (await itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
+                .ToDictionary(i => i.Id);
         }
     }
 }

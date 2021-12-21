@@ -159,10 +159,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
                 throw new ArgumentNullException(nameof(storeId));
 
             var entities = await GetItemQuery()
-                .Where(item => item.Name.Contains(searchInput)
-                    && !item.Deleted
+                .Where(item =>
+                    !item.Deleted
                     && !item.IsTemporary
-                    && item.AvailableAt.FirstOrDefault(map => map.StoreId == storeId.Value) != null)
+                    && item.Name.Contains(searchInput) 
+                    && (item.AvailableAt.Any(map => map.StoreId == storeId.Value) 
+                        || item.ItemTypes.Any(t => t.AvailableAt.Any(av => av.StoreId == storeId.Value))))
                 .ToListAsync();
 
             cancellationToken.ThrowIfCancellationRequested();

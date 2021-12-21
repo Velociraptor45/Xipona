@@ -72,6 +72,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain
                 var validatorDelegat = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
                 return (cancellationToken) => new ItemModificationService(itemRepository, validatorDelegat,
                     shoppingListRepository, cancellationToken);
+
             });
 
             services.AddTransient<Func<CancellationToken, IValidator>>(provider =>
