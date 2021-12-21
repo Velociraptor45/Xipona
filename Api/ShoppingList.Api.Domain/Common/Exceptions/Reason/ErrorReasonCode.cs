@@ -24,6 +24,7 @@
         SectionAlreadyInShoppingList = 20,
         MultipleAvailabilitiesForStore = 21,
         CannotModifyItemAsItemWithTypes = 22,
-        CannotAddTypedItemToShoppingListWithoutTypeIdReason = 23
+        CannotAddTypedItemToShoppingListWithoutTypeIdReason = 23,
+        CannotRemoveAllTypesFromItemWithTypes = 24
     }
 }

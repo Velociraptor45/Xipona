@@ -127,8 +127,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             if (modification is null)
                 throw new ArgumentNullException(nameof(modification));
 
-            if (_availabilities.Any())
+            if (!_itemTypes.Any())
                 throw new DomainException(new CannotModifyItemAsItemWithTypesReason(Id));
+
+            if (!modification.ItemTypes.Any())
+                throw new DomainException(new CannotRemoveAllTypesFromItemWithTypesReason(Id));
 
             foreach (var type in modification.ItemTypes)
             {
