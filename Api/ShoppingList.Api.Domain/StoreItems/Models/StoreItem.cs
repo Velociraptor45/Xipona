@@ -130,8 +130,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             if (_availabilities.Any())
                 throw new DomainException(new CannotModifyItemAsItemWithTypesReason(Id));
 
-            var availabilities = modification.ItemTypes.SelectMany(t => t.Availabilities);
-            await validator.ValidateAsync(availabilities);
+            foreach (var type in modification.ItemTypes)
+            {
+                await validator.ValidateAsync(type.Availabilities);
+            }
 
             Name = modification.Name;
             Comment = modification.Comment;
