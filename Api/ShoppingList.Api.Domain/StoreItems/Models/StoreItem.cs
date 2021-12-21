@@ -63,6 +63,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             _itemTypes = itemTypes?.ToList() ?? throw new ArgumentNullException(nameof(itemTypes));
             _availabilities = new List<IStoreItemAvailability>();
 
+            if (!_itemTypes.Any())
+                throw new DomainException(new CannotCreateItemWithTypesWithoutTypesReason(Id));
+
             // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
             // https://github.com/AutoFixture/AutoFixture/issues/1108
             Predecessor = null;

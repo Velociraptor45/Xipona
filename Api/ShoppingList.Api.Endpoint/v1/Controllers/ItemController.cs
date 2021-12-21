@@ -66,13 +66,19 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
 
         [HttpPost]
         [ProducesResponseType(200)]
-        [Route("create-with-type")]
+        [Route("create-with-types")]
         public async Task<IActionResult> CreateItemWithTypes([FromBody] CreateItemWithTypesContract contract)
         {
-            var model = _converters.ToDomain<CreateItemWithTypesContract, IStoreItem>(contract);
-            var command = new CreateItemWithTypesCommand(model);
-
-            await _commandDispatcher.DispatchAsync(command, default);
+            try
+            {
+                var model = _converters.ToDomain<CreateItemWithTypesContract, IStoreItem>(contract);
+                var command = new CreateItemWithTypesCommand(model);
+                await _commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (DomainException e)
+            {
+                return UnprocessableEntity(e.Reason);
+            }
 
             return Ok();
         }

@@ -25,6 +25,7 @@
         MultipleAvailabilitiesForStore = 21,
         CannotModifyItemAsItemWithTypes = 22,
         CannotAddTypedItemToShoppingListWithoutTypeIdReason = 23,
-        CannotRemoveAllTypesFromItemWithTypes = 24
+        CannotRemoveAllTypesFromItemWithTypes = 24,
+        CannotCreateItemWithTypesWithoutTypes = 25
     }
 }
