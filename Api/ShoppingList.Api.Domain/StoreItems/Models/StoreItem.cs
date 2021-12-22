@@ -18,7 +18,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
     public class StoreItem : IStoreItem
     {
         private List<IStoreItemAvailability> _availabilities;
-        private List<IItemType> _itemTypes;
 
         public StoreItem(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
@@ -36,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
             TemporaryId = temporaryId;
-            _itemTypes = new List<IItemType>();
+            ItemTypes = new ItemTypes(Enumerable.Empty<IItemType>());
             _availabilities = availabilities.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
 
             // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
@@ -49,6 +48,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
             IEnumerable<IItemType> itemTypes)
         {
+            if (itemTypes is null)
+                throw new ArgumentNullException(nameof(itemTypes));
+
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Name = name;
             IsDeleted = isDeleted;
@@ -60,10 +62,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
             TemporaryId = null;
-            _itemTypes = itemTypes?.ToList() ?? throw new ArgumentNullException(nameof(itemTypes));
+            ItemTypes = new ItemTypes(itemTypes);
             _availabilities = new List<IStoreItemAvailability>();
 
-            if (!_itemTypes.Any())
+            if (!ItemTypes.Any())
                 throw new DomainException(new CannotCreateItemWithTypesWithoutTypesReason(Id));
 
             // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
@@ -84,11 +86,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         public ManufacturerId? ManufacturerId { get; private set; }
         public TemporaryItemId? TemporaryId { get; }
         public IStoreItem? Predecessor { get; private set; } // todo: change this to an IItemPredecessor model to satisfy DDD
-        public IReadOnlyCollection<IItemType> ItemTypes => _itemTypes.AsReadOnly();
+        public ItemTypes ItemTypes { get; private set; }
 
         public IReadOnlyCollection<IStoreItemAvailability> Availabilities => _availabilities.AsReadOnly();
 
-        public bool HasItemTypes => _itemTypes.Any();
+        public bool HasItemTypes => ItemTypes.Any();
 
         public void Delete()
         {
@@ -130,7 +132,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             if (modification is null)
                 throw new ArgumentNullException(nameof(modification));
 
-            if (!_itemTypes.Any())
+            if (!ItemTypes.Any())
                 throw new DomainException(new CannotModifyItemAsItemWithTypesReason(Id));
 
             if (!modification.ItemTypes.Any())
@@ -148,7 +150,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             QuantityTypeInPacket = modification.QuantityTypeInPacket;
             ItemCategoryId = modification.ItemCategoryId;
             ManufacturerId = modification.ManufacturerId;
-            _itemTypes = modification.ItemTypes.ToList();
+            ItemTypes = new ItemTypes(modification.ItemTypes);
         }
 
         public SectionId GetDefaultSectionIdForStore(StoreId storeId)
