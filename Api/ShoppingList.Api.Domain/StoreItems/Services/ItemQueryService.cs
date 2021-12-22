@@ -67,8 +67,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
 
             // items with types
             var searchResultItemsWithTypesDict = searchResultItemGroups[true].ToDictionary(g => g.Id);
-            var itemsWithTypeNotOnShoppingList = GetMatchingItemsWithTypeIds(storeId, searchResultItemsWithTypesDict,
-                    itemIdsOnShoppingListGroups[false])
+            var itemsWithTypeNotOnShoppingList = GetMatchingItemsWithTypeIds(storeId,
+                    searchResultItemsWithTypesDict.Values, itemIdsOnShoppingListGroups[false])
                 .ToList();
 
             // types
@@ -83,30 +83,31 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
         }
 
         private IEnumerable<ItemWithMatchingItemTypeIds> GetMatchingItemsWithTypeIds(StoreId storeId,
-            Dictionary<ItemId, IStoreItem> searchResultItemsWithTypesDict, IEnumerable<(ItemId, ItemTypeId?)> itemIdsOnShoppingList)
+            IEnumerable<IStoreItem> searchResultItemsWithTypes, IEnumerable<(ItemId, ItemTypeId?)> itemIdsOnShoppingList)
         {
             var itemsWithTypesOnShoppingList = itemIdsOnShoppingList.ToLookup(g => g.Item1, g => g.Item2!);
-            var result = new List<ItemWithMatchingItemTypeIds>();
-            foreach (var itemOnShoppingList in itemsWithTypesOnShoppingList)
+            foreach (var item in searchResultItemsWithTypes)
             {
-                if (!searchResultItemsWithTypesDict.TryGetValue(itemOnShoppingList.Key, out var searchResultItem))
+                if (!itemsWithTypesOnShoppingList.Contains(item.Id))
+                {
+                    yield return new ItemWithMatchingItemTypeIds(
+                        item,
+                        item.ItemTypes.GetForStore(storeId).Select(t => t.Id));
                     continue;
+                }
 
-                var typesOnList = itemOnShoppingList.ToList();
-                var searchResultItemTypeIdsNotOnShoppingList = searchResultItem.ItemTypes
-                    .Where(t => t.Availabilities.Any(av => av.StoreId == storeId))
+                var typeIdsOnList = itemsWithTypesOnShoppingList[item.Id].ToList();
+                var typeIdsNotOnList = item.ItemTypes
+                    .GetForStore(storeId)
                     .Select(t => t.Id)
-                    .Intersect(typesOnList)
+                    .Intersect(typeIdsOnList)
                     .ToList();
 
-                if (!searchResultItemTypeIdsNotOnShoppingList.Any())
+                if (!typeIdsNotOnList.Any())
                     continue;
 
-                result.Add(
-                    new ItemWithMatchingItemTypeIds(searchResultItem, searchResultItemTypeIdsNotOnShoppingList));
+                yield return new ItemWithMatchingItemTypeIds(item, typeIdsNotOnList);
             }
-
-            return result;
         }
 
         private async Task<IEnumerable<ItemWithMatchingItemTypeIds>> GetItemsWithMatchingItemTypeIdsAsync(

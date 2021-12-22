@@ -278,6 +278,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
 
                     yield return new ItemSearchReadModel(
                         item.Id,
+                        null,
                         item.Name,
                         item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                         availability.Price,
