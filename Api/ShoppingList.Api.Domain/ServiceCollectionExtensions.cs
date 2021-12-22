@@ -20,6 +20,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemCreation;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System;
 using System.Reflection;
 using System.Threading;
@@ -59,6 +60,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain
             services.AddTransient<IItemTypeFactory, ItemTypeFactory>();
 
             // services
+            services.AddTransient<Func<CancellationToken, IItemQueryService>>(provider =>
+            {
+                var itemRepository = provider.GetRequiredService<IItemRepository>();
+                var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
+                var storeRepository = provider.GetRequiredService<IStoreRepository>();
+                var itemTypeReadRepository = provider.GetRequiredService<IItemTypeReadRepository>();
+                var conversionService = provider.GetRequiredService<IItemSearchReadModelConversionService>();
+                return (cancellationToken) => new ItemQueryService(itemRepository, shoppingListRepository,
+                    storeRepository, itemTypeReadRepository, conversionService, cancellationToken);
+            });
+
             services.AddTransient<Func<CancellationToken, IItemCreationService>>(provider =>
             {
                 var itemRepository = provider.GetRequiredService<IItemRepository>();
@@ -72,7 +84,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain
                 var validatorDelegat = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
                 return (cancellationToken) => new ItemModificationService(itemRepository, validatorDelegat,
                     shoppingListRepository, cancellationToken);
-
             });
 
             services.AddTransient<Func<CancellationToken, IValidator>>(provider =>

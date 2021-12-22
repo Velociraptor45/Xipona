@@ -19,14 +19,20 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<ItemTypeId>> FindByAsync(string name, StoreId storeId,
+        public async Task<IEnumerable<(ItemId, ItemTypeId)>> FindActiveByAsync(string name, StoreId storeId,
             CancellationToken cancellationToken)
         {
-            return await _dbContext.ItemTypes.AsNoTracking()
-                .Where(type => type.Name.Contains(name)
+            var entries = await _dbContext.ItemTypes.AsNoTracking()
+                .Include(t => t.Item)
+                .Where(type =>
+                    !type.Item.Deleted
+                    && type.Name.Contains(name)
                     && type.AvailableAt.Any(av => av.StoreId == storeId.Value))
-                .Select(type => new ItemTypeId(type.Id))
+                .Select(type => new { type.ItemId, type.Id })
                 .ToListAsync(cancellationToken);
+
+            return entries
+                .Select(type => (new ItemId(type.ItemId), new ItemTypeId(type.Id)));
         }
     }
 }

@@ -59,23 +59,23 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.I
         }
 
         public async Task<IEnumerable<ItemSearchReadModel>> ConvertAsync(
-            IEnumerable<(IStoreItem, IEnumerable<ItemTypeId>)> itemTypes, IStore store,
+            IEnumerable<ItemWithMatchingItemTypeIds> itemTypes, IStore store,
             CancellationToken cancellationToken)
         {
             var itemTypesList = itemTypes.ToList();
-            var itemsList = itemTypesList.Select(t => t.Item1);
+            var itemsList = itemTypesList.Select(t => t.Item);
 
             var itemCategoryDict = await GetItemCategories(itemsList, cancellationToken);
             var manufaturerDict = await GetManufacturers(itemsList, cancellationToken);
 
             return itemTypesList.SelectMany(tuple =>
             {
-                var item = tuple.Item1;
+                var item = tuple.Item;
 
                 IManufacturer? manufacturer = item.ManufacturerId == null ? null : manufaturerDict[item.ManufacturerId];
                 IItemCategory? itemCategory = item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId];
 
-                var itemTypeIdsSet = tuple.Item2.ToHashSet();
+                var itemTypeIdsSet = tuple.MatchingItemTypeIds.ToHashSet();
                 var requiredItemTypes = item.ItemTypes.Where(t => itemTypeIdsSet.Contains(t.Id));
                 return requiredItemTypes.Select(type =>
                 {

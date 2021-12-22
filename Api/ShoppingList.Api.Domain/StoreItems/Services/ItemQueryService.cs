@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
 {
-    public class ItemQueryService
+    public class ItemQueryService : IItemQueryService
     {
         private readonly IItemRepository _itemRepository;
         private readonly IShoppingListRepository _shoppingListRepository;
@@ -40,22 +40,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
 
         public async Task<IEnumerable<ItemSearchReadModel>> SearchAsync(string name, StoreId storeId)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new System.ArgumentException($"'{nameof(name)}' cannot be null or whitespace.", nameof(name));
             if (storeId is null)
                 throw new ArgumentNullException(nameof(storeId));
+            if (string.IsNullOrWhiteSpace(name))
+                return Enumerable.Empty<ItemSearchReadModel>();
 
-            var store = await _storeRepository.FindByAsync(storeId, _cancellationToken);
-            if (store == null)
-                throw new DomainException(new StoreNotFoundReason(storeId));
+            var store = await LoadStoreAsync(storeId);
 
             var searchResultItemGroups = (await _itemRepository
                 .FindActiveByAsync(name.Trim(), storeId, _cancellationToken))
                 .ToLookup(i => i.HasItemTypes);
-            IShoppingList? shoppingList = await _shoppingListRepository
-                .FindActiveByAsync(storeId, _cancellationToken);
-            if (shoppingList is null)
-                throw new DomainException(new ShoppingListNotFoundReason(storeId));
+            IShoppingList? shoppingList = await LoadShoppingListAsync(storeId);
 
             var itemIdsOnShoppingListGroups = shoppingList.Items
                 .Select(item => (item.Id, item.TypeId))
@@ -72,8 +67,26 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
 
             // items with types
             var searchResultItemsWithTypesDict = searchResultItemGroups[true].ToDictionary(g => g.Id);
-            var itemsWithTypesOnShoppingList = itemIdsOnShoppingListGroups[false].ToLookup(g => g.Id, g => g.TypeId!);
-            var itemsWithTypeNotOnShoppingList = new List<(IStoreItem, IEnumerable<ItemTypeId>)>();
+            var itemsWithTypeNotOnShoppingList = GetMatchingItemsWithTypeIds(storeId, searchResultItemsWithTypesDict,
+                    itemIdsOnShoppingListGroups[false])
+                .ToList();
+
+            // types
+            var itemsWithMatchingItemTypes = await GetItemsWithMatchingItemTypeIdsAsync(name, storeId,
+                searchResultItemsWithTypesDict);
+            itemsWithTypeNotOnShoppingList.AddRange(itemsWithMatchingItemTypes);
+
+            var itemsWithTypesReadModels = await _itemSearchReadModelConversionService.ConvertAsync(
+                itemsWithTypeNotOnShoppingList, store, _cancellationToken);
+
+            return itemsWithTypesReadModels.Union(itemWithoutTypesReadModels);
+        }
+
+        private IEnumerable<ItemWithMatchingItemTypeIds> GetMatchingItemsWithTypeIds(StoreId storeId,
+            Dictionary<ItemId, IStoreItem> searchResultItemsWithTypesDict, IEnumerable<(ItemId, ItemTypeId?)> itemIdsOnShoppingList)
+        {
+            var itemsWithTypesOnShoppingList = itemIdsOnShoppingList.ToLookup(g => g.Item1, g => g.Item2!);
+            var result = new List<ItemWithMatchingItemTypeIds>();
             foreach (var itemOnShoppingList in itemsWithTypesOnShoppingList)
             {
                 if (!searchResultItemsWithTypesDict.TryGetValue(itemOnShoppingList.Key, out var searchResultItem))
@@ -89,15 +102,56 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
                 if (!searchResultItemTypeIdsNotOnShoppingList.Any())
                     continue;
 
-                itemsWithTypeNotOnShoppingList.Add((searchResultItem, searchResultItemTypeIdsNotOnShoppingList));
+                result.Add(
+                    new ItemWithMatchingItemTypeIds(searchResultItem, searchResultItemTypeIdsNotOnShoppingList));
             }
 
-            var itemsWithTypesReadModels = await _itemSearchReadModelConversionService.ConvertAsync(
-                itemsWithTypeNotOnShoppingList, store, _cancellationToken);
+            return result;
+        }
 
-            // todo items with types
+        private async Task<IEnumerable<ItemWithMatchingItemTypeIds>> GetItemsWithMatchingItemTypeIdsAsync(
+            string name, StoreId storeId, Dictionary<ItemId, IStoreItem> searchResultItemsWithTypesDict)
+        {
+            var itemTypeIdMappings = await _itemTypeReadRepository.FindActiveByAsync(name, storeId, _cancellationToken);
+            var itemTypeIdGroups = itemTypeIdMappings
+                .GroupBy(mapping => mapping.Item1, mapping => mapping.Item2)
+                // de-duplication => sort out all items that were already considered
+                .Where(group => !searchResultItemsWithTypesDict.ContainsKey(group.Key))
+                .ToList();
 
-            return;
+            var itemIds = itemTypeIdGroups.Select(group => group.Key);
+            var itemsDict = (await _itemRepository.FindByAsync(itemIds, _cancellationToken))
+                .ToDictionary(i => i.Id);
+
+            var result = new List<ItemWithMatchingItemTypeIds>();
+            foreach (var itemTypeIdGroup in itemTypeIdGroups)
+            {
+                if (!itemsDict.TryGetValue(itemTypeIdGroup.Key, out var item))
+                    throw new DomainException(new ItemNotFoundReason(itemTypeIdGroup.Key));
+
+                result.Add(new ItemWithMatchingItemTypeIds(item, itemTypeIdGroup));
+            }
+
+            return result;
+        }
+
+        private async Task<IShoppingList> LoadShoppingListAsync(StoreId storeId)
+        {
+            IShoppingList? shoppingList = await _shoppingListRepository
+                .FindActiveByAsync(storeId, _cancellationToken);
+            if (shoppingList is null)
+                throw new DomainException(new ShoppingListNotFoundReason(storeId));
+
+            return shoppingList;
+        }
+
+        private async Task<IStore> LoadStoreAsync(StoreId storeId)
+        {
+            var store = await _storeRepository.FindByAsync(storeId, _cancellationToken);
+            if (store == null)
+                throw new DomainException(new StoreNotFoundReason(storeId));
+
+            return store;
         }
     }
 }
