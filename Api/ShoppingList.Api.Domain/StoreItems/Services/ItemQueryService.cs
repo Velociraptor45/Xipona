@@ -67,13 +67,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
 
             // items with types
             var searchResultItemsWithTypesDict = searchResultItemGroups[true].ToDictionary(g => g.Id);
+            IEnumerable<(ItemId Id, ItemTypeId TypeId)> itemIdsWithTypeIdOnShoppingListGroups =
+                itemIdsOnShoppingListGroups[false]!;
             var itemsWithTypeNotOnShoppingList = GetMatchingItemsWithTypeIds(storeId,
-                    searchResultItemsWithTypesDict.Values, itemIdsOnShoppingListGroups[false])
+                    searchResultItemsWithTypesDict.Values, itemIdsWithTypeIdOnShoppingListGroups)
                 .ToList();
 
             // types
             var itemsWithMatchingItemTypes = await GetItemsWithMatchingItemTypeIdsAsync(name, storeId,
-                searchResultItemsWithTypesDict);
+                searchResultItemsWithTypesDict, itemIdsWithTypeIdOnShoppingListGroups.Select(m => m.TypeId));
             itemsWithTypeNotOnShoppingList.AddRange(itemsWithMatchingItemTypes);
 
             var itemsWithTypesReadModels = await _itemSearchReadModelConversionService.ConvertAsync(
@@ -83,7 +85,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
         }
 
         private IEnumerable<ItemWithMatchingItemTypeIds> GetMatchingItemsWithTypeIds(StoreId storeId,
-            IEnumerable<IStoreItem> searchResultItemsWithTypes, IEnumerable<(ItemId, ItemTypeId?)> itemIdsOnShoppingList)
+            IEnumerable<IStoreItem> searchResultItemsWithTypes, IEnumerable<(ItemId, ItemTypeId)> itemIdsOnShoppingList)
         {
             var itemsWithTypesOnShoppingList = itemIdsOnShoppingList.ToLookup(g => g.Item1, g => g.Item2!);
             foreach (var item in searchResultItemsWithTypes)
@@ -100,7 +102,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
                 var typeIdsNotOnList = item.ItemTypes
                     .GetForStore(storeId)
                     .Select(t => t.Id)
-                    .Intersect(typeIdsOnList)
+                    .Except(typeIdsOnList)
                     .ToList();
 
                 if (!typeIdsNotOnList.Any())
@@ -111,10 +113,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
         }
 
         private async Task<IEnumerable<ItemWithMatchingItemTypeIds>> GetItemsWithMatchingItemTypeIdsAsync(
-            string name, StoreId storeId, Dictionary<ItemId, IStoreItem> searchResultItemsWithTypesDict)
+            string name, StoreId storeId, Dictionary<ItemId, IStoreItem> searchResultItemsWithTypesDict,
+            IEnumerable<ItemTypeId> itemTypeIdsOnShoppingList)
         {
+            var itemTypeIdsOnShoppingListDict = itemTypeIdsOnShoppingList.ToHashSet();
             var itemTypeIdMappings = await _itemTypeReadRepository.FindActiveByAsync(name, storeId, _cancellationToken);
             var itemTypeIdGroups = itemTypeIdMappings
+                .Where(mapping => !itemTypeIdsOnShoppingListDict.Contains(mapping.Item2))
                 .GroupBy(mapping => mapping.Item1, mapping => mapping.Item2)
                 // de-duplication => sort out all items that were already considered
                 .Where(group => !searchResultItemsWithTypesDict.ContainsKey(group.Key))
