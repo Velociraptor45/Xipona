@@ -28,6 +28,8 @@
         CannotRemoveAllTypesFromItemWithTypes = 24,
         CannotCreateItemWithTypesWithoutTypes = 25,
         ItemTypeNotFound = 26,
-        ShoppingListItemMissingType = 27
+        ShoppingListItemMissingType = 27,
+        ItemTypeNotPartOfItem = 28,
+        ItemTypeAtStoreNotAvailable = 29
     }
 }

@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
     {
         public CannotAddTypedItemToShoppingListWithoutTypeIdReason(ItemId itemId)
         {
-            Message = $"Cannot add typed item {itemId} to shopping list without type id.";
+            Message = $"Cannot add typed item {itemId.Value} to shopping list without type id.";
         }
 
         public string Message { get; }

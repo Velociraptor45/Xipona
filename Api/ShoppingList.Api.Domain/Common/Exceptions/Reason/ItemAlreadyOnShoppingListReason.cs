@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
     {
         public ItemAlreadyOnShoppingListReason(ItemId itemId, ShoppingListId listId)
         {
-            Message = $"Item {itemId} already exists on shopping list {listId.Value}";
+            Message = $"Item {itemId.Value} already exists on shopping list {listId.Value}";
         }
 
         public string Message { get; }

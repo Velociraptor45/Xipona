@@ -7,18 +7,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
     public class ItemTypes : IReadOnlyCollection<IItemType>
     {
-        private readonly List<IItemType> _itemTypes;
+        private readonly Dictionary<ItemTypeId, IItemType> _itemTypes;
 
         public ItemTypes(IEnumerable<IItemType> itemTypes)
         {
-            _itemTypes = itemTypes.ToList();
+            _itemTypes = itemTypes.ToDictionary(t => t.Id);
         }
 
         public int Count => _itemTypes.Count;
 
         public IEnumerator<IItemType> GetEnumerator()
         {
-            return _itemTypes.GetEnumerator();
+            return _itemTypes.Values.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -28,10 +28,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 
         public IReadOnlyCollection<IItemType> GetForStore(StoreId storeId)
         {
-            return _itemTypes
+            return _itemTypes.Values
                 .Where(t => t.Availabilities.Any(av => av.StoreId == storeId))
                 .ToList()
                 .AsReadOnly();
+        }
+
+        public bool ContainsId(ItemTypeId itemTypeId)
+        {
+            return _itemTypes.ContainsKey(itemTypeId);
+        }
+
+        public bool TryGetValue(ItemTypeId id, out IItemType? itemType)
+        {
+            return _itemTypes.TryGetValue(id, out itemType);
         }
     }
 }

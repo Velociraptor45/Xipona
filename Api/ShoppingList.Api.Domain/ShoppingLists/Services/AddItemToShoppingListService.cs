@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -15,19 +16,39 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
 {
     public class AddItemToShoppingListService : IAddItemToShoppingListService
     {
-        private readonly IShoppingListSectionFactory shoppingListSectionFactory;
-        private readonly IStoreRepository storeRepository;
-        private readonly IItemRepository itemRepository;
-        private readonly IShoppingListItemFactory shoppingListItemFactory;
+        private readonly IShoppingListSectionFactory _shoppingListSectionFactory;
+        private readonly IStoreRepository _storeRepository;
+        private readonly IItemRepository _itemRepository;
+        private readonly IShoppingListItemFactory _shoppingListItemFactory;
+        private readonly IShoppingListRepository _shoppingListRepository;
 
         public AddItemToShoppingListService(IShoppingListSectionFactory shoppingListSectionFactory,
             IStoreRepository storeRepository, IItemRepository itemRepository,
-            IShoppingListItemFactory shoppingListItemFactory)
+            IShoppingListItemFactory shoppingListItemFactory, IShoppingListRepository shoppingListRepository)
         {
-            this.shoppingListSectionFactory = shoppingListSectionFactory;
-            this.storeRepository = storeRepository;
-            this.itemRepository = itemRepository;
-            this.shoppingListItemFactory = shoppingListItemFactory;
+            _shoppingListSectionFactory = shoppingListSectionFactory;
+            _storeRepository = storeRepository;
+            _itemRepository = itemRepository;
+            _shoppingListItemFactory = shoppingListItemFactory;
+            _shoppingListRepository = shoppingListRepository;
+        }
+
+        public async Task AddItemWithTypeToShoppingList(ShoppingListId shoppingListId, ItemId itemId, ItemTypeId itemTypeId,
+            SectionId? sectionId, float quantity, CancellationToken cancellationToken)
+        {
+            if (shoppingListId is null)
+                throw new ArgumentNullException(nameof(shoppingListId));
+            if (itemId is null)
+                throw new ArgumentNullException(nameof(itemId));
+            if (itemTypeId is null)
+                throw new ArgumentNullException(nameof(itemTypeId));
+
+            var shoppingList = await LoadShoppingList(shoppingListId, cancellationToken);
+            var item = await LoadItem(itemId, cancellationToken);
+
+            await AddItemToShoppingList(shoppingList, item, itemTypeId, sectionId, quantity, cancellationToken);
+
+            await _shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
         }
 
         public async Task AddItemToShoppingList(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
@@ -54,9 +75,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
             await AddItemToShoppingList(shoppingList, storeItem, sectionId, quantity, cancellationToken);
         }
 
+        private async Task<IShoppingList> LoadShoppingList(ShoppingListId shoppingListId,
+            CancellationToken cancellationToken)
+        {
+            var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId, cancellationToken);
+            if (shoppingList is null)
+                throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
+
+            return shoppingList;
+        }
+
         private async Task<IStoreItem> LoadItem(ItemId itemId, CancellationToken cancellationToken)
         {
-            IStoreItem? item = await itemRepository.FindByAsync(itemId, cancellationToken);
+            IStoreItem? item = await _itemRepository.FindByAsync(itemId, cancellationToken);
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(itemId));
 
@@ -65,7 +96,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
 
         private async Task<IStoreItem> LoadItem(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
         {
-            IStoreItem? item = await itemRepository.FindByAsync(temporaryItemId, cancellationToken);
+            IStoreItem? item = await _itemRepository.FindByAsync(temporaryItemId, cancellationToken);
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryItemId));
 
@@ -74,7 +105,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
 
         private IShoppingListItem CreateShoppingListItem(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
         {
-            return shoppingListItemFactory.Create(itemId, itemTypeId, false, quantity);
+            return _shoppingListItemFactory.Create(itemId, itemTypeId, false, quantity);
         }
 
         private void ValidateItemIsAvailableAtStore(IStoreItem storeItem, StoreId storeId,
@@ -85,27 +116,52 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
                 throw new DomainException(new ItemAtStoreNotAvailableReason(storeItem.Id, storeId));
         }
 
-        internal async Task AddItemToShoppingList(IShoppingList shoppingList, IStoreItem storeItem,
-            SectionId? sectionId, float quantity, CancellationToken cancellationToken)
+        private void ValidateItemTypeIsAvailableAtStore(IItemType itemType, StoreId storeId,
+            out IStoreItemAvailability availability)
         {
-            if (storeItem.HasItemTypes)
-                throw new DomainException(new CannotAddTypedItemToShoppingListWithoutTypeIdReason(storeItem.Id));
+            availability = itemType.Availabilities.FirstOrDefault(av => av.StoreId == storeId);
+            if (availability == null)
+                throw new DomainException(new ItemTypeAtStoreNotAvailableReason(itemType.Id, storeId));
+        }
 
-            ValidateItemIsAvailableAtStore(storeItem, shoppingList.StoreId, out var availability);
+        internal async Task AddItemToShoppingList(IShoppingList shoppingList, IStoreItem item,
+            ItemTypeId itemTypeId, SectionId? sectionId, float quantity, CancellationToken cancellationToken)
+        {
+            if (!item.ItemTypes.TryGetValue(itemTypeId, out var itemType))
+                throw new DomainException(new ItemTypeNotPartOfItemReason(item.Id, itemTypeId));
+
+            ValidateItemTypeIsAvailableAtStore(itemType!, shoppingList.StoreId, out var availability);
 
             if (sectionId == null)
                 sectionId = availability.DefaultSectionId;
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            IShoppingListItem shoppingListItem = CreateShoppingListItem(storeItem.Id, null, quantity);
+            IShoppingListItem shoppingListItem = CreateShoppingListItem(item.Id, itemTypeId, quantity);
+            await AddItemToShoppingList(shoppingList, shoppingListItem, sectionId, cancellationToken);
+        }
+
+        internal async Task AddItemToShoppingList(IShoppingList shoppingList, IStoreItem item,
+            SectionId? sectionId, float quantity, CancellationToken cancellationToken)
+        {
+            if (item.HasItemTypes)
+                throw new DomainException(new CannotAddTypedItemToShoppingListWithoutTypeIdReason(item.Id));
+
+            ValidateItemIsAvailableAtStore(item, shoppingList.StoreId, out var availability);
+
+            if (sectionId == null)
+                sectionId = availability.DefaultSectionId;
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            IShoppingListItem shoppingListItem = CreateShoppingListItem(item.Id, null, quantity);
             await AddItemToShoppingList(shoppingList, shoppingListItem, sectionId, cancellationToken);
         }
 
         internal async Task AddItemToShoppingList(IShoppingList shoppingList, IShoppingListItem item,
             SectionId sectionId, CancellationToken cancellationToken)
         {
-            var store = await storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
+            var store = await _storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
             if (store == null)
                 throw new DomainException(new StoreNotFoundReason(shoppingList.StoreId));
 
@@ -116,7 +172,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
 
             if (!shoppingList.Sections.Any(s => s.Id == sectionId))
             {
-                var section = shoppingListSectionFactory.CreateEmpty(sectionId);
+                var section = _shoppingListSectionFactory.CreateEmpty(sectionId);
                 shoppingList.AddSection(section);
             }
 
