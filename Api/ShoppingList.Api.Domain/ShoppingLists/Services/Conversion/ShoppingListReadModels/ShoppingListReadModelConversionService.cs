@@ -70,13 +70,33 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversio
                 {
                     var storeItem = storeItems[item.Id];
 
+                    float price;
+                    string name;
+                    if (storeItem.HasItemTypes)
+                    {
+                        if (item.TypeId == null)
+                            throw new DomainException(new ShoppingListItemMissingTypeReason(item.Id));
+
+                        var itemType = storeItem.ItemTypes.FirstOrDefault(t => t.Id == item.TypeId);
+                        if (itemType == null)
+                            throw new DomainException(new ItemTypeNotFoundReason(item.Id, item.TypeId));
+
+                        price = itemType.Availabilities.First(av => av.StoreId == store.Id).Price;
+                        name = $"{storeItem.Name} {itemType.Name}";
+                    }
+                    else
+                    {
+                        price = storeItem.Availabilities.First(av => av.StoreId == store.Id).Price;
+                        name = storeItem.Name;
+                    }
+
                     var itemReadModel = new ShoppingListItemReadModel(
                         item.Id,
-                        storeItem.Name,
+                        name,
                         storeItem.IsDeleted,
                         storeItem.Comment,
                         storeItem.IsTemporary,
-                        storeItem.Availabilities.First(av => av.StoreId == store.Id).Price,
+                        price,
                         storeItem.QuantityType.ToReadModel(),
                         storeItem.QuantityInPacket,
                         storeItem.QuantityTypeInPacket.ToReadModel(),

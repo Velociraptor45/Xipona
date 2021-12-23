@@ -26,6 +26,8 @@
         CannotModifyItemAsItemWithTypes = 22,
         CannotAddTypedItemToShoppingListWithoutTypeIdReason = 23,
         CannotRemoveAllTypesFromItemWithTypes = 24,
-        CannotCreateItemWithTypesWithoutTypes = 25
+        CannotCreateItemWithTypesWithoutTypes = 25,
+        ItemTypeNotFound = 26,
+        ShoppingListItemMissingType = 27
     }
 }
