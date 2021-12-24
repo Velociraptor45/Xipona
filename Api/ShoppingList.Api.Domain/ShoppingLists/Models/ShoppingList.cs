@@ -36,7 +36,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             if (sectionId == null)
                 throw new ArgumentNullException(nameof(sectionId));
 
-            if (Items.Any(it => it.Id == item.Id))
+            if (Items.Any(it => it.Id == item.Id && it.TypeId == item.TypeId))
                 throw new DomainException(new ItemAlreadyOnShoppingListReason(item.Id, Id));
 
             if (!_sections.ContainsKey(sectionId))
