@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Queries.AllActiveItemCategories;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturer.Queries.AllActiveManufacturers;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
@@ -36,6 +37,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Post("shopping-list/items/add")]
         Task AddItemToShoppingList([Body] AddItemToShoppingListContract contract);
+
+        [Post("shopping-list/items/add-with-type")]
+        Task AddItemWithTypeToShoppingList([Body] AddItemWithTypeToShoppingListContract contract);
 
         [Post("shopping-list/items/change-quantity")]
         Task ChangeItemQuantityOnShoppingList([Body] ChangeItemQuantityOnShoppingListContract contract);
