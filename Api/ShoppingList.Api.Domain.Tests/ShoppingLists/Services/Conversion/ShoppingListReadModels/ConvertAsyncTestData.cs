@@ -207,6 +207,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
                         {
                             new ShoppingListItemReadModel(
                                 item.Id,
+                                null,
                                 item.Name,
                                 item.IsDeleted,
                                 item.Comment,

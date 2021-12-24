@@ -5,17 +5,16 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
 {
     public class ShoppingListItemContract
     {
-        public ShoppingListItemContract(int id, string name, bool isDeleted, string comment, bool isTemporary,
+        public ShoppingListItemContract(int id, int? typeId, string name, bool isDeleted, string comment, bool isTemporary,
             float pricePerQuantity, QuantityTypeContract quantityType, float quantityInPacket,
             QuantityTypeInPacketContract quantityTypeInPacket,
             ItemCategoryContract itemCategory, ManufacturerContract manufacturer, bool isInBasket, float quantity)
         {
             if (string.IsNullOrWhiteSpace(name))
-            {
                 throw new System.ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
-            }
 
             Id = id;
+            TypeId = typeId;
             Name = name;
             IsDeleted = isDeleted;
             Comment = comment;
@@ -31,6 +30,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
         }
 
         public int Id { get; }
+        public int? TypeId { get; }
         public string Name { get; }
         public bool IsDeleted { get; }
         public string Comment { get; }

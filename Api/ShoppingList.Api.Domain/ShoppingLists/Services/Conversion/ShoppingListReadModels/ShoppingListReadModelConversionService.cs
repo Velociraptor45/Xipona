@@ -20,18 +20,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversio
 {
     public class ShoppingListReadModelConversionService : IShoppingListReadModelConversionService
     {
-        private readonly IStoreRepository storeRepository;
-        private readonly IItemRepository itemRepository;
-        private readonly IItemCategoryRepository itemCategoryRepository;
-        private readonly IManufacturerRepository manufacturerRepository;
+        private readonly IStoreRepository _storeRepository;
+        private readonly IItemRepository _itemRepository;
+        private readonly IItemCategoryRepository _itemCategoryRepository;
+        private readonly IManufacturerRepository _manufacturerRepository;
 
         public ShoppingListReadModelConversionService(IStoreRepository storeRepository, IItemRepository itemRepository,
             IItemCategoryRepository itemCategoryRepository, IManufacturerRepository manufacturerRepository)
         {
-            this.storeRepository = storeRepository;
-            this.itemRepository = itemRepository;
-            this.itemCategoryRepository = itemCategoryRepository;
-            this.manufacturerRepository = manufacturerRepository;
+            _storeRepository = storeRepository;
+            _itemRepository = itemRepository;
+            _itemCategoryRepository = itemCategoryRepository;
+            _manufacturerRepository = manufacturerRepository;
         }
 
         public async Task<ShoppingListReadModel> ConvertAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
@@ -40,18 +40,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversio
                 throw new System.ArgumentNullException(nameof(shoppingList));
 
             var ItemIds = shoppingList.Items.Select(i => i.Id);
-            var itemsDict = (await itemRepository.FindByAsync(ItemIds, cancellationToken))
+            var itemsDict = (await _itemRepository.FindByAsync(ItemIds, cancellationToken))
                 .ToDictionary(i => i.Id);
 
             var itemCategoryIds = itemsDict.Values.Where(i => i.ItemCategoryId != null).Select(i => i.ItemCategoryId!);
-            var itemCategoriesDict = (await itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
+            var itemCategoriesDict = (await _itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
                 .ToDictionary(cat => cat.Id);
 
             var manufacturerIds = itemsDict.Values.Where(i => i.ManufacturerId != null).Select(i => i.ManufacturerId!);
-            var manufacturersDict = (await manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
+            var manufacturersDict = (await _manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
                 .ToDictionary(man => man.Id);
 
-            IStore? store = await storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
+            IStore? store = await _storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
             if (store is null)
                 throw new DomainException(new StoreNotFoundReason(shoppingList.StoreId));
 
@@ -92,6 +92,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversio
 
                     var itemReadModel = new ShoppingListItemReadModel(
                         item.Id,
+                        item.TypeId,
                         name,
                         storeItem.IsDeleted,
                         storeItem.Comment,

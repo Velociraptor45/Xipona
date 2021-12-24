@@ -3,12 +3,13 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using System;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId
 {
     public class ShoppingListItemReadModel
     {
-        public ShoppingListItemReadModel(ItemId id, string name, bool isDeleted, string comment,
+        public ShoppingListItemReadModel(ItemId id, ItemTypeId? typeId, string name, bool isDeleted, string comment,
             bool isTemporary, float pricePerQuantity, QuantityTypeReadModel quantityType, float quantityInPacket,
             QuantityTypeInPacketReadModel quantityTypeInPacket,
             ItemCategoryReadModel? itemCategory, ManufacturerReadModel? manufacturer,
@@ -16,18 +17,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShop
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new System.ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
+                throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
             }
 
-            Id = id ?? throw new System.ArgumentNullException(nameof(id));
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            TypeId = typeId;
             Name = name;
             IsDeleted = isDeleted;
             Comment = comment;
             IsTemporary = isTemporary;
             PricePerQuantity = pricePerQuantity;
-            QuantityType = quantityType ?? throw new System.ArgumentNullException(nameof(quantityType));
+            QuantityType = quantityType ?? throw new ArgumentNullException(nameof(quantityType));
             QuantityInPacket = quantityInPacket;
-            QuantityTypeInPacket = quantityTypeInPacket ?? throw new System.ArgumentNullException(nameof(quantityTypeInPacket));
+            QuantityTypeInPacket = quantityTypeInPacket ?? throw new ArgumentNullException(nameof(quantityTypeInPacket));
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
             IsInBasket = isInBasket;
@@ -35,6 +37,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShop
         }
 
         public ItemId Id { get; }
+        public ItemTypeId? TypeId { get; }
         public string Name { get; }
         public bool IsDeleted { get; }
         public string Comment { get; }
