@@ -135,18 +135,18 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
             IShoppingList shoppingList, CancellationToken cancellationToken)
         {
             var shoppingListEntityToStore = _toEntityConverter.ToEntity(shoppingList);
-            var onListMappings = existingShoppingListEntity.ItemsOnList.ToDictionary(map => map.ItemId);
+            var onListMappings = existingShoppingListEntity.ItemsOnList.ToDictionary(map => (map.ItemId, map.ItemTypeId));
 
             _dbContext.Entry(shoppingListEntityToStore).State = EntityState.Modified;
             foreach (var map in shoppingListEntityToStore.ItemsOnList)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                if (onListMappings.TryGetValue(map.ItemId, out var existingMapping))
+                if (onListMappings.TryGetValue((map.ItemId, map.ItemTypeId), out var existingMapping))
                 {
                     // mapping was modified
                     map.Id = existingMapping.Id;
                     _dbContext.Entry(map).State = EntityState.Modified;
-                    onListMappings.Remove(map.ItemId);
+                    onListMappings.Remove((map.ItemId, map.ItemTypeId));
                 }
                 else
                 {
