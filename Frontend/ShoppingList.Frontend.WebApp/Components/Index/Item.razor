@@ -80,13 +80,13 @@
         if (Model.IsInBasket)
         {
             Model.RemoveFromBasket();
-            var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
+            var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id, Model.TypeId);
             await communicationService.EnqueueAsync(request);
         }
         else
         {
             Model.PutInBasket();
-            var request = new PutItemInBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
+            var request = new PutItemInBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id, Model.TypeId);
             await communicationService.EnqueueAsync(request);
         }
         State.StateChanged?.Invoke();
@@ -107,7 +107,8 @@
     private async Task OnRemoveItemButtonClickedAsync()
     {
         State.ShoppingList.Remove(Model.Id, Model.TypeId);
-        var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
+        var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id, 
+        Model.TypeId);
         await communicationService.EnqueueAsync(request);
         State.StateChanged?.Invoke();
     }
@@ -128,8 +129,8 @@
 
     private async Task SendQuantityChangedRequestAsync()
     {
-        var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id,
-            Model.Quantity);
+        var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id, 
+            Model.TypeId, Model.Quantity);
         await communicationService.EnqueueAsync(request);
     }
 

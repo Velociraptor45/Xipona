@@ -11,7 +11,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests
             return new RemoveItemFromShoppingListContract
             {
                 ShoppingListId = request.ShoppingListId,
-                ItemId = request.ItemId.ToContract()
+                ItemId = request.ItemId.ToContract(),
+                ItemTypeId = request.ItemTypeId
             };
         }
     }
