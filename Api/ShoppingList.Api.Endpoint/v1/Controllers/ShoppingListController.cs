@@ -258,8 +258,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest("No item id was specified.");
             }
 
+            var itemTypeId = contract.ItemTypeId.HasValue ? new ItemTypeId(contract.ItemTypeId.Value) : null;
             var command = new ChangeItemQuantityOnShoppingListCommand(new ShoppingListId(contract.ShoppingListId),
-                itemId, contract.Quantity);
+                itemId, itemTypeId, contract.Quantity);
 
             try
             {

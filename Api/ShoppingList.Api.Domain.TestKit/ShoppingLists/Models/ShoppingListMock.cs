@@ -127,9 +127,9 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
                 Times.Once);
         }
 
-        public void VerifyChangeItemQuantityOnce(ItemId itemId, float quantity)
+        public void VerifyChangeItemQuantityOnce(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
         {
-            Verify(i => i.ChangeItemQuantity(itemId, quantity),
+            Verify(i => i.ChangeItemQuantity(itemId, itemTypeId, quantity),
                 Times.Once);
         }
 

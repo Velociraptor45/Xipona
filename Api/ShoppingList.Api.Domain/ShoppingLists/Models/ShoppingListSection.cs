@@ -82,14 +82,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             return new ShoppingListSection(Id, items.Values);
         }
 
-        public IShoppingListSection ChangeItemQuantity(ItemId itemId, float quantity)
+        public IShoppingListSection ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
         {
-            if (!_shoppingListItems.ContainsKey((itemId, null)))
+            if (!_shoppingListItems.ContainsKey((itemId, itemTypeId)))
                 throw new DomainException(new ItemNotInSectionReason(itemId, Id));
 
             var items = new Dictionary<(ItemId, ItemTypeId?), IShoppingListItem>(_shoppingListItems);
-            var item = items[(itemId, null)];
-            items[(itemId, null)] = item.ChangeQuantity(quantity);
+            var item = items[(itemId, itemTypeId)];
+            items[(itemId, itemTypeId)] = item.ChangeQuantity(quantity);
 
             return new ShoppingListSection(Id, items.Values);
         }

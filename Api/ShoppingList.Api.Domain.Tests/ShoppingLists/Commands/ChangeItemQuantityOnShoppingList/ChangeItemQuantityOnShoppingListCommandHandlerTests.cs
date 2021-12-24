@@ -221,13 +221,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
 
             public void VerifyChangeItemQuantityOnce()
             {
-                ShoppingListMock.VerifyChangeItemQuantityOnce(StoreItem.Id, Command.Quantity);
+                ShoppingListMock.VerifyChangeItemQuantityOnce(StoreItem.Id, Command.ItemTypeId, Command.Quantity);
             }
 
             public void VerifyChangeItemQuantityWithOfflineIdOnce()
             {
                 ShoppingListMock.VerifyChangeItemQuantityOnce(
                     new ItemId(Command.OfflineTolerantItemId.ActualId.Value),
+                    Command.ItemTypeId,
                     Command.Quantity);
             }
 

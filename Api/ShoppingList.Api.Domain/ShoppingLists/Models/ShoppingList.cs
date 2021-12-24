@@ -92,18 +92,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
             _sections[section.Id] = section.RemoveItemFromBasket(itemId, itemTypeId);
         }
 
-        public void ChangeItemQuantity(ItemId itemId, float quantity)
+        public void ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
         {
             if (itemId == null)
                 throw new ArgumentNullException(nameof(itemId));
             if (quantity <= 0f)
                 throw new DomainException(new InvalidItemQuantityReason(quantity));
 
-            IShoppingListSection section = _sections.Values.FirstOrDefault(s => s.ContainsItem(itemId));
+            IShoppingListSection section = _sections.Values.FirstOrDefault(s => s.ContainsItem(itemId, itemTypeId));
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
-            _sections[section.Id] = section.ChangeItemQuantity(itemId, quantity);
+            _sections[section.Id] = section.ChangeItemQuantity(itemId, itemTypeId, quantity);
         }
 
         public void AddSection(IShoppingListSection section)

@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         IShoppingListSection AddItem(IShoppingListItem item);
 
-        IShoppingListSection ChangeItemQuantity(ItemId itemId, float quantity);
+        IShoppingListSection ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, float quantity);
 
         bool ContainsItem(ItemId itemId);
 

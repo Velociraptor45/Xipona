@@ -25,7 +25,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         void RemoveFromBasket(ItemId itemId, ItemTypeId? itemTypeId);
 
-        void ChangeItemQuantity(ItemId itemId, float quantity);
+        void ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, float quantity);
 
         IShoppingList Finish(DateTime completionDate);
 

@@ -349,7 +349,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var list = ShoppingListMother.ThreeSections().Create();
 
             // Act
-            Action action = () => list.ChangeItemQuantity(null, commonFixture.NextFloat());
+            Action action = () => list.ChangeItemQuantity(null, null, commonFixture.NextFloat());
 
             // Assert
             using (new AssertionScope())
@@ -367,7 +367,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
 
             // Act
-            Action action = () => list.ChangeItemQuantity(shoppingListItemId, commonFixture.NextFloat());
+            Action action = () => list.ChangeItemQuantity(shoppingListItemId, null, commonFixture.NextFloat());
 
             // Assert
             using (new AssertionScope())
@@ -385,7 +385,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var chosenShoppingListItem = commonFixture.ChooseRandom(shoppinglist.Items);
 
             // Act
-            Action action = () => shoppinglist.ChangeItemQuantity(chosenShoppingListItem.Id, -commonFixture.NextFloat());
+            Action action = () => shoppinglist.ChangeItemQuantity(chosenShoppingListItem.Id, null, -commonFixture.NextFloat());
 
             // Assert
             using (new AssertionScope())
@@ -412,7 +412,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             float quantity = commonFixture.NextFloat();
 
             // Act
-            shoppingList.ChangeItemQuantity(chosenItem.Id, quantity);
+            shoppingList.ChangeItemQuantity(chosenItem.Id, null, quantity);
 
             // Assert
             using (new AssertionScope())
@@ -420,7 +420,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
                 foreach (var section in sectionMocks)
                 {
                     if (section == chosenSectionMock)
-                        section.VerifyChangeItemQuantityOnce(chosenItem.Id, quantity);
+                        section.VerifyChangeItemQuantityOnce(chosenItem.Id, null, quantity);
                     else
                         section.VerifyChangeItemQuantityNever();
                 }

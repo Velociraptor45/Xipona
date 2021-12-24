@@ -101,11 +101,9 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
                 Times.Never);
         }
 
-        public void VerifyChangeItemQuantityOnce(ItemId id, float quantity)
+        public void VerifyChangeItemQuantityOnce(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
         {
-            Verify(i => i.ChangeItemQuantity(
-                    It.Is<ItemId>(itemId => itemId == id),
-                    It.Is<float>(qnt => qnt == quantity)),
+            Verify(i => i.ChangeItemQuantity(itemId, itemTypeId, quantity),
                 Times.Once);
         }
 
@@ -113,6 +111,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
         {
             Verify(i => i.ChangeItemQuantity(
                     It.IsAny<ItemId>(),
+                    It.IsAny<ItemTypeId?>(),
                     It.IsAny<float>()),
                 Times.Never);
         }
