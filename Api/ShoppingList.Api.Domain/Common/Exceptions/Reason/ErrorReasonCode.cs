@@ -30,6 +30,7 @@
         ItemTypeNotFound = 26,
         ShoppingListItemMissingType = 27,
         ItemTypeNotPartOfItem = 28,
-        ItemTypeAtStoreNotAvailable = 29
+        ItemTypeAtStoreNotAvailable = 29,
+        TemporaryItemCannotHaveTypeIdReason = 30
     }
 }

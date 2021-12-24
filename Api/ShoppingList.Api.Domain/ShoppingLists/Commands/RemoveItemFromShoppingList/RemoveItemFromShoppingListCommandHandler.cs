@@ -14,16 +14,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
     public class RemoveItemFromShoppingListCommandHandler :
         ICommandHandler<RemoveItemFromShoppingListCommand, bool>
     {
-        private readonly IShoppingListRepository shoppingListRepository;
-        private readonly IItemRepository itemRepository;
-        private readonly ITransactionGenerator transactionGenerator;
+        private readonly IShoppingListRepository _shoppingListRepository;
+        private readonly IItemRepository _itemRepository;
+        private readonly ITransactionGenerator _transactionGenerator;
 
         public RemoveItemFromShoppingListCommandHandler(IShoppingListRepository shoppingListRepository,
             IItemRepository itemRepository, ITransactionGenerator transactionGenerator)
         {
-            this.shoppingListRepository = shoppingListRepository;
-            this.itemRepository = itemRepository;
-            this.transactionGenerator = transactionGenerator;
+            _shoppingListRepository = shoppingListRepository;
+            _itemRepository = itemRepository;
+            _transactionGenerator = transactionGenerator;
         }
 
         public async Task<bool> HandleAsync(RemoveItemFromShoppingListCommand command, CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
             if (command == null)
                 throw new ArgumentNullException(nameof(command));
 
-            var list = await shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
+            var list = await _shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
             if (list == null)
                 throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
 
@@ -42,33 +42,36 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
             {
                 ItemId itemId = new ItemId(command.OfflineTolerantItemId.ActualId!.Value);
 
-                item = await itemRepository.FindByAsync(itemId, cancellationToken);
+                item = await _itemRepository.FindByAsync(itemId, cancellationToken);
                 if (item == null)
                     throw new DomainException(new ItemNotFoundReason(itemId));
             }
             else
             {
+                if (command.ItemTypeId != null)
+                    throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
+
                 TemporaryItemId itemId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId!.Value);
 
-                item = await itemRepository.FindByAsync(itemId, cancellationToken);
+                item = await _itemRepository.FindByAsync(itemId, cancellationToken);
                 if (item == null)
                     throw new DomainException(new ItemNotFoundReason(itemId));
             }
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            using var transaction = await transactionGenerator.GenerateAsync(cancellationToken);
+            using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
-            list.RemoveItem(item.Id);
+            list.RemoveItem(item.Id, command.ItemTypeId);
             if (item.IsTemporary)
             {
                 item.Delete();
-                await itemRepository.StoreAsync(item, cancellationToken);
+                await _itemRepository.StoreAsync(item, cancellationToken);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await shoppingListRepository.StoreAsync(list, cancellationToken);
+            await _shoppingListRepository.StoreAsync(list, cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
             return true;

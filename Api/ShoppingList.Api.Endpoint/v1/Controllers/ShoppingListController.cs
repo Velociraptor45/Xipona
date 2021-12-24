@@ -23,6 +23,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 using System;
@@ -104,8 +105,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 return BadRequest("No item id was specified.");
             }
+            var itemTypeId = contract.ItemTypeId.HasValue ? new ItemTypeId(contract.ItemTypeId.Value) : null;
 
-            var command = new RemoveItemFromShoppingListCommand(new ShoppingListId(contract.ShoppingListId), itemId);
+            var command = new RemoveItemFromShoppingListCommand(new ShoppingListId(contract.ShoppingListId), itemId,
+                itemTypeId);
 
             try
             {
