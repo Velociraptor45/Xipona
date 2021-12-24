@@ -54,7 +54,7 @@
         }
         else
         {
-            <Button Disabled="@ShouldDisableChangeButton()" OnClick="@OnUpdateButtonClickedAsync">Update</Button>
+            <Button Disabled="@(ShouldDisableChangeButton() || State.EditedItem.IsItemWithTypes)" OnClick="@OnUpdateButtonClickedAsync">Update</Button>
             <Button Disabled="@ShouldDisableChangeButton()" Class="ml-2" OnClick="@OnModifyButtonClickedAsync">Modify</Button>
         }
     </div>
