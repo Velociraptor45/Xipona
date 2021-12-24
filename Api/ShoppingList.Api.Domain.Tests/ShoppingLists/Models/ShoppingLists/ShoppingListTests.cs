@@ -262,7 +262,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
                 foreach (var section in sectionMocks)
                 {
                     if (section == chosenSectionMock)
-                        section.VerifyPutItemInBasketOnce(chosenItem.Id);
+                        section.VerifyPutItemInBasketOnce(chosenItem.Id, null);
                     else
                         section.VerifyPutItemInBasketNever();
                 }
@@ -280,7 +280,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var list = ShoppingListMother.ThreeSections().Create();
 
             // Act
-            Action action = () => list.RemoveFromBasket(null);
+            Action action = () => list.RemoveFromBasket(null, null);
 
             // Assert
             using (new AssertionScope())
@@ -298,7 +298,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
 
             // Act
-            Action action = () => list.RemoveFromBasket(shoppingListItemId);
+            Action action = () => list.RemoveFromBasket(shoppingListItemId, null);
 
             // Assert
             using (new AssertionScope())
@@ -323,7 +323,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             sectionMocks.ForEach(m => m.SetupContainsItem(m == chosenSectionMock));
 
             // Act
-            shoppingList.RemoveFromBasket(chosenItem.Id);
+            shoppingList.RemoveFromBasket(chosenItem.Id, null);
 
             // Assert
             using (new AssertionScope())
@@ -331,7 +331,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
                 foreach (var section in sectionMocks)
                 {
                     if (section == chosenSectionMock)
-                        section.VerifyRemoveItemFromBasketOnce(chosenItem.Id);
+                        section.VerifyRemoveItemFromBasketOnce(chosenItem.Id, null);
                     else
                         section.VerifyRemoveItemFromBasketNever();
                 }

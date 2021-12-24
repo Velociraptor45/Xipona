@@ -21,7 +21,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         void PutItemInBasket(ItemId itemId);
 
-        void RemoveFromBasket(ItemId itemId);
+        void PutItemInBasket(ItemId itemId, ItemTypeId? itemTypeId);
+
+        void RemoveFromBasket(ItemId itemId, ItemTypeId? itemTypeId);
 
         void ChangeItemQuantity(ItemId itemId, float quantity);
 

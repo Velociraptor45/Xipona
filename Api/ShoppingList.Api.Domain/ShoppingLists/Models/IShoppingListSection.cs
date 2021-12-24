@@ -17,9 +17,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         bool ContainsItem(ItemId itemId, ItemTypeId? itemTypeId);
 
-        IShoppingListSection PutItemInBasket(ItemId itemId);
+        IShoppingListSection PutItemInBasket(ItemId itemId, ItemTypeId? itemTypeId);
 
-        IShoppingListSection RemoveItemFromBasket(ItemId itemId);
+        IShoppingListSection RemoveItemFromBasket(ItemId itemId, ItemTypeId? itemTypeId);
 
         IShoppingListSection RemoveItem(ItemId itemId);
 

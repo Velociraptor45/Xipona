@@ -193,7 +193,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             else
                 itemId = new OfflineTolerantItemId(contract.ItemId.Offline!.Value);
 
-            var command = new PutItemInBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId);
+            var itemTypeId = contract.ItemTypeId.HasValue ? new ItemTypeId(contract.ItemTypeId.Value) : null;
+            var command = new PutItemInBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId,
+                itemTypeId);
 
             try
             {
@@ -223,7 +225,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest("No item id was specified.");
             }
 
-            var command = new RemoveItemFromBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId);
+            var itemTypeId = contract.ItemTypeId.HasValue ? new ItemTypeId(contract.ItemTypeId.Value) : null;
+            var command = new RemoveItemFromBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId,
+                itemTypeId);
+
             try
             {
                 await commandDispatcher.DispatchAsync(command, default);

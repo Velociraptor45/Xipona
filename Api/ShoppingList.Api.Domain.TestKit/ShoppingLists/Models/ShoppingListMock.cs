@@ -89,9 +89,9 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
             Verify(i => i.PutItemInBasket(It.IsAny<ItemId>()), Times.Never);
         }
 
-        public void VerifyRemoveItemFromBasketOnce(ItemId itemId)
+        public void VerifyRemoveItemFromBasketOnce(ItemId itemId, ItemTypeId? itemTypeId)
         {
-            Verify(i => i.RemoveFromBasket(itemId), Times.Once);
+            Verify(i => i.RemoveFromBasket(itemId, itemTypeId), Times.Once);
         }
 
         public void VerifyAddItemOnce(IShoppingListItem listItem, SectionId sectionId)

@@ -272,13 +272,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
 
             public void VerifyRemoveItemFromBasketWithStoreItemId()
             {
-                ShoppingListMock.VerifyRemoveItemFromBasketOnce(StoreItem.Id);
+                ShoppingListMock.VerifyRemoveItemFromBasketOnce(StoreItem.Id, Command.ItemTypeId);
             }
 
             public void VerifyRemoveItemFromBasketWithCommandActualId()
             {
                 ShoppingListMock.VerifyRemoveItemFromBasketOnce(
-                    new ItemId(Command.OfflineTolerantItemId.ActualId.Value));
+                    new ItemId(Command.OfflineTolerantItemId.ActualId.Value),
+                    Command.ItemTypeId);
             }
 
             public void VerifyStoringShoppingList()
