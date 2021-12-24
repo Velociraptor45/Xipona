@@ -7,12 +7,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class ShoppingListSection
     {
-        private readonly Dictionary<ItemId, ShoppingListItem> items;
+        private readonly Dictionary<(ItemId, int?), ShoppingListItem> _items;
 
         public ShoppingListSection(int id, string name, int sortingIndex, bool isDefaultSection,
             IEnumerable<ShoppingListItem> items)
         {
-            this.items = items.ToDictionary(i => i.Id);
+            _items = items.ToDictionary(i => (i.Id, i.TypeId));
             Id = id;
             Name = name;
             SortingIndex = sortingIndex;
@@ -27,22 +27,19 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         public bool IsExpanded { get; private set; }
         public bool AllItemsInBasket => Items.All(i => i.IsInBasket);
         public bool SomeItemsInBasket => !AllItemsInBasket && Items.Any(i => i.IsInBasket);
-        public IReadOnlyCollection<ShoppingListItem> Items => items.Values.ToList().AsReadOnly();
+        public IReadOnlyCollection<ShoppingListItem> Items => _items.Values.ToList().AsReadOnly();
 
-        public void RemoveItem(ItemId itemId)
+        public void RemoveItem(ItemId itemId, int? itemTypeId)
         {
-            if (items.ContainsKey(itemId))
-            {
-                items.Remove(itemId);
-            }
+            _items.Remove((itemId, itemTypeId));
         }
 
         public void AddItem(ShoppingListItem item)
         {
-            if (items.ContainsKey(item.Id))
+            if (_items.ContainsKey((item.Id, item.TypeId)))
                 return;
 
-            items.Add(item.Id, item);
+            _items.Add((item.Id, item.TypeId), item);
         }
 
         public void Expand()

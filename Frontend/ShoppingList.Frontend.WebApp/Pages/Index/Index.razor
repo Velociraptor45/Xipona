@@ -161,10 +161,10 @@
     private RenderFragment GetButtonRenderFragment(Action callback, string label = "Retry")
     {
         return@<Button Type="@ButtonType.Primary" OnClick="() => callback()">@label</Button>;
-}
+    }
 
-private RenderFragment GetAsyncButtonRenderFragment(Func<Task> callback, string label = "Retry")
-{
-return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
-}
+    private RenderFragment GetAsyncButtonRenderFragment(Func<Task> callback, string label = "Retry")
+    {
+        return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
+    }
 }

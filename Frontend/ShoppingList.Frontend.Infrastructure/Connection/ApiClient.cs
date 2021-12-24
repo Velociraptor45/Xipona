@@ -56,6 +56,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             await client.AddItemToShoppingList(request.ToContract());
         }
 
+        public async Task AddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request)
+        {
+            await client.AddItemWithTypeToShoppingList(request.ToContract());
+        }
+
         public async Task UpdateItemAsync(UpdateItemRequest request)
         {
             await client.UpdateItemAsync(request.StoreItem.ToUpdateItemContract());

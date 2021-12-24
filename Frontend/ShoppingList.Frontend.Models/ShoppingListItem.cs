@@ -5,11 +5,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class ShoppingListItem
     {
-        public ShoppingListItem(ItemId id, string name, bool isTemporary, float pricePerQuantity, QuantityType quantityType,
+        public ShoppingListItem(ItemId id, int? typeId, string name, bool isTemporary, float pricePerQuantity, QuantityType quantityType,
             float quantityInPacket, QuantityTypeInPacket quantityInPacketType, string itemCategory,
             string manufacturer, bool isInBasket, float quantity)
         {
             Id = id ?? throw new System.ArgumentNullException(nameof(id));
+            TypeId = typeId;
             Name = name;
             IsTemporary = isTemporary;
             PricePerQuantity = pricePerQuantity;
@@ -23,6 +24,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         }
 
         public ItemId Id { get; }
+        public int? TypeId { get; }
         public string Name { get; }
         public bool IsTemporary { get; }
         public float PricePerQuantity { get; }

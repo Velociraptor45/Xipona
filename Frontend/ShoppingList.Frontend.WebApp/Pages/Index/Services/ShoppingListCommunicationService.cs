@@ -102,6 +102,23 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             return false;
         }
 
+        public async Task<bool> AddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request,
+            Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator)
+        {
+            try
+            {
+                await apiClient.AddItemWithTypeToShoppingListAsync(request);
+                return true;
+            }
+            catch (Exception e)
+            {
+                var fragment = fragmentCreator.CreateAsyncRetryFragment(OnFailure);
+                notificationService.NotifyError("Adding item failed", e.Message, fragment);
+            }
+
+            return false;
+        }
+
         public async Task<IEnumerable<Store>> LoadAllActiveStoresAsync(Func<Task> OnFailure,
             IAsyncRetryFragmentCreator fragmentCreator)
         {

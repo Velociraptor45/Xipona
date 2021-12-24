@@ -13,6 +13,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
     public interface IShoppingListCommunicationService
     {
         Task<bool> AddItemToShoppingListAsync(AddItemToShoppingListRequest request, Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator);
+        Task<bool> AddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request, Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator);
         Task EnqueueAsync(IApiRequest request);
         Task<bool> FinishListAsync(FinishListRequest request, Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator);
         void InitializeCommandQueue(ICommandQueueErrorHandler errorHandler);

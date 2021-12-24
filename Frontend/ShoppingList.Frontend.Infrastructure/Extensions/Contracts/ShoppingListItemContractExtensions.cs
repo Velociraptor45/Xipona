@@ -10,6 +10,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contract
         {
             return new ShoppingListItem(
                     new ItemId(contract.Id),
+                    contract.TypeId,
                     contract.Name,
                     contract.IsTemporary,
                     contract.PricePerQuantity,

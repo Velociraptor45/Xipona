@@ -3,7 +3,7 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
 
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager;
-@inject             Models.Index.Services.IItemPriceCalculationService itemPriceCalculationService;
+@inject Models.Index.Services.IItemPriceCalculationService itemPriceCalculationService;
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListCommunicationService communicationService;
 
 <li class="list-style-non py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
@@ -106,7 +106,7 @@
 
     private async Task OnRemoveItemButtonClickedAsync()
     {
-        State.ShoppingList.Remove(Model.Id);
+        State.ShoppingList.Remove(Model.Id, Model.TypeId);
         var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id);
         await communicationService.EnqueueAsync(request);
         State.StateChanged?.Invoke();
