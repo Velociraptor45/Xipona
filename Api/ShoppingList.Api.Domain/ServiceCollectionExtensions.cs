@@ -18,6 +18,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemS
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.StoreItemReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemCreation;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdate;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
@@ -60,6 +61,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain
             services.AddTransient<IItemTypeFactory, ItemTypeFactory>();
 
             // services
+            services.AddTransient<Func<CancellationToken, IItemUpdateService>>(provider =>
+            {
+                var itemRepository = provider.GetRequiredService<IItemRepository>();
+                var itemTypeFactory = provider.GetRequiredService<IItemTypeFactory>();
+                var storeItemFactory = provider.GetRequiredService<IStoreItemFactory>();
+                var shoppingListUpdateService = provider.GetRequiredService<IShoppingListUpdateService>();
+                var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
+
+                return (cancellationToken) => new ItemUpdateService(itemRepository, validatorDelegate, itemTypeFactory,
+                    storeItemFactory, shoppingListUpdateService, cancellationToken);
+            });
+
             services.AddTransient<Func<CancellationToken, IItemQueryService>>(provider =>
             {
                 var itemRepository = provider.GetRequiredService<IItemRepository>();

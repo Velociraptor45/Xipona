@@ -16,5 +16,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
 
         Task AddItemWithTypeToShoppingList(ShoppingListId shoppingListId, ItemId itemId, ItemTypeId itemTypeId,
             SectionId? sectionId, float quantity, CancellationToken cancellationToken);
+
+        Task AddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item, ItemTypeId itemTypeId,
+            SectionId? sectionId, float quantity, CancellationToken cancellationToken);
     }
 }

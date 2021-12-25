@@ -43,5 +43,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         {
             return _itemTypes.TryGetValue(id, out itemType);
         }
+
+        public bool TryGetWithPredecessor(ItemTypeId predecessorId, out IItemType? predecessor)
+        {
+            predecessor = _itemTypes.Values
+                .SingleOrDefault(t => t.Predecessor != null && t.Predecessor.Id == predecessorId);
+
+            return predecessor != null;
+        }
     }
 }

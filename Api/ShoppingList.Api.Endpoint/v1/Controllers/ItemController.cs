@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ItemUpdateWithTypes;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
@@ -9,6 +10,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporar
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
@@ -87,7 +89,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [Route("modify-with-types")]
-        public async Task<IActionResult> ModifyItemWithTypes([FromBody] ModifyItemWithTypesContract contract)
+        public async Task<IActionResult> ModifyItemWithTypesAsync([FromBody] ModifyItemWithTypesContract contract)
         {
             var model = _converters.ToDomain<ModifyItemWithTypesContract, ItemWithTypesModification>(contract);
             var command = new ModifyItemWithTypesCommand(model);
@@ -108,7 +110,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [Route("modify")]
-        public async Task<IActionResult> ModifyItem([FromBody] ModifyItemContract modifyItemContract)
+        public async Task<IActionResult> ModifyItemAsync([FromBody] ModifyItemContract modifyItemContract)
         {
             var model = _converters.ToDomain<ModifyItemContract, ItemModify>(modifyItemContract);
             var command = new ModifyItemCommand(model);
@@ -129,7 +131,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [Route("update")]
-        public async Task<IActionResult> UpdateItem([FromBody] UpdateItemContract updateItemContract)
+        public async Task<IActionResult> UpdateItemAsync([FromBody] UpdateItemContract updateItemContract)
         {
             var model = _converters.ToDomain<UpdateItemContract, ItemUpdate>(updateItemContract);
             var command = new UpdateItemCommand(model);
@@ -141,6 +143,26 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             catch (DomainException e)
             {
                 return BadRequest(e.Reason);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Route("update-with-types")]
+        public async Task<IActionResult> UpdateItemWithTypesAsync([FromBody] UpdateItemWithTypesContract contract)
+        {
+            var command = _converters.ToDomain<UpdateItemWithTypesContract, UpdateItemWithTypesCommand>(contract);
+
+            try
+            {
+                await _commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (DomainException e)
+            {
+                return UnprocessableEntity(e.Reason);
             }
 
             return Ok();

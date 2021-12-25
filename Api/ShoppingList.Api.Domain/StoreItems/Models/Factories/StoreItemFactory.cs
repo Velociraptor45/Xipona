@@ -112,5 +112,28 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
             model.SetPredecessor(predecessor);
             return model;
         }
+
+        public IStoreItem CreateNew(string name, string comment,
+            QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+            ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
+            IEnumerable<IItemType> itemTypes)
+        {
+            var item = new StoreItem(
+                new ItemId(0),
+                name,
+                isDeleted: false,
+                comment,
+                quantityType,
+                quantityInPacket,
+                quantityTypeInPacket,
+                itemCategoryId,
+                manufacturerId,
+                itemTypes);
+
+            if (predecessor != null)
+                item.SetPredecessor(predecessor);
+
+            return item;
+        }
     }
 }

@@ -51,6 +51,21 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
             await _shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
         }
 
+        public async Task AddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
+            ItemTypeId itemTypeId, SectionId? sectionId, float quantity, CancellationToken cancellationToken)
+        {
+            if (shoppingList is null)
+                throw new ArgumentNullException(nameof(shoppingList));
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
+            if (itemTypeId is null)
+                throw new ArgumentNullException(nameof(itemTypeId));
+
+            await AddItemToShoppingList(shoppingList, item, itemTypeId, sectionId, quantity, cancellationToken);
+
+            await _shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
+        }
+
         public async Task AddItemToShoppingList(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
             float quantity, CancellationToken cancellationToken)
         {
