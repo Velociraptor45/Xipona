@@ -54,7 +54,7 @@
         }
         else
         {
-            <Button Disabled="@(ShouldDisableChangeButton() || State.EditedItem.IsItemWithTypes)" OnClick="@OnUpdateButtonClickedAsync">Update</Button>
+            <Button Disabled="@ShouldDisableChangeButton()" OnClick="@OnUpdateButtonClickedAsync">Update</Button>
             <Button Disabled="@ShouldDisableChangeButton()" Class="ml-2" OnClick="@OnModifyButtonClickedAsync">Modify</Button>
         }
     </div>
@@ -66,6 +66,24 @@
 
     private async Task OnUpdateButtonClickedAsync()
     {
+        if(State.EditedItem.ItemTypes.Any())
+        {
+            var withTypesRequest = new UpdateItemWithTypesRequest(Guid.NewGuid(), State.EditedItem);
+            try
+            {
+                await apiClient.UpdateItemWithTypesAsync(withTypesRequest);
+            }
+            catch(Exception e)
+            {
+                var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnModifyButtonClickedAsync());
+                notificationService.NotifyError("Updating item with types failed", e.Message, fragment);
+                return;
+            }
+
+            State.LeaveEditor();
+            return;
+        }
+
         var request = new UpdateItemRequest(Guid.NewGuid(), State.EditedItem);
         try
         {
@@ -92,7 +110,7 @@
             catch(Exception e)
             {
                 var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnModifyButtonClickedAsync());
-                notificationService.NotifyError("Modifying item with type failed", e.Message, fragment);
+                notificationService.NotifyError("Modifying item with types failed", e.Message, fragment);
                 return;
             }
 
