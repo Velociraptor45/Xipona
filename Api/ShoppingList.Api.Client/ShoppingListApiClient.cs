@@ -21,6 +21,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporar
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
@@ -127,6 +128,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
         public async Task UpdateItemAsync(UpdateItemContract updateItemContract)
         {
             await _apiClient.UpdateItemAsync(updateItemContract);
+        }
+
+        public async Task UpdateItemWithTypesAsync(UpdateItemWithTypesContract contract)
+        {
+            await _apiClient.UpdateItemWithTypesAsync(contract);
         }
 
         public async Task DeleteItemAsync(int itemId)
