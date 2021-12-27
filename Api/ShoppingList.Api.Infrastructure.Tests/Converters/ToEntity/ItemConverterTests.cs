@@ -47,7 +47,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
                             DefaultSectionId = av.DefaultSectionId.Value
                         }).ToList(),
                 PredecessorId = source.Predecessor?.Id.Value,
-                ItemTypes = new List<Entities.ItemType>() //todo split the converters for 'with' and 'without' types
+                ItemTypes = new List<Entities.ItemType>()
             };
         }
 

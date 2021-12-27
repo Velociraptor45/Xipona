@@ -58,7 +58,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
                     source.QuantityType.ToEnum<QuantityType>(),
                     source.QuantityInPacket,
                     source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),
-                    itemCategoryId!, //todo ensure this?
+                    itemCategoryId!,
                     manufacturerId,
                     predecessor,
                     itemTypes);
