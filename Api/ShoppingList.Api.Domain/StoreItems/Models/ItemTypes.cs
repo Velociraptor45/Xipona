@@ -7,18 +7,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
     public class ItemTypes : IReadOnlyCollection<IItemType>
     {
-        private readonly Dictionary<ItemTypeId, IItemType> _itemTypes;
+        private readonly List<IItemType> _itemTypes;
 
         public ItemTypes(IEnumerable<IItemType> itemTypes)
         {
-            _itemTypes = itemTypes.ToDictionary(t => t.Id);
+            _itemTypes = itemTypes.ToList();
         }
 
         public int Count => _itemTypes.Count;
 
         public IEnumerator<IItemType> GetEnumerator()
         {
-            return _itemTypes.Values.GetEnumerator();
+            return _itemTypes.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -28,7 +28,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 
         public IReadOnlyCollection<IItemType> GetForStore(StoreId storeId)
         {
-            return _itemTypes.Values
+            return _itemTypes
                 .Where(t => t.Availabilities.Any(av => av.StoreId == storeId))
                 .ToList()
                 .AsReadOnly();
@@ -36,17 +36,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 
         public bool ContainsId(ItemTypeId itemTypeId)
         {
-            return _itemTypes.ContainsKey(itemTypeId);
+            return _itemTypes.ToDictionary(t => t.Id).ContainsKey(itemTypeId);
         }
 
         public bool TryGetValue(ItemTypeId id, out IItemType? itemType)
         {
-            return _itemTypes.TryGetValue(id, out itemType);
+            return _itemTypes.ToDictionary(t => t.Id).TryGetValue(id, out itemType);
         }
 
         public bool TryGetWithPredecessor(ItemTypeId predecessorId, out IItemType? predecessor)
         {
-            predecessor = _itemTypes.Values
+            predecessor = _itemTypes
                 .SingleOrDefault(t => t.Predecessor != null && t.Predecessor.Id == predecessorId);
 
             return predecessor != null;

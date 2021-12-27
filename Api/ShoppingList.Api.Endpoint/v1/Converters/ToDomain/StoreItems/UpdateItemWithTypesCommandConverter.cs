@@ -31,7 +31,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreIt
 
             var itemTypeUpdates = source.ItemTypes.Select(t => new ItemTypeUpdate(
                 new ItemTypeId(t.OldId),
-                source.Name,
+                t.Name,
                 _availabilityConverter.ToDomain(t.Availabilities)));
 
             var itemUpdate = new ItemWithTypesUpdate(
