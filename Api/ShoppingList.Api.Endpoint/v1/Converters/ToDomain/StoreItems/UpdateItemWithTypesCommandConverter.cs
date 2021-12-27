@@ -30,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreIt
                 throw new ArgumentNullException(nameof(source));
 
             var itemTypeUpdates = source.ItemTypes.Select(t => new ItemTypeUpdate(
-                new ItemTypeId(source.OldId),
+                new ItemTypeId(t.OldId),
                 source.Name,
                 _availabilityConverter.ToDomain(t.Availabilities)));
 
