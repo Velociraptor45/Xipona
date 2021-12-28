@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using Moq;
+﻿using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
@@ -8,19 +7,16 @@ using System.Threading;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services
 {
-    public class AddItemToShoppingListServiceMock
+    public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListService>
     {
-        private readonly Mock<IAddItemToShoppingListService> mock;
-
-        public AddItemToShoppingListServiceMock(Fixture fixture)
+        public AddItemToShoppingListServiceMock(MockBehavior behavior) : base(behavior)
         {
-            mock = fixture.Freeze<Mock<IAddItemToShoppingListService>>();
         }
 
         public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, ItemId itemId, SectionId sectionId,
             float quantity)
         {
-            mock.Verify(i => i.AddItemToShoppingList(
+            Verify(i => i.AddItemToShoppingList(
                 shoppingList,
                 itemId,
                 sectionId,
@@ -31,7 +27,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services
         public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
             SectionId sectionId, float quantity)
         {
-            mock.Verify(i => i.AddItemToShoppingList(
+            Verify(i => i.AddItemToShoppingList(
                 shoppingList,
                 temporaryItemId,
                 sectionId,

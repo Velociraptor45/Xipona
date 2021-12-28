@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using Moq;
+﻿using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
@@ -9,24 +8,15 @@ using System.Threading;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Ports
 {
-    public class ItemRepositoryMock
+    public class ItemRepositoryMock : Mock<IItemRepository>
     {
-        private readonly Mock<IItemRepository> mock;
-
-        public ItemRepositoryMock(Mock<IItemRepository> mock)
+        public ItemRepositoryMock(MockBehavior behavior) : base(behavior)
         {
-            this.mock = mock;
-        }
-
-        public ItemRepositoryMock(Fixture fixture)
-        {
-            mock = fixture.Freeze<Mock<IItemRepository>>();
         }
 
         public void SetupFindByAsync(ItemId itemId, IStoreItem returnValue)
         {
-            mock
-                .Setup(i => i.FindByAsync(
+            Setup(i => i.FindByAsync(
                     It.Is<ItemId>(id => id == itemId),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(returnValue);
@@ -34,8 +24,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Ports
 
         public void SetupFindByAsync(IEnumerable<ItemId> itemIds, IEnumerable<IStoreItem> returnValue)
         {
-            mock
-                .Setup(i => i.FindByAsync(
+            Setup(i => i.FindByAsync(
                     It.Is<IEnumerable<ItemId>>(ids => ids.SequenceEqual(itemIds)),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(returnValue);
@@ -43,8 +32,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Ports
 
         public void SetupFindByAsync(TemporaryItemId temporaryItemId, IStoreItem returnValue)
         {
-            mock
-                .Setup(i => i.FindByAsync(
+            Setup(i => i.FindByAsync(
                     It.Is<TemporaryItemId>(id => id == temporaryItemId),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(returnValue);
@@ -52,8 +40,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Ports
 
         public void SetupFindActiveByAsync(ItemCategoryId itemCategoryId, IEnumerable<IStoreItem> returnValue)
         {
-            mock
-                .Setup(i => i.FindActiveByAsync(
+            Setup(i => i.FindActiveByAsync(
                     It.Is<ItemCategoryId>(id => id == itemCategoryId),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(returnValue);
@@ -61,7 +48,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Ports
 
         public void VerifyFindByAsync(ItemId storeItemId)
         {
-            mock.Verify(
+            Verify(
                 i => i.FindByAsync(
                         It.Is<ItemId>(id => id == storeItemId),
                         It.IsAny<CancellationToken>()),
@@ -70,7 +57,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Ports
 
         public void VerifyFindByAsync(TemporaryItemId temporaryItemId)
         {
-            mock.Verify(
+            Verify(
                 i => i.FindByAsync(
                         It.Is<TemporaryItemId>(id => id == temporaryItemId),
                         It.IsAny<CancellationToken>()),
@@ -79,7 +66,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Ports
 
         public void VerifyStoreAsyncOnce(IStoreItem storeItem)
         {
-            mock.Verify(
+            Verify(
                 i => i.StoreAsync(
                     It.Is<IStoreItem>(item => item == storeItem),
                     It.IsAny<CancellationToken>()),
@@ -88,7 +75,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Ports
 
         public void VerifyStoreAsyncNever()
         {
-            mock.Verify(
+            Verify(
                 i => i.StoreAsync(
                     It.IsAny<IStoreItem>(),
                     It.IsAny<CancellationToken>()),

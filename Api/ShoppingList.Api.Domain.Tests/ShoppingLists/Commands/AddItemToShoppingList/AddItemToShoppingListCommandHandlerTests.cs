@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemToShoppingList;
@@ -25,7 +26,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
         {
             // Arrange
             var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
+            var handler = local.CreateSut();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(null, default);
@@ -42,7 +43,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
         {
             // Arrange
             var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
+            var handler = local.CreateSut();
             var command = local.CreateCommandWithOfflineId();
 
             local.ShoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, null);
@@ -62,7 +63,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
         {
             // Arrange
             var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
+            var handler = local.CreateSut();
             var command = local.CreateCommandWithOfflineId();
 
             ShoppingListMock listMock = local.ShoppingListMockFixture.Create();
@@ -90,7 +91,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
         {
             // Arrange
             var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
+            var handler = local.CreateSut();
             var command = local.CreateCommandWithActualId();
 
             ShoppingListMock listMock = local.ShoppingListMockFixture.Create();
@@ -128,8 +129,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
 
                 ShoppingListMockFixture = new ShoppingListMockFixture();
 
-                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
-                AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(Fixture);
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+                AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(MockBehavior.Strict);
             }
 
             public AddItemToShoppingListCommand CreateCommandWithActualId()
@@ -148,9 +149,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Add
                 return Fixture.Create<AddItemToShoppingListCommand>();
             }
 
-            public AddItemToShoppingListCommandHandler CreateCommandHandler()
+            public AddItemToShoppingListCommandHandler CreateSut()
             {
-                return Fixture.Create<AddItemToShoppingListCommandHandler>();
+                return new AddItemToShoppingListCommandHandler(
+                    ShoppingListRepositoryMock.Object,
+                    AddItemToShoppingListServiceMock.Object);
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
@@ -32,7 +33,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(null, default);
@@ -51,7 +52,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         {
             // Arrange
             _local.SetupWithManufacturerId();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             var result = await handler.HandleAsync(_local.Command, default);
@@ -68,7 +69,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         {
             // Arrange
             _local.SetupWithManufacturerId();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -85,7 +86,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         {
             // Arrange
             _local.SetupWithManufacturerId();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -102,7 +103,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         {
             // Arrange
             _local.SetupWithManufacturerId();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -119,7 +120,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         {
             // Arrange
             _local.SetupWithManufacturerId();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -140,7 +141,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         {
             // Arrange
             _local.SetupWithManufacturerIdNull();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             var result = await handler.HandleAsync(_local.Command, default);
@@ -157,7 +158,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         {
             // Arrange
             _local.SetupWithManufacturerIdNull();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -174,7 +175,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         {
             // Arrange
             _local.SetupWithManufacturerIdNull();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -191,7 +192,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         {
             // Arrange
             _local.SetupWithManufacturerIdNull();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -208,7 +209,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         {
             // Arrange
             _local.SetupWithManufacturerIdNull();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -240,11 +241,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ItemRepositoryMock = new ItemRepositoryMock(Fixture);
-                StoreItemFactoryMock = new StoreItemFactoryMock(Fixture);
-                ItemCategoryValidationServiceMock = new ItemCategoryValidationServiceMock(Fixture);
-                ManufacturerValidationServiceMock = new ManufacturerValidationServiceMock(Fixture);
-                AvailabilityValidationServiceMock = new AvailabilityValidationServiceMock(Fixture);
+                ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
+                StoreItemFactoryMock = new StoreItemFactoryMock(MockBehavior.Strict);
+                ItemCategoryValidationServiceMock = new ItemCategoryValidationServiceMock(MockBehavior.Strict);
+                ManufacturerValidationServiceMock = new ManufacturerValidationServiceMock(MockBehavior.Strict);
+                AvailabilityValidationServiceMock = new AvailabilityValidationServiceMock(MockBehavior.Strict);
             }
 
             public void SetupCommand()
@@ -256,9 +257,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                 Command = Fixture.Create<CreateItemCommand>();
             }
 
-            public CreateItemCommandHandler CreateCommandHandler()
+            public CreateItemCommandHandler CreateSut()
             {
-                return Fixture.Create<CreateItemCommandHandler>();
+                return new CreateItemCommandHandler(
+                    ItemCategoryValidationServiceMock.Object,
+                    ManufacturerValidationServiceMock.Object,
+                    AvailabilityValidationServiceMock.Object,
+                    ItemRepositoryMock.Object,
+                    StoreItemFactoryMock.Object);
             }
 
             public void SetupManufacturerId()

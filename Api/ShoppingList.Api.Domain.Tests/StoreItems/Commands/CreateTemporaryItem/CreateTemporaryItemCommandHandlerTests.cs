@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
@@ -28,7 +29,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(null, default);
@@ -46,7 +47,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         public async Task HandleAsync_WithValidData_ShouldReturnTrue()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupWithValidData();
 
             // Act
@@ -63,7 +64,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         public async Task HandleAsync_WithValidData_ShouldValidateAvailabilities()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupWithValidData();
 
             // Act
@@ -80,7 +81,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
         public async Task HandleAsync_WithValidData_ShouldStoreItem()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupWithValidData();
 
             // Act
@@ -111,9 +112,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ItemRepositoryMock = new ItemRepositoryMock(Fixture);
-                StoreItemFactoryMock = new StoreItemFactoryMock(Fixture);
-                AvailabilityValidationServiceMock = new AvailabilityValidationServiceMock(Fixture);
+                ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
+                StoreItemFactoryMock = new StoreItemFactoryMock(MockBehavior.Strict);
+                AvailabilityValidationServiceMock = new AvailabilityValidationServiceMock(MockBehavior.Strict);
             }
 
             public void SetupCommand()
@@ -122,9 +123,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                 Command = Fixture.Create<CreateTemporaryItemCommand>();
             }
 
-            public CreateTemporaryItemCommandHandler CreateCommandHandler()
+            public CreateTemporaryItemCommandHandler CreateSut()
             {
-                return Fixture.Create<CreateTemporaryItemCommandHandler>();
+                return new CreateTemporaryItemCommandHandler(
+                    ItemRepositoryMock.Object,
+                    StoreItemFactoryMock.Object,
+                    AvailabilityValidationServiceMock.Object);
             }
 
             public void SetupStoreItem()

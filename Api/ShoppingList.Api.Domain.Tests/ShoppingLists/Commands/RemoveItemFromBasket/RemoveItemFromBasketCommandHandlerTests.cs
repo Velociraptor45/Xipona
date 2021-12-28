@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromBasket;
@@ -31,7 +32,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(null, default);
@@ -51,7 +52,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             _local.SetupShoppingListMock();
             _local.SetupFindingShoppingList();
             _local.SetupFindingNoItemByOfflineId();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(_local.Command, default);
@@ -69,7 +70,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             // Arrange
             _local.SetupCommandWithOfflineId();
             _local.SetupFindingNoShoppingList();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(_local.Command, default);
@@ -88,7 +89,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         {
             // Arrange
             _local.SetupWithActualId();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             bool result = await handler.HandleAsync(_local.Command, default);
@@ -105,7 +106,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         {
             // Arrange
             _local.SetupWithActualId();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -122,7 +123,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         {
             // Arrange
             _local.SetupWithActualId();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -143,7 +144,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         {
             // Arrange
             _local.SetupWithValidOfflineId();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             bool result = await handler.HandleAsync(_local.Command, default);
@@ -160,7 +161,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         {
             // Arrange
             _local.SetupWithValidOfflineId();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -177,7 +178,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         {
             // Arrange
             _local.SetupWithValidOfflineId();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -206,8 +207,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
-                ItemRepositoryMock = new ItemRepositoryMock(Fixture);
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+                ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
             }
 
             public void SetupCommandWithActualId()
@@ -227,9 +228,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
                 Command = Fixture.Create<RemoveItemFromBasketCommand>();
             }
 
-            public RemoveItemFromBasketCommandHandler CreateCommandHandler()
+            public RemoveItemFromBasketCommandHandler CreateSut()
             {
-                return Fixture.Create<RemoveItemFromBasketCommandHandler>();
+                return new RemoveItemFromBasketCommandHandler(
+                    ShoppingListRepositoryMock.Object,
+                    ItemRepositoryMock.Object);
             }
 
             public void SetupItem()

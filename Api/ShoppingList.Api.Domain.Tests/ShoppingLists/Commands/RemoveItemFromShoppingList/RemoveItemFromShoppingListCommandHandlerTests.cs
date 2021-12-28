@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
@@ -33,7 +34,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupCommandNull();
 
             // Act
@@ -50,7 +51,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         public async Task HandleAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupCommandWithOfflineId();
             _local.SetupFindingNoShoppingList();
 
@@ -69,7 +70,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         public async Task HandleAsync_WithInvalidActualItemId_ShouldThrowDomainException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupCommandWithActualId();
 
             _local.SetupShoppingListMock();
@@ -90,7 +91,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         public async Task HandleAsync_WithInvalidOfflineId_ShouldThrowDomainException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupCommandWithOfflineId();
 
             _local.SetupShoppingListMock();
@@ -115,7 +116,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
         public async Task HandleAsync_WithValidActualId_ShouldRemoveItemFromBasket(bool isActualItemId, bool isTemporaryItem)
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             if (isTemporaryItem)
                 _local.SetupTemporaryItemMock();
@@ -181,9 +182,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
-                ItemRepositoryMock = new ItemRepositoryMock(Fixture);
-                TransactionGeneratorMock = new TransactionGeneratorMock(Fixture);
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+                ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
+                TransactionGeneratorMock = new TransactionGeneratorMock(MockBehavior.Strict);
             }
 
             public void SetupCommandWithActualId()
@@ -208,9 +209,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
                 Command = null;
             }
 
-            public RemoveItemFromShoppingListCommandHandler CreateCommandHandler()
+            public RemoveItemFromShoppingListCommandHandler CreateSut()
             {
-                return Fixture.Create<RemoveItemFromShoppingListCommandHandler>();
+                return new RemoveItemFromShoppingListCommandHandler(
+                    ShoppingListRepositoryMock.Object,
+                    ItemRepositoryMock.Object,
+                    TransactionGeneratorMock.Object);
             }
 
             public void SetupTemporaryItemMock()

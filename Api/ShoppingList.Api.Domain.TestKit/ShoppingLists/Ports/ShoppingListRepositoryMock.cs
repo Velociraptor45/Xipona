@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using Moq;
+﻿using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
@@ -10,25 +9,16 @@ using System.Threading.Tasks;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports
 {
-    public class ShoppingListRepositoryMock
+    public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
     {
-        private readonly Mock<IShoppingListRepository> mock;
-
-        public ShoppingListRepositoryMock(Mock<IShoppingListRepository> mock)
+        public ShoppingListRepositoryMock(MockBehavior behavior) : base(behavior)
         {
-            this.mock = mock;
-        }
-
-        public ShoppingListRepositoryMock(Fixture fixture)
-        {
-            mock = fixture.Freeze<Mock<IShoppingListRepository>>();
         }
 
         public void SetupFindActiveByAsync(ItemId storeItemId,
             IEnumerable<IShoppingList> returnValue)
         {
-            mock
-                .Setup(i => i.FindActiveByAsync(
+            Setup(i => i.FindActiveByAsync(
                     It.Is<ItemId>(id => id == storeItemId),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(returnValue));
@@ -37,8 +27,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports
         public void SetupFindActiveByAsync(
             IEnumerable<IShoppingList> returnValue)
         {
-            mock
-                .Setup(i => i.FindActiveByAsync(
+            Setup(i => i.FindActiveByAsync(
                     It.IsAny<ItemId>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(returnValue);
@@ -46,8 +35,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports
 
         public void SetupFindActiveByAsync(StoreId storeId, IShoppingList returnValue)
         {
-            mock
-                .Setup(i => i.FindActiveByAsync(
+            Setup(i => i.FindActiveByAsync(
                     It.Is<StoreId>(id => id == storeId),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(returnValue));
@@ -56,8 +44,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports
         public void SetupFindByAsync(ShoppingListId shoppingListId,
             IShoppingList returnValue)
         {
-            mock
-                .Setup(instance => instance.FindByAsync(
+            Setup(instance => instance.FindByAsync(
                     It.Is<ShoppingListId>(id => id == shoppingListId),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(returnValue));
@@ -65,7 +52,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports
 
         public void VerifyStoreAsyncOnce(IShoppingList shoppingList)
         {
-            mock.Verify(
+            Verify(
                 i => i.StoreAsync(
                     It.Is<IShoppingList>(list => list == shoppingList),
                     It.IsAny<CancellationToken>()),
@@ -74,7 +61,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports
 
         public void VerifyStoreAsyncNever()
         {
-            mock.Verify(
+            Verify(
                 i => i.StoreAsync(
                     It.IsAny<IShoppingList>(),
                     It.IsAny<CancellationToken>()),

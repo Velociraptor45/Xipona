@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -9,6 +10,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
@@ -36,7 +38,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupStoreItem();
             local.SetupSectionId();
@@ -58,7 +60,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupShoppingListMock();
             local.SetupStoreItemNull();
@@ -81,7 +83,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupShoppingListMock();
             local.SetupStoreItem();
@@ -107,7 +109,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupStoreItem();
             local.SetupShoppingListMockMatchingStoreItem();
@@ -142,7 +144,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupTemporaryStoreItem();
             local.SetupSectionId();
@@ -164,7 +166,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupShoppingListMock();
             local.SetupTemporaryStoreItemNull();
@@ -187,7 +189,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupShoppingListMock();
             local.SetupTemporaryStoreItem();
@@ -213,7 +215,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupTemporaryStoreItem();
             local.SetupShoppingListMockMatchingStoreItem();
@@ -248,7 +250,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupStoreItem();
             local.SetupShoppingListMockNotMatchingStoreItem();
@@ -273,7 +275,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupStoreItem();
             local.SetupShoppingListMockMatchingStoreItem();
@@ -306,7 +308,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupShoppingListMock();
             local.SetupShoppingListItem();
@@ -331,7 +333,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupShoppingListMock();
             local.SetupShoppingListItem();
@@ -357,7 +359,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupShoppingListMock();
             local.SetupShoppingListItem();
@@ -386,7 +388,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupShoppingListMock();
             local.SetupShoppingListItem();
@@ -417,7 +419,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             public StoreRepositoryMock StoreRepositoryMock { get; }
             public ItemRepositoryMock ItemRepositoryMock { get; }
             public ShoppingListItemFactoryMock ShoppingListItemFactoryMock { get; }
-
+            public ShoppingListRepositoryMock ShoppingListRepositoryMock { get; }
             public ShoppingListMock ShoppingListMock { get; private set; }
             public SectionId SectionId { get; private set; }
             public float Quantity { get; private set; }
@@ -430,15 +432,21 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ShoppingListSectionFactoryMock = new ShoppingListSectionFactoryMock(Fixture);
-                StoreRepositoryMock = new StoreRepositoryMock(Fixture);
-                ItemRepositoryMock = new ItemRepositoryMock(Fixture);
-                ShoppingListItemFactoryMock = new ShoppingListItemFactoryMock(Fixture);
+                ShoppingListSectionFactoryMock = new ShoppingListSectionFactoryMock(MockBehavior.Strict);
+                StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
+                ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
+                ShoppingListItemFactoryMock = new ShoppingListItemFactoryMock(MockBehavior.Strict);
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
             }
 
-            public AddItemToShoppingListService CreateService()
+            public AddItemToShoppingListService CreateSut()
             {
-                return Fixture.Create<AddItemToShoppingListService>();
+                return new AddItemToShoppingListService(
+                    ShoppingListSectionFactoryMock.Object,
+                    StoreRepositoryMock.Object,
+                    ItemRepositoryMock.Object,
+                    ShoppingListItemFactoryMock.Object,
+                    ShoppingListRepositoryMock.Object);
             }
 
             public void SetupShoppingListMock()

@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
@@ -33,7 +34,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         public async Task ExchangeItemAsync_WithOldItemIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
             _local.SetupNewItem();
             _local.SetupOldItemNull();
 
@@ -51,7 +52,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         public async Task ExchangeItemAsync_WithNewItemIdIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
             _local.SetupNewItemNull();
             _local.SetupOldItem();
 
@@ -69,7 +70,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         public async Task ExchangeItemAsync_WithOldItemOnNoShoppingLists_ShouldDoNothing()
         {
             // Arrange
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             _local.SetupOldItem();
             _local.SetupNewItem();
@@ -93,7 +94,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             // Arrange
             _local.SetupWithNewItemNotAvailableForShoppingList();
 
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             // Act
             await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
@@ -111,7 +112,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             // Arrange
             _local.SetupWithNewItemNotAvailableForShoppingList();
 
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             // Act
             await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
@@ -129,7 +130,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             // Arrange
             _local.SetupWithNewItemNotAvailableForShoppingList();
 
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             // Act
             await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
@@ -150,7 +151,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             _local.SetupWithNewItemAvailableForShoppingListAndInBasket();
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             // Act
             await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
@@ -167,7 +168,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             _local.SetupWithNewItemAvailableForShoppingListAndInBasket();
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             // Act
             await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
@@ -184,7 +185,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             _local.SetupWithNewItemAvailableForShoppingListAndInBasket();
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             // Act
             await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
@@ -201,7 +202,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             _local.SetupWithNewItemAvailableForShoppingListAndInBasket();
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             // Act
             await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
@@ -222,7 +223,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             _local.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             // Act
             await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
@@ -239,7 +240,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             _local.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             // Act
             await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
@@ -256,7 +257,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             _local.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             // Act
             await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
@@ -273,7 +274,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
         {
             // Arrange
             _local.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             // Act
             await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
@@ -304,13 +305,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
-                AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(Fixture);
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+                AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(MockBehavior.Strict);
             }
 
-            public ShoppingListUpdateService CreateService()
+            public ShoppingListUpdateService CreateSut()
             {
-                return Fixture.Create<ShoppingListUpdateService>();
+                return new ShoppingListUpdateService(
+                    ShoppingListRepositoryMock.Object,
+                    AddItemToShoppingListServiceMock.Object);
             }
 
             public void SetupNewItemMatchingShoppingList()

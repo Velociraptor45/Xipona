@@ -1,6 +1,7 @@
 ﻿using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,6 +15,13 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
             SetupIsTemporary(storeItem.IsTemporary);
             SetupIsDeleted(storeItem.IsDeleted);
             SetupAvailabilities(storeItem.Availabilities);
+            SetupItemTypes(storeItem.ItemTypes);
+        }
+
+        private void SetupItemTypes(ItemTypes itemTypes)
+        {
+            Setup(i => i.ItemTypes)
+                .Returns(itemTypes);
         }
 
         public void SetupId(ItemId returnValue)

@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
@@ -31,7 +32,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(null, default);
@@ -47,7 +48,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
         public async Task HandleAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupTemporaryItemId();
             _local.SetupCommand();
 
@@ -68,7 +69,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
         public async Task HandleAsync_WithInvalidOfflineId_ShouldThrowDomainException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupTemporaryItemId();
             _local.SetupCommand();
 
@@ -92,7 +93,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
         public async Task HandleAsync_WithActualId_ShouldChangeItemQuantityAndStoreIt()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupCommand();
             _local.SetupShoppingListMock();
             _local.SetupShoppingListRepositoryFindBy();
@@ -113,7 +114,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
         public async Task HandleAsync_WithOfflineId_ShouldChangeItemQuantityAndStoreIt()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupTemporaryItemId();
             _local.SetupCommand();
             _local.SetupShoppingListMock();
@@ -150,8 +151,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
-                ItemRepositoryMock = new ItemRepositoryMock(Fixture);
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+                ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
             }
 
             public void SetupCommand()
@@ -168,9 +169,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
                 Command = Fixture.Create<ChangeItemQuantityOnShoppingListCommand>();
             }
 
-            public ChangeItemQuantityOnShoppingListCommandHandler CreateCommandHandler()
+            public ChangeItemQuantityOnShoppingListCommandHandler CreateSut()
             {
-                return Fixture.Create<ChangeItemQuantityOnShoppingListCommandHandler>();
+                return new ChangeItemQuantityOnShoppingListCommandHandler(
+                    ShoppingListRepositoryMock.Object,
+                    ItemRepositoryMock.Object);
             }
 
             public void SetupTemporaryItemId()

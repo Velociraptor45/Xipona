@@ -20,20 +20,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
 {
     public class FinishShoppingListCommandHandlerTests
     {
-        private readonly CommonFixture commonFixture;
-        private readonly ShoppingListMockFixture shoppingListMockFixture;
+        private readonly CommonFixture _commonFixture;
+        private readonly ShoppingListMockFixture _shoppingListMockFixture;
+        private readonly LocalFixture _fixture;
 
         public FinishShoppingListCommandHandlerTests()
         {
-            commonFixture = new CommonFixture();
-            shoppingListMockFixture = new ShoppingListMockFixture();
+            _commonFixture = new CommonFixture();
+            _shoppingListMockFixture = new ShoppingListMockFixture();
+            _fixture = new LocalFixture();
         }
 
         [Fact]
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
+            var fixture = _commonFixture.GetNewFixture();
             var handler = fixture.Create<FinishShoppingListCommandHandler>();
 
             // Act
@@ -50,9 +52,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
         public async Task HandleAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
+            var fixture = _commonFixture.GetNewFixture();
 
-            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
+            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
 
             var command = fixture.Create<FinishShoppingListCommand>();
             var handler = fixture.Create<FinishShoppingListCommandHandler>();
@@ -74,22 +76,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
         public async Task HandleAsync_WithValidData_ShouldFinishShoppingList()
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
+            var fixture = _commonFixture.GetNewFixture();
 
-            TransactionGeneratorMock transactionGeneratorMock = new TransactionGeneratorMock(fixture);
-            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(fixture);
             Mock<ITransaction> transactionMock = new Mock<ITransaction>();
 
-            ShoppingListMock listMock = shoppingListMockFixture.Create();
-            ShoppingListMock remainingListMock = shoppingListMockFixture.Create();
+            ShoppingListMock listMock = _shoppingListMockFixture.Create();
+            ShoppingListMock remainingListMock = _shoppingListMockFixture.Create();
 
             var command = fixture.Create<FinishShoppingListCommand>();
-            var handler = fixture.Create<FinishShoppingListCommandHandler>();
+            var handler = _fixture.CreateSut();
 
             listMock.SetupFinish(command.CompletionDate, remainingListMock.Object);
 
-            shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
-            transactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
+            _fixture.ShoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
+            _fixture.TransactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
 
             // Act
             bool result = await handler.HandleAsync(command, default);
@@ -99,13 +99,31 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
             {
                 result.Should().BeTrue();
                 listMock.VerifyFinishOnce(command.CompletionDate);
-                transactionGeneratorMock.VerifyGenerateAsyncOnce();
-                shoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
-                shoppingListRepositoryMock.VerifyStoreAsyncOnce(remainingListMock.Object);
+                _fixture.TransactionGeneratorMock.VerifyGenerateAsyncOnce();
+                _fixture.ShoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
+                _fixture.ShoppingListRepositoryMock.VerifyStoreAsyncOnce(remainingListMock.Object);
                 transactionMock.Verify(
                     i => i.CommitAsync(
                         It.IsAny<CancellationToken>()),
                     Times.Once);
+            }
+        }
+
+        private class LocalFixture
+        {
+            public LocalFixture()
+            {
+                TransactionGeneratorMock = new TransactionGeneratorMock(MockBehavior.Strict);
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+            }
+
+            public TransactionGeneratorMock TransactionGeneratorMock { get; private set; }
+            public ShoppingListRepositoryMock ShoppingListRepositoryMock { get; private set; }
+
+            public FinishShoppingListCommandHandler CreateSut()
+            {
+                return new FinishShoppingListCommandHandler(ShoppingListRepositoryMock.Object,
+                    TransactionGeneratorMock.Object);
             }
         }
     }

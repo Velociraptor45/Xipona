@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services;
@@ -21,7 +22,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Manufacturers.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             // Act
             Func<Task> function = async () => await service.ValidateAsync(null, default);
@@ -38,7 +39,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Manufacturers.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupManufacturer();
             local.SetupFindingNoManufacturer();
@@ -58,7 +59,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Manufacturers.Services
         {
             // Arrange
             var local = new LocalFixture();
-            var service = local.CreateService();
+            var service = local.CreateSut();
 
             local.SetupManufacturer();
             local.SetupFindingManufacturer();
@@ -85,12 +86,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Manufacturers.Services
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ManufacturerRepositoryMock = new ManufacturerRepositoryMock(Fixture);
+                ManufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
             }
 
-            public ManufacturerValidationService CreateService()
+            public ManufacturerValidationService CreateSut()
             {
-                return Fixture.Create<ManufacturerValidationService>();
+                return new ManufacturerValidationService(ManufacturerRepositoryMock.Object);
             }
 
             public void SetupManufacturer()

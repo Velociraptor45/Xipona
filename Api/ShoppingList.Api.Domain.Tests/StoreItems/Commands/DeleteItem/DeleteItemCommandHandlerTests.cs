@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem;
 using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
@@ -25,7 +26,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
         {
             // Arrange
             var local = new LocalFixture();
-            var handler = local.CreateCommandHandler();
+            var handler = local.CreateSut();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(null, default);
@@ -45,7 +46,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
             local.SetupCommand();
             local.SetupFindingNoItem();
 
-            var handler = local.CreateCommandHandler();
+            var handler = local.CreateSut();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(local.Command, default);
@@ -71,7 +72,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
             local.SetupFindingShoppingList(shoppingListMocks);
             local.SetupGeneratingTransaction();
 
-            var handler = local.CreateCommandHandler();
+            var handler = local.CreateSut();
 
             // Act
             var result = await handler.HandleAsync(local.Command, default);
@@ -111,9 +112,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
-                ItemRepositoryMock = new ItemRepositoryMock(Fixture);
-                TransactionGeneratorMock = new TransactionGeneratorMock(Fixture);
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+                ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
+                TransactionGeneratorMock = new TransactionGeneratorMock(MockBehavior.Strict);
             }
 
             public void SetupCommand()
@@ -121,9 +122,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
                 Command = Fixture.Create<DeleteItemCommand>();
             }
 
-            public DeleteItemCommandHandler CreateCommandHandler()
+            public DeleteItemCommandHandler CreateSut()
             {
-                return Fixture.Create<DeleteItemCommandHandler>();
+                return new DeleteItemCommandHandler(
+                    ItemRepositoryMock.Object,
+                    ShoppingListRepositoryMock.Object,
+                    TransactionGeneratorMock.Object);
             }
 
             public void SetupStoreItemMock()
