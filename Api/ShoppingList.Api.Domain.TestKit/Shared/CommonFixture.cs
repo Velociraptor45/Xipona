@@ -101,5 +101,17 @@ namespace ShoppingList.Api.Domain.TestKit.Shared
             var fixture = GetNewFixture();
             return fixture.Create<DateTime>();
         }
+
+        public IEnumerable<T> RemoveRandom<T>(IEnumerable<T> enumerable, int count)
+        {
+            var list = enumerable.ToList();
+            for (int i = 0; i < count; i++)
+            {
+                var index = NextInt(0, list.Count - 1);
+                list.RemoveAt(index);
+            }
+
+            return list;
+        }
     }
 }

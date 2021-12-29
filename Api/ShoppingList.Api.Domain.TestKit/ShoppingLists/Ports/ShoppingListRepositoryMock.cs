@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -50,6 +51,12 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports
                 .Returns(Task.FromResult(returnValue));
         }
 
+        public void SetupFindByAsync(ItemTypeId itemTypeId, IEnumerable<IShoppingList> returnValue)
+        {
+            Setup(m => m.FindByAsync(itemTypeId, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(returnValue);
+        }
+
         public void VerifyStoreAsyncOnce(IShoppingList shoppingList)
         {
             Verify(
@@ -66,6 +73,21 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports
                     It.IsAny<IShoppingList>(),
                     It.IsAny<CancellationToken>()),
                 Times.Never);
+        }
+
+        public void VerifyStoreAsync(IShoppingList shoppingList, Func<Times> times)
+        {
+            Verify(
+                i => i.StoreAsync(
+                    shoppingList,
+                    It.IsAny<CancellationToken>()),
+                times);
+        }
+
+        public void SetupStoreAsync(IShoppingList shoppingList)
+        {
+            Setup(m => m.StoreAsync(shoppingList, It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
         }
     }
 }

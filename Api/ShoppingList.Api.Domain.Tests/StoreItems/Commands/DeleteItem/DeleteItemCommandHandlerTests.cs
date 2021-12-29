@@ -132,7 +132,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
 
             public void SetupStoreItemMock()
             {
-                StoreItemMock = new StoreItemMock(StoreItemMother.Initial().Create());
+                StoreItemMock = new StoreItemMock(StoreItemMother.Initial().Create(), MockBehavior.Strict);
             }
 
             public void SetupTransactionMock()

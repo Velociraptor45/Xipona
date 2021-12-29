@@ -220,13 +220,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             public void SetupTemporaryItemMock()
             {
                 var item = StoreItemMother.InitialTemporary().Create();
-                ItemMock = new StoreItemMock(item);
+                ItemMock = new StoreItemMock(item, MockBehavior.Strict);
             }
 
             public void SetupItemMock()
             {
                 var item = StoreItemMother.Initial().Create();
-                ItemMock = new StoreItemMock(item);
+                ItemMock = new StoreItemMock(item, MockBehavior.Strict);
             }
 
             public void SetupShoppingListMock()

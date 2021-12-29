@@ -13,6 +13,14 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
                 .AsItem();
         }
 
+        public static StoreItemBuilder InitialWithTypes()
+        {
+            return new StoreItemBuilder()
+                .WithIsDeleted(false)
+                .WithIsTemporary(false)
+                .WithoutTemporaryId();
+        }
+
         public static StoreItemBuilder InitialTemporary()
         {
             return new StoreItemBuilder()

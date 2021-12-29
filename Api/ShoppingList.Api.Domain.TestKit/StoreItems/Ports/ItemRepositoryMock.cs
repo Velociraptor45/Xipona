@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -80,6 +81,17 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Ports
                     It.IsAny<IStoreItem>(),
                     It.IsAny<CancellationToken>()),
                 Times.Never);
+        }
+
+        public void SetupStoreAsync(IStoreItem item, IStoreItem returnValue)
+        {
+            Setup(m => m.StoreAsync(item, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(returnValue);
+        }
+
+        public void VerifyStoreAsync(IStoreItem item, Func<Times> times)
+        {
+            Verify(m => m.StoreAsync(item, It.IsAny<CancellationToken>()), times);
         }
     }
 }

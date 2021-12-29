@@ -496,7 +496,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
             {
                 StoreItemMocks = StoreItemMother.Initial()
                     .CreateMany(2)
-                    .Select(i => new StoreItemMock(i))
+                    .Select(i => new StoreItemMock(i, MockBehavior.Strict))
                     .ToList();
             }
 

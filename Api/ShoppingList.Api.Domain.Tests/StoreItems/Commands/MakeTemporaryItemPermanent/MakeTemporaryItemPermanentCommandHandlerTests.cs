@@ -199,7 +199,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
 
             public void SetupStoreItemMock(IStoreItem storeItem)
             {
-                StoreItemMock = new StoreItemMock(storeItem);
+                StoreItemMock = new StoreItemMock(storeItem, MockBehavior.Strict);
             }
         }
     }
