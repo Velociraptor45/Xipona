@@ -1,16 +1,20 @@
 ﻿using AutoFixture;
+using FluentAssertions;
 using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services.Validation;
+using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +30,34 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
         public ItemModificationServiceTests()
         {
             _fixture = new LocalFixture();
+        }
+
+        [Fact]
+        public async Task ModifyItemWithTypesAsync_WithModificationNull_ShouldThrowArgumentNullException()
+        {
+            // Arrange
+            var sut = _fixture.CreateSut();
+
+            // Act
+            Func<Task> func = async () => await sut.ModifyItemWithTypesAsync(null);
+
+            // Assert
+            await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*modification*");
+        }
+
+        [Fact]
+        public async Task ModifyItemWithTypesAsync_WithNotFindingItem_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupNotFindingItem();
+            _fixture.SetupModification();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            Func<Task> func = async () => await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemNotFound);
         }
 
         #region WithModifiedItemTypesEqualToExisting
@@ -329,10 +361,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
                     default);
             }
 
-            private void SetupModification()
+            public void SetupModification()
             {
-                _fixture.ConstructorArgumentFor<ItemWithTypesModification, IEnumerable<IItemType>>("itemTypes",
-                    _modifiedItemTypes);
+                if (_modifiedItemTypes != null)
+                {
+                    _fixture.ConstructorArgumentFor<ItemWithTypesModification, IEnumerable<IItemType>>("itemTypes",
+                        _modifiedItemTypes);
+                }
                 _fixture.ConstructorArgumentFor<ItemWithTypesModification, ItemId>("id", _itemMock.Object.Id);
                 Modification = _fixture.Create<ItemWithTypesModification>();
             }
@@ -343,10 +378,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
                 _itemRepositoryMock.SetupFindByAsync(_itemMock.Object.Id, _itemMock.Object);
             }
 
+            public void SetupNotFindingItem()
+            {
+                _itemMock = new StoreItemMock(StoreItemMother.InitialWithTypes().Create(), MockBehavior.Strict);
+                _itemRepositoryMock.SetupFindByAsync(_itemMock.Object.Id, null);
+            }
+
             private void SetupItemReturningTypes()
             {
+                var originalItemTypes = _itemMock.Object.ItemTypes;
                 _itemMock.SetupItemTypes()
-                    .Returns(_itemMock.ModifyWithTypeCalled ? _itemMock.Object.ItemTypes : new ItemTypes(Modification.ItemTypes));
+                    .Returns(() =>
+                        _itemMock.ModifyWithTypeCalled ? new ItemTypes(Modification.ItemTypes) : originalItemTypes);
             }
 
             private void SetupModifyingItem()
@@ -385,7 +428,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
                         removedOne = true;
                         return new ItemTypeBuilder(t).WithAvailabilities(av).Create();
                     })
-                    .ToList<IItemType>();
+                    .ToList();
             }
 
             private void SetupFindingShoppingListsWithoutStoreChanges()
@@ -393,7 +436,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
                 var dict = new Dictionary<ItemTypeId, List<ShoppingListMock>>();
                 foreach (var type in _itemMock.Object.ItemTypes)
                 {
-                    var storeId = _commonFixture.ChooseRandom(type.Availabilities).StoreId;
+                    var storeId = StoreIdMother.OneFrom(type.Availabilities).Create();
                     var shoppingLists = new ShoppingListBuilder()
                         .WithStoreId(storeId)
                         .CreateMany(1)
@@ -412,9 +455,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
                 foreach (var type in _itemMock.Object.ItemTypes)
                 {
                     var storeId =
-                        type.Id == _removedStoreByTypeId.Item1 ?
-                        new StoreId(_commonFixture.NextInt(type.Availabilities.Select(av => av.StoreId.Value))) :
-                        _commonFixture.ChooseRandom(type.Availabilities).StoreId;
+                        type.Id == _removedStoreByTypeId.Item1
+                            ? StoreIdMother.OneNotFrom(type.Availabilities).Create()
+                            : StoreIdMother.OneFrom(type.Availabilities).Create();
                     var shoppingListMocks = new ShoppingListBuilder()
                         .WithStoreId(storeId)
                         .CreateMany(1)
