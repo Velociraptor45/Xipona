@@ -694,15 +694,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
                 _itemToTypeIdMappings.Add(new ItemWithMatchingItemTypeIds(item, item.ItemTypes.Select(t => t.Id)));
             }
 
-            public void SetupItemTypeMappingsPartiallyNotOnShoppingList()
-            {
-                var item = _itemsFromTypeMapping.Single(i => i.HasItemTypes);
-                var itemTypeIds = item.ItemTypes.Select(t => t.Id);
-                var typesNotOnList =
-                    itemTypeIds.Except(_shoppingList.Items.Where(i => i.TypeId != null).Select(t => t.TypeId));
-                _itemToTypeIdMappings.Add(new ItemWithMatchingItemTypeIds(item, typesNotOnList));
-            }
-
             public void SetupConversionServiceReceivingEmptyItemList()
             {
                 _conversionServiceMock.SetupConvertAsync(Enumerable.Empty<IStoreItem>(), _store,
