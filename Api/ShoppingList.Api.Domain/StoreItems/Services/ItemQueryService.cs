@@ -42,6 +42,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
         {
             if (storeId is null)
                 throw new ArgumentNullException(nameof(storeId));
+            if (name == null) 
+                throw new ArgumentNullException(nameof(name));
             if (string.IsNullOrWhiteSpace(name))
                 return Enumerable.Empty<ItemSearchReadModel>();
 

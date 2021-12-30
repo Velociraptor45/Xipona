@@ -1,11 +1,13 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Moq;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
@@ -14,6 +16,7 @@ using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services.Conversion.ItemSearchReadModels;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Ports;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,6 +31,94 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
         public ItemQueryServiceTests()
         {
             _fixture = new LocalFixture();
+        }
+
+        [Fact]
+        public async Task SearchAsync_WithNameIsEmpty_ShouldReturnEmptyResult()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = await sut.SearchAsync(string.Empty, _fixture.StoreId);
+
+            // Assert
+            result.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task SearchAsync_WithNameIsWhiteSpace_ShouldReturnEmptyResult()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = await sut.SearchAsync("  ", _fixture.StoreId);
+
+            // Assert
+            result.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task SearchAsync_WithNameNull_ShouldThrowArgumentNullException()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            Func<Task> func = async () => await sut.SearchAsync(null, _fixture.StoreId);
+
+            // Assert
+            await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*name*");
+        }
+
+        [Fact]
+        public async Task SearchAsync_WithStoreIdNull_ShouldThrowArgumentNullException()
+        {
+            // Arrange
+            _fixture.SetupName();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            Func<Task> func = async () => await sut.SearchAsync(_fixture.Name, null);
+
+            // Assert
+            await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*storeId*");
+        }
+
+        [Fact]
+        public async Task SearchAsync_WithStoreNotFound_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupParameters();
+            _fixture.SetupNotFindingStore();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            Func<Task> func = async () => await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.StoreNotFound);
+        }
+
+        [Fact]
+        public async Task SearchAsync_WithShoppingListNotFound_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupParameters();
+            _fixture.SetupFindingNoItems();
+            _fixture.SetupFindingStore();
+            _fixture.SetupNotFindingShoppingList();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            Func<Task> func = async () => await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListNotFound);
         }
 
         [Fact]
@@ -82,7 +173,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
             _fixture.SetupParameters();
             _fixture.SetupItemsWithTypes(availableAtStore);
             _fixture.SetupFindingItems();
-            _fixture.SetupFindingShoppingListWithItemWithTypes(true);
+            _fixture.SetupFindingShoppingListWithItemWithTypes(true, false);
             _fixture.SetupFindingStore();
             _fixture.SetupFindingNoItemTypeMapping();
             _fixture.SetupItemTypesPartiallyNotOnShoppingList();
@@ -104,7 +195,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
             _fixture.SetupParameters();
             _fixture.SetupItemsWithTypes(true);
             _fixture.SetupFindingItems();
-            _fixture.SetupFindingShoppingListWithItemWithTypes(false);
+            _fixture.SetupFindingShoppingListWithItemWithTypes(false, false);
             _fixture.SetupFindingStore();
             _fixture.SetupFindingNoItemTypeMapping();
             _fixture.SetupAllItemTypesNotOnShoppingList();
@@ -126,7 +217,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
             _fixture.SetupParameters();
             _fixture.SetupItemsWithTypes(false);
             _fixture.SetupFindingItems();
-            _fixture.SetupFindingShoppingListWithItemWithTypes(false);
+            _fixture.SetupFindingShoppingListWithItemWithTypes(false, false);
             _fixture.SetupFindingStore();
             _fixture.SetupFindingNoItemTypeMapping();
             _fixture.SetupAllItemTypesOnShoppingListOrNotAvailable();
@@ -148,7 +239,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
             _fixture.SetupParameters();
             _fixture.SetupItemsWithTypes(true, 2);
             _fixture.SetupFindingItems();
-            _fixture.SetupFindingShoppingListWithItemWithTypes(true);
+            _fixture.SetupFindingShoppingListWithItemWithTypes(true, false);
             _fixture.SetupFindingStore();
             _fixture.SetupFindingNoItemTypeMapping();
             _fixture.SetupItemTypesPartiallyNotOnShoppingList();
@@ -190,14 +281,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
         {
             // Arrange
             _fixture.SetupParameters();
-            _fixture.SetupItemsWithTypes(true);
+            _fixture.SetupItemsFromTypeMapping(true);
             _fixture.SetupFindingNoItems();
-            _fixture.SetupFindingShoppingListWithItemWithTypes(false);
+            _fixture.SetupFindingShoppingListWithItemWithTypes(false, false);
             _fixture.SetupFindingStore();
+
             _fixture.SetupItemTypeMapping();
             _fixture.SetupFindingItemTypeMapping();
-            _fixture.SetupFindingItemsById();
-            _fixture.SetupAllItemTypesNotOnShoppingList();
+            _fixture.SetupFindingItemsFromTypeMapping();
+
+            _fixture.SetupAllItemTypeMappingsNotOnShoppingList();
+
             _fixture.SetupConversionServiceReceivingEmptyItemList();
             _fixture.SetupConversionServiceReceivingItemWithTypeList();
             var sut = _fixture.CreateSut();
@@ -210,18 +304,76 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
         }
 
         [Fact]
-        public async Task SearchAsync_WithItemTypeDuplicatedByItem_ShouldReturnExpectedResult() //todo
+        public async Task SearchAsync_WithItemFromTypeMappingNotFound_ShouldThrowDomainException()
         {
             // Arrange
             _fixture.SetupParameters();
-            _fixture.SetupItemsWithTypes(true);
+            _fixture.SetupItemsFromTypeMapping(true);
             _fixture.SetupFindingNoItems();
-            _fixture.SetupFindingShoppingListWithItemWithTypes(false);
+            _fixture.SetupFindingShoppingListWithItemWithTypes(false, false);
             _fixture.SetupFindingStore();
+
             _fixture.SetupItemTypeMapping();
             _fixture.SetupFindingItemTypeMapping();
-            _fixture.SetupFindingItemsById();
+            _fixture.SetupFindingNoItemsFromTypeMapping();
+
+            _fixture.SetupAllItemTypeMappingsNotOnShoppingList();
+
+            _fixture.SetupConversionServiceReceivingEmptyItemList();
+            _fixture.SetupConversionServiceReceivingItemWithTypeList();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            Func<Task> func = async () => await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemNotFound);
+        }
+
+        [Fact]
+        public async Task SearchAsync_WithItemTypeMappingAlreadyOnShoppingList_ShouldReturnEmptyResult()
+        {
+            // Arrange
+            _fixture.SetupParameters();
+            _fixture.SetupItemsFromTypeMapping(true);
+            _fixture.SetupFindingNoItems();
+            _fixture.SetupFindingShoppingListWithItemWithTypes(false, true);
+            _fixture.SetupFindingStore();
+
+            _fixture.SetupItemTypeMapping();
+            _fixture.SetupFindingItemTypeMapping();
+            _fixture.SetupFindingNoItemsFromTypeMappingWithEmptyInput();
+
+            _fixture.SetupAllItemTypeMappingsOnShoppingListOrNotAvailable();
+
+            _fixture.SetupConversionServiceReceivingEmptyItemList();
+            _fixture.SetupConversionServiceReceivingEmptyItemWithTypesList();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+
+            // Assert
+            result.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task SearchAsync_WithItemTypeDuplicatedByItemAndNotOnShoppingList_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupParameters();
+            _fixture.SetupItemsFromTypeMapping(true);
+            _fixture.SetupItemsWithTypesFromTypeMapping(true);
+            _fixture.SetupFindingItems();
+            _fixture.SetupFindingShoppingListWithItemWithTypes(false, false);
+            _fixture.SetupFindingStore();
+
+            _fixture.SetupItemTypeMapping();
+            _fixture.SetupFindingItemTypeMapping();
+            _fixture.SetupFindingNoItemsFromTypeMappingWithEmptyInput();
+
             _fixture.SetupAllItemTypesNotOnShoppingList();
+
             _fixture.SetupConversionServiceReceivingEmptyItemList();
             _fixture.SetupConversionServiceReceivingItemWithTypeList();
             var sut = _fixture.CreateSut();
@@ -231,6 +383,34 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.Result);
+        }
+
+        [Fact]
+        public async Task SearchAsync_WithItemTypeDuplicatedByItemAndOnShoppingList_ShouldReturnEmptyResult()
+        {
+            // Arrange
+            _fixture.SetupParameters();
+            _fixture.SetupItemsFromTypeMapping(true);
+            _fixture.SetupItemsWithTypesFromTypeMapping(true);
+            _fixture.SetupFindingItems();
+            _fixture.SetupFindingShoppingListWithItemWithTypes(true, false);
+            _fixture.SetupFindingStore();
+
+            _fixture.SetupItemTypeMapping();
+            _fixture.SetupFindingItemTypeMapping();
+            _fixture.SetupFindingNoItemsFromTypeMappingWithEmptyInput();
+
+            _fixture.SetupAllItemTypesOnShoppingListOrNotAvailable();
+
+            _fixture.SetupConversionServiceReceivingEmptyItemList();
+            _fixture.SetupConversionServiceReceivingEmptyItemWithTypesList();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+
+            // Assert
+            result.Should().BeEmpty();
         }
 
         private sealed class LocalFixture
@@ -245,6 +425,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
             private readonly ItemSearchReadModelConversionServiceMock _conversionServiceMock;
 
             private List<IStoreItem> _items;
+            private readonly List<IStoreItem> _itemsFromTypeMapping = new List<IStoreItem>();
             private Store _store;
             private readonly List<ItemWithMatchingItemTypeIds> _itemToTypeIdMappings = new List<ItemWithMatchingItemTypeIds>();
             private IShoppingList _shoppingList;
@@ -308,6 +489,32 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
                 _items = StoreItemMother.InitialWithTypes().WithTypes(types).CreateMany(1).ToList<IStoreItem>();
             }
 
+            public void SetupItemsWithTypesFromTypeMapping(bool availableAtStore)
+            {
+                var item = _itemsFromTypeMapping.Single();
+
+                var typesBuilder = new ItemTypeBuilder()
+                    .WithId(_commonFixture.ChooseRandom(item.ItemTypes).Id);
+
+                if (availableAtStore)
+                {
+                    var availability = StoreItemAvailabilityMother.ForStore(StoreId).CreateMany(1);
+                    typesBuilder.WithAvailabilities(availability);
+                }
+
+                var types = typesBuilder.CreateMany(1);
+
+                _items = StoreItemMother.InitialWithTypes().WithId(item.Id).WithTypes(types).CreateMany(1)
+                    .ToList<IStoreItem>();
+            }
+
+            public void SetupItemsFromTypeMapping(bool availableAtStore, int typeCount = 1)
+            {
+                var types = GetItemTypes(availableAtStore, typeCount);
+
+                _itemsFromTypeMapping.Add(StoreItemMother.InitialWithTypes().WithTypes(types).Create());
+            }
+
             private IEnumerable<IItemType> GetItemTypes(bool availableAtStore, int count)
             {
                 var typesBuilder = new ItemTypeBuilder();
@@ -336,9 +543,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
                 _itemRepositoryMock.SetupFindActiveByAsync(Name, StoreId, Enumerable.Empty<IStoreItem>());
             }
 
-            public void SetupFindingItemsById()
+            public void SetupFindingItemsFromTypeMapping()
             {
-                _itemRepositoryMock.SetupFindByAsync(_items.Select(i => i.Id), _items);
+                _itemRepositoryMock.SetupFindByAsync(_itemsFromTypeMapping.Select(i => i.Id), _itemsFromTypeMapping);
+            }
+
+            public void SetupFindingNoItemsFromTypeMapping()
+            {
+                _itemRepositoryMock.SetupFindByAsync(_itemsFromTypeMapping.Select(i => i.Id), Enumerable.Empty<IStoreItem>());
+            }
+
+            public void SetupFindingNoItemsFromTypeMappingWithEmptyInput()
+            {
+                _itemRepositoryMock.SetupFindByAsync(Enumerable.Empty<ItemId>(), Enumerable.Empty<IStoreItem>());
             }
 
             public void SetupFindingShoppingListWithItemWithoutTypes(bool containsItem)
@@ -381,7 +598,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
                 _shoppingListRepositoryMock.SetupFindActiveByAsync(StoreId, _shoppingList);
             }
 
-            public void SetupFindingShoppingListWithItemWithTypes(bool containsItem)
+            public void SetupFindingShoppingListWithItemWithTypes(bool containsItem,
+                bool containsAdditionalItemTypeMappingItem)
             {
                 var builder = new ShoppingListItemBuilder();
 
@@ -392,7 +610,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
                     builder.WithTypeId(_commonFixture.ChooseRandom(item.ItemTypes).Id);
                 }
 
-                var items = builder.CreateMany(1);
+                var items = builder.CreateMany(1).ToList();
+
+                if (containsAdditionalItemTypeMappingItem)
+                {
+                    var item = _itemsFromTypeMapping.Single();
+                    var additionalListItem = new ShoppingListItemBuilder()
+                        .WithId(item.Id)
+                        .WithTypeId(_commonFixture.ChooseRandom(item.ItemTypes).Id)
+                        .Create();
+
+                    items.Add(additionalListItem);
+                }
 
                 _shoppingList = ShoppingListMother.OneSection(items).Create();
                 _shoppingListRepositoryMock.SetupFindActiveByAsync(StoreId, _shoppingList);
@@ -427,7 +656,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
 
             public void SetupItemTypeMapping()
             {
-                _itemTypeMapping = _items.Where(i => i.HasItemTypes)
+                _itemTypeMapping = _itemsFromTypeMapping.Where(i => i.HasItemTypes)
                     .SelectMany(i => i.ItemTypes.Select(t => (i.Id, t.Id)))
                     .ToList();
             }
@@ -447,6 +676,27 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
             public void SetupItemTypesPartiallyNotOnShoppingList()
             {
                 var item = _items.Single(i => i.HasItemTypes);
+                var itemTypeIds = item.ItemTypes.Select(t => t.Id);
+                var typesNotOnList =
+                    itemTypeIds.Except(_shoppingList.Items.Where(i => i.TypeId != null).Select(t => t.TypeId));
+                _itemToTypeIdMappings.Add(new ItemWithMatchingItemTypeIds(item, typesNotOnList));
+            }
+
+            public void SetupAllItemTypeMappingsOnShoppingListOrNotAvailable()
+            {
+                var item = _itemsFromTypeMapping.Single();
+                _itemToTypeIdMappings.Add(new ItemWithMatchingItemTypeIds(item, Enumerable.Empty<ItemTypeId>()));
+            }
+
+            public void SetupAllItemTypeMappingsNotOnShoppingList()
+            {
+                var item = _itemsFromTypeMapping.Single();
+                _itemToTypeIdMappings.Add(new ItemWithMatchingItemTypeIds(item, item.ItemTypes.Select(t => t.Id)));
+            }
+
+            public void SetupItemTypeMappingsPartiallyNotOnShoppingList()
+            {
+                var item = _itemsFromTypeMapping.Single(i => i.HasItemTypes);
                 var itemTypeIds = item.ItemTypes.Select(t => t.Id);
                 var typesNotOnList =
                     itemTypeIds.Except(_shoppingList.Items.Where(i => i.TypeId != null).Select(t => t.TypeId));
