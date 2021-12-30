@@ -50,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
             var searchResultItemGroups = (await _itemRepository
                 .FindActiveByAsync(name.Trim(), storeId, _cancellationToken))
                 .ToLookup(i => i.HasItemTypes);
-            IShoppingList? shoppingList = await LoadShoppingListAsync(storeId);
+            IShoppingList shoppingList = await LoadShoppingListAsync(storeId);
 
             var itemIdsOnShoppingListGroups = shoppingList.Items
                 .Select(item => (item.Id, item.TypeId))
@@ -92,9 +92,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
             {
                 if (!itemsWithTypesOnShoppingList.Contains(item.Id))
                 {
-                    yield return new ItemWithMatchingItemTypeIds(
-                        item,
-                        item.ItemTypes.GetForStore(storeId).Select(t => t.Id));
+                    var itemTypeIds = item.ItemTypes.GetForStore(storeId).Select(t => t.Id);
+                    if (!itemTypeIds.Any())
+                        continue;
+
+                    yield return new ItemWithMatchingItemTypeIds(item, itemTypeIds);
                     continue;
                 }
 
@@ -117,7 +119,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
             IEnumerable<ItemTypeId> itemTypeIdsOnShoppingList)
         {
             var itemTypeIdsOnShoppingListDict = itemTypeIdsOnShoppingList.ToHashSet();
-            var itemTypeIdMappings = await _itemTypeReadRepository.FindActiveByAsync(name, storeId, _cancellationToken);
+            var itemTypeIdMappings =
+                (await _itemTypeReadRepository.FindActiveByAsync(name, storeId, _cancellationToken)).ToList();
+            if (!itemTypeIdMappings.Any())
+                return Enumerable.Empty<ItemWithMatchingItemTypeIds>();
+
             var itemTypeIdGroups = itemTypeIdMappings
                 .Where(mapping => !itemTypeIdsOnShoppingListDict.Contains(mapping.Item2))
                 .GroupBy(mapping => mapping.Item1, mapping => mapping.Item2)

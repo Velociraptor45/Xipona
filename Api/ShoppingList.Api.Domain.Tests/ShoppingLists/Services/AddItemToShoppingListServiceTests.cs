@@ -478,7 +478,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
             public void SetupStoreItem()
             {
-                StoreItem = StoreItemMother.Initial().WithoutTypeId().Create();
+                StoreItem = StoreItemMother.Initial().WithoutTypes().Create();
             }
 
             public void SetupStoreItemNull()

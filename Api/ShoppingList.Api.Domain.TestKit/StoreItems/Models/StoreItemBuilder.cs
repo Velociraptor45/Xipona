@@ -98,15 +98,15 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
             return WithTemporaryId(null);
         }
 
-        public StoreItemBuilder WithTypeId(ItemTypeId typeId)
+        public StoreItemBuilder WithTypes(IEnumerable<IItemType> itemTypes)
         {
-            FillContructorWith("typeId", typeId);
+            FillContructorWith("itemTypes", itemTypes);
             return this;
         }
 
-        public StoreItemBuilder WithoutTypeId()
+        public StoreItemBuilder WithoutTypes()
         {
-            return WithTypeId(null);
+            return WithTypes(null);
         }
     }
 }

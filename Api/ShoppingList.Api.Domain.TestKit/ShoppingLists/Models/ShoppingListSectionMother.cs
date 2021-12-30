@@ -38,5 +38,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
             return new ShoppingListSectionBuilder()
                 .WithoutItems();
         }
+
+        public static ShoppingListSectionBuilder Items(IEnumerable<IShoppingListItem> items)
+        {
+            return new ShoppingListSectionBuilder()
+                .WithItems(items);
+        }
     }
 }

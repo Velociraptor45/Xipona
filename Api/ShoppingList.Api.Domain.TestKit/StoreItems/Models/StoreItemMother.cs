@@ -28,7 +28,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
                 .WithIsTemporary(true)
                 .WithoutItemCategoryId()
                 .WithoutManufacturerId()
-                .WithoutTypeId()
+                .WithoutTypes()
                 .WithAvailabilities(StoreItemAvailabilityMother.Initial().Create().ToMonoList())
                 .AsItem();
         }
