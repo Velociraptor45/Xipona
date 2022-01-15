@@ -185,7 +185,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (!shoppingList.Sections.Any(s => s.Id == sectionId))
+            if (shoppingList.Sections.All(s => s.Id != sectionId))
             {
                 var section = _shoppingListSectionFactory.CreateEmpty(sectionId);
                 shoppingList.AddSection(section);

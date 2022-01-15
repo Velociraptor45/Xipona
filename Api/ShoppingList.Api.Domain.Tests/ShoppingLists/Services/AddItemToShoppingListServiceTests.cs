@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using FluentAssertions;
+﻿using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
@@ -8,6 +7,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
@@ -24,414 +24,1070 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 {
     public class AddItemToShoppingListServiceTests
     {
-        private readonly LocalFixture _local;
-
-        public AddItemToShoppingListServiceTests()
+        public class AddItemToShoppingListTests
         {
-            _local = new LocalFixture();
-        }
+            private readonly AddItemToShoppingListFixture _fixture;
 
-        #region ItemId
-
-        [Fact]
-        public async Task AddItemToShoppingList_WithItemIdAndShoppingListIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
-
-            local.SetupStoreItem();
-            local.SetupSectionId();
-            local.SetupQuantity();
-
-            // Act
-            Func<Task> function = async () =>
-                await service.AddItemToShoppingList(null, local.StoreItem.Id, local.SectionId, local.Quantity, default);
-
-            // Assert
-            using (new AssertionScope())
+            public AddItemToShoppingListTests()
             {
-                await function.Should().ThrowAsync<ArgumentNullException>();
+                _fixture = new AddItemToShoppingListFixture();
+            }
+
+            #region ItemId
+
+            [Fact]
+            public async Task AddItemToShoppingList_WithItemIdAndShoppingListIsNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupStoreItem();
+                _fixture.SetupSectionId();
+                _fixture.SetupQuantity();
+
+                // Act
+                Func<Task> function = async () =>
+                    await service.AddItemToShoppingList(null, _fixture.StoreItem.Id, _fixture.SectionId, _fixture.Quantity,
+                        default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    await function.Should().ThrowAsync<ArgumentNullException>();
+                }
+            }
+
+            [Fact]
+            public async Task AddItemToShoppingList_WithItemIdIsNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupShoppingListMock();
+                _fixture.SetupStoreItemNull();
+                _fixture.SetupSectionId();
+                _fixture.SetupQuantity();
+
+                // Act
+                Func<Task> function = async () => await service.AddItemToShoppingList(
+                    _fixture.ShoppingListMock.Object, _fixture.StoreItem?.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    await function.Should().ThrowAsync<ArgumentNullException>();
+                }
+            }
+
+            [Fact]
+            public async Task AddItemToShoppingList_WithInvalidItemId_ShouldThrowDomainException()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupShoppingListMock();
+                _fixture.SetupStoreItem();
+                _fixture.SetupSectionId();
+                _fixture.SetupQuantity();
+
+                _fixture.SetupNotFindingItem();
+
+                // Act
+                Func<Task> function = async () => await service.AddItemToShoppingList(
+                    _fixture.ShoppingListMock.Object, _fixture.StoreItem.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    (await function.Should().ThrowAsync<DomainException>())
+                        .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ItemNotFound);
+                }
+            }
+
+            [Fact]
+            public async Task AddItemToShoppingList_WithItemIdAndValidData_ShouldAddItemToShoppingList()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupStoreItem();
+                _fixture.SetupShoppingListMockMatchingStoreItem();
+                _fixture.SetupShoppingListItem();
+
+                _fixture.SetupSectionIdMatchingShoppingList();
+                _fixture.SetupStore();
+                _fixture.SetupQuantity();
+
+                _fixture.SetupFindingItem();
+                _fixture.SetupCreatingShoppingListItem();
+                _fixture.SetupFindingStore();
+
+                _fixture.SetupAddingItemToShoppingList();
+
+                // Act
+                await service.AddItemToShoppingList(
+                    _fixture.ShoppingListMock.Object, _fixture.StoreItem.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyAddSectionNever();
+                    _fixture.VerifyAddItemOnce();
+                }
+            }
+
+            #endregion ItemId
+
+            #region TemporaryItemId
+
+            [Fact]
+            public async Task
+                AddItemToShoppingList_WithTemporaryItemIdAndShoppingListIsNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupTemporaryStoreItem();
+                _fixture.SetupSectionId();
+                _fixture.SetupQuantity();
+
+                // Act
+                Func<Task> function = async () => await service.AddItemToShoppingList(null, _fixture.StoreItem.TemporaryId,
+                    _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    await function.Should().ThrowAsync<ArgumentNullException>();
+                }
+            }
+
+            [Fact]
+            public async Task AddItemToShoppingList_WithTemporaryItemIdIsNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupShoppingListMock();
+                _fixture.SetupTemporaryStoreItemNull();
+                _fixture.SetupSectionId();
+                _fixture.SetupQuantity();
+
+                // Act
+                Func<Task> function = async () => await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
+                    _fixture.StoreItem?.TemporaryId, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    await function.Should().ThrowAsync<ArgumentNullException>();
+                }
+            }
+
+            [Fact]
+            public async Task AddItemToShoppingList_WithInvalidTemporaryItemId_ShouldThrowDomainException()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupShoppingListMock();
+                _fixture.SetupTemporaryStoreItem();
+                _fixture.SetupSectionId();
+                _fixture.SetupQuantity();
+
+                _fixture.SetupFindingNoItemWithTemporaryId();
+
+                // Act
+                Func<Task> function = async () => await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
+                    _fixture.StoreItem.TemporaryId, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    (await function.Should().ThrowAsync<DomainException>())
+                        .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ItemNotFound);
+                }
+            }
+
+            [Fact]
+            public async Task AddItemToShoppingList_WithTemporaryItemIdAndValidData_ShouldAddItemToShoppingList()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupTemporaryStoreItem();
+                _fixture.SetupShoppingListMockMatchingStoreItem();
+                _fixture.SetupShoppingListItem();
+
+                _fixture.SetupSectionIdMatchingShoppingList();
+                _fixture.SetupStore();
+                _fixture.SetupQuantity();
+
+                _fixture.SetupFindingItemWithTemporaryId();
+                _fixture.SetupCreatingShoppingListItem();
+                _fixture.SetupFindingStore();
+                _fixture.SetupAddingItemToShoppingList();
+
+                // Act
+                await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem.TemporaryId,
+                    _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyAddSectionNever();
+                    _fixture.VerifyAddItemOnce();
+                }
+            }
+
+            #endregion TemporaryItemId
+
+            #region AddItemToShoppingList (internal 1st)
+
+            [Fact]
+            public async Task AddItemToShoppingList_WithItemAtStoreNotAvailable_ShouldThrowDomainException()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupStoreItem();
+                _fixture.SetupShoppingListMockNotMatchingStoreItem();
+
+                _fixture.SetupSectionId();
+                _fixture.SetupQuantity();
+
+                // Act
+                Func<Task> function = async () => await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
+                    _fixture.StoreItem, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    (await function.Should().ThrowAsync<DomainException>())
+                        .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ItemAtStoreNotAvailable);
+                }
+            }
+
+            [Fact]
+            public async Task AddItemToShoppingList_WithSectionIdIsNull_ShouldSetDefaultSectionId()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupStoreItem();
+                _fixture.SetupShoppingListMockMatchingStoreItem();
+                _fixture.SetupShoppingListItem();
+
+                _fixture.SetupStore();
+                _fixture.SetupQuantity();
+
+                _fixture.SetupCreatingShoppingListItem();
+                _fixture.SetupFindingStore();
+
+                _fixture.SetupEmptyShoppingListSection();
+                _fixture.SetupCreatingEmptyShoppingListSection();
+                _fixture.SetupAddingSectionToShoppingList();
+                _fixture.SetupAddingItemToShoppingList();
+
+                // Act
+                await service.AddItemToShoppingList(
+                    _fixture.ShoppingListMock.Object, _fixture.StoreItem, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyAddItemOnce();
+                }
+            }
+
+            #endregion AddItemToShoppingList (internal 1st)
+
+            #region AddItemToShoppingList (internal 2nd)
+
+            [Fact]
+            public async Task AddItemToShoppingList_WithStoreIdIsInvalid_ShouldThrowDomainException()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupShoppingListMock();
+                _fixture.SetupShoppingListItem();
+                _fixture.SetupSectionId();
+
+                _fixture.SetupNotFindingStore();
+
+                // Act
+                Func<Task> function = async () => await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
+                    _fixture.ShoppingListItem, _fixture.SectionId, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    (await function.Should().ThrowAsync<DomainException>())
+                        .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.StoreNotFound);
+                }
+            }
+
+            [Fact]
+            public async Task AddItemToShoppingList_WithSectionIdNotInStore_ShouldThrowDomainException()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupShoppingListMock();
+                _fixture.SetupShoppingListItem();
+                _fixture.SetupSectionId();
+                _fixture.SetupStoreNotMatchingSectionId();
+
+                _fixture.SetupFindingStore();
+
+                // Act
+                Func<Task> function = async () => await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
+                    _fixture.ShoppingListItem, _fixture.SectionId, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    (await function.Should().ThrowAsync<DomainException>())
+                        .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.SectionInStoreNotFound);
+                }
+            }
+
+            [Fact]
+            public async Task AddItemToShoppingList_WithSectionNotInShoppingList_AddSectionToShoppingList()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupShoppingListMock();
+                _fixture.SetupShoppingListItem();
+                _fixture.SetupSectionId();
+                _fixture.SetupStore();
+                _fixture.SetupEmptyShoppingListSection();
+
+                _fixture.SetupFindingStore();
+                _fixture.SetupCreatingEmptyShoppingListSection();
+                _fixture.SetupAddingSectionToShoppingList();
+                _fixture.SetupAddingItemToShoppingList();
+
+                // Act
+                await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
+                    _fixture.ShoppingListItem, _fixture.SectionId, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyCreatingEmptyShoppingListSectionOnce();
+                    _fixture.VerifyAddSectionOnce();
+                    _fixture.VerifyAddItemOnce();
+                }
+            }
+
+            [Fact]
+            public async Task AddItemToShoppingList_WithSectionAlreadyInShoppingList_ShouldNotAddSectionToShoppingList()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupShoppingListMock();
+                _fixture.SetupShoppingListItem();
+                _fixture.SetupSectionIdMatchingShoppingList();
+                _fixture.SetupStore();
+
+                _fixture.SetupFindingStore();
+                _fixture.SetupAddingItemToShoppingList();
+
+                // Act
+                await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
+                    _fixture.ShoppingListItem, _fixture.SectionId, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyAddSectionNever();
+                    _fixture.VerifyAddItemOnce();
+                }
+            }
+
+            #endregion AddItemToShoppingList (internal 2nd)
+
+            private sealed class AddItemToShoppingListFixture : LocalFixture
+            {
+                public void SetupShoppingListMockMatchingStoreItem()
+                {
+                    Availability = CommonFixture.ChooseRandom(StoreItem.Availabilities);
+
+                    var list = ShoppingListMother.Sections(3).WithStoreId(Availability.StoreId).Create();
+                    ShoppingListMock = new ShoppingListMock(list, MockBehavior.Strict);
+                }
+
+                public void SetupShoppingListMockNotMatchingStoreItem()
+                {
+                    var excludedStoreIds = StoreItem.Availabilities.Select(av => av.StoreId.Value);
+                    var storeId = new StoreId(CommonFixture.NextInt(excludedStoreIds));
+
+                    var list = ShoppingListMother.Sections(3).WithStoreId(storeId).Create();
+                    ShoppingListMock = new ShoppingListMock(list, MockBehavior.Strict);
+                }
+
+                public void SetupShoppingListItem()
+                {
+                    ShoppingListItem = ShoppingListItemMother.InBasket().WithoutTypeId().Create();
+                }
+
+                public void SetupStoreItem()
+                {
+                    StoreItem = StoreItemMother.Initial().Create();
+                }
+
+                public void SetupStoreItemNull()
+                {
+                    StoreItem = null;
+                }
+
+                public void SetupTemporaryStoreItem()
+                {
+                    StoreItem = StoreItemMother.InitialTemporary().Create();
+                }
+
+                public void SetupTemporaryStoreItemNull()
+                {
+                    StoreItem = null;
+                }
+
+                #region Mock Setup
+
+                public void SetupCreatingShoppingListItem()
+                {
+                    ShoppingListItemFactoryMock.SetupCreate(StoreItem.Id, null, false, Quantity, ShoppingListItem);
+                }
+
+                public void SetupFindingNoItemWithTemporaryId()
+                {
+                    ItemRepositoryMock.SetupFindByAsync(StoreItem.TemporaryId, null);
+                }
+
+                public void SetupFindingItemWithTemporaryId()
+                {
+                    ItemRepositoryMock.SetupFindByAsync(StoreItem.TemporaryId, StoreItem);
+                }
+
+                #endregion Mock Setup
             }
         }
 
-        [Fact]
-        public async Task AddItemToShoppingList_WithItemIdIsNull_ShouldThrowArgumentNullException()
+        public class AddItemWithTypeToShoppingListTests
         {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
+            private readonly AddItemWithTypeToShoppingListFixture _fixture;
 
-            local.SetupShoppingListMock();
-            local.SetupStoreItemNull();
-            local.SetupSectionId();
-            local.SetupQuantity();
-
-            // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(
-                local.ShoppingListMock.Object, local.StoreItem?.Id, local.SectionId, local.Quantity, default);
-
-            // Assert
-            using (new AssertionScope())
+            public AddItemWithTypeToShoppingListTests()
             {
-                await function.Should().ThrowAsync<ArgumentNullException>();
+                _fixture = new AddItemWithTypeToShoppingListFixture();
+            }
+
+            #region Item
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithShoppingListNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupSectionId();
+                _fixture.SetupStoreItem();
+                _fixture.SetupItemType();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(null,
+                    _fixture.StoreItem, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*shoppingList*");
+            }
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithItemNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupSectionId();
+                _fixture.SetupStoreItem();
+                _fixture.SetupItemType();
+                _fixture.SetupShoppingListMock();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object,
+                    null, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*item*");
+            }
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithItemTypeIdNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupSectionId();
+                _fixture.SetupStoreItem();
+                _fixture.SetupShoppingListMock();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object,
+                    _fixture.StoreItem, null, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*itemTypeId*");
+            }
+
+            #region WithMissingSection
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithMissingSection_ShouldAddItemToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithMissingSection();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem,
+                    _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                _fixture.VerifyAddItemOnce();
+            }
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithMissingSection_ShouldAddSectionToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithMissingSection();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem,
+                    _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                _fixture.VerifyAddSectionOnce();
+            }
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithMissingSection_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithMissingSection();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem,
+                    _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                _fixture.VerifyStoringShoppingList();
+            }
+
+            #endregion WithMissingSection
+
+            #region WithExistingSection
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithExistingSection_ShouldNotAddSectionToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithExistingSection();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem,
+                    _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                _fixture.VerifyAddSectionNever();
+            }
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithExistingSection_ShouldAddItemToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithExistingSection();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem,
+                    _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                _fixture.VerifyAddItemOnce();
+            }
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithExistingSection_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithExistingSection();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem,
+                    _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                _fixture.VerifyStoringShoppingList();
+            }
+
+            #endregion WithExistingSection
+
+            #region WithSectionIdNull
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithSectionIdNull_ShouldAddSectionToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithSectionIdNull();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem,
+                    _fixture.ItemType.Id, null, _fixture.Quantity, default);
+
+                // Assert
+                _fixture.VerifyAddSectionOnce();
+            }
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithSectionIdNull_ShouldAddItemToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithSectionIdNull();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem,
+                    _fixture.ItemType.Id, null, _fixture.Quantity, default);
+
+                // Assert
+                _fixture.VerifyAddItemOnce();
+            }
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithSectionIdNull_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithSectionIdNull();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem,
+                    _fixture.ItemType.Id, null, _fixture.Quantity, default);
+
+                // Assert
+                _fixture.VerifyStoringShoppingList();
+            }
+
+            #endregion WithSectionIdNull
+
+            #region WithStoreMissingSection
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithStoreMissingSection_ShouldThrowDomainException()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupStoreItem();
+                _fixture.SetupItemType();
+                _fixture.SetupShoppingListMockMatchingItemType();
+                _fixture.SetupSectionIdMatchingShoppingList();
+                _fixture.SetupShoppingListItem();
+                _fixture.SetupCreatingShoppingListItem();
+                _fixture.SetupStoreNotMatchingSectionId();
+                _fixture.SetupFindingStore();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object,
+                    _fixture.StoreItem, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.SectionInStoreNotFound);
+            }
+
+            #endregion WithStoreMissingSection
+
+            #region WithStoreNotFound
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithStoreNotFound_ShouldThrowDomainException()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupStoreItem();
+                _fixture.SetupItemType();
+                _fixture.SetupShoppingListMockMatchingItemType();
+                _fixture.SetupSectionIdMatchingShoppingList();
+                _fixture.SetupShoppingListItem();
+                _fixture.SetupCreatingShoppingListItem();
+                _fixture.SetupNotFindingStore();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object,
+                    _fixture.StoreItem, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.StoreNotFound);
+            }
+
+            #endregion WithStoreNotFound
+
+            #region WithItemTypeNotPartOfItem
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_WithItemTypeNotPartOfItem_ShouldThrowDomainException()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupStoreItem();
+                _fixture.SetupSectionId();
+                _fixture.SetupItemTypeNotPartOfItem();
+                _fixture.SetupShoppingListMockMatchingItemType();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object,
+                    _fixture.StoreItem, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemTypeNotPartOfItem);
+            }
+
+            #endregion WithItemTypeNotPartOfItem
+
+            #endregion Item
+
+            #region ItemId
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_ItemId_WithShoppingListIdNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupSectionId();
+                _fixture.SetupStoreItem();
+                _fixture.SetupItemType();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(null,
+                    _fixture.StoreItem.Id, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*shoppingList*");
+            }
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_ItemId_WithItemIdNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupSectionId();
+                _fixture.SetupStoreItem();
+                _fixture.SetupItemType();
+                _fixture.SetupShoppingListMock();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object.Id,
+                    null, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*item*");
+            }
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_ItemId_WithItemTypeIdNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupSectionId();
+                _fixture.SetupStoreItem();
+                _fixture.SetupShoppingListMock();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object.Id,
+                    _fixture.StoreItem.Id, null, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*itemTypeId*");
+            }
+
+            #region WithMissingSection
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_ItemId_WithMissingSection_ShouldAddItemToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupSectionId();
+                _fixture.SetupStoreItem();
+                _fixture.SetupFindingItem();
+                _fixture.SetupItemType();
+                _fixture.SetupShoppingListMockMatchingItemType();
+                _fixture.SetupFindingShoppingList();
+                _fixture.SetupShoppingListItem();
+                _fixture.SetupCreatingShoppingListItem();
+                _fixture.SetupStore();
+                _fixture.SetupFindingStore();
+                _fixture.SetupEmptyShoppingListSection();
+                _fixture.SetupCreatingEmptyShoppingListSection();
+                _fixture.SetupAddingSectionToShoppingList();
+                _fixture.SetupAddingItemToShoppingList();
+                _fixture.SetupStoringShoppingList();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object.Id, _fixture.StoreItem.Id,
+                    _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                _fixture.VerifyAddItemOnce();
+            }
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_ItemId_WithMissingSection_ShouldAddSectionToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupSectionId();
+                _fixture.SetupStoreItem();
+                _fixture.SetupFindingItem();
+                _fixture.SetupItemType();
+                _fixture.SetupShoppingListMockMatchingItemType();
+                _fixture.SetupFindingShoppingList();
+                _fixture.SetupShoppingListItem();
+                _fixture.SetupCreatingShoppingListItem();
+                _fixture.SetupStore();
+                _fixture.SetupFindingStore();
+                _fixture.SetupEmptyShoppingListSection();
+                _fixture.SetupCreatingEmptyShoppingListSection();
+                _fixture.SetupAddingSectionToShoppingList();
+                _fixture.SetupAddingItemToShoppingList();
+                _fixture.SetupStoringShoppingList();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object.Id, _fixture.StoreItem.Id,
+                    _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                _fixture.VerifyAddSectionOnce();
+            }
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_ItemId_WithMissingSection_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupSectionId();
+                _fixture.SetupStoreItem();
+                _fixture.SetupFindingItem();
+                _fixture.SetupItemType();
+                _fixture.SetupShoppingListMockMatchingItemType();
+                _fixture.SetupFindingShoppingList();
+                _fixture.SetupShoppingListItem();
+                _fixture.SetupCreatingShoppingListItem();
+                _fixture.SetupStore();
+                _fixture.SetupFindingStore();
+                _fixture.SetupEmptyShoppingListSection();
+                _fixture.SetupCreatingEmptyShoppingListSection();
+                _fixture.SetupAddingSectionToShoppingList();
+                _fixture.SetupAddingItemToShoppingList();
+                _fixture.SetupStoringShoppingList();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object.Id, _fixture.StoreItem.Id,
+                    _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                _fixture.VerifyStoringShoppingList();
+            }
+
+            #endregion WithMissingSection
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_ItemId_WithItemNotFound_ShouldThrowDomainException()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupSectionId();
+                _fixture.SetupStoreItem();
+                _fixture.SetupNotFindingItem();
+                _fixture.SetupItemType();
+                _fixture.SetupShoppingListMockMatchingItemType();
+                _fixture.SetupFindingShoppingList();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object.Id,
+                    _fixture.StoreItem.Id, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemNotFound);
+            }
+
+            [Fact]
+            public async Task AddItemWithTypeToShoppingList_ItemId_WithShoppingListNotFound_ShouldThrowDomainException()
+            {
+                // Arrange
+                _fixture.SetupQuantity();
+                _fixture.SetupSectionId();
+                _fixture.SetupStoreItem();
+                _fixture.SetupFindingItem();
+                _fixture.SetupItemType();
+                _fixture.SetupShoppingListMockMatchingItemType();
+                _fixture.SetupNotFindingShoppingList();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object.Id,
+                    _fixture.StoreItem.Id, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+
+                // Assert
+                await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListNotFound);
+            }
+
+            #endregion ItemId
+
+            private sealed class AddItemWithTypeToShoppingListFixture : LocalFixture
+            {
+                public IItemType ItemType { get; private set; }
+
+                public void SetupShoppingListMockMatchingItemType()
+                {
+                    Availability = CommonFixture.ChooseRandom(ItemType.Availabilities);
+
+                    var list = ShoppingListMother.Sections(3).WithStoreId(Availability.StoreId).Create();
+                    ShoppingListMock = new ShoppingListMock(list, MockBehavior.Strict);
+                }
+
+                public void SetupShoppingListItem()
+                {
+                    ShoppingListItem = ShoppingListItemMother.InBasket().Create();
+                }
+
+                public void SetupStoreItem()
+                {
+                    StoreItem = StoreItemMother.InitialWithTypes().Create();
+                }
+
+                public void SetupItemType()
+                {
+                    ItemType = CommonFixture.ChooseRandom(StoreItem.ItemTypes);
+                }
+
+                public void SetupItemTypeNotPartOfItem()
+                {
+                    ItemType = new ItemTypeBuilder().Create();
+                }
+
+                #region Mock Setup
+
+                public void SetupCreatingShoppingListItem()
+                {
+                    ShoppingListItemFactoryMock.SetupCreate(StoreItem.Id, ItemType.Id, false, Quantity, ShoppingListItem);
+                }
+
+                public void SetupFindingShoppingList()
+                {
+                    ShoppingListRepositoryMock.SetupFindByAsync(ShoppingListMock.Object.Id, ShoppingListMock.Object);
+                }
+
+                public void SetupNotFindingShoppingList()
+                {
+                    ShoppingListRepositoryMock.SetupFindByAsync(ShoppingListMock.Object.Id, null);
+                }
+
+                #endregion Mock Setup
+
+                #region Aggregates
+
+                public void SetupWithMissingSection()
+                {
+                    SetupQuantity();
+                    SetupSectionId();
+                    SetupStoreItem();
+                    SetupItemType();
+                    SetupShoppingListMockMatchingItemType();
+                    SetupShoppingListItem();
+                    SetupCreatingShoppingListItem();
+                    SetupStore();
+                    SetupFindingStore();
+                    SetupEmptyShoppingListSection();
+                    SetupCreatingEmptyShoppingListSection();
+                    SetupAddingSectionToShoppingList();
+                    SetupAddingItemToShoppingList();
+                    SetupStoringShoppingList();
+                }
+
+                public void SetupWithExistingSection()
+                {
+                    SetupQuantity();
+                    SetupStoreItem();
+                    SetupItemType();
+                    SetupShoppingListMockMatchingItemType();
+                    SetupSectionIdMatchingShoppingList();
+                    SetupShoppingListItem();
+                    SetupCreatingShoppingListItem();
+                    SetupStore();
+                    SetupFindingStore();
+                    SetupAddingItemToShoppingList();
+                    SetupStoringShoppingList();
+                }
+
+                public void SetupWithSectionIdNull()
+                {
+                    SetupQuantity();
+                    SetupStoreItem();
+                    SetupItemType();
+                    SetupShoppingListMockMatchingItemType();
+                    SetupShoppingListItem();
+                    SetupCreatingShoppingListItem();
+                    SetupStore();
+                    SetupFindingStore();
+                    SetupEmptyShoppingListSection();
+                    SetupCreatingEmptyShoppingListSection();
+                    SetupAddingSectionToShoppingList();
+                    SetupAddingItemToShoppingList();
+                    SetupStoringShoppingList();
+                }
+
+                #endregion Aggregates
             }
         }
 
-        [Fact]
-        public async Task AddItemToShoppingList_WithInvalidItemId_ShouldThrowDomainException()
+        private abstract class LocalFixture
         {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
+            protected readonly CommonFixture CommonFixture = new CommonFixture();
+            protected readonly ShoppingListSectionFactoryMock ShoppingListSectionFactoryMock;
+            protected readonly StoreRepositoryMock StoreRepositoryMock;
+            protected readonly ItemRepositoryMock ItemRepositoryMock;
+            protected readonly ShoppingListItemFactoryMock ShoppingListItemFactoryMock;
+            protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
+            public ShoppingListMock ShoppingListMock { get; protected set; }
+            public SectionId SectionId { get; protected set; }
+            public float Quantity { get; protected set; }
+            public IStoreItem StoreItem { get; protected set; }
+            public IShoppingListItem ShoppingListItem { get; protected set; }
+            public IStore Store { get; protected set; }
+            public IShoppingListSection ShoppingListSection { get; protected set; }
+            protected IStoreItemAvailability Availability;
 
-            local.SetupShoppingListMock();
-            local.SetupStoreItem();
-            local.SetupSectionId();
-            local.SetupQuantity();
-
-            local.SetupFindingNoItem();
-
-            // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(
-                local.ShoppingListMock.Object, local.StoreItem.Id, local.SectionId, local.Quantity, default);
-
-            // Assert
-            using (new AssertionScope())
+            protected LocalFixture()
             {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ItemNotFound);
-            }
-        }
-
-        [Fact]
-        public async Task AddItemToShoppingList_WithItemIdAndValidData_ShouldAddItemToShoppingList()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
-
-            local.SetupStoreItem();
-            local.SetupShoppingListMockMatchingStoreItem();
-            local.SetupShoppingListItem();
-
-            local.SetupSectionIdMatchingShoppingList();
-            local.SetupStore();
-            local.SetupQuantity();
-
-            local.SetupFindingItem();
-            local.SetupCreatingShoppingListItem();
-            local.SetupFindingStore();
-
-            // Act
-            await service.AddItemToShoppingList(
-                local.ShoppingListMock.Object, local.StoreItem.Id, local.SectionId, local.Quantity, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                local.VerifyAddSectionNever();
-                local.VerifyAddItemOnce();
-            }
-        }
-
-        #endregion ItemId
-
-        #region TemporaryItemId
-
-        [Fact]
-        public async Task AddItemToShoppingList_WithTemporaryItemIdAndShoppingListIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
-
-            local.SetupTemporaryStoreItem();
-            local.SetupSectionId();
-            local.SetupQuantity();
-
-            // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(null, local.StoreItem.TemporaryId,
-                local.SectionId, local.Quantity, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowAsync<ArgumentNullException>();
-            }
-        }
-
-        [Fact]
-        public async Task AddItemToShoppingList_WithTemporaryItemIdIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
-
-            local.SetupShoppingListMock();
-            local.SetupTemporaryStoreItemNull();
-            local.SetupSectionId();
-            local.SetupQuantity();
-
-            // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(local.ShoppingListMock.Object,
-                local.StoreItem?.TemporaryId, local.SectionId, local.Quantity, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowAsync<ArgumentNullException>();
-            }
-        }
-
-        [Fact]
-        public async Task AddItemToShoppingList_WithInvalidTemporaryItemId_ShouldThrowDomainException()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
-
-            local.SetupShoppingListMock();
-            local.SetupTemporaryStoreItem();
-            local.SetupSectionId();
-            local.SetupQuantity();
-
-            local.SetupFindingNoItemWithTemporaryId();
-
-            // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(local.ShoppingListMock.Object,
-                local.StoreItem.TemporaryId, local.SectionId, local.Quantity, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ItemNotFound);
-            }
-        }
-
-        [Fact]
-        public async Task AddItemToShoppingList_WithTemporaryItemIdAndValidData_ShouldAddItemToShoppingList()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
-
-            local.SetupTemporaryStoreItem();
-            local.SetupShoppingListMockMatchingStoreItem();
-            local.SetupShoppingListItem();
-
-            local.SetupSectionIdMatchingShoppingList();
-            local.SetupStore();
-            local.SetupQuantity();
-
-            local.SetupFindingItemWithTemporaryId();
-            local.SetupCreatingShoppingListItem();
-            local.SetupFindingStore();
-
-            // Act
-            await service.AddItemToShoppingList(local.ShoppingListMock.Object, local.StoreItem.TemporaryId,
-                local.SectionId, local.Quantity, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                local.VerifyAddSectionNever();
-                local.VerifyAddItemOnce();
-            }
-        }
-
-        #endregion TemporaryItemId
-
-        #region AddItemToShoppingList (internal 1st)
-
-        [Fact]
-        public async Task AddItemToShoppingList_WithItemAtStoreNotAvailable_ShouldThrowDomainException()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
-
-            local.SetupStoreItem();
-            local.SetupShoppingListMockNotMatchingStoreItem();
-
-            local.SetupSectionId();
-            local.SetupQuantity();
-
-            // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(local.ShoppingListMock.Object,
-                local.StoreItem, local.SectionId, local.Quantity, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ItemAtStoreNotAvailable);
-            }
-        }
-
-        [Fact]
-        public async Task AddItemToShoppingList_WithSectionIdIsNull_ShouldSetDefaultSectionId()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
-
-            local.SetupStoreItem();
-            local.SetupShoppingListMockMatchingStoreItem();
-            local.SetupShoppingListItem();
-
-            local.SetupSectionIdMatchingShoppingList();
-            local.SetupStore();
-            local.SetupQuantity();
-
-            local.SetupCreatingShoppingListItem();
-            local.SetupFindingStore();
-
-            // Act
-            await service.AddItemToShoppingList(
-                local.ShoppingListMock.Object, local.StoreItem, local.SectionId, local.Quantity, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                local.VerifyAddItemOnce();
-            }
-        }
-
-        #endregion AddItemToShoppingList (internal 1st)
-
-        #region AddItemToShoppingList (internal 2nd)
-
-        [Fact]
-        public async Task AddItemToShoppingList_WithStoreIdIsInvalid_ShouldThrowDomainException()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
-
-            local.SetupShoppingListMock();
-            local.SetupShoppingListItem();
-            local.SetupSectionId();
-
-            local.SetupFindingNoStore();
-
-            // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(local.ShoppingListMock.Object,
-                local.ShoppingListItem, local.SectionId, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.StoreNotFound);
-            }
-        }
-
-        [Fact]
-        public async Task AddItemToShoppingList_WithSectionIdNotInStore_ShouldThrowDomainException()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
-
-            local.SetupShoppingListMock();
-            local.SetupShoppingListItem();
-            local.SetupSectionId();
-            local.SetupStoreNotMatchingSectionId();
-
-            local.SetupFindingStore();
-
-            // Act
-            Func<Task> function = async () => await service.AddItemToShoppingList(local.ShoppingListMock.Object,
-                local.ShoppingListItem, local.SectionId, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.SectionInStoreNotFound);
-            }
-        }
-
-        [Fact]
-        public async Task AddItemToShoppingList_WithSectionNotInShoppingList_AddSectionToShoppingList()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
-
-            local.SetupShoppingListMock();
-            local.SetupShoppingListItem();
-            local.SetupSectionId();
-            local.SetupStore();
-            local.SetupEmptyShoppingListSection();
-
-            local.SetupFindingStore();
-            local.SetupCreatingEmptyShoppingListSection();
-
-            // Act
-            await service.AddItemToShoppingList(local.ShoppingListMock.Object,
-                local.ShoppingListItem, local.SectionId, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                local.VerifyCreatingEmptyShoppingListSectionOnce();
-                local.VerifyAddSectionOnce();
-                local.VerifyAddItemOnce();
-            }
-        }
-
-        [Fact]
-        public async Task AddItemToShoppingList_WithSectionAlreadyInShoppingList_ShouldNotAddSectionToShoppingList()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
-
-            local.SetupShoppingListMock();
-            local.SetupShoppingListItem();
-            local.SetupSectionIdMatchingShoppingList();
-            local.SetupStore();
-
-            local.SetupFindingStore();
-
-            // Act
-            await service.AddItemToShoppingList(local.ShoppingListMock.Object,
-                local.ShoppingListItem, local.SectionId, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                local.VerifyAddSectionNever();
-                local.VerifyAddItemOnce();
-            }
-        }
-
-        #endregion AddItemToShoppingList (internal 2nd)
-
-        private class LocalFixture
-        {
-            public Fixture Fixture { get; }
-            public CommonFixture CommonFixture { get; } = new CommonFixture();
-            public ShoppingListSectionFactoryMock ShoppingListSectionFactoryMock { get; }
-            public StoreRepositoryMock StoreRepositoryMock { get; }
-            public ItemRepositoryMock ItemRepositoryMock { get; }
-            public ShoppingListItemFactoryMock ShoppingListItemFactoryMock { get; }
-            public ShoppingListRepositoryMock ShoppingListRepositoryMock { get; }
-            public ShoppingListMock ShoppingListMock { get; private set; }
-            public SectionId SectionId { get; private set; }
-            public float Quantity { get; private set; }
-            public IStoreItem StoreItem { get; private set; }
-            public IShoppingListItem ShoppingListItem { get; private set; }
-            public IStore Store { get; private set; }
-            public IShoppingListSection ShoppingListSection { get; private set; }
-
-            public LocalFixture()
-            {
-                Fixture = CommonFixture.GetNewFixture();
-
                 ShoppingListSectionFactoryMock = new ShoppingListSectionFactoryMock(MockBehavior.Strict);
                 StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
                 ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
@@ -451,49 +1107,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
             public void SetupShoppingListMock()
             {
-                ShoppingListMock = new ShoppingListMock(ShoppingListMother.Sections(3).Create());
+                ShoppingListMock = new ShoppingListMock(ShoppingListMother.Sections(3).Create(), MockBehavior.Strict);
             }
 
-            public void SetupShoppingListMockMatchingStoreItem()
+            public void SetupQuantity()
             {
-                var storeId = CommonFixture.ChooseRandom(StoreItem.Availabilities).StoreId;
-
-                var list = ShoppingListMother.Sections(3).WithStoreId(storeId).Create();
-                ShoppingListMock = new ShoppingListMock(list);
-            }
-
-            public void SetupShoppingListMockNotMatchingStoreItem()
-            {
-                var excludedStoreIds = StoreItem.Availabilities.Select(av => av.StoreId.Value);
-                var storeId = new StoreId(CommonFixture.NextInt(excludedStoreIds));
-
-                var list = ShoppingListMother.Sections(3).WithStoreId(storeId).Create();
-                ShoppingListMock = new ShoppingListMock(list);
-            }
-
-            public void SetupShoppingListItem()
-            {
-                ShoppingListItem = ShoppingListItemMother.InBasket().Create();
-            }
-
-            public void SetupStoreItem()
-            {
-                StoreItem = StoreItemMother.Initial().WithoutTypes().Create();
-            }
-
-            public void SetupStoreItemNull()
-            {
-                StoreItem = null;
-            }
-
-            public void SetupTemporaryStoreItem()
-            {
-                StoreItem = StoreItemMother.InitialTemporary().Create();
-            }
-
-            public void SetupTemporaryStoreItemNull()
-            {
-                StoreItem = null;
+                Quantity = CommonFixture.NextFloat();
             }
 
             public void SetupSectionId()
@@ -506,21 +1125,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 SectionId = CommonFixture.ChooseRandom(ShoppingListMock.Object.Sections).Id;
             }
 
-            public void SetupQuantity()
+            public void SetupStoreNotMatchingSectionId()
             {
-                Quantity = CommonFixture.NextFloat();
-            }
-
-            public void SetupStore()
-            {
-                var section = StoreSectionMother.Default().WithId(SectionId).Create();
+                var sectionId = new SectionId(CommonFixture.NextInt(SectionId.Value));
+                var section = StoreSectionMother.Default().WithId(sectionId).Create();
 
                 Store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSection(section).Create();
             }
 
-            public void SetupStoreNotMatchingSectionId()
+            public void SetupStore()
             {
-                var sectionId = new SectionId(CommonFixture.NextInt(SectionId.Value));
+                var sectionId = SectionId ?? Availability.DefaultSectionId;
                 var section = StoreSectionMother.Default().WithId(sectionId).Create();
 
                 Store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSection(section).Create();
@@ -533,14 +1148,36 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
             #region Mock Setup
 
-            public void SetupFindingNoItem()
+            public void SetupFindingStore()
             {
-                ItemRepositoryMock.SetupFindByAsync(StoreItem.Id, null);
+                StoreRepositoryMock.SetupFindByAsync(Store.Id, Store);
             }
 
-            public void SetupFindingNoItemWithTemporaryId()
+            public void SetupNotFindingStore()
             {
-                ItemRepositoryMock.SetupFindByAsync(StoreItem.TemporaryId, null);
+                StoreRepositoryMock.SetupFindByAsync(ShoppingListMock.Object.StoreId, null);
+            }
+
+            public void SetupStoringShoppingList()
+            {
+                ShoppingListRepositoryMock.SetupStoreAsync(ShoppingListMock.Object);
+            }
+
+            public void SetupCreatingEmptyShoppingListSection()
+            {
+                var sectionId = SectionId ?? Availability.DefaultSectionId;
+                ShoppingListSectionFactoryMock.SetupCreateEmpty(sectionId, ShoppingListSection);
+            }
+
+            public void SetupAddingSectionToShoppingList()
+            {
+                ShoppingListMock.SetupAddSection(ShoppingListSection);
+            }
+
+            public void SetupAddingItemToShoppingList()
+            {
+                var sectionId = SectionId ?? Availability.DefaultSectionId;
+                ShoppingListMock.SetupAddItem(ShoppingListItem, sectionId);
             }
 
             public void SetupFindingItem()
@@ -548,29 +1185,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 ItemRepositoryMock.SetupFindByAsync(StoreItem.Id, StoreItem);
             }
 
-            public void SetupFindingItemWithTemporaryId()
+            public void SetupNotFindingItem()
             {
-                ItemRepositoryMock.SetupFindByAsync(StoreItem.TemporaryId, StoreItem);
-            }
-
-            public void SetupCreatingShoppingListItem()
-            {
-                ShoppingListItemFactoryMock.SetupCreate(StoreItem.Id, null, false, Quantity, ShoppingListItem);
-            }
-
-            public void SetupFindingStore()
-            {
-                StoreRepositoryMock.SetupFindByAsync(Store.Id, Store);
-            }
-
-            public void SetupFindingNoStore()
-            {
-                StoreRepositoryMock.SetupFindByAsync(ShoppingListMock.Object.StoreId, null);
-            }
-
-            public void SetupCreatingEmptyShoppingListSection()
-            {
-                ShoppingListSectionFactoryMock.SetupCreateEmpty(SectionId, ShoppingListSection);
+                ItemRepositoryMock.SetupFindByAsync(StoreItem.Id, null);
             }
 
             #endregion Mock Setup
@@ -589,12 +1206,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
             public void VerifyAddItemOnce()
             {
-                ShoppingListMock.VerifyAddItemOnce(ShoppingListItem, SectionId);
+                var sectionId = SectionId ?? Availability.DefaultSectionId;
+                ShoppingListMock.VerifyAddItemOnce(ShoppingListItem, sectionId);
             }
 
             public void VerifyCreatingEmptyShoppingListSectionOnce()
             {
                 ShoppingListSectionFactoryMock.VerifyCreateEmptyOnce(SectionId);
+            }
+
+            public void VerifyStoringShoppingList()
+            {
+                ShoppingListRepositoryMock.VerifyStoreAsyncOnce(ShoppingListMock.Object);
             }
 
             #endregion Verify

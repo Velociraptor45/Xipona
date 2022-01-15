@@ -11,7 +11,8 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
 {
     public class ShoppingListMock : Mock<IShoppingList>
     {
-        public ShoppingListMock(IShoppingList shoppingList)
+        public ShoppingListMock(IShoppingList shoppingList, MockBehavior behavior = MockBehavior.Default)
+            : base(behavior)
         {
             SetupId(shoppingList.Id);
             SetupStoreId(shoppingList.StoreId);
@@ -67,6 +68,16 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
         {
             Setup(i => i.Finish(completionDate))
                 .Returns(returnValue);
+        }
+
+        public void SetupAddSection(IShoppingListSection section)
+        {
+            Setup(m => m.AddSection(section));
+        }
+
+        public void SetupAddItem(IShoppingListItem item, SectionId sectionId)
+        {
+            Setup(m => m.AddItem(item, sectionId));
         }
 
         #endregion Setup methods

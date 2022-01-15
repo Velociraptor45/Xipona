@@ -10,6 +10,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
                 .WithIsDeleted(false)
                 .WithIsTemporary(false)
                 .WithoutTemporaryId()
+                .WithoutTypes()
                 .AsItem();
         }
 
