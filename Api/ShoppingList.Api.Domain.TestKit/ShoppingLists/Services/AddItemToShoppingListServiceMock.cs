@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services
 {
@@ -11,6 +12,18 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services
     {
         public AddItemToShoppingListServiceMock(MockBehavior behavior) : base(behavior)
         {
+        }
+
+        public void SetupAddItemToShoppingList(IShoppingList shoppingList,
+            ItemId itemId, SectionId? sectionId, float quantity)
+        {
+            Setup(m => m.AddItemToShoppingList(
+                    shoppingList,
+                    itemId,
+                    sectionId,
+                    quantity,
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
         }
 
         public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, ItemId itemId, SectionId sectionId,

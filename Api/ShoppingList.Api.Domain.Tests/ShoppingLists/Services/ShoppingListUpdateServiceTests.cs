@@ -389,6 +389,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 ShoppingListRepositoryMock.SetupFindActiveByAsync(OldItem.Id, Enumerable.Empty<IShoppingList>());
             }
 
+            public void SetupAddingItemToShoppingList()
+            {
+                var sectionId = NewItem.GetDefaultSectionIdForStore(ShoppingListMock.Object.StoreId);
+                AddItemToShoppingListServiceMock.SetupAddItemToShoppingList(ShoppingListMock.Object, NewItem.Id,
+                    sectionId, OldItem.Quantity);
+            }
+
+            public void SetupStoringShoppingList()
+            {
+                ShoppingListRepositoryMock.SetupStoreAsync(ShoppingListMock.Object);
+            }
+
             #endregion Mock Setup
 
             #region Verify
@@ -443,6 +455,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 SetupOldItemFromShoppingListNotInBasket();
                 SetupNewItemNotMatchingShoppingList();
                 SetupFindingShoppingList();
+                SetupStoringShoppingList();
             }
 
             public void SetupWithNewItemAvailableForShoppingListAndInBasket()
@@ -451,6 +464,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 SetupOldItemFromShoppingListInBasket();
                 SetupNewItemMatchingShoppingList();
                 SetupFindingShoppingList();
+                SetupAddingItemToShoppingList();
+                SetupStoringShoppingList();
             }
 
             public void SetupWithNewItemAvailableForShoppingListAndNotInBasket()
@@ -459,6 +474,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 SetupOldItemFromShoppingListNotInBasket();
                 SetupNewItemMatchingShoppingList();
                 SetupFindingShoppingList();
+                SetupAddingItemToShoppingList();
+                SetupStoringShoppingList();
             }
 
             #endregion Aggregates
