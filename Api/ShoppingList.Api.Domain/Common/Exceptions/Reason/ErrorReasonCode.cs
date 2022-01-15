@@ -20,7 +20,6 @@
         SectionInStoreNotFound = 16,
         ItemAlreadyInSection = 17,
         StoreItemSectionNotFound = 18,
-        NoDefaultSectionSpecified = 19,
         SectionAlreadyInShoppingList = 20,
         MultipleAvailabilitiesForStore = 21,
         CannotModifyItemAsItemWithTypes = 22,
@@ -33,6 +32,7 @@
         ItemTypeAtStoreNotAvailable = 29,
         TemporaryItemCannotHaveTypeIdReason = 30,
         CannotUpdateItemAsItemWithTypesReason = 31,
-        ShoppingListItemHasNoType = 32
+        ShoppingListItemHasNoType = 32,
+        ShoppingListItemHasType = 33
     }
 }

@@ -2,10 +2,12 @@
 using FluentAssertions.Execution;
 using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
@@ -87,6 +89,24 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 {
                     _fixture.VerifyStoreShoppingListNever();
                 }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithShoppingListItemHasType_ShouldThrowDomainException()
+            {
+                // Arrange
+                _fixture.SetupShoppingListWithItemWithType();
+                _fixture.SetupOldItemFromShoppingListInBasket();
+                _fixture.SetupNewItemMatchingShoppingList();
+                _fixture.SetupFindingShoppingList();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () =>
+                    await sut.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListItemHasType);
             }
 
             #region WithNewItemNotAvailableForShoppingList
@@ -301,7 +321,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
             private class ExchangeItemAsyncWithoutTypesFixture : ExchangeItemAsyncFixture
             {
-                public override void SetupNewItem()
+                public void SetupNewItem()
                 {
                     NewItem = StoreItemMother.Initial().Create();
                 }
@@ -326,7 +346,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                     ShoppingListMock = new ShoppingListMock(list);
                 }
 
-                public override void SetupOldItem()
+                public void SetupShoppingListWithItemWithType()
+                {
+                    var items = ShoppingListItemMother.InBasket().CreateMany(1).ToList();
+                    items.AddRange(ShoppingListItemMother.NotInBasket().CreateMany(2));
+                    var list = ShoppingListMother.OneSection(items).Create();
+                    ShoppingListMock = new ShoppingListMock(list);
+                }
+
+                public void SetupOldItem()
                 {
                     OldShoppingListItem = ShoppingListItemMother.InBasket().Create();
                 }
@@ -410,6 +438,82 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             {
                 _fixture = new ExchangeItemAsyncWithTypesFixture();
             }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithShoppingListItemHasNoType_ShouldThrowDomainException()
+            {
+                // Arrange
+                _fixture.SetupShoppingListWithItemWithoutType();
+                _fixture.SetupOldItemFromShoppingListInBasket();
+                _fixture.SetupItemMatchingShoppingListWithNewTypes();
+                _fixture.SetupFindingShoppingList();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () =>
+                    await sut.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListItemHasNoType);
+            }
+
+            #region WithItemTypeRemoved
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithItemTypeRemoved_ShouldRemoveOldItem()
+            {
+                // Arrange
+                _fixture.SetupWithItemTypeRemoved();
+
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyRemoveItemOnce();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithItemTypeRemoved_ShouldNotAddItemToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithItemTypeRemoved();
+
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyAddItemToShoppingListNever();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithItemTypeRemoved_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithItemTypeRemoved();
+
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyStoreShoppingListOnce();
+                }
+            }
+
+            #endregion WithItemTypeRemoved
 
             #region WithNewItemTypeNotAvailableForShoppingList
 
@@ -621,19 +725,29 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
             private class ExchangeItemAsyncWithTypesFixture : ExchangeItemAsyncFixture
             {
-                public override void SetupNewItem()
-                {
-                    NewItem = StoreItemMother.InitialWithTypes().Create();
-                }
-
                 protected override void SetupNewItemForStore(StoreId storeId)
                 {
                     var availability = StoreItemAvailabilityMother.Initial()
                         .WithStoreId(storeId)
                         .CreateMany(1);
-                    var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1);
+                    var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1).ToList();
                     type.First().SetPredecessor(new ItemTypeBuilder().WithId(OldShoppingListItem.TypeId).Create());
                     NewItem = new StoreItemBuilder().WithTypes(type).Create();
+                }
+
+                public void SetupItemMatchingShoppingListWithNewTypes()
+                {
+                    var availability = StoreItemAvailabilityMother.Initial()
+                        .WithStoreId(ShoppingListMock.Object.StoreId)
+                        .CreateMany(1);
+                    var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1);
+                    NewItem = new StoreItemBuilder().WithTypes(type).Create();
+                }
+
+                public void SetupShoppingListWithItemWithoutType()
+                {
+                    var list = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
+                    ShoppingListMock = new ShoppingListMock(list);
                 }
 
                 public override void SetupShoppingListMockWithItemInBasket()
@@ -650,11 +764,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                     items.AddRange(ShoppingListItemMother.InBasket().CreateMany(2));
                     var list = ShoppingListMother.OneSection(items).Create();
                     ShoppingListMock = new ShoppingListMock(list);
-                }
-
-                public override void SetupOldItem()
-                {
-                    throw new NotImplementedException();
                 }
 
                 public override void SetupAddingItemToShoppingList()
@@ -693,6 +802,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 #endregion Verify
 
                 #region Aggregates
+
+                public void SetupWithItemTypeRemoved()
+                {
+                    SetupShoppingListWithItemNotInBasket();
+                    SetupOldItemFromShoppingListNotInBasket();
+                    SetupItemMatchingShoppingListWithNewTypes();
+                    SetupFindingShoppingList();
+                    SetupStoringShoppingList();
+                }
 
                 public void SetupWithNewItemNotAvailableForShoppingList()
                 {
@@ -733,8 +851,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             public IStoreItem NewItem { get; protected set; }
             public IShoppingListItem OldShoppingListItem { get; protected set; }
 
-            public abstract void SetupNewItem();
-
             public void SetupNewItemNull()
             {
                 NewItem = null;
@@ -766,8 +882,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             {
                 OldShoppingListItem = ShoppingListMock.GetRandomItem(CommonFixture, i => i.IsInBasket);
             }
-
-            public abstract void SetupOldItem();
 
             public void SetupOldItemNull()
             {

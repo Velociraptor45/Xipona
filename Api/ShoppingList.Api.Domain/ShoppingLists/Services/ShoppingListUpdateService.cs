@@ -47,6 +47,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
             {
                 IShoppingListItem oldListItem = list.Items
                     .First(i => i.Id == oldItemId);
+                if (oldListItem.TypeId != null)
+                    throw new DomainException(new ShoppingListItemHasTypeReason(list.Id, oldListItem.Id));
+
                 list.RemoveItem(oldListItem.Id);
                 if (newItem.IsAvailableInStore(list.StoreId))
                 {
