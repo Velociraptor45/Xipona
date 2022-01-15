@@ -35,12 +35,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
                 .ToList();
 
             if (newItem.HasItemTypes)
-                await ExachangeItemWithTypesAsync(shoppingListsWithOldItem, oldItemId, newItem, cancellationToken);
+                await ExchangeItemWithTypesAsync(shoppingListsWithOldItem, oldItemId, newItem, cancellationToken);
             else
-                await ExachangeItemWithoutTypesAsync(shoppingListsWithOldItem, oldItemId, newItem, cancellationToken);
+                await ExchangeItemWithoutTypesAsync(shoppingListsWithOldItem, oldItemId, newItem, cancellationToken);
         }
 
-        private async Task ExachangeItemWithoutTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
+        private async Task ExchangeItemWithoutTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
             IStoreItem newItem, CancellationToken cancellationToken)
         {
             foreach (var list in shoppingLists)
@@ -62,7 +62,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
             }
         }
 
-        private async Task ExachangeItemWithTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
+        private async Task ExchangeItemWithTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
             IStoreItem newItem, CancellationToken cancellationToken)
         {
             foreach (var list in shoppingLists)
@@ -76,15 +76,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
                         throw new DomainException(new ShoppingListItemHasNoTypeReason(list.Id, oldListItem.Id));
 
                     list.RemoveItem(oldItemId, oldListItem.TypeId);
-                    if (newItem.ItemTypes.TryGetWithPredecessor(oldListItem.TypeId, out var itemType))
-                    {
-                        var sectionId = itemType!.GetDefaultSectionIdForStore(list.StoreId);
-                        await _addItemToShoppingListService.AddItemWithTypeToShoppingList(list, newItem, itemType.Id,
-                            sectionId, oldListItem.Quantity, cancellationToken);
+                    if (!newItem.ItemTypes.TryGetWithPredecessor(oldListItem.TypeId, out var itemType)
+                        || !itemType!.IsAvailableAtStore(list.StoreId))
+                        continue;
 
-                        if (oldListItem.IsInBasket)
-                            list.PutItemInBasket(newItem.Id);
-                    }
+                    var sectionId = itemType.GetDefaultSectionIdForStore(list.StoreId);
+                    await _addItemToShoppingListService.AddItemWithTypeToShoppingList(list, newItem, itemType.Id,
+                        sectionId, oldListItem.Quantity, cancellationToken);
+
+                    if (oldListItem.IsInBasket)
+                        list.PutItemInBasket(newItem.Id, itemType.Id);
                 }
 
                 await _shoppingListRepository.StoreAsync(list, cancellationToken);

@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,26 +27,54 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services
                 .Returns(Task.CompletedTask);
         }
 
+        public void SetupAddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
+            ItemTypeId typeId, SectionId? sectionId, float quantity)
+        {
+            Setup(m => m.AddItemWithTypeToShoppingList(
+                    shoppingList,
+                    item,
+                    typeId,
+                    sectionId,
+                    quantity,
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+        }
+
+        public void VerifyAddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
+            ItemTypeId typeId, SectionId? sectionId, float quantity, Func<Times> times)
+        {
+            Verify(m => m.AddItemWithTypeToShoppingList(
+                    shoppingList,
+                    item,
+                    typeId,
+                    sectionId,
+                    quantity,
+                    It.IsAny<CancellationToken>()),
+                times);
+        }
+
         public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, ItemId itemId, SectionId sectionId,
             float quantity)
         {
             Verify(i => i.AddItemToShoppingList(
-                shoppingList,
-                itemId,
-                sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()));
+                    shoppingList,
+                    itemId,
+                    sectionId,
+                    quantity,
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
         }
 
         public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
             SectionId sectionId, float quantity)
         {
             Verify(i => i.AddItemToShoppingList(
-                shoppingList,
-                temporaryItemId,
-                sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()));
+                    shoppingList,
+                    temporaryItemId,
+                    sectionId,
+                    quantity,
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
         }
     }
 }

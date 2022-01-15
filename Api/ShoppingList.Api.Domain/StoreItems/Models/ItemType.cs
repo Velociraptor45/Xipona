@@ -41,5 +41,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 
             return availability.DefaultSectionId;
         }
+
+        public bool IsAvailableAtStore(StoreId storeId)
+        {
+            return Availabilities.Any(av => av.StoreId == storeId);
+        }
     }
 }

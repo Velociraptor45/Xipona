@@ -79,6 +79,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
                 Times.Once);
         }
 
+        public void VerifyRemoveItemOnce(ItemId itemId, ItemTypeId typeId)
+        {
+            Verify(m => m.RemoveItem(itemId, typeId), Times.Once);
+        }
+
         public void VerifyRemoveItemNever(ItemId itemId, ItemTypeId itemTypeId)
         {
             Verify(i => i.RemoveItem(itemId, itemTypeId), Times.Never);
@@ -89,9 +94,19 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
             Verify(i => i.PutItemInBasket(itemId), Times.Once);
         }
 
+        public void VerifyPutItemInBasket(ItemId itemId, ItemTypeId typeId, Func<Times> times)
+        {
+            Verify(i => i.PutItemInBasket(itemId, typeId), times);
+        }
+
         public void VerifyPutItemInBasketNever()
         {
             Verify(i => i.PutItemInBasket(It.IsAny<ItemId>()), Times.Never);
+        }
+
+        public void VerifyPutItemInBasketWithTypeIdNever()
+        {
+            Verify(i => i.PutItemInBasket(It.IsAny<ItemId>(), It.IsAny<ItemTypeId>()), Times.Never);
         }
 
         public void VerifyRemoveItemFromBasketOnce(ItemId itemId, ItemTypeId? itemTypeId)
