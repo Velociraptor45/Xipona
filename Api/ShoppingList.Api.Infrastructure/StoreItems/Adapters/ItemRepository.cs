@@ -162,8 +162,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
                 .Where(item =>
                     !item.Deleted
                     && !item.IsTemporary
-                    && item.Name.Contains(searchInput) 
-                    && (item.AvailableAt.Any(map => map.StoreId == storeId.Value) 
+                    && item.Name.Contains(searchInput)
+                    && (item.AvailableAt.Any(map => map.StoreId == storeId.Value)
                         || item.ItemTypes.Any(t => t.AvailableAt.Any(av => av.StoreId == storeId.Value))))
                 .ToListAsync();
 
@@ -249,7 +249,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
             return dbContext.Items.AsNoTracking()
                 .Include(item => item.AvailableAt)
                 .Include(item => item.ItemTypes)
-                .ThenInclude(itemType => itemType.AvailableAt);
+                .ThenInclude(itemType => itemType.AvailableAt)
+                .Include(item => item.ItemTypes)
+                .ThenInclude(itemType => itemType.Predecessor);
         }
 
         private async Task<Item?> LoadPredecessorsAsync(Item item)

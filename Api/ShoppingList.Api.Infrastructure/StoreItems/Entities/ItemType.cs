@@ -21,7 +21,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities
         [ForeignKey("ItemId")]
         public Item Item { get; set; }
 
-        [ForeignKey("PredecessorId")] public ItemType? Predecessor { get; set; }
+        [ForeignKey("PredecessorId")]
+        public ItemType? Predecessor { get; set; }
 
         [InverseProperty("ItemType")]
         public ICollection<ItemTypeAvailableAt> AvailableAt { get; set; }

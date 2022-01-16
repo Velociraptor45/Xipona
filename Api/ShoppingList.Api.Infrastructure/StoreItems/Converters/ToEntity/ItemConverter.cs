@@ -50,7 +50,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
                 Id = itemType.Id.Value,
                 ItemId = source.Id.Value,
                 Name = itemType.Name,
-                AvailableAt = itemType.Availabilities.Select(av => ToItemTypeAvailableAt(av, itemType)).ToList()
+                AvailableAt = itemType.Availabilities.Select(av => ToItemTypeAvailableAt(av, itemType)).ToList(),
+                PredecessorId = itemType.Predecessor?.Id.Value
             };
         }
 
