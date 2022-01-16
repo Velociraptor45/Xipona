@@ -62,10 +62,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdate
             var types = new List<IItemType>();
             foreach (var typeUpdate in update.TypeUpdates)
             {
-                if (!oldItem.ItemTypes.TryGetValue(typeUpdate.OldId, out var predecessorType))
-                    throw new DomainException(new ItemTypeNotFoundReason(oldItem.Id, typeUpdate.OldId));
-
-                var type = _itemTypeFactory.CreateNew(typeUpdate.Name, typeUpdate.Availabilities, predecessorType!);
+                oldItem.ItemTypes.TryGetValue(typeUpdate.OldId, out var predecessorType);
+                var type = _itemTypeFactory.CreateNew(typeUpdate.Name, typeUpdate.Availabilities, predecessorType);
 
                 await _validator.ValidateAsync(type.Availabilities);
 
