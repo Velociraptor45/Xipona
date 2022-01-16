@@ -1,5 +1,8 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
@@ -15,5 +18,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         SectionId GetDefaultSectionIdForStore(StoreId storeId);
 
         bool IsAvailableAtStore(StoreId storeId);
+
+        Task<IItemType> ModifyAsync(ItemTypeModification modification, IValidator validator);
     }
 }

@@ -138,11 +138,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             if (!modification.ItemTypes.Any())
                 throw new DomainException(new CannotRemoveAllTypesFromItemWithTypesReason(Id));
 
-            foreach (var type in modification.ItemTypes)
-            {
-                await validator.ValidateAsync(type.Availabilities);
-            }
-
             Name = modification.Name;
             Comment = modification.Comment;
             QuantityType = modification.QuantityType;
@@ -150,7 +145,25 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             QuantityTypeInPacket = modification.QuantityTypeInPacket;
             ItemCategoryId = modification.ItemCategoryId;
             ManufacturerId = modification.ManufacturerId;
-            ItemTypes = new ItemTypes(modification.ItemTypes);
+
+            var newTypes = new List<IItemType>();
+            foreach (var modifiedType in modification.ItemTypes)
+            {
+                IItemType newType;
+                if (ItemTypes.TryGetValue(modifiedType.Id, out var currentType))
+                {
+                    newType = await currentType!.ModifyAsync(modifiedType, validator);
+                }
+                else
+                {
+                    await validator.ValidateAsync(modifiedType.Availabilities);
+                    newType = new ItemType(new ItemTypeId(0), modifiedType.Name, modifiedType.Availabilities);
+                }
+
+                newTypes.Add(newType);
+            }
+
+            ItemTypes = new ItemTypes(newTypes);
         }
 
         public SectionId GetDefaultSectionIdForStore(StoreId storeId)

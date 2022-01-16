@@ -389,7 +389,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
                 var originalItemTypes = _itemMock.Object.ItemTypes;
                 _itemMock.SetupItemTypes()
                     .Returns(() =>
-                        _itemMock.ModifyWithTypeCalled ? new ItemTypes(Modification.ItemTypes) : originalItemTypes);
+                        _itemMock.ModifyWithTypeCalled ?
+                            new ItemTypes(Modification.ItemTypes.Select(t => new ItemType(t.Id, t.Name, t.Availabilities))) :
+                            originalItemTypes);
             }
 
             private void SetupModifyingItem()

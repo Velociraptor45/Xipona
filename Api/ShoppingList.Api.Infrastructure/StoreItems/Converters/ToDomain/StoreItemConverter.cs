@@ -35,13 +35,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            IStoreItem? predecessor = null;
-            if (source.PredecessorId != null)
-            {
-                var converter = new StoreItemConverter(_storeItemFactory, _itemTypeConverter,
-                    _storeItemAvailabilityConverter, _itemTypeAvailabilityConverter);
-                predecessor = converter.ToDomain(source.Predecessor!);
-            }
+            IStoreItem? predecessor = source.PredecessorId is null ? null : ToDomain(source.Predecessor!);
+
             var itemCategoryId = source.ItemCategoryId.HasValue ? new ItemCategoryId(source.ItemCategoryId.Value) : null;
             var manufacturerId = source.ManufacturerId.HasValue ? new ManufacturerId(source.ManufacturerId.Value) : null;
             var temporaryId = source.CreatedFrom.HasValue ? new TemporaryItemId(source.CreatedFrom.Value) : null;

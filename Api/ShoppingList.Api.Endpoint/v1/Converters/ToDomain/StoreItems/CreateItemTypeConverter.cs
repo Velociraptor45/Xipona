@@ -20,10 +20,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreIt
 
         public IItemType ToDomain(CreateItemTypeContract source)
         {
-            return _itemTypeFactory.Create(
-                new ItemTypeId(0),
+            return _itemTypeFactory.CreateNew(
                 source.Name,
-                _itemAvailabilityConverter.ToDomain(source.Availabilities));
+                _itemAvailabilityConverter.ToDomain(source.Availabilities),
+                null);
         }
     }
 }

@@ -23,8 +23,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
+            IItemType? predecessor = source.PredecessorId is null ? null : ToDomain(source.Predecessor!);
+
             var typeAvailabilities = _itemTypeAvailabilityConverter.ToDomain(source.AvailableAt);
-            return _itemTypeFactory.Create(new ItemTypeId(source.Id), source.Name, typeAvailabilities);
+            return _itemTypeFactory.Create(new ItemTypeId(source.Id), source.Name, typeAvailabilities,
+                predecessor);
         }
     }
 }

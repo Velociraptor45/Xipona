@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModifica
         public ItemWithTypesModification(ItemId id, string name, string comment,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
             ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
-            IEnumerable<IItemType> itemTypes)
+            IEnumerable<ItemTypeModification> itemTypes)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -38,6 +38,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModifica
         public QuantityTypeInPacket QuantityTypeInPacket { get; }
         public ItemCategoryId ItemCategoryId { get; }
         public ManufacturerId? ManufacturerId { get; }
-        public IReadOnlyCollection<IItemType> ItemTypes { get; }
+        public IReadOnlyCollection<ItemTypeModification> ItemTypes { get; }
     }
 }

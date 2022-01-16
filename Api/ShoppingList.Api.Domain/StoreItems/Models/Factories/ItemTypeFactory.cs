@@ -4,18 +4,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
 {
     public class ItemTypeFactory : IItemTypeFactory
     {
-        public IItemType Create(ItemTypeId id, string name, IEnumerable<IStoreItemAvailability> availabilities)
+        public IItemType Create(ItemTypeId id, string name, IEnumerable<IStoreItemAvailability> availabilities,
+            IItemType? predecessor)
         {
-            return new ItemType(id, name, availabilities);
+            var type = new ItemType(id, name, availabilities);
+            if(predecessor != null)
+                type.SetPredecessor(predecessor);
+
+            return type;
         }
 
         public IItemType CreateNew(string name, IEnumerable<IStoreItemAvailability> availabilities,
-            IItemType predecessor)
+            IItemType? predecessor)
         {
-            var type = new ItemType(new ItemTypeId(0), name, availabilities);
-            type.SetPredecessor(predecessor);
-
-            return type;
+            return Create(new ItemTypeId(0), name, availabilities, predecessor);
         }
     }
 }

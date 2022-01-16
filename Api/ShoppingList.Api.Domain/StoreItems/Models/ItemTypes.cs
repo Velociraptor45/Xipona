@@ -36,12 +36,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 
         public bool ContainsId(ItemTypeId itemTypeId)
         {
-            return _itemTypes.ToDictionary(t => t.Id).ContainsKey(itemTypeId);
+            return _itemTypes.Any(t => t.Id == itemTypeId);
         }
 
         public bool TryGetValue(ItemTypeId id, out IItemType? itemType)
         {
-            return _itemTypes.ToDictionary(t => t.Id).TryGetValue(id, out itemType);
+            itemType = _itemTypes.SingleOrDefault(t => t.Id == id);
+            return itemType != null;
         }
 
         public bool TryGetWithPredecessor(ItemTypeId predecessorId, out IItemType? predecessor)

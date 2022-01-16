@@ -11,11 +11,11 @@ using System;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreItems
 {
-    public class ModifyItemWithTypesConverter : IToDomainConverter<ModifyItemWithTypesContract, ItemWithTypesModification>
+    public class ItemWithTypesModificationConverter : IToDomainConverter<ModifyItemWithTypesContract, ItemWithTypesModification>
     {
-        private readonly IToDomainConverter<ItemTypeContract, IItemType> _itemTypeConverter;
+        private readonly IToDomainConverter<ItemTypeContract, ItemTypeModification> _itemTypeConverter;
 
-        public ModifyItemWithTypesConverter(IToDomainConverter<ItemTypeContract, IItemType> itemTypeConverter)
+        public ItemWithTypesModificationConverter(IToDomainConverter<ItemTypeContract, ItemTypeModification> itemTypeConverter)
         {
             _itemTypeConverter = itemTypeConverter;
         }

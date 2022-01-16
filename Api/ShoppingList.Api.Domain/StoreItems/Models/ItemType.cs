@@ -1,9 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
@@ -45,6 +48,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         public bool IsAvailableAtStore(StoreId storeId)
         {
             return Availabilities.Any(av => av.StoreId == storeId);
+        }
+
+        public async Task<IItemType> ModifyAsync(ItemTypeModification modification, IValidator validator)
+        {
+            await validator.ValidateAsync(modification.Availabilities);
+
+            return new ItemType(
+                Id,
+                modification.Name,
+                modification.Availabilities);
         }
     }
 }
