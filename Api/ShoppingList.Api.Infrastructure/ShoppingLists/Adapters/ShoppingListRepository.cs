@@ -48,6 +48,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
             cancellationToken.ThrowIfCancellationRequested();
 
             await StoreModifiedListAsync(listEntity, shoppingList, cancellationToken);
+
+            _dbContext.ChangeTracker.Clear();
         }
 
         public async Task<IShoppingList?> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)
@@ -56,7 +58,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
                 throw new ArgumentNullException(nameof(id));
 
             var entity = await GetShoppingListQuery()
-                .FirstOrDefaultAsync(list => list.Id == id.Value);
+                .FirstOrDefaultAsync(list => list.Id == id.Value, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -74,7 +76,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
 
             List<Entities.ShoppingList> entities = await GetShoppingListQuery()
                 .Where(l => l.ItemsOnList.Any(i => i.ItemId == storeItemId.Value))
-                .ToListAsync();
+                .ToListAsync(cancellationToken: cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -103,7 +105,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
             List<Entities.ShoppingList> entities = await GetShoppingListQuery()
                 .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Value) != null
                     && l.CompletionDate == null)
-                .ToListAsync();
+                .ToListAsync(cancellationToken: cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -116,8 +118,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
                 throw new ArgumentNullException(nameof(storeId));
 
             var entity = await GetShoppingListQuery()
-                .FirstOrDefaultAsync(list => list.CompletionDate == null
-                    && list.StoreId == storeId.Value);
+                .FirstOrDefaultAsync(list =>
+                    list.CompletionDate == null
+                    && list.StoreId == storeId.Value,
+                    cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -163,7 +167,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
         private async Task StoreAsNewListAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
@@ -178,7 +182,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
         private async Task<Entities.ShoppingList> FindEntityByIdAsync(ShoppingListId id)
