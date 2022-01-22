@@ -119,9 +119,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             var handler = _local.CreateSut();
 
             if (isTemporaryItem)
+            {
                 _local.SetupTemporaryItemMock();
+                _local.SetupDeletingItem();
+                _local.SetupStoringItem();
+            }
             else
+            {
                 _local.SetupItemMock();
+            }
 
             if (isActualItemId)
             {
@@ -138,6 +144,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             _local.SetupFindingShoppingList();
             _local.SetupTransactionMock();
             _local.SetupGeneratingTransaction();
+            _local.SetupStoringShoppingList();
 
             // Act
             bool result = await handler.HandleAsync(_local.Command, default);
@@ -200,6 +207,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             private void SetupCommand(OfflineTolerantItemId id)
             {
                 Fixture.ConstructorArgumentFor<RemoveItemFromShoppingListCommand, OfflineTolerantItemId>("itemId", id);
+                if (!id.IsActualId)
+                    Fixture.ConstructorArgumentFor<RemoveItemFromShoppingListCommand, ItemTypeId?>("itemTypeId", null);
 
                 Command = Fixture.Create<RemoveItemFromShoppingListCommand>();
             }
@@ -241,6 +250,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
 
             #region Mock Setup
 
+            public void SetupDeletingItem()
+            {
+                ItemMock.SetupDelete();
+            }
+
             public void SetupFindingItemByActualId()
             {
                 ItemRepositoryMock.SetupFindByAsync(new ItemId(Command.OfflineTolerantItemId.ActualId.Value),
@@ -264,6 +278,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
                     null);
             }
 
+            public void SetupStoringItem()
+            {
+                ItemRepositoryMock.SetupStoreAsync(ItemMock.Object, ItemMock.Object);
+            }
+
             public void SetupFindingShoppingList()
             {
                 ShoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, ShoppingListMock.Object);
@@ -272,6 +291,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
             public void SetupFindingNoShoppingList()
             {
                 ShoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, null);
+            }
+
+            public void SetupStoringShoppingList()
+            {
+                ShoppingListRepositoryMock.SetupStoreAsync(ShoppingListMock.Object);
             }
 
             public void SetupGeneratingTransaction()
@@ -285,7 +309,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Rem
 
             public void VerifyRemoveItemOnce()
             {
-                ShoppingListMock.VerifyRemoveItemOnce(ItemMock.Object.Id);
+                ShoppingListMock.VerifyRemoveItem(ItemMock.Object.Id, Command.ItemTypeId, Times.Once);
             }
 
             public void VerifyGenerateTransactionOnce()

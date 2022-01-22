@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Services
 {
@@ -17,6 +18,12 @@ namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Services
                     itemCategoryId,
                     It.IsAny<CancellationToken>()),
                 Times.Once);
+        }
+
+        public void SetupValidateAsync(ItemCategoryId itemCategoryId)
+        {
+            Setup(m => m.ValidateAsync(itemCategoryId, It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
         }
     }
 }

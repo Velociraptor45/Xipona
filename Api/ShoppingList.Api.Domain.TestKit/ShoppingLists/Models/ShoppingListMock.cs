@@ -90,9 +90,9 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
                 Times.Once);
         }
 
-        public void VerifyRemoveItemOnce(ItemId itemId, ItemTypeId typeId)
+        public void VerifyRemoveItem(ItemId itemId, ItemTypeId itemTypeId, Func<Times> times)
         {
-            Verify(m => m.RemoveItem(itemId, typeId), Times.Once);
+            Verify(m => m.RemoveItem(itemId, itemTypeId), times);
         }
 
         public void VerifyRemoveItemNever(ItemId itemId, ItemTypeId itemTypeId)
@@ -162,11 +162,6 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
         {
             Verify(i => i.ChangeItemQuantity(itemId, itemTypeId, quantity),
                 Times.Once);
-        }
-
-        public void VerifyRemoveItem(ItemId itemId, ItemTypeId itemTypeId, Func<Times> times)
-        {
-            Verify(m => m.RemoveItem(itemId, itemTypeId), times);
         }
 
         #endregion Verify methods

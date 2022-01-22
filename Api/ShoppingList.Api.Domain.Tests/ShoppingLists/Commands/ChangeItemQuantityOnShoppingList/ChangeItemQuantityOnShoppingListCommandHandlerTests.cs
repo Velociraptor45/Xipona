@@ -97,6 +97,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
             _local.SetupCommand();
             _local.SetupShoppingListMock();
             _local.SetupShoppingListRepositoryFindBy();
+            _local.SetupStoringShoppingList();
 
             // Act
             bool result = await handler.HandleAsync(_local.Command, default);
@@ -122,6 +123,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
 
             _local.SetupShoppingListRepositoryFindBy();
             _local.SetupItemRepositoryFindBy();
+            _local.SetupStoringShoppingList();
 
             // Act
             bool result = await handler.HandleAsync(_local.Command, default);
@@ -137,80 +139,91 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
 
         private sealed class LocalFixture
         {
-            public Fixture Fixture { get; }
-            public CommonFixture CommonFixture { get; } = new CommonFixture();
-            public ShoppingListRepositoryMock ShoppingListRepositoryMock { get; }
-            public ItemRepositoryMock ItemRepositoryMock { get; }
-
-            public ShoppingListMock ShoppingListMock { get; set; }
-            public ChangeItemQuantityOnShoppingListCommand Command { get; private set; }
-            public TemporaryItemId TemporaryItemId { get; private set; }
-            public IStoreItem StoreItem { get; private set; }
+            private readonly Fixture _fixture;
+            private readonly CommonFixture _commonFixture = new CommonFixture();
+            private readonly ShoppingListRepositoryMock _shoppingListRepositoryMock;
+            private readonly ItemRepositoryMock _itemRepositoryMock;
+            private ShoppingListMock _shoppingListMock;
+            private TemporaryItemId _temporaryItemId;
+            private IStoreItem _storeItem;
 
             public LocalFixture()
             {
-                Fixture = CommonFixture.GetNewFixture();
+                _fixture = _commonFixture.GetNewFixture();
 
-                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
-                ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
+                _shoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+                _itemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
             }
+
+            public ChangeItemQuantityOnShoppingListCommand Command { get; private set; }
 
             public void SetupCommand()
             {
                 OfflineTolerantItemId offlineTolerantItemId;
-                if (TemporaryItemId == null)
-                    offlineTolerantItemId = new OfflineTolerantItemId(CommonFixture.NextInt());
+                if (_temporaryItemId == null)
+                {
+                    offlineTolerantItemId = new OfflineTolerantItemId(_commonFixture.NextInt());
+                }
                 else
-                    offlineTolerantItemId = new OfflineTolerantItemId(TemporaryItemId.Value);
+                {
+                    _fixture.ConstructorArgumentFor<ChangeItemQuantityOnShoppingListCommand, ItemTypeId?>("itemTypeId",
+                        null);
+                    offlineTolerantItemId = new OfflineTolerantItemId(_temporaryItemId.Value);
+                }
 
-                Fixture.ConstructorArgumentFor<ChangeItemQuantityOnShoppingListCommand, OfflineTolerantItemId>("itemId",
+                _fixture.ConstructorArgumentFor<ChangeItemQuantityOnShoppingListCommand, OfflineTolerantItemId>("itemId",
                     offlineTolerantItemId);
 
-                Command = Fixture.Create<ChangeItemQuantityOnShoppingListCommand>();
+                Command = _fixture.Create<ChangeItemQuantityOnShoppingListCommand>();
             }
 
             public ChangeItemQuantityOnShoppingListCommandHandler CreateSut()
             {
                 return new ChangeItemQuantityOnShoppingListCommandHandler(
-                    ShoppingListRepositoryMock.Object,
-                    ItemRepositoryMock.Object);
+                    _shoppingListRepositoryMock.Object,
+                    _itemRepositoryMock.Object);
             }
 
             public void SetupTemporaryItemId()
             {
-                TemporaryItemId = new TemporaryItemId(Guid.NewGuid());
+                _temporaryItemId = new TemporaryItemId(Guid.NewGuid());
             }
 
             public void SetupShoppingListMock()
             {
-                ShoppingListMock = new ShoppingListMock(ShoppingListMother.Sections(2).Create());
+                _shoppingListMock = new ShoppingListMock(ShoppingListMother.Sections(2).Create());
             }
 
             public void SetupStoreItem()
             {
-                StoreItem = StoreItemMother.Initial().Create();
+                _storeItem = StoreItemMother.Initial().Create();
             }
 
             #region Fixture Setup
 
             public void SetupShoppingListRepositoryFindBy()
             {
-                ShoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, ShoppingListMock.Object);
+                _shoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, _shoppingListMock.Object);
             }
 
             public void SetupShoppingListRepositoryFindingNoList()
             {
-                ShoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, null);
+                _shoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, null);
+            }
+
+            public void SetupStoringShoppingList()
+            {
+                _shoppingListRepositoryMock.SetupStoreAsync(_shoppingListMock.Object);
             }
 
             public void SetupItemRepositoryFindBy()
             {
-                ItemRepositoryMock.SetupFindByAsync(TemporaryItemId, StoreItem);
+                _itemRepositoryMock.SetupFindByAsync(_temporaryItemId, _storeItem);
             }
 
             public void SetupItemRepositoryFindingNoItem()
             {
-                ItemRepositoryMock.SetupFindByAsync(TemporaryItemId, null);
+                _itemRepositoryMock.SetupFindByAsync(_temporaryItemId, null);
             }
 
             #endregion Fixture Setup
@@ -219,17 +232,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
 
             public void VerifyStoreAsync()
             {
-                ShoppingListRepositoryMock.VerifyStoreAsyncOnce(ShoppingListMock.Object);
+                _shoppingListRepositoryMock.VerifyStoreAsyncOnce(_shoppingListMock.Object);
             }
 
             public void VerifyChangeItemQuantityOnce()
             {
-                ShoppingListMock.VerifyChangeItemQuantityOnce(StoreItem.Id, Command.ItemTypeId, Command.Quantity);
+                _shoppingListMock.VerifyChangeItemQuantityOnce(_storeItem.Id, Command.ItemTypeId, Command.Quantity);
             }
 
             public void VerifyChangeItemQuantityWithOfflineIdOnce()
             {
-                ShoppingListMock.VerifyChangeItemQuantityOnce(
+                _shoppingListMock.VerifyChangeItemQuantityOnce(
                     new ItemId(Command.OfflineTolerantItemId.ActualId.Value),
                     Command.ItemTypeId,
                     Command.Quantity);

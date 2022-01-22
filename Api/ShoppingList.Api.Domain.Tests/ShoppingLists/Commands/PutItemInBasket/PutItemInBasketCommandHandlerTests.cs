@@ -98,6 +98,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
 
             _local.SetupShoppingListMock();
             _local.SetupShoppingListRepositoryFindBy();
+            _local.SetupStoringShoppingList();
 
             // Act
             bool result = await handler.HandleAsync(_local.Command, default);
@@ -124,6 +125,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
 
             _local.SetupShoppingListRepositoryFindBy();
             _local.SetupItemRepositoryFindBy();
+            _local.SetupStoringShoppingList();
 
             // Act
             bool result = await handler.HandleAsync(_local.Command, default);
@@ -162,9 +164,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             {
                 OfflineTolerantItemId offlineTolerantItemId;
                 if (TemporaryItemId == null)
+                {
                     offlineTolerantItemId = new OfflineTolerantItemId(CommonFixture.NextInt());
+                }
                 else
+                {
+                    Fixture.ConstructorArgumentFor<PutItemInBasketCommand, ItemTypeId?>("itemTypeId", null);
                     offlineTolerantItemId = new OfflineTolerantItemId(TemporaryItemId.Value);
+                }
 
                 Fixture.ConstructorArgumentFor<PutItemInBasketCommand, OfflineTolerantItemId>("itemId",
                     offlineTolerantItemId);
@@ -206,6 +213,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
                 ShoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, null);
             }
 
+            public void SetupStoringShoppingList()
+            {
+                ShoppingListRepositoryMock.SetupStoreAsync(ShoppingListMock.Object);
+            }
+
             public void SetupItemRepositoryFindBy()
             {
                 ItemRepositoryMock.SetupFindByAsync(TemporaryItemId, StoreItem);
@@ -227,12 +239,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
 
             public void VerifyPutItemInBasketOnce()
             {
-                ShoppingListMock.VerifyPutItemInBasketOnce(StoreItem.Id);
+                ShoppingListMock.VerifyPutItemInBasket(StoreItem.Id, Command.ItemTypeId, Times.Once);
             }
 
             public void VerifyPutItemInBasketWithOfflineIdOnce()
             {
-                ShoppingListMock.VerifyPutItemInBasketOnce(new ItemId(Command.OfflineTolerantItemId.ActualId.Value));
+                ShoppingListMock.VerifyPutItemInBasket(new ItemId(Command.OfflineTolerantItemId.ActualId.Value),
+                    Command.ItemTypeId, Times.Once);
             }
 
             public void VerifyItemRepositoryFindByWithTemporaryItemId()

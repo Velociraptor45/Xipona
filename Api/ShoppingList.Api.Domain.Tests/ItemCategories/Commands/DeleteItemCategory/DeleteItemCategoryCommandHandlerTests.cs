@@ -515,6 +515,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
 
             #region Mock Setup
 
+            public void SetupDeletingItems()
+            {
+                foreach (var itemMock in StoreItemMocks)
+                {
+                    itemMock.SetupDelete();
+                }
+            }
+
             public void SetupFindingShoppingLists()
             {
                 foreach (var storeItemMock in ShoppingListDict.Keys)
@@ -534,6 +542,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
                 }
             }
 
+            public void SetupStoringShoppingLists()
+            {
+                foreach (var list in ShoppingListDict.Values.SelectMany(l => l))
+                {
+                    ShoppingListRepositoryMock.SetupStoreAsync(list.Object);
+                }
+            }
+
             public void SetupFindingItemCategory()
             {
                 ItemCategoryRepositoryMock.SetupFindByAsync(Command.ItemCategoryId, ItemCategoryMock.Object);
@@ -544,6 +560,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
                 ItemCategoryRepositoryMock.SetupFindByAsync(Command.ItemCategoryId, null);
             }
 
+            public void SetupStoringItemCategory()
+            {
+                ItemCategoryRepositoryMock.SetupStoreAsync(ItemCategoryMock.Object, ItemCategoryMock.Object);
+            }
+
             public void SetupFindingItems()
             {
                 ItemRepositoryMock.SetupFindActiveByAsync(Command.ItemCategoryId, StoreItemMocks.Select(m => m.Object));
@@ -552,6 +573,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
             public void SetupFindingNoItems()
             {
                 ItemRepositoryMock.SetupFindActiveByAsync(Command.ItemCategoryId, Enumerable.Empty<IStoreItem>());
+            }
+
+            public void SetupStoringItem()
+            {
+                foreach (var item in StoreItemMocks)
+                {
+                    ItemRepositoryMock.SetupStoreAsync(item.Object, item.Object);
+                }
             }
 
             public void SetupGeneratingTransaction()
@@ -643,6 +672,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
                 SetupFindingItemCategory();
                 SetupFindingItems();
                 SetupGeneratingTransaction();
+                SetupDeletingItems();
+                SetupStoringShoppingLists();
+                SetupStoringItem();
+                SetupStoringItemCategory();
             }
 
             public void SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists()
@@ -650,11 +683,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
                 SetupCommand();
                 SetupItemCategoryMock();
                 SetupStoreItemMocks();
+                SetupDeletingItems();
                 SetupTransactionMock();
                 SetupFindingItemCategory();
                 SetupFindingItems();
                 SetupFindingNoShoppingLists();
                 SetupGeneratingTransaction();
+                SetupStoringItem();
+                SetupStoringItemCategory();
             }
 
             public void SetupWithNoItemsOfItemCategory()
@@ -665,6 +701,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
                 SetupFindingItemCategory();
                 SetupFindingNoItems();
                 SetupGeneratingTransaction();
+                SetupStoringItemCategory();
             }
 
             #endregion Aggregates

@@ -37,5 +37,11 @@ namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Ports
                     It.IsAny<CancellationToken>()),
                 Times.Once);
         }
+
+        public void SetupStoreAsync(IItemCategory itemCategory, IItemCategory returnValue)
+        {
+            Setup(m => m.StoreAsync(itemCategory, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(returnValue);
+        }
     }
 }

@@ -27,6 +27,18 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services
                 .Returns(Task.CompletedTask);
         }
 
+        public void SetupAddItemToShoppingList(IShoppingList shoppingList,
+            TemporaryItemId temporaryItemId, SectionId? sectionId, float quantity)
+        {
+            Setup(m => m.AddItemToShoppingList(
+                    shoppingList,
+                    temporaryItemId,
+                    sectionId,
+                    quantity,
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+        }
+
         public void SetupAddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
             ItemTypeId typeId, SectionId? sectionId, float quantity)
         {

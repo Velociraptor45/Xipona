@@ -778,7 +778,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
                 public override void VerifyRemoveItemOnce()
                 {
-                    ShoppingListMock.VerifyRemoveItemOnce(OldShoppingListItem.Id, OldShoppingListItem.TypeId);
+                    ShoppingListMock.VerifyRemoveItem(OldShoppingListItem.Id, OldShoppingListItem.TypeId, Times.Once);
                 }
 
                 public override void VerifyAddItemToShoppingListOnce()

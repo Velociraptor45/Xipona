@@ -292,6 +292,26 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                 StoreItemFactoryMock.SetupCreate(Command.ItemCreation, StoreItem);
             }
 
+            public void SetupValidatingItemCategory()
+            {
+                ItemCategoryValidationServiceMock.SetupValidateAsync(Command.ItemCreation.ItemCategoryId);
+            }
+
+            public void SetupValidatingManufacturer()
+            {
+                ManufacturerValidationServiceMock.SetupValidateAsync(Command.ItemCreation.ManufacturerId);
+            }
+
+            public void SetupValidatingAvailabilities()
+            {
+                AvailabilityValidationServiceMock.SetupValidateAsync(Command.ItemCreation.Availabilities);
+            }
+
+            public void SetupStoringItem()
+            {
+                ItemRepositoryMock.SetupStoreAsync(StoreItem, StoreItem);
+            }
+
             #region Verify
 
             public void VerifyValidateAvailabilitiesOnce()
@@ -332,6 +352,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                 SetupCommand();
 
                 SetupStoreItemFactoryCreate();
+                SetupStoringItem();
+
+                SetupValidatingAvailabilities();
+                SetupValidatingItemCategory();
             }
 
             public void SetupWithManufacturerId()
@@ -343,6 +367,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                 SetupCommand();
 
                 SetupStoreItemFactoryCreate();
+                SetupStoringItem();
+
+                SetupValidatingAvailabilities();
+                SetupValidatingItemCategory();
+                SetupValidatingManufacturer();
             }
 
             #endregion Aggregates

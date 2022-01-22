@@ -20,6 +20,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
             SetupIsDeleted(storeItem.IsDeleted);
             SetupAvailabilities(storeItem.Availabilities);
             SetupItemTypes(storeItem.ItemTypes);
+            SetupHasItemTypes(storeItem.HasItemTypes);
         }
 
         public bool ModifyWithTypeCalled { get; set; }
@@ -28,6 +29,12 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
         {
             Setup(i => i.ItemTypes)
                 .Returns(itemTypes);
+        }
+
+        private void SetupHasItemTypes(bool hasItemTypes)
+        {
+            Setup(i => i.HasItemTypes)
+                .Returns(hasItemTypes);
         }
 
         public ISetup<IStoreItem, ItemTypes> SetupItemTypes()
@@ -64,6 +71,11 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
             Setup(m => m.ModifyAsync(modification, validator))
                 .Callback(() => ModifyWithTypeCalled = true)
                 .Returns(Task.CompletedTask);
+        }
+
+        public void SetupDelete()
+        {
+            Setup(i => i.Delete());
         }
 
         #region Verify

@@ -54,12 +54,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
             // Arrange
             var fixture = _commonFixture.GetNewFixture();
 
-            ShoppingListRepositoryMock shoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
-
             var command = fixture.Create<FinishShoppingListCommand>();
-            var handler = fixture.Create<FinishShoppingListCommandHandler>();
+            var handler = _fixture.CreateSut();
 
-            shoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, null);
+            _fixture.ShoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, null);
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(command, default);
@@ -89,6 +87,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Fin
             listMock.SetupFinish(command.CompletionDate, remainingListMock.Object);
 
             _fixture.ShoppingListRepositoryMock.SetupFindByAsync(command.ShoppingListId, listMock.Object);
+            _fixture.ShoppingListRepositoryMock.SetupStoreAsync(listMock.Object);
+            _fixture.ShoppingListRepositoryMock.SetupStoreAsync(remainingListMock.Object);
             _fixture.TransactionGeneratorMock.SetupGenerateAsync(transactionMock.Object);
 
             // Act

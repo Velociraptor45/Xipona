@@ -148,6 +148,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                 StoreItemFactoryMock.SetupCreate(Command.TemporaryItemCreation, StoreItem);
             }
 
+            public void SetupValidatingAvailabilities()
+            {
+                AvailabilityValidationServiceMock.SetupValidateAsync(Availability.ToMonoList());
+            }
+
+            public void SetupStoringItem()
+            {
+                ItemRepositoryMock.SetupStoreAsync(StoreItem, StoreItem);
+            }
+
             #endregion Mock Setup
 
             #region Verify
@@ -173,6 +183,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
                 SetupRandomAvailability();
                 SetupCommand();
                 SetupCreatingStoreItem();
+                SetupStoringItem();
+
+                SetupValidatingAvailabilities();
             }
 
             #endregion Aggregates

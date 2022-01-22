@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Services
 {
@@ -25,6 +26,12 @@ namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Services
                     It.IsAny<ManufacturerId>(),
                     It.IsAny<CancellationToken>()),
                 Times.Never);
+        }
+
+        public void SetupValidateAsync(ManufacturerId manufacturerId)
+        {
+            Setup(m => m.ValidateAsync(manufacturerId, It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
         }
     }
 }
