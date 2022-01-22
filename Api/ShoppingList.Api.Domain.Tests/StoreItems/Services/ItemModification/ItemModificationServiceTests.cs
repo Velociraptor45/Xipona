@@ -340,7 +340,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
             private List<IItemType> _notExistingItemTypes;
             private Tuple<ItemTypeId, StoreId> _removedStoreByTypeId;
             private StoreItemMock _itemMock;
-            private List<IItemType> _modifiedItemTypes;
+            private List<ItemTypeModification> _modifiedItemTypes;
 
             public LocalFixture()
             {
@@ -365,7 +365,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
             {
                 if (_modifiedItemTypes != null)
                 {
-                    _fixture.ConstructorArgumentFor<ItemWithTypesModification, IEnumerable<IItemType>>("itemTypes",
+                    _fixture.ConstructorArgumentFor<ItemWithTypesModification, IEnumerable<ItemTypeModification>>("itemTypes",
                         _modifiedItemTypes);
                 }
                 _fixture.ConstructorArgumentFor<ItemWithTypesModification, ItemId>("id", _itemMock.Object.Id);
@@ -401,18 +401,25 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
 
             private void SetupModifiedItemTypesEqualToExisting()
             {
-                _modifiedItemTypes = _itemMock.Object.ItemTypes.ToList();
+                _modifiedItemTypes = _itemMock.Object.ItemTypes
+                    .Select(t => new ItemTypeModification(t.Id, t.Name, t.Availabilities))
+                    .ToList();
             }
 
             private void SetupModifiedItemTypesContainingNew()
             {
-                _modifiedItemTypes = _itemMock.Object.ItemTypes.Union(new ItemTypeBuilder().CreateMany(1)).ToList();
+                _modifiedItemTypes = _itemMock.Object.ItemTypes
+                    .Select(t => new ItemTypeModification(t.Id, t.Name, t.Availabilities))
+                    .Union(_fixture.CreateMany<ItemTypeModification>(1))
+                    .ToList();
             }
 
             private void SetupModifiedItemTypesNotContainingAllExisting()
             {
-                _modifiedItemTypes = _commonFixture.ChooseRandom(_itemMock.Object.ItemTypes).ToMonoList();
-                _notExistingItemTypes = _itemMock.Object.ItemTypes.Except(_modifiedItemTypes).ToList();
+                var choseItem = _commonFixture.ChooseRandom(_itemMock.Object.ItemTypes);
+                _modifiedItemTypes = new ItemTypeModification(choseItem.Id, choseItem.Name, choseItem.Availabilities)
+                    .ToMonoList();
+                _notExistingItemTypes = _itemMock.Object.ItemTypes.Except(choseItem.ToMonoList()).ToList();
             }
 
             private void SetupModifiedItemTypesEqualToExistingButOneWithDifferentStores()
@@ -422,13 +429,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
                     .Select(t =>
                     {
                         if (removedOne)
-                            return t;
+                            return new ItemTypeModification(t.Id, t.Name, t.Availabilities);
 
                         var av = _commonFixture.RemoveRandom(t.Availabilities, 1);
                         var removedAvailability = t.Availabilities.Except(av).Single();
                         _removedStoreByTypeId = new Tuple<ItemTypeId, StoreId>(t.Id, removedAvailability.StoreId);
                         removedOne = true;
-                        return new ItemTypeBuilder(t).WithAvailabilities(av).Create();
+                        return new ItemTypeModification(t.Id, t.Name, av);
                     })
                     .ToList();
             }
@@ -499,6 +506,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
                     {
                         _shoppingListRepositoryMock.SetupStoreAsync(mock.Object);
                     }
+                }
+            }
+
+            public void SetupStoringShoppingList()
+            {
+                foreach (var listMock in _shoppingListDict.Values.SelectMany(l => l))
+                {
+                    _shoppingListRepositoryMock.SetupStoreAsync(listMock.Object);
                 }
             }
 
@@ -610,6 +625,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
                 SetupItemReturningTypes();
                 SetupFindingShoppingListsWithoutStoreChanges();
                 SetupStoringItem();
+                SetupStoringShoppingList();
             }
 
             public void SetupForWithModifiedItemTypesNotContainingAllExisting()
@@ -622,6 +638,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
                 SetupFindingShoppingListsWithoutStoreChanges();
                 SetupStoringShoppingListsOfNotExistingItemTypes();
                 SetupStoringItem();
+                SetupStoringShoppingList();
             }
 
             public void SetupForWithModifiedItemTypesContainingNew()
@@ -633,6 +650,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
                 SetupItemReturningTypes();
                 SetupFindingShoppingListsWithoutStoreChanges();
                 SetupStoringItem();
+                SetupStoringShoppingList();
             }
 
             public void SetupForWithSameItemsButStoresChanged()
@@ -645,6 +663,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemMo
                 SetupFindingShoppingListsWithStoreChanges();
                 SetupStoringShoppingListsOfItemTypeWithChangedStore();
                 SetupStoringItem();
+                SetupStoringShoppingList();
             }
 
             #endregion SetupAggregates

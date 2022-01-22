@@ -1,9 +1,12 @@
 ﻿using Moq;
 using Moq.Language.Flow;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
+using ShoppingList.Api.Core.TestKit.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +24,8 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
             SetupAvailabilities(storeItem.Availabilities);
             SetupItemTypes(storeItem.ItemTypes);
             SetupHasItemTypes(storeItem.HasItemTypes);
+            SetupItemCategoryId(storeItem.ItemCategoryId);
+            SetupManufacturerId(storeItem.ManufacturerId);
         }
 
         public bool ModifyWithTypeCalled { get; set; }
@@ -58,6 +63,18 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
         {
             Setup(i => i.IsDeleted)
                 .Returns(returnValue);
+        }
+
+        public void SetupItemCategoryId(ItemCategoryId? itemCategoryId)
+        {
+            Setup(i => i.ItemCategoryId)
+                .Returns(itemCategoryId);
+        }
+
+        public void SetupManufacturerId(ManufacturerId? manufacturerId)
+        {
+            Setup(i => i.ManufacturerId)
+                .Returns(manufacturerId);
         }
 
         public void SetupAvailabilities(IEnumerable<IStoreItemAvailability> returnValue)
@@ -106,5 +123,11 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
         }
 
         #endregion Verify
+
+        public void SetupMakePermanent(PermanentItem permanentItem, IEnumerable<IStoreItemAvailability> availabilities)
+        {
+            Setup(i => i.MakePermanent(permanentItem,
+                It.Is<IEnumerable<IStoreItemAvailability>>(avs => avs.IsEquivalentTo(availabilities))));
+        }
     }
 }

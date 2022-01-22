@@ -71,6 +71,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
             local.SetupFindingItem();
             local.SetupFindingShoppingList(shoppingListMocks);
             local.SetupGeneratingTransaction();
+            local.SetupDeletingItem();
+            local.SetupStoringItem();
+            local.SetupStoringShoppingLists(shoppingListMocks);
 
             var handler = local.CreateSut();
 
@@ -142,6 +145,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
 
             #region Mock Setup
 
+            public void SetupDeletingItem()
+            {
+                StoreItemMock.SetupDelete();
+            }
+
             public void SetupGeneratingTransaction()
             {
                 TransactionGeneratorMock.SetupGenerateAsync(TransactionMock.Object);
@@ -157,10 +165,23 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Delete
                 ItemRepositoryMock.SetupFindByAsync(Command.ItemId, null);
             }
 
+            public void SetupStoringItem()
+            {
+                ItemRepositoryMock.SetupStoreAsync(StoreItemMock.Object, StoreItemMock.Object);
+            }
+
             public void SetupFindingShoppingList(List<ShoppingListMock> shoppingListMocks)
             {
                 ShoppingListRepositoryMock.SetupFindActiveByAsync(StoreItemMock.Object.Id,
                     shoppingListMocks.Select(m => m.Object));
+            }
+
+            public void SetupStoringShoppingLists(List<ShoppingListMock> shoppingListMocks)
+            {
+                foreach (var listMock in shoppingListMocks)
+                {
+                    ShoppingListRepositoryMock.SetupStoreAsync(listMock.Object);
+                }
             }
 
             #endregion Mock Setup
