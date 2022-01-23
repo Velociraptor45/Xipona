@@ -159,10 +159,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
                 throw new ArgumentNullException(nameof(storeId));
 
             var entities = await GetItemQuery()
-                .Where(item => item.Name.Contains(searchInput)
-                    && !item.Deleted
+                .Where(item =>
+                    !item.Deleted
                     && !item.IsTemporary
-                    && item.AvailableAt.FirstOrDefault(map => map.StoreId == storeId.Value) != null)
+                    && item.Name.Contains(searchInput)
+                    && (item.AvailableAt.Any(map => map.StoreId == storeId.Value)
+                        || item.ItemTypes.Any(t => t.AvailableAt.Any(av => av.StoreId == storeId.Value))))
                 .ToListAsync();
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -227,6 +229,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
 
                 UpdateOrAddAvailabilities(existingEntity, updatedEntity);
                 DeleteAvailabilities(existingEntity, updatedEntity);
+                UpdateOrAddItemTypes(existingEntity, updatedEntity);
+                DeleteItemTypes(existingEntity, updatedEntity);
 
                 await dbContext.SaveChangesAsync();
 
@@ -243,7 +247,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
         private IQueryable<Item> GetItemQuery()
         {
             return dbContext.Items.AsNoTracking()
-                .Include(item => item.AvailableAt);
+                .Include(item => item.AvailableAt)
+                .Include(item => item.ItemTypes)
+                .ThenInclude(itemType => itemType.AvailableAt)
+                .Include(item => item.ItemTypes)
+                .ThenInclude(itemType => itemType.Predecessor);
         }
 
         private async Task<Item?> LoadPredecessorsAsync(Item item)
@@ -264,6 +272,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
         {
             return await dbContext.Items
                 .Include(item => item.AvailableAt)
+                .Include(item => item.ItemTypes)
+                .ThenInclude(itemType => itemType.AvailableAt)
                 .FirstOrDefaultAsync(i => i.Id == id.Value);
         }
 
@@ -286,6 +296,71 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
         }
 
         private void DeleteAvailabilities(Item existing, Item updated)
+        {
+            foreach (var availability in existing.AvailableAt)
+            {
+                bool hasExistingAvailability = updated.AvailableAt.Any(av => av.Id == availability.Id);
+                if (!hasExistingAvailability)
+                {
+                    dbContext.Remove(availability);
+                }
+            }
+        }
+
+        private void DeleteItemTypes(Item existing, Item updated)
+        {
+            foreach (var type in existing.ItemTypes)
+            {
+                bool hasExistingAvailability = updated.ItemTypes.Any(t => t.Id == type.Id);
+                if (!hasExistingAvailability)
+                {
+                    dbContext.Remove(type);
+                }
+            }
+        }
+
+        private void UpdateOrAddItemTypes(Item existing, Item updated)
+        {
+            foreach (var updatedType in updated.ItemTypes!)
+            {
+                var exisitingType = existing.ItemTypes
+                    .FirstOrDefault(t => t.Id == updatedType.Id);
+
+                if (exisitingType == null)
+                {
+                    existing.ItemTypes.Add(updatedType);
+                }
+                else
+                {
+                    dbContext.Entry(exisitingType).CurrentValues.SetValues(updatedType);
+                    UpdateOrAddItemAvailability(exisitingType, updatedType);
+                    DeleteItemAvailability(exisitingType, updatedType);
+                }
+            }
+        }
+
+        private void UpdateOrAddItemAvailability(Entities.ItemType existing, Entities.ItemType updated)
+        {
+            foreach (var availability in updated.AvailableAt!)
+            {
+                var exisitingAvailability = existing.AvailableAt
+                    .FirstOrDefault(av =>
+                        av.ItemTypeId == availability.ItemTypeId
+                        && av.StoreId == availability.StoreId);
+
+                if (exisitingAvailability == null)
+                {
+                    existing.AvailableAt.Add(availability);
+                }
+                else
+                {
+                    availability.Id = exisitingAvailability.Id;
+                    dbContext.Entry(exisitingAvailability).CurrentValues.SetValues(availability);
+                }
+            }
+        }
+
+        private void DeleteItemAvailability(Entities.ItemType existing, Entities.ItemType updated)
         {
             foreach (var availability in existing.AvailableAt)
             {

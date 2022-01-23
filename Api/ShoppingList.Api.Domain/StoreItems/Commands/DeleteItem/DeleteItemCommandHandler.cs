@@ -43,7 +43,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem
             foreach (var list in listsWithItem)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                list.RemoveItem(item.Id);
+
+                if (item.HasItemTypes)
+                {
+                    foreach (var type in item.ItemTypes)
+                    {
+                        list.RemoveItem(item.Id, type.Id);
+                    }
+                }
+                else
+                {
+                    list.RemoveItem(item.Id);
+                }
+
                 await shoppingListRepository.StoreAsync(list, cancellationToken);
             }
 

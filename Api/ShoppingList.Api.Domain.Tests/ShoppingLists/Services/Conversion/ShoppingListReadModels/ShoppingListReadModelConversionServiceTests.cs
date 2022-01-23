@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -54,13 +55,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
             IEnumerable<IManufacturer> manufacturers, ShoppingListReadModel expected)
         {
             // Arrange
-            var fixture = commonFixture.GetNewFixture();
-            var storeRepositoryMock = new StoreRepositoryMock(fixture);
-            var itemRepositoryMock = new ItemRepositoryMock(fixture);
-            var itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(fixture);
-            var manufacturerRepositoryMock = new ManufacturerRepositoryMock(fixture);
+            var storeRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
+            var itemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
+            var itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
+            var manufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
 
-            var service = fixture.Create<ShoppingListReadModelConversionService>();
+            var service = new ShoppingListReadModelConversionService(
+                storeRepositoryMock.Object,
+                itemRepositoryMock.Object,
+                itemCategoryRepositoryMock.Object,
+                manufacturerRepositoryMock.Object);
 
             storeRepositoryMock.SetupFindByAsync(store.Id, store);
             itemRepositoryMock.SetupFindByAsync(items.Select(i => i.Id), items);

@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Queries.AllActiveItemCategories;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturer.Queries.AllActiveManufacturers;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
@@ -16,7 +17,9 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
@@ -35,6 +38,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Post("shopping-list/items/add")]
         Task AddItemToShoppingList([Body] AddItemToShoppingListContract contract);
+
+        [Post("shopping-list/items/add-with-type")]
+        Task AddItemWithTypeToShoppingList([Body] AddItemWithTypeToShoppingListContract contract);
 
         [Post("shopping-list/items/change-quantity")]
         Task ChangeItemQuantityOnShoppingList([Body] ChangeItemQuantityOnShoppingListContract contract);
@@ -73,8 +79,14 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Post("item/modify")]
         Task ModifyItem([Body] ModifyItemContract modifyItemContract);
 
+        [Post("item/modify-with-types")]
+        Task ModifyItemWithTypesAsync([Body] ModifyItemWithTypesContract contract);
+
         [Post("item/update")]
         Task UpdateItemAsync([Body] UpdateItemContract updateItemContract);
+
+        [Post("item/update-with-types")]
+        Task UpdateItemWithTypesAsync([Body] UpdateItemWithTypesContract contract);
 
         [Post("item/delete/{itemId}")]
         Task DeleteItemAsync([Path] int itemId);

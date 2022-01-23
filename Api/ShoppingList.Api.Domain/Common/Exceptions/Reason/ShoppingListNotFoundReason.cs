@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
 
         public ShoppingListNotFoundReason(StoreId id)
         {
-            Message = $"No active shopping list for store {id} found.";
+            Message = $"No active shopping list for store {id.Value} found.";
         }
 
         public string Message { get; }

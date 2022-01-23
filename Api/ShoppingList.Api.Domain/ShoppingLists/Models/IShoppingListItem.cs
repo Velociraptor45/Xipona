@@ -7,6 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         ItemId Id { get; }
         bool IsInBasket { get; }
         float Quantity { get; }
+        ItemTypeId? TypeId { get; }
 
         IShoppingListItem PutInBasket();
 

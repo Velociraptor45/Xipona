@@ -82,12 +82,25 @@
         if (item == null)
             return;
 
-        var request = new AddItemToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, new ItemId(item.ItemId), 1,
-            item.DefaultSectionId); //todo default item quantity
+        bool success;
+        if(item.ItemTypeId == null)
+        {
+            var request = new AddItemToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, new ItemId(item.ItemId), 1,
+                item.DefaultSectionId); //todo default item quantity
 
-        var result = await communicationService.AddItemToShoppingListAsync(request, async () => await OnSearchItemSelected(item), ErrorHandler);
-        if (!result)
+            success = await communicationService.AddItemToShoppingListAsync(request, async () => await OnSearchItemSelected(item), ErrorHandler);
+        }
+        else
+        {
+            var request = new AddItemWithTypeToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, 
+                item.ItemId, item.ItemTypeId.Value, 1, item.DefaultSectionId); //todo default item quantity
+
+            success = await communicationService.AddItemWithTypeToShoppingListAsync(request, async () => await OnSearchItemSelected(item), ErrorHandler);
+        }
+
+        if (!success)
             return;
+
 
         searchBar.ResetInput();
         searchBar.ResetOptions();

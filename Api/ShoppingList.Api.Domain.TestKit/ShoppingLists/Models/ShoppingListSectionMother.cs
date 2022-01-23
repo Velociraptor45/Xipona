@@ -7,7 +7,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
     {
         public static ShoppingListSectionBuilder OneItemInBasket()
         {
-            var item = ShoppingListItemMother.InBasket().Create();
+            var item = ShoppingListItemMother.InBasket().WithoutTypeId().Create();
 
             return new ShoppingListSectionBuilder()
                 .WithItem(item);
@@ -15,7 +15,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
 
         public static ShoppingListSectionBuilder OneItemNotInBasket()
         {
-            var item = ShoppingListItemMother.NotInBasket().Create();
+            var item = ShoppingListItemMother.NotInBasket().WithoutTypeId().Create();
 
             return new ShoppingListSectionBuilder()
                 .WithItem(item);
@@ -25,8 +25,8 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
         {
             var items = new List<IShoppingListItem>
             {
-                ShoppingListItemMother.NotInBasket().Create(),
-                ShoppingListItemMother.InBasket().Create()
+                ShoppingListItemMother.NotInBasket().WithoutTypeId().Create(),
+                ShoppingListItemMother.InBasket().WithoutTypeId().Create()
             };
 
             return new ShoppingListSectionBuilder()
@@ -37,6 +37,12 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
         {
             return new ShoppingListSectionBuilder()
                 .WithoutItems();
+        }
+
+        public static ShoppingListSectionBuilder Items(IEnumerable<IShoppingListItem> items)
+        {
+            return new ShoppingListSectionBuilder()
+                .WithItems(items);
         }
     }
 }

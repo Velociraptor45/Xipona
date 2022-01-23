@@ -17,13 +17,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         void RemoveItem(ItemId itemId);
 
+        void RemoveItem(ItemId itemId, ItemTypeId? itemTypeId);
+
         void PutItemInBasket(ItemId itemId);
 
-        void RemoveFromBasket(ItemId itemId);
+        void PutItemInBasket(ItemId itemId, ItemTypeId? itemTypeId);
 
-        void ChangeItemQuantity(ItemId itemId, float quantity);
+        void RemoveFromBasket(ItemId itemId, ItemTypeId? itemTypeId);
+
+        void ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, float quantity);
 
         IShoppingList Finish(DateTime completionDate);
+
         void AddSection(IShoppingListSection section);
     }
 }

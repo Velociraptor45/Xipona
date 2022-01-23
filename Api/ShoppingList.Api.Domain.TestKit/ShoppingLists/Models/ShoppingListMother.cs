@@ -1,4 +1,7 @@
-﻿namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
+﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using System.Collections.Generic;
+
+namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
 {
     public static class ShoppingListMother
     {
@@ -57,6 +60,13 @@
         public static ShoppingListBuilder Completed()
         {
             return new ShoppingListBuilder();
+        }
+
+        public static ShoppingListBuilder OneSection(IEnumerable<IShoppingListItem> items)
+        {
+            return new ShoppingListBuilder()
+                .WithSection(ShoppingListSectionMother.Items(items).Create())
+                .WithoutCompletionDate();
         }
     }
 }

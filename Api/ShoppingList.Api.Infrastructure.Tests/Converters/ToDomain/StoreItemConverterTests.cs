@@ -36,6 +36,10 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
                 .Select(av => StoreItemAvailabilityConverterTests.GetSource(av))
                 .ToList();
 
+            var itemTypes = destination.ItemTypes
+                .Select(t => ItemTypeConverterTests.GetSource(t))
+                .ToList();
+
             return new Item
             {
                 Id = destination.Id.Value,
@@ -51,18 +55,20 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
                 PredecessorId = predecessor?.Id,
                 Predecessor = predecessor,
                 AvailableAt = availabilities,
-                CreatedFrom = destination.TemporaryId?.Value
+                CreatedFrom = destination.TemporaryId?.Value,
+                ItemTypes = itemTypes
             };
         }
 
         public static void AddDependencies(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddInstancesOfGenericType(typeof(StoreItemConverter).Assembly, typeof(IToDomainConverter<,>));
-            serviceCollection.AddInstancesOfNonGenericType(typeof(IStoreItemFactory).Assembly, typeof(IStoreItemFactory));
+            serviceCollection.AddImplementationOfGenericType(typeof(StoreItemConverter).Assembly, typeof(IToDomainConverter<,>));
+            serviceCollection.AddImplementationOfNonGenericType(typeof(IStoreItemFactory).Assembly, typeof(IStoreItemFactory));
 
             StoreItemAvailabilityConverterTests.AddDependencies(serviceCollection);
             ManufacturerConverterTests.AddDependencies(serviceCollection);
             ItemCategoryConverterTests.AddDependencies(serviceCollection);
+            ItemTypeConverterTests.AddDependencies(serviceCollection);
         }
     }
 }

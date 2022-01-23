@@ -30,7 +30,16 @@
                             FragmentCreator="@ErrorHandler"></ManufacturerSelect>
     </div>
     <Quantity State="@State"></Quantity>
-    <Availabilities State="@State"></Availabilities>
+    @if (State.EditedItem.ItemMode == ItemMode.WithoutTypes
+        || (!State.EditedItem.ItemTypes.Any() && State.EditedItem.ItemMode == ItemMode.NotDefined))
+    {
+        <Availabilities State="@State"></Availabilities>
+    }
+    @if (State.EditedItem.ItemMode == ItemMode.WithTypes
+        || (!State.EditedItem.Availabilities.Any() && State.EditedItem.ItemMode == ItemMode.NotDefined))
+    {
+        <ItemTypes State="State"></ItemTypes>
+    }
     <div class="pb-2 pt-4">
         <TextArea Placeholder="Comment" MinRows="2" @bind-Value="@State.EditedItem.Comment"></TextArea>
     </div>
@@ -45,8 +54,8 @@
         }
         else
         {
-            <Button OnClick="@OnUpdateButtonClickedAsync">Update</Button>
-            <Button Class="ml-2" OnClick="@OnModifyButtonClickedAsync">Modify</Button>
+            <Button Disabled="@ShouldDisableChangeButton()" OnClick="@OnUpdateButtonClickedAsync">Update</Button>
+            <Button Disabled="@ShouldDisableChangeButton()" Class="ml-2" OnClick="@OnModifyButtonClickedAsync">Modify</Button>
         }
     </div>
 </div>
@@ -57,6 +66,24 @@
 
     private async Task OnUpdateButtonClickedAsync()
     {
+        if(State.EditedItem.ItemTypes.Any())
+        {
+            var withTypesRequest = new UpdateItemWithTypesRequest(Guid.NewGuid(), State.EditedItem);
+            try
+            {
+                await apiClient.UpdateItemWithTypesAsync(withTypesRequest);
+            }
+            catch(Exception e)
+            {
+                var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnModifyButtonClickedAsync());
+                notificationService.NotifyError("Updating item with types failed", e.Message, fragment);
+                return;
+            }
+
+            State.LeaveEditor();
+            return;
+        }
+
         var request = new UpdateItemRequest(Guid.NewGuid(), State.EditedItem);
         try
         {
@@ -73,6 +100,24 @@
 
     private async Task OnModifyButtonClickedAsync()
     {
+        if(State.EditedItem.ItemTypes.Any())
+        {
+            var withTypesRequest = new ModifyItemWithTypesRequest(Guid.NewGuid(), State.EditedItem);
+            try
+            {
+                await apiClient.ModifyItemWithTypesAsync(withTypesRequest);
+            }
+            catch(Exception e)
+            {
+                var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnModifyButtonClickedAsync());
+                notificationService.NotifyError("Modifying item with types failed", e.Message, fragment);
+                return;
+            }
+
+            State.LeaveEditor();
+            return;
+        }
+
         var request = new ModifyItemRequest(Guid.NewGuid(), State.EditedItem);
         try
         {
@@ -139,6 +184,11 @@
             return;
         }
         State.LeaveEditor();
+    }
+
+    private bool ShouldDisableChangeButton()
+    {
+        return State.EditedItem.IsItemWithTypes && !State.EditedItem.ItemTypes.Any();
     }
 
     private void OnBackButtonClicked()

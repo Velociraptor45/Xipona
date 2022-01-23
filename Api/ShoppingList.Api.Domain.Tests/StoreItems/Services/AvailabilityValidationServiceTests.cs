@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
@@ -31,7 +32,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
         public async Task ValidateAsync_WithAvailabilitiesIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             // Act
             Func<Task> function = async () => await service.ValidateAsync(null, default);
@@ -47,7 +48,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
         public async Task ValidateAsync_WithDuplicatedStoreIds_ShouldThrowDomainException()
         {
             // Arrange
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
             _local.SetupAvailabilitiesWithDuplicatedStoreIds();
 
             // Act
@@ -64,7 +65,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
         public async Task ValidateAsync_WithInvalidStoreId_ShouldThrowDomainException()
         {
             // Arrange
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
             _local.SetupAvailabilities();
             _local.SetupFindingNoStores();
 
@@ -82,7 +83,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
         public async Task ValidateAsync_WithSectionIdNotInStore_ShouldThrowDomainException()
         {
             // Arrange
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
             _local.SetupAvailabilities();
             _local.SetupStoresWithInvalidSectionIds();
             _local.SetupFindingStores();
@@ -101,7 +102,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
         public async Task ValidateAsync_WithValidData_ShouldNotThrow()
         {
             // Arrange
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
             _local.SetupAvailabilities();
             _local.SetupStores();
             _local.SetupFindingStores();
@@ -129,12 +130,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                StoreRepositoryMock = new StoreRepositoryMock(Fixture);
+                StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
             }
 
-            public AvailabilityValidationService CreateService()
+            public AvailabilityValidationService CreateSut()
             {
-                return Fixture.Create<AvailabilityValidationService>();
+                return new AvailabilityValidationService(StoreRepositoryMock.Object);
             }
 
             public void SetupAvailabilitiesWithDuplicatedStoreIds()

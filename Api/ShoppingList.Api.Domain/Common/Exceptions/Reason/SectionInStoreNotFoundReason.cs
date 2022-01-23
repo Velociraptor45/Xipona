@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
     {
         public SectionInStoreNotFoundReason(SectionId sectionId, StoreId storeId)
         {
-            Message = $"Section {sectionId} wasn't found in store {storeId}.";
+            Message = $"Section {sectionId.Value} wasn't found in store {storeId.Value}.";
         }
 
         public string Message { get; }

@@ -78,13 +78,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure
 
             services.AddTransient<IShoppingListRepository, ShoppingListRepository>();
             services.AddTransient<IItemRepository, ItemRepository>();
+            services.AddTransient<IItemTypeReadRepository, ItemTypeReadRepository>();
             services.AddTransient<IItemCategoryRepository, ItemCategoryRepository>();
             services.AddTransient<IManufacturerRepository, ManufacturerRepository>();
             services.AddTransient<IStoreRepository, StoreRepository>();
             services.AddScoped<ITransactionGenerator, TransactionGenerator>();
 
-            services.AddInstancesOfGenericType(assembly, typeof(IToEntityConverter<,>));
-            services.AddInstancesOfGenericType(assembly, typeof(IToDomainConverter<,>));
+            services.AddImplementationOfGenericType(assembly, typeof(IToEntityConverter<,>));
+            services.AddImplementationOfGenericType(assembly, typeof(IToDomainConverter<,>));
         }
 
         private static IEnumerable<DbContext> GetAllDbContextInstances(IServiceProvider serviceProvider)

@@ -37,6 +37,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities
         public Item? Predecessor { get; set; }
 
         [InverseProperty("Item")]
+        public ICollection<ItemType> ItemTypes { get; set; }
+
+        [InverseProperty("Item")]
         public ICollection<AvailableAt> AvailableAt { get; set; }
     }
 }

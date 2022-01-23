@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Attributes;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
@@ -39,7 +40,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
         public async Task ConvertAsync_WithNeitherItemCategoryNorManufacturer_ShouldConvertToReadModel()
         {
             // Arrange
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             _local.SetupStore();
             _local.SetupItemsWithNeitherItemCategoryNorManufacturer();
@@ -65,7 +66,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
         public async Task ConvertAsync_WithItemCategoryAndNoManufacturer_ShouldConvertToReadModel()
         {
             // Arrange
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             _local.SetupStore();
             _local.SetupItemsWithoutManufacturer();
@@ -91,7 +92,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
         public async Task ConvertAsync_WithManufacturerAndNoItemCategory_ShouldConvertToReadModel()
         {
             // Arrange
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             _local.SetupStore();
             _local.SetupItemsWithoutItemCategory();
@@ -117,7 +118,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
         public async Task ConvertAsync_WithItemCategoryAndManufacturer_ShouldConvertToReadModel()
         {
             // Arrange
-            var service = _local.CreateService();
+            var service = _local.CreateSut();
 
             _local.SetupStore();
             _local.SetupItems();
@@ -155,13 +156,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(Fixture);
-                ManufacturerRepositoryMock = new ManufacturerRepositoryMock(Fixture);
+                ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
+                ManufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
             }
 
-            public ItemSearchReadModelConversionService CreateService()
+            public ItemSearchReadModelConversionService CreateSut()
             {
-                return Fixture.Create<ItemSearchReadModelConversionService>();
+                return new ItemSearchReadModelConversionService(ItemCategoryRepositoryMock.Object,
+                    ManufacturerRepositoryMock.Object);
             }
 
             public void SetupStore()
@@ -278,6 +280,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
 
                     yield return new ItemSearchReadModel(
                         item.Id,
+                        null,
                         item.Name,
                         item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                         availability.Price,

@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
     {
         public ItemAtStoreNotAvailableReason(ItemId itemId, StoreId storeId)
         {
-            Message = $"Item {itemId} not available at store {storeId.Value}";
+            Message = $"Item {itemId.Value} not available at store {storeId.Value}";
         }
 
         public string Message { get; }

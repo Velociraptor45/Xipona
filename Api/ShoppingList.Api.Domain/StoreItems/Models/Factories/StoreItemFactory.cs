@@ -36,9 +36,33 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
             return item;
         }
 
+        public IStoreItem Create(ItemId id, string name, bool isDeleted, string comment,
+            QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+            ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
+            IEnumerable<IItemType> itemTypes)
+        {
+            var item = new StoreItem(
+                id,
+                name,
+                isDeleted,
+                comment,
+                quantityType,
+                quantityInPacket,
+                quantityTypeInPacket,
+                itemCategoryId,
+                manufacturerId,
+                itemTypes);
+
+            if (predecessor != null)
+                item.SetPredecessor(predecessor);
+
+            return item;
+        }
+
         public IStoreItem Create(ItemCreation itemCreation)
         {
-            return new StoreItem(new ItemId(0),
+            return new StoreItem(
+                new ItemId(0),
                 itemCreation.Name,
                 false,
                 itemCreation.Comment,
@@ -87,6 +111,29 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
 
             model.SetPredecessor(predecessor);
             return model;
+        }
+
+        public IStoreItem CreateNew(string name, string comment,
+            QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+            ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
+            IEnumerable<IItemType> itemTypes)
+        {
+            var item = new StoreItem(
+                new ItemId(0),
+                name,
+                isDeleted: false,
+                comment,
+                quantityType,
+                quantityInPacket,
+                quantityTypeInPacket,
+                itemCategoryId,
+                manufacturerId,
+                itemTypes);
+
+            if (predecessor != null)
+                item.SetPredecessor(predecessor);
+
+            return item;
         }
     }
 }

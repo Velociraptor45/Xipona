@@ -3,7 +3,10 @@ using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Core.Converter
 {
-    public interface IToContractConverter<in TSource, out TDestination>
+    public interface IToContractConverter : IConverter
+    { }
+
+    public interface IToContractConverter<in TSource, out TDestination> : IToContractConverter
     {
         TDestination ToContract(TSource source);
 

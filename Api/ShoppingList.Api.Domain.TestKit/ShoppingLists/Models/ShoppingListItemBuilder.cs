@@ -23,5 +23,16 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
             FillContructorWith("quantity", quantity);
             return this;
         }
+
+        public ShoppingListItemBuilder WithTypeId(ItemTypeId? typeId)
+        {
+            FillContructorWith("typeId", typeId);
+            return this;
+        }
+
+        public ShoppingListItemBuilder WithoutTypeId()
+        {
+            return WithTypeId(null);
+        }
     }
 }

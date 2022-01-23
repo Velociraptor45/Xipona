@@ -1,11 +1,13 @@
-﻿using AutoFixture;
-using FluentAssertions;
+﻿using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
@@ -20,297 +22,838 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 {
     public class ShoppingListUpdateServiceTests
     {
-        private readonly LocalFixture _local;
-
-        public ShoppingListUpdateServiceTests()
+        public class ExchangeItemAsyncTestsWithoutTypes
         {
-            _local = new LocalFixture();
-        }
+            private readonly ExchangeItemAsyncWithoutTypesFixture _fixture;
 
-        #region ExchangeItemAsync
-
-        [Fact]
-        public async Task ExchangeItemAsync_WithOldItemIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var service = _local.CreateService();
-            _local.SetupNewItem();
-            _local.SetupOldItemNull();
-
-            // Act
-            Func<Task> function = async () => await service.ExchangeItemAsync(_local.OldItem?.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
+            public ExchangeItemAsyncTestsWithoutTypes()
             {
-                await function.Should().ThrowAsync<ArgumentNullException>();
+                _fixture = new ExchangeItemAsyncWithoutTypesFixture();
+            }
+
+            #region ExchangeItemAsync
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithOldItemIsNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+                _fixture.SetupNewItem();
+                _fixture.SetupOldItemNull();
+
+                // Act
+                Func<Task> function = async () =>
+                    await service.ExchangeItemAsync(_fixture.OldShoppingListItem?.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    await function.Should().ThrowAsync<ArgumentNullException>();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithNewItemIdIsNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+                _fixture.SetupNewItemNull();
+                _fixture.SetupOldItem();
+
+                // Act
+                Func<Task> function = async () =>
+                    await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    await function.Should().ThrowAsync<ArgumentNullException>();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithOldItemOnNoShoppingLists_ShouldDoNothing()
+            {
+                // Arrange
+                var service = _fixture.CreateSut();
+
+                _fixture.SetupOldItem();
+                _fixture.SetupNewItem();
+                _fixture.SetupFindingNoShoppingList();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyStoreShoppingListNever();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithShoppingListItemHasType_ShouldThrowDomainException()
+            {
+                // Arrange
+                _fixture.SetupShoppingListWithItemWithType();
+                _fixture.SetupOldItemFromShoppingListInBasket();
+                _fixture.SetupNewItemMatchingShoppingList();
+                _fixture.SetupFindingShoppingList();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () =>
+                    await sut.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListItemHasType);
+            }
+
+            #region WithNewItemNotAvailableForShoppingList
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithNewItemNotAvailableForShoppingList_ShouldRemoveOldItem()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemNotAvailableForShoppingList();
+
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyRemoveItemOnce();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithNewItemNotAvailableForShoppingList_ShouldNotAddItemToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemNotAvailableForShoppingList();
+
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyAddItemToShoppingListNever();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithNewItemNotAvailableForShoppingList_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemNotAvailableForShoppingList();
+
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyStoreShoppingListOnce();
+                }
+            }
+
+            #endregion WithNewItemNotAvailableForShoppingList
+
+            #region WithNewItemAvailableForShoppingListAndInBasket
+
+            [Fact]
+            public async Task
+                ExchangeItemAsync_WithNewItemAvailableForShoppingListAndInBasket_ShouldRemoveOldItemFromShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyRemoveItemOnce();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndInBasket_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyStoreShoppingListOnce();
+                }
+            }
+
+            [Fact]
+            public async Task
+                ExchangeItemAsync_WithNewItemAvailableForShoppingListAndInBasket_ShouldAddItemToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyAddItemToShoppingListOnce();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndInBasket_ShouldPutItemInBasket()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyPutItemInBasketOnce();
+                }
+            }
+
+            #endregion WithNewItemAvailableForShoppingListAndInBasket
+
+            #region WithNewItemAvailableForShoppingListAndNotInBasket
+
+            [Fact]
+            public async Task
+                ExchangeItemAsync_WithNewItemAvailableForShoppingListAndNotInBasket_ShouldRemoveOldItemFromShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyRemoveItemOnce();
+                }
+            }
+
+            [Fact]
+            public async Task
+                ExchangeItemAsync_WithNewItemAvailableForShoppingListAndNotInBasket_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyStoreShoppingListOnce();
+                }
+            }
+
+            [Fact]
+            public async Task
+                ExchangeItemAsync_WithNewItemAvailableForShoppingListAndNotInBasket_ShouldAddNewItemToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyAddItemToShoppingListOnce();
+                }
+            }
+
+            [Fact]
+            public async Task
+                ExchangeItemAsync_WithNewItemAvailableForShoppingListAndNotInBasket_ShouldNotPutItemInBasket()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyPutItemInBasketNever();
+                }
+            }
+
+            #endregion WithNewItemAvailableForShoppingListAndNotInBasket
+
+            #endregion ExchangeItemAsync
+
+            private class ExchangeItemAsyncWithoutTypesFixture : ExchangeItemAsyncFixture
+            {
+                public void SetupNewItem()
+                {
+                    NewItem = StoreItemMother.Initial().Create();
+                }
+
+                protected override void SetupNewItemForStore(StoreId storeId)
+                {
+                    var availability = StoreItemAvailabilityMother.Initial()
+                        .WithStoreId(storeId)
+                        .Create();
+                    NewItem = StoreItemMother.Initial().WithAvailability(availability).Create();
+                }
+
+                public override void SetupShoppingListMockWithItemInBasket()
+                {
+                    var list = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
+                    ShoppingListMock = new ShoppingListMock(list);
+                }
+
+                public override void SetupShoppingListWithItemNotInBasket()
+                {
+                    var list = ShoppingListMother.OneSectionWithOneItemNotInBasket().Create();
+                    ShoppingListMock = new ShoppingListMock(list);
+                }
+
+                public void SetupShoppingListWithItemWithType()
+                {
+                    var items = ShoppingListItemMother.InBasket().CreateMany(1).ToList();
+                    items.AddRange(ShoppingListItemMother.NotInBasket().CreateMany(2));
+                    var list = ShoppingListMother.OneSection(items).Create();
+                    ShoppingListMock = new ShoppingListMock(list);
+                }
+
+                public void SetupOldItem()
+                {
+                    OldShoppingListItem = ShoppingListItemMother.InBasket().Create();
+                }
+
+                public override void SetupAddingItemToShoppingList()
+                {
+                    var sectionId = NewItem.GetDefaultSectionIdForStore(ShoppingListMock.Object.StoreId);
+                    AddItemToShoppingListServiceMock.SetupAddItemToShoppingList(ShoppingListMock.Object, NewItem.Id,
+                        sectionId, OldShoppingListItem.Quantity);
+                }
+
+                #region Verify
+
+                public override void VerifyRemoveItemOnce()
+                {
+                    ShoppingListMock.VerifyRemoveItemOnce(OldShoppingListItem.Id);
+                }
+
+                public override void VerifyAddItemToShoppingListOnce()
+                {
+                    var defaultSectionId = NewItem.Availabilities
+                        .First(av => av.StoreId == ShoppingListMock.Object.StoreId)
+                        .DefaultSectionId;
+
+                    AddItemToShoppingListServiceMock.VerifyAddItemToShoppingListOnce(ShoppingListMock.Object,
+                        NewItem.Id, defaultSectionId, OldShoppingListItem.Quantity);
+                }
+
+                public override void VerifyPutItemInBasketNever()
+                {
+                    ShoppingListMock.VerifyPutItemInBasketNever();
+                }
+
+                public override void VerifyPutItemInBasketOnce()
+                {
+                    ShoppingListMock.VerifyPutItemInBasketOnce(NewItem.Id);
+                }
+
+                #endregion Verify
+
+                #region Aggregates
+
+                public void SetupWithNewItemNotAvailableForShoppingList()
+                {
+                    SetupShoppingListWithItemNotInBasket();
+                    SetupOldItemFromShoppingListNotInBasket();
+                    SetupNewItemNotMatchingShoppingList();
+                    SetupFindingShoppingList();
+                    SetupStoringShoppingList();
+                }
+
+                public void SetupWithNewItemAvailableForShoppingListAndInBasket()
+                {
+                    SetupShoppingListMockWithItemInBasket();
+                    SetupOldItemFromShoppingListInBasket();
+                    SetupNewItemMatchingShoppingList();
+                    SetupFindingShoppingList();
+                    SetupAddingItemToShoppingList();
+                    SetupStoringShoppingList();
+                }
+
+                public void SetupWithNewItemAvailableForShoppingListAndNotInBasket()
+                {
+                    SetupShoppingListWithItemNotInBasket();
+                    SetupOldItemFromShoppingListNotInBasket();
+                    SetupNewItemMatchingShoppingList();
+                    SetupFindingShoppingList();
+                    SetupAddingItemToShoppingList();
+                    SetupStoringShoppingList();
+                }
+
+                #endregion Aggregates
             }
         }
 
-        [Fact]
-        public async Task ExchangeItemAsync_WithNewItemIdIsNull_ShouldThrowArgumentNullException()
+        public class ExchangeItemAsyncTestsWithTypes
         {
-            // Arrange
-            var service = _local.CreateService();
-            _local.SetupNewItemNull();
-            _local.SetupOldItem();
+            private readonly ExchangeItemAsyncWithTypesFixture _fixture;
 
-            // Act
-            Func<Task> function = async () => await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
+            public ExchangeItemAsyncTestsWithTypes()
             {
-                await function.Should().ThrowAsync<ArgumentNullException>();
+                _fixture = new ExchangeItemAsyncWithTypesFixture();
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithShoppingListItemHasNoType_ShouldThrowDomainException()
+            {
+                // Arrange
+                _fixture.SetupShoppingListWithItemWithoutType();
+                _fixture.SetupOldItemFromShoppingListInBasket();
+                _fixture.SetupItemMatchingShoppingListWithNewTypes();
+                _fixture.SetupFindingShoppingList();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () =>
+                    await sut.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListItemHasNoType);
+            }
+
+            #region WithItemTypeRemoved
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithItemTypeRemoved_ShouldRemoveOldItem()
+            {
+                // Arrange
+                _fixture.SetupWithItemTypeRemoved();
+
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyRemoveItemOnce();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithItemTypeRemoved_ShouldNotAddItemToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithItemTypeRemoved();
+
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyAddItemToShoppingListNever();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithItemTypeRemoved_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithItemTypeRemoved();
+
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyStoreShoppingListOnce();
+                }
+            }
+
+            #endregion WithItemTypeRemoved
+
+            #region WithNewItemTypeNotAvailableForShoppingList
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithNewItemNotAvailableForShoppingList_ShouldRemoveOldItem()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemNotAvailableForShoppingList();
+
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyRemoveItemOnce();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithNewItemNotAvailableForShoppingList_ShouldNotAddItemToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemNotAvailableForShoppingList();
+
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyAddItemToShoppingListNever();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithNewItemNotAvailableForShoppingList_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemNotAvailableForShoppingList();
+
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyStoreShoppingListOnce();
+                }
+            }
+
+            #endregion WithNewItemTypeNotAvailableForShoppingList
+
+            #region WithNewItemAvailableForShoppingListAndInBasket
+
+            [Fact]
+            public async Task
+                ExchangeItemAsync_WithNewItemAvailableForShoppingListAndInBasket_ShouldRemoveOldItemFromShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyRemoveItemOnce();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndInBasket_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyStoreShoppingListOnce();
+                }
+            }
+
+            [Fact]
+            public async Task
+                ExchangeItemAsync_WithNewItemAvailableForShoppingListAndInBasket_ShouldAddItemToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyAddItemToShoppingListOnce();
+                }
+            }
+
+            [Fact]
+            public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndInBasket_ShouldPutItemInBasket()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyPutItemInBasketOnce();
+                }
+            }
+
+            #endregion WithNewItemAvailableForShoppingListAndInBasket
+
+            #region WithNewItemAvailableForShoppingListAndNotInBasket
+
+            [Fact]
+            public async Task
+                ExchangeItemAsync_WithNewItemAvailableForShoppingListAndNotInBasket_ShouldRemoveOldItemFromShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyRemoveItemOnce();
+                }
+            }
+
+            [Fact]
+            public async Task
+                ExchangeItemAsync_WithNewItemAvailableForShoppingListAndNotInBasket_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyStoreShoppingListOnce();
+                }
+            }
+
+            [Fact]
+            public async Task
+                ExchangeItemAsync_WithNewItemAvailableForShoppingListAndNotInBasket_ShouldAddNewItemToShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyAddItemToShoppingListOnce();
+                }
+            }
+
+            [Fact]
+            public async Task
+                ExchangeItemAsync_WithNewItemAvailableForShoppingListAndNotInBasket_ShouldNotPutItemInBasket()
+            {
+                // Arrange
+                _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
+                var service = _fixture.CreateSut();
+
+                // Act
+                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyPutItemInBasketNever();
+                }
+            }
+
+            #endregion WithNewItemAvailableForShoppingListAndNotInBasket
+
+            private class ExchangeItemAsyncWithTypesFixture : ExchangeItemAsyncFixture
+            {
+                protected override void SetupNewItemForStore(StoreId storeId)
+                {
+                    var availability = StoreItemAvailabilityMother.Initial()
+                        .WithStoreId(storeId)
+                        .CreateMany(1);
+                    var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1).ToList();
+                    type.First().SetPredecessor(new ItemTypeBuilder().WithId(OldShoppingListItem.TypeId).Create());
+                    NewItem = new StoreItemBuilder().WithTypes(type).Create();
+                }
+
+                public void SetupItemMatchingShoppingListWithNewTypes()
+                {
+                    var availability = StoreItemAvailabilityMother.Initial()
+                        .WithStoreId(ShoppingListMock.Object.StoreId)
+                        .CreateMany(1);
+                    var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1);
+                    NewItem = new StoreItemBuilder().WithTypes(type).Create();
+                }
+
+                public void SetupShoppingListWithItemWithoutType()
+                {
+                    var list = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
+                    ShoppingListMock = new ShoppingListMock(list);
+                }
+
+                public override void SetupShoppingListMockWithItemInBasket()
+                {
+                    var items = ShoppingListItemMother.InBasket().CreateMany(1).ToList();
+                    items.AddRange(ShoppingListItemMother.NotInBasket().CreateMany(2));
+                    var list = ShoppingListMother.OneSection(items).Create();
+                    ShoppingListMock = new ShoppingListMock(list);
+                }
+
+                public override void SetupShoppingListWithItemNotInBasket()
+                {
+                    var items = ShoppingListItemMother.NotInBasket().CreateMany(1).ToList();
+                    items.AddRange(ShoppingListItemMother.InBasket().CreateMany(2));
+                    var list = ShoppingListMother.OneSection(items).Create();
+                    ShoppingListMock = new ShoppingListMock(list);
+                }
+
+                public override void SetupAddingItemToShoppingList()
+                {
+                    var type = NewItem.ItemTypes.First();
+                    var sectionId = type.GetDefaultSectionIdForStore(ShoppingListMock.Object.StoreId);
+                    AddItemToShoppingListServiceMock.SetupAddItemWithTypeToShoppingList(ShoppingListMock.Object, NewItem,
+                        type.Id, sectionId, OldShoppingListItem.Quantity);
+                }
+
+                #region Verify
+
+                public override void VerifyRemoveItemOnce()
+                {
+                    ShoppingListMock.VerifyRemoveItem(OldShoppingListItem.Id, OldShoppingListItem.TypeId, Times.Once);
+                }
+
+                public override void VerifyAddItemToShoppingListOnce()
+                {
+                    var type = NewItem.ItemTypes.First();
+                    var sectionId = type.GetDefaultSectionIdForStore(ShoppingListMock.Object.StoreId);
+                    AddItemToShoppingListServiceMock.VerifyAddItemWithTypeToShoppingList(ShoppingListMock.Object, NewItem,
+                        type.Id, sectionId, OldShoppingListItem.Quantity, Times.Once);
+                }
+
+                public override void VerifyPutItemInBasketNever()
+                {
+                    ShoppingListMock.VerifyPutItemInBasketWithTypeIdNever();
+                }
+
+                public override void VerifyPutItemInBasketOnce()
+                {
+                    ShoppingListMock.VerifyPutItemInBasket(NewItem.Id, NewItem.ItemTypes.First().Id, Times.Once);
+                }
+
+                #endregion Verify
+
+                #region Aggregates
+
+                public void SetupWithItemTypeRemoved()
+                {
+                    SetupShoppingListWithItemNotInBasket();
+                    SetupOldItemFromShoppingListNotInBasket();
+                    SetupItemMatchingShoppingListWithNewTypes();
+                    SetupFindingShoppingList();
+                    SetupStoringShoppingList();
+                }
+
+                public void SetupWithNewItemNotAvailableForShoppingList()
+                {
+                    SetupShoppingListWithItemNotInBasket();
+                    SetupOldItemFromShoppingListNotInBasket();
+                    SetupNewItemNotMatchingShoppingList();
+                    SetupFindingShoppingList();
+                    SetupStoringShoppingList();
+                }
+
+                public void SetupWithNewItemAvailableForShoppingListAndInBasket()
+                {
+                    SetupShoppingListMockWithItemInBasket();
+                    SetupOldItemFromShoppingListInBasket();
+                    SetupNewItemMatchingShoppingList();
+                    SetupFindingShoppingList();
+                    SetupAddingItemToShoppingList();
+                    SetupStoringShoppingList();
+                }
+
+                public void SetupWithNewItemAvailableForShoppingListAndNotInBasket()
+                {
+                    SetupShoppingListWithItemNotInBasket();
+                    SetupOldItemFromShoppingListNotInBasket();
+                    SetupNewItemMatchingShoppingList();
+                    SetupFindingShoppingList();
+                    SetupAddingItemToShoppingList();
+                    SetupStoringShoppingList();
+                }
+
+                #endregion Aggregates
             }
         }
 
-        [Fact]
-        public async Task ExchangeItemAsync_WithOldItemOnNoShoppingLists_ShouldDoNothing()
+        public abstract class ExchangeItemAsyncFixture : LocalFixture
         {
-            // Arrange
-            var service = _local.CreateService();
+            protected ShoppingListMock ShoppingListMock;
+            public IStoreItem NewItem { get; protected set; }
+            public IShoppingListItem OldShoppingListItem { get; protected set; }
 
-            _local.SetupOldItem();
-            _local.SetupNewItem();
-            _local.SetupFindingNoShoppingList();
-
-            // Act
-            await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
+            public void SetupNewItemNull()
             {
-                _local.VerifyStoreShoppingListNever();
-            }
-        }
-
-        #region WithNewItemNotAvailableForShoppingList
-
-        [Fact]
-        public async Task ExchangeItemAsync_WithNewItemNotAvailableForShoppingList_ShouldRemoveOldItem()
-        {
-            // Arrange
-            _local.SetupWithNewItemNotAvailableForShoppingList();
-
-            var service = _local.CreateService();
-
-            // Act
-            await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                _local.VerifyRemoveItemOnce();
-            }
-        }
-
-        [Fact]
-        public async Task ExchangeItemAsync_WithNewItemNotAvailableForShoppingList_ShouldNotAddItemToShoppingList()
-        {
-            // Arrange
-            _local.SetupWithNewItemNotAvailableForShoppingList();
-
-            var service = _local.CreateService();
-
-            // Act
-            await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                _local.VerifyAddItemToShoppingListNever();
-            }
-        }
-
-        [Fact]
-        public async Task ExchangeItemAsync_WithNewItemNotAvailableForShoppingList_ShouldStoreShoppingList()
-        {
-            // Arrange
-            _local.SetupWithNewItemNotAvailableForShoppingList();
-
-            var service = _local.CreateService();
-
-            // Act
-            await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                _local.VerifyStoreShoppingListOnce();
-            }
-        }
-
-        #endregion WithNewItemNotAvailableForShoppingList
-
-        #region WithNewItemAvailableForShoppingListAndInBasket
-
-        [Fact]
-        public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndInBasket_ShouldRemoveOldItemFromShoppingList()
-        {
-            // Arrange
-            _local.SetupWithNewItemAvailableForShoppingListAndInBasket();
-            var service = _local.CreateService();
-
-            // Act
-            await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                _local.VerifyRemoveItemOnce();
-            }
-        }
-
-        [Fact]
-        public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndInBasket_ShouldStoreShoppingList()
-        {
-            // Arrange
-            _local.SetupWithNewItemAvailableForShoppingListAndInBasket();
-            var service = _local.CreateService();
-
-            // Act
-            await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                _local.VerifyStoreShoppingListOnce();
-            }
-        }
-
-        [Fact]
-        public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndInBasket_ShouldAddItemToShoppingList()
-        {
-            // Arrange
-            _local.SetupWithNewItemAvailableForShoppingListAndInBasket();
-            var service = _local.CreateService();
-
-            // Act
-            await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                _local.VerifyAddItemToShoppingListOnce();
-            }
-        }
-
-        [Fact]
-        public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndInBasket_ShouldPutItemInBasket()
-        {
-            // Arrange
-            _local.SetupWithNewItemAvailableForShoppingListAndInBasket();
-            var service = _local.CreateService();
-
-            // Act
-            await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                _local.VerifyPutItemInBasketOnce();
-            }
-        }
-
-        #endregion WithNewItemAvailableForShoppingListAndInBasket
-
-        #region WithNewItemAvailableForShoppingListAndNotInBasket
-
-        [Fact]
-        public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndNotInBasket_ShouldRemoveOldItemFromShoppingList()
-        {
-            // Arrange
-            _local.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
-            var service = _local.CreateService();
-
-            // Act
-            await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                _local.VerifyRemoveItemOnce();
-            }
-        }
-
-        [Fact]
-        public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndNotInBasket_ShouldStoreShoppingList()
-        {
-            // Arrange
-            _local.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
-            var service = _local.CreateService();
-
-            // Act
-            await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                _local.VerifyStoreShoppingListOnce();
-            }
-        }
-
-        [Fact]
-        public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndNotInBasket_ShouldAddNewItemToShoppingList()
-        {
-            // Arrange
-            _local.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
-            var service = _local.CreateService();
-
-            // Act
-            await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                _local.VerifyAddItemToShoppingListOnce();
-            }
-        }
-
-        [Fact]
-        public async Task ExchangeItemAsync_WithNewItemAvailableForShoppingListAndNotInBasket_ShouldNotPutItemInBasket()
-        {
-            // Arrange
-            _local.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
-            var service = _local.CreateService();
-
-            // Act
-            await service.ExchangeItemAsync(_local.OldItem.Id, _local.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                _local.VerifyPutItemInBasketNever();
-            }
-        }
-
-        #endregion WithNewItemAvailableForShoppingListAndNotInBasket
-
-        #endregion ExchangeItemAsync
-
-        private class LocalFixture
-        {
-            public Fixture Fixture { get; }
-            public CommonFixture CommonFixture { get; } = new CommonFixture();
-            public ShoppingListRepositoryMock ShoppingListRepositoryMock { get; }
-            public AddItemToShoppingListServiceMock AddItemToShoppingListServiceMock { get; }
-
-            public ShoppingListMock ShoppingListMock { get; private set; }
-            public IStoreItem NewItem { get; private set; }
-            public IShoppingListItem OldItem { get; private set; }
-
-            public LocalFixture()
-            {
-                Fixture = CommonFixture.GetNewFixture();
-
-                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
-                AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(Fixture);
-            }
-
-            public ShoppingListUpdateService CreateService()
-            {
-                return Fixture.Create<ShoppingListUpdateService>();
+                NewItem = null;
             }
 
             public void SetupNewItemMatchingShoppingList()
@@ -324,76 +867,49 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 SetupNewItemForStore(storeId);
             }
 
-            private void SetupNewItemForStore(StoreId storeId)
-            {
-                var availability = StoreItemAvailabilityMother.Initial()
-                    .WithStoreId(storeId)
-                    .Create();
-                NewItem = StoreItemMother.Initial().WithAvailability(availability).Create();
-            }
+            protected abstract void SetupNewItemForStore(StoreId storeId);
 
-            public void SetupNewItem()
-            {
-                NewItem = StoreItemMother.Initial().Create();
-            }
+            public abstract void SetupShoppingListMockWithItemInBasket();
 
-            public void SetupNewItemNull()
-            {
-                NewItem = null;
-            }
-
-            public void SetupShoppingListMockInBasket()
-            {
-                var list = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
-                ShoppingListMock = new ShoppingListMock(list);
-            }
-
-            public void SetupShoppingListMockNotInBasket()
-            {
-                var list = ShoppingListMother.OneSectionWithOneItemNotInBasket().Create();
-                ShoppingListMock = new ShoppingListMock(list);
-            }
+            public abstract void SetupShoppingListWithItemNotInBasket();
 
             public void SetupOldItemFromShoppingListNotInBasket()
             {
-                OldItem = ShoppingListMock.GetRandomItem(CommonFixture, i => !i.IsInBasket);
+                OldShoppingListItem = ShoppingListMock.GetRandomItem(CommonFixture, i => !i.IsInBasket);
             }
 
             public void SetupOldItemFromShoppingListInBasket()
             {
-                OldItem = ShoppingListMock.GetRandomItem(CommonFixture, i => i.IsInBasket);
-            }
-
-            public void SetupOldItem()
-            {
-                OldItem = ShoppingListItemMother.InBasket().Create();
+                OldShoppingListItem = ShoppingListMock.GetRandomItem(CommonFixture, i => i.IsInBasket);
             }
 
             public void SetupOldItemNull()
             {
-                OldItem = null;
+                OldShoppingListItem = null;
             }
 
             #region Mock Setup
 
             public void SetupFindingShoppingList()
             {
-                ShoppingListRepositoryMock.SetupFindActiveByAsync(OldItem.Id, ShoppingListMock.Object.ToMonoList());
+                ShoppingListRepositoryMock.SetupFindActiveByAsync(OldShoppingListItem.Id, ShoppingListMock.Object.ToMonoList());
             }
 
             public void SetupFindingNoShoppingList()
             {
-                ShoppingListRepositoryMock.SetupFindActiveByAsync(OldItem.Id, Enumerable.Empty<IShoppingList>());
+                ShoppingListRepositoryMock.SetupFindActiveByAsync(OldShoppingListItem.Id, Enumerable.Empty<IShoppingList>());
+            }
+
+            public abstract void SetupAddingItemToShoppingList();
+
+            public void SetupStoringShoppingList()
+            {
+                ShoppingListRepositoryMock.SetupStoreAsync(ShoppingListMock.Object);
             }
 
             #endregion Mock Setup
 
             #region Verify
-
-            public void VerifyRemoveItemOnce()
-            {
-                ShoppingListMock.VerifyRemoveItemOnce(OldItem.Id);
-            }
 
             public void VerifyStoreShoppingListOnce()
             {
@@ -405,60 +921,40 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 ShoppingListRepositoryMock.VerifyStoreAsyncNever();
             }
 
-            public void VerifyAddItemToShoppingListOnce()
-            {
-                var defaultSectionId = NewItem.Availabilities
-                    .First(av => av.StoreId == ShoppingListMock.Object.StoreId)
-                    .DefaultSectionId;
+            public abstract void VerifyRemoveItemOnce();
 
-                AddItemToShoppingListServiceMock.VerifyAddItemToShoppingListOnce(ShoppingListMock.Object,
-                    NewItem.Id, defaultSectionId, OldItem.Quantity);
-            }
+            public abstract void VerifyAddItemToShoppingListOnce();
 
             public void VerifyAddItemToShoppingListNever()
             {
                 ShoppingListMock.VerifyAddItemNever();
             }
 
-            public void VerifyPutItemInBasketNever()
-            {
-                ShoppingListMock.VerifyPutItemInBasketNever();
-            }
+            public abstract void VerifyPutItemInBasketNever();
 
-            public void VerifyPutItemInBasketOnce()
-            {
-                ShoppingListMock.VerifyPutItemInBasketOnce(NewItem.Id);
-            }
+            public abstract void VerifyPutItemInBasketOnce();
 
             #endregion Verify
+        }
 
-            #region Aggregates
+        public abstract class LocalFixture
+        {
+            protected CommonFixture CommonFixture = new CommonFixture();
+            protected ShoppingListRepositoryMock ShoppingListRepositoryMock;
+            protected AddItemToShoppingListServiceMock AddItemToShoppingListServiceMock;
 
-            public void SetupWithNewItemNotAvailableForShoppingList()
+            protected LocalFixture()
             {
-                SetupShoppingListMockNotInBasket();
-                SetupOldItemFromShoppingListNotInBasket();
-                SetupNewItemNotMatchingShoppingList();
-                SetupFindingShoppingList();
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+                AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(MockBehavior.Strict);
             }
 
-            public void SetupWithNewItemAvailableForShoppingListAndInBasket()
+            public ShoppingListUpdateService CreateSut()
             {
-                SetupShoppingListMockInBasket();
-                SetupOldItemFromShoppingListInBasket();
-                SetupNewItemMatchingShoppingList();
-                SetupFindingShoppingList();
+                return new ShoppingListUpdateService(
+                    ShoppingListRepositoryMock.Object,
+                    AddItemToShoppingListServiceMock.Object);
             }
-
-            public void SetupWithNewItemAvailableForShoppingListAndNotInBasket()
-            {
-                SetupShoppingListMockNotInBasket();
-                SetupOldItemFromShoppingListNotInBasket();
-                SetupNewItemMatchingShoppingList();
-                SetupFindingShoppingList();
-            }
-
-            #endregion Aggregates
         }
     }
 }

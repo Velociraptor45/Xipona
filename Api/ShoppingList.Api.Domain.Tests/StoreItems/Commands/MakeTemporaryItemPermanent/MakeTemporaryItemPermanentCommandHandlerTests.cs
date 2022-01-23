@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
@@ -34,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(null, default);
@@ -50,7 +51,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         public async Task HandleAsync_WithInvalidItemId_ShouldThrowDomainException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupCommand();
 
             _local.ItemRepositoryMock.SetupFindByAsync(_local.Command.PermanentItem.Id, null);
@@ -70,7 +71,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         public async Task HandleAsync_WithNonTemporaryItem_ShouldThrowDomainException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupCommand();
             _local.SetupStoreItemMock(StoreItemMother.Initial().Create());
 
@@ -91,11 +92,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         public async Task HandleAsync_WithValidDataAndManufacturerId_ShouldMakeTemporaryItemPermanent()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupStoreItemMock(StoreItemMother.InitialTemporary().Create());
 
             List<IStoreItemAvailability> availabilities = _local.StoreItemMock.Object.Availabilities.ToList();
             _local.SetupCommand(availabilities);
+            _local.SetupValidatingAvailabilities();
+            _local.SetupValidatingItemCategory();
+            _local.SetupValidatingManufacturer();
+            _local.SetupMakingPermanent();
+            _local.SetupStoringItem();
 
             _local.ItemRepositoryMock.SetupFindByAsync(_local.Command.PermanentItem.Id, _local.StoreItemMock.Object);
 
@@ -118,11 +124,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
         public async Task HandleAsync_WithValidDataAndManufacturerIdIsNull_ShouldMakeTemporaryItemPermanent()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupStoreItemMock(StoreItemMother.InitialTemporary().Create());
 
             List<IStoreItemAvailability> availabilities = _local.StoreItemMock.Object.Availabilities.ToList();
             _local.SetupCommandWithoutManufacturerId(availabilities);
+            _local.SetupValidatingAvailabilities();
+            _local.SetupValidatingItemCategory();
+            _local.SetupMakingPermanent();
+            _local.SetupStoringItem();
 
             _local.ItemRepositoryMock.SetupFindByAsync(_local.Command.PermanentItem.Id, _local.StoreItemMock.Object);
 
@@ -157,11 +167,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ItemRepositoryMock = new ItemRepositoryMock(Fixture);
-                StoreItemFactoryMock = new StoreItemFactoryMock(Fixture);
-                ItemCategoryValidationServiceMock = new ItemCategoryValidationServiceMock(Fixture);
-                ManufacturerValidationServiceMock = new ManufacturerValidationServiceMock(Fixture);
-                AvailabilityValidationServiceMock = new AvailabilityValidationServiceMock(Fixture);
+                ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
+                StoreItemFactoryMock = new StoreItemFactoryMock(MockBehavior.Strict);
+                ItemCategoryValidationServiceMock = new ItemCategoryValidationServiceMock(MockBehavior.Strict);
+                ManufacturerValidationServiceMock = new ManufacturerValidationServiceMock(MockBehavior.Strict);
+                AvailabilityValidationServiceMock = new AvailabilityValidationServiceMock(MockBehavior.Strict);
             }
 
             public void SetupCommand()
@@ -187,14 +197,43 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
                 Command = Fixture.Create<MakeTemporaryItemPermanentCommand>();
             }
 
-            public MakeTemporaryItemPermanentCommandHandler CreateCommandHandler()
+            public MakeTemporaryItemPermanentCommandHandler CreateSut()
             {
-                return Fixture.Create<MakeTemporaryItemPermanentCommandHandler>();
+                return new MakeTemporaryItemPermanentCommandHandler(
+                    ItemRepositoryMock.Object,
+                    ItemCategoryValidationServiceMock.Object,
+                    ManufacturerValidationServiceMock.Object,
+                    AvailabilityValidationServiceMock.Object);
             }
 
             public void SetupStoreItemMock(IStoreItem storeItem)
             {
-                StoreItemMock = new StoreItemMock(storeItem);
+                StoreItemMock = new StoreItemMock(storeItem, MockBehavior.Strict);
+            }
+
+            public void SetupValidatingItemCategory()
+            {
+                ItemCategoryValidationServiceMock.SetupValidateAsync(Command.PermanentItem.ItemCategoryId);
+            }
+
+            public void SetupValidatingManufacturer()
+            {
+                ManufacturerValidationServiceMock.SetupValidateAsync(Command.PermanentItem.ManufacturerId);
+            }
+
+            public void SetupValidatingAvailabilities()
+            {
+                AvailabilityValidationServiceMock.SetupValidateAsync(StoreItemMock.Object.Availabilities);
+            }
+
+            public void SetupMakingPermanent()
+            {
+                StoreItemMock.SetupMakePermanent(Command.PermanentItem, Command.PermanentItem.Availabilities);
+            }
+
+            public void SetupStoringItem()
+            {
+                ItemRepositoryMock.SetupStoreAsync(StoreItemMock.Object, StoreItemMock.Object);
             }
         }
     }

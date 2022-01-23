@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
@@ -31,7 +32,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
         public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             Func<Task> function = async () => await handler.HandleAsync(null, default);
@@ -47,7 +48,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
         public async Task HandleAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupTemporaryItemId();
             _local.SetupCommand();
 
@@ -68,7 +69,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
         public async Task HandleAsync_WithInvalidOfflineId_ShouldThrowDomainException()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupTemporaryItemId();
             _local.SetupCommand();
 
@@ -92,11 +93,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
         public async Task HandleAsync_WithActualId_ShouldPutItemInBasket()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupCommand();
 
             _local.SetupShoppingListMock();
             _local.SetupShoppingListRepositoryFindBy();
+            _local.SetupStoringShoppingList();
 
             // Act
             bool result = await handler.HandleAsync(_local.Command, default);
@@ -114,7 +116,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
         public async Task HandleAsync_WithValidOfflineId_ShouldPutItemInBasket()
         {
             // Arrange
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
             _local.SetupTemporaryItemId();
             _local.SetupCommand();
 
@@ -123,6 +125,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
 
             _local.SetupShoppingListRepositoryFindBy();
             _local.SetupItemRepositoryFindBy();
+            _local.SetupStoringShoppingList();
 
             // Act
             bool result = await handler.HandleAsync(_local.Command, default);
@@ -153,17 +156,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
-                ItemRepositoryMock = new ItemRepositoryMock(Fixture);
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+                ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
             }
 
             public void SetupCommand()
             {
                 OfflineTolerantItemId offlineTolerantItemId;
                 if (TemporaryItemId == null)
+                {
                     offlineTolerantItemId = new OfflineTolerantItemId(CommonFixture.NextInt());
+                }
                 else
+                {
+                    Fixture.ConstructorArgumentFor<PutItemInBasketCommand, ItemTypeId?>("itemTypeId", null);
                     offlineTolerantItemId = new OfflineTolerantItemId(TemporaryItemId.Value);
+                }
 
                 Fixture.ConstructorArgumentFor<PutItemInBasketCommand, OfflineTolerantItemId>("itemId",
                     offlineTolerantItemId);
@@ -186,9 +194,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
                 StoreItem = StoreItemMother.Initial().Create();
             }
 
-            public PutItemInBasketCommandHandler CreateCommandHandler()
+            public PutItemInBasketCommandHandler CreateSut()
             {
-                return Fixture.Create<PutItemInBasketCommandHandler>();
+                return new PutItemInBasketCommandHandler(
+                    ShoppingListRepositoryMock.Object,
+                    ItemRepositoryMock.Object);
             }
 
             #region Fixture Setup
@@ -201,6 +211,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             public void SetupShoppingListRepositoryFindingNoList()
             {
                 ShoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, null);
+            }
+
+            public void SetupStoringShoppingList()
+            {
+                ShoppingListRepositoryMock.SetupStoreAsync(ShoppingListMock.Object);
             }
 
             public void SetupItemRepositoryFindBy()
@@ -224,12 +239,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
 
             public void VerifyPutItemInBasketOnce()
             {
-                ShoppingListMock.VerifyPutItemInBasketOnce(StoreItem.Id);
+                ShoppingListMock.VerifyPutItemInBasket(StoreItem.Id, Command.ItemTypeId, Times.Once);
             }
 
             public void VerifyPutItemInBasketWithOfflineIdOnce()
             {
-                ShoppingListMock.VerifyPutItemInBasketOnce(new ItemId(Command.OfflineTolerantItemId.ActualId.Value));
+                ShoppingListMock.VerifyPutItemInBasket(new ItemId(Command.OfflineTolerantItemId.ActualId.Value),
+                    Command.ItemTypeId, Times.Once);
             }
 
             public void VerifyItemRepositoryFindByWithTemporaryItemId()

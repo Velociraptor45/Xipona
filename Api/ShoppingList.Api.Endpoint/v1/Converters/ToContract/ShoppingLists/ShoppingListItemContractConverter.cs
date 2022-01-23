@@ -12,10 +12,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Shopp
 {
     public class ShoppingListItemContractConverter : IToContractConverter<ShoppingListItemReadModel, ShoppingListItemContract>
     {
-        private readonly IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> itemCategoryContractConverter;
-        private readonly IToContractConverter<ManufacturerReadModel, ManufacturerContract> manufacturerContractConverter;
-        private readonly IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeContractConverter;
-        private readonly IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketContractConverter;
+        private readonly IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> _itemCategoryContractConverter;
+        private readonly IToContractConverter<ManufacturerReadModel, ManufacturerContract> _manufacturerContractConverter;
+        private readonly IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> _quantityTypeContractConverter;
+        private readonly IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> _quantityTypeInPacketContractConverter;
 
         public ShoppingListItemContractConverter(
             IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> itemCategoryContractConverter,
@@ -23,10 +23,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Shopp
             IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeContractConverter,
             IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketContractConverter)
         {
-            this.itemCategoryContractConverter = itemCategoryContractConverter;
-            this.manufacturerContractConverter = manufacturerContractConverter;
-            this.quantityTypeContractConverter = quantityTypeContractConverter;
-            this.quantityTypeInPacketContractConverter = quantityTypeInPacketContractConverter;
+            _itemCategoryContractConverter = itemCategoryContractConverter;
+            _manufacturerContractConverter = manufacturerContractConverter;
+            _quantityTypeContractConverter = quantityTypeContractConverter;
+            _quantityTypeInPacketContractConverter = quantityTypeInPacketContractConverter;
         }
 
         public ShoppingListItemContract ToContract(ShoppingListItemReadModel source)
@@ -36,18 +36,19 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Shopp
 
             ItemCategoryContract? itemCategoryContract = null;
             if (source.ItemCategory != null)
-                itemCategoryContract = itemCategoryContractConverter.ToContract(source.ItemCategory);
+                itemCategoryContract = _itemCategoryContractConverter.ToContract(source.ItemCategory);
 
             ManufacturerContract? manufacturerContract = null;
             if (source.Manufacturer != null)
-                manufacturerContract = manufacturerContractConverter.ToContract(source.Manufacturer);
+                manufacturerContract = _manufacturerContractConverter.ToContract(source.Manufacturer);
 
-            QuantityTypeContract quantityTypeContract = quantityTypeContractConverter.ToContract(source.QuantityType);
+            QuantityTypeContract quantityTypeContract = _quantityTypeContractConverter.ToContract(source.QuantityType);
             QuantityTypeInPacketContract quantityTypeInPacketContract =
-                quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket);
+                _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket);
 
             return new ShoppingListItemContract(
                 source.Id.Value,
+                source.TypeId?.Value,
                 source.Name,
                 source.IsDeleted,
                 source.Comment,

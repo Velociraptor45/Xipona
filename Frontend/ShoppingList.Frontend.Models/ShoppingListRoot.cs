@@ -33,11 +33,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             return Items.FirstOrDefault(item => item.Id.ActualId == id);
         }
 
-        public void Remove(ItemId itemId)
+        public void Remove(ItemId itemId, int? itemTypeId)
         {
             var section = sections.FirstOrDefault(s => s.Items.Any(i => i.Id == itemId));
 
-            section?.RemoveItem(itemId);
+            section?.RemoveItem(itemId, itemTypeId);
         }
 
         public void AddItem(ShoppingListItem item, int sectionId)

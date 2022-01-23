@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.DeleteItemCategory;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -36,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupCommandNull();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(_local.Command, default);
@@ -55,7 +56,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
             _local.SetupCommand();
             _local.SetupFindingNoItemCategory();
 
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             Func<Task<bool>> action = async () => await handler.HandleAsync(_local.Command, default);
@@ -74,7 +75,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithNoItemsOfItemCategory();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             var result = await handler.HandleAsync(_local.Command, default);
@@ -91,7 +92,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithNoItemsOfItemCategory();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -108,7 +109,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithNoItemsOfItemCategory();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -125,7 +126,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithNoItemsOfItemCategory();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -142,7 +143,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithNoItemsOfItemCategory();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -159,7 +160,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithNoItemsOfItemCategory();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -180,7 +181,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             var result = await handler.HandleAsync(_local.Command, default);
@@ -197,7 +198,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -214,7 +215,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -231,7 +232,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -248,7 +249,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -265,7 +266,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -282,7 +283,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -303,7 +304,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             var result = await handler.HandleAsync(_local.Command, default);
@@ -320,7 +321,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -337,7 +338,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -354,7 +355,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -371,7 +372,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -388,7 +389,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -405,7 +406,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -422,7 +423,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
         {
             // Arrange
             _local.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
-            var handler = _local.CreateCommandHandler();
+            var handler = _local.CreateSut();
 
             // Act
             await handler.HandleAsync(_local.Command, default);
@@ -456,15 +457,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
             public LocalFixture()
             {
                 Fixture = CommonFixture.GetNewFixture();
-                ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(Fixture);
-                ItemRepositoryMock = new ItemRepositoryMock(Fixture);
-                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(Fixture);
-                TransactionGeneratorMock = new TransactionGeneratorMock(Fixture);
+                ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
+                ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
+                ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+                TransactionGeneratorMock = new TransactionGeneratorMock(MockBehavior.Strict);
             }
 
-            public DeleteItemCategoryCommandHandler CreateCommandHandler()
+            public DeleteItemCategoryCommandHandler CreateSut()
             {
-                return Fixture.Create<DeleteItemCategoryCommandHandler>();
+                return new DeleteItemCategoryCommandHandler(
+                    ItemCategoryRepositoryMock.Object,
+                    ItemRepositoryMock.Object,
+                    ShoppingListRepositoryMock.Object,
+                    TransactionGeneratorMock.Object);
             }
 
             public void SetupCommand()
@@ -491,7 +496,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
             {
                 StoreItemMocks = StoreItemMother.Initial()
                     .CreateMany(2)
-                    .Select(i => new StoreItemMock(i))
+                    .Select(i => new StoreItemMock(i, MockBehavior.Strict))
                     .ToList();
             }
 
@@ -509,6 +514,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
             }
 
             #region Mock Setup
+
+            public void SetupDeletingItems()
+            {
+                foreach (var itemMock in StoreItemMocks)
+                {
+                    itemMock.SetupDelete();
+                }
+            }
 
             public void SetupFindingShoppingLists()
             {
@@ -529,6 +542,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
                 }
             }
 
+            public void SetupStoringShoppingLists()
+            {
+                foreach (var list in ShoppingListDict.Values.SelectMany(l => l))
+                {
+                    ShoppingListRepositoryMock.SetupStoreAsync(list.Object);
+                }
+            }
+
             public void SetupFindingItemCategory()
             {
                 ItemCategoryRepositoryMock.SetupFindByAsync(Command.ItemCategoryId, ItemCategoryMock.Object);
@@ -539,6 +560,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
                 ItemCategoryRepositoryMock.SetupFindByAsync(Command.ItemCategoryId, null);
             }
 
+            public void SetupStoringItemCategory()
+            {
+                ItemCategoryRepositoryMock.SetupStoreAsync(ItemCategoryMock.Object, ItemCategoryMock.Object);
+            }
+
             public void SetupFindingItems()
             {
                 ItemRepositoryMock.SetupFindActiveByAsync(Command.ItemCategoryId, StoreItemMocks.Select(m => m.Object));
@@ -547,6 +573,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
             public void SetupFindingNoItems()
             {
                 ItemRepositoryMock.SetupFindActiveByAsync(Command.ItemCategoryId, Enumerable.Empty<IStoreItem>());
+            }
+
+            public void SetupStoringItem()
+            {
+                foreach (var item in StoreItemMocks)
+                {
+                    ItemRepositoryMock.SetupStoreAsync(item.Object, item.Object);
+                }
             }
 
             public void SetupGeneratingTransaction()
@@ -638,6 +672,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
                 SetupFindingItemCategory();
                 SetupFindingItems();
                 SetupGeneratingTransaction();
+                SetupDeletingItems();
+                SetupStoringShoppingLists();
+                SetupStoringItem();
+                SetupStoringItemCategory();
             }
 
             public void SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists()
@@ -645,11 +683,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
                 SetupCommand();
                 SetupItemCategoryMock();
                 SetupStoreItemMocks();
+                SetupDeletingItems();
                 SetupTransactionMock();
                 SetupFindingItemCategory();
                 SetupFindingItems();
                 SetupFindingNoShoppingLists();
                 SetupGeneratingTransaction();
+                SetupStoringItem();
+                SetupStoringItemCategory();
             }
 
             public void SetupWithNoItemsOfItemCategory()
@@ -660,6 +701,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
                 SetupFindingItemCategory();
                 SetupFindingNoItems();
                 SetupGeneratingTransaction();
+                SetupStoringItemCategory();
             }
 
             #endregion Aggregates

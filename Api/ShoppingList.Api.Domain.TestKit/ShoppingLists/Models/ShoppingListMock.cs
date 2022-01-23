@@ -11,7 +11,8 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
 {
     public class ShoppingListMock : Mock<IShoppingList>
     {
-        public ShoppingListMock(IShoppingList shoppingList)
+        public ShoppingListMock(IShoppingList shoppingList, MockBehavior behavior = MockBehavior.Default)
+            : base(behavior)
         {
             SetupId(shoppingList.Id);
             SetupStoreId(shoppingList.StoreId);
@@ -69,6 +70,16 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
                 .Returns(returnValue);
         }
 
+        public void SetupAddSection(IShoppingListSection section)
+        {
+            Setup(m => m.AddSection(section));
+        }
+
+        public void SetupAddItem(IShoppingListItem item, SectionId sectionId)
+        {
+            Setup(m => m.AddItem(item, sectionId));
+        }
+
         #endregion Setup methods
 
         #region Verify methods
@@ -79,9 +90,24 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
                 Times.Once);
         }
 
+        public void VerifyRemoveItem(ItemId itemId, ItemTypeId itemTypeId, Func<Times> times)
+        {
+            Verify(m => m.RemoveItem(itemId, itemTypeId), times);
+        }
+
+        public void VerifyRemoveItemNever(ItemId itemId, ItemTypeId itemTypeId)
+        {
+            Verify(i => i.RemoveItem(itemId, itemTypeId), Times.Never);
+        }
+
         public void VerifyPutItemInBasketOnce(ItemId itemId)
         {
             Verify(i => i.PutItemInBasket(itemId), Times.Once);
+        }
+
+        public void VerifyPutItemInBasket(ItemId itemId, ItemTypeId typeId, Func<Times> times)
+        {
+            Verify(i => i.PutItemInBasket(itemId, typeId), times);
         }
 
         public void VerifyPutItemInBasketNever()
@@ -89,9 +115,14 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
             Verify(i => i.PutItemInBasket(It.IsAny<ItemId>()), Times.Never);
         }
 
-        public void VerifyRemoveItemFromBasketOnce(ItemId itemId)
+        public void VerifyPutItemInBasketWithTypeIdNever()
         {
-            Verify(i => i.RemoveFromBasket(itemId), Times.Once);
+            Verify(i => i.PutItemInBasket(It.IsAny<ItemId>(), It.IsAny<ItemTypeId>()), Times.Never);
+        }
+
+        public void VerifyRemoveItemFromBasketOnce(ItemId itemId, ItemTypeId? itemTypeId)
+        {
+            Verify(i => i.RemoveFromBasket(itemId, itemTypeId), Times.Once);
         }
 
         public void VerifyAddItemOnce(IShoppingListItem listItem, SectionId sectionId)
@@ -127,9 +158,9 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
                 Times.Once);
         }
 
-        public void VerifyChangeItemQuantityOnce(ItemId itemId, float quantity)
+        public void VerifyChangeItemQuantityOnce(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
         {
-            Verify(i => i.ChangeItemQuantity(itemId, quantity),
+            Verify(i => i.ChangeItemQuantity(itemId, itemTypeId, quantity),
                 Times.Once);
         }
 

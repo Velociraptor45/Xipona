@@ -9,7 +9,17 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
             return new StoreItemBuilder()
                 .WithIsDeleted(false)
                 .WithIsTemporary(false)
-                .WithTemporaryId(null);
+                .WithoutTemporaryId()
+                .WithoutTypes()
+                .AsItem();
+        }
+
+        public static StoreItemBuilder InitialWithTypes()
+        {
+            return new StoreItemBuilder()
+                .WithIsDeleted(false)
+                .WithIsTemporary(false)
+                .WithoutTemporaryId();
         }
 
         public static StoreItemBuilder InitialTemporary()
@@ -19,7 +29,9 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
                 .WithIsTemporary(true)
                 .WithoutItemCategoryId()
                 .WithoutManufacturerId()
-                .WithAvailabilities(StoreItemAvailabilityMother.Initial().Create().ToMonoList());
+                .WithoutTypes()
+                .WithAvailabilities(StoreItemAvailabilityMother.Initial().Create().ToMonoList())
+                .AsItem();
         }
 
         public static StoreItemBuilder InitialWithoutManufacturer()
@@ -27,14 +39,16 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
             return new StoreItemBuilder()
                 .WithIsDeleted(false)
                 .WithIsTemporary(false)
-                .WithTemporaryId(null)
-                .WithoutManufacturerId();
+                .WithoutTemporaryId()
+                .WithoutManufacturerId()
+                .AsItem();
         }
 
         public static StoreItemBuilder Deleted()
         {
             return new StoreItemBuilder()
-                .WithIsDeleted(true);
+                .WithIsDeleted(true)
+                .AsItem();
         }
     }
 }

@@ -56,14 +56,30 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             await client.AddItemToShoppingList(request.ToContract());
         }
 
+        public async Task AddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request)
+        {
+            await client.AddItemWithTypeToShoppingList(request.ToContract());
+        }
+
         public async Task UpdateItemAsync(UpdateItemRequest request)
         {
             await client.UpdateItemAsync(request.StoreItem.ToUpdateItemContract());
         }
 
+        public async Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request)
+        {
+            var contract = request.StoreItem.ToUpdateItemWithTypesContract();
+            await client.UpdateItemWithTypesAsync(contract);
+        }
+
         public async Task ModifyItemAsync(ModifyItemRequest request)
         {
             await client.ModifyItem(request.StoreItem.ToModifyItemContract());
+        }
+
+        public async Task ModifyItemWithTypesAsync(ModifyItemWithTypesRequest request)
+        {
+            await client.ModifyItemWithTypesAsync(request.StoreItem.ToModifyItemWithTypesContract());
         }
 
         public async Task CreateItemAsync(CreateItemRequest request)

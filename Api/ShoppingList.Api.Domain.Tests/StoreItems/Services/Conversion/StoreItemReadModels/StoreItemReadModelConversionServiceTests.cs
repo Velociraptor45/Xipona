@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Attributes;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
@@ -25,6 +26,7 @@ using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Ports;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -218,14 +220,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(Fixture);
-                ManufacturerRepositoryMock = new ManufacturerRepositoryMock(Fixture);
-                StoreRepositoryMock = new StoreRepositoryMock(Fixture);
+                ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
+                ManufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
+                StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
             }
 
             public StoreItemReadModelConversionService CreateService()
             {
-                return Fixture.Create<StoreItemReadModelConversionService>();
+                return new StoreItemReadModelConversionService(
+                    ItemCategoryRepositoryMock.Object,
+                    ManufacturerRepositoryMock.Object,
+                    StoreRepositoryMock.Object);
             }
 
             public void SetupItem()
@@ -298,23 +303,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
                         ItemCategory.Name,
                         ItemCategory.IsDeleted);
 
-                var section = Store.Sections.First();
-                var storeSectionReadModel = new StoreSectionReadModel(
-                    section.Id,
-                    section.Name,
-                    section.SortingIndex,
-                    section.IsDefaultSection);
+                var availabilityReadModel = CreateAvailabilityReadModel(Store, StoreItem.Availabilities.First());
 
-                var storeReadModel = new StoreItemStoreReadModel(
-                    Store.Id,
-                    Store.Name,
-                    storeSectionReadModel.ToMonoList());
-
-                var availability = StoreItem.Availabilities.First();
-                var availabilityReadModel = new StoreItemAvailabilityReadModel(
-                    storeReadModel,
-                    availability.Price,
-                    storeSectionReadModel);
+                var itemType = StoreItem.ItemTypes.FirstOrDefault();
+                List<ItemTypeReadModel> itemTypeReadModels = new List<ItemTypeReadModel>();
+                if (itemType != null)
+                {
+                    var itemTypeAvailability = itemType.Availabilities.First();
+                    var itemTypeAvailabilityReadModel = CreateAvailabilityReadModel(Store, itemTypeAvailability);
+                    itemTypeReadModels.Add(new ItemTypeReadModel(
+                        itemType.Id,
+                        itemType.Name,
+                        itemTypeAvailabilityReadModel.ToMonoList()));
+                }
 
                 return new StoreItemReadModel(
                     StoreItem.Id,
@@ -336,7 +337,29 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
                         StoreItem.QuantityTypeInPacket.GetAttribute<QuantityLabelAttribute>().QuantityLabel),
                     itemCategoryReadModel,
                     manufacturerReadModel,
-                    availabilityReadModel.ToMonoList());
+                    availabilityReadModel.ToMonoList(),
+                    itemTypeReadModels);
+            }
+
+            private StoreItemAvailabilityReadModel CreateAvailabilityReadModel(IStore store,
+                IStoreItemAvailability availability)
+            {
+                var section = store.Sections.First();
+                var storeSectionReadModel = new StoreSectionReadModel(
+                    section.Id,
+                    section.Name,
+                    section.SortingIndex,
+                    section.IsDefaultSection);
+
+                var storeReadModel = new StoreItemStoreReadModel(
+                    store.Id,
+                    store.Name,
+                    storeSectionReadModel.ToMonoList());
+
+                return new StoreItemAvailabilityReadModel(
+                   storeReadModel,
+                   availability.Price,
+                   storeSectionReadModel);
             }
 
             #region Mock Setup

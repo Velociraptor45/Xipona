@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using FluentAssertions.Common;
 using FluentAssertions.Execution;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
@@ -11,6 +12,7 @@ using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using System;
 using System.Linq;
+using Moq;
 using Xunit;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists
@@ -67,9 +69,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         {
             // Arrange
             var shoppingList = ShoppingListMother.ThreeSections().Create();
-            var collidingItemId = commonFixture.ChooseRandom(shoppingList.Items).Id;
+            var chosenItem = commonFixture.ChooseRandom(shoppingList.Items);
 
-            var collidingItem = new ShoppingListItemBuilder().WithId(collidingItemId).Create();
+            var collidingItem = new ShoppingListItemBuilder().WithId(chosenItem.Id).WithTypeId(chosenItem.TypeId).Create();
             SectionId sectionId = new SectionId(commonFixture.NextInt());
 
             // Act
@@ -182,10 +184,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             ShoppingListSectionMock chosenSectionMock = commonFixture.ChooseRandom(sectionMocks);
             IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
-            sectionMocks.ForEach(m => m.SetupContainsItem(m == chosenSectionMock));
+            foreach (var sectionMock in sectionMocks)
+                sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
+                    sectionMock.IsSameOrEqualTo(chosenSectionMock));
 
             // Act
-            shoppingList.RemoveItem(chosenItem.Id);
+            shoppingList.RemoveItem(chosenItem.Id, chosenItem.TypeId);
 
             // Assert
             using (new AssertionScope())
@@ -193,7 +197,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
                 foreach (var section in sectionMocks)
                 {
                     if (section == chosenSectionMock)
-                        section.VerifyRemoveItemOnce(chosenItem.Id);
+                        section.VerifyRemoveItem(chosenItem.Id, chosenItem.TypeId, Times.Once);
                     else
                         section.VerifyRemoveItemNever();
                 }
@@ -251,10 +255,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             ShoppingListSectionMock chosenSectionMock = commonFixture.ChooseRandom(sectionMocks);
             IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
-            sectionMocks.ForEach(m => m.SetupContainsItem(m == chosenSectionMock));
+            foreach (var sectionMock in sectionMocks)
+                sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
+                    sectionMock.IsSameOrEqualTo(chosenSectionMock));
 
             // Act
-            shoppingList.PutItemInBasket(chosenItem.Id);
+            shoppingList.PutItemInBasket(chosenItem.Id, chosenItem.TypeId);
 
             // Assert
             using (new AssertionScope())
@@ -262,7 +268,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
                 foreach (var section in sectionMocks)
                 {
                     if (section == chosenSectionMock)
-                        section.VerifyPutItemInBasketOnce(chosenItem.Id);
+                        section.VerifyPutItemInBasketOnce(chosenItem.Id, chosenItem.TypeId);
                     else
                         section.VerifyPutItemInBasketNever();
                 }
@@ -280,7 +286,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var list = ShoppingListMother.ThreeSections().Create();
 
             // Act
-            Action action = () => list.RemoveFromBasket(null);
+            Action action = () => list.RemoveFromBasket(null, null);
 
             // Assert
             using (new AssertionScope())
@@ -298,7 +304,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
 
             // Act
-            Action action = () => list.RemoveFromBasket(shoppingListItemId);
+            Action action = () => list.RemoveFromBasket(shoppingListItemId, null);
 
             // Assert
             using (new AssertionScope())
@@ -320,10 +326,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             ShoppingListSectionMock chosenSectionMock = commonFixture.ChooseRandom(sectionMocks);
             IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
-            sectionMocks.ForEach(m => m.SetupContainsItem(m == chosenSectionMock));
+            foreach (var sectionMock in sectionMocks)
+                sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
+                    sectionMock.IsSameOrEqualTo(chosenSectionMock));
 
             // Act
-            shoppingList.RemoveFromBasket(chosenItem.Id);
+            shoppingList.RemoveFromBasket(chosenItem.Id, chosenItem.TypeId);
 
             // Assert
             using (new AssertionScope())
@@ -331,7 +339,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
                 foreach (var section in sectionMocks)
                 {
                     if (section == chosenSectionMock)
-                        section.VerifyRemoveItemFromBasketOnce(chosenItem.Id);
+                        section.VerifyRemoveItemFromBasketOnce(chosenItem.Id, chosenItem.TypeId);
                     else
                         section.VerifyRemoveItemFromBasketNever();
                 }
@@ -349,7 +357,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var list = ShoppingListMother.ThreeSections().Create();
 
             // Act
-            Action action = () => list.ChangeItemQuantity(null, commonFixture.NextFloat());
+            Action action = () => list.ChangeItemQuantity(null, null, commonFixture.NextFloat());
 
             // Assert
             using (new AssertionScope())
@@ -367,7 +375,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
 
             // Act
-            Action action = () => list.ChangeItemQuantity(shoppingListItemId, commonFixture.NextFloat());
+            Action action = () => list.ChangeItemQuantity(shoppingListItemId, null, commonFixture.NextFloat());
 
             // Assert
             using (new AssertionScope())
@@ -385,7 +393,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             var chosenShoppingListItem = commonFixture.ChooseRandom(shoppinglist.Items);
 
             // Act
-            Action action = () => shoppinglist.ChangeItemQuantity(chosenShoppingListItem.Id, -commonFixture.NextFloat());
+            Action action = () => shoppinglist.ChangeItemQuantity(chosenShoppingListItem.Id, null, -commonFixture.NextFloat());
 
             // Assert
             using (new AssertionScope())
@@ -407,12 +415,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
             ShoppingListSectionMock chosenSectionMock = commonFixture.ChooseRandom(sectionMocks);
             IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
-            sectionMocks.ForEach(m => m.SetupContainsItem(m == chosenSectionMock));
+            foreach (var sectionMock in sectionMocks)
+            {
+                sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId, sectionMock.IsSameOrEqualTo(chosenSectionMock));
+            }
 
             float quantity = commonFixture.NextFloat();
 
             // Act
-            shoppingList.ChangeItemQuantity(chosenItem.Id, quantity);
+            shoppingList.ChangeItemQuantity(chosenItem.Id, chosenItem.TypeId, quantity);
 
             // Assert
             using (new AssertionScope())
@@ -420,7 +431,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
                 foreach (var section in sectionMocks)
                 {
                     if (section == chosenSectionMock)
-                        section.VerifyChangeItemQuantityOnce(chosenItem.Id, quantity);
+                        section.VerifyChangeItemQuantityOnce(chosenItem.Id, chosenItem.TypeId, quantity);
                     else
                         section.VerifyChangeItemQuantityNever();
                 }

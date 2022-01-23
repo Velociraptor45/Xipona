@@ -20,7 +20,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
 
         protected override void SetupServiceCollection()
         {
-            serviceCollection.AddInstancesOfGenericType(typeof(ManufacturerConverter).Assembly, typeof(IToEntityConverter<,>));
+            serviceCollection.AddImplementationOfGenericType(typeof(ManufacturerConverter).Assembly, typeof(IToEntityConverter<,>));
         }
     }
 }

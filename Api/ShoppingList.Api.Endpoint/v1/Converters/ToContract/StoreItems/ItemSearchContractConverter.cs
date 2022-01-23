@@ -25,6 +25,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Store
 
             return new ItemSearchContract(
                 source.Id.Value,
+                source.TypeId?.Value,
                 source.Name,
                 source.DefaultQuantity,
                 source.Price,

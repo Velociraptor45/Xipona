@@ -20,8 +20,19 @@
         SectionInStoreNotFound = 16,
         ItemAlreadyInSection = 17,
         StoreItemSectionNotFound = 18,
-        NoDefaultSectionSpecified = 19,
         SectionAlreadyInShoppingList = 20,
-        MultipleAvailabilitiesForStore = 21
+        MultipleAvailabilitiesForStore = 21,
+        CannotModifyItemAsItemWithTypes = 22,
+        CannotAddTypedItemToShoppingListWithoutTypeIdReason = 23,
+        CannotRemoveAllTypesFromItemWithTypes = 24,
+        CannotCreateItemWithTypesWithoutTypes = 25,
+        ItemTypeNotFound = 26,
+        ShoppingListItemMissingType = 27,
+        ItemTypeNotPartOfItem = 28,
+        ItemTypeAtStoreNotAvailable = 29,
+        TemporaryItemCannotHaveTypeIdReason = 30,
+        CannotUpdateItemAsItemWithTypesReason = 31,
+        ShoppingListItemHasNoType = 32,
+        ShoppingListItemHasType = 33
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Items
@@ -7,7 +8,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
     {
         public StoreItem(int id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityInPacketType,
-            int? itemCategoryId, int? manufacturerId, IEnumerable<StoreItemAvailability> availabilities)
+            int? itemCategoryId, int? manufacturerId, IEnumerable<StoreItemAvailability> availabilities,
+            IEnumerable<ItemType> itemTypes)
         {
             Id = id;
             Name = name;
@@ -19,7 +21,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
             QuantityInPacketType = quantityInPacketType;
             ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
+            ItemTypes = itemTypes.ToList();
             Availabilities = availabilities.ToList();
+            SetItemMode();
         }
 
         public int Id { get; }
@@ -32,7 +36,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         public QuantityTypeInPacket QuantityInPacketType { get; set; }
         public int? ItemCategoryId { get; set; }
         public int? ManufacturerId { get; set; }
+        public List<ItemType> ItemTypes { get; set; }
         public List<StoreItemAvailability> Availabilities { get; set; }
+        public ItemMode ItemMode { get; private set; }
+
+        public bool IsItemWithTypes => ItemMode == ItemMode.WithTypes;
 
         public IEnumerable<StoreItemStore> GetNotRegisteredStores(IEnumerable<Store> stores)
         {
@@ -44,6 +52,17 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
 
             var availableStoreIds = allStoreIds.Except(registeredStoreIds).ToList();
             return stores.Where(s => availableStoreIds.Contains(s.Id)).Select(s => s.AsStoreItemStore());
+        }
+
+        private void SetItemMode()
+        {
+            if (Id == 0)
+            {
+                ItemMode = ItemMode.NotDefined;
+                return;
+            }
+
+            ItemMode = ItemTypes.Count > 0 ? ItemMode.WithTypes : ItemMode.WithoutTypes;
         }
     }
 }

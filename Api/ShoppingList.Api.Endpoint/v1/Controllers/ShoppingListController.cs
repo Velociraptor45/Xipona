@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectHermes.ShoppingList.Api.ApplicationServices;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
@@ -21,7 +23,9 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 using System;
 using System.Threading.Tasks;
 
@@ -37,12 +41,14 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         private readonly IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeToContractConverter;
         private readonly IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketToContractConverter;
         private readonly IToDomainConverter<ItemIdContract, OfflineTolerantItemId> offlineTolerantItemIdConverter;
+        private readonly IEndpointConverters _converters;
 
         public ShoppingListController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
             IToContractConverter<ShoppingListReadModel, ShoppingListContract> shoppingListToContractConverter,
             IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeToContractConverter,
             IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketToContractConverter,
-            IToDomainConverter<ItemIdContract, OfflineTolerantItemId> offlineTolerantItemIdConverter)
+            IToDomainConverter<ItemIdContract, OfflineTolerantItemId> offlineTolerantItemIdConverter,
+            IEndpointConverters converters)
         {
             this.queryDispatcher = queryDispatcher;
             this.commandDispatcher = commandDispatcher;
@@ -50,6 +56,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             this.quantityTypeToContractConverter = quantityTypeToContractConverter;
             this.quantityTypeInPacketToContractConverter = quantityTypeInPacketToContractConverter;
             this.offlineTolerantItemIdConverter = offlineTolerantItemIdConverter;
+            _converters = converters;
         }
 
         [HttpGet]
@@ -98,8 +105,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 return BadRequest("No item id was specified.");
             }
+            var itemTypeId = contract.ItemTypeId.HasValue ? new ItemTypeId(contract.ItemTypeId.Value) : null;
 
-            var command = new RemoveItemFromShoppingListCommand(new ShoppingListId(contract.ShoppingListId), itemId);
+            var command = new RemoveItemFromShoppingListCommand(new ShoppingListId(contract.ShoppingListId), itemId,
+                itemTypeId);
 
             try
             {
@@ -150,6 +159,28 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [Route("items/add-with-type")]
+        public async Task<IActionResult> AddItemWithTypeToShoppingList([FromBody]
+            AddItemWithTypeToShoppingListContract contract)
+        {
+            var command = _converters.ToDomain<AddItemWithTypeToShoppingListContract, AddItemWithTypeToShoppingListCommand>(
+                contract);
+
+            try
+            {
+                await commandDispatcher.DispatchAsync(command, default);
+            }
+            catch (DomainException e)
+            {
+                return UnprocessableEntity(e.Reason);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [Route("items/put-in-basket")]
         public async Task<IActionResult> PutItemInBasket([FromBody] PutItemInBasketContract contract)
         {
@@ -162,7 +193,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             else
                 itemId = new OfflineTolerantItemId(contract.ItemId.Offline!.Value);
 
-            var command = new PutItemInBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId);
+            var itemTypeId = contract.ItemTypeId.HasValue ? new ItemTypeId(contract.ItemTypeId.Value) : null;
+            var command = new PutItemInBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId,
+                itemTypeId);
 
             try
             {
@@ -192,7 +225,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest("No item id was specified.");
             }
 
-            var command = new RemoveItemFromBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId);
+            var itemTypeId = contract.ItemTypeId.HasValue ? new ItemTypeId(contract.ItemTypeId.Value) : null;
+            var command = new RemoveItemFromBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId,
+                itemTypeId);
+
             try
             {
                 await commandDispatcher.DispatchAsync(command, default);
@@ -222,8 +258,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest("No item id was specified.");
             }
 
+            var itemTypeId = contract.ItemTypeId.HasValue ? new ItemTypeId(contract.ItemTypeId.Value) : null;
             var command = new ChangeItemQuantityOnShoppingListCommand(new ShoppingListId(contract.ShoppingListId),
-                itemId, contract.Quantity);
+                itemId, itemTypeId, contract.Quantity);
 
             try
             {

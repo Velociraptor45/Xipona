@@ -5,7 +5,10 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToEnti
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using System.Collections.Generic;
 using System.Linq;
+
+using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
 {
@@ -43,13 +46,14 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
                             ItemId = source.Id?.Value ?? 0,
                             DefaultSectionId = av.DefaultSectionId.Value
                         }).ToList(),
-                PredecessorId = source.Predecessor?.Id.Value
+                PredecessorId = source.Predecessor?.Id.Value,
+                ItemTypes = new List<Entities.ItemType>()
             };
         }
 
         protected override void SetupServiceCollection()
         {
-            serviceCollection.AddInstancesOfGenericType(typeof(ItemConverter).Assembly, typeof(IToEntityConverter<,>));
+            serviceCollection.AddImplementationOfGenericType(typeof(ItemConverter).Assembly, typeof(IToEntityConverter<,>));
         }
     }
 }

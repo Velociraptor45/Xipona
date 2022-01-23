@@ -32,7 +32,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
 
         protected override void SetupServiceCollection()
         {
-            serviceCollection.AddInstancesOfGenericType(typeof(StoreConverter).Assembly, typeof(IToEntityConverter<,>));
+            serviceCollection.AddImplementationOfGenericType(typeof(StoreConverter).Assembly, typeof(IToEntityConverter<,>));
         }
     }
 }

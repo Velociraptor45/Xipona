@@ -34,7 +34,7 @@
         State.EditedItem.Availabilities.Add(
             new StoreItemAvailability(chosenStore, 1, GetSectionForStoreId(chosenStore.Id)));
 
-        StateHasChanged();
+        State.StateChanged();
     }
 
     private StoreItemSection GetSectionForStoreId(int storeId)

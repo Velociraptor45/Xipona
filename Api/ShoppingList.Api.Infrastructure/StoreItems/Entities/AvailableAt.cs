@@ -14,8 +14,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities
         public float Price { get; set; }
         public int DefaultSectionId { get; set; }
 
-        [ForeignKey("ItemId")]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
+        [ForeignKey("ItemId")]
         public Item Item { get; set; }
 
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

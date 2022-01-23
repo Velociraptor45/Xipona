@@ -15,7 +15,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
-                .HasAnnotation("ProductVersion", "5.0.3");
+                .HasAnnotation("ProductVersion", "5.0.8");
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.AvailableAt", b =>
                 {
@@ -49,7 +49,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
                         .HasColumnType("int");
 
                     b.Property<string>("Comment")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<Guid?>("CreatedFrom")
                         .HasColumnType("char(36)");
@@ -68,7 +69,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<int?>("PredecessorId")
                         .HasColumnType("int");
@@ -87,6 +88,56 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
                     b.HasIndex("PredecessorId");
 
                     b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("PredecessorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("PredecessorId");
+
+                    b.ToTable("ItemTypes");
+                });
+
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemTypeAvailableAt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("DefaultSectionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemTypeId");
+
+                    b.ToTable("ItemTypeAvailableAts");
                 });
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.AvailableAt", b =>
@@ -109,7 +160,42 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
                     b.Navigation("Predecessor");
                 });
 
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType", b =>
+                {
+                    b.HasOne("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item", "Item")
+                        .WithMany("ItemTypes")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType", "Predecessor")
+                        .WithMany()
+                        .HasForeignKey("PredecessorId");
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Predecessor");
+                });
+
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemTypeAvailableAt", b =>
+                {
+                    b.HasOne("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType", "ItemType")
+                        .WithMany("AvailableAt")
+                        .HasForeignKey("ItemTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ItemType");
+                });
+
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item", b =>
+                {
+                    b.Navigation("AvailableAt");
+
+                    b.Navigation("ItemTypes");
+                });
+
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType", b =>
                 {
                     b.Navigation("AvailableAt");
                 });

@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
@@ -83,12 +84,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services
             {
                 Fixture = CommonFixture.GetNewFixture();
 
-                ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(Fixture);
+                ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
             }
 
             public ItemCategoryValidationService CreateService()
             {
-                return Fixture.Create<ItemCategoryValidationService>();
+                return new ItemCategoryValidationService(ItemCategoryRepositoryMock.Object);
             }
 
             public void SetupItemCategory()

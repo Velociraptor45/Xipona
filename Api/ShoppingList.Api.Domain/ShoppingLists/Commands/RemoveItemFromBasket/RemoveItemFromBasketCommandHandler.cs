@@ -38,6 +38,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
             }
             else
             {
+                if (command.ItemTypeId != null)
+                    throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
+
                 var temporaryId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId!.Value);
                 IStoreItem? item = await itemRepository.FindByAsync(temporaryId, cancellationToken);
 
@@ -47,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
                 itemId = item.Id;
             }
 
-            list.RemoveFromBasket(itemId);
+            list.RemoveFromBasket(itemId, command.ItemTypeId);
 
             await shoppingListRepository.StoreAsync(list, cancellationToken);
             return true;

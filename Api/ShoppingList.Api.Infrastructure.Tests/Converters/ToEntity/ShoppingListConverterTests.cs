@@ -33,6 +33,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
                         {
                             ShoppingListId = source.Id.Value,
                             ItemId = item.Id.Value,
+                            ItemTypeId = item.TypeId?.Value,
                             InBasket = item.IsInBasket,
                             Quantity = item.Quantity,
                             SectionId = section.Id.Value
@@ -42,7 +43,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
 
         protected override void SetupServiceCollection()
         {
-            serviceCollection.AddInstancesOfGenericType(typeof(ShoppingListConverter).Assembly, typeof(IToEntityConverter<,>));
+            serviceCollection.AddImplementationOfGenericType(typeof(ShoppingListConverter).Assembly, typeof(IToEntityConverter<,>));
         }
     }
 }

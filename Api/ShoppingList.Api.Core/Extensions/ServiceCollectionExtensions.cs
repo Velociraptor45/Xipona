@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Core.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddInstancesOfGenericType(this IServiceCollection services, Assembly assembly,
+        public static void AddImplementationOfGenericType(this IServiceCollection services, Assembly assembly,
             Type type)
         {
             var assemblyTypes = assembly
@@ -20,7 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Core.Extensions
                     .GetInterfaces()
                     .Where(t => t.IsGenericType
                         && t.GetGenericTypeDefinition() == type
-                        && services.All(service => !TypeIsInDescriptor(service, t, assemblyType)));
+                        && services.All(service => !service.TypeIsInDescriptor(t, assemblyType)));
 
                 foreach (var interfaceType in interfaceTypes)
                 {
@@ -29,7 +29,7 @@ namespace ProjectHermes.ShoppingList.Api.Core.Extensions
             }
         }
 
-        public static void AddInstancesOfNonGenericType(this IServiceCollection services, Assembly assembly,
+        public static void AddImplementationOfNonGenericType(this IServiceCollection services, Assembly assembly,
             Type type)
         {
             var assemblyTypes = assembly
@@ -43,7 +43,7 @@ namespace ProjectHermes.ShoppingList.Api.Core.Extensions
                     .GetInterfaces()
                     .Where(t => !t.IsGenericType
                         && t == type
-                        && services.All(service => !TypeIsInDescriptor(service, t, assemblyType)));
+                        && services.All(service => !service.TypeIsInDescriptor(t, assemblyType)));
 
                 foreach (var interfaceType in interfaceTypes)
                 {
@@ -52,7 +52,7 @@ namespace ProjectHermes.ShoppingList.Api.Core.Extensions
             }
         }
 
-        private static bool TypeIsInDescriptor(ServiceDescriptor descriptor, Type serviceType, Type implementationType)
+        public static bool TypeIsInDescriptor(this ServiceDescriptor descriptor, Type serviceType, Type implementationType)
         {
             if (descriptor.ServiceType != serviceType)
                 return false;

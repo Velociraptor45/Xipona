@@ -21,7 +21,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
 
         protected override void SetupServiceCollection()
         {
-            serviceCollection.AddInstancesOfGenericType(typeof(ItemCategoryConverter).Assembly, typeof(IToEntityConverter<,>));
+            serviceCollection.AddImplementationOfGenericType(typeof(ItemCategoryConverter).Assembly, typeof(IToEntityConverter<,>));
         }
     }
 }

@@ -1,31 +1,29 @@
-﻿using AutoFixture;
-using Moq;
+﻿using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Services
 {
-    public class ItemCategoryValidationServiceMock
+    public class ItemCategoryValidationServiceMock : Mock<IItemCategoryValidationService>
     {
-        private readonly Mock<IItemCategoryValidationService> mock;
-
-        public ItemCategoryValidationServiceMock(Mock<IItemCategoryValidationService> mock)
+        public ItemCategoryValidationServiceMock(MockBehavior behavior) : base(behavior)
         {
-            this.mock = mock;
-        }
-
-        public ItemCategoryValidationServiceMock(Fixture fixture)
-        {
-            mock = fixture.Freeze<Mock<IItemCategoryValidationService>>();
         }
 
         public void VerifyValidateAsyncOnce(ItemCategoryId itemCategoryId)
         {
-            mock.Verify(i => i.ValidateAsync(
+            Verify(i => i.ValidateAsync(
                     itemCategoryId,
                     It.IsAny<CancellationToken>()),
                 Times.Once);
+        }
+
+        public void SetupValidateAsync(ItemCategoryId itemCategoryId)
+        {
+            Setup(m => m.ValidateAsync(itemCategoryId, It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
         }
     }
 }

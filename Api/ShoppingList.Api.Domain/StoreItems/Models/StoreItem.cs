@@ -5,16 +5,19 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
     public class StoreItem : IStoreItem
     {
-        private List<IStoreItemAvailability> availabilities;
+        private List<IStoreItemAvailability> _availabilities;
 
         public StoreItem(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
@@ -32,7 +35,38 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
             TemporaryId = temporaryId;
-            this.availabilities = availabilities.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
+            ItemTypes = new ItemTypes(Enumerable.Empty<IItemType>());
+            _availabilities = availabilities.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
+
+            // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
+            // https://github.com/AutoFixture/AutoFixture/issues/1108
+            Predecessor = null;
+        }
+
+        public StoreItem(ItemId id, string name, bool isDeleted, string comment,
+            QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+            ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
+            IEnumerable<IItemType> itemTypes)
+        {
+            if (itemTypes is null)
+                throw new ArgumentNullException(nameof(itemTypes));
+
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Name = name;
+            IsDeleted = isDeleted;
+            Comment = comment;
+            IsTemporary = false;
+            QuantityType = quantityType;
+            QuantityInPacket = quantityInPacket;
+            QuantityTypeInPacket = quantityTypeInPacket;
+            ItemCategoryId = itemCategoryId;
+            ManufacturerId = manufacturerId;
+            TemporaryId = null;
+            ItemTypes = new ItemTypes(itemTypes);
+            _availabilities = new List<IStoreItemAvailability>();
+
+            if (!ItemTypes.Any())
+                throw new DomainException(new CannotCreateItemWithTypesWithoutTypesReason(Id));
 
             // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
             // https://github.com/AutoFixture/AutoFixture/issues/1108
@@ -52,8 +86,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
         public ManufacturerId? ManufacturerId { get; private set; }
         public TemporaryItemId? TemporaryId { get; }
         public IStoreItem? Predecessor { get; private set; } // todo: change this to an IItemPredecessor model to satisfy DDD
+        public ItemTypes ItemTypes { get; private set; }
 
-        public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.AsReadOnly();
+        public IReadOnlyCollection<IStoreItemAvailability> Availabilities => _availabilities.AsReadOnly();
+
+        public bool HasItemTypes => ItemTypes.Any();
 
         public void Delete()
         {
@@ -74,7 +111,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             QuantityTypeInPacket = permanentItem.QuantityTypeInPacket;
             ItemCategoryId = permanentItem.ItemCategoryId;
             ManufacturerId = permanentItem.ManufacturerId;
-            this.availabilities = availabilities.ToList();
+            _availabilities = availabilities.ToList();
             IsTemporary = false;
         }
 
@@ -87,12 +124,51 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             QuantityTypeInPacket = itemChange.QuantityTypeInPacket;
             ItemCategoryId = itemChange.ItemCategoryId;
             ManufacturerId = itemChange.ManufacturerId;
-            this.availabilities = availabilities.ToList();
+            _availabilities = availabilities.ToList();
+        }
+
+        public async Task ModifyAsync(ItemWithTypesModification modification, IValidator validator)
+        {
+            if (modification is null)
+                throw new ArgumentNullException(nameof(modification));
+
+            if (!ItemTypes.Any())
+                throw new DomainException(new CannotModifyItemAsItemWithTypesReason(Id));
+
+            if (!modification.ItemTypes.Any())
+                throw new DomainException(new CannotRemoveAllTypesFromItemWithTypesReason(Id));
+
+            Name = modification.Name;
+            Comment = modification.Comment;
+            QuantityType = modification.QuantityType;
+            QuantityInPacket = modification.QuantityInPacket;
+            QuantityTypeInPacket = modification.QuantityTypeInPacket;
+            ItemCategoryId = modification.ItemCategoryId;
+            ManufacturerId = modification.ManufacturerId;
+
+            var newTypes = new List<IItemType>();
+            foreach (var modifiedType in modification.ItemTypes)
+            {
+                IItemType newType;
+                if (ItemTypes.TryGetValue(modifiedType.Id, out var currentType))
+                {
+                    newType = await currentType!.ModifyAsync(modifiedType, validator);
+                }
+                else
+                {
+                    await validator.ValidateAsync(modifiedType.Availabilities);
+                    newType = new ItemType(new ItemTypeId(0), modifiedType.Name, modifiedType.Availabilities);
+                }
+
+                newTypes.Add(newType);
+            }
+
+            ItemTypes = new ItemTypes(newTypes);
         }
 
         public SectionId GetDefaultSectionIdForStore(StoreId storeId)
         {
-            var availability = availabilities.FirstOrDefault(av => av.StoreId == storeId);
+            var availability = _availabilities.FirstOrDefault(av => av.StoreId == storeId);
             if (availability == null)
                 throw new DomainException(new ItemAtStoreNotAvailableReason(Id, storeId));
 

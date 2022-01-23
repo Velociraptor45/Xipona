@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using System;
 using System.Collections.Generic;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
@@ -35,10 +36,9 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
                 .Returns(returnValue);
         }
 
-        public void SetupContainsItem(ItemId itemId, bool returnValue)
+        public void SetupContainsItem(ItemId itemId, ItemTypeId? itemTypeId, bool returnValue)
         {
-            Setup(i => i.ContainsItem(
-                    It.Is<ItemId>(id => id == itemId)))
+            Setup(i => i.ContainsItem(itemId, itemTypeId))
                 .Returns(returnValue);
         }
 
@@ -61,11 +61,9 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
                 Times.Once);
         }
 
-        public void VerifyRemoveItemOnce(ItemId id)
+        public void VerifyRemoveItem(ItemId id, ItemTypeId? itemTypeId, Func<Times> times)
         {
-            Verify(i => i.RemoveItem(
-                    It.Is<ItemId>(itemId => itemId == id)),
-                Times.Once);
+            Verify(i => i.RemoveItem(id, itemTypeId), times);
         }
 
         public void VerifyRemoveItemNever()
@@ -75,39 +73,35 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
                 Times.Never);
         }
 
-        public void VerifyPutItemInBasketOnce(ItemId id)
+        public void VerifyPutItemInBasketOnce(ItemId itemId, ItemTypeId? itemTypeId)
         {
-            Verify(i => i.PutItemInBasket(
-                    It.Is<ItemId>(itemId => itemId == id)),
-                Times.Once);
+            Verify(i => i.PutItemInBasket(itemId, itemTypeId), Times.Once);
         }
 
         public void VerifyPutItemInBasketNever()
         {
             Verify(i => i.PutItemInBasket(
-                    It.IsAny<ItemId>()),
+                    It.IsAny<ItemId>(),
+                    It.IsAny<ItemTypeId?>()),
                 Times.Never);
         }
 
-        public void VerifyRemoveItemFromBasketOnce(ItemId id)
+        public void VerifyRemoveItemFromBasketOnce(ItemId itemId, ItemTypeId? itemTypeId)
         {
-            Verify(i => i.RemoveItemFromBasket(
-                    It.Is<ItemId>(itemId => itemId == id)),
-                Times.Once);
+            Verify(i => i.RemoveItemFromBasket(itemId, itemTypeId), Times.Once);
         }
 
         public void VerifyRemoveItemFromBasketNever()
         {
             Verify(i => i.RemoveItemFromBasket(
-                    It.IsAny<ItemId>()),
+                    It.IsAny<ItemId>(),
+                    It.IsAny<ItemTypeId?>()),
                 Times.Never);
         }
 
-        public void VerifyChangeItemQuantityOnce(ItemId id, float quantity)
+        public void VerifyChangeItemQuantityOnce(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
         {
-            Verify(i => i.ChangeItemQuantity(
-                    It.Is<ItemId>(itemId => itemId == id),
-                    It.Is<float>(qnt => qnt == quantity)),
+            Verify(i => i.ChangeItemQuantity(itemId, itemTypeId, quantity),
                 Times.Once);
         }
 
@@ -115,6 +109,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
         {
             Verify(i => i.ChangeItemQuantity(
                     It.IsAny<ItemId>(),
+                    It.IsAny<ItemTypeId?>(),
                     It.IsAny<float>()),
                 Times.Never);
         }

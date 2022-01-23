@@ -1,32 +1,33 @@
-﻿using AutoFixture;
-using Moq;
+﻿using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
+using ShoppingList.Api.Core.TestKit.Extensions;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Services
 {
-    public class AvailabilityValidationServiceMock
+    public class AvailabilityValidationServiceMock : Mock<IAvailabilityValidationService>
     {
-        private readonly Mock<IAvailabilityValidationService> mock;
-
-        public AvailabilityValidationServiceMock(Mock<IAvailabilityValidationService> mock)
+        public AvailabilityValidationServiceMock(MockBehavior behavior) : base(behavior)
         {
-            this.mock = mock;
-        }
-
-        public AvailabilityValidationServiceMock(Fixture fixture)
-        {
-            mock = fixture.Freeze<Mock<IAvailabilityValidationService>>();
         }
 
         public void VerifyValidateOnce(IEnumerable<IStoreItemAvailability> availabilities)
         {
-            mock.Verify(i => i.ValidateAsync(
+            Verify(i => i.ValidateAsync(
                     availabilities,
                     It.IsAny<CancellationToken>()),
                 Times.Once);
+        }
+
+        public void SetupValidateAsync(IEnumerable<IStoreItemAvailability> availabilities)
+        {
+            Setup(m => m.ValidateAsync(
+                    It.Is<IEnumerable<IStoreItemAvailability>>(avs => avs.IsEquivalentTo(availabilities)),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
         }
     }
 }
