@@ -1,10 +1,11 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models;
-@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
-
-@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager;
-@inject Models.Index.Services.IItemPriceCalculationService itemPriceCalculationService;
-@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListCommunicationService communicationService;
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Index.Services
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
+@using ProjectHermes.ShoppingList.Frontend.Models
+@inject NavigationManager navigationManager;
+@inject IItemPriceCalculationService itemPriceCalculationService;
+@inject IShoppingListCommunicationService communicationService;
 
 <li class="list-style-non py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
     @if (State.ItemsInEditMode)
