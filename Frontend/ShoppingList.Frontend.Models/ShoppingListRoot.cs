@@ -56,5 +56,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         {
             return Sections.Sum(s => s.GetInBasketPrice(priceCalculationService));
         }
+
+        public IReadOnlyCollection<ShoppingListSection> GetNonEmptySections(bool excludeWithAllItemsInBasket)
+        {
+            return sections.Where(s => s.Items.Any() && (!s.AllItemsInBasket || !excludeWithAllItemsInBasket)).ToList();
+        }
     }
 }
