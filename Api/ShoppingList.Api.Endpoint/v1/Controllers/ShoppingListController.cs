@@ -280,7 +280,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
         [Route("{shoppingListId}/finish")]
         public async Task<IActionResult> FinishList([FromRoute(Name = "shoppingListId")] int shoppingListId)
         {
-            var command = new FinishShoppingListCommand(new ShoppingListId(shoppingListId), DateTime.Now);
+            var command = new FinishShoppingListCommand(new ShoppingListId(shoppingListId), DateTime.UtcNow);
             try
             {
                 await commandDispatcher.DispatchAsync(command, default);
