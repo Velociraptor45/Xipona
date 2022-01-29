@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Comma
         public AddItemWithTypeToShoppingListCommand(ShoppingListId shoppingListId, ItemId itemId,
             ItemTypeId itemTypeId, SectionId? sectionId, float quantity)
         {
-            ShoppingListId = shoppingListId ?? throw new System.ArgumentNullException(nameof(shoppingListId));
+            ShoppingListId = shoppingListId;
             ItemId = itemId ?? throw new System.ArgumentNullException(nameof(itemId));
             ItemTypeId = itemTypeId ?? throw new System.ArgumentNullException(nameof(itemTypeId));
             SectionId = sectionId;

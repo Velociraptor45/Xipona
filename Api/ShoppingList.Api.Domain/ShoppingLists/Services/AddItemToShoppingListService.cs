@@ -36,8 +36,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
         public async Task AddItemWithTypeToShoppingList(ShoppingListId shoppingListId, ItemId itemId, ItemTypeId itemTypeId,
             SectionId? sectionId, float quantity, CancellationToken cancellationToken)
         {
-            if (shoppingListId is null)
-                throw new ArgumentNullException(nameof(shoppingListId));
             if (itemId is null)
                 throw new ArgumentNullException(nameof(itemId));
             if (itemTypeId is null)

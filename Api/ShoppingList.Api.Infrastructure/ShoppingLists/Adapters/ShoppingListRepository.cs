@@ -54,9 +54,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
 
         public async Task<IShoppingList?> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)
         {
-            if (id is null)
-                throw new ArgumentNullException(nameof(id));
-
             var entity = await GetShoppingListQuery()
                 .FirstOrDefaultAsync(list => list.Id == id.Value, cancellationToken);
 

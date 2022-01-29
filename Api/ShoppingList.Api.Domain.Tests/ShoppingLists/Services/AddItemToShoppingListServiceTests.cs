@@ -770,24 +770,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             #region ItemId
 
             [Fact]
-            public async Task AddItemWithTypeToShoppingList_ItemId_WithShoppingListIdNull_ShouldThrowArgumentNullException()
-            {
-                // Arrange
-                _fixture.SetupQuantity();
-                _fixture.SetupSectionId();
-                _fixture.SetupStoreItem();
-                _fixture.SetupItemType();
-                var sut = _fixture.CreateSut();
-
-                // Act
-                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(null,
-                    _fixture.StoreItem.Id, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
-
-                // Assert
-                await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*shoppingList*");
-            }
-
-            [Fact]
             public async Task AddItemWithTypeToShoppingList_ItemId_WithItemIdNull_ShouldThrowArgumentNullException()
             {
                 // Arrange

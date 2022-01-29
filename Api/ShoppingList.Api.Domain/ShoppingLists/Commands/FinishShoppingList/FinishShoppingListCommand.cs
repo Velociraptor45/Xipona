@@ -8,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishSho
     {
         public FinishShoppingListCommand(ShoppingListId shoppingListId, DateTime completionDate)
         {
-            ShoppingListId = shoppingListId ?? throw new ArgumentNullException(nameof(shoppingListId));
+            ShoppingListId = shoppingListId;
             CompletionDate = completionDate;
         }
 
