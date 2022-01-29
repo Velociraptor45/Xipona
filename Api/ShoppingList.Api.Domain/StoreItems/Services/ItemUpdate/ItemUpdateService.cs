@@ -54,7 +54,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdate
 
             if (update.ManufacturerId != null)
             {
-                await _validator.ValidateAsync(update.ManufacturerId);
+                await _validator.ValidateAsync(update.ManufacturerId.Value);
             }
 
             _cancellationToken.ThrowIfCancellationRequested();

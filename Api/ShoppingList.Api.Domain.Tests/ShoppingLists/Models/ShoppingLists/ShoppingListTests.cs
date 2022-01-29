@@ -2,6 +2,7 @@
 using FluentAssertions;
 using FluentAssertions.Common;
 using FluentAssertions.Execution;
+using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -12,7 +13,6 @@ using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using System;
 using System.Linq;
-using Moq;
 using Xunit;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists
@@ -29,23 +29,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         }
 
         #region AddItem
-
-        [Fact]
-        public void AddItem_WithSectionIdIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var shoppingList = ShoppingListMother.ThreeSections().Create();
-            var item = new ShoppingListItemBuilder().Create();
-
-            // Act
-            Action action = () => shoppingList.AddItem(item, null);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                action.Should().Throw<ArgumentNullException>();
-            }
-        }
 
         [Fact]
         public void AddItem_WithStoreItemIsNull_ShouldThrowArgumentNullException()
@@ -131,22 +114,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         #region RemoveItem
 
         [Fact]
-        public void RemoveItem_WithItemIdIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var list = ShoppingListMother.ThreeSections().Create();
-
-            // Act
-            Action action = () => list.RemoveItem(null);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                action.Should().Throw<ArgumentNullException>();
-            }
-        }
-
-        [Fact]
         public void RemoveItem_WithItemIdNotOnList_ShouldDoNothing()
         {
             // Arrange
@@ -209,22 +176,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         #region PutItemInBasket
 
         [Fact]
-        public void PutItemInBasket_WithItemIdIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var list = ShoppingListMother.ThreeSections().Create();
-
-            // Act
-            Action action = () => list.PutItemInBasket(null);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                action.Should().Throw<ArgumentNullException>();
-            }
-        }
-
-        [Fact]
         public void PutItemInBasket_WithItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
@@ -280,22 +231,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         #region RemoveFromBasket
 
         [Fact]
-        public void RemoveFromBasket_WithItemIdIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var list = ShoppingListMother.ThreeSections().Create();
-
-            // Act
-            Action action = () => list.RemoveFromBasket(null, null);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                action.Should().Throw<ArgumentNullException>();
-            }
-        }
-
-        [Fact]
         public void RemoveFromBasket_WithItemIdNotOnList_ShouldThrowDomainException()
         {
             // Arrange
@@ -349,22 +284,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
         #endregion RemoveFromBasket
 
         #region ChangeItemQuantity
-
-        [Fact]
-        public void ChangeItemQuantity_WithItemIdIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var list = ShoppingListMother.ThreeSections().Create();
-
-            // Act
-            Action action = () => list.ChangeItemQuantity(null, null, commonFixture.NextFloat());
-
-            // Assert
-            using (new AssertionScope())
-            {
-                action.Should().Throw<ArgumentNullException>();
-            }
-        }
 
         [Fact]
         public void ChangeItemQuantity_WithItemIdNotOnList_ShouldThrowDomainException()

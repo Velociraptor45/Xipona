@@ -39,15 +39,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversio
             if (shoppingList is null)
                 throw new System.ArgumentNullException(nameof(shoppingList));
 
-            var ItemIds = shoppingList.Items.Select(i => i.Id);
-            var itemsDict = (await _itemRepository.FindByAsync(ItemIds, cancellationToken))
+            var itemIds = shoppingList.Items.Select(i => i.Id);
+            var itemsDict = (await _itemRepository.FindByAsync(itemIds, cancellationToken))
                 .ToDictionary(i => i.Id);
 
-            var itemCategoryIds = itemsDict.Values.Where(i => i.ItemCategoryId != null).Select(i => i.ItemCategoryId!);
+            var itemCategoryIds = itemsDict.Values.Where(i => i.ItemCategoryId != null)
+                .Select(i => i.ItemCategoryId!.Value);
             var itemCategoriesDict = (await _itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
                 .ToDictionary(cat => cat.Id);
 
-            var manufacturerIds = itemsDict.Values.Where(i => i.ManufacturerId != null).Select(i => i.ManufacturerId!);
+            var manufacturerIds = itemsDict.Values.Where(i => i.ManufacturerId != null)
+                .Select(i => i.ManufacturerId!.Value);
             var manufacturersDict = (await _manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
                 .ToDictionary(man => man.Id);
 
@@ -58,14 +60,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversio
             return ToReadModel(shoppingList, store, itemsDict, itemCategoriesDict, manufacturersDict);
         }
 
-        private ShoppingListReadModel ToReadModel(IShoppingList shoppingList, IStore store,
-            Dictionary<ItemId, IStoreItem> storeItems, Dictionary<ItemCategoryId, IItemCategory> itemCategories,
-            Dictionary<ManufacturerId, IManufacturer> manufacturers)
+        private static ShoppingListReadModel ToReadModel(IShoppingList shoppingList, IStore store,
+            IReadOnlyDictionary<ItemId, IStoreItem> storeItems, IReadOnlyDictionary<ItemCategoryId,
+            IItemCategory> itemCategories, IReadOnlyDictionary<ManufacturerId, IManufacturer> manufacturers)
         {
-            List<ShoppingListSectionReadModel> sectionReadModels = new List<ShoppingListSectionReadModel>();
+            List<ShoppingListSectionReadModel> sectionReadModels = new();
             foreach (var section in shoppingList.Sections)
             {
-                List<ShoppingListItemReadModel> itemReadModels = new List<ShoppingListItemReadModel>();
+                List<ShoppingListItemReadModel> itemReadModels = new();
                 foreach (var item in section.Items)
                 {
                     var storeItem = storeItems[item.Id];
@@ -79,7 +81,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversio
 
                         var itemType = storeItem.ItemTypes.FirstOrDefault(t => t.Id == item.TypeId);
                         if (itemType == null)
-                            throw new DomainException(new ItemTypeNotFoundReason(item.Id, item.TypeId));
+                            throw new DomainException(new ItemTypeNotFoundReason(item.Id, item.TypeId.Value));
 
                         price = itemType.Availabilities.First(av => av.StoreId == store.Id).Price;
                         name = $"{storeItem.Name} {itemType.Name}";
@@ -101,8 +103,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversio
                         storeItem.QuantityType.ToReadModel(),
                         storeItem.QuantityInPacket,
                         storeItem.QuantityTypeInPacket.ToReadModel(),
-                        storeItem.ItemCategoryId == null ? null : itemCategories[storeItem.ItemCategoryId].ToReadModel(),
-                        storeItem.ManufacturerId == null ? null : manufacturers[storeItem.ManufacturerId].ToReadModel(),
+                        storeItem.ItemCategoryId == null ?
+                            null : itemCategories[storeItem.ItemCategoryId.Value].ToReadModel(),
+                        storeItem.ManufacturerId == null ?
+                            null : manufacturers[storeItem.ManufacturerId.Value].ToReadModel(),
                         item.IsInBasket,
                         item.Quantity);
 

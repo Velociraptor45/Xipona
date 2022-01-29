@@ -21,7 +21,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels
                 throw new ArgumentException($"'{nameof(name)}' cannot be null or empty", nameof(name));
             }
 
-            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Id = id;
             Name = name;
             IsDeleted = isDeleted;
             Comment = comment;

@@ -148,7 +148,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
             public ItemRepositoryMock ItemRepositoryMock { get; }
 
             public PutItemInBasketCommand Command { get; private set; }
-            public TemporaryItemId TemporaryItemId { get; private set; }
+            public TemporaryItemId? TemporaryItemId { get; private set; }
             public ShoppingListMock ShoppingListMock { get; private set; }
             public IStoreItem StoreItem { get; private set; }
 
@@ -170,7 +170,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
                 else
                 {
                     Fixture.ConstructorArgumentFor<PutItemInBasketCommand, ItemTypeId?>("itemTypeId", null);
-                    offlineTolerantItemId = new OfflineTolerantItemId(TemporaryItemId.Value);
+                    offlineTolerantItemId = new OfflineTolerantItemId(TemporaryItemId.Value.Value);
                 }
 
                 Fixture.ConstructorArgumentFor<PutItemInBasketCommand, OfflineTolerantItemId>("itemId",
@@ -220,12 +220,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
 
             public void SetupItemRepositoryFindBy()
             {
-                ItemRepositoryMock.SetupFindByAsync(TemporaryItemId, StoreItem);
+                ItemRepositoryMock.SetupFindByAsync(TemporaryItemId.Value, StoreItem);
             }
 
             public void SetupItemRepositoryFindingNoItem()
             {
-                ItemRepositoryMock.SetupFindByAsync(TemporaryItemId, null);
+                ItemRepositoryMock.SetupFindByAsync(TemporaryItemId.Value, null);
             }
 
             #endregion Fixture Setup
@@ -250,7 +250,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Put
 
             public void VerifyItemRepositoryFindByWithTemporaryItemId()
             {
-                ItemRepositoryMock.VerifyFindByAsync(TemporaryItemId);
+                ItemRepositoryMock.VerifyFindByAsync(TemporaryItemId.Value);
             }
 
             #endregion Verify

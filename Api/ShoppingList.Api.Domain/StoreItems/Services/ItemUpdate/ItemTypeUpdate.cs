@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdate
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace.", nameof(name));
 
-            OldId = oldId ?? throw new ArgumentNullException(nameof(oldId));
+            OldId = oldId;
             Name = name;
             Availabilities = availabilities?.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
         }

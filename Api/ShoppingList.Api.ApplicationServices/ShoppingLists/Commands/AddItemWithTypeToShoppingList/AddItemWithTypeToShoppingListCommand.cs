@@ -11,8 +11,8 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Comma
             ItemTypeId itemTypeId, SectionId? sectionId, float quantity)
         {
             ShoppingListId = shoppingListId;
-            ItemId = itemId ?? throw new System.ArgumentNullException(nameof(itemId));
-            ItemTypeId = itemTypeId ?? throw new System.ArgumentNullException(nameof(itemTypeId));
+            ItemId = itemId;
+            ItemTypeId = itemTypeId;
             SectionId = sectionId;
             Quantity = quantity;
         }

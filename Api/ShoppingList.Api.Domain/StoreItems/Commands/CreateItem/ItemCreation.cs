@@ -26,7 +26,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
-            ItemCategoryId = itemCategoryId ?? throw new ArgumentNullException(nameof(itemCategoryId));
+            ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
             this.availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
         }

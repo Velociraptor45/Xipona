@@ -12,14 +12,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemIn
 {
     public class PutItemInBasketCommandHandler : ICommandHandler<PutItemInBasketCommand, bool>
     {
-        private readonly IShoppingListRepository shoppingListRepository;
-        private readonly IItemRepository itemRepository;
+        private readonly IShoppingListRepository _shoppingListRepository;
+        private readonly IItemRepository _itemRepository;
 
         public PutItemInBasketCommandHandler(IShoppingListRepository shoppingListRepository,
             IItemRepository itemRepository)
         {
-            this.shoppingListRepository = shoppingListRepository;
-            this.itemRepository = itemRepository;
+            _shoppingListRepository = shoppingListRepository;
+            _itemRepository = itemRepository;
         }
 
         public async Task<bool> HandleAsync(PutItemInBasketCommand command, CancellationToken cancellationToken)
@@ -27,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemIn
             if (command == null)
                 throw new ArgumentNullException(nameof(command));
 
-            var shoppingList = await shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
+            var shoppingList = await _shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
             if (shoppingList == null)
                 throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
 
@@ -42,7 +42,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemIn
                     throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
 
                 var temporaryId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId!.Value);
-                IStoreItem? item = await itemRepository.FindByAsync(temporaryId, cancellationToken);
+                IStoreItem? item = await _itemRepository.FindByAsync(temporaryId, cancellationToken);
 
                 if (item == null)
                     throw new DomainException(new ItemNotFoundReason(temporaryId));
@@ -54,7 +54,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.PutItemIn
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
+            await _shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
 
             return true;
         }

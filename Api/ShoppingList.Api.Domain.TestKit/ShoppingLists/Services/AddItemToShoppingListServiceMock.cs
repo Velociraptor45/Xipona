@@ -65,7 +65,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services
                 times);
         }
 
-        public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, ItemId itemId, SectionId sectionId,
+        public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
             float quantity)
         {
             Verify(i => i.AddItemToShoppingList(
@@ -78,7 +78,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services
         }
 
         public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
-            SectionId sectionId, float quantity)
+            SectionId? sectionId, float quantity)
         {
             Verify(i => i.AddItemToShoppingList(
                     shoppingList,

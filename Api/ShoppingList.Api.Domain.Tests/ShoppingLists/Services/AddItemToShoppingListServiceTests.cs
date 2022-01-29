@@ -58,28 +58,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             }
 
             [Fact]
-            public async Task AddItemToShoppingList_WithItemIdIsNull_ShouldThrowArgumentNullException()
-            {
-                // Arrange
-                var service = _fixture.CreateSut();
-
-                _fixture.SetupShoppingListMock();
-                _fixture.SetupStoreItemNull();
-                _fixture.SetupSectionId();
-                _fixture.SetupQuantity();
-
-                // Act
-                Func<Task> function = async () => await service.AddItemToShoppingList(
-                    _fixture.ShoppingListMock.Object, _fixture.StoreItem?.Id, _fixture.SectionId, _fixture.Quantity, default);
-
-                // Assert
-                using (new AssertionScope())
-                {
-                    await function.Should().ThrowAsync<ArgumentNullException>();
-                }
-            }
-
-            [Fact]
             public async Task AddItemToShoppingList_WithInvalidItemId_ShouldThrowDomainException()
             {
                 // Arrange
@@ -152,30 +130,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 _fixture.SetupQuantity();
 
                 // Act
-                Func<Task> function = async () => await service.AddItemToShoppingList(null, _fixture.StoreItem.TemporaryId,
-                    _fixture.SectionId, _fixture.Quantity, default);
-
-                // Assert
-                using (new AssertionScope())
-                {
-                    await function.Should().ThrowAsync<ArgumentNullException>();
-                }
-            }
-
-            [Fact]
-            public async Task AddItemToShoppingList_WithTemporaryItemIdIsNull_ShouldThrowArgumentNullException()
-            {
-                // Arrange
-                var service = _fixture.CreateSut();
-
-                _fixture.SetupShoppingListMock();
-                _fixture.SetupTemporaryStoreItemNull();
-                _fixture.SetupSectionId();
-                _fixture.SetupQuantity();
-
-                // Act
-                Func<Task> function = async () => await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
-                    _fixture.StoreItem?.TemporaryId, _fixture.SectionId, _fixture.Quantity, default);
+                Func<Task> function = async () => await service.AddItemToShoppingList(null,
+                    _fixture.StoreItem.TemporaryId.Value, _fixture.SectionId, _fixture.Quantity, default);
 
                 // Assert
                 using (new AssertionScope())
@@ -199,7 +155,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
                 // Act
                 Func<Task> function = async () => await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
-                    _fixture.StoreItem.TemporaryId, _fixture.SectionId, _fixture.Quantity, default);
+                    _fixture.StoreItem.TemporaryId.Value, _fixture.SectionId, _fixture.Quantity, default);
 
                 // Assert
                 using (new AssertionScope())
@@ -229,8 +185,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                 _fixture.SetupAddingItemToShoppingList();
 
                 // Act
-                await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem.TemporaryId,
-                    _fixture.SectionId, _fixture.Quantity, default);
+                await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
+                    _fixture.StoreItem.TemporaryId.Value, _fixture.SectionId, _fixture.Quantity, default);
 
                 // Assert
                 using (new AssertionScope())
@@ -318,7 +274,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
                 // Act
                 Func<Task> function = async () => await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
-                    _fixture.ShoppingListItem, _fixture.SectionId, default);
+                    _fixture.ShoppingListItem, _fixture.SectionId.Value, default);
 
                 // Assert
                 using (new AssertionScope())
@@ -343,7 +299,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
                 // Act
                 Func<Task> function = async () => await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
-                    _fixture.ShoppingListItem, _fixture.SectionId, default);
+                    _fixture.ShoppingListItem, _fixture.SectionId.Value, default);
 
                 // Assert
                 using (new AssertionScope())
@@ -372,7 +328,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
                 // Act
                 await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
-                    _fixture.ShoppingListItem, _fixture.SectionId, default);
+                    _fixture.ShoppingListItem, _fixture.SectionId.Value, default);
 
                 // Assert
                 using (new AssertionScope())
@@ -399,7 +355,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
                 // Act
                 await service.AddItemToShoppingList(_fixture.ShoppingListMock.Object,
-                    _fixture.ShoppingListItem, _fixture.SectionId, default);
+                    _fixture.ShoppingListItem, _fixture.SectionId.Value, default);
 
                 // Assert
                 using (new AssertionScope())
@@ -464,12 +420,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
                 public void SetupFindingNoItemWithTemporaryId()
                 {
-                    ItemRepositoryMock.SetupFindByAsync(StoreItem.TemporaryId, null);
+                    ItemRepositoryMock.SetupFindByAsync(StoreItem.TemporaryId.Value, null);
                 }
 
                 public void SetupFindingItemWithTemporaryId()
                 {
-                    ItemRepositoryMock.SetupFindByAsync(StoreItem.TemporaryId, StoreItem);
+                    ItemRepositoryMock.SetupFindByAsync(StoreItem.TemporaryId.Value, StoreItem);
                 }
 
                 #endregion Mock Setup
@@ -522,24 +478,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
                 // Assert
                 await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*item*");
-            }
-
-            [Fact]
-            public async Task AddItemWithTypeToShoppingList_WithItemTypeIdNull_ShouldThrowArgumentNullException()
-            {
-                // Arrange
-                _fixture.SetupQuantity();
-                _fixture.SetupSectionId();
-                _fixture.SetupStoreItem();
-                _fixture.SetupShoppingListMock();
-                var sut = _fixture.CreateSut();
-
-                // Act
-                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object,
-                    _fixture.StoreItem, null, _fixture.SectionId, _fixture.Quantity, default);
-
-                // Assert
-                await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*itemTypeId*");
             }
 
             #region WithMissingSection
@@ -768,43 +706,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             #endregion Item
 
             #region ItemId
-
-            [Fact]
-            public async Task AddItemWithTypeToShoppingList_ItemId_WithItemIdNull_ShouldThrowArgumentNullException()
-            {
-                // Arrange
-                _fixture.SetupQuantity();
-                _fixture.SetupSectionId();
-                _fixture.SetupStoreItem();
-                _fixture.SetupItemType();
-                _fixture.SetupShoppingListMock();
-                var sut = _fixture.CreateSut();
-
-                // Act
-                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object.Id,
-                    null, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
-
-                // Assert
-                await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*item*");
-            }
-
-            [Fact]
-            public async Task AddItemWithTypeToShoppingList_ItemId_WithItemTypeIdNull_ShouldThrowArgumentNullException()
-            {
-                // Arrange
-                _fixture.SetupQuantity();
-                _fixture.SetupSectionId();
-                _fixture.SetupStoreItem();
-                _fixture.SetupShoppingListMock();
-                var sut = _fixture.CreateSut();
-
-                // Act
-                Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object.Id,
-                    _fixture.StoreItem.Id, null, _fixture.SectionId, _fixture.Quantity, default);
-
-                // Assert
-                await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*itemTypeId*");
-            }
 
             #region WithMissingSection
 
@@ -1060,7 +961,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             protected readonly ShoppingListItemFactoryMock ShoppingListItemFactoryMock;
             protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
             public ShoppingListMock ShoppingListMock { get; protected set; }
-            public SectionId SectionId { get; protected set; }
+            public SectionId? SectionId { get; protected set; }
             public float Quantity { get; protected set; }
             public IStoreItem StoreItem { get; protected set; }
             public IShoppingListItem ShoppingListItem { get; protected set; }
@@ -1109,7 +1010,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
             public void SetupStoreNotMatchingSectionId()
             {
-                var sectionId = new SectionId(CommonFixture.NextInt(SectionId.Value));
+                var sectionId = new SectionId(CommonFixture.NextInt(SectionId.Value.Value));
                 var section = StoreSectionMother.Default().WithId(sectionId).Create();
 
                 Store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSection(section).Create();
@@ -1125,7 +1026,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
             public void SetupEmptyShoppingListSection()
             {
-                ShoppingListSection = ShoppingListSectionMother.Empty().WithId(SectionId).Create();
+                ShoppingListSection = ShoppingListSectionMother.Empty().WithId(SectionId.Value).Create();
             }
 
             #region Mock Setup
@@ -1194,7 +1095,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
 
             public void VerifyCreatingEmptyShoppingListSectionOnce()
             {
-                ShoppingListSectionFactoryMock.VerifyCreateEmptyOnce(SectionId);
+                ShoppingListSectionFactoryMock.VerifyCreateEmptyOnce(SectionId.Value);
             }
 
             public void VerifyStoringShoppingList()

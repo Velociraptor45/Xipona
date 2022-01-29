@@ -34,25 +34,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
             #region ExchangeItemAsync
 
             [Fact]
-            public async Task ExchangeItemAsync_WithOldItemIsNull_ShouldThrowArgumentNullException()
-            {
-                // Arrange
-                var service = _fixture.CreateSut();
-                _fixture.SetupNewItem();
-                _fixture.SetupOldItemNull();
-
-                // Act
-                Func<Task> function = async () =>
-                    await service.ExchangeItemAsync(_fixture.OldShoppingListItem?.Id, _fixture.NewItem, default);
-
-                // Assert
-                using (new AssertionScope())
-                {
-                    await function.Should().ThrowAsync<ArgumentNullException>();
-                }
-            }
-
-            [Fact]
             public async Task ExchangeItemAsync_WithNewItemIdIsNull_ShouldThrowArgumentNullException()
             {
                 // Arrange
@@ -731,7 +712,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services
                         .WithStoreId(storeId)
                         .CreateMany(1);
                     var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1).ToList();
-                    type.First().SetPredecessor(new ItemTypeBuilder().WithId(OldShoppingListItem.TypeId).Create());
+                    type.First().SetPredecessor(new ItemTypeBuilder().WithId(OldShoppingListItem.TypeId.Value).Create());
                     NewItem = new StoreItemBuilder().WithTypes(type).Create();
                 }
 

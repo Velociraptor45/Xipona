@@ -3,7 +3,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,9 +34,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 
         public SectionId GetDefaultSectionIdForStore(StoreId storeId)
         {
-            if (storeId is null)
-                throw new ArgumentNullException(nameof(storeId));
-
             var availability = Availabilities.FirstOrDefault(av => av.StoreId == storeId);
             if (availability == null)
                 throw new DomainException(new ItemTypeAtStoreNotAvailableReason(Id, storeId));

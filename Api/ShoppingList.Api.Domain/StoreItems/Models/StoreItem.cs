@@ -24,7 +24,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
             IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId? temporaryId)
         {
-            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Id = id;
             Name = name;
             IsDeleted = isDeleted;
             Comment = comment;
@@ -51,7 +51,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
             if (itemTypes is null)
                 throw new ArgumentNullException(nameof(itemTypes));
 
-            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Id = id;
             Name = name;
             IsDeleted = isDeleted;
             Comment = comment;

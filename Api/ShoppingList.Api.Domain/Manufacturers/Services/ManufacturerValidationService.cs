@@ -2,7 +2,6 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,19 +9,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services
 {
     public class ManufacturerValidationService : IManufacturerValidationService
     {
-        private readonly IManufacturerRepository manufacturerRepository;
+        private readonly IManufacturerRepository _manufacturerRepository;
 
         public ManufacturerValidationService(IManufacturerRepository manufacturerRepository)
         {
-            this.manufacturerRepository = manufacturerRepository;
+            _manufacturerRepository = manufacturerRepository;
         }
 
         public async Task ValidateAsync(ManufacturerId manufacturerId, CancellationToken cancellationToken)
         {
-            if (manufacturerId is null)
-                throw new ArgumentNullException(nameof(manufacturerId));
-
-            IManufacturer? manufacturer = await manufacturerRepository
+            IManufacturer? manufacturer = await _manufacturerRepository
                     .FindByAsync(manufacturerId, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();

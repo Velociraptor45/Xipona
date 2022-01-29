@@ -19,7 +19,7 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Common
         {
             var valueType = command.GetType()
                 .GetInterfaces()
-                .FirstOrDefault(interf => interf.IsGenericType && interf.GetGenericTypeDefinition() == typeof(ICommand<>))
+                .First(interf => interf.IsGenericType && interf.GetGenericTypeDefinition() == typeof(ICommand<>))
                 .GetGenericArguments()
                 .First();
 

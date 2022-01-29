@@ -18,23 +18,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services
     public class ItemCategoryValidationServiceTests
     {
         [Fact]
-        public async Task ValidateAsync_WithItemCategoryIdIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateService();
-
-            // Act
-            Func<Task> function = async () => await service.ValidateAsync(null, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowAsync<ArgumentNullException>();
-            }
-        }
-
-        [Fact]
         public async Task ValidateAsync_WithInvalidItemCategoryId_ShouldThrowDomainException()
         {
             // Arrange

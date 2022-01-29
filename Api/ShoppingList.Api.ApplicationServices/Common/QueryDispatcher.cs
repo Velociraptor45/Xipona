@@ -19,7 +19,7 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Common
         {
             var valueType = query.GetType()
                 .GetInterfaces()
-                .FirstOrDefault(interf => interf.IsGenericType && interf.GetGenericTypeDefinition() == typeof(IQuery<>))
+                .First(interf => interf.IsGenericType && interf.GetGenericTypeDefinition() == typeof(IQuery<>))
                 .GetGenericArguments()
                 .First();
 

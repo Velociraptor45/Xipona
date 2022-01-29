@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
 {
     public class PermanentItem
     {
-        private readonly IEnumerable<IStoreItemAvailability> availabilities;
+        private readonly IEnumerable<IStoreItemAvailability> _availabilities;
 
         public PermanentItem(ItemId id, string name, string comment, QuantityType quantityType,
             float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
@@ -21,18 +21,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
                 throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
             }
 
-            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Id = id;
             Name = name;
             Comment = comment ?? throw new ArgumentNullException(nameof(comment));
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
-            ItemCategoryId = itemCategoryId ?? throw new ArgumentNullException(nameof(itemCategoryId));
+            ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
-            this.availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
+            _availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
         }
 
-        public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
+        public IReadOnlyCollection<IStoreItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
 
         public ItemId Id { get; }
         public string Name { get; }

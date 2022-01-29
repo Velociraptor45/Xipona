@@ -18,23 +18,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Manufacturers.Services
     public class ManufacturerValidationServiceTests
     {
         [Fact]
-        public async Task ValidateAsync_WithManufacturerIdIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateSut();
-
-            // Act
-            Func<Task> function = async () => await service.ValidateAsync(null, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowAsync<ArgumentNullException>();
-            }
-        }
-
-        [Fact]
         public async Task ValidateAsync_WithInvalidManufacturerId_ShouldThrowDomainException()
         {
             // Arrange

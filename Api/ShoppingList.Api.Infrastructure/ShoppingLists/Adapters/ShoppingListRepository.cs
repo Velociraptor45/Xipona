@@ -68,9 +68,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
         public async Task<IEnumerable<IShoppingList>> FindByAsync(ItemId storeItemId,
             CancellationToken cancellationToken)
         {
-            if (storeItemId is null)
-                throw new ArgumentNullException(nameof(storeItemId));
-
             List<Entities.ShoppingList> entities = await GetShoppingListQuery()
                 .Where(l => l.ItemsOnList.Any(i => i.ItemId == storeItemId.Value))
                 .ToListAsync(cancellationToken: cancellationToken);
@@ -83,9 +80,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
         public async Task<IEnumerable<IShoppingList>> FindByAsync(ItemTypeId typeId,
             CancellationToken cancellationToken)
         {
-            if (typeId is null)
-                throw new ArgumentNullException(nameof(typeId));
-
             var entities = await GetShoppingListQuery()
                 .Where(l => l.ItemsOnList.Any(i => i.ItemTypeId.HasValue && i.ItemTypeId == typeId.Value))
                 .ToListAsync(cancellationToken);
@@ -96,9 +90,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
         public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(ItemId storeItemId,
             CancellationToken cancellationToken)
         {
-            if (storeItemId is null)
-                throw new ArgumentNullException(nameof(storeItemId));
-
             List<Entities.ShoppingList> entities = await GetShoppingListQuery()
                 .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Value) != null
                     && l.CompletionDate == null)
@@ -111,9 +102,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
 
         public async Task<IShoppingList?> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
         {
-            if (storeId is null)
-                throw new ArgumentNullException(nameof(storeId));
-
             var entity = await GetShoppingListQuery()
                 .FirstOrDefaultAsync(list =>
                     list.CompletionDate == null
@@ -184,8 +172,13 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
 
         private async Task<Entities.ShoppingList> FindEntityByIdAsync(ShoppingListId id)
         {
-            return await GetShoppingListQuery()
+            var list = await GetShoppingListQuery()
                 .FirstOrDefaultAsync(list => list.Id == id.Value);
+
+            if (list is null)
+                throw new InvalidOperationException($"list with id {id.Value} not found");
+
+            return list;
         }
 
         private IQueryable<Entities.ShoppingList> GetShoppingListQuery()

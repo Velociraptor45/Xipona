@@ -62,7 +62,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem
 
             if (manufacturerId != null)
             {
-                await manufacturerValidationService.ValidateAsync(manufacturerId, cancellationToken);
+                await manufacturerValidationService.ValidateAsync(manufacturerId.Value, cancellationToken);
             }
 
             cancellationToken.ThrowIfCancellationRequested();

@@ -40,9 +40,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
 
         public async Task<IEnumerable<ItemSearchReadModel>> SearchAsync(string name, StoreId storeId)
         {
-            if (storeId is null)
-                throw new ArgumentNullException(nameof(storeId));
-            if (name == null) 
+            if (name == null)
                 throw new ArgumentNullException(nameof(name));
             if (string.IsNullOrWhiteSpace(name))
                 return Enumerable.Empty<ItemSearchReadModel>();
@@ -69,8 +67,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
 
             // items with types
             var searchResultItemsWithTypesDict = searchResultItemGroups[true].ToDictionary(g => g.Id);
-            IEnumerable<(ItemId Id, ItemTypeId TypeId)> itemIdsWithTypeIdOnShoppingListGroups =
-                itemIdsOnShoppingListGroups[false]!;
+            var itemIdsWithTypeIdOnShoppingListGroups =
+                (IEnumerable<(ItemId Id, ItemTypeId TypeId)>)itemIdsOnShoppingListGroups[false];
             var itemsWithTypeNotOnShoppingList = GetMatchingItemsWithTypeIds(storeId,
                     searchResultItemsWithTypesDict.Values, itemIdsWithTypeIdOnShoppingListGroups)
                 .ToList();

@@ -1,11 +1,21 @@
-﻿using ProjectHermes.ShoppingList.Api.Core;
+﻿using System;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models
 {
-    public class SectionId : GenericPrimitive<int>
+    public readonly record struct SectionId
     {
-        public SectionId(int value) : base(value)
+        public SectionId() : this(default)
         {
         }
+
+        public SectionId(int value)
+        {
+            if (value == default)
+                throw new ArgumentException($"{nameof(value)} mustn't be default ({value})");
+
+            Value = value;
+        }
+
+        public int Value { get; }
     }
 }

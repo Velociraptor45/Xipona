@@ -30,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters
         {
             var storeEntities = await GetStoreQuery()
                 .Where(store => !store.Deleted)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -39,14 +39,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters
 
         public async Task<IStore?> FindActiveByAsync(StoreId id, CancellationToken cancellationToken)
         {
-            if (id == null)
-                throw new ArgumentNullException(nameof(id));
-
             cancellationToken.ThrowIfCancellationRequested();
 
             var entity = await GetStoreQuery()
                 .Where(store => !store.Deleted)
-                .FirstOrDefaultAsync(store => store.Id == id.Value);
+                .FirstOrDefaultAsync(store => store.Id == id.Value, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -58,20 +55,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters
 
         public async Task<IStore?> FindByAsync(StoreId id, CancellationToken cancellationToken)
         {
-            if (id == null)
-                throw new ArgumentNullException(nameof(id));
-
             cancellationToken.ThrowIfCancellationRequested();
 
             var entity = await GetStoreQuery()
-                .FirstOrDefaultAsync(store => store.Id == id.Value);
+                .FirstOrDefaultAsync(store => store.Id == id.Value, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (entity == null)
-                return null;
-
-            return toDomainConverter.ToDomain(entity);
+            return entity == null ? null : toDomainConverter.ToDomain(entity);
         }
 
         public async Task<IEnumerable<IStore>> FindByAsync(IEnumerable<StoreId> ids, CancellationToken cancellationToken)
@@ -123,7 +114,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync(cancellationToken);
 
             return toDomainConverter.ToDomain(entity);
         }
@@ -161,7 +152,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync(cancellationToken);
 
             return toDomainConverter.ToDomain(incomingEntity);
         }
@@ -170,10 +161,15 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            return await dbContext.Stores.AsNoTracking()
+            var store = await dbContext.Stores.AsNoTracking()
                 .Include(s => s.Sections)
                 .Where(store => !store.Deleted)
-                .FirstOrDefaultAsync(store => store.Id == id);
+                .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
+
+            if (store is null)
+                throw new InvalidOperationException($"No store with id {id} found.");
+
+            return store;
         }
 
         private IQueryable<Entities.Store> GetStoreQuery()

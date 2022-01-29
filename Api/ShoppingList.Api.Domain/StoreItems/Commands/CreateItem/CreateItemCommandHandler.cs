@@ -42,7 +42,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
 
             if (manufacturerId != null)
             {
-                await manufacturerValidationService.ValidateAsync(manufacturerId, cancellationToken);
+                await manufacturerValidationService.ValidateAsync(manufacturerId.Value, cancellationToken);
             }
 
             cancellationToken.ThrowIfCancellationRequested();

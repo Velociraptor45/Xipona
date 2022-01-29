@@ -33,13 +33,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
 
         public async Task<IStoreItem?> FindByAsync(ItemId storeItemId, CancellationToken cancellationToken)
         {
-            if (storeItemId is null)
-                throw new ArgumentNullException(nameof(storeItemId));
-
             cancellationToken.ThrowIfCancellationRequested();
 
             var itemEntity = await GetItemQuery()
-                .FirstOrDefaultAsync(item => item.Id == storeItemId.Value);
+                .FirstOrDefaultAsync(item => item.Id == storeItemId.Value, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -53,13 +50,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
 
         public async Task<IStoreItem?> FindByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
         {
-            if (temporaryItemId is null)
-                throw new ArgumentNullException(nameof(temporaryItemId));
-
             cancellationToken.ThrowIfCancellationRequested();
 
             var itemEntity = await GetItemQuery()
-                .FirstOrDefaultAsync(item => item.CreatedFrom.HasValue && item.CreatedFrom == temporaryItemId.Value);
+                .FirstOrDefaultAsync(item => item.CreatedFrom.HasValue && item.CreatedFrom == temporaryItemId.Value,
+                    cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -73,12 +68,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
 
         public async Task<IEnumerable<IStoreItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
         {
-            if (storeId == null)
-                throw new ArgumentNullException(nameof(storeId));
-
             var entities = await GetItemQuery()
                 .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId.Value) != null)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -99,7 +91,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
 
             var entities = await GetItemQuery()
                 .Where(item => idList.Contains(item.Id))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -117,9 +109,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
         {
             if (storeIds is null)
                 throw new ArgumentNullException(nameof(storeIds));
-            else if (itemCategoriesIds is null)
+            if (itemCategoriesIds is null)
                 throw new ArgumentNullException(nameof(itemCategoriesIds));
-            else if (manufacturerIds is null)
+            if (manufacturerIds is null)
                 throw new ArgumentNullException(nameof(manufacturerIds));
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -134,7 +126,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
                     && itemCategoryIdLists.Contains(item.ItemCategoryId!.Value)
                     && (!item.ManufacturerId.HasValue && !manufacturerIdLists.Any()
                         || manufacturerIdLists.Contains(item.ManufacturerId!.Value)))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             // filtering by store
             var filteredResultByStore = result
@@ -155,9 +147,6 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
         public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, StoreId storeId,
             CancellationToken cancellationToken)
         {
-            if (storeId == null)
-                throw new ArgumentNullException(nameof(storeId));
-
             var entities = await GetItemQuery()
                 .Where(item =>
                     !item.Deleted
@@ -165,7 +154,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
                     && item.Name.Contains(searchInput)
                     && (item.AvailableAt.Any(map => map.StoreId == storeId.Value)
                         || item.ItemTypes.Any(t => t.AvailableAt.Any(av => av.StoreId == storeId.Value))))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -180,16 +169,13 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
         public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(ItemCategoryId itemCategoryId,
             CancellationToken cancellationToken)
         {
-            if (itemCategoryId is null)
-                throw new ArgumentNullException(nameof(itemCategoryId));
-
             cancellationToken.ThrowIfCancellationRequested();
 
             var entities = await GetItemQuery()
                 .Where(item => item.ItemCategoryId.HasValue
                     && item.ItemCategoryId == itemCategoryId.Value
                     && !item.Deleted)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -215,7 +201,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
                 var newEntity = toEntityConverter.ToEntity(storeItem);
                 dbContext.Add(newEntity);
 
-                await dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync(cancellationToken);
 
                 var e = GetItemQuery().First(i => i.Id == newEntity.Id);
                 e.Predecessor = await LoadPredecessorsAsync(e);
@@ -232,7 +218,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
                 UpdateOrAddItemTypes(existingEntity, updatedEntity);
                 DeleteItemTypes(existingEntity, updatedEntity);
 
-                await dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync(cancellationToken);
 
                 var e = GetItemQuery().First(i => i.Id == updatedEntity.Id);
                 e.Predecessor = await LoadPredecessorsAsync(e);
@@ -268,7 +254,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
             return predecessor;
         }
 
-        private async Task<Item> FindTrackedEntityBy(ItemId id)
+        private async Task<Item?> FindTrackedEntityBy(ItemId id)
         {
             return await dbContext.Items
                 .Include(item => item.AvailableAt)
@@ -279,18 +265,18 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
 
         private void UpdateOrAddAvailabilities(Item existing, Item updated)
         {
-            foreach (var availability in updated.AvailableAt!)
+            foreach (var availability in updated.AvailableAt)
             {
-                var exisitingAvailability = existing.AvailableAt
+                var existingAvailability = existing.AvailableAt
                     .FirstOrDefault(av => av.Id == availability.Id);
 
-                if (exisitingAvailability == null)
+                if (existingAvailability == null)
                 {
                     existing.AvailableAt.Add(availability);
                 }
                 else
                 {
-                    dbContext.Entry(exisitingAvailability).CurrentValues.SetValues(availability);
+                    dbContext.Entry(existingAvailability).CurrentValues.SetValues(availability);
                 }
             }
         }
@@ -321,41 +307,41 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters
 
         private void UpdateOrAddItemTypes(Item existing, Item updated)
         {
-            foreach (var updatedType in updated.ItemTypes!)
+            foreach (var updatedType in updated.ItemTypes)
             {
-                var exisitingType = existing.ItemTypes
+                var existingType = existing.ItemTypes
                     .FirstOrDefault(t => t.Id == updatedType.Id);
 
-                if (exisitingType == null)
+                if (existingType == null)
                 {
                     existing.ItemTypes.Add(updatedType);
                 }
                 else
                 {
-                    dbContext.Entry(exisitingType).CurrentValues.SetValues(updatedType);
-                    UpdateOrAddItemAvailability(exisitingType, updatedType);
-                    DeleteItemAvailability(exisitingType, updatedType);
+                    dbContext.Entry(existingType).CurrentValues.SetValues(updatedType);
+                    UpdateOrAddItemAvailability(existingType, updatedType);
+                    DeleteItemAvailability(existingType, updatedType);
                 }
             }
         }
 
         private void UpdateOrAddItemAvailability(Entities.ItemType existing, Entities.ItemType updated)
         {
-            foreach (var availability in updated.AvailableAt!)
+            foreach (var availability in updated.AvailableAt)
             {
-                var exisitingAvailability = existing.AvailableAt
+                var existingAvailability = existing.AvailableAt
                     .FirstOrDefault(av =>
                         av.ItemTypeId == availability.ItemTypeId
                         && av.StoreId == availability.StoreId);
 
-                if (exisitingAvailability == null)
+                if (existingAvailability == null)
                 {
                     existing.AvailableAt.Add(availability);
                 }
                 else
                 {
-                    availability.Id = exisitingAvailability.Id;
-                    dbContext.Entry(exisitingAvailability).CurrentValues.SetValues(availability);
+                    availability.Id = existingAvailability.Id;
+                    dbContext.Entry(existingAvailability).CurrentValues.SetValues(availability);
                 }
             }
         }

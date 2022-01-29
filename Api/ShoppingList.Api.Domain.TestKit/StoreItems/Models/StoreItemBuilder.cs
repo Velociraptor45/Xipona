@@ -54,7 +54,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
             return this;
         }
 
-        public StoreItemBuilder WithItemCategoryId(ItemCategoryId itemCategoryId)
+        public StoreItemBuilder WithItemCategoryId(ItemCategoryId? itemCategoryId)
         {
             FillContructorWith("itemCategoryId", itemCategoryId);
             return this;
@@ -65,7 +65,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
             return WithItemCategoryId(null);
         }
 
-        public StoreItemBuilder WithManufacturerId(ManufacturerId manufacturerId)
+        public StoreItemBuilder WithManufacturerId(ManufacturerId? manufacturerId)
         {
             FillContructorWith("manufacturerId", manufacturerId);
             return this;
@@ -87,7 +87,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
             return WithAvailabilities(availability.ToMonoList());
         }
 
-        public StoreItemBuilder WithTemporaryId(TemporaryItemId temporaryId)
+        public StoreItemBuilder WithTemporaryId(TemporaryItemId? temporaryId)
         {
             FillContructorWith("temporaryId", temporaryId);
             return this;

@@ -17,7 +17,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Converters
 
         public IShoppingListItem ToDomain(ItemsOnList source)
         {
-            var itemTypeId = source.ItemTypeId.HasValue ? new ItemTypeId(source.ItemTypeId.Value) : null;
+            var itemTypeId = source.ItemTypeId.HasValue ? new ItemTypeId(source.ItemTypeId.Value) : (ItemTypeId?)null;
 
             return _shoppingListItemFactory.Create(
                 new ItemId(source.ItemId),

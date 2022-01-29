@@ -4,15 +4,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterRes
 {
     public class ItemFilterResultReadModel
     {
-        public ItemFilterResultReadModel(ItemId id, string ItemName)
+        public ItemFilterResultReadModel(ItemId id, string itemName)
         {
-            if (string.IsNullOrEmpty(ItemName))
+            if (string.IsNullOrEmpty(itemName))
             {
-                throw new System.ArgumentException($"'{nameof(ItemName)}' cannot be null or empty", nameof(ItemName));
+                throw new System.ArgumentException($"'{nameof(itemName)}' cannot be null or empty", nameof(itemName));
             }
 
-            Id = id ?? throw new System.ArgumentNullException(nameof(id));
-            this.ItemName = ItemName;
+            Id = id;
+            ItemName = itemName;
         }
 
         public ItemId Id { get; }

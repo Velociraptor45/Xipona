@@ -105,7 +105,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             {
                 return BadRequest("No item id was specified.");
             }
-            var itemTypeId = contract.ItemTypeId.HasValue ? new ItemTypeId(contract.ItemTypeId.Value) : null;
+
+            var itemTypeId = contract.ItemTypeId.HasValue
+                ? new ItemTypeId(contract.ItemTypeId.Value)
+                : (ItemTypeId?)null;
 
             var command = new RemoveItemFromShoppingListCommand(new ShoppingListId(contract.ShoppingListId), itemId,
                 itemTypeId);
@@ -187,13 +190,13 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
             if (contract.ItemId.Actual is null && contract.ItemId.Offline is null)
                 return BadRequest("At least one item id must be specified");
 
-            OfflineTolerantItemId itemId;
-            if (contract.ItemId.Actual != null)
-                itemId = new OfflineTolerantItemId(contract.ItemId.Actual.Value);
-            else
-                itemId = new OfflineTolerantItemId(contract.ItemId.Offline!.Value);
+            var itemId = contract.ItemId.Actual != null
+                ? new OfflineTolerantItemId(contract.ItemId.Actual.Value)
+                : new OfflineTolerantItemId(contract.ItemId.Offline!.Value);
 
-            var itemTypeId = contract.ItemTypeId.HasValue ? new ItemTypeId(contract.ItemTypeId.Value) : null;
+            var itemTypeId = contract.ItemTypeId.HasValue
+                ? new ItemTypeId(contract.ItemTypeId.Value)
+                : (ItemTypeId?)null;
             var command = new PutItemInBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId,
                 itemTypeId);
 
@@ -225,7 +228,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest("No item id was specified.");
             }
 
-            var itemTypeId = contract.ItemTypeId.HasValue ? new ItemTypeId(contract.ItemTypeId.Value) : null;
+            var itemTypeId = contract.ItemTypeId.HasValue
+                ? new ItemTypeId(contract.ItemTypeId.Value)
+                : (ItemTypeId?)null;
             var command = new RemoveItemFromBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId,
                 itemTypeId);
 
@@ -258,7 +263,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
                 return BadRequest("No item id was specified.");
             }
 
-            var itemTypeId = contract.ItemTypeId.HasValue ? new ItemTypeId(contract.ItemTypeId.Value) : null;
+            var itemTypeId = contract.ItemTypeId.HasValue
+                ? new ItemTypeId(contract.ItemTypeId.Value)
+                : (ItemTypeId?)null;
             var command = new ChangeItemQuantityOnShoppingListCommand(new ShoppingListId(contract.ShoppingListId),
                 itemId, itemTypeId, contract.Quantity);
 

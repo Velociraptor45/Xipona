@@ -25,8 +25,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
 
         public async Task ExchangeItemAsync(ItemId oldItemId, IStoreItem newItem, CancellationToken cancellationToken)
         {
-            if (oldItemId is null)
-                throw new ArgumentNullException(nameof(oldItemId));
             if (newItem is null)
                 throw new ArgumentNullException(nameof(newItem));
 
@@ -79,7 +77,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services
                         throw new DomainException(new ShoppingListItemHasNoTypeReason(list.Id, oldListItem.Id));
 
                     list.RemoveItem(oldItemId, oldListItem.TypeId);
-                    if (!newItem.ItemTypes.TryGetWithPredecessor(oldListItem.TypeId, out var itemType)
+                    if (!newItem.ItemTypes.TryGetWithPredecessor(oldListItem.TypeId.Value, out var itemType)
                         || !itemType!.IsAvailableAtStore(list.StoreId))
                         continue;
 

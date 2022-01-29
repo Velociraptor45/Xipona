@@ -2,7 +2,6 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,19 +9,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services
 {
     public class ItemCategoryValidationService : IItemCategoryValidationService
     {
-        private readonly IItemCategoryRepository itemCategoryRepository;
+        private readonly IItemCategoryRepository _itemCategoryRepository;
 
         public ItemCategoryValidationService(IItemCategoryRepository itemCategoryRepository)
         {
-            this.itemCategoryRepository = itemCategoryRepository;
+            _itemCategoryRepository = itemCategoryRepository;
         }
 
         public async Task ValidateAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken)
         {
-            if (itemCategoryId is null)
-                throw new ArgumentNullException(nameof(itemCategoryId));
-
-            IItemCategory? itemCategory = await itemCategoryRepository
+            IItemCategory? itemCategory = await _itemCategoryRepository
                 .FindByAsync(itemCategoryId, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();

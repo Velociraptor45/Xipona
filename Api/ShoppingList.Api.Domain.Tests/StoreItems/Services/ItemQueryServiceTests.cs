@@ -69,24 +69,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
             var sut = _fixture.CreateSut();
 
             // Act
-            Func<Task> func = async () => await sut.SearchAsync(null, _fixture.StoreId);
+            Func<Task> func = async () => await sut.SearchAsync(null!, _fixture.StoreId);
 
             // Assert
             await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*name*");
-        }
-
-        [Fact]
-        public async Task SearchAsync_WithStoreIdNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            _fixture.SetupName();
-            var sut = _fixture.CreateSut();
-
-            // Act
-            Func<Task> func = async () => await sut.SearchAsync(_fixture.Name, null);
-
-            // Assert
-            await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*storeId*");
         }
 
         [Fact]
@@ -416,7 +402,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
         private sealed class LocalFixture
         {
             private readonly Fixture _fixture;
-            private readonly CommonFixture _commonFixture = new CommonFixture();
+            private readonly CommonFixture _commonFixture = new();
 
             private readonly ItemRepositoryMock _itemRepositoryMock;
             private readonly ShoppingListRepositoryMock _shoppingListRepositoryMock;
@@ -425,9 +411,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
             private readonly ItemSearchReadModelConversionServiceMock _conversionServiceMock;
 
             private List<IStoreItem> _items;
-            private readonly List<IStoreItem> _itemsFromTypeMapping = new List<IStoreItem>();
+            private readonly List<IStoreItem> _itemsFromTypeMapping = new();
             private Store _store;
-            private readonly List<ItemWithMatchingItemTypeIds> _itemToTypeIdMappings = new List<ItemWithMatchingItemTypeIds>();
+            private readonly List<ItemWithMatchingItemTypeIds> _itemToTypeIdMappings = new();
             private IShoppingList _shoppingList;
             private List<(ItemId, ItemTypeId)> _itemTypeMapping;
 
@@ -445,7 +431,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
             public string Name { get; private set; }
             public StoreId StoreId { get; private set; }
 
-            public List<ItemSearchReadModel> Result { get; } = new List<ItemSearchReadModel>();
+            public List<ItemSearchReadModel> Result { get; } = new();
 
             public ItemQueryService CreateSut()
             {
@@ -678,7 +664,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
                 var item = _items.Single(i => i.HasItemTypes);
                 var itemTypeIds = item.ItemTypes.Select(t => t.Id);
                 var typesNotOnList =
-                    itemTypeIds.Except(_shoppingList.Items.Where(i => i.TypeId != null).Select(t => t.TypeId));
+                    itemTypeIds.Except(_shoppingList.Items.Where(i => i.TypeId != null).Select(t => t.TypeId!.Value));
                 _itemToTypeIdMappings.Add(new ItemWithMatchingItemTypeIds(item, typesNotOnList));
             }
 

@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem
     {
         public DeleteItemCommand(ItemId itemId)
         {
-            ItemId = itemId ?? throw new System.ArgumentNullException(nameof(itemId));
+            ItemId = itemId;
         }
 
         public ItemId ItemId { get; }

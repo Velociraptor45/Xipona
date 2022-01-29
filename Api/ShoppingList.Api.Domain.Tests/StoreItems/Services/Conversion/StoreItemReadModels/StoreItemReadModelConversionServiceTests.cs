@@ -211,8 +211,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
 
             public IStoreItem StoreItem { get; private set; }
             public IStore Store { get; private set; }
-            public ManufacturerId ManufacturerId => StoreItem.ManufacturerId;
-            public ItemCategoryId ItemCategoryId => StoreItem.ItemCategoryId;
+            public ManufacturerId ManufacturerId => StoreItem.ManufacturerId!.Value;
+            public ItemCategoryId ItemCategoryId => StoreItem.ItemCategoryId!.Value;
             public IItemCategory ItemCategory { get; private set; }
             public IManufacturer Manufacturer { get; private set; }
 
@@ -306,7 +306,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
                 var availabilityReadModel = CreateAvailabilityReadModel(Store, StoreItem.Availabilities.First());
 
                 var itemType = StoreItem.ItemTypes.FirstOrDefault();
-                List<ItemTypeReadModel> itemTypeReadModels = new List<ItemTypeReadModel>();
+                List<ItemTypeReadModel> itemTypeReadModels = new();
                 if (itemType != null)
                 {
                     var itemTypeAvailability = itemType.Availabilities.First();
@@ -341,7 +341,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
                     itemTypeReadModels);
             }
 
-            private StoreItemAvailabilityReadModel CreateAvailabilityReadModel(IStore store,
+            private static StoreItemAvailabilityReadModel CreateAvailabilityReadModel(IStore store,
                 IStoreItemAvailability availability)
             {
                 var section = store.Sections.First();

@@ -26,7 +26,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
         {
             return new Item
             {
-                Id = source.Id?.Value ?? 0,
+                Id = source.Id.Value,
                 Name = source.Name,
                 Deleted = source.IsDeleted,
                 Comment = source.Comment,
@@ -43,7 +43,7 @@ namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
                         {
                             StoreId = av.StoreId.Value,
                             Price = av.Price,
-                            ItemId = source.Id?.Value ?? 0,
+                            ItemId = source.Id.Value,
                             DefaultSectionId = av.DefaultSectionId.Value
                         }).ToList(),
                 PredecessorId = source.Predecessor?.Id.Value,

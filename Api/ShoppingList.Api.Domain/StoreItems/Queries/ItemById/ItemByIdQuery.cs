@@ -8,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemById
     {
         public ItemByIdQuery(ItemId itemId)
         {
-            ItemId = itemId ?? throw new System.ArgumentNullException(nameof(itemId));
+            ItemId = itemId;
         }
 
         public ItemId ItemId { get; }
