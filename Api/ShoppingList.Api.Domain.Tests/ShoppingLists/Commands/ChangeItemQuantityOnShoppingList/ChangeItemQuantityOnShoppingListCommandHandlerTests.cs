@@ -186,7 +186,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
 
             public void SetupTemporaryItemId()
             {
-                _temporaryItemId = new TemporaryItemId(Guid.NewGuid());
+                _temporaryItemId = TemporaryItemId.New;
             }
 
             public void SetupShoppingListMock()

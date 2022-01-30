@@ -62,7 +62,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
         public IStoreItem Create(ItemCreation itemCreation)
         {
             return new StoreItem(
-                new ItemId(0),
+                ItemId.New,
                 itemCreation.Name,
                 false,
                 itemCreation.Comment,
@@ -79,7 +79,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
         public IStoreItem Create(TemporaryItemCreation model)
         {
             return new StoreItem(
-                new ItemId(0),
+                ItemId.New,
                 model.Name,
                 false,
                 string.Empty,
@@ -96,7 +96,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
         public IStoreItem Create(ItemUpdate itemUpdate, IStoreItem predecessor)
         {
             var model = new StoreItem(
-                new ItemId(0),
+                ItemId.New,
                 itemUpdate.Name,
                 isDeleted: false,
                 itemUpdate.Comment,
@@ -119,7 +119,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
             IEnumerable<IItemType> itemTypes)
         {
             var item = new StoreItem(
-                new ItemId(0),
+                ItemId.New,
                 name,
                 isDeleted: false,
                 comment,

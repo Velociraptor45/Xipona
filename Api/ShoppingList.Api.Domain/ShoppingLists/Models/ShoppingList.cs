@@ -122,7 +122,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
                 _sections[key] = _sections[key].RemoveItemsNotInBasket();
             }
 
-            return new ShoppingList(new ShoppingListId(0), StoreId, null, notInBasketSections.Values);
+            return new ShoppingList(ShoppingListId.New, StoreId, null, notInBasketSections.Values);
         }
     }
 }

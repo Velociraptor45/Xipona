@@ -27,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Commands.CreateMan
                 throw new ArgumentNullException(nameof(command));
             }
 
-            var model = manufacturerFactory.Create(new ManufacturerId(0), command.Name, false);
+            var model = manufacturerFactory.Create(ManufacturerId.New, command.Name, false);
             await manufacturerRepository.StoreAsync(model, cancellationToken);
             return true;
         }

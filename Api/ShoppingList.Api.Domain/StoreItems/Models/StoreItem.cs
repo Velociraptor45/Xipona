@@ -157,7 +157,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
                 else
                 {
                     await validator.ValidateAsync(modifiedType.Availabilities);
-                    newType = new ItemType(new ItemTypeId(0), modifiedType.Name, modifiedType.Availabilities);
+                    newType = new ItemType(ItemTypeId.New, modifiedType.Name, modifiedType.Availabilities);
                 }
 
                 newTypes.Add(newType);

@@ -27,7 +27,11 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreIt
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            return _itemFactory.Create(new ItemId(0), source.Name, false, source.Comment,
+            return _itemFactory.Create(
+                ItemId.New,
+                source.Name,
+                false,
+                source.Comment,
                 source.QuantityType.ToEnum<QuantityType>(),
                 source.QuantityInPacket,
                 source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),

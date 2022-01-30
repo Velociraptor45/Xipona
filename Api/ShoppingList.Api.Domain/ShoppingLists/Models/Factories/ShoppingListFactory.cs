@@ -24,7 +24,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories
         {
             var sections = store.Sections.Select(s => shoppingListSectionFactory.CreateEmpty(s));
 
-            return new ShoppingList(new ShoppingListId(0), store.Id, null, sections);
+            return new ShoppingList(ShoppingListId.New, store.Id, null, sections);
         }
     }
 }

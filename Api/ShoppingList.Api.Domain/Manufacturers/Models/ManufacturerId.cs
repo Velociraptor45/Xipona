@@ -4,17 +4,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models
 {
     public readonly record struct ManufacturerId
     {
-        public ManufacturerId() : this(default)
+        public ManufacturerId()
         {
+            throw new NotSupportedException("Use 'New' property to create initial value.");
         }
 
         public ManufacturerId(int value)
         {
-            if (value == default)
-                throw new ArgumentException($"{nameof(value)} mustn't be default ({value})");
-
             Value = value;
         }
+
+        public static ManufacturerId New => new(0);
 
         public int Value { get; }
     }

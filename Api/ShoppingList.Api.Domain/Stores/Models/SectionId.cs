@@ -4,17 +4,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models
 {
     public readonly record struct SectionId
     {
-        public SectionId() : this(default)
+        public SectionId()
         {
+            throw new NotSupportedException("Use 'New' property to create initial value.");
         }
 
         public SectionId(int value)
         {
-            if (value == default)
-                throw new ArgumentException($"{nameof(value)} mustn't be default ({value})");
-
             Value = value;
         }
+
+        public static SectionId New => new(0);
 
         public int Value { get; }
     }
