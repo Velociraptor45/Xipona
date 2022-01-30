@@ -6,7 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.DeleteItemCategory;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
+using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Common.Mocks;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
@@ -451,8 +451,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Commands.De
             public ItemCategoryMock ItemCategoryMock { get; private set; }
             public List<StoreItemMock> StoreItemMocks { get; private set; }
 
-            public Dictionary<StoreItemMock, List<ShoppingListMock>> ShoppingListDict { get; } =
-                new Dictionary<StoreItemMock, List<ShoppingListMock>>();
+            public Dictionary<StoreItemMock, List<ShoppingListMock>> ShoppingListDict { get; } = new();
 
             public LocalFixture()
             {

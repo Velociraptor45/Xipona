@@ -2,7 +2,12 @@
 using AutoFixture.AutoMoq;
 using AutoFixture.Kernel;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
 using System;
 using System.Collections.Generic;
@@ -12,7 +17,7 @@ namespace ShoppingList.Api.Domain.TestKit.Shared
 {
     public class CommonFixture
     {
-        private static readonly Random random = new Random();
+        private static readonly Random _random = new();
 
         public Fixture GetNewFixture()
         {
@@ -20,6 +25,14 @@ namespace ShoppingList.Api.Domain.TestKit.Shared
             fixture.Customizations.Add(new EnumSpecimenBuilder<QuantityType>());
             fixture.Customizations.Add(new TypeRelay(typeof(IStoreItemAvailability), typeof(StoreItemAvailability)));
             fixture.Customize(new AutoMoqCustomization { ConfigureMembers = true });
+            fixture.Customize<ItemCategoryId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+            fixture.Customize<ManufacturerId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+            fixture.Customize<ShoppingListId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+            fixture.Customize<ItemId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+            fixture.Customize<ItemTypeId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+            fixture.Customize<TemporaryItemId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+            fixture.Customize<StoreId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+            fixture.Customize<SectionId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
             return fixture;
         }
 
@@ -62,7 +75,7 @@ namespace ShoppingList.Api.Domain.TestKit.Shared
 
         public int NextInt(int minValue, int maxValue)
         {
-            return random.Next(minValue, maxValue);
+            return _random.Next(minValue, maxValue);
         }
 
         public int NextInt()
@@ -88,12 +101,12 @@ namespace ShoppingList.Api.Domain.TestKit.Shared
 
         public bool NextBool()
         {
-            return random.NextDouble() < .5f;
+            return _random.NextDouble() < .5f;
         }
 
         public float NextFloat()
         {
-            return (float)random.NextDouble();
+            return (float)_random.NextDouble();
         }
 
         public DateTime NextDate()

@@ -67,8 +67,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services
 
             // items with types
             var searchResultItemsWithTypesDict = searchResultItemGroups[true].ToDictionary(g => g.Id);
-            var itemIdsWithTypeIdOnShoppingListGroups =
-                (IEnumerable<(ItemId Id, ItemTypeId TypeId)>)itemIdsOnShoppingListGroups[false];
+            var itemIdsWithTypeIdOnShoppingListGroups = itemIdsOnShoppingListGroups[false]
+                    .Select(t => (t.Id, TypeId: t.TypeId!.Value));
             var itemsWithTypeNotOnShoppingList = GetMatchingItemsWithTypeIds(storeId,
                     searchResultItemsWithTypesDict.Values, itemIdsWithTypeIdOnShoppingListGroups)
                 .ToList();

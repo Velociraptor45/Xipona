@@ -1,10 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ShoppingList.Api.Core.TestKit;
+using ShoppingList.Api.Domain.TestKit.Common;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
 {
-    public class StoreItemAvailabilityBuilder : TestBuilderBase<StoreItemAvailability>
+    public class StoreItemAvailabilityBuilder : DomainTestBuilderBase<StoreItemAvailability>
     {
         public StoreItemAvailabilityBuilder WithStoreId(StoreId storeId)
         {

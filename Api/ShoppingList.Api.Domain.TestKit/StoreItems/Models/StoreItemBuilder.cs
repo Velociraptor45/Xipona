@@ -4,8 +4,8 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ShoppingList.Api.Core.TestKit.AutoFixture.Selectors;
 using ShoppingList.Api.Domain.TestKit.Common;
+using ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 using System.Collections.Generic;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
@@ -14,7 +14,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
     {
         public StoreItemBuilder AsItem()
         {
-            Customize<StoreItem>(c => c.FromFactory(new MethodInvoker(new ItemConstrutorQuery())));
+            Customize<StoreItem>(c => c.FromFactory(new MethodInvoker(new ItemConstructorQuery())));
             return this;
         }
 
