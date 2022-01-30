@@ -1,9 +1,9 @@
-﻿using FluentAssertions.Specialized;
+﻿using System.Threading.Tasks;
+using FluentAssertions.Specialized;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using System.Threading.Tasks;
 
-namespace ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions
+namespace ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions
 {
     public static class NonGenericAsyncFunctionAssertionsExtensions
     {

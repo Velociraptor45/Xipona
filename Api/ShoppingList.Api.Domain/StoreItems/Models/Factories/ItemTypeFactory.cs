@@ -17,7 +17,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
         public IItemType CreateNew(string name, IEnumerable<IStoreItemAvailability> availabilities,
             IItemType? predecessor)
         {
-            return Create(new ItemTypeId(0), name, availabilities, predecessor);
+            return Create(ItemTypeId.New, name, availabilities, predecessor);
         }
     }
 }

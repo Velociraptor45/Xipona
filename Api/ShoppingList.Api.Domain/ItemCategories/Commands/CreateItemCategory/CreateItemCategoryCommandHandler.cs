@@ -27,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.CreateIt
                 throw new ArgumentNullException(nameof(command));
             }
 
-            var model = itemCategoryFactory.Create(new ItemCategoryId(0), command.Name, false);
+            var model = itemCategoryFactory.Create(ItemCategoryId.New, command.Name, false);
             await itemCategoryRepository.StoreAsync(model, cancellationToken);
             return true;
         }

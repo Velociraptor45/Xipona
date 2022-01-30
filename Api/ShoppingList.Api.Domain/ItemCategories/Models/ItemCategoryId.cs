@@ -1,12 +1,21 @@
-﻿using ProjectHermes.ShoppingList.Api.Core;
+﻿using System;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models
 {
-    public class ItemCategoryId : GenericPrimitive<int>
+    public readonly record struct ItemCategoryId
     {
-        public ItemCategoryId(int id)
-            : base(id)
+        public ItemCategoryId()
         {
+            throw new NotSupportedException("Use 'New' property to create initial value.");
         }
+
+        public ItemCategoryId(int value)
+        {
+            Value = value;
+        }
+
+        public static ItemCategoryId New => new(0);
+
+        public int Value { get; }
     }
 }

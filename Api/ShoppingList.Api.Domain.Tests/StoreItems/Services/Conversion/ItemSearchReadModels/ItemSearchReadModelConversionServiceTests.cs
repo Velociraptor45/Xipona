@@ -149,8 +149,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
             public ManufacturerRepositoryMock ManufacturerRepositoryMock { get; }
             public List<IStoreItem> StoreItems { get; private set; }
             public IStore Store { get; private set; }
-            public Dictionary<ItemCategoryId, IItemCategory> ItemCategories { get; } = new Dictionary<ItemCategoryId, IItemCategory>();
-            public Dictionary<ManufacturerId, IManufacturer> Manufacturers { get; } = new Dictionary<ManufacturerId, IManufacturer>();
+            public Dictionary<ItemCategoryId, IItemCategory> ItemCategories { get; } = new();
+            public Dictionary<ManufacturerId, IManufacturer> Manufacturers { get; } = new();
 
             public LocalFixture()
             {
@@ -224,7 +224,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
             {
                 var itemCategoryIds = StoreItems
                     .Where(i => i.ItemCategoryId != null)
-                    .Select(i => i.ItemCategoryId);
+                    .Select(i => i.ItemCategoryId!.Value);
 
                 foreach (var itemCategoryId in itemCategoryIds)
                 {
@@ -237,7 +237,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
             {
                 var manufacturerIds = StoreItems
                     .Where(i => i.ManufacturerId != null)
-                    .Select(i => i.ManufacturerId);
+                    .Select(i => i.ManufacturerId!.Value);
 
                 foreach (var manufacturerId in manufacturerIds)
                 {
@@ -255,7 +255,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
 
                     if (item.ManufacturerId != null)
                     {
-                        var manufacturer = Manufacturers[item.ManufacturerId];
+                        var manufacturer = Manufacturers[item.ManufacturerId.Value];
 
                         manufacturerReadModel = new ManufacturerReadModel(
                             manufacturer.Id,
@@ -265,7 +265,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
 
                     if (item.ItemCategoryId != null)
                     {
-                        var itemCategory = ItemCategories[item.ItemCategoryId];
+                        var itemCategory = ItemCategories[item.ItemCategoryId.Value];
 
                         itemCategoryReadModel = new ItemCategoryReadModel(
                                 itemCategory.Id,

@@ -14,19 +14,19 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
     {
         public ShoppingListBuilder WithId(ShoppingListId id)
         {
-            FillContructorWith("id", id);
+            FillConstructorWith("id", id);
             return this;
         }
 
         public ShoppingListBuilder WithStoreId(StoreId storeId)
         {
-            FillContructorWith("storeId", storeId);
+            FillConstructorWith("storeId", storeId);
             return this;
         }
 
         public ShoppingListBuilder WithCompletionDate(DateTime? completionDate)
         {
-            FillContructorWith("completionDate", completionDate);
+            FillConstructorWith("completionDate", completionDate);
             return this;
         }
 
@@ -37,7 +37,7 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
 
         public ShoppingListBuilder WithSections(IEnumerable<IShoppingListSection> sections)
         {
-            FillContructorWith("sections", sections);
+            FillConstructorWith("sections", sections);
             return this;
         }
 

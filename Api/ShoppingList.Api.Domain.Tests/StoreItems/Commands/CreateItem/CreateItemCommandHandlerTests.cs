@@ -234,7 +234,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
             public AvailabilityValidationServiceMock AvailabilityValidationServiceMock { get; }
             public IStoreItem StoreItem { get; private set; }
             public CreateItemCommand Command { get; private set; }
-            public ManufacturerId ManufacturerId { get; private set; }
+            public ManufacturerId? ManufacturerId { get; private set; }
             public List<IStoreItemAvailability> Availabilities { get; private set; }
 
             public LocalFixture()
@@ -250,7 +250,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
 
             public void SetupCommand()
             {
-                Fixture.ConstructorArgumentFor<ItemCreation, ManufacturerId>("manufacturerId", ManufacturerId);
+                Fixture.ConstructorArgumentFor<ItemCreation, ManufacturerId?>("manufacturerId", ManufacturerId);
                 Fixture.ConstructorArgumentFor<ItemCreation, IEnumerable<IStoreItemAvailability>>(
                     "availabilities", Availabilities);
 
@@ -299,7 +299,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
 
             public void SetupValidatingManufacturer()
             {
-                ManufacturerValidationServiceMock.SetupValidateAsync(Command.ItemCreation.ManufacturerId);
+                ManufacturerValidationServiceMock.SetupValidateAsync(Command.ItemCreation.ManufacturerId.Value);
             }
 
             public void SetupValidatingAvailabilities()
@@ -321,7 +321,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.Create
 
             public void VerifyValidateManufacturerOnce()
             {
-                ManufacturerValidationServiceMock.VerifyValidateAsyncOnce(Command.ItemCreation.ManufacturerId);
+                ManufacturerValidationServiceMock.VerifyValidateAsyncOnce(Command.ItemCreation.ManufacturerId.Value);
             }
 
             public void VerifyValidateManufacturerNever()

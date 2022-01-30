@@ -57,7 +57,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
 
             if (manufacturerId != null)
             {
-                await manufacturerValidationService.ValidateAsync(manufacturerId, cancellationToken);
+                await manufacturerValidationService.ValidateAsync(manufacturerId.Value, cancellationToken);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -71,7 +71,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem
 
             var availableAtStoreIds = storeItem.Availabilities.Select(av => av.StoreId);
             var shoppingListsWithItem = (await shoppingListRepository.FindByAsync(storeItem.Id, cancellationToken))
-                .Where(list => !availableAtStoreIds.Any(storeId => storeId == list.StoreId))
+                .Where(list => availableAtStoreIds.All(storeId => storeId != list.StoreId))
                 .ToList();
 
             using var transaction = await transactionGenerator.GenerateAsync(cancellationToken);

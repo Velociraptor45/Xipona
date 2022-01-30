@@ -11,13 +11,13 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
     {
         public ShoppingListSectionBuilder WithId(SectionId id)
         {
-            FillContructorWith("id", id);
+            FillConstructorWith("id", id);
             return this;
         }
 
         public ShoppingListSectionBuilder WithItems(IEnumerable<IShoppingListItem> items)
         {
-            FillContructorWith("shoppingListItems", items);
+            FillConstructorWith("shoppingListItems", items);
             return this;
         }
 

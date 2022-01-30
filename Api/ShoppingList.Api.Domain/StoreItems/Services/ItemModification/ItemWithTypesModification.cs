@@ -19,13 +19,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModifica
                 throw new System.ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
             }
 
-            Id = id ?? throw new System.ArgumentNullException(nameof(id));
+            Id = id;
             Name = name;
             Comment = comment;
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
-            ItemCategoryId = itemCategoryId ?? throw new System.ArgumentNullException(nameof(itemCategoryId));
+            ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
             ItemTypes = itemTypes?.ToList() ?? throw new System.ArgumentNullException(nameof(itemTypes));
         }

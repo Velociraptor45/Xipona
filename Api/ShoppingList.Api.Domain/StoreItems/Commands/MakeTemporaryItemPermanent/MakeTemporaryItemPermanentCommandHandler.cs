@@ -52,7 +52,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
 
             if (manufacturerId != null)
             {
-                await manufacturerValidationService.ValidateAsync(manufacturerId, cancellationToken);
+                await manufacturerValidationService.ValidateAsync(manufacturerId.Value, cancellationToken);
             }
 
             var availabilities = command.PermanentItem.Availabilities;

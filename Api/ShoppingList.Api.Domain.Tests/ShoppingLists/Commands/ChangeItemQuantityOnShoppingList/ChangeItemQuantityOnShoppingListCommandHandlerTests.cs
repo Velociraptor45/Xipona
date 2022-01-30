@@ -144,7 +144,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
             private readonly ShoppingListRepositoryMock _shoppingListRepositoryMock;
             private readonly ItemRepositoryMock _itemRepositoryMock;
             private ShoppingListMock _shoppingListMock;
-            private TemporaryItemId _temporaryItemId;
+            private TemporaryItemId? _temporaryItemId;
             private IStoreItem _storeItem;
 
             public LocalFixture()
@@ -168,7 +168,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
                 {
                     _fixture.ConstructorArgumentFor<ChangeItemQuantityOnShoppingListCommand, ItemTypeId?>("itemTypeId",
                         null);
-                    offlineTolerantItemId = new OfflineTolerantItemId(_temporaryItemId.Value);
+                    offlineTolerantItemId = new OfflineTolerantItemId(_temporaryItemId.Value.Value);
                 }
 
                 _fixture.ConstructorArgumentFor<ChangeItemQuantityOnShoppingListCommand, OfflineTolerantItemId>("itemId",
@@ -186,7 +186,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
 
             public void SetupTemporaryItemId()
             {
-                _temporaryItemId = new TemporaryItemId(Guid.NewGuid());
+                _temporaryItemId = TemporaryItemId.New;
             }
 
             public void SetupShoppingListMock()
@@ -218,12 +218,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.Cha
 
             public void SetupItemRepositoryFindBy()
             {
-                _itemRepositoryMock.SetupFindByAsync(_temporaryItemId, _storeItem);
+                _itemRepositoryMock.SetupFindByAsync(_temporaryItemId.Value, _storeItem);
             }
 
             public void SetupItemRepositoryFindingNoItem()
             {
-                _itemRepositoryMock.SetupFindByAsync(_temporaryItemId, null);
+                _itemRepositoryMock.SetupFindByAsync(_temporaryItemId.Value, null);
             }
 
             #endregion Fixture Setup

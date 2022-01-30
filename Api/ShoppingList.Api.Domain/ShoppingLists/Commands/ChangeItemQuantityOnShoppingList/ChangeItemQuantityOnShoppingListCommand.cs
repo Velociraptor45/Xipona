@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.ChangeIte
         public ChangeItemQuantityOnShoppingListCommand(ShoppingListId shoppingListId, OfflineTolerantItemId itemId,
             ItemTypeId? itemTypeId, float quantity)
         {
-            ShoppingListId = shoppingListId ?? throw new ArgumentNullException(nameof(shoppingListId));
+            ShoppingListId = shoppingListId;
             OfflineTolerantItemId = itemId ?? throw new ArgumentNullException(nameof(itemId));
             ItemTypeId = itemTypeId;
             Quantity = quantity;

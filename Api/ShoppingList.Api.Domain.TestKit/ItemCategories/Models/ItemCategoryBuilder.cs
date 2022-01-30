@@ -7,13 +7,13 @@ namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Models
     {
         public ItemCategoryBuilder WithId(ItemCategoryId id)
         {
-            FillContructorWith("id", id);
+            FillConstructorWith("id", id);
             return this;
         }
 
         public ItemCategoryBuilder WithIsDeleted(bool isDeleted)
         {
-            FillContructorWith("isDeleted", isDeleted);
+            FillConstructorWith("isDeleted", isDeleted);
             return this;
         }
     }

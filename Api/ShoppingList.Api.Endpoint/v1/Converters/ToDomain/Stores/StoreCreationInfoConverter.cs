@@ -23,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Stores
                 throw new ArgumentNullException(nameof(source));
 
             return new StoreCreationInfo(
-                new StoreId(0),
+                StoreId.New,
                 source.Name,
                 storeSectionConverter.ToDomain(source.Sections));
         }

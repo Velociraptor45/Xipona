@@ -5,13 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ShoppingList.Api.Core.TestKit.AutoFixture.Selectors
+namespace ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors
 {
-    public class ItemConstrutorQuery : IMethodQuery
+    public class ItemConstructorQuery : IMethodQuery
     {
         private readonly Type _availabilitiesType;
 
-        public ItemConstrutorQuery()
+        public ItemConstructorQuery()
         {
             _availabilitiesType = typeof(IEnumerable<IStoreItemAvailability>);
         }

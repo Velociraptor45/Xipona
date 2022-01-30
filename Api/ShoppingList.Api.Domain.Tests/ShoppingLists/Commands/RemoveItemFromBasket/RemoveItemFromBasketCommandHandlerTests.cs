@@ -7,7 +7,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
+using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;

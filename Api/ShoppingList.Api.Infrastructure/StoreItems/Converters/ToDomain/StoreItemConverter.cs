@@ -17,17 +17,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
         private readonly IStoreItemFactory _storeItemFactory;
         private readonly IToDomainConverter<Entities.ItemType, IItemType> _itemTypeConverter;
         private readonly IToDomainConverter<AvailableAt, IStoreItemAvailability> _storeItemAvailabilityConverter;
-        private readonly IToDomainConverter<ItemTypeAvailableAt, IStoreItemAvailability> _itemTypeAvailabilityConverter;
 
         public StoreItemConverter(IStoreItemFactory storeItemFactory,
             IToDomainConverter<Entities.ItemType, IItemType> itemTypeConverter,
-            IToDomainConverter<AvailableAt, IStoreItemAvailability> storeItemAvailabilityConverter,
-            IToDomainConverter<ItemTypeAvailableAt, IStoreItemAvailability> itemTypeAvailabilityConverter)
+            IToDomainConverter<AvailableAt, IStoreItemAvailability> storeItemAvailabilityConverter)
         {
             _storeItemFactory = storeItemFactory;
             _itemTypeConverter = itemTypeConverter;
             _storeItemAvailabilityConverter = storeItemAvailabilityConverter;
-            _itemTypeAvailabilityConverter = itemTypeAvailabilityConverter;
         }
 
         public IStoreItem ToDomain(Item source)
@@ -37,13 +34,22 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
 
             IStoreItem? predecessor = source.PredecessorId is null ? null : ToDomain(source.Predecessor!);
 
-            var itemCategoryId = source.ItemCategoryId.HasValue ? new ItemCategoryId(source.ItemCategoryId.Value) : null;
-            var manufacturerId = source.ManufacturerId.HasValue ? new ManufacturerId(source.ManufacturerId.Value) : null;
-            var temporaryId = source.CreatedFrom.HasValue ? new TemporaryItemId(source.CreatedFrom.Value) : null;
+            var itemCategoryId = source.ItemCategoryId.HasValue
+                ? new ItemCategoryId(source.ItemCategoryId.Value)
+                : (ItemCategoryId?)null;
+            var manufacturerId = source.ManufacturerId.HasValue
+                ? new ManufacturerId(source.ManufacturerId.Value)
+                : (ManufacturerId?)null;
+            var temporaryId = source.CreatedFrom.HasValue
+                ? new TemporaryItemId(source.CreatedFrom.Value)
+                : (TemporaryItemId?)null;
 
             if (source.ItemTypes.Any())
             {
                 var itemTypes = _itemTypeConverter.ToDomain(source.ItemTypes);
+
+                if (itemCategoryId is null)
+                    throw new InvalidOperationException("ItemCategoryId mustn't be null for an item with types.");
 
                 return _storeItemFactory.Create(
                     new ItemId(source.Id),
@@ -53,7 +59,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
                     source.QuantityType.ToEnum<QuantityType>(),
                     source.QuantityInPacket,
                     source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),
-                    itemCategoryId!,
+                    itemCategoryId.Value,
                     manufacturerId,
                     predecessor,
                     itemTypes);

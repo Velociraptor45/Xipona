@@ -5,7 +5,7 @@ using Moq;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
-using ShoppingList.Api.Core.TestKit.Extensions.FluentAssertions;
+using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
 using ShoppingList.Api.Domain.TestKit.Shared;
@@ -17,23 +17,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services
 {
     public class ItemCategoryValidationServiceTests
     {
-        [Fact]
-        public async Task ValidateAsync_WithItemCategoryIdIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateService();
-
-            // Act
-            Func<Task> function = async () => await service.ValidateAsync(null, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowAsync<ArgumentNullException>();
-            }
-        }
-
         [Fact]
         public async Task ValidateAsync_WithInvalidItemCategoryId_ShouldThrowDomainException()
         {

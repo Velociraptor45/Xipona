@@ -8,25 +8,25 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models
     {
         public ShoppingListItemBuilder WithId(ItemId id)
         {
-            FillContructorWith("id", id);
+            FillConstructorWith("id", id);
             return this;
         }
 
         public ShoppingListItemBuilder WithIsInBasket(bool isInBasket)
         {
-            FillContructorWith("isInBasket", isInBasket);
+            FillConstructorWith("isInBasket", isInBasket);
             return this;
         }
 
         public ShoppingListItemBuilder WithQuantity(float quantity)
         {
-            FillContructorWith("quantity", quantity);
+            FillConstructorWith("quantity", quantity);
             return this;
         }
 
         public ShoppingListItemBuilder WithTypeId(ItemTypeId? typeId)
         {
-            FillContructorWith("typeId", typeId);
+            FillConstructorWith("typeId", typeId);
             return this;
         }
 

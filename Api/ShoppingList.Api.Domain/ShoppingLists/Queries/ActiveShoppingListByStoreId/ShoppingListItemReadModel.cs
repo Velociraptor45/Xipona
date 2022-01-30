@@ -20,7 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShop
                 throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
             }
 
-            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Id = id;
             TypeId = typeId;
             Name = name;
             IsDeleted = isDeleted;

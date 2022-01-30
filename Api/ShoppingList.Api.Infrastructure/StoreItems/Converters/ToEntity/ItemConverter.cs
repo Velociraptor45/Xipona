@@ -13,9 +13,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
             if (source is null)
                 throw new System.ArgumentNullException(nameof(source));
 
-            return new Item()
+            return new Item
             {
-                Id = source.Id?.Value ?? 0,
+                Id = source.Id.Value,
                 Name = source.Name,
                 Deleted = source.IsDeleted,
                 Comment = source.Comment,
@@ -32,20 +32,20 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
             };
         }
 
-        private AvailableAt ToAvailableAt(IStoreItemAvailability availability, IStoreItem source)
+        private static AvailableAt ToAvailableAt(IStoreItemAvailability availability, IStoreItem source)
         {
-            return new AvailableAt()
+            return new AvailableAt
             {
                 StoreId = availability.StoreId.Value,
                 Price = availability.Price,
-                ItemId = source.Id?.Value ?? 0,
+                ItemId = source.Id.Value,
                 DefaultSectionId = availability.DefaultSectionId.Value
             };
         }
 
-        private Entities.ItemType ToItemType(IItemType itemType, IStoreItem source)
+        private static Entities.ItemType ToItemType(IItemType itemType, IStoreItem source)
         {
-            return new Entities.ItemType()
+            return new Entities.ItemType
             {
                 Id = itemType.Id.Value,
                 ItemId = source.Id.Value,
@@ -55,9 +55,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
             };
         }
 
-        private ItemTypeAvailableAt ToItemTypeAvailableAt(IStoreItemAvailability availability, IItemType itemType)
+        private static ItemTypeAvailableAt ToItemTypeAvailableAt(IStoreItemAvailability availability, IItemType itemType)
         {
-            return new ItemTypeAvailableAt()
+            return new ItemTypeAvailableAt
             {
                 StoreId = availability.StoreId.Value,
                 Price = availability.Price,

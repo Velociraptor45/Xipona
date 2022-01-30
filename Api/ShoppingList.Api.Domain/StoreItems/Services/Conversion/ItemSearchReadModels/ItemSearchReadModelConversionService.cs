@@ -38,8 +38,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.I
             return itemsList
                 .Select(item =>
                 {
-                    IManufacturer? manufacturer = item.ManufacturerId == null ? null : manufaturerDict[item.ManufacturerId];
-                    IItemCategory? itemCategory = item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId];
+                    IManufacturer? manufacturer =
+                        item.ManufacturerId == null ? null : manufaturerDict[item.ManufacturerId.Value];
+                    IItemCategory? itemCategory =
+                        item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId.Value];
 
                     IStoreItemAvailability storeAvailability = item.Availabilities
                         .Single(av => av.StoreId == store.Id);
@@ -72,8 +74,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.I
             {
                 var item = tuple.Item;
 
-                IManufacturer? manufacturer = item.ManufacturerId == null ? null : manufaturerDict[item.ManufacturerId];
-                IItemCategory? itemCategory = item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId];
+                IManufacturer? manufacturer =
+                    item.ManufacturerId == null ? null : manufaturerDict[item.ManufacturerId.Value];
+                IItemCategory? itemCategory =
+                    item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId.Value];
 
                 var itemTypeIdsSet = tuple.MatchingItemTypeIds.ToHashSet();
                 var requiredItemTypes = item.ItemTypes.Where(t => itemTypeIdsSet.Contains(t.Id));
@@ -102,7 +106,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.I
         {
             var manufacturerIds = items
                 .Where(i => i.ManufacturerId != null)
-                .Select(i => i.ManufacturerId!)
+                .Select(i => i.ManufacturerId!.Value)
                 .Distinct();
             return (await manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
                 .ToDictionary(m => m.Id);
@@ -113,7 +117,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.I
         {
             var itemCategoryIds = items
                 .Where(i => i.ItemCategoryId != null)
-                .Select(i => i.ItemCategoryId!)
+                .Select(i => i.ItemCategoryId!.Value)
                 .Distinct();
             return (await itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
                 .ToDictionary(i => i.Id);

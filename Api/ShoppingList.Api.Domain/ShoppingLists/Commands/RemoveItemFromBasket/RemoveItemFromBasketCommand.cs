@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
         public RemoveItemFromBasketCommand(ShoppingListId shoppingListId, OfflineTolerantItemId itemId,
             ItemTypeId? itemTypeId)
         {
-            ShoppingListId = shoppingListId ?? throw new ArgumentNullException(nameof(shoppingListId));
+            ShoppingListId = shoppingListId;
             OfflineTolerantItemId = itemId ?? throw new ArgumentNullException(nameof(itemId));
             ItemTypeId = itemTypeId;
         }

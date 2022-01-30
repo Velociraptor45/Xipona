@@ -31,7 +31,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Adapters
         {
             var itemCategoryEntities = await dbContext.ItemCategories.AsNoTracking()
                 .Where(category => category.Name.Contains(searchInput))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -40,11 +40,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Adapters
 
         public async Task<IItemCategory?> FindByAsync(ItemCategoryId id, CancellationToken cancellationToken)
         {
-            if (id == null)
-                throw new ArgumentNullException(nameof(id));
-
             var entity = await dbContext.ItemCategories.AsNoTracking()
-                .FirstOrDefaultAsync(category => category.Id == id.Value);
+                .FirstOrDefaultAsync(category => category.Id == id.Value, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -66,7 +63,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Adapters
 
             var entities = await dbContext.ItemCategories.AsNoTracking()
                 .Where(m => idHashSet.Contains(m.Id))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -77,7 +74,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Adapters
         {
             var entities = await dbContext.ItemCategories.AsNoTracking()
                 .Where(m => !m.Deleted)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -89,18 +86,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Adapters
         {
             var entity = toEntityConverter.ToEntity(model);
 
-            if (entity.Id <= 0)
-            {
-                dbContext.Entry(entity).State = EntityState.Added;
-            }
-            else
-            {
-                dbContext.Entry(entity).State = EntityState.Modified;
-            }
+            dbContext.Entry(entity).State = entity.Id <= 0 ? EntityState.Added : EntityState.Modified;
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync(cancellationToken);
             return toModelConverter.ToDomain(entity);
         }
     }

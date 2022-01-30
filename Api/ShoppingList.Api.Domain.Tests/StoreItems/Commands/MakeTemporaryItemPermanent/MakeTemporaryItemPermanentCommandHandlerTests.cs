@@ -112,8 +112,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             using (new AssertionScope())
             {
                 result.Should().BeTrue();
-                _local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(_local.Command.PermanentItem.ItemCategoryId);
-                _local.ManufacturerValidationServiceMock.VerifyValidateAsyncOnce(_local.Command.PermanentItem.ManufacturerId);
+                _local.ItemCategoryValidationServiceMock.VerifyValidateAsyncOnce(_local.Command.PermanentItem
+                    .ItemCategoryId);
+                _local.ManufacturerValidationServiceMock.VerifyValidateAsyncOnce(_local.Command.PermanentItem
+                    .ManufacturerId.Value);
                 _local.AvailabilityValidationServiceMock.VerifyValidateOnce(availabilities);
                 _local.StoreItemMock.VerifyMakePermanentOnce(_local.Command.PermanentItem, availabilities);
                 _local.ItemRepositoryMock.VerifyStoreAsyncOnce(_local.StoreItemMock.Object);
@@ -190,7 +192,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
             public void SetupCommandWithoutManufacturerId(
                 IEnumerable<IStoreItemAvailability> availabilities)
             {
-                Fixture.ConstructorArgumentFor<PermanentItem, ManufacturerId>("manufacturerId", null);
+                Fixture.ConstructorArgumentFor<PermanentItem, ManufacturerId?>("manufacturerId", null);
                 Fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<IStoreItemAvailability>>(
                     "availabilities", availabilities);
 
@@ -218,7 +220,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.MakeTe
 
             public void SetupValidatingManufacturer()
             {
-                ManufacturerValidationServiceMock.SetupValidateAsync(Command.PermanentItem.ManufacturerId);
+                ManufacturerValidationServiceMock.SetupValidateAsync(Command.PermanentItem.ManufacturerId.Value);
             }
 
             public void SetupValidatingAvailabilities()

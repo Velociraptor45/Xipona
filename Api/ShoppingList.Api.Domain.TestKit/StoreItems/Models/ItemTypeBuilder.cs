@@ -19,19 +19,19 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
 
         public ItemTypeBuilder WithId(ItemTypeId id)
         {
-            FillContructorWith("id", id);
+            FillConstructorWith("id", id);
             return this;
         }
 
         public ItemTypeBuilder WithName(string name)
         {
-            FillContructorWith("name", name);
+            FillConstructorWith("name", name);
             return this;
         }
 
         public ItemTypeBuilder WithAvailabilities(IEnumerable<IStoreItemAvailability> availabilities)
         {
-            FillContructorWith("availabilities", availabilities);
+            FillConstructorWith("availabilities", availabilities);
             return this;
         }
     }

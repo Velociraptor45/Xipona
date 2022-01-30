@@ -10,19 +10,19 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Models
     {
         public StoreBuilder WithId(StoreId id)
         {
-            FillContructorWith("id", id);
+            FillConstructorWith("id", id);
             return this;
         }
 
         public StoreBuilder WithIsDeleted(bool isDeleted)
         {
-            FillContructorWith("isDeleted", isDeleted);
+            FillConstructorWith("isDeleted", isDeleted);
             return this;
         }
 
         public StoreBuilder WithSections(IEnumerable<IStoreSection> sections)
         {
-            FillContructorWith("sections", sections);
+            FillConstructorWith("sections", sections);
             return this;
         }
 

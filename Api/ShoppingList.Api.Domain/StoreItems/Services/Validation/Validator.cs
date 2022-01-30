@@ -38,17 +38,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation
 
         public async Task ValidateAsync(ItemCategoryId itemCategoryId)
         {
-            if (itemCategoryId is null)
-                throw new ArgumentNullException(nameof(itemCategoryId));
-
             await _itemCategoryValidationService.ValidateAsync(itemCategoryId, _cancellationToken);
         }
 
         public async Task ValidateAsync(ManufacturerId manufacturerId)
         {
-            if (manufacturerId is null)
-                throw new ArgumentNullException(nameof(manufacturerId));
-
             await _manufacturerValidationService.ValidateAsync(manufacturerId, _cancellationToken);
         }
     }

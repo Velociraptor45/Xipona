@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
 {
@@ -7,9 +6,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
     {
         public StoreItemAvailability(StoreId storeId, float price, SectionId defaultSectionId)
         {
-            StoreId = storeId ?? throw new System.ArgumentNullException(nameof(storeId));
+            StoreId = storeId;
             Price = price;
-            DefaultSectionId = defaultSectionId ?? throw new System.ArgumentNullException(nameof(defaultSectionId));
+            DefaultSectionId = defaultSectionId;
         }
 
         public StoreId StoreId { get; }

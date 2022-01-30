@@ -41,15 +41,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.S
 
             if (item.ItemCategoryId != null)
             {
-                itemCategory = await itemCategoryRepository.FindByAsync(item.ItemCategoryId, cancellationToken);
+                itemCategory = await itemCategoryRepository.FindByAsync(item.ItemCategoryId.Value, cancellationToken);
                 if (itemCategory == null)
-                    throw new DomainException(new ItemCategoryNotFoundReason(item.ItemCategoryId));
+                    throw new DomainException(new ItemCategoryNotFoundReason(item.ItemCategoryId.Value));
             }
             if (item.ManufacturerId != null)
             {
-                manufacturer = await manufacturerRepository.FindByAsync(item.ManufacturerId, cancellationToken);
+                manufacturer = await manufacturerRepository.FindByAsync(item.ManufacturerId.Value, cancellationToken);
                 if (manufacturer == null)
-                    throw new DomainException(new ManufacturerNotFoundReason(item.ManufacturerId));
+                    throw new DomainException(new ManufacturerNotFoundReason(item.ManufacturerId.Value));
             }
 
             var storeIds = item.Availabilities.Select(av => av.StoreId).ToList();
@@ -88,7 +88,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.S
                 itemTypeReadModels);
         }
 
-        private IEnumerable<StoreItemAvailabilityReadModel> ToAvailabilityReadModel(
+        private static IEnumerable<StoreItemAvailabilityReadModel> ToAvailabilityReadModel(
             IEnumerable<IStoreItemAvailability> availabilities, Dictionary<StoreId, IStore> stores)
         {
             foreach (var av in availabilities)

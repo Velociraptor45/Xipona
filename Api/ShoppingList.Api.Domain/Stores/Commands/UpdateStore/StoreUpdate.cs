@@ -13,7 +13,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore
                 throw new System.ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
             }
 
-            Id = id ?? throw new System.ArgumentNullException(nameof(id));
+            Id = id;
             Name = name;
             Sections = sections.ToList().AsReadOnly();
         }

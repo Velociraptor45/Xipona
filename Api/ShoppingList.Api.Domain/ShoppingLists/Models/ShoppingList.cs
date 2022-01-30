@@ -33,8 +33,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
-            if (sectionId == null)
-                throw new ArgumentNullException(nameof(sectionId));
 
             if (Items.Any(it => it.Id == item.Id && it.TypeId == item.TypeId))
                 throw new DomainException(new ItemAlreadyOnShoppingListReason(item.Id, Id));
@@ -53,10 +51,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         public void RemoveItem(ItemId itemId, ItemTypeId? itemTypeId)
         {
-            if (itemId is null)
-                throw new ArgumentNullException(nameof(itemId));
-
-            IShoppingListSection section = _sections.Values.FirstOrDefault(s => s.ContainsItem(itemId, itemTypeId));
+            IShoppingListSection? section = _sections.Values.FirstOrDefault(s => s.ContainsItem(itemId, itemTypeId));
             if (section == null)
                 return;
 
@@ -70,10 +65,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         public void PutItemInBasket(ItemId itemId, ItemTypeId? itemTypeId)
         {
-            if (itemId == null)
-                throw new ArgumentNullException(nameof(itemId));
-
-            IShoppingListSection section = _sections.Values.FirstOrDefault(s => s.ContainsItem(itemId, itemTypeId));
+            IShoppingListSection? section = _sections.Values.FirstOrDefault(s => s.ContainsItem(itemId, itemTypeId));
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
@@ -82,10 +74,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         public void RemoveFromBasket(ItemId itemId, ItemTypeId? itemTypeId)
         {
-            if (itemId == null)
-                throw new ArgumentNullException(nameof(itemId));
-
-            IShoppingListSection section = _sections.Values.FirstOrDefault(s => s.ContainsItem(itemId, itemTypeId));
+            IShoppingListSection? section = _sections.Values.FirstOrDefault(s => s.ContainsItem(itemId, itemTypeId));
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
@@ -94,12 +83,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
 
         public void ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
         {
-            if (itemId == null)
-                throw new ArgumentNullException(nameof(itemId));
             if (quantity <= 0f)
                 throw new DomainException(new InvalidItemQuantityReason(quantity));
 
-            IShoppingListSection section = _sections.Values.FirstOrDefault(s => s.ContainsItem(itemId, itemTypeId));
+            IShoppingListSection? section = _sections.Values.FirstOrDefault(s => s.ContainsItem(itemId, itemTypeId));
             if (section == null)
                 throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));
 
@@ -135,7 +122,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
                 _sections[key] = _sections[key].RemoveItemsNotInBasket();
             }
 
-            return new ShoppingList(new ShoppingListId(0), StoreId, null, notInBasketSections.Values);
+            return new ShoppingList(ShoppingListId.New, StoreId, null, notInBasketSections.Values);
         }
     }
 }
