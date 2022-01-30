@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AutoFixture.Kernel;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoFixture.Kernel;
-using ProjectHermes.ShoppingList.Api.Core.Extensions;
 
 namespace ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors
 {
@@ -23,9 +23,6 @@ namespace ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors
         {
             if (type is null)
                 throw new ArgumentNullException(nameof(type));
-
-            if (!type.Name.EndsWith("Id"))
-                return Enumerable.Empty<IMethod>();
 
             var ctors = type.GetConstructors();
             var ctor = ctors.Single(ctor =>
