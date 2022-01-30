@@ -7,19 +7,19 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Models
     {
         public StoreSectionBuilder WithId(SectionId id)
         {
-            FillContructorWith("id", id);
+            FillConstructorWith("id", id);
             return this;
         }
 
         public StoreSectionBuilder WithSortingIndex(int sortingIndex)
         {
-            FillContructorWith("sortingIndex", sortingIndex);
+            FillConstructorWith("sortingIndex", sortingIndex);
             return this;
         }
 
         public StoreSectionBuilder WithIsDefaultSection(bool isDefaultSection)
         {
-            FillContructorWith("isDefaultSection", isDefaultSection);
+            FillConstructorWith("isDefaultSection", isDefaultSection);
             return this;
         }
     }

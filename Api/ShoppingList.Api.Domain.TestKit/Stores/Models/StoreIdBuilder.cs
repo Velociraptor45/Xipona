@@ -7,7 +7,7 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Models
     {
         public StoreIdBuilder WithValue(int value)
         {
-            FillContructorWith("value", value);
+            FillConstructorWith("value", value);
             return this;
         }
     }

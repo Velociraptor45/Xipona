@@ -8,19 +8,19 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
     {
         public StoreItemAvailabilityBuilder WithStoreId(StoreId storeId)
         {
-            FillContructorWith("storeId", storeId);
+            FillConstructorWith("storeId", storeId);
             return this;
         }
 
         public StoreItemAvailabilityBuilder WithPrice(float price)
         {
-            FillContructorWith("price", price);
+            FillConstructorWith("price", price);
             return this;
         }
 
         public StoreItemAvailabilityBuilder WithDefaultSectionId(SectionId defaultSectionId)
         {
-            FillContructorWith("defaultSectionId", defaultSectionId);
+            FillConstructorWith("defaultSectionId", defaultSectionId);
             return this;
         }
     }

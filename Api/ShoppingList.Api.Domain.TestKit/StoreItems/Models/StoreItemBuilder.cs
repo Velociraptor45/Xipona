@@ -20,43 +20,43 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
 
         public StoreItemBuilder WithId(ItemId id)
         {
-            FillContructorWith("id", id);
+            FillConstructorWith("id", id);
             return this;
         }
 
         public StoreItemBuilder WithIsDeleted(bool isDeleted)
         {
-            FillContructorWith("isDeleted", isDeleted);
+            FillConstructorWith("isDeleted", isDeleted);
             return this;
         }
 
         public StoreItemBuilder WithIsTemporary(bool isTemporary)
         {
-            FillContructorWith("isTemporary", isTemporary);
+            FillConstructorWith("isTemporary", isTemporary);
             return this;
         }
 
         public StoreItemBuilder WithQuantityType(QuantityType quantityType)
         {
-            FillContructorWith("quantityType", quantityType);
+            FillConstructorWith("quantityType", quantityType);
             return this;
         }
 
         public StoreItemBuilder WithQuantityInPacket(float quantityInPacket)
         {
-            FillContructorWith("quantityInPacket", quantityInPacket);
+            FillConstructorWith("quantityInPacket", quantityInPacket);
             return this;
         }
 
         public StoreItemBuilder WithQuantityTypeInPacket(QuantityTypeInPacket quantityTypeInPacket)
         {
-            FillContructorWith("quantityTypeInPacket", quantityTypeInPacket);
+            FillConstructorWith("quantityTypeInPacket", quantityTypeInPacket);
             return this;
         }
 
         public StoreItemBuilder WithItemCategoryId(ItemCategoryId? itemCategoryId)
         {
-            FillContructorWith("itemCategoryId", itemCategoryId);
+            FillConstructorWith("itemCategoryId", itemCategoryId);
             return this;
         }
 
@@ -67,7 +67,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
 
         public StoreItemBuilder WithManufacturerId(ManufacturerId? manufacturerId)
         {
-            FillContructorWith("manufacturerId", manufacturerId);
+            FillConstructorWith("manufacturerId", manufacturerId);
             return this;
         }
 
@@ -78,7 +78,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
 
         public StoreItemBuilder WithAvailabilities(IEnumerable<IStoreItemAvailability> availabilities)
         {
-            FillContructorWith("availabilities", availabilities);
+            FillConstructorWith("availabilities", availabilities);
             return this;
         }
 
@@ -89,7 +89,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
 
         public StoreItemBuilder WithTemporaryId(TemporaryItemId? temporaryId)
         {
-            FillContructorWith("temporaryId", temporaryId);
+            FillConstructorWith("temporaryId", temporaryId);
             return this;
         }
 
@@ -100,7 +100,7 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models
 
         public StoreItemBuilder WithTypes(IEnumerable<IItemType> itemTypes)
         {
-            FillContructorWith("itemTypes", itemTypes);
+            FillConstructorWith("itemTypes", itemTypes);
             return this;
         }
 

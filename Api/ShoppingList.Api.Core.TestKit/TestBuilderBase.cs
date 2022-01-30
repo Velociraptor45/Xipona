@@ -12,7 +12,7 @@ namespace ShoppingList.Api.Core.TestKit
             Customize(new AutoMoqCustomization { ConfigureMembers = true });
         }
 
-        protected void FillContructorWith<TParameter>(string parameterName, TParameter value)
+        protected void FillConstructorWith<TParameter>(string parameterName, TParameter value)
         {
             this.ConstructorArgumentFor<TModel, TParameter>(parameterName, value);
         }
