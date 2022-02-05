@@ -9,7 +9,7 @@ public class SectionConverter : IToEntityConverter<IStoreSection, Section>
     public Section ToEntity(IStoreSection source)
     {
         if (source is null)
-            throw new System.ArgumentNullException(nameof(source));
+            throw new ArgumentNullException(nameof(source));
 
         return new Section
         {

@@ -15,18 +15,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
 
 public class ShoppingListReadModelConversionServiceTests
 {
-    private readonly CommonFixture commonFixture;
+    private readonly CommonFixture _commonFixture;
 
     public ShoppingListReadModelConversionServiceTests()
     {
-        commonFixture = new CommonFixture();
+        _commonFixture = new CommonFixture();
     }
 
     [Fact]
     public async Task ConvertAsync_WithShoppingListIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var fixture = commonFixture.GetNewFixture();
+        var fixture = _commonFixture.GetNewFixture();
         var service = fixture.Create<ShoppingListReadModelConversionService>();
 
         // Act

@@ -6,12 +6,12 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Store
 
 public class ActiveStoreContractConverter : IToContractConverter<StoreReadModel, ActiveStoreContract>
 {
-    private readonly IToContractConverter<StoreSectionReadModel, StoreSectionContract> storeSectionContractConverter;
+    private readonly IToContractConverter<StoreSectionReadModel, StoreSectionContract> _storeSectionContractConverter;
 
     public ActiveStoreContractConverter(
         IToContractConverter<StoreSectionReadModel, StoreSectionContract> storeSectionContractConverter)
     {
-        this.storeSectionContractConverter = storeSectionContractConverter;
+        _storeSectionContractConverter = storeSectionContractConverter;
     }
 
     public ActiveStoreContract ToContract(StoreReadModel source)
@@ -23,6 +23,6 @@ public class ActiveStoreContractConverter : IToContractConverter<StoreReadModel,
             source.Id.Value,
             source.Name,
             source.ItemCount,
-            storeSectionContractConverter.ToContract(source.Sections));
+            _storeSectionContractConverter.ToContract(source.Sections));
     }
 }

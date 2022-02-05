@@ -8,7 +8,7 @@ public class ItemFilterResultReadModel
     {
         if (string.IsNullOrEmpty(itemName))
         {
-            throw new System.ArgumentException($"'{nameof(itemName)}' cannot be null or empty", nameof(itemName));
+            throw new ArgumentException($"'{nameof(itemName)}' cannot be null or empty", nameof(itemName));
         }
 
         Id = id;

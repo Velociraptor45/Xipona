@@ -280,7 +280,7 @@ public class StoreItemReadModelConversionServiceTests
 
         public StoreItemReadModel CreateSimpleReadModel()
         {
-            var manufacturerReadModel = this.Manufacturer == null
+            var manufacturerReadModel = Manufacturer == null
                 ? null
                 : new ManufacturerReadModel(
                     Manufacturer.Id,

@@ -7,14 +7,14 @@ public abstract class ToDomainConverterTestBase<TSource, TDestination>
     where TSource : class
     where TDestination : class
 {
-    protected readonly TSource source;
-    protected readonly TDestination destination;
-    protected readonly IServiceCollection serviceCollection;
+    protected readonly TSource Source;
+    protected readonly TDestination Destination;
+    protected readonly IServiceCollection ServiceCollection;
 
     protected ToDomainConverterTestBase()
     {
-        (source, destination) = CreateTestObjects();
-        serviceCollection = new ServiceCollection();
+        (Source, Destination) = CreateTestObjects();
+        ServiceCollection = new ServiceCollection();
         SetupServiceCollection();
     }
 
@@ -24,7 +24,7 @@ public abstract class ToDomainConverterTestBase<TSource, TDestination>
 
     protected IToDomainConverter<TSource, TDestination> CreateConverter()
     {
-        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var serviceProvider = ServiceCollection.BuildServiceProvider();
 
         return serviceProvider.GetRequiredService<IToDomainConverter<TSource, TDestination>>();
     }
@@ -52,12 +52,12 @@ public abstract class ToDomainConverterTestBase<TSource, TDestination>
         var converter = CreateConverter();
 
         // Act
-        TDestination result = converter.ToDomain(source);
+        TDestination result = converter.ToDomain(Source);
 
         // Assert
         using (new AssertionScope())
         {
-            result.Should().BeEquivalentTo(destination);
+            result.Should().BeEquivalentTo(Destination);
         }
     }
 }

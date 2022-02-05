@@ -22,7 +22,7 @@ public class ShoppingListConverterTests : ToDomainConverterTestBase<ProjectHerme
 
     protected override void SetupServiceCollection()
     {
-        AddDependencies(serviceCollection);
+        AddDependencies(ServiceCollection);
     }
 
     public static ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities.ShoppingList GetSource(IShoppingList destination)

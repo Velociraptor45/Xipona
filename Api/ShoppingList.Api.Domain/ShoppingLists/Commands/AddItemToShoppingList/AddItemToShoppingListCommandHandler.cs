@@ -9,14 +9,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.AddItemTo
 
 public class AddItemToShoppingListCommandHandler : ICommandHandler<AddItemToShoppingListCommand, bool>
 {
-    private readonly IShoppingListRepository shoppingListRepository;
-    private readonly IAddItemToShoppingListService addItemToShoppingListService;
+    private readonly IShoppingListRepository _shoppingListRepository;
+    private readonly IAddItemToShoppingListService _addItemToShoppingListService;
 
     public AddItemToShoppingListCommandHandler(IShoppingListRepository shoppingListRepository,
         IAddItemToShoppingListService addItemToShoppingListService)
     {
-        this.shoppingListRepository = shoppingListRepository;
-        this.addItemToShoppingListService = addItemToShoppingListService;
+        _shoppingListRepository = shoppingListRepository;
+        _addItemToShoppingListService = addItemToShoppingListService;
     }
 
     public async Task<bool> HandleAsync(AddItemToShoppingListCommand command, CancellationToken cancellationToken)
@@ -24,7 +24,7 @@ public class AddItemToShoppingListCommandHandler : ICommandHandler<AddItemToShop
         if (command == null)
             throw new ArgumentNullException(nameof(command));
 
-        var list = await shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
+        var list = await _shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
 
@@ -33,19 +33,19 @@ public class AddItemToShoppingListCommandHandler : ICommandHandler<AddItemToShop
         if (command.ItemId.IsActualId)
         {
             var actualId = new ItemId(command.ItemId.ActualId!.Value);
-            await addItemToShoppingListService.AddItemToShoppingList(list, actualId, command.SectionId, command.Quantity,
+            await _addItemToShoppingListService.AddItemToShoppingList(list, actualId, command.SectionId, command.Quantity,
                 cancellationToken);
         }
         else
         {
             var temporaryId = new TemporaryItemId(command.ItemId.OfflineId!.Value);
-            await addItemToShoppingListService.AddItemToShoppingList(list, temporaryId, command.SectionId,
+            await _addItemToShoppingListService.AddItemToShoppingList(list, temporaryId, command.SectionId,
                 command.Quantity, cancellationToken);
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        await shoppingListRepository.StoreAsync(list, cancellationToken);
+        await _shoppingListRepository.StoreAsync(list, cancellationToken);
 
         return true;
     }

@@ -33,12 +33,12 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 [Route("v1/shopping-list")]
 public class ShoppingListController : ControllerBase
 {
-    private readonly IQueryDispatcher queryDispatcher;
-    private readonly ICommandDispatcher commandDispatcher;
-    private readonly IToContractConverter<ShoppingListReadModel, ShoppingListContract> shoppingListToContractConverter;
-    private readonly IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeToContractConverter;
-    private readonly IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketToContractConverter;
-    private readonly IToDomainConverter<ItemIdContract, OfflineTolerantItemId> offlineTolerantItemIdConverter;
+    private readonly IQueryDispatcher _queryDispatcher;
+    private readonly ICommandDispatcher _commandDispatcher;
+    private readonly IToContractConverter<ShoppingListReadModel, ShoppingListContract> _shoppingListToContractConverter;
+    private readonly IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> _quantityTypeToContractConverter;
+    private readonly IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> _quantityTypeInPacketToContractConverter;
+    private readonly IToDomainConverter<ItemIdContract, OfflineTolerantItemId> _offlineTolerantItemIdConverter;
     private readonly IEndpointConverters _converters;
 
     public ShoppingListController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
@@ -48,12 +48,12 @@ public class ShoppingListController : ControllerBase
         IToDomainConverter<ItemIdContract, OfflineTolerantItemId> offlineTolerantItemIdConverter,
         IEndpointConverters converters)
     {
-        this.queryDispatcher = queryDispatcher;
-        this.commandDispatcher = commandDispatcher;
-        this.shoppingListToContractConverter = shoppingListToContractConverter;
-        this.quantityTypeToContractConverter = quantityTypeToContractConverter;
-        this.quantityTypeInPacketToContractConverter = quantityTypeInPacketToContractConverter;
-        this.offlineTolerantItemIdConverter = offlineTolerantItemIdConverter;
+        _queryDispatcher = queryDispatcher;
+        _commandDispatcher = commandDispatcher;
+        _shoppingListToContractConverter = shoppingListToContractConverter;
+        _quantityTypeToContractConverter = quantityTypeToContractConverter;
+        _quantityTypeInPacketToContractConverter = quantityTypeInPacketToContractConverter;
+        _offlineTolerantItemIdConverter = offlineTolerantItemIdConverter;
         _converters = converters;
     }
 
@@ -75,14 +75,14 @@ public class ShoppingListController : ControllerBase
         ShoppingListReadModel readModel;
         try
         {
-            readModel = await queryDispatcher.DispatchAsync(query, default);
+            readModel = await _queryDispatcher.DispatchAsync(query, default);
         }
         catch (ArgumentException e)
         {
             return BadRequest(e.Message);
         }
 
-        var contract = shoppingListToContractConverter.ToContract(readModel);
+        var contract = _shoppingListToContractConverter.ToContract(readModel);
 
         return Ok(contract);
     }
@@ -97,7 +97,7 @@ public class ShoppingListController : ControllerBase
         OfflineTolerantItemId itemId;
         try
         {
-            itemId = offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
+            itemId = _offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
         }
         catch (ArgumentException)
         {
@@ -113,7 +113,7 @@ public class ShoppingListController : ControllerBase
 
         try
         {
-            await commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, default);
         }
         catch (DomainException e)
         {
@@ -132,7 +132,7 @@ public class ShoppingListController : ControllerBase
         OfflineTolerantItemId itemId;
         try
         {
-            itemId = offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
+            itemId = _offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
         }
         catch (ArgumentException)
         {
@@ -147,7 +147,7 @@ public class ShoppingListController : ControllerBase
 
         try
         {
-            await commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, default);
         }
         catch (DomainException e)
         {
@@ -169,7 +169,7 @@ public class ShoppingListController : ControllerBase
 
         try
         {
-            await commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, default);
         }
         catch (DomainException e)
         {
@@ -200,7 +200,7 @@ public class ShoppingListController : ControllerBase
 
         try
         {
-            await commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, default);
         }
         catch (DomainException e)
         {
@@ -219,7 +219,7 @@ public class ShoppingListController : ControllerBase
         OfflineTolerantItemId itemId;
         try
         {
-            itemId = offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
+            itemId = _offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
         }
         catch (ArgumentException)
         {
@@ -234,7 +234,7 @@ public class ShoppingListController : ControllerBase
 
         try
         {
-            await commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, default);
         }
         catch (DomainException e)
         {
@@ -254,7 +254,7 @@ public class ShoppingListController : ControllerBase
         OfflineTolerantItemId itemId;
         try
         {
-            itemId = offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
+            itemId = _offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
         }
         catch (ArgumentException)
         {
@@ -269,7 +269,7 @@ public class ShoppingListController : ControllerBase
 
         try
         {
-            await commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, default);
         }
         catch (DomainException e)
         {
@@ -288,7 +288,7 @@ public class ShoppingListController : ControllerBase
         var command = new FinishShoppingListCommand(new ShoppingListId(shoppingListId), DateTime.UtcNow);
         try
         {
-            await commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, default);
         }
         catch (DomainException e)
         {
@@ -304,8 +304,8 @@ public class ShoppingListController : ControllerBase
     public async Task<IActionResult> GetAllQuantityTypes()
     {
         var query = new AllQuantityTypesQuery();
-        var readModels = await queryDispatcher.DispatchAsync(query, default);
-        var contracts = quantityTypeToContractConverter.ToContract(readModels);
+        var readModels = await _queryDispatcher.DispatchAsync(query, default);
+        var contracts = _quantityTypeToContractConverter.ToContract(readModels);
 
         return Ok(contracts);
     }
@@ -316,8 +316,8 @@ public class ShoppingListController : ControllerBase
     public async Task<IActionResult> GetAllQuantityTypesInPacket()
     {
         var query = new AllQuantityTypesInPacketQuery();
-        var readModels = await queryDispatcher.DispatchAsync(query, default);
-        var contracts = quantityTypeInPacketToContractConverter.ToContract(readModels);
+        var readModels = await _queryDispatcher.DispatchAsync(query, default);
+        var contracts = _quantityTypeInPacketToContractConverter.ToContract(readModels);
 
         return Ok(contracts);
     }

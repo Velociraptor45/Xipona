@@ -21,7 +21,7 @@ public class StoreConverterTests : ToDomainConverterTestBase<ProjectHermes.Shopp
 
     protected override void SetupServiceCollection()
     {
-        AddDependencies(serviceCollection);
+        AddDependencies(ServiceCollection);
     }
 
     public static ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Store GetSource(IStore destination)

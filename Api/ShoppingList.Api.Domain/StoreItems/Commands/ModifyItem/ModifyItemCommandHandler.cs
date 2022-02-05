@@ -12,24 +12,24 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 
 public class ModifyItemCommandHandler : ICommandHandler<ModifyItemCommand, bool>
 {
-    private readonly IItemRepository itemRepository;
-    private readonly IShoppingListRepository shoppingListRepository;
-    private readonly ITransactionGenerator transactionGenerator;
-    private readonly IItemCategoryValidationService itemCategoryValidationService;
-    private readonly IManufacturerValidationService manufacturerValidationService;
-    private readonly IAvailabilityValidationService availabilityValidationService;
+    private readonly IItemRepository _itemRepository;
+    private readonly IShoppingListRepository _shoppingListRepository;
+    private readonly ITransactionGenerator _transactionGenerator;
+    private readonly IItemCategoryValidationService _itemCategoryValidationService;
+    private readonly IManufacturerValidationService _manufacturerValidationService;
+    private readonly IAvailabilityValidationService _availabilityValidationService;
 
     public ModifyItemCommandHandler(IItemRepository itemRepository, IShoppingListRepository shoppingListRepository,
         ITransactionGenerator transactionGenerator, IItemCategoryValidationService itemCategoryValidationService,
         IManufacturerValidationService manufacturerValidationService,
         IAvailabilityValidationService availabilityValidationService)
     {
-        this.itemRepository = itemRepository;
-        this.shoppingListRepository = shoppingListRepository;
-        this.transactionGenerator = transactionGenerator;
-        this.itemCategoryValidationService = itemCategoryValidationService;
-        this.manufacturerValidationService = manufacturerValidationService;
-        this.availabilityValidationService = availabilityValidationService;
+        _itemRepository = itemRepository;
+        _shoppingListRepository = shoppingListRepository;
+        _transactionGenerator = transactionGenerator;
+        _itemCategoryValidationService = itemCategoryValidationService;
+        _manufacturerValidationService = manufacturerValidationService;
+        _availabilityValidationService = availabilityValidationService;
     }
 
     public async Task<bool> HandleAsync(ModifyItemCommand command, CancellationToken cancellationToken)
@@ -37,7 +37,7 @@ public class ModifyItemCommandHandler : ICommandHandler<ModifyItemCommand, bool>
         if (command == null)
             throw new ArgumentNullException(nameof(command));
 
-        var storeItem = await itemRepository.FindByAsync(command.ItemModify.Id, cancellationToken);
+        var storeItem = await _itemRepository.FindByAsync(command.ItemModify.Id, cancellationToken);
 
         if (storeItem == null)
             throw new DomainException(new ItemNotFoundReason(command.ItemModify.Id));
@@ -47,38 +47,38 @@ public class ModifyItemCommandHandler : ICommandHandler<ModifyItemCommand, bool>
         var itemCategoryId = command.ItemModify.ItemCategoryId;
         var manufacturerId = command.ItemModify.ManufacturerId;
 
-        await itemCategoryValidationService.ValidateAsync(itemCategoryId, cancellationToken);
+        await _itemCategoryValidationService.ValidateAsync(itemCategoryId, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
         if (manufacturerId != null)
         {
-            await manufacturerValidationService.ValidateAsync(manufacturerId.Value, cancellationToken);
+            await _manufacturerValidationService.ValidateAsync(manufacturerId.Value, cancellationToken);
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
         var availabilities = command.ItemModify.Availabilities;
-        await availabilityValidationService.ValidateAsync(availabilities, cancellationToken);
+        await _availabilityValidationService.ValidateAsync(availabilities, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
         storeItem.Modify(command.ItemModify, availabilities);
 
         var availableAtStoreIds = storeItem.Availabilities.Select(av => av.StoreId);
-        var shoppingListsWithItem = (await shoppingListRepository.FindByAsync(storeItem.Id, cancellationToken))
+        var shoppingListsWithItem = (await _shoppingListRepository.FindByAsync(storeItem.Id, cancellationToken))
             .Where(list => availableAtStoreIds.All(storeId => storeId != list.StoreId))
             .ToList();
 
-        using var transaction = await transactionGenerator.GenerateAsync(cancellationToken);
+        using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
-        await itemRepository.StoreAsync(storeItem, cancellationToken);
+        await _itemRepository.StoreAsync(storeItem, cancellationToken);
         foreach (var list in shoppingListsWithItem)
         {
             cancellationToken.ThrowIfCancellationRequested();
             // remove items from all shopping lists where item is not available anymore
             list.RemoveItem(storeItem.Id);
-            await shoppingListRepository.StoreAsync(list, cancellationToken);
+            await _shoppingListRepository.StoreAsync(list, cancellationToken);
         }
 
         await transaction.CommitAsync(cancellationToken);

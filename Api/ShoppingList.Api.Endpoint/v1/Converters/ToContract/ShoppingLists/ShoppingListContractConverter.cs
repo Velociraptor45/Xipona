@@ -6,23 +6,23 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Shopp
 
 public class ShoppingListContractConverter : IToContractConverter<ShoppingListReadModel, ShoppingListContract>
 {
-    private readonly IToContractConverter<ShoppingListSectionReadModel, ShoppingListSectionContract> shoppingListSectionContractConverter;
-    private readonly IToContractConverter<ShoppingListStoreReadModel, ShoppingListStoreContract> shoppingListStoreContractConverter;
+    private readonly IToContractConverter<ShoppingListSectionReadModel, ShoppingListSectionContract> _shoppingListSectionContractConverter;
+    private readonly IToContractConverter<ShoppingListStoreReadModel, ShoppingListStoreContract> _shoppingListStoreContractConverter;
 
     public ShoppingListContractConverter(
         IToContractConverter<ShoppingListSectionReadModel, ShoppingListSectionContract> shoppingListSectionContractConverter,
         IToContractConverter<ShoppingListStoreReadModel, ShoppingListStoreContract> shoppingListStoreContractConverter)
     {
-        this.shoppingListSectionContractConverter = shoppingListSectionContractConverter;
-        this.shoppingListStoreContractConverter = shoppingListStoreContractConverter;
+        _shoppingListSectionContractConverter = shoppingListSectionContractConverter;
+        _shoppingListStoreContractConverter = shoppingListStoreContractConverter;
     }
 
     public ShoppingListContract ToContract(ShoppingListReadModel source)
     {
         return new ShoppingListContract(
             source.Id.Value,
-            shoppingListStoreContractConverter.ToContract(source.Store),
-            shoppingListSectionContractConverter.ToContract(source.Sections),
+            _shoppingListStoreContractConverter.ToContract(source.Store),
+            _shoppingListSectionContractConverter.ToContract(source.Sections),
             source.CompletionDate);
     }
 }

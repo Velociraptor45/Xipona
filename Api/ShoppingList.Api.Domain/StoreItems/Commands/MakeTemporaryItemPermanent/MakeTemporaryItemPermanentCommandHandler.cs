@@ -11,20 +11,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporar
 
 public class MakeTemporaryItemPermanentCommandHandler : ICommandHandler<MakeTemporaryItemPermanentCommand, bool>
 {
-    private readonly IItemRepository itemRepository;
-    private readonly IItemCategoryValidationService itemCategoryValidationService;
-    private readonly IManufacturerValidationService manufacturerValidationService;
-    private readonly IAvailabilityValidationService availabilityValidationService;
+    private readonly IItemRepository _itemRepository;
+    private readonly IItemCategoryValidationService _itemCategoryValidationService;
+    private readonly IManufacturerValidationService _manufacturerValidationService;
+    private readonly IAvailabilityValidationService _availabilityValidationService;
 
     public MakeTemporaryItemPermanentCommandHandler(IItemRepository itemRepository,
         IItemCategoryValidationService itemCategoryValidationService,
         IManufacturerValidationService manufacturerValidationService,
         IAvailabilityValidationService availabilityValidationService)
     {
-        this.itemRepository = itemRepository;
-        this.itemCategoryValidationService = itemCategoryValidationService;
-        this.manufacturerValidationService = manufacturerValidationService;
-        this.availabilityValidationService = availabilityValidationService;
+        _itemRepository = itemRepository;
+        _itemCategoryValidationService = itemCategoryValidationService;
+        _manufacturerValidationService = manufacturerValidationService;
+        _availabilityValidationService = availabilityValidationService;
     }
 
     public async Task<bool> HandleAsync(MakeTemporaryItemPermanentCommand command, CancellationToken cancellationToken)
@@ -34,7 +34,7 @@ public class MakeTemporaryItemPermanentCommandHandler : ICommandHandler<MakeTemp
             throw new ArgumentNullException(nameof(command));
         }
 
-        IStoreItem? storeItem = await itemRepository.FindByAsync(command.PermanentItem.Id, cancellationToken);
+        IStoreItem? storeItem = await _itemRepository.FindByAsync(command.PermanentItem.Id, cancellationToken);
         if (storeItem == null)
             throw new DomainException(new ItemNotFoundReason(command.PermanentItem.Id));
         if (!storeItem.IsTemporary)
@@ -43,22 +43,22 @@ public class MakeTemporaryItemPermanentCommandHandler : ICommandHandler<MakeTemp
         var itemCategoryId = command.PermanentItem.ItemCategoryId;
         var manufacturerId = command.PermanentItem.ManufacturerId;
 
-        await itemCategoryValidationService.ValidateAsync(itemCategoryId, cancellationToken);
+        await _itemCategoryValidationService.ValidateAsync(itemCategoryId, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
         if (manufacturerId != null)
         {
-            await manufacturerValidationService.ValidateAsync(manufacturerId.Value, cancellationToken);
+            await _manufacturerValidationService.ValidateAsync(manufacturerId.Value, cancellationToken);
         }
 
         var availabilities = command.PermanentItem.Availabilities;
-        await availabilityValidationService.ValidateAsync(availabilities, cancellationToken);
+        await _availabilityValidationService.ValidateAsync(availabilities, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
         storeItem.MakePermanent(command.PermanentItem, availabilities);
-        await itemRepository.StoreAsync(storeItem, cancellationToken);
+        await _itemRepository.StoreAsync(storeItem, cancellationToken);
 
         return true;
     }

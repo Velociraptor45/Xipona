@@ -22,7 +22,7 @@ public class StoreItemConverterTests : ToDomainConverterTestBase<Item, IStoreIte
 
     protected override void SetupServiceCollection()
     {
-        AddDependencies(serviceCollection);
+        AddDependencies(ServiceCollection);
     }
 
     public static Item GetSource(IStoreItem destination)

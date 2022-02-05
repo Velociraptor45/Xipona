@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShop
 
 public class ShoppingListSectionReadModel
 {
-    private readonly IEnumerable<ShoppingListItemReadModel> itemReadModels;
+    private readonly IEnumerable<ShoppingListItemReadModel> _itemReadModels;
 
     public ShoppingListSectionReadModel(SectionId id, string name, int sortingIndex,
         bool isDefaultSection, IEnumerable<ShoppingListItemReadModel> itemReadModels)
@@ -13,10 +13,10 @@ public class ShoppingListSectionReadModel
         Name = name;
         SortingIndex = sortingIndex;
         IsDefaultSection = isDefaultSection;
-        this.itemReadModels = itemReadModels;
+        _itemReadModels = itemReadModels;
     }
 
-    public IReadOnlyCollection<ShoppingListItemReadModel> ItemReadModels => itemReadModels.ToList().AsReadOnly();
+    public IReadOnlyCollection<ShoppingListItemReadModel> ItemReadModels => _itemReadModels.ToList().AsReadOnly();
 
     public SectionId Id { get; }
     public string Name { get; }

@@ -10,41 +10,41 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.DeleteIt
 
 public class DeleteItemCategoryCommandHandler : ICommandHandler<DeleteItemCategoryCommand, bool>
 {
-    private readonly IItemCategoryRepository itemCategoryRepository;
-    private readonly IItemRepository itemRepository;
-    private readonly IShoppingListRepository shoppingListRepository;
-    private readonly ITransactionGenerator transactionGenerator;
+    private readonly IItemCategoryRepository _itemCategoryRepository;
+    private readonly IItemRepository _itemRepository;
+    private readonly IShoppingListRepository _shoppingListRepository;
+    private readonly ITransactionGenerator _transactionGenerator;
 
     public DeleteItemCategoryCommandHandler(IItemCategoryRepository itemCategoryRepository,
         IItemRepository itemRepository, IShoppingListRepository shoppingListRepository,
         ITransactionGenerator transactionGenerator)
     {
-        this.itemCategoryRepository = itemCategoryRepository;
-        this.itemRepository = itemRepository;
-        this.shoppingListRepository = shoppingListRepository;
-        this.transactionGenerator = transactionGenerator;
+        _itemCategoryRepository = itemCategoryRepository;
+        _itemRepository = itemRepository;
+        _shoppingListRepository = shoppingListRepository;
+        _transactionGenerator = transactionGenerator;
     }
 
     public async Task<bool> HandleAsync(DeleteItemCategoryCommand command, CancellationToken cancellationToken)
     {
         if (command is null)
         {
-            throw new System.ArgumentNullException(nameof(command));
+            throw new ArgumentNullException(nameof(command));
         }
 
-        var category = await itemCategoryRepository.FindByAsync(command.ItemCategoryId, cancellationToken);
+        var category = await _itemCategoryRepository.FindByAsync(command.ItemCategoryId, cancellationToken);
         if (category == null)
             throw new DomainException(new ItemCategoryNotFoundReason(command.ItemCategoryId));
 
         category.Delete();
 
-        var storeItems = (await itemRepository.FindActiveByAsync(command.ItemCategoryId, cancellationToken))
+        var storeItems = (await _itemRepository.FindActiveByAsync(command.ItemCategoryId, cancellationToken))
             .ToList();
 
-        using var transaction = await transactionGenerator.GenerateAsync(cancellationToken);
+        using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
         foreach (var item in storeItems)
         {
-            var lists = await shoppingListRepository.FindActiveByAsync(item.Id, cancellationToken);
+            var lists = await _shoppingListRepository.FindActiveByAsync(item.Id, cancellationToken);
             foreach (var list in lists)
             {
                 if (item.HasItemTypes)
@@ -59,12 +59,12 @@ public class DeleteItemCategoryCommandHandler : ICommandHandler<DeleteItemCatego
                     list.RemoveItem(item.Id);
                 }
 
-                await shoppingListRepository.StoreAsync(list, cancellationToken);
+                await _shoppingListRepository.StoreAsync(list, cancellationToken);
             }
             item.Delete();
-            await itemRepository.StoreAsync(item, cancellationToken);
+            await _itemRepository.StoreAsync(item, cancellationToken);
         }
-        await itemCategoryRepository.StoreAsync(category, cancellationToken);
+        await _itemCategoryRepository.StoreAsync(category, cancellationToken);
 
         await transaction.CommitAsync(cancellationToken);
         return true;

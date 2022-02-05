@@ -17,16 +17,16 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 [Route("v1/item-category")]
 public class ItemCategoryController : ControllerBase
 {
-    private readonly IQueryDispatcher queryDispatcher;
-    private readonly ICommandDispatcher commandDispatcher;
-    private readonly IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> itemCategoryContractConverter;
+    private readonly IQueryDispatcher _queryDispatcher;
+    private readonly ICommandDispatcher _commandDispatcher;
+    private readonly IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> _itemCategoryContractConverter;
 
     public ItemCategoryController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
         IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> itemCategoryContractConverter)
     {
-        this.queryDispatcher = queryDispatcher;
-        this.commandDispatcher = commandDispatcher;
-        this.itemCategoryContractConverter = itemCategoryContractConverter;
+        _queryDispatcher = queryDispatcher;
+        _commandDispatcher = commandDispatcher;
+        _itemCategoryContractConverter = itemCategoryContractConverter;
     }
 
     [HttpGet]
@@ -42,8 +42,8 @@ public class ItemCategoryController : ControllerBase
         }
 
         var query = new ItemCategorySearchQuery(searchInput);
-        var itemCategoryReadModels = await queryDispatcher.DispatchAsync(query, default);
-        var itemCategoryContracts = itemCategoryContractConverter.ToContract(itemCategoryReadModels);
+        var itemCategoryReadModels = await _queryDispatcher.DispatchAsync(query, default);
+        var itemCategoryContracts = _itemCategoryContractConverter.ToContract(itemCategoryReadModels);
 
         return Ok(itemCategoryContracts);
     }
@@ -54,8 +54,8 @@ public class ItemCategoryController : ControllerBase
     public async Task<IActionResult> GetAllActiveItemCategories()
     {
         var query = new AllActiveItemCategoriesQuery();
-        var readModels = await queryDispatcher.DispatchAsync(query, default);
-        var contracts = itemCategoryContractConverter.ToContract(readModels);
+        var readModels = await _queryDispatcher.DispatchAsync(query, default);
+        var contracts = _itemCategoryContractConverter.ToContract(readModels);
 
         return Ok(contracts);
     }
@@ -66,7 +66,7 @@ public class ItemCategoryController : ControllerBase
     public async Task<IActionResult> CreateItemCategory([FromRoute(Name = "name")] string name)
     {
         var command = new CreateItemCategoryCommand(name);
-        await commandDispatcher.DispatchAsync(command, default);
+        await _commandDispatcher.DispatchAsync(command, default);
 
         return Ok();
     }
@@ -80,7 +80,7 @@ public class ItemCategoryController : ControllerBase
         var command = new DeleteItemCategoryCommand(new ItemCategoryId(contract.ItemCategoryId));
         try
         {
-            await commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, default);
         }
         catch (DomainException e)
         {

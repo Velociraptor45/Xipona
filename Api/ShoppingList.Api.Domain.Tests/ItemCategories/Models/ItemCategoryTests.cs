@@ -5,11 +5,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Models;
 
 public class ItemCategoryTests
 {
-    private readonly CommonFixture commonFixture;
+    private readonly CommonFixture _commonFixture;
 
     public ItemCategoryTests()
     {
-        commonFixture = new CommonFixture();
+        _commonFixture = new CommonFixture();
     }
 
     [Fact]

@@ -8,17 +8,17 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Converters
 
 public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, IShoppingList>
 {
-    private readonly IShoppingListFactory shoppingListFactory;
-    private readonly IShoppingListSectionFactory shoppingListSectionFactory;
-    private readonly IToDomainConverter<ItemsOnList, IShoppingListItem> shoppingListItemConverter;
+    private readonly IShoppingListFactory _shoppingListFactory;
+    private readonly IShoppingListSectionFactory _shoppingListSectionFactory;
+    private readonly IToDomainConverter<ItemsOnList, IShoppingListItem> _shoppingListItemConverter;
 
     public ShoppingListConverter(IShoppingListFactory shoppingListFactory,
         IShoppingListSectionFactory shoppingListSectionFactory,
         IToDomainConverter<ItemsOnList, IShoppingListItem> shoppingListItemConverter)
     {
-        this.shoppingListFactory = shoppingListFactory;
-        this.shoppingListSectionFactory = shoppingListSectionFactory;
-        this.shoppingListItemConverter = shoppingListItemConverter;
+        _shoppingListFactory = shoppingListFactory;
+        _shoppingListSectionFactory = shoppingListSectionFactory;
+        _shoppingListItemConverter = shoppingListItemConverter;
     }
 
     public IShoppingList ToDomain(Entities.ShoppingList source)
@@ -40,12 +40,12 @@ public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, I
         foreach (var sectionId in itemMapsPerSection.Keys)
         {
             var maps = itemMapsPerSection[sectionId];
-            var items = maps.Select(map => shoppingListItemConverter.ToDomain(map)).ToList();
+            var items = maps.Select(map => _shoppingListItemConverter.ToDomain(map)).ToList();
             var sectionModel = CreateSection(sectionId, items);
             sectionModels.Add(sectionModel);
         }
 
-        return shoppingListFactory.Create(
+        return _shoppingListFactory.Create(
             new ShoppingListId(source.Id),
             new StoreId(source.StoreId),
             source.CompletionDate,
@@ -54,7 +54,7 @@ public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, I
 
     public IShoppingListSection CreateSection(int sectionId, IEnumerable<IShoppingListItem> items)
     {
-        return shoppingListSectionFactory.Create(
+        return _shoppingListSectionFactory.Create(
             new SectionId(sectionId),
             items);
     }

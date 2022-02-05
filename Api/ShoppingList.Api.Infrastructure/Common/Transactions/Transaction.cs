@@ -5,11 +5,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 
 public class Transaction : ITransaction
 {
-    private DbTransaction? transaction;
+    private DbTransaction? _transaction;
 
     public Transaction(DbTransaction transaction)
     {
-        this.transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
+        _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
     }
 
     public async Task CommitAsync(CancellationToken cancellationToken)
@@ -18,20 +18,20 @@ public class Transaction : ITransaction
 
         try
         {
-            await transaction!.CommitAsync(cancellationToken);
+            await _transaction!.CommitAsync(cancellationToken);
         }
         finally
         {
             try
             {
-                transaction!.Dispose();
+                _transaction!.Dispose();
             }
             catch (Exception)
             {
                 // todo log
             }
 
-            transaction = null;
+            _transaction = null;
         }
     }
 
@@ -41,20 +41,20 @@ public class Transaction : ITransaction
 
         try
         {
-            await transaction!.RollbackAsync(cancellationToken);
+            await _transaction!.RollbackAsync(cancellationToken);
         }
         finally
         {
             try
             {
-                transaction!.Dispose();
+                _transaction!.Dispose();
             }
             catch (Exception)
             {
                 // todo log
             }
 
-            transaction = null;
+            _transaction = null;
         }
     }
 
@@ -66,14 +66,14 @@ public class Transaction : ITransaction
 
     protected virtual void Dispose(bool disposing)
     {
-        if (transaction == null)
+        if (_transaction == null)
             return;
         RollbackAsync(default).GetAwaiter().GetResult();
     }
 
     private void ThrowIfTransactionNull()
     {
-        if (transaction == null)
+        if (_transaction == null)
             throw new InvalidOperationException("Transaction is null");
     }
 }

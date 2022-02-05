@@ -14,13 +14,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem;
 
 public class UpdateItemCommandHandler : ICommandHandler<UpdateItemCommand, bool>
 {
-    private readonly IItemRepository itemRepository;
-    private readonly ITransactionGenerator transactionGenerator;
-    private readonly IStoreItemFactory storeItemFactory;
-    private readonly IItemCategoryValidationService itemCategoryValidationService;
-    private readonly IManufacturerValidationService manufacturerValidationService;
-    private readonly IAvailabilityValidationService availabilityValidationService;
-    private readonly IShoppingListUpdateService shoppingListUpdateService;
+    private readonly IItemRepository _itemRepository;
+    private readonly ITransactionGenerator _transactionGenerator;
+    private readonly IStoreItemFactory _storeItemFactory;
+    private readonly IItemCategoryValidationService _itemCategoryValidationService;
+    private readonly IManufacturerValidationService _manufacturerValidationService;
+    private readonly IAvailabilityValidationService _availabilityValidationService;
+    private readonly IShoppingListUpdateService _shoppingListUpdateService;
 
     public UpdateItemCommandHandler(IItemRepository itemRepository,
         ITransactionGenerator transactionGenerator, IStoreItemFactory storeItemFactory,
@@ -29,23 +29,23 @@ public class UpdateItemCommandHandler : ICommandHandler<UpdateItemCommand, bool>
         IAvailabilityValidationService availabilityValidationService,
         IShoppingListUpdateService shoppingListUpdateService)
     {
-        this.itemRepository = itemRepository;
-        this.transactionGenerator = transactionGenerator;
-        this.storeItemFactory = storeItemFactory;
-        this.itemCategoryValidationService = itemCategoryValidationService;
-        this.manufacturerValidationService = manufacturerValidationService;
-        this.availabilityValidationService = availabilityValidationService;
-        this.shoppingListUpdateService = shoppingListUpdateService;
+        _itemRepository = itemRepository;
+        _transactionGenerator = transactionGenerator;
+        _storeItemFactory = storeItemFactory;
+        _itemCategoryValidationService = itemCategoryValidationService;
+        _manufacturerValidationService = manufacturerValidationService;
+        _availabilityValidationService = availabilityValidationService;
+        _shoppingListUpdateService = shoppingListUpdateService;
     }
 
     public async Task<bool> HandleAsync(UpdateItemCommand command, CancellationToken cancellationToken)
     {
         if (command is null)
         {
-            throw new System.ArgumentNullException(nameof(command));
+            throw new ArgumentNullException(nameof(command));
         }
 
-        IStoreItem? oldItem = await itemRepository.FindByAsync(command.ItemUpdate.OldId, cancellationToken);
+        IStoreItem? oldItem = await _itemRepository.FindByAsync(command.ItemUpdate.OldId, cancellationToken);
         if (oldItem == null)
             throw new DomainException(new ItemNotFoundReason(command.ItemUpdate.OldId));
         if (oldItem.IsTemporary)
@@ -56,27 +56,27 @@ public class UpdateItemCommandHandler : ICommandHandler<UpdateItemCommand, bool>
         var itemCategoryId = command.ItemUpdate.ItemCategoryId;
         var manufacturerId = command.ItemUpdate.ManufacturerId;
 
-        await itemCategoryValidationService.ValidateAsync(itemCategoryId, cancellationToken);
+        await _itemCategoryValidationService.ValidateAsync(itemCategoryId, cancellationToken);
 
         if (manufacturerId != null)
         {
-            await manufacturerValidationService.ValidateAsync(manufacturerId.Value, cancellationToken);
+            await _manufacturerValidationService.ValidateAsync(manufacturerId.Value, cancellationToken);
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
         var availabilities = command.ItemUpdate.Availabilities;
-        await availabilityValidationService.ValidateAsync(availabilities, cancellationToken);
+        await _availabilityValidationService.ValidateAsync(availabilities, cancellationToken);
 
-        using ITransaction transaction = await transactionGenerator.GenerateAsync(cancellationToken);
-        await itemRepository.StoreAsync(oldItem, cancellationToken);
+        using ITransaction transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
+        await _itemRepository.StoreAsync(oldItem, cancellationToken);
 
         // create new Item
-        IStoreItem updatedItem = storeItemFactory.Create(command.ItemUpdate, oldItem);
-        updatedItem = await itemRepository.StoreAsync(updatedItem, cancellationToken);
+        IStoreItem updatedItem = _storeItemFactory.Create(command.ItemUpdate, oldItem);
+        updatedItem = await _itemRepository.StoreAsync(updatedItem, cancellationToken);
 
         // change existing item references on shopping lists
-        await shoppingListUpdateService.ExchangeItemAsync(oldItem.Id, updatedItem, cancellationToken);
+        await _shoppingListUpdateService.ExchangeItemAsync(oldItem.Id, updatedItem, cancellationToken);
 
         await transaction.CommitAsync(cancellationToken);
 

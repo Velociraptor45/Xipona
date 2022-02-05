@@ -9,14 +9,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.FinishSho
 
 public class FinishShoppingListCommandHandler : ICommandHandler<FinishShoppingListCommand, bool>
 {
-    private readonly IShoppingListRepository shoppingListRepository;
-    private readonly ITransactionGenerator transactionGenerator;
+    private readonly IShoppingListRepository _shoppingListRepository;
+    private readonly ITransactionGenerator _transactionGenerator;
 
     public FinishShoppingListCommandHandler(IShoppingListRepository shoppingListRepository,
         ITransactionGenerator transactionGenerator)
     {
-        this.shoppingListRepository = shoppingListRepository;
-        this.transactionGenerator = transactionGenerator;
+        _shoppingListRepository = shoppingListRepository;
+        _transactionGenerator = transactionGenerator;
     }
 
     public async Task<bool> HandleAsync(FinishShoppingListCommand command, CancellationToken cancellationToken)
@@ -24,7 +24,7 @@ public class FinishShoppingListCommandHandler : ICommandHandler<FinishShoppingLi
         if (command == null)
             throw new ArgumentNullException(nameof(command));
 
-        var shoppingList = await shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
+        var shoppingList = await _shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
         if (shoppingList == null)
             throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
 
@@ -34,9 +34,9 @@ public class FinishShoppingListCommandHandler : ICommandHandler<FinishShoppingLi
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        using var transaction = await transactionGenerator.GenerateAsync(cancellationToken);
-        await shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
-        await shoppingListRepository.StoreAsync(nextShoppingList, cancellationToken);
+        using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
+        await _shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
+        await _shoppingListRepository.StoreAsync(nextShoppingList, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
         return true;

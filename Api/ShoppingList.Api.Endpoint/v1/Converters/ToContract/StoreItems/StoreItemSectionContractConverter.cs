@@ -10,7 +10,7 @@ public class StoreItemSectionContractConverter :
     public StoreItemSectionContract ToContract(StoreItemSectionReadModel source)
     {
         if (source is null)
-            throw new System.ArgumentNullException(nameof(source));
+            throw new ArgumentNullException(nameof(source));
 
         return new StoreItemSectionContract(source.Id.Value, source.Name, source.SortingIndex);
     }

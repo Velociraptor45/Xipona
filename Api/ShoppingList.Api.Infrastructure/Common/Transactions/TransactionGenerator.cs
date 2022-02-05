@@ -6,23 +6,23 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 
 public class TransactionGenerator : ITransactionGenerator
 {
-    private readonly object lockObject = new object();
-    private readonly IList<DbContext> dbContexts;
-    private readonly DbConnection connection;
+    private readonly object _lockObject = new object();
+    private readonly IList<DbContext> _dbContexts;
+    private readonly DbConnection _connection;
 
     public TransactionGenerator(IList<DbContext> dbContexts, DbConnection connection)
     {
-        this.dbContexts = dbContexts;
-        this.connection = connection;
+        _dbContexts = dbContexts;
+        _connection = connection;
     }
 
     public Task<ITransaction> GenerateAsync(CancellationToken cancellationToken)
     {
-        lock (lockObject)
+        lock (_lockObject)
         {
-            var dbTransaction = connection.BeginTransactionAsync(cancellationToken)
+            var dbTransaction = _connection.BeginTransactionAsync(cancellationToken)
                 .GetAwaiter().GetResult();
-            foreach (var database in dbContexts.Select(ctx => ctx.Database))
+            foreach (var database in _dbContexts.Select(ctx => ctx.Database))
             {
                 if (database.CurrentTransaction != null)
                     throw new InvalidOperationException("Transaction already open");

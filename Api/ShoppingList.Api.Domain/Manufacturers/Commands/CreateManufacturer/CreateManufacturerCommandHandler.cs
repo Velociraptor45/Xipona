@@ -7,14 +7,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Commands.CreateMan
 
 public class CreateManufacturerCommandHandler : ICommandHandler<CreateManufacturerCommand, bool>
 {
-    private readonly IManufacturerRepository manufacturerRepository;
-    private readonly IManufacturerFactory manufacturerFactory;
+    private readonly IManufacturerRepository _manufacturerRepository;
+    private readonly IManufacturerFactory _manufacturerFactory;
 
     public CreateManufacturerCommandHandler(IManufacturerRepository manufacturerRepository,
         IManufacturerFactory manufacturerFactory)
     {
-        this.manufacturerRepository = manufacturerRepository;
-        this.manufacturerFactory = manufacturerFactory;
+        _manufacturerRepository = manufacturerRepository;
+        _manufacturerFactory = manufacturerFactory;
     }
 
     public async Task<bool> HandleAsync(CreateManufacturerCommand command, CancellationToken cancellationToken)
@@ -24,8 +24,8 @@ public class CreateManufacturerCommandHandler : ICommandHandler<CreateManufactur
             throw new ArgumentNullException(nameof(command));
         }
 
-        var model = manufacturerFactory.Create(ManufacturerId.New, command.Name, false);
-        await manufacturerRepository.StoreAsync(model, cancellationToken);
+        var model = _manufacturerFactory.Create(ManufacturerId.New, command.Name, false);
+        await _manufacturerRepository.StoreAsync(model, cancellationToken);
         return true;
     }
 }

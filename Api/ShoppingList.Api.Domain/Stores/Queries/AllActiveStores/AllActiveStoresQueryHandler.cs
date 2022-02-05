@@ -8,24 +8,24 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
 
 public class AllActiveStoresQueryHandler : IQueryHandler<AllActiveStoresQuery, IEnumerable<StoreReadModel>>
 {
-    private readonly IStoreRepository storeRepository;
-    private readonly IItemRepository itemRepository;
+    private readonly IStoreRepository _storeRepository;
+    private readonly IItemRepository _itemRepository;
 
     public AllActiveStoresQueryHandler(IStoreRepository storeRepository, IItemRepository itemRepository)
     {
-        this.storeRepository = storeRepository;
-        this.itemRepository = itemRepository;
+        _storeRepository = storeRepository;
+        _itemRepository = itemRepository;
     }
 
     public async Task<IEnumerable<StoreReadModel>> HandleAsync(AllActiveStoresQuery query, CancellationToken cancellationToken)
     {
-        var activeStores = (await storeRepository.GetAsync(cancellationToken)).ToList();
+        var activeStores = (await _storeRepository.GetAsync(cancellationToken)).ToList();
         var itemCountPerStoreDict = new Dictionary<StoreId, int>();
 
         foreach (var store in activeStores)
         {
             var storeId = new StoreId(store.Id.Value);
-            var items = (await itemRepository.FindByAsync(storeId, cancellationToken)).ToList();
+            var items = (await _itemRepository.FindByAsync(storeId, cancellationToken)).ToList();
 
             itemCountPerStoreDict.Add(storeId, items.Count);
         }

@@ -8,35 +8,35 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Adapters;
 
 public class ManufacturerRepository : IManufacturerRepository
 {
-    private readonly ManufacturerContext dbContext;
-    private readonly IToDomainConverter<Entities.Manufacturer, IManufacturer> toModelConverter;
-    private readonly IToEntityConverter<IManufacturer, Entities.Manufacturer> toEntityConverter;
+    private readonly ManufacturerContext _dbContext;
+    private readonly IToDomainConverter<Entities.Manufacturer, IManufacturer> _toModelConverter;
+    private readonly IToEntityConverter<IManufacturer, Entities.Manufacturer> _toEntityConverter;
 
     public ManufacturerRepository(ManufacturerContext dbContext,
         IToDomainConverter<Entities.Manufacturer, IManufacturer> toModelConverter,
         IToEntityConverter<IManufacturer, Entities.Manufacturer> toEntityConverter)
     {
-        this.dbContext = dbContext;
-        this.toModelConverter = toModelConverter;
-        this.toEntityConverter = toEntityConverter;
+        _dbContext = dbContext;
+        _toModelConverter = toModelConverter;
+        _toEntityConverter = toEntityConverter;
     }
 
     public async Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput,
         CancellationToken cancellationToken)
     {
-        var manufacturerEntities = await dbContext.Manufacturers.AsNoTracking()
+        var manufacturerEntities = await _dbContext.Manufacturers.AsNoTracking()
             .Where(category => category.Name.Contains(searchInput))
             .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        return toModelConverter.ToDomain(manufacturerEntities);
+        return _toModelConverter.ToDomain(manufacturerEntities);
     }
 
     public async Task<IManufacturer?> FindByAsync(ManufacturerId id,
         CancellationToken cancellationToken)
     {
-        var entity = await dbContext.Manufacturers.AsNoTracking()
+        var entity = await _dbContext.Manufacturers.AsNoTracking()
             .FirstOrDefaultAsync(m => m.Id == id.Value, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -44,7 +44,7 @@ public class ManufacturerRepository : IManufacturerRepository
         if (entity == null)
             return null;
 
-        return toModelConverter.ToDomain(entity);
+        return _toModelConverter.ToDomain(entity);
     }
 
     public async Task<IEnumerable<IManufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids,
@@ -57,36 +57,36 @@ public class ManufacturerRepository : IManufacturerRepository
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var entities = await dbContext.Manufacturers.AsNoTracking()
+        var entities = await _dbContext.Manufacturers.AsNoTracking()
             .Where(m => idHashSet.Contains(m.Id))
             .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        return toModelConverter.ToDomain(entities);
+        return _toModelConverter.ToDomain(entities);
     }
 
     public async Task<IEnumerable<IManufacturer>> FindByAsync(bool includeDeleted,
         CancellationToken cancellationToken)
     {
-        var entities = await dbContext.Manufacturers.AsNoTracking()
+        var entities = await _dbContext.Manufacturers.AsNoTracking()
             .Where(m => !m.Deleted || includeDeleted)
             .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        return toModelConverter.ToDomain(entities);
+        return _toModelConverter.ToDomain(entities);
     }
 
     public async Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken)
     {
-        var entity = toEntityConverter.ToEntity(model);
+        var entity = _toEntityConverter.ToEntity(model);
 
-        dbContext.Entry(entity).State = entity.Id <= 0 ? EntityState.Added : EntityState.Modified;
+        _dbContext.Entry(entity).State = entity.Id <= 0 ? EntityState.Added : EntityState.Modified;
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        await dbContext.SaveChangesAsync(cancellationToken);
-        return toModelConverter.ToDomain(entity);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return _toModelConverter.ToDomain(entity);
     }
 }

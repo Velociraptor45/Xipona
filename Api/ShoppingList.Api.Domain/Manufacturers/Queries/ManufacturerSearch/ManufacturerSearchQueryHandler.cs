@@ -8,11 +8,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.Manufactur
 public class ManufacturerSearchQueryHandler
     : IQueryHandler<ManufacturerSearchQuery, IEnumerable<ManufacturerReadModel>>
 {
-    private readonly IManufacturerRepository manufacturerRepository;
+    private readonly IManufacturerRepository _manufacturerRepository;
 
     public ManufacturerSearchQueryHandler(IManufacturerRepository manufacturerRepository)
     {
-        this.manufacturerRepository = manufacturerRepository;
+        _manufacturerRepository = manufacturerRepository;
     }
 
     public async Task<IEnumerable<ManufacturerReadModel>> HandleAsync(ManufacturerSearchQuery query, CancellationToken cancellationToken)
@@ -20,7 +20,7 @@ public class ManufacturerSearchQueryHandler
         if (query == null)
             throw new ArgumentNullException(nameof(query));
 
-        var manufacturerModels = await manufacturerRepository.FindByAsync(query.SearchInput,
+        var manufacturerModels = await _manufacturerRepository.FindByAsync(query.SearchInput,
             cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();

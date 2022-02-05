@@ -8,11 +8,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
 
 public class StoreItemAvailabilityConverter : IToDomainConverter<AvailableAt, IStoreItemAvailability>
 {
-    private readonly IStoreItemAvailabilityFactory storeItemAvailabilityFactory;
+    private readonly IStoreItemAvailabilityFactory _storeItemAvailabilityFactory;
 
     public StoreItemAvailabilityConverter(IStoreItemAvailabilityFactory storeItemAvailabilityFactory)
     {
-        this.storeItemAvailabilityFactory = storeItemAvailabilityFactory;
+        _storeItemAvailabilityFactory = storeItemAvailabilityFactory;
     }
 
     public IStoreItemAvailability ToDomain(AvailableAt source)
@@ -20,7 +20,7 @@ public class StoreItemAvailabilityConverter : IToDomainConverter<AvailableAt, IS
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        return storeItemAvailabilityFactory.Create(
+        return _storeItemAvailabilityFactory.Create(
             new StoreId(source.StoreId),
             source.Price,
             new SectionId(source.DefaultSectionId));

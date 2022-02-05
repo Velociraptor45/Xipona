@@ -2,29 +2,29 @@
 
 public class Store : IStore
 {
-    private StoreSections sections;
+    private StoreSections _sections;
 
     public Store(StoreId id, string name, bool isDeleted, IEnumerable<IStoreSection> sections)
     {
         Id = id;
         Name = name;
         IsDeleted = isDeleted;
-        this.sections = new StoreSections(sections);
+        _sections = new StoreSections(sections);
     }
 
     public StoreId Id { get; }
     public string Name { get; private set; }
     public bool IsDeleted { get; }
-    public IReadOnlyCollection<IStoreSection> Sections => sections.AsReadOnly();
+    public IReadOnlyCollection<IStoreSection> Sections => _sections.AsReadOnly();
 
     public IStoreSection GetDefaultSection()
     {
-        return sections.GetDefaultSection();
+        return _sections.GetDefaultSection();
     }
 
     public bool ContainsSection(SectionId sectionId)
     {
-        return sections.Contains(sectionId);
+        return _sections.Contains(sectionId);
     }
 
     public void ChangeName(string name)
@@ -34,6 +34,6 @@ public class Store : IStore
 
     public void UpdateStores(IEnumerable<IStoreSection> storeSections)
     {
-        sections = new StoreSections(storeSections);
+        _sections = new StoreSections(storeSections);
     }
 }

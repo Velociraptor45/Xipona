@@ -7,11 +7,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
 
 public class UpdateStoreCommandHandler : ICommandHandler<UpdateStoreCommand, bool>
 {
-    private readonly IStoreRepository storeRepository;
+    private readonly IStoreRepository _storeRepository;
 
     public UpdateStoreCommandHandler(IStoreRepository storeRepository)
     {
-        this.storeRepository = storeRepository;
+        _storeRepository = storeRepository;
     }
 
     public async Task<bool> HandleAsync(UpdateStoreCommand command, CancellationToken cancellationToken)
@@ -19,7 +19,7 @@ public class UpdateStoreCommandHandler : ICommandHandler<UpdateStoreCommand, boo
         if (command == null)
             throw new ArgumentNullException(nameof(command));
 
-        var store = await storeRepository.FindByAsync(command.StoreUpdate.Id, cancellationToken);
+        var store = await _storeRepository.FindByAsync(command.StoreUpdate.Id, cancellationToken);
         if (store == null)
             throw new DomainException(new StoreNotFoundReason(command.StoreUpdate.Id));
 
@@ -28,7 +28,7 @@ public class UpdateStoreCommandHandler : ICommandHandler<UpdateStoreCommand, boo
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        await storeRepository.StoreAsync(store, cancellationToken);
+        await _storeRepository.StoreAsync(store, cancellationToken);
 
         return true;
     }

@@ -14,7 +14,7 @@ public class ItemWithTypesModification
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new System.ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
+            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
         }
 
         Id = id;
@@ -25,7 +25,7 @@ public class ItemWithTypesModification
         QuantityTypeInPacket = quantityTypeInPacket;
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
-        ItemTypes = itemTypes?.ToList() ?? throw new System.ArgumentNullException(nameof(itemTypes));
+        ItemTypes = itemTypes?.ToList() ?? throw new ArgumentNullException(nameof(itemTypes));
     }
 
     public ItemId Id { get; }

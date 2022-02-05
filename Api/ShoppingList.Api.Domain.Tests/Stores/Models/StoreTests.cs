@@ -6,18 +6,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Stores.Models;
 
 public class StoreTests
 {
-    private readonly CommonFixture commonFixture;
+    private readonly CommonFixture _commonFixture;
 
     public StoreTests()
     {
-        commonFixture = new CommonFixture();
+        _commonFixture = new CommonFixture();
     }
 
     [Fact]
     public void ChangeName_WithValidData_ShouldChangeName()
     {
         // Arrange
-        string newName = commonFixture.GetNewFixture().Create<string>();
+        string newName = _commonFixture.GetNewFixture().Create<string>();
         IStore store = StoreMother.Sections(3).Create();
 
         // Act

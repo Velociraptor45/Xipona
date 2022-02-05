@@ -11,11 +11,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreIte
 
 public class StoreItemTests
 {
-    private readonly CommonFixture commonFixture;
+    private readonly CommonFixture _commonFixture;
 
     public StoreItemTests()
     {
-        commonFixture = new CommonFixture();
+        _commonFixture = new CommonFixture();
     }
 
     #region Delete
@@ -48,7 +48,7 @@ public class StoreItemTests
         var availabilityStoreIds = testObject.Availabilities.Select(av => av.StoreId.Value).ToList();
 
         // Act
-        StoreId storeId = new StoreId(commonFixture.NextInt(availabilityStoreIds));
+        StoreId storeId = new StoreId(_commonFixture.NextInt(availabilityStoreIds));
         bool result = testObject.IsAvailableInStore(storeId);
 
         // Assert
@@ -66,7 +66,7 @@ public class StoreItemTests
         var availabilityStoreIds = testObject.Availabilities.Select(av => av.StoreId).ToList();
 
         // Act
-        StoreId chosenStoreId = commonFixture.ChooseRandom(availabilityStoreIds);
+        StoreId chosenStoreId = _commonFixture.ChooseRandom(availabilityStoreIds);
         bool result = testObject.IsAvailableInStore(chosenStoreId);
 
         // Assert
@@ -84,7 +84,7 @@ public class StoreItemTests
     public void MakePermanent_WithValidData_ShouldMakeItemPermanent()
     {
         // Arrange
-        Fixture fixture = commonFixture.GetNewFixture();
+        Fixture fixture = _commonFixture.GetNewFixture();
 
         IStoreItem testObject = StoreItemMother.Initial().Create();
         PermanentItem permanentItem = fixture.Create<PermanentItem>();
@@ -119,7 +119,7 @@ public class StoreItemTests
     public void Modify_WithValidData_ShouldModifyItem(bool isTemporary)
     {
         // Arrange
-        Fixture fixture = commonFixture.GetNewFixture();
+        Fixture fixture = _commonFixture.GetNewFixture();
 
         IStoreItem testObject = StoreItemMother.Initial().WithIsTemporary(isTemporary).Create();
         ItemModify itemModify = fixture.Create<ItemModify>();
@@ -154,7 +154,7 @@ public class StoreItemTests
         // Arrange
         IStoreItem testObject = StoreItemMother.Initial().Create();
         var allStoreIds = testObject.Availabilities.Select(av => av.StoreId.Value);
-        var requestStoreId = new StoreId(commonFixture.NextInt(allStoreIds));
+        var requestStoreId = new StoreId(_commonFixture.NextInt(allStoreIds));
 
         // Act
         Action action = () => testObject.GetDefaultSectionIdForStore(requestStoreId);
@@ -172,7 +172,7 @@ public class StoreItemTests
     {
         // Arrange
         IStoreItem testObject = StoreItemMother.Initial().Create();
-        var chosenAvailability = commonFixture.ChooseRandom(testObject.Availabilities);
+        var chosenAvailability = _commonFixture.ChooseRandom(testObject.Availabilities);
 
         // Act
         var result = testObject.GetDefaultSectionIdForStore(chosenAvailability.StoreId);

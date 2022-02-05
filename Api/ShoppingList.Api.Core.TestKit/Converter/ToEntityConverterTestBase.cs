@@ -7,14 +7,14 @@ public abstract class ToEntityConverterTestBase<TSource, TDestination>
     where TSource : class
     where TDestination : class
 {
-    protected readonly TSource source;
-    protected readonly TDestination destination;
-    protected readonly IServiceCollection serviceCollection;
+    protected readonly TSource Source;
+    protected readonly TDestination Destination;
+    protected readonly IServiceCollection ServiceCollection;
 
     protected ToEntityConverterTestBase()
     {
-        (source, destination) = CreateTestObjects();
-        serviceCollection = new ServiceCollection();
+        (Source, Destination) = CreateTestObjects();
+        ServiceCollection = new ServiceCollection();
         SetupServiceCollection();
     }
 
@@ -24,7 +24,7 @@ public abstract class ToEntityConverterTestBase<TSource, TDestination>
 
     protected IToEntityConverter<TSource, TDestination> CreateConverter()
     {
-        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var serviceProvider = ServiceCollection.BuildServiceProvider();
 
         return serviceProvider.GetRequiredService<IToEntityConverter<TSource, TDestination>>();
     }
@@ -52,12 +52,12 @@ public abstract class ToEntityConverterTestBase<TSource, TDestination>
         var converter = CreateConverter();
 
         // Act
-        TDestination result = converter.ToEntity(source);
+        TDestination result = converter.ToEntity(Source);
 
         // Assert
         using (new AssertionScope())
         {
-            result.Should().BeEquivalentTo(destination);
+            result.Should().BeEquivalentTo(Destination);
         }
     }
 }

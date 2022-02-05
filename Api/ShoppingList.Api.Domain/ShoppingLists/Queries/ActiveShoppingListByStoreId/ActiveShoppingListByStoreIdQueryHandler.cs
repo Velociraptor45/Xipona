@@ -9,25 +9,25 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShop
 public class ActiveShoppingListByStoreIdQueryHandler
     : IQueryHandler<ActiveShoppingListByStoreIdQuery, ShoppingListReadModel>
 {
-    private readonly IShoppingListRepository shoppingListRepository;
-    private readonly IShoppingListReadModelConversionService shoppingListReadModelConversionService;
+    private readonly IShoppingListRepository _shoppingListRepository;
+    private readonly IShoppingListReadModelConversionService _shoppingListReadModelConversionService;
 
     public ActiveShoppingListByStoreIdQueryHandler(IShoppingListRepository shoppingListRepository,
         IShoppingListReadModelConversionService shoppingListReadModelConversionService)
     {
-        this.shoppingListRepository = shoppingListRepository;
-        this.shoppingListReadModelConversionService = shoppingListReadModelConversionService;
+        _shoppingListRepository = shoppingListRepository;
+        _shoppingListReadModelConversionService = shoppingListReadModelConversionService;
     }
 
     public async Task<ShoppingListReadModel> HandleAsync(ActiveShoppingListByStoreIdQuery query,
         CancellationToken cancellationToken)
     {
-        var shoppingList = await shoppingListRepository.FindActiveByAsync(query.StoreId, cancellationToken);
+        var shoppingList = await _shoppingListRepository.FindActiveByAsync(query.StoreId, cancellationToken);
         if (shoppingList == null)
             throw new DomainException(new ShoppingListNotFoundReason(query.StoreId));
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        return await shoppingListReadModelConversionService.ConvertAsync(shoppingList, cancellationToken);
+        return await _shoppingListReadModelConversionService.ConvertAsync(shoppingList, cancellationToken);
     }
 }

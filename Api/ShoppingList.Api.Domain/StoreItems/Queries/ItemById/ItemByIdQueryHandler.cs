@@ -9,14 +9,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemById;
 
 public class ItemByIdQueryHandler : IQueryHandler<ItemByIdQuery, StoreItemReadModel>
 {
-    private readonly IItemRepository itemRepository;
-    private readonly IStoreItemReadModelConversionService storeItemReadModelConversionService;
+    private readonly IItemRepository _itemRepository;
+    private readonly IStoreItemReadModelConversionService _storeItemReadModelConversionService;
 
     public ItemByIdQueryHandler(IItemRepository itemRepository,
         IStoreItemReadModelConversionService storeItemReadModelConversionService)
     {
-        this.itemRepository = itemRepository;
-        this.storeItemReadModelConversionService = storeItemReadModelConversionService;
+        _itemRepository = itemRepository;
+        _storeItemReadModelConversionService = storeItemReadModelConversionService;
     }
 
     public async Task<StoreItemReadModel> HandleAsync(ItemByIdQuery query, CancellationToken cancellationToken)
@@ -26,12 +26,12 @@ public class ItemByIdQueryHandler : IQueryHandler<ItemByIdQuery, StoreItemReadMo
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var item = await itemRepository.FindByAsync(query.ItemId, cancellationToken);
+        var item = await _itemRepository.FindByAsync(query.ItemId, cancellationToken);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(query.ItemId));
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        return await storeItemReadModelConversionService.ConvertAsync(item, cancellationToken);
+        return await _storeItemReadModelConversionService.ConvertAsync(item, cancellationToken);
     }
 }

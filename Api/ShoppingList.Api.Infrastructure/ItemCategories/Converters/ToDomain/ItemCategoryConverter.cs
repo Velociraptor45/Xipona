@@ -6,11 +6,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Converter
 
 public class ItemCategoryConverter : IToDomainConverter<Entities.ItemCategory, IItemCategory>
 {
-    private readonly IItemCategoryFactory itemCategoryFactory;
+    private readonly IItemCategoryFactory _itemCategoryFactory;
 
     public ItemCategoryConverter(IItemCategoryFactory itemCategoryFactory)
     {
-        this.itemCategoryFactory = itemCategoryFactory;
+        _itemCategoryFactory = itemCategoryFactory;
     }
 
     public IItemCategory ToDomain(Entities.ItemCategory source)
@@ -18,7 +18,7 @@ public class ItemCategoryConverter : IToDomainConverter<Entities.ItemCategory, I
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        return itemCategoryFactory.Create(
+        return _itemCategoryFactory.Create(
             new ItemCategoryId(source.Id),
             source.Name,
             source.Deleted);

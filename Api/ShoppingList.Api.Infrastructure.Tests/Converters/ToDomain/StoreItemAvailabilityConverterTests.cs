@@ -22,7 +22,7 @@ public class StoreItemAvailabilityConverterTests : ToDomainConverterTestBase<Ava
 
     protected override void SetupServiceCollection()
     {
-        AddDependencies(serviceCollection);
+        AddDependencies(ServiceCollection);
     }
 
     public static AvailableAt GetSource(IStoreItemAvailability destination)

@@ -30,7 +30,7 @@ internal class ItemTypeAvailabilityConverterTests : ToDomainConverterTestBase<It
 
     protected override void SetupServiceCollection()
     {
-        AddDependencies(serviceCollection);
+        AddDependencies(ServiceCollection);
     }
 
     public static void AddDependencies(IServiceCollection serviceCollection)

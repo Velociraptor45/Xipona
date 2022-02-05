@@ -6,7 +6,7 @@ public class ModifyItemCommand : ICommand<bool>
 {
     public ModifyItemCommand(ItemModify itemModify)
     {
-        ItemModify = itemModify ?? throw new System.ArgumentNullException(nameof(itemModify));
+        ItemModify = itemModify ?? throw new ArgumentNullException(nameof(itemModify));
     }
 
     public ItemModify ItemModify { get; }

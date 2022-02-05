@@ -19,6 +19,6 @@ public class ManufacturerConverterTests : ToEntityConverterTestBase<IManufacture
 
     protected override void SetupServiceCollection()
     {
-        serviceCollection.AddImplementationOfGenericType(typeof(ManufacturerConverter).Assembly, typeof(IToEntityConverter<,>));
+        ServiceCollection.AddImplementationOfGenericType(typeof(ManufacturerConverter).Assembly, typeof(IToEntityConverter<,>));
     }
 }

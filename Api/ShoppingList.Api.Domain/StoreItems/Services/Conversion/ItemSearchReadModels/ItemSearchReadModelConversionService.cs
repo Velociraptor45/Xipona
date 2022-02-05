@@ -13,14 +13,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.I
 
 public class ItemSearchReadModelConversionService : IItemSearchReadModelConversionService
 {
-    private readonly IItemCategoryRepository itemCategoryRepository;
-    private readonly IManufacturerRepository manufacturerRepository;
+    private readonly IItemCategoryRepository _itemCategoryRepository;
+    private readonly IManufacturerRepository _manufacturerRepository;
 
     public ItemSearchReadModelConversionService(IItemCategoryRepository itemCategoryRepository,
         IManufacturerRepository manufacturerRepository)
     {
-        this.itemCategoryRepository = itemCategoryRepository;
-        this.manufacturerRepository = manufacturerRepository;
+        _itemCategoryRepository = itemCategoryRepository;
+        _manufacturerRepository = manufacturerRepository;
     }
 
     public async Task<IEnumerable<ItemSearchReadModel>> ConvertAsync(IEnumerable<IStoreItem> items,
@@ -29,13 +29,13 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
         var itemsList = items.ToList();
 
         var itemCategoryDict = await GetItemCategories(itemsList, cancellationToken);
-        var manufaturerDict = await GetManufacturers(itemsList, cancellationToken);
+        var manufacturerDict = await GetManufacturers(itemsList, cancellationToken);
 
         return itemsList
             .Select(item =>
             {
                 IManufacturer? manufacturer =
-                    item.ManufacturerId == null ? null : manufaturerDict[item.ManufacturerId.Value];
+                    item.ManufacturerId == null ? null : manufacturerDict[item.ManufacturerId.Value];
                 IItemCategory? itemCategory =
                     item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId.Value];
 
@@ -61,17 +61,17 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
         CancellationToken cancellationToken)
     {
         var itemTypesList = itemTypes.ToList();
-        var itemsList = itemTypesList.Select(t => t.Item);
+        var itemsList = itemTypesList.Select(t => t.Item).ToList();
 
         var itemCategoryDict = await GetItemCategories(itemsList, cancellationToken);
-        var manufaturerDict = await GetManufacturers(itemsList, cancellationToken);
+        var manufacturerDict = await GetManufacturers(itemsList, cancellationToken);
 
         return itemTypesList.SelectMany(tuple =>
         {
             var item = tuple.Item;
 
             IManufacturer? manufacturer =
-                item.ManufacturerId == null ? null : manufaturerDict[item.ManufacturerId.Value];
+                item.ManufacturerId == null ? null : manufacturerDict[item.ManufacturerId.Value];
             IItemCategory? itemCategory =
                 item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId.Value];
 
@@ -104,7 +104,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
             .Where(i => i.ManufacturerId != null)
             .Select(i => i.ManufacturerId!.Value)
             .Distinct();
-        return (await manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
+        return (await _manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
             .ToDictionary(m => m.Id);
     }
 
@@ -115,7 +115,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
             .Where(i => i.ItemCategoryId != null)
             .Select(i => i.ItemCategoryId!.Value)
             .Distinct();
-        return (await itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
+        return (await _itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
             .ToDictionary(i => i.Id);
     }
 }

@@ -6,11 +6,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Converters
 
 public class ManufacturerConverter : IToDomainConverter<Entities.Manufacturer, IManufacturer>
 {
-    private readonly IManufacturerFactory manufacturerFactory;
+    private readonly IManufacturerFactory _manufacturerFactory;
 
     public ManufacturerConverter(IManufacturerFactory manufacturerFactory)
     {
-        this.manufacturerFactory = manufacturerFactory;
+        _manufacturerFactory = manufacturerFactory;
     }
 
     public IManufacturer ToDomain(Entities.Manufacturer source)
@@ -18,7 +18,7 @@ public class ManufacturerConverter : IToDomainConverter<Entities.Manufacturer, I
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        return manufacturerFactory.Create(
+        return _manufacturerFactory.Create(
             new ManufacturerId(source.Id),
             source.Name,
             source.Deleted);

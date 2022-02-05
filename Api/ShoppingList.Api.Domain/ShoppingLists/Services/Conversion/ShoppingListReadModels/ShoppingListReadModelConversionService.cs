@@ -33,7 +33,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
     public async Task<ShoppingListReadModel> ConvertAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
     {
         if (shoppingList is null)
-            throw new System.ArgumentNullException(nameof(shoppingList));
+            throw new ArgumentNullException(nameof(shoppingList));
 
         var itemIds = shoppingList.Items.Select(i => i.Id);
         var itemsDict = (await _itemRepository.FindByAsync(itemIds, cancellationToken))

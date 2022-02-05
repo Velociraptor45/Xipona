@@ -4,11 +4,11 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
 
 public class CommandDispatcher : ICommandDispatcher
 {
-    private readonly IServiceProvider serviceProvider;
+    private readonly IServiceProvider _serviceProvider;
 
     public CommandDispatcher(IServiceProvider serviceProvider)
     {
-        this.serviceProvider = serviceProvider;
+        _serviceProvider = serviceProvider;
     }
 
     public Task<T> DispatchAsync<T>(ICommand<T> command, CancellationToken cancellationToken)
@@ -20,7 +20,7 @@ public class CommandDispatcher : ICommandDispatcher
             .First();
 
         var serviceType = typeof(ICommandHandler<,>).MakeGenericType(command.GetType(), valueType);
-        var service = serviceProvider.GetService(serviceType);
+        var service = _serviceProvider.GetService(serviceType);
         var method = serviceType.GetMethod("HandleAsync");
 
         if (method is null)

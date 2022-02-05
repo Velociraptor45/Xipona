@@ -12,13 +12,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
 
 public class ShoppingListTests
 {
-    private readonly CommonFixture commonFixture;
-    private readonly ShoppingListSectionMockFixture shoppingListSectionMockFixture;
+    private readonly CommonFixture _commonFixture;
+    private readonly ShoppingListSectionMockFixture _shoppingListSectionMockFixture;
 
     public ShoppingListTests()
     {
-        commonFixture = new CommonFixture();
-        shoppingListSectionMockFixture = new ShoppingListSectionMockFixture();
+        _commonFixture = new CommonFixture();
+        _shoppingListSectionMockFixture = new ShoppingListSectionMockFixture();
     }
 
     #region AddItem
@@ -28,7 +28,7 @@ public class ShoppingListTests
     {
         // Arrange
         var shoppingList = ShoppingListMother.ThreeSections().Create();
-        SectionId sectionId = new SectionId(commonFixture.NextInt());
+        SectionId sectionId = new SectionId(_commonFixture.NextInt());
 
         // Act
         Action action = () => shoppingList.AddItem(null, sectionId);
@@ -45,10 +45,10 @@ public class ShoppingListTests
     {
         // Arrange
         var shoppingList = ShoppingListMother.ThreeSections().Create();
-        var chosenItem = commonFixture.ChooseRandom(shoppingList.Items);
+        var chosenItem = _commonFixture.ChooseRandom(shoppingList.Items);
 
         var collidingItem = new ShoppingListItemBuilder().WithId(chosenItem.Id).WithTypeId(chosenItem.TypeId).Create();
-        SectionId sectionId = new SectionId(commonFixture.NextInt());
+        SectionId sectionId = new SectionId(_commonFixture.NextInt());
 
         // Act
         Action action = () => shoppingList.AddItem(collidingItem, sectionId);
@@ -67,7 +67,7 @@ public class ShoppingListTests
         IShoppingList shoppingList = ShoppingListMother.ThreeSections().Create();
         IShoppingListItem item = new ShoppingListItemBuilder().Create();
         var existingSectionIds = shoppingList.Sections.Select(s => s.Id.Value);
-        int sectionId = commonFixture.NextInt(exclude: existingSectionIds);
+        int sectionId = _commonFixture.NextInt(exclude: existingSectionIds);
 
         // Act
         Action action = () => shoppingList.AddItem(item, new SectionId(sectionId));
@@ -84,12 +84,12 @@ public class ShoppingListTests
     public void AddItem_WithValidItemWithActualId_ShouldAddItemToList()
     {
         // Arrange
-        var sectionMocks = shoppingListSectionMockFixture.CreateMany(3).ToList();
+        var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
         var shoppingList = ShoppingListMother.Initial()
             .WithSections(sectionMocks.Select(s => s.Object))
             .Create();
 
-        ShoppingListSectionMock chosenSection = commonFixture.ChooseRandom(sectionMocks);
+        ShoppingListSectionMock chosenSection = _commonFixture.ChooseRandom(sectionMocks);
         IShoppingListItem item = new ShoppingListItemBuilder().Create();
 
         // Act
@@ -110,14 +110,14 @@ public class ShoppingListTests
     public void RemoveItem_WithItemIdNotOnList_ShouldDoNothing()
     {
         // Arrange
-        var sectionMocks = shoppingListSectionMockFixture.CreateMany(2).ToList();
+        var sectionMocks = _shoppingListSectionMockFixture.CreateMany(2).ToList();
         sectionMocks.ForEach(m => m.SetupContainsItem(false));
         var list = ShoppingListMother.Initial()
             .WithSections(sectionMocks.Select(s => s.Object))
             .Create();
 
         var itemIdsToExclude = list.Items.Select(i => i.Id.Value);
-        var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
+        var shoppingListItemId = new ItemId(_commonFixture.NextInt(itemIdsToExclude));
 
         // Act
         list.RemoveItem(shoppingListItemId);
@@ -136,13 +136,13 @@ public class ShoppingListTests
     public void RemoveItem_WithValidItemId_ShouldRemoveItemFromList()
     {
         // Arrange
-        var sectionMocks = shoppingListSectionMockFixture.CreateMany(3).ToList();
+        var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
         var shoppingList = ShoppingListMother.Initial()
             .WithSections(sectionMocks.Select(s => s.Object))
             .Create();
 
-        ShoppingListSectionMock chosenSectionMock = commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+        ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
+        IShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
         foreach (var sectionMock in sectionMocks)
             sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
@@ -174,7 +174,7 @@ public class ShoppingListTests
         // Arrange
         var list = ShoppingListMother.ThreeSections().Create();
         var itemIdsToExclude = list.Items.Select(i => i.Id.Value);
-        var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
+        var shoppingListItemId = new ItemId(_commonFixture.NextInt(itemIdsToExclude));
 
         // Act
         Action action = () => list.PutItemInBasket(shoppingListItemId);
@@ -191,13 +191,13 @@ public class ShoppingListTests
     public void PutItemInBasket_WithValidItemId_ShouldPutItemInBasket()
     {
         // Arrange
-        var sectionMocks = shoppingListSectionMockFixture.CreateMany(3).ToList();
+        var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
         var shoppingList = ShoppingListMother.Initial()
             .WithSections(sectionMocks.Select(s => s.Object))
             .Create();
 
-        ShoppingListSectionMock chosenSectionMock = commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+        ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
+        IShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
         foreach (var sectionMock in sectionMocks)
             sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
@@ -229,7 +229,7 @@ public class ShoppingListTests
         // Arrange
         var list = ShoppingListMother.ThreeSections().Create();
         var itemIdsToExclude = list.Items.Select(i => i.Id.Value);
-        var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
+        var shoppingListItemId = new ItemId(_commonFixture.NextInt(itemIdsToExclude));
 
         // Act
         Action action = () => list.RemoveFromBasket(shoppingListItemId, null);
@@ -246,13 +246,13 @@ public class ShoppingListTests
     public void RemoveFromBasket_WithValidItemId_ShouldRemoveItemFromList()
     {
         // Arrange
-        var sectionMocks = shoppingListSectionMockFixture.CreateMany(3).ToList();
+        var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
         var shoppingList = ShoppingListMother.Initial()
             .WithSections(sectionMocks.Select(s => s.Object))
             .Create();
 
-        ShoppingListSectionMock chosenSectionMock = commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+        ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
+        IShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
         foreach (var sectionMock in sectionMocks)
             sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
@@ -284,10 +284,10 @@ public class ShoppingListTests
         // Arrange
         var list = ShoppingListMother.ThreeSections().Create();
         var itemIdsToExclude = list.Items.Select(i => i.Id.Value);
-        var shoppingListItemId = new ItemId(commonFixture.NextInt(itemIdsToExclude));
+        var shoppingListItemId = new ItemId(_commonFixture.NextInt(itemIdsToExclude));
 
         // Act
-        Action action = () => list.ChangeItemQuantity(shoppingListItemId, null, commonFixture.NextFloat());
+        Action action = () => list.ChangeItemQuantity(shoppingListItemId, null, _commonFixture.NextFloat());
 
         // Assert
         using (new AssertionScope())
@@ -302,10 +302,10 @@ public class ShoppingListTests
     {
         // Arrange
         var shoppinglist = ShoppingListMother.ThreeSections().Create();
-        var chosenShoppingListItem = commonFixture.ChooseRandom(shoppinglist.Items);
+        var chosenShoppingListItem = _commonFixture.ChooseRandom(shoppinglist.Items);
 
         // Act
-        Action action = () => shoppinglist.ChangeItemQuantity(chosenShoppingListItem.Id, null, -commonFixture.NextFloat());
+        Action action = () => shoppinglist.ChangeItemQuantity(chosenShoppingListItem.Id, null, -_commonFixture.NextFloat());
 
         // Assert
         using (new AssertionScope())
@@ -319,20 +319,20 @@ public class ShoppingListTests
     public void ChangeItemQuantity_WithValidItemId_ShouldChangeQuantity()
     {
         // Arrange
-        var sectionMocks = shoppingListSectionMockFixture.CreateMany(3).ToList();
+        var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
         var shoppingList = ShoppingListMother.Initial()
             .WithSections(sectionMocks.Select(s => s.Object))
             .Create();
 
-        ShoppingListSectionMock chosenSectionMock = commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem chosenItem = commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+        ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
+        IShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
         foreach (var sectionMock in sectionMocks)
         {
             sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId, sectionMock.IsSameOrEqualTo(chosenSectionMock));
         }
 
-        float quantity = commonFixture.NextFloat();
+        float quantity = _commonFixture.NextFloat();
 
         // Act
         shoppingList.ChangeItemQuantity(chosenItem.Id, chosenItem.TypeId, quantity);
@@ -358,7 +358,7 @@ public class ShoppingListTests
     public void Finish_WithCompletedShoppingList_ShouldThrowDomainException()
     {
         // Arrange
-        var fixture = commonFixture.GetNewFixture();
+        var fixture = _commonFixture.GetNewFixture();
         var shoppingList = ShoppingListMother.Completed().Create();
 
         DateTime completionDate = fixture.Create<DateTime>();
@@ -382,7 +382,7 @@ public class ShoppingListTests
         var itemsInBasket = shoppingList.Items.Where(i => i.IsInBasket);
         var itemsNotInBasket = shoppingList.Items.Where(i => !i.IsInBasket);
 
-        DateTime completionDate = commonFixture.GetNewFixture().Create<DateTime>();
+        DateTime completionDate = _commonFixture.GetNewFixture().Create<DateTime>();
 
         // Act
         IShoppingList result = shoppingList.Finish(completionDate);
@@ -420,7 +420,7 @@ public class ShoppingListTests
     public void AddSection_WithSectionAlreadyInShoppingList_ShouldThrowDomainException()
     {
         IShoppingList shoppingList = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
-        IShoppingListSection section = commonFixture.ChooseRandom(shoppingList.Sections);
+        IShoppingListSection section = _commonFixture.ChooseRandom(shoppingList.Sections);
 
         // Act
         Action action = () => shoppingList.AddSection(section);
@@ -439,7 +439,7 @@ public class ShoppingListTests
         IShoppingList shoppingList = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
         var existingSectionIds = shoppingList.Sections.Select(s => s.Id.Value);
 
-        var sectionId = new SectionId(commonFixture.NextInt(existingSectionIds));
+        var sectionId = new SectionId(_commonFixture.NextInt(existingSectionIds));
         IShoppingListSection section = new ShoppingListSectionBuilder().WithId(sectionId).Create();
 
         // Act

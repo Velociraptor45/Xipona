@@ -7,17 +7,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.ItemCateg
 
 public class ItemCategorySearchQueryHandler : IQueryHandler<ItemCategorySearchQuery, IEnumerable<ItemCategoryReadModel>>
 {
-    private readonly IItemCategoryRepository itemCategoryRepository;
+    private readonly IItemCategoryRepository _itemCategoryRepository;
 
     public ItemCategorySearchQueryHandler(IItemCategoryRepository itemCategoryRepository)
     {
-        this.itemCategoryRepository = itemCategoryRepository;
+        _itemCategoryRepository = itemCategoryRepository;
     }
 
     public async Task<IEnumerable<ItemCategoryReadModel>> HandleAsync(ItemCategorySearchQuery query,
         CancellationToken cancellationToken)
     {
-        var itemCategoryModels = await itemCategoryRepository.FindByAsync(query.SearchInput,
+        var itemCategoryModels = await _itemCategoryRepository.FindByAsync(query.SearchInput,
             cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();

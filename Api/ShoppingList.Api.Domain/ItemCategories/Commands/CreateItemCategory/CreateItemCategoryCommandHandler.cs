@@ -7,14 +7,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.CreateIt
 
 public class CreateItemCategoryCommandHandler : ICommandHandler<CreateItemCategoryCommand, bool>
 {
-    private readonly IItemCategoryRepository itemCategoryRepository;
-    private readonly IItemCategoryFactory itemCategoryFactory;
+    private readonly IItemCategoryRepository _itemCategoryRepository;
+    private readonly IItemCategoryFactory _itemCategoryFactory;
 
     public CreateItemCategoryCommandHandler(IItemCategoryRepository itemCategoryRepository,
         IItemCategoryFactory itemCategoryFactory)
     {
-        this.itemCategoryRepository = itemCategoryRepository;
-        this.itemCategoryFactory = itemCategoryFactory;
+        _itemCategoryRepository = itemCategoryRepository;
+        _itemCategoryFactory = itemCategoryFactory;
     }
 
     public async Task<bool> HandleAsync(CreateItemCategoryCommand command, CancellationToken cancellationToken)
@@ -24,8 +24,8 @@ public class CreateItemCategoryCommandHandler : ICommandHandler<CreateItemCatego
             throw new ArgumentNullException(nameof(command));
         }
 
-        var model = itemCategoryFactory.Create(ItemCategoryId.New, command.Name, false);
-        await itemCategoryRepository.StoreAsync(model, cancellationToken);
+        var model = _itemCategoryFactory.Create(ItemCategoryId.New, command.Name, false);
+        await _itemCategoryRepository.StoreAsync(model, cancellationToken);
         return true;
     }
 }

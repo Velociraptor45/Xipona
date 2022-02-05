@@ -9,16 +9,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem;
 
 public class DeleteItemCommandHandler : ICommandHandler<DeleteItemCommand, bool>
 {
-    private readonly IItemRepository itemRepository;
-    private readonly IShoppingListRepository shoppingListRepository;
-    private readonly ITransactionGenerator transactionGenerator;
+    private readonly IItemRepository _itemRepository;
+    private readonly IShoppingListRepository _shoppingListRepository;
+    private readonly ITransactionGenerator _transactionGenerator;
 
     public DeleteItemCommandHandler(IItemRepository itemRepository, IShoppingListRepository shoppingListRepository,
         ITransactionGenerator transactionGenerator)
     {
-        this.itemRepository = itemRepository;
-        this.shoppingListRepository = shoppingListRepository;
-        this.transactionGenerator = transactionGenerator;
+        _itemRepository = itemRepository;
+        _shoppingListRepository = shoppingListRepository;
+        _transactionGenerator = transactionGenerator;
     }
 
     public async Task<bool> HandleAsync(DeleteItemCommand command, CancellationToken cancellationToken)
@@ -26,15 +26,15 @@ public class DeleteItemCommandHandler : ICommandHandler<DeleteItemCommand, bool>
         if (command is null)
             throw new ArgumentNullException(nameof(command));
 
-        var item = await itemRepository.FindByAsync(command.ItemId, cancellationToken);
+        var item = await _itemRepository.FindByAsync(command.ItemId, cancellationToken);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(command.ItemId));
 
         item.Delete();
-        var listsWithItem = (await shoppingListRepository.FindActiveByAsync(item.Id, cancellationToken)).ToList();
+        var listsWithItem = (await _shoppingListRepository.FindActiveByAsync(item.Id, cancellationToken)).ToList();
 
-        using var transaction = await transactionGenerator.GenerateAsync(cancellationToken);
-        await itemRepository.StoreAsync(item, cancellationToken);
+        using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
+        await _itemRepository.StoreAsync(item, cancellationToken);
 
         foreach (var list in listsWithItem)
         {
@@ -52,7 +52,7 @@ public class DeleteItemCommandHandler : ICommandHandler<DeleteItemCommand, bool>
                 list.RemoveItem(item.Id);
             }
 
-            await shoppingListRepository.StoreAsync(list, cancellationToken);
+            await _shoppingListRepository.StoreAsync(list, cancellationToken);
         }
 
         await transaction.CommitAsync(cancellationToken);

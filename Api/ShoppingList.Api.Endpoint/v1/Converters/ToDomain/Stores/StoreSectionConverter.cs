@@ -7,11 +7,11 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Stores;
 
 public class StoreSectionConverter : IToDomainConverter<StoreSectionContract, IStoreSection>
 {
-    private readonly IStoreSectionFactory storeSectionFactory;
+    private readonly IStoreSectionFactory _storeSectionFactory;
 
     public StoreSectionConverter(IStoreSectionFactory storeSectionFactory)
     {
-        this.storeSectionFactory = storeSectionFactory;
+        _storeSectionFactory = storeSectionFactory;
     }
 
     public IStoreSection ToDomain(StoreSectionContract source)
@@ -19,7 +19,7 @@ public class StoreSectionConverter : IToDomainConverter<StoreSectionContract, IS
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        return storeSectionFactory.Create(
+        return _storeSectionFactory.Create(
             new SectionId(source.Id),
             source.Name,
             source.SortingIndex,

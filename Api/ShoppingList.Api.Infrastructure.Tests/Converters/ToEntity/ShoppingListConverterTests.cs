@@ -40,6 +40,6 @@ public class ShoppingListConverterTests : ToEntityConverterTestBase<IShoppingLis
 
     protected override void SetupServiceCollection()
     {
-        serviceCollection.AddImplementationOfGenericType(typeof(ShoppingListConverter).Assembly, typeof(IToEntityConverter<,>));
+        ServiceCollection.AddImplementationOfGenericType(typeof(ShoppingListConverter).Assembly, typeof(IToEntityConverter<,>));
     }
 }

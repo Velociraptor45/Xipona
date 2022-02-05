@@ -8,17 +8,17 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters;
 
 public class StoreRepository : IStoreRepository
 {
-    private readonly StoreContext dbContext;
-    private readonly IToDomainConverter<Entities.Store, IStore> toDomainConverter;
-    private readonly IToEntityConverter<IStore, Entities.Store> toEntityConverter;
+    private readonly StoreContext _dbContext;
+    private readonly IToDomainConverter<Entities.Store, IStore> _toDomainConverter;
+    private readonly IToEntityConverter<IStore, Entities.Store> _toEntityConverter;
 
     public StoreRepository(StoreContext dbContext,
         IToDomainConverter<Entities.Store, IStore> toDomainConverter,
         IToEntityConverter<IStore, Entities.Store> toEntityConverter)
     {
-        this.dbContext = dbContext;
-        this.toDomainConverter = toDomainConverter;
-        this.toEntityConverter = toEntityConverter;
+        _dbContext = dbContext;
+        _toDomainConverter = toDomainConverter;
+        _toEntityConverter = toEntityConverter;
     }
 
     public async Task<IEnumerable<IStore>> GetAsync(CancellationToken cancellationToken)
@@ -29,7 +29,7 @@ public class StoreRepository : IStoreRepository
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        return toDomainConverter.ToDomain(storeEntities);
+        return _toDomainConverter.ToDomain(storeEntities);
     }
 
     public async Task<IStore?> FindActiveByAsync(StoreId id, CancellationToken cancellationToken)
@@ -45,7 +45,7 @@ public class StoreRepository : IStoreRepository
         if (entity == null)
             return null;
 
-        return toDomainConverter.ToDomain(entity);
+        return _toDomainConverter.ToDomain(entity);
     }
 
     public async Task<IStore?> FindByAsync(StoreId id, CancellationToken cancellationToken)
@@ -57,7 +57,7 @@ public class StoreRepository : IStoreRepository
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        return entity == null ? null : toDomainConverter.ToDomain(entity);
+        return entity == null ? null : _toDomainConverter.ToDomain(entity);
     }
 
     public async Task<IEnumerable<IStore>> FindByAsync(IEnumerable<StoreId> ids, CancellationToken cancellationToken)
@@ -75,7 +75,7 @@ public class StoreRepository : IStoreRepository
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        return toDomainConverter.ToDomain(entities);
+        return _toDomainConverter.ToDomain(entities);
     }
 
     public async Task<IStore> StoreAsync(IStore store, CancellationToken cancellationToken)
@@ -99,28 +99,28 @@ public class StoreRepository : IStoreRepository
 
     private async Task<IStore> StoreAsNew(IStore store, CancellationToken cancellationToken)
     {
-        var entity = toEntityConverter.ToEntity(store);
-        dbContext.Entry(entity).State = EntityState.Added;
+        var entity = _toEntityConverter.ToEntity(store);
+        _dbContext.Entry(entity).State = EntityState.Added;
 
         foreach (var section in entity.Sections)
         {
-            dbContext.Entry(section).State = EntityState.Added;
+            _dbContext.Entry(section).State = EntityState.Added;
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return toDomainConverter.ToDomain(entity);
+        return _toDomainConverter.ToDomain(entity);
     }
 
     private async Task<IStore> StoreAsModified(IStore store, CancellationToken cancellationToken)
     {
         var existingEntity = await FindEntityById(store.Id.Value, cancellationToken);
         var existingSections = existingEntity.Sections.ToDictionary(s => s.Id);
-        var incomingEntity = toEntityConverter.ToEntity(store);
+        var incomingEntity = _toEntityConverter.ToEntity(store);
 
-        dbContext.Entry(incomingEntity).State = EntityState.Modified;
+        _dbContext.Entry(incomingEntity).State = EntityState.Modified;
 
         foreach (var section in incomingEntity.Sections)
         {
@@ -128,13 +128,13 @@ public class StoreRepository : IStoreRepository
             if (existingSections.ContainsKey(section.Id))
             {
                 // section was modified
-                dbContext.Entry(section).State = EntityState.Modified;
+                _dbContext.Entry(section).State = EntityState.Modified;
                 existingSections.Remove(section.Id);
             }
             else
             {
                 // section was added
-                dbContext.Entry(section).State = EntityState.Added;
+                _dbContext.Entry(section).State = EntityState.Added;
             }
         }
 
@@ -142,21 +142,21 @@ public class StoreRepository : IStoreRepository
 
         foreach (var section in existingSections.Values)
         {
-            dbContext.Entry(section).State = EntityState.Deleted;
+            _dbContext.Entry(section).State = EntityState.Deleted;
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return toDomainConverter.ToDomain(incomingEntity);
+        return _toDomainConverter.ToDomain(incomingEntity);
     }
 
     private async Task<Entities.Store> FindEntityById(int id, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var store = await dbContext.Stores.AsNoTracking()
+        var store = await _dbContext.Stores.AsNoTracking()
             .Include(s => s.Sections)
             .Where(store => !store.Deleted)
             .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
@@ -169,7 +169,7 @@ public class StoreRepository : IStoreRepository
 
     private IQueryable<Entities.Store> GetStoreQuery()
     {
-        return dbContext.Stores.AsNoTracking()
+        return _dbContext.Stores.AsNoTracking()
             .Include(s => s.Sections);
     }
 

@@ -7,14 +7,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Converters.ToDoma
 
 public class StoreConverter : IToDomainConverter<Entities.Store, IStore>
 {
-    private readonly IStoreFactory storeFactory;
-    private readonly IToDomainConverter<Section, IStoreSection> storeSectionConverter;
+    private readonly IStoreFactory _storeFactory;
+    private readonly IToDomainConverter<Section, IStoreSection> _storeSectionConverter;
 
     public StoreConverter(IStoreFactory storeFactory,
         IToDomainConverter<Section, IStoreSection> storeSectionConverter)
     {
-        this.storeFactory = storeFactory;
-        this.storeSectionConverter = storeSectionConverter;
+        _storeFactory = storeFactory;
+        _storeSectionConverter = storeSectionConverter;
     }
 
     public IStore ToDomain(Entities.Store source)
@@ -22,9 +22,9 @@ public class StoreConverter : IToDomainConverter<Entities.Store, IStore>
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        List<IStoreSection> sections = storeSectionConverter.ToDomain(source.Sections).ToList();
+        List<IStoreSection> sections = _storeSectionConverter.ToDomain(source.Sections).ToList();
 
-        return storeFactory.Create(
+        return _storeFactory.Create(
             new StoreId(source.Id),
             source.Name,
             source.Deleted,

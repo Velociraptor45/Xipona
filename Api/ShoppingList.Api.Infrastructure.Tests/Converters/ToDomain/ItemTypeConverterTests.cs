@@ -35,7 +35,7 @@ public class ItemTypeConverterTests : ToDomainConverterTestBase<ProjectHermes.Sh
 
     protected override void SetupServiceCollection()
     {
-        AddDependencies(serviceCollection);
+        AddDependencies(ServiceCollection);
     }
 
     public static void AddDependencies(IServiceCollection serviceCollection)

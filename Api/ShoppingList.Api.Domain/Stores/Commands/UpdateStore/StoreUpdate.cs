@@ -8,7 +8,7 @@ public class StoreUpdate
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new System.ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
+            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
         }
 
         Id = id;

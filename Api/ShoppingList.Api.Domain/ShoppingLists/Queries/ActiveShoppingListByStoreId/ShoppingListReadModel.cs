@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShop
 
 public class ShoppingListReadModel
 {
-    private readonly IEnumerable<ShoppingListSectionReadModel> sections;
+    private readonly IEnumerable<ShoppingListSectionReadModel> _sections;
 
     public ShoppingListReadModel(ShoppingListId id, DateTime? completionDate, ShoppingListStoreReadModel store,
         IEnumerable<ShoppingListSectionReadModel> sections)
@@ -12,11 +12,11 @@ public class ShoppingListReadModel
         Id = id;
         CompletionDate = completionDate;
         Store = store;
-        this.sections = sections;
+        _sections = sections;
     }
 
     public ShoppingListId Id { get; }
     public DateTime? CompletionDate { get; }
     public ShoppingListStoreReadModel Store { get; }
-    public IReadOnlyCollection<ShoppingListSectionReadModel> Sections => sections.ToList().AsReadOnly();
+    public IReadOnlyCollection<ShoppingListSectionReadModel> Sections => _sections.ToList().AsReadOnly();
 }

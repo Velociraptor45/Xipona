@@ -9,14 +9,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.RemoveIte
 
 public class RemoveItemFromBasketCommandHandler : ICommandHandler<RemoveItemFromBasketCommand, bool>
 {
-    private readonly IShoppingListRepository shoppingListRepository;
-    private readonly IItemRepository itemRepository;
+    private readonly IShoppingListRepository _shoppingListRepository;
+    private readonly IItemRepository _itemRepository;
 
     public RemoveItemFromBasketCommandHandler(IShoppingListRepository shoppingListRepository,
         IItemRepository itemRepository)
     {
-        this.shoppingListRepository = shoppingListRepository;
-        this.itemRepository = itemRepository;
+        _shoppingListRepository = shoppingListRepository;
+        _itemRepository = itemRepository;
     }
 
     public async Task<bool> HandleAsync(RemoveItemFromBasketCommand command, CancellationToken cancellationToken)
@@ -24,7 +24,7 @@ public class RemoveItemFromBasketCommandHandler : ICommandHandler<RemoveItemFrom
         if (command == null)
             throw new ArgumentNullException(nameof(command));
 
-        var list = await shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
+        var list = await _shoppingListRepository.FindByAsync(command.ShoppingListId, cancellationToken);
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(command.ShoppingListId));
 
@@ -39,7 +39,7 @@ public class RemoveItemFromBasketCommandHandler : ICommandHandler<RemoveItemFrom
                 throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
 
             var temporaryId = new TemporaryItemId(command.OfflineTolerantItemId.OfflineId!.Value);
-            IStoreItem? item = await itemRepository.FindByAsync(temporaryId, cancellationToken);
+            IStoreItem? item = await _itemRepository.FindByAsync(temporaryId, cancellationToken);
 
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryId));
@@ -49,7 +49,7 @@ public class RemoveItemFromBasketCommandHandler : ICommandHandler<RemoveItemFrom
 
         list.RemoveFromBasket(itemId, command.ItemTypeId);
 
-        await shoppingListRepository.StoreAsync(list, cancellationToken);
+        await _shoppingListRepository.StoreAsync(list, cancellationToken);
         return true;
     }
 }

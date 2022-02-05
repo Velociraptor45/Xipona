@@ -8,9 +8,9 @@ public class ConstructorArgumentRelay<TTarget, TValueType> : ISpecimenBuilder
     private readonly string _paramName;
     private readonly TValueType _value;
 
-    public ConstructorArgumentRelay(string ParamName, TValueType value)
+    public ConstructorArgumentRelay(string paramName, TValueType value)
     {
-        _paramName = ParamName;
+        _paramName = paramName;
         _value = value;
     }
 

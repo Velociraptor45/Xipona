@@ -16,8 +16,8 @@ public class ChangeItemQuantityOnShoppingListCommandHandler
     public ChangeItemQuantityOnShoppingListCommandHandler(IShoppingListRepository shoppingListRepository,
         IItemRepository itemRepository)
     {
-        this._shoppingListRepository = shoppingListRepository;
-        this._itemRepository = itemRepository;
+        _shoppingListRepository = shoppingListRepository;
+        _itemRepository = itemRepository;
     }
 
     public async Task<bool> HandleAsync(ChangeItemQuantityOnShoppingListCommand command, CancellationToken cancellationToken)

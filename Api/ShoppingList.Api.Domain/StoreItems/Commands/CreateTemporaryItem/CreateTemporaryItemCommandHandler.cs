@@ -8,16 +8,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTempor
 
 public class CreateTemporaryItemCommandHandler : ICommandHandler<CreateTemporaryItemCommand, bool>
 {
-    private readonly IItemRepository itemRepository;
-    private readonly IStoreItemFactory storeItemFactory;
-    private readonly IAvailabilityValidationService availabilityValidationService;
+    private readonly IItemRepository _itemRepository;
+    private readonly IStoreItemFactory _storeItemFactory;
+    private readonly IAvailabilityValidationService _availabilityValidationService;
 
     public CreateTemporaryItemCommandHandler(IItemRepository itemRepository, IStoreItemFactory storeItemFactory,
         IAvailabilityValidationService availabilityValidationService)
     {
-        this.itemRepository = itemRepository;
-        this.storeItemFactory = storeItemFactory;
-        this.availabilityValidationService = availabilityValidationService;
+        _itemRepository = itemRepository;
+        _storeItemFactory = storeItemFactory;
+        _availabilityValidationService = availabilityValidationService;
     }
 
     public async Task<bool> HandleAsync(CreateTemporaryItemCommand command, CancellationToken cancellationToken)
@@ -28,11 +28,11 @@ public class CreateTemporaryItemCommandHandler : ICommandHandler<CreateTemporary
         }
 
         var availability = command.TemporaryItemCreation.Availability;
-        await availabilityValidationService.ValidateAsync(availability.ToMonoList(), cancellationToken);
+        await _availabilityValidationService.ValidateAsync(availability.ToMonoList(), cancellationToken);
 
-        var storeItem = storeItemFactory.Create(command.TemporaryItemCreation);
+        var storeItem = _storeItemFactory.Create(command.TemporaryItemCreation);
 
-        await itemRepository.StoreAsync(storeItem, cancellationToken);
+        await _itemRepository.StoreAsync(storeItem, cancellationToken);
         return true;
     }
 }

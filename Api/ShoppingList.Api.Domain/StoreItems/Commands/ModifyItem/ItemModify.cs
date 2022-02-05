@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 
 public class ItemModify
 {
-    private readonly IEnumerable<IStoreItemAvailability> availabilities;
+    private readonly IEnumerable<IStoreItemAvailability> _availabilities;
 
     public ItemModify(ItemId id, string name, string comment,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
@@ -16,7 +16,7 @@ public class ItemModify
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new System.ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
+            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
         }
 
         Id = id;
@@ -27,7 +27,7 @@ public class ItemModify
         QuantityTypeInPacket = quantityTypeInPacket;
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
-        this.availabilities = availabilities ?? throw new System.ArgumentNullException(nameof(availabilities));
+        _availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
     }
 
     public ItemId Id { get; }
@@ -39,5 +39,5 @@ public class ItemModify
     public ItemCategoryId ItemCategoryId { get; }
     public ManufacturerId? ManufacturerId { get; }
 
-    public IReadOnlyCollection<IStoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
+    public IReadOnlyCollection<IStoreItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
 }

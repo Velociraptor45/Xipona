@@ -4,11 +4,11 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
 
 public class QueryDispatcher : IQueryDispatcher
 {
-    private readonly IServiceProvider serviceProvider;
+    private readonly IServiceProvider _serviceProvider;
 
     public QueryDispatcher(IServiceProvider serviceProvider)
     {
-        this.serviceProvider = serviceProvider;
+        _serviceProvider = serviceProvider;
     }
 
     public Task<T> DispatchAsync<T>(IQuery<T> query, CancellationToken cancellationToken)
@@ -20,7 +20,7 @@ public class QueryDispatcher : IQueryDispatcher
             .First();
 
         var serviceType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), valueType);
-        var service = serviceProvider.GetService(serviceType);
+        var service = _serviceProvider.GetService(serviceType);
         var method = serviceType.GetMethod("HandleAsync");
 
         if (method is null)

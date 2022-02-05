@@ -8,11 +8,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 
 public class AvailabilityValidationService : IAvailabilityValidationService
 {
-    private readonly IStoreRepository storeRepository;
+    private readonly IStoreRepository _storeRepository;
 
     public AvailabilityValidationService(IStoreRepository storeRepository)
     {
-        this.storeRepository = storeRepository;
+        _storeRepository = storeRepository;
     }
 
     public async Task ValidateAsync(IEnumerable<IStoreItemAvailability> availabilities, CancellationToken cancellationToken)
@@ -26,7 +26,7 @@ public class AvailabilityValidationService : IAvailabilityValidationService
         if (!storeIds.SequenceEqual(storeIds.Distinct()))
             throw new DomainException(new MultipleAvailabilitiesForStoreReason());
 
-        var storesDict = (await storeRepository.FindByAsync(storeIds, cancellationToken))
+        var storesDict = (await _storeRepository.FindByAsync(storeIds, cancellationToken))
             .ToDictionary(s => s.Id);
 
         foreach (var availability in availabilitiesList)

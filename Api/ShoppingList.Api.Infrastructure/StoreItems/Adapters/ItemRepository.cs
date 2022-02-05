@@ -12,16 +12,16 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters;
 
 public class ItemRepository : IItemRepository
 {
-    private readonly ItemContext dbContext;
-    private readonly IToDomainConverter<Item, IStoreItem> toModelConverter;
-    private readonly IToEntityConverter<IStoreItem, Item> toEntityConverter;
+    private readonly ItemContext _dbContext;
+    private readonly IToDomainConverter<Item, IStoreItem> _toModelConverter;
+    private readonly IToEntityConverter<IStoreItem, Item> _toEntityConverter;
 
     public ItemRepository(ItemContext dbContext, IToDomainConverter<Item, IStoreItem> toModelConverter,
         IToEntityConverter<IStoreItem, Item> toEntityConverter)
     {
-        this.dbContext = dbContext;
-        this.toModelConverter = toModelConverter;
-        this.toEntityConverter = toEntityConverter;
+        _dbContext = dbContext;
+        _toModelConverter = toModelConverter;
+        _toEntityConverter = toEntityConverter;
     }
 
     #region public methods
@@ -40,7 +40,7 @@ public class ItemRepository : IItemRepository
 
         itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
 
-        return toModelConverter.ToDomain(itemEntity);
+        return _toModelConverter.ToDomain(itemEntity);
     }
 
     public async Task<IStoreItem?> FindByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
@@ -58,7 +58,7 @@ public class ItemRepository : IItemRepository
 
         itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
 
-        return toModelConverter.ToDomain(itemEntity);
+        return _toModelConverter.ToDomain(itemEntity);
     }
 
     public async Task<IEnumerable<IStoreItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
@@ -74,7 +74,7 @@ public class ItemRepository : IItemRepository
             item.Predecessor = await LoadPredecessorsAsync(item);
         }
 
-        return toModelConverter.ToDomain(entities);
+        return _toModelConverter.ToDomain(entities);
     }
 
     public async Task<IEnumerable<IStoreItem>> FindByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken)
@@ -95,7 +95,7 @@ public class ItemRepository : IItemRepository
             item.Predecessor = await LoadPredecessorsAsync(item);
         }
 
-        return toModelConverter.ToDomain(entities);
+        return _toModelConverter.ToDomain(entities);
     }
 
     public async Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
@@ -136,7 +136,7 @@ public class ItemRepository : IItemRepository
             item.Predecessor = await LoadPredecessorsAsync(item);
         }
 
-        return toModelConverter.ToDomain(filteredResultByStore);
+        return _toModelConverter.ToDomain(filteredResultByStore);
     }
 
     public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, StoreId storeId,
@@ -158,7 +158,7 @@ public class ItemRepository : IItemRepository
             item.Predecessor = await LoadPredecessorsAsync(item);
         }
 
-        return toModelConverter.ToDomain(entities);
+        return _toModelConverter.ToDomain(entities);
     }
 
     public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(ItemCategoryId itemCategoryId,
@@ -179,7 +179,7 @@ public class ItemRepository : IItemRepository
             item.Predecessor = await LoadPredecessorsAsync(item);
         }
 
-        return toModelConverter.ToDomain(entities);
+        return _toModelConverter.ToDomain(entities);
     }
 
     public async Task<IStoreItem> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken)
@@ -193,31 +193,31 @@ public class ItemRepository : IItemRepository
 
         if (existingEntity == null)
         {
-            var newEntity = toEntityConverter.ToEntity(storeItem);
-            dbContext.Add(newEntity);
+            var newEntity = _toEntityConverter.ToEntity(storeItem);
+            _dbContext.Add(newEntity);
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             var e = GetItemQuery().First(i => i.Id == newEntity.Id);
             e.Predecessor = await LoadPredecessorsAsync(e);
-            return toModelConverter.ToDomain(e);
+            return _toModelConverter.ToDomain(e);
         }
         else
         {
-            var updatedEntity = toEntityConverter.ToEntity(storeItem);
-            dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
-            dbContext.Entry(existingEntity).State = EntityState.Modified;
+            var updatedEntity = _toEntityConverter.ToEntity(storeItem);
+            _dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
+            _dbContext.Entry(existingEntity).State = EntityState.Modified;
 
             UpdateOrAddAvailabilities(existingEntity, updatedEntity);
             DeleteAvailabilities(existingEntity, updatedEntity);
             UpdateOrAddItemTypes(existingEntity, updatedEntity);
             DeleteItemTypes(existingEntity, updatedEntity);
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             var e = GetItemQuery().First(i => i.Id == updatedEntity.Id);
             e.Predecessor = await LoadPredecessorsAsync(e);
-            return toModelConverter.ToDomain(e);
+            return _toModelConverter.ToDomain(e);
         }
     }
 
@@ -227,7 +227,7 @@ public class ItemRepository : IItemRepository
 
     private IQueryable<Item> GetItemQuery()
     {
-        return dbContext.Items.AsNoTracking()
+        return _dbContext.Items.AsNoTracking()
             .Include(item => item.AvailableAt)
             .Include(item => item.ItemTypes)
             .ThenInclude(itemType => itemType.AvailableAt)
@@ -251,7 +251,7 @@ public class ItemRepository : IItemRepository
 
     private async Task<Item?> FindTrackedEntityBy(ItemId id)
     {
-        return await dbContext.Items
+        return await _dbContext.Items
             .Include(item => item.AvailableAt)
             .Include(item => item.ItemTypes)
             .ThenInclude(itemType => itemType.AvailableAt)
@@ -271,7 +271,7 @@ public class ItemRepository : IItemRepository
             }
             else
             {
-                dbContext.Entry(existingAvailability).CurrentValues.SetValues(availability);
+                _dbContext.Entry(existingAvailability).CurrentValues.SetValues(availability);
             }
         }
     }
@@ -283,7 +283,7 @@ public class ItemRepository : IItemRepository
             bool hasExistingAvailability = updated.AvailableAt.Any(av => av.Id == availability.Id);
             if (!hasExistingAvailability)
             {
-                dbContext.Remove(availability);
+                _dbContext.Remove(availability);
             }
         }
     }
@@ -295,7 +295,7 @@ public class ItemRepository : IItemRepository
             bool hasExistingAvailability = updated.ItemTypes.Any(t => t.Id == type.Id);
             if (!hasExistingAvailability)
             {
-                dbContext.Remove(type);
+                _dbContext.Remove(type);
             }
         }
     }
@@ -313,7 +313,7 @@ public class ItemRepository : IItemRepository
             }
             else
             {
-                dbContext.Entry(existingType).CurrentValues.SetValues(updatedType);
+                _dbContext.Entry(existingType).CurrentValues.SetValues(updatedType);
                 UpdateOrAddItemAvailability(existingType, updatedType);
                 DeleteItemAvailability(existingType, updatedType);
             }
@@ -336,7 +336,7 @@ public class ItemRepository : IItemRepository
             else
             {
                 availability.Id = existingAvailability.Id;
-                dbContext.Entry(existingAvailability).CurrentValues.SetValues(availability);
+                _dbContext.Entry(existingAvailability).CurrentValues.SetValues(availability);
             }
         }
     }
@@ -348,7 +348,7 @@ public class ItemRepository : IItemRepository
             bool hasExistingAvailability = updated.AvailableAt.Any(av => av.Id == availability.Id);
             if (!hasExistingAvailability)
             {
-                dbContext.Remove(availability);
+                _dbContext.Remove(availability);
             }
         }
     }

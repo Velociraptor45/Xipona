@@ -6,20 +6,20 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
 {
     public class ShoppingListContract
     {
-        private readonly IEnumerable<ShoppingListSectionContract> sections;
+        private readonly IEnumerable<ShoppingListSectionContract> _sections;
 
         public ShoppingListContract(int id, ShoppingListStoreContract store, IEnumerable<ShoppingListSectionContract> sections,
             DateTime? completionDate)
         {
             Id = id;
             Store = store;
-            this.sections = sections;
+            _sections = sections;
             CompletionDate = completionDate;
         }
 
         public int Id { get; }
         public ShoppingListStoreContract Store { get; }
-        public IReadOnlyCollection<ShoppingListSectionContract> Sections { get => sections.ToList().AsReadOnly(); }
+        public IReadOnlyCollection<ShoppingListSectionContract> Sections { get => _sections.ToList().AsReadOnly(); }
         public DateTime? CompletionDate { get; }
     }
 }

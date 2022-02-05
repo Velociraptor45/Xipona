@@ -22,7 +22,7 @@ public class StoreSectionConverterTests : ToDomainConverterTestBase<Section, ISt
 
     protected override void SetupServiceCollection()
     {
-        AddDependencies(serviceCollection);
+        AddDependencies(ServiceCollection);
     }
 
     public static Section GetSource(IStoreSection destination)

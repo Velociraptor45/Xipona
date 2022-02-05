@@ -6,24 +6,24 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Converters.ToEnti
 
 public class StoreConverter : IToEntityConverter<IStore, Entities.Store>
 {
-    private readonly IToEntityConverter<IStoreSection, Section> sectionConverter;
+    private readonly IToEntityConverter<IStoreSection, Section> _sectionConverter;
 
     public StoreConverter(IToEntityConverter<IStoreSection, Section> sectionConverter)
     {
-        this.sectionConverter = sectionConverter;
+        _sectionConverter = sectionConverter;
     }
 
     public Entities.Store ToEntity(IStore source)
     {
         if (source is null)
-            throw new System.ArgumentNullException(nameof(source));
+            throw new ArgumentNullException(nameof(source));
 
         return new Entities.Store()
         {
             Id = source.Id.Value,
             Name = source.Name,
             Deleted = source.IsDeleted,
-            Sections = sectionConverter.ToEntity(source.Sections).ToList()
+            Sections = _sectionConverter.ToEntity(source.Sections).ToList()
         };
     }
 }

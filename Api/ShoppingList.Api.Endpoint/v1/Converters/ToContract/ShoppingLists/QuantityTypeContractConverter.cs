@@ -9,7 +9,7 @@ public class QuantityTypeContractConverter : IToContractConverter<QuantityTypeRe
     public QuantityTypeContract ToContract(QuantityTypeReadModel source)
     {
         if (source is null)
-            throw new System.ArgumentNullException(nameof(source));
+            throw new ArgumentNullException(nameof(source));
 
         return new QuantityTypeContract(
             source.Id,

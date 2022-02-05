@@ -19,6 +19,6 @@ public class ItemCategoryConverterTests : ToEntityConverterTestBase<IItemCategor
 
     protected override void SetupServiceCollection()
     {
-        serviceCollection.AddImplementationOfGenericType(typeof(ItemCategoryConverter).Assembly, typeof(IToEntityConverter<,>));
+        ServiceCollection.AddImplementationOfGenericType(typeof(ItemCategoryConverter).Assembly, typeof(IToEntityConverter<,>));
     }
 }

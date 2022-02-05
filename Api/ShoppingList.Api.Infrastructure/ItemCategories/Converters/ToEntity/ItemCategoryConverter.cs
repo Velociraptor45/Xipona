@@ -8,7 +8,7 @@ public class ItemCategoryConverter : IToEntityConverter<IItemCategory, Entities.
     public Entities.ItemCategory ToEntity(IItemCategory source)
     {
         if (source is null)
-            throw new System.ArgumentNullException(nameof(source));
+            throw new ArgumentNullException(nameof(source));
 
         return new Entities.ItemCategory()
         {

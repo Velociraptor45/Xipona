@@ -6,11 +6,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterRes
 
 public class ItemFilterResultsQueryHandler : IQueryHandler<ItemFilterResultsQuery, IEnumerable<ItemFilterResultReadModel>>
 {
-    private readonly IItemRepository itemRepository;
+    private readonly IItemRepository _itemRepository;
 
     public ItemFilterResultsQueryHandler(IItemRepository itemRepository)
     {
-        this.itemRepository = itemRepository;
+        _itemRepository = itemRepository;
     }
 
     public async Task<IEnumerable<ItemFilterResultReadModel>> HandleAsync(
@@ -18,10 +18,10 @@ public class ItemFilterResultsQueryHandler : IQueryHandler<ItemFilterResultsQuer
     {
         if (query is null)
         {
-            throw new System.ArgumentNullException(nameof(query));
+            throw new ArgumentNullException(nameof(query));
         }
 
-        var storeItems = await itemRepository.FindPermanentByAsync(query.StoreIds, query.ItemCategoriesIds,
+        var storeItems = await _itemRepository.FindPermanentByAsync(query.StoreIds, query.ItemCategoriesIds,
             query.ManufacturerIds, cancellationToken);
 
         return storeItems

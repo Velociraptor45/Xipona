@@ -8,11 +8,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.AllActive
 public class AllActiveItemCategoriesQueryHandler
     : IQueryHandler<AllActiveItemCategoriesQuery, IEnumerable<ItemCategoryReadModel>>
 {
-    private readonly IItemCategoryRepository itemCategoryRepository;
+    private readonly IItemCategoryRepository _itemCategoryRepository;
 
     public AllActiveItemCategoriesQueryHandler(IItemCategoryRepository itemCategoryRepository)
     {
-        this.itemCategoryRepository = itemCategoryRepository;
+        _itemCategoryRepository = itemCategoryRepository;
     }
 
     public async Task<IEnumerable<ItemCategoryReadModel>> HandleAsync(AllActiveItemCategoriesQuery query, CancellationToken cancellationToken)
@@ -22,7 +22,7 @@ public class AllActiveItemCategoriesQueryHandler
             throw new ArgumentNullException(nameof(query));
         }
 
-        var results = await itemCategoryRepository.FindActiveByAsync(cancellationToken);
+        var results = await _itemCategoryRepository.FindActiveByAsync(cancellationToken);
 
         return results.Select(r => r.ToReadModel());
     }

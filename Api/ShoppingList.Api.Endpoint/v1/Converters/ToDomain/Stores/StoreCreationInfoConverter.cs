@@ -8,12 +8,12 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Stores;
 
 public class StoreCreationInfoConverter : IToDomainConverter<CreateStoreContract, StoreCreationInfo>
 {
-    private readonly IToDomainConverter<StoreSectionContract, IStoreSection> storeSectionConverter;
+    private readonly IToDomainConverter<StoreSectionContract, IStoreSection> _storeSectionConverter;
 
     public StoreCreationInfoConverter(
         IToDomainConverter<StoreSectionContract, IStoreSection> storeSectionConverter)
     {
-        this.storeSectionConverter = storeSectionConverter;
+        _storeSectionConverter = storeSectionConverter;
     }
 
     public StoreCreationInfo ToDomain(CreateStoreContract source)
@@ -24,6 +24,6 @@ public class StoreCreationInfoConverter : IToDomainConverter<CreateStoreContract
         return new StoreCreationInfo(
             StoreId.New,
             source.Name,
-            storeSectionConverter.ToDomain(source.Sections));
+            _storeSectionConverter.ToDomain(source.Sections));
     }
 }

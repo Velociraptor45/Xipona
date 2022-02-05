@@ -9,7 +9,7 @@ public class ManufacturerContractConverter : IToContractConverter<ManufacturerRe
     public ManufacturerContract ToContract(ManufacturerReadModel source)
     {
         if (source is null)
-            throw new System.ArgumentNullException(nameof(source));
+            throw new ArgumentNullException(nameof(source));
 
         return new ManufacturerContract(source.Id.Value, source.Name, source.IsDeleted);
     }

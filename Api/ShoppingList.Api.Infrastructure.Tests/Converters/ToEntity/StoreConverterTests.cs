@@ -30,6 +30,6 @@ public class StoreConverterTests : ToEntityConverterTestBase<IStore, ProjectHerm
 
     protected override void SetupServiceCollection()
     {
-        serviceCollection.AddImplementationOfGenericType(typeof(StoreConverter).Assembly, typeof(IToEntityConverter<,>));
+        ServiceCollection.AddImplementationOfGenericType(typeof(StoreConverter).Assembly, typeof(IToEntityConverter<,>));
     }
 }

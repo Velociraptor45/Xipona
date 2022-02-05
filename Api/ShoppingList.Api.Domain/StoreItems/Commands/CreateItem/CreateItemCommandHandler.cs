@@ -9,22 +9,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 
 public class CreateItemCommandHandler : ICommandHandler<CreateItemCommand, bool>
 {
-    private readonly IItemCategoryValidationService itemCategoryValidationService;
-    private readonly IManufacturerValidationService manufacturerValidationService;
-    private readonly IAvailabilityValidationService availabilityValidationService;
-    private readonly IItemRepository itemRepository;
-    private readonly IStoreItemFactory storeItemFactory;
+    private readonly IItemCategoryValidationService _itemCategoryValidationService;
+    private readonly IManufacturerValidationService _manufacturerValidationService;
+    private readonly IAvailabilityValidationService _availabilityValidationService;
+    private readonly IItemRepository _itemRepository;
+    private readonly IStoreItemFactory _storeItemFactory;
 
     public CreateItemCommandHandler(IItemCategoryValidationService itemCategoryValidationService,
         IManufacturerValidationService manufacturerValidationService,
         IAvailabilityValidationService availabilityValidationService,
         IItemRepository itemRepository, IStoreItemFactory storeItemFactory)
     {
-        this.itemCategoryValidationService = itemCategoryValidationService;
-        this.manufacturerValidationService = manufacturerValidationService;
-        this.availabilityValidationService = availabilityValidationService;
-        this.itemRepository = itemRepository;
-        this.storeItemFactory = storeItemFactory;
+        _itemCategoryValidationService = itemCategoryValidationService;
+        _manufacturerValidationService = manufacturerValidationService;
+        _availabilityValidationService = availabilityValidationService;
+        _itemRepository = itemRepository;
+        _storeItemFactory = storeItemFactory;
     }
 
     public async Task<bool> HandleAsync(CreateItemCommand command, CancellationToken cancellationToken)
@@ -35,21 +35,21 @@ public class CreateItemCommandHandler : ICommandHandler<CreateItemCommand, bool>
         var itemCategoryId = command.ItemCreation.ItemCategoryId;
         var manufacturerId = command.ItemCreation.ManufacturerId;
 
-        await itemCategoryValidationService.ValidateAsync(itemCategoryId, cancellationToken);
+        await _itemCategoryValidationService.ValidateAsync(itemCategoryId, cancellationToken);
 
         if (manufacturerId != null)
         {
-            await manufacturerValidationService.ValidateAsync(manufacturerId.Value, cancellationToken);
+            await _manufacturerValidationService.ValidateAsync(manufacturerId.Value, cancellationToken);
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
         var availabilities = command.ItemCreation.Availabilities;
-        await availabilityValidationService.ValidateAsync(availabilities, cancellationToken);
+        await _availabilityValidationService.ValidateAsync(availabilities, cancellationToken);
 
-        var storeItem = storeItemFactory.Create(command.ItemCreation);
+        var storeItem = _storeItemFactory.Create(command.ItemCreation);
 
-        await itemRepository.StoreAsync(storeItem, cancellationToken);
+        await _itemRepository.StoreAsync(storeItem, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 

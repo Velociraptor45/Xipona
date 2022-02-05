@@ -10,21 +10,21 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore;
 
 public class CreateStoreCommandHandler : ICommandHandler<CreateStoreCommand, bool>
 {
-    private readonly IStoreRepository storeRepository;
-    private readonly IStoreFactory storeFactory;
-    private readonly IShoppingListFactory shoppingListFactory;
-    private readonly IShoppingListRepository shoppingListRepository;
-    private readonly ITransactionGenerator transactionGenerator;
+    private readonly IStoreRepository _storeRepository;
+    private readonly IStoreFactory _storeFactory;
+    private readonly IShoppingListFactory _shoppingListFactory;
+    private readonly IShoppingListRepository _shoppingListRepository;
+    private readonly ITransactionGenerator _transactionGenerator;
 
     public CreateStoreCommandHandler(IStoreRepository storeRepository, IStoreFactory storeFactory,
         IShoppingListFactory shoppingListFactory, IShoppingListRepository shoppingListRepository,
         ITransactionGenerator transactionGenerator)
     {
-        this.storeRepository = storeRepository;
-        this.storeFactory = storeFactory;
-        this.shoppingListFactory = shoppingListFactory;
-        this.shoppingListRepository = shoppingListRepository;
-        this.transactionGenerator = transactionGenerator;
+        _storeRepository = storeRepository;
+        _storeFactory = storeFactory;
+        _shoppingListFactory = shoppingListFactory;
+        _shoppingListRepository = shoppingListRepository;
+        _transactionGenerator = transactionGenerator;
     }
 
     public async Task<bool> HandleAsync(CreateStoreCommand command, CancellationToken cancellationToken)
@@ -34,16 +34,16 @@ public class CreateStoreCommandHandler : ICommandHandler<CreateStoreCommand, boo
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        IStore store = storeFactory.Create(command.StoreCreationInfo.Id, command.StoreCreationInfo.Name, false,
+        IStore store = _storeFactory.Create(command.StoreCreationInfo.Id, command.StoreCreationInfo.Name, false,
             command.StoreCreationInfo.Sections);
 
-        using ITransaction transaction = await transactionGenerator.GenerateAsync(cancellationToken);
-        store = await storeRepository.StoreAsync(store, cancellationToken);
+        using ITransaction transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
+        store = await _storeRepository.StoreAsync(store, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var shoppingList = shoppingListFactory.CreateNew(store);
-        await shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
+        var shoppingList = _shoppingListFactory.CreateNew(store);
+        await _shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 

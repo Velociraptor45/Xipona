@@ -8,17 +8,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.AllActiveM
 public class AllActiveManufacturersQueryHandler
     : IQueryHandler<AllActiveManufacturersQuery, IEnumerable<ManufacturerReadModel>>
 {
-    private readonly IManufacturerRepository manufacturerRepository;
+    private readonly IManufacturerRepository _manufacturerRepository;
 
     public AllActiveManufacturersQueryHandler(IManufacturerRepository manufacturerRepository)
     {
-        this.manufacturerRepository = manufacturerRepository;
+        _manufacturerRepository = manufacturerRepository;
     }
 
     public async Task<IEnumerable<ManufacturerReadModel>> HandleAsync(AllActiveManufacturersQuery query,
         CancellationToken cancellationToken)
     {
-        var manufacturers = await manufacturerRepository.FindByAsync(false, cancellationToken);
+        var manufacturers = await _manufacturerRepository.FindByAsync(false, cancellationToken);
 
         return manufacturers.Select(m => m.ToReadModel());
     }

@@ -9,7 +9,7 @@ public class ItemCategoryContractConverter : IToContractConverter<ItemCategoryRe
     public ItemCategoryContract ToContract(ItemCategoryReadModel source)
     {
         if (source is null)
-            throw new System.ArgumentNullException(nameof(source));
+            throw new ArgumentNullException(nameof(source));
 
         return new ItemCategoryContract(source.Id.Value, source.Name, source.IsDeleted);
     }

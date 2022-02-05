@@ -21,7 +21,7 @@ public class ItemCategoryConverterTests : ToDomainConverterTestBase<ProjectHerme
 
     protected override void SetupServiceCollection()
     {
-        AddDependencies(serviceCollection);
+        AddDependencies(ServiceCollection);
     }
 
     public static ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities.ItemCategory GetSource(IItemCategory destination)

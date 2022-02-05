@@ -13,16 +13,16 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 [Route("v1/manufacturer")]
 public class ManufacturerController : ControllerBase
 {
-    private readonly IQueryDispatcher queryDispatcher;
-    private readonly ICommandDispatcher commandDispatcher;
-    private readonly IToContractConverter<ManufacturerReadModel, ManufacturerContract> manufacturerContractConverter;
+    private readonly IQueryDispatcher _queryDispatcher;
+    private readonly ICommandDispatcher _commandDispatcher;
+    private readonly IToContractConverter<ManufacturerReadModel, ManufacturerContract> _manufacturerContractConverter;
 
     public ManufacturerController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
         IToContractConverter<ManufacturerReadModel, ManufacturerContract> manufacturerContractConverter)
     {
-        this.queryDispatcher = queryDispatcher;
-        this.commandDispatcher = commandDispatcher;
-        this.manufacturerContractConverter = manufacturerContractConverter;
+        _queryDispatcher = queryDispatcher;
+        _commandDispatcher = commandDispatcher;
+        _manufacturerContractConverter = manufacturerContractConverter;
     }
 
     [HttpGet]
@@ -38,8 +38,8 @@ public class ManufacturerController : ControllerBase
         }
 
         var query = new ManufacturerSearchQuery(searchInput);
-        var manufacturerReadModels = await queryDispatcher.DispatchAsync(query, default);
-        var manufacturerContracts = manufacturerContractConverter.ToContract(manufacturerReadModels);
+        var manufacturerReadModels = await _queryDispatcher.DispatchAsync(query, default);
+        var manufacturerContracts = _manufacturerContractConverter.ToContract(manufacturerReadModels);
 
         return Ok(manufacturerContracts);
     }
@@ -50,8 +50,8 @@ public class ManufacturerController : ControllerBase
     public async Task<IActionResult> GetAllActiveManufacturers()
     {
         var query = new AllActiveManufacturersQuery();
-        var readModels = await queryDispatcher.DispatchAsync(query, default);
-        var contracts = manufacturerContractConverter.ToContract(readModels);
+        var readModels = await _queryDispatcher.DispatchAsync(query, default);
+        var contracts = _manufacturerContractConverter.ToContract(readModels);
 
         return Ok(contracts);
     }
@@ -62,7 +62,7 @@ public class ManufacturerController : ControllerBase
     public async Task<IActionResult> CreateManufacturer([FromRoute(Name = "name")] string name)
     {
         var command = new CreateManufacturerCommand(name);
-        await commandDispatcher.DispatchAsync(command, default);
+        await _commandDispatcher.DispatchAsync(command, default);
 
         return Ok();
     }

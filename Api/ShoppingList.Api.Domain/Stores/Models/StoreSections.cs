@@ -2,7 +2,7 @@
 
 public class StoreSections : IEnumerable<IStoreSection>
 {
-    private readonly IList<IStoreSection> sections;
+    private readonly IList<IStoreSection> _sections;
 
     public StoreSections(IEnumerable<IStoreSection> sections)
     {
@@ -11,27 +11,27 @@ public class StoreSections : IEnumerable<IStoreSection>
 
         //todo add logic checks
 
-        this.sections = sections.ToList();
+        _sections = sections.ToList();
     }
 
     public IStoreSection GetDefaultSection()
     {
-        return sections.First(s => s.IsDefaultSection);
+        return _sections.First(s => s.IsDefaultSection);
     }
 
     public IReadOnlyCollection<IStoreSection> AsReadOnly()
     {
-        return sections.ToList().AsReadOnly();
+        return _sections.ToList().AsReadOnly();
     }
 
     public bool Contains(SectionId sectionId)
     {
-        return sections.Any(s => s.Id == sectionId);
+        return _sections.Any(s => s.Id == sectionId);
     }
 
     public IEnumerator<IStoreSection> GetEnumerator()
     {
-        return sections.GetEnumerator();
+        return _sections.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()

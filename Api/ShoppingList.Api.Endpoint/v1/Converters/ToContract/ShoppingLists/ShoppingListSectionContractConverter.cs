@@ -7,24 +7,24 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Shopp
 public class ShoppingListSectionContractConverter :
     IToContractConverter<ShoppingListSectionReadModel, ShoppingListSectionContract>
 {
-    private readonly IToContractConverter<ShoppingListItemReadModel, ShoppingListItemContract> shoppingListItemContractConverter;
+    private readonly IToContractConverter<ShoppingListItemReadModel, ShoppingListItemContract> _shoppingListItemContractConverter;
 
     public ShoppingListSectionContractConverter(
         IToContractConverter<ShoppingListItemReadModel, ShoppingListItemContract> shoppingListItemContractConverter)
     {
-        this.shoppingListItemContractConverter = shoppingListItemContractConverter;
+        _shoppingListItemContractConverter = shoppingListItemContractConverter;
     }
 
     public ShoppingListSectionContract ToContract(ShoppingListSectionReadModel source)
     {
         if (source is null)
-            throw new System.ArgumentNullException(nameof(source));
+            throw new ArgumentNullException(nameof(source));
 
         return new ShoppingListSectionContract(
             source.Id.Value,
             source.Name,
             source.SortingIndex,
             source.IsDefaultSection,
-            shoppingListItemContractConverter.ToContract(source.ItemReadModels));
+            _shoppingListItemContractConverter.ToContract(source.ItemReadModels));
     }
 }
