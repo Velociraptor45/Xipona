@@ -263,7 +263,7 @@ public class ItemRepository : IItemRepository
         foreach (var availability in updated.AvailableAt)
         {
             var existingAvailability = existing.AvailableAt
-                .FirstOrDefault(av => av.Id == availability.Id);
+                .FirstOrDefault(av => MatchesKey(av, availability));
 
             if (existingAvailability == null)
             {
@@ -280,7 +280,7 @@ public class ItemRepository : IItemRepository
     {
         foreach (var availability in existing.AvailableAt)
         {
-            bool hasExistingAvailability = updated.AvailableAt.Any(av => av.Id == availability.Id);
+            bool hasExistingAvailability = updated.AvailableAt.Any(av => MatchesKey(av, availability));
             if (!hasExistingAvailability)
             {
                 _dbContext.Remove(availability);
@@ -324,10 +324,7 @@ public class ItemRepository : IItemRepository
     {
         foreach (var availability in updated.AvailableAt)
         {
-            var existingAvailability = existing.AvailableAt
-                .FirstOrDefault(av =>
-                    av.ItemTypeId == availability.ItemTypeId
-                    && av.StoreId == availability.StoreId);
+            var existingAvailability = existing.AvailableAt.FirstOrDefault(av => MatchesKey(av, availability));
 
             if (existingAvailability == null)
             {
@@ -335,7 +332,6 @@ public class ItemRepository : IItemRepository
             }
             else
             {
-                availability.Id = existingAvailability.Id;
                 _dbContext.Entry(existingAvailability).CurrentValues.SetValues(availability);
             }
         }
@@ -345,12 +341,22 @@ public class ItemRepository : IItemRepository
     {
         foreach (var availability in existing.AvailableAt)
         {
-            bool hasExistingAvailability = updated.AvailableAt.Any(av => av.Id == availability.Id);
+            bool hasExistingAvailability = updated.AvailableAt.Any(av => MatchesKey(av, availability));
             if (!hasExistingAvailability)
             {
                 _dbContext.Remove(availability);
             }
         }
+    }
+
+    private static bool MatchesKey(AvailableAt left, AvailableAt right)
+    {
+        return left.StoreId == right.StoreId && left.ItemId == right.ItemId;
+    }
+
+    private static bool MatchesKey(ItemTypeAvailableAt left, ItemTypeAvailableAt right)
+    {
+        return left.StoreId == right.StoreId && left.ItemTypeId == right.ItemTypeId;
     }
 
     #endregion private methods
