@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
+﻿namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 
 public class EndpointConverters : IEndpointConverters
 {

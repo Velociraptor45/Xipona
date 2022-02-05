@@ -1,7 +1,4 @@
-﻿using System;
-using System.Reflection;
-using System.Threading;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
@@ -25,6 +22,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdate;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
+using System.Reflection;
 
 namespace ProjectHermes.ShoppingList.Api.Domain;
 

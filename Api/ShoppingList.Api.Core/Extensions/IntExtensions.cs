@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProjectHermes.ShoppingList.Api.Core.Extensions;
+﻿namespace ProjectHermes.ShoppingList.Api.Core.Extensions;
 
 public static class IntExtensions
 {

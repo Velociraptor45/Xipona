@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
 

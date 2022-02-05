@@ -1,5 +1,4 @@
-﻿using System;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;

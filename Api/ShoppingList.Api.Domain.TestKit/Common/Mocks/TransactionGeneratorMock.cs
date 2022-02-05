@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Moq;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 
 namespace ShoppingList.Api.Domain.TestKit.Common.Mocks;
 

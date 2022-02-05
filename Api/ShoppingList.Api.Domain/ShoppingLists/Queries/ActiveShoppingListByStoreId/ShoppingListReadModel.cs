@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId;
 

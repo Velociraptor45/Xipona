@@ -1,5 +1,4 @@
-﻿using System;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.Shared;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.Shared;
 

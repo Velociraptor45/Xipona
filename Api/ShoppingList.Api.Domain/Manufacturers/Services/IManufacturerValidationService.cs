@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services;
 

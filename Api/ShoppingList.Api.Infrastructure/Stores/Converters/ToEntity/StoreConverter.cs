@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using ProjectHermes.ShoppingList.Api.Core.Converter;
+﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities;
 

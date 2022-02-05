@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using System.Runtime.Serialization;
-using ProjectHermes.ShoppingList.Api.Core.Converter;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 

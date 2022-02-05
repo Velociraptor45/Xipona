@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 
 public readonly record struct ItemCategoryId
 {

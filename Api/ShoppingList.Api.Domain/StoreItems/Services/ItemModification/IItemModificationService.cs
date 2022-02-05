@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
 
 public interface IItemModificationService
 {

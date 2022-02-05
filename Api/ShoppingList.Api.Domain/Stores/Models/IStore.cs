@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 public interface IStore
 {
@@ -10,7 +8,10 @@ public interface IStore
     IReadOnlyCollection<IStoreSection> Sections { get; }
 
     void ChangeName(string name);
+
     bool ContainsSection(SectionId sectionId);
+
     IStoreSection GetDefaultSection();
+
     void UpdateStores(IEnumerable<IStoreSection> storeSections);
 }

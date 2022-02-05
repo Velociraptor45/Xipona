@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;

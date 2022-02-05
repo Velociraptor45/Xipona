@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace ProjectHermes.ShoppingList.Api.Core.Converter;
+﻿namespace ProjectHermes.ShoppingList.Api.Core.Converter;
 
 public interface IToEntityConverter<in TSource, out TDestination>
 {

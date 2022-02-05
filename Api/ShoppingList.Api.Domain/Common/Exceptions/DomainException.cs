@@ -1,5 +1,4 @@
-﻿using System;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 

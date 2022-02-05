@@ -1,5 +1,4 @@
-﻿using System;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterResults;
 

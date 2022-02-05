@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ProjectHermes.ShoppingList.Api.Core.Extensions;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;

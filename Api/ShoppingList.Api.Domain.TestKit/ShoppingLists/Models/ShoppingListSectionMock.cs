@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Moq;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 

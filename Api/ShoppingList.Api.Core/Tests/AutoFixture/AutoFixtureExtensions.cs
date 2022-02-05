@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using AutoFixture;
+﻿using AutoFixture;
 
 namespace ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 

@@ -1,11 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoFixture;
-using FluentAssertions;
-using FluentAssertions.Execution;
-using Moq;
-using ProjectHermes.ShoppingList.Api.Core.Attributes;
+﻿using ProjectHermes.ShoppingList.Api.Core.Attributes;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
@@ -23,7 +16,6 @@ using ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
-using Xunit;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conversion.ItemSearchReadModels;
 

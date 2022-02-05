@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+﻿using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 

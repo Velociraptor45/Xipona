@@ -1,10 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using AutoFixture;
-using FluentAssertions;
-using FluentAssertions.Execution;
-using Moq;
-using ProjectHermes.ShoppingList.Api.Core.Extensions;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
@@ -12,7 +6,6 @@ using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services;
-using Xunit;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.CreateTemporaryItem;
 

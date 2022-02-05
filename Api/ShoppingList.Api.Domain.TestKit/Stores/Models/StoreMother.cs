@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace ShoppingList.Api.Domain.TestKit.Stores.Models;
+﻿namespace ShoppingList.Api.Domain.TestKit.Stores.Models;
 
 public static class StoreMother
 {

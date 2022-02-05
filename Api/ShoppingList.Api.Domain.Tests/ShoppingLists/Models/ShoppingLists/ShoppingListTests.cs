@@ -1,10 +1,4 @@
-﻿using System;
-using System.Linq;
-using AutoFixture;
-using FluentAssertions;
-using FluentAssertions.Common;
-using FluentAssertions.Execution;
-using Moq;
+﻿using FluentAssertions.Common;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -13,7 +7,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
-using Xunit;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists;
 

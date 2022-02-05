@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using AutoFixture.Kernel;
+﻿using AutoFixture.Kernel;
 using ShoppingList.Api.Domain.TestKit.Shared;
 
 namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;

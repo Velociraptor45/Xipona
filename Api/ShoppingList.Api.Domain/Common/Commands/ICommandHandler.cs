@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 
 public interface ICommandHandler<TCommand, TValue>
     where TCommand : ICommand<TValue>

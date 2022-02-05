@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoFixture.Kernel;
+﻿using AutoFixture.Kernel;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 
 namespace ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;

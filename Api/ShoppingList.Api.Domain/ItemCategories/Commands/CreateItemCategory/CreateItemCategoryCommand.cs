@@ -1,5 +1,4 @@
-﻿using System;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.CreateItemCategory;
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
 public readonly record struct ManufacturerId
 {

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace ProjectHermes.ShoppingList.Api.Core.Extensions;
 

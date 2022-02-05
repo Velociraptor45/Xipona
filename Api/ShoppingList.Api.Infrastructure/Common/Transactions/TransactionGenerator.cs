@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
+using System.Data.Common;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 

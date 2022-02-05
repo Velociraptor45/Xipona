@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using FluentAssertions;
-using FluentAssertions.Execution;
-using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using Xunit;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 
 namespace ShoppingList.Api.Core.Tests.Extensions;
 

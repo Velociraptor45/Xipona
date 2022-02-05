@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
@@ -25,6 +20,8 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
+using System.Data.Common;
+using System.Reflection;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure;
 

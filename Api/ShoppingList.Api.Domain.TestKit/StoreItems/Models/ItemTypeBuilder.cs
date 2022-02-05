@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Common;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models;

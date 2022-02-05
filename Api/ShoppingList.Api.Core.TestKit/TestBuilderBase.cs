@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using AutoFixture;
-using AutoFixture.AutoMoq;
+﻿using AutoFixture.AutoMoq;
 using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 
 namespace ShoppingList.Api.Core.TestKit;

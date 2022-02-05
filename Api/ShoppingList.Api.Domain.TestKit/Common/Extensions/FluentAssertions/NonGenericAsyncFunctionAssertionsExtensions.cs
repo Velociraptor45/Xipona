@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using FluentAssertions.Specialized;
+﻿using FluentAssertions.Specialized;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 

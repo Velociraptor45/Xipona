@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 public class StoreSections : IEnumerable<IStoreSection>
 {

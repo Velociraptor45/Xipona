@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 public class Store : IStore
 {

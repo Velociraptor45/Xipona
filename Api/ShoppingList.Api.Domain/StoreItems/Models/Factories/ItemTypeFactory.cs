@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 
 public class ItemTypeFactory : IItemTypeFactory
 {
@@ -8,7 +6,7 @@ public class ItemTypeFactory : IItemTypeFactory
         IItemType? predecessor)
     {
         var type = new ItemType(id, name, availabilities);
-        if(predecessor != null)
+        if (predecessor != null)
             type.SetPredecessor(predecessor);
 
         return type;

@@ -1,6 +1,5 @@
-﻿using System;
+﻿using AutoFixture.Kernel;
 using System.Reflection;
-using AutoFixture.Kernel;
 
 namespace ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 

@@ -1,10 +1,6 @@
-﻿using AutoFixture;
-using FluentAssertions;
-using FluentAssertions.Execution;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
-using Xunit;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Stores.Models;
 

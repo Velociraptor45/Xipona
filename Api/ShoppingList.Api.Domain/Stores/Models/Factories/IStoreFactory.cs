@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 
 public interface IStoreFactory
 {
