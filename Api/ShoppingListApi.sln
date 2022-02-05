@@ -58,7 +58,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "08_Domain", "08_Domain", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "09_Core", "09_Core", "{9277A09C-FC46-4EB9-AD4B-83236A350B0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Api.TestTools", "ShoppingList.Api.TestTools\ShoppingList.Api.TestTools.csproj", "{685DB17B-5D0D-48F1-BDDA-8A512DC7AC38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Api.TestTools", "ShoppingList.Api.TestTools\ShoppingList.Api.TestTools.csproj", "{685DB17B-5D0D-48F1-BDDA-8A512DC7AC38}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
