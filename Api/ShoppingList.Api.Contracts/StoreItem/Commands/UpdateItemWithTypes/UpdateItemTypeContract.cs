@@ -1,5 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes
 {

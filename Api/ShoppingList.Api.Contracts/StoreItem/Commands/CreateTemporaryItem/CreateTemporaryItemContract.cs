@@ -1,5 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
-using System;
+﻿using System;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem
 {

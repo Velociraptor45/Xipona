@@ -1,12 +1,11 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.StoreItemReadModels
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.StoreItemReadModels;
+
+public interface IStoreItemReadModelConversionService
 {
-    public interface IStoreItemReadModelConversionService
-    {
-        Task<StoreItemReadModel> ConvertAsync(IStoreItem item, CancellationToken cancellationToken);
-    }
+    Task<StoreItemReadModel> ConvertAsync(IStoreItem item, CancellationToken cancellationToken);
 }

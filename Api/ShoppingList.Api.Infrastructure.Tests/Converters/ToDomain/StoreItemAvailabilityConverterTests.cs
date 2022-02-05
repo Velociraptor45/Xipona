@@ -8,37 +8,36 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
+namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain;
+
+public class StoreItemAvailabilityConverterTests : ToDomainConverterTestBase<AvailableAt, IStoreItemAvailability>
 {
-    public class StoreItemAvailabilityConverterTests : ToDomainConverterTestBase<AvailableAt, IStoreItemAvailability>
+    protected override (AvailableAt, IStoreItemAvailability) CreateTestObjects()
     {
-        protected override (AvailableAt, IStoreItemAvailability) CreateTestObjects()
-        {
-            var destination = StoreItemAvailabilityMother.Initial().Create();
-            var source = GetSource(destination);
+        var destination = StoreItemAvailabilityMother.Initial().Create();
+        var source = GetSource(destination);
 
-            return (source, destination);
-        }
+        return (source, destination);
+    }
 
-        protected override void SetupServiceCollection()
-        {
-            AddDependencies(serviceCollection);
-        }
+    protected override void SetupServiceCollection()
+    {
+        AddDependencies(serviceCollection);
+    }
 
-        public static AvailableAt GetSource(IStoreItemAvailability destination)
+    public static AvailableAt GetSource(IStoreItemAvailability destination)
+    {
+        return new AvailableAt
         {
-            return new AvailableAt
-            {
-                StoreId = destination.StoreId.Value,
-                Price = destination.Price,
-                DefaultSectionId = destination.DefaultSectionId.Value
-            };
-        }
+            StoreId = destination.StoreId.Value,
+            Price = destination.Price,
+            DefaultSectionId = destination.DefaultSectionId.Value
+        };
+    }
 
-        public static void AddDependencies(IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddImplementationOfGenericType(typeof(StoreItemAvailabilityConverter).Assembly, typeof(IToDomainConverter<,>));
-            serviceCollection.AddImplementationOfNonGenericType(typeof(IStoreItemAvailabilityFactory).Assembly, typeof(IStoreItemAvailabilityFactory));
-        }
+    public static void AddDependencies(IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddImplementationOfGenericType(typeof(StoreItemAvailabilityConverter).Assembly, typeof(IToDomainConverter<,>));
+        serviceCollection.AddImplementationOfNonGenericType(typeof(IStoreItemAvailabilityFactory).Assembly, typeof(IStoreItemAvailabilityFactory));
     }
 }

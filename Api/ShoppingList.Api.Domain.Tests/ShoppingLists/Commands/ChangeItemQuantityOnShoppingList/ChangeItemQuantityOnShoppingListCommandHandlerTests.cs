@@ -1,4 +1,6 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Threading.Tasks;
+using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
@@ -13,242 +15,239 @@ using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
+
+public class ChangeItemQuantityOnShoppingListCommandHandlerTests
 {
-    public class ChangeItemQuantityOnShoppingListCommandHandlerTests
+    private readonly LocalFixture _local;
+
+    public ChangeItemQuantityOnShoppingListCommandHandlerTests()
     {
-        private readonly LocalFixture _local;
+        _local = new LocalFixture();
+    }
 
-        public ChangeItemQuantityOnShoppingListCommandHandlerTests()
+    [Fact]
+    public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var handler = _local.CreateSut();
+
+        // Act
+        Func<Task> function = async () => await handler.HandleAsync(null, default);
+
+        // Assert
+        using (new AssertionScope())
         {
-            _local = new LocalFixture();
+            await function.Should().ThrowAsync<ArgumentNullException>();
+        }
+    }
+
+    [Fact]
+    public async Task HandleAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
+    {
+        // Arrange
+        var handler = _local.CreateSut();
+        _local.SetupTemporaryItemId();
+        _local.SetupCommand();
+
+        _local.SetupShoppingListRepositoryFindingNoList();
+
+        // Act
+        Func<Task> function = async () => await handler.HandleAsync(_local.Command, default);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            (await function.Should().ThrowAsync<DomainException>())
+                .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ShoppingListNotFound);
+        }
+    }
+
+    [Fact]
+    public async Task HandleAsync_WithInvalidOfflineId_ShouldThrowDomainException()
+    {
+        // Arrange
+        var handler = _local.CreateSut();
+        _local.SetupTemporaryItemId();
+        _local.SetupCommand();
+
+        _local.SetupShoppingListMock();
+
+        _local.SetupShoppingListRepositoryFindBy();
+        _local.SetupItemRepositoryFindingNoItem();
+
+        // Act
+        Func<Task> function = async () => await handler.HandleAsync(_local.Command, default);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            (await function.Should().ThrowAsync<DomainException>())
+                .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound);
+        }
+    }
+
+    [Fact]
+    public async Task HandleAsync_WithActualId_ShouldChangeItemQuantityAndStoreIt()
+    {
+        // Arrange
+        var handler = _local.CreateSut();
+        _local.SetupCommand();
+        _local.SetupShoppingListMock();
+        _local.SetupShoppingListRepositoryFindBy();
+        _local.SetupStoringShoppingList();
+
+        // Act
+        bool result = await handler.HandleAsync(_local.Command, default);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.Should().BeTrue();
+            _local.VerifyChangeItemQuantityWithOfflineIdOnce();
+            _local.VerifyStoreAsync();
+        }
+    }
+
+    [Fact]
+    public async Task HandleAsync_WithOfflineId_ShouldChangeItemQuantityAndStoreIt()
+    {
+        // Arrange
+        var handler = _local.CreateSut();
+        _local.SetupTemporaryItemId();
+        _local.SetupCommand();
+        _local.SetupShoppingListMock();
+        _local.SetupStoreItem();
+
+        _local.SetupShoppingListRepositoryFindBy();
+        _local.SetupItemRepositoryFindBy();
+        _local.SetupStoringShoppingList();
+
+        // Act
+        bool result = await handler.HandleAsync(_local.Command, default);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.Should().BeTrue();
+            _local.VerifyChangeItemQuantityOnce();
+            _local.VerifyStoreAsync();
+        }
+    }
+
+    private sealed class LocalFixture
+    {
+        private readonly Fixture _fixture;
+        private readonly CommonFixture _commonFixture = new CommonFixture();
+        private readonly ShoppingListRepositoryMock _shoppingListRepositoryMock;
+        private readonly ItemRepositoryMock _itemRepositoryMock;
+        private ShoppingListMock _shoppingListMock;
+        private TemporaryItemId? _temporaryItemId;
+        private IStoreItem _storeItem;
+
+        public LocalFixture()
+        {
+            _fixture = _commonFixture.GetNewFixture();
+
+            _shoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+            _itemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
         }
 
-        [Fact]
-        public async Task HandleAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
+        public ChangeItemQuantityOnShoppingListCommand Command { get; private set; }
+
+        public void SetupCommand()
         {
-            // Arrange
-            var handler = _local.CreateSut();
-
-            // Act
-            Func<Task> function = async () => await handler.HandleAsync(null, default);
-
-            // Assert
-            using (new AssertionScope())
+            OfflineTolerantItemId offlineTolerantItemId;
+            if (_temporaryItemId == null)
             {
-                await function.Should().ThrowAsync<ArgumentNullException>();
+                offlineTolerantItemId = new OfflineTolerantItemId(_commonFixture.NextInt());
             }
+            else
+            {
+                _fixture.ConstructorArgumentFor<ChangeItemQuantityOnShoppingListCommand, ItemTypeId?>("itemTypeId",
+                    null);
+                offlineTolerantItemId = new OfflineTolerantItemId(_temporaryItemId.Value.Value);
+            }
+
+            _fixture.ConstructorArgumentFor<ChangeItemQuantityOnShoppingListCommand, OfflineTolerantItemId>("itemId",
+                offlineTolerantItemId);
+
+            Command = _fixture.Create<ChangeItemQuantityOnShoppingListCommand>();
         }
 
-        [Fact]
-        public async Task HandleAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
+        public ChangeItemQuantityOnShoppingListCommandHandler CreateSut()
         {
-            // Arrange
-            var handler = _local.CreateSut();
-            _local.SetupTemporaryItemId();
-            _local.SetupCommand();
-
-            _local.SetupShoppingListRepositoryFindingNoList();
-
-            // Act
-            Func<Task> function = async () => await handler.HandleAsync(_local.Command, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ShoppingListNotFound);
-            }
+            return new ChangeItemQuantityOnShoppingListCommandHandler(
+                _shoppingListRepositoryMock.Object,
+                _itemRepositoryMock.Object);
         }
 
-        [Fact]
-        public async Task HandleAsync_WithInvalidOfflineId_ShouldThrowDomainException()
+        public void SetupTemporaryItemId()
         {
-            // Arrange
-            var handler = _local.CreateSut();
-            _local.SetupTemporaryItemId();
-            _local.SetupCommand();
-
-            _local.SetupShoppingListMock();
-
-            _local.SetupShoppingListRepositoryFindBy();
-            _local.SetupItemRepositoryFindingNoItem();
-
-            // Act
-            Func<Task> function = async () => await handler.HandleAsync(_local.Command, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound);
-            }
+            _temporaryItemId = TemporaryItemId.New;
         }
 
-        [Fact]
-        public async Task HandleAsync_WithActualId_ShouldChangeItemQuantityAndStoreIt()
+        public void SetupShoppingListMock()
         {
-            // Arrange
-            var handler = _local.CreateSut();
-            _local.SetupCommand();
-            _local.SetupShoppingListMock();
-            _local.SetupShoppingListRepositoryFindBy();
-            _local.SetupStoringShoppingList();
-
-            // Act
-            bool result = await handler.HandleAsync(_local.Command, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                result.Should().BeTrue();
-                _local.VerifyChangeItemQuantityWithOfflineIdOnce();
-                _local.VerifyStoreAsync();
-            }
+            _shoppingListMock = new ShoppingListMock(ShoppingListMother.Sections(2).Create());
         }
 
-        [Fact]
-        public async Task HandleAsync_WithOfflineId_ShouldChangeItemQuantityAndStoreIt()
+        public void SetupStoreItem()
         {
-            // Arrange
-            var handler = _local.CreateSut();
-            _local.SetupTemporaryItemId();
-            _local.SetupCommand();
-            _local.SetupShoppingListMock();
-            _local.SetupStoreItem();
-
-            _local.SetupShoppingListRepositoryFindBy();
-            _local.SetupItemRepositoryFindBy();
-            _local.SetupStoringShoppingList();
-
-            // Act
-            bool result = await handler.HandleAsync(_local.Command, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                result.Should().BeTrue();
-                _local.VerifyChangeItemQuantityOnce();
-                _local.VerifyStoreAsync();
-            }
+            _storeItem = StoreItemMother.Initial().Create();
         }
 
-        private sealed class LocalFixture
+        #region Fixture Setup
+
+        public void SetupShoppingListRepositoryFindBy()
         {
-            private readonly Fixture _fixture;
-            private readonly CommonFixture _commonFixture = new CommonFixture();
-            private readonly ShoppingListRepositoryMock _shoppingListRepositoryMock;
-            private readonly ItemRepositoryMock _itemRepositoryMock;
-            private ShoppingListMock _shoppingListMock;
-            private TemporaryItemId? _temporaryItemId;
-            private IStoreItem _storeItem;
-
-            public LocalFixture()
-            {
-                _fixture = _commonFixture.GetNewFixture();
-
-                _shoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
-                _itemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
-            }
-
-            public ChangeItemQuantityOnShoppingListCommand Command { get; private set; }
-
-            public void SetupCommand()
-            {
-                OfflineTolerantItemId offlineTolerantItemId;
-                if (_temporaryItemId == null)
-                {
-                    offlineTolerantItemId = new OfflineTolerantItemId(_commonFixture.NextInt());
-                }
-                else
-                {
-                    _fixture.ConstructorArgumentFor<ChangeItemQuantityOnShoppingListCommand, ItemTypeId?>("itemTypeId",
-                        null);
-                    offlineTolerantItemId = new OfflineTolerantItemId(_temporaryItemId.Value.Value);
-                }
-
-                _fixture.ConstructorArgumentFor<ChangeItemQuantityOnShoppingListCommand, OfflineTolerantItemId>("itemId",
-                    offlineTolerantItemId);
-
-                Command = _fixture.Create<ChangeItemQuantityOnShoppingListCommand>();
-            }
-
-            public ChangeItemQuantityOnShoppingListCommandHandler CreateSut()
-            {
-                return new ChangeItemQuantityOnShoppingListCommandHandler(
-                    _shoppingListRepositoryMock.Object,
-                    _itemRepositoryMock.Object);
-            }
-
-            public void SetupTemporaryItemId()
-            {
-                _temporaryItemId = TemporaryItemId.New;
-            }
-
-            public void SetupShoppingListMock()
-            {
-                _shoppingListMock = new ShoppingListMock(ShoppingListMother.Sections(2).Create());
-            }
-
-            public void SetupStoreItem()
-            {
-                _storeItem = StoreItemMother.Initial().Create();
-            }
-
-            #region Fixture Setup
-
-            public void SetupShoppingListRepositoryFindBy()
-            {
-                _shoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, _shoppingListMock.Object);
-            }
-
-            public void SetupShoppingListRepositoryFindingNoList()
-            {
-                _shoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, null);
-            }
-
-            public void SetupStoringShoppingList()
-            {
-                _shoppingListRepositoryMock.SetupStoreAsync(_shoppingListMock.Object);
-            }
-
-            public void SetupItemRepositoryFindBy()
-            {
-                _itemRepositoryMock.SetupFindByAsync(_temporaryItemId.Value, _storeItem);
-            }
-
-            public void SetupItemRepositoryFindingNoItem()
-            {
-                _itemRepositoryMock.SetupFindByAsync(_temporaryItemId.Value, null);
-            }
-
-            #endregion Fixture Setup
-
-            #region Verify
-
-            public void VerifyStoreAsync()
-            {
-                _shoppingListRepositoryMock.VerifyStoreAsyncOnce(_shoppingListMock.Object);
-            }
-
-            public void VerifyChangeItemQuantityOnce()
-            {
-                _shoppingListMock.VerifyChangeItemQuantityOnce(_storeItem.Id, Command.ItemTypeId, Command.Quantity);
-            }
-
-            public void VerifyChangeItemQuantityWithOfflineIdOnce()
-            {
-                _shoppingListMock.VerifyChangeItemQuantityOnce(
-                    new ItemId(Command.OfflineTolerantItemId.ActualId.Value),
-                    Command.ItemTypeId,
-                    Command.Quantity);
-            }
-
-            #endregion Verify
+            _shoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, _shoppingListMock.Object);
         }
+
+        public void SetupShoppingListRepositoryFindingNoList()
+        {
+            _shoppingListRepositoryMock.SetupFindByAsync(Command.ShoppingListId, null);
+        }
+
+        public void SetupStoringShoppingList()
+        {
+            _shoppingListRepositoryMock.SetupStoreAsync(_shoppingListMock.Object);
+        }
+
+        public void SetupItemRepositoryFindBy()
+        {
+            _itemRepositoryMock.SetupFindByAsync(_temporaryItemId.Value, _storeItem);
+        }
+
+        public void SetupItemRepositoryFindingNoItem()
+        {
+            _itemRepositoryMock.SetupFindByAsync(_temporaryItemId.Value, null);
+        }
+
+        #endregion Fixture Setup
+
+        #region Verify
+
+        public void VerifyStoreAsync()
+        {
+            _shoppingListRepositoryMock.VerifyStoreAsyncOnce(_shoppingListMock.Object);
+        }
+
+        public void VerifyChangeItemQuantityOnce()
+        {
+            _shoppingListMock.VerifyChangeItemQuantityOnce(_storeItem.Id, Command.ItemTypeId, Command.Quantity);
+        }
+
+        public void VerifyChangeItemQuantityWithOfflineIdOnce()
+        {
+            _shoppingListMock.VerifyChangeItemQuantityOnce(
+                new ItemId(Command.OfflineTolerantItemId.ActualId.Value),
+                Command.ItemTypeId,
+                Command.Quantity);
+        }
+
+        #endregion Verify
     }
 }

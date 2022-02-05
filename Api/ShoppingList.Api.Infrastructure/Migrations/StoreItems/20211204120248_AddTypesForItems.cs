@@ -1,23 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems;
+
+public partial class AddTypesForItems : Migration
 {
-    public partial class AddTypesForItems : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AlterColumn<string>(
+        migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Items",
                 type: "longtext",
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "longtext CHARACTER SET utf8mb4")
-                .Annotation("MySql:CharSet", "utf8mb4")
-                .OldAnnotation("MySql:CharSet", "utf8mb4");
+            .Annotation("MySql:CharSet", "utf8mb4")
+            .OldAnnotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.AlterColumn<string>(
+        migrationBuilder.AlterColumn<string>(
                 name: "Comment",
                 table: "Items",
                 type: "longtext",
@@ -26,10 +26,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
                 oldClrType: typeof(string),
                 oldType: "longtext CHARACTER SET utf8mb4",
                 oldNullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4")
-                .OldAnnotation("MySql:CharSet", "utf8mb4");
+            .Annotation("MySql:CharSet", "utf8mb4")
+            .OldAnnotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.CreateTable(
+        migrationBuilder.CreateTable(
                 name: "ItemType",
                 columns: table => new
                 {
@@ -49,9 +49,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
-                .Annotation("MySql:CharSet", "utf8mb4");
+            .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.CreateTable(
+        migrationBuilder.CreateTable(
                 name: "ItemTypeAvailableAt",
                 columns: table => new
                 {
@@ -72,46 +72,45 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
-                .Annotation("MySql:CharSet", "utf8mb4");
+            .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemType_ItemId",
-                table: "ItemType",
-                column: "ItemId");
+        migrationBuilder.CreateIndex(
+            name: "IX_ItemType_ItemId",
+            table: "ItemType",
+            column: "ItemId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemTypeAvailableAt_ItemTypeId",
-                table: "ItemTypeAvailableAt",
-                column: "ItemTypeId");
-        }
+        migrationBuilder.CreateIndex(
+            name: "IX_ItemTypeAvailableAt_ItemTypeId",
+            table: "ItemTypeAvailableAt",
+            column: "ItemTypeId");
+    }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(
-                name: "ItemTypeAvailableAt");
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropTable(
+            name: "ItemTypeAvailableAt");
 
-            migrationBuilder.DropTable(
-                name: "ItemType");
+        migrationBuilder.DropTable(
+            name: "ItemType");
 
-            migrationBuilder.AlterColumn<string>(
+        migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Items",
                 type: "longtext CHARACTER SET utf8mb4",
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "longtext")
-                .Annotation("MySql:CharSet", "utf8mb4")
-                .OldAnnotation("MySql:CharSet", "utf8mb4");
+            .Annotation("MySql:CharSet", "utf8mb4")
+            .OldAnnotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.AlterColumn<string>(
+        migrationBuilder.AlterColumn<string>(
                 name: "Comment",
                 table: "Items",
                 type: "longtext CHARACTER SET utf8mb4",
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "longtext")
-                .Annotation("MySql:CharSet", "utf8mb4")
-                .OldAnnotation("MySql:CharSet", "utf8mb4");
-        }
+            .Annotation("MySql:CharSet", "utf8mb4")
+            .OldAnnotation("MySql:CharSet", "utf8mb4");
     }
 }

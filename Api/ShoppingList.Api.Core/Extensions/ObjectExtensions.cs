@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Api.Core.Extensions
+namespace ProjectHermes.ShoppingList.Api.Core.Extensions;
+
+public static class ObjectExtensions
 {
-    public static class ObjectExtensions
+    public static List<T> ToMonoList<T>(this T obj)
     {
-        public static List<T> ToMonoList<T>(this T obj)
-        {
-            return new List<T> { obj };
-        }
+        return new List<T> { obj };
     }
 }

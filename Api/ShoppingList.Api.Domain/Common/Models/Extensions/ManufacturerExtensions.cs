@@ -1,13 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions
+namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
+
+public static class ManufacturerExtensions
 {
-    public static class ManufacturerExtensions
+    public static ManufacturerReadModel ToReadModel(this IManufacturer model)
     {
-        public static ManufacturerReadModel ToReadModel(this IManufacturer model)
-        {
-            return new ManufacturerReadModel(model.Id, model.Name, model.IsDeleted);
-        }
+        return new ManufacturerReadModel(model.Id, model.Name, model.IsDeleted);
     }
 }

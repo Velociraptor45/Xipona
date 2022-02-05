@@ -1,14 +1,13 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem
-{
-    public class CreateItemCommand : ICommand<bool>
-    {
-        public CreateItemCommand(ItemCreation itemCreation)
-        {
-            ItemCreation = itemCreation ?? throw new System.ArgumentNullException(nameof(itemCreation));
-        }
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
 
-        public ItemCreation ItemCreation { get; }
+public class CreateItemCommand : ICommand<bool>
+{
+    public CreateItemCommand(ItemCreation itemCreation)
+    {
+        ItemCreation = itemCreation ?? throw new System.ArgumentNullException(nameof(itemCreation));
     }
+
+    public ItemCreation ItemCreation { get; }
 }

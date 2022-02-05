@@ -1,83 +1,82 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
-using System;
+﻿using System;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
+
+public class Transaction : ITransaction
 {
-    public class Transaction : ITransaction
+    private DbTransaction? transaction;
+
+    public Transaction(DbTransaction transaction)
     {
-        private DbTransaction? transaction;
+        this.transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
+    }
 
-        public Transaction(DbTransaction transaction)
+    public async Task CommitAsync(CancellationToken cancellationToken)
+    {
+        ThrowIfTransactionNull();
+
+        try
         {
-            this.transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
+            await transaction!.CommitAsync(cancellationToken);
         }
-
-        public async Task CommitAsync(CancellationToken cancellationToken)
+        finally
         {
-            ThrowIfTransactionNull();
-
             try
             {
-                await transaction!.CommitAsync(cancellationToken);
+                transaction!.Dispose();
             }
-            finally
+            catch (Exception)
             {
-                try
-                {
-                    transaction!.Dispose();
-                }
-                catch (Exception)
-                {
-                    // todo log
-                }
-
-                transaction = null;
+                // todo log
             }
+
+            transaction = null;
         }
+    }
 
-        public async Task RollbackAsync(CancellationToken cancellationToken)
+    public async Task RollbackAsync(CancellationToken cancellationToken)
+    {
+        ThrowIfTransactionNull();
+
+        try
         {
-            ThrowIfTransactionNull();
-
+            await transaction!.RollbackAsync(cancellationToken);
+        }
+        finally
+        {
             try
             {
-                await transaction!.RollbackAsync(cancellationToken);
+                transaction!.Dispose();
             }
-            finally
+            catch (Exception)
             {
-                try
-                {
-                    transaction!.Dispose();
-                }
-                catch (Exception)
-                {
-                    // todo log
-                }
-
-                transaction = null;
+                // todo log
             }
-        }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            transaction = null;
         }
+    }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (transaction == null)
-                return;
-            RollbackAsync(default).GetAwaiter().GetResult();
-        }
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-        private void ThrowIfTransactionNull()
-        {
-            if (transaction == null)
-                throw new InvalidOperationException("Transaction is null");
-        }
+    protected virtual void Dispose(bool disposing)
+    {
+        if (transaction == null)
+            return;
+        RollbackAsync(default).GetAwaiter().GetResult();
+    }
+
+    private void ThrowIfTransactionNull()
+    {
+        if (transaction == null)
+            throw new InvalidOperationException("Transaction is null");
     }
 }

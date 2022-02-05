@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories
-{
-    public interface IItemTypeFactory
-    {
-        IItemType Create(ItemTypeId id, string name, IEnumerable<IStoreItemAvailability> availabilities,
-            IItemType? predecessor);
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 
-        IItemType CreateNew(string name, IEnumerable<IStoreItemAvailability> availabilities, IItemType? predecessor);
-    }
+public interface IItemTypeFactory
+{
+    IItemType Create(ItemTypeId id, string name, IEnumerable<IStoreItemAvailability> availabilities,
+        IItemType? predecessor);
+
+    IItemType CreateNew(string name, IEnumerable<IStoreItemAvailability> availabilities, IItemType? predecessor);
 }

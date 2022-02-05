@@ -1,11 +1,10 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 
-namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Common
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
+
+public interface IQueryDispatcher
 {
-    public interface IQueryDispatcher
-    {
-        Task<T> DispatchAsync<T>(IQuery<T> query, CancellationToken cancellationToken);
-    }
+    Task<T> DispatchAsync<T>(IQuery<T> query, CancellationToken cancellationToken);
 }

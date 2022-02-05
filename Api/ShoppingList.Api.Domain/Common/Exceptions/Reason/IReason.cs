@@ -1,8 +1,7 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+
+public interface IReason
 {
-    public interface IReason
-    {
-        string Message { get; }
-        ErrorReasonCode ErrorCode { get; }
-    }
+    string Message { get; }
+    ErrorReasonCode ErrorCode { get; }
 }

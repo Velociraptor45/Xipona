@@ -6,32 +6,31 @@ using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using Xunit;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Stores.Models
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Stores.Models;
+
+public class StoreTests
 {
-    public class StoreTests
+    private readonly CommonFixture commonFixture;
+
+    public StoreTests()
     {
-        private readonly CommonFixture commonFixture;
+        commonFixture = new CommonFixture();
+    }
 
-        public StoreTests()
+    [Fact]
+    public void ChangeName_WithValidData_ShouldChangeName()
+    {
+        // Arrange
+        string newName = commonFixture.GetNewFixture().Create<string>();
+        IStore store = StoreMother.Sections(3).Create();
+
+        // Act
+        store.ChangeName(newName);
+
+        // Assert
+        using (new AssertionScope())
         {
-            commonFixture = new CommonFixture();
-        }
-
-        [Fact]
-        public void ChangeName_WithValidData_ShouldChangeName()
-        {
-            // Arrange
-            string newName = commonFixture.GetNewFixture().Create<string>();
-            IStore store = StoreMother.Sections(3).Create();
-
-            // Act
-            store.ChangeName(newName);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                store.Name.Should().Be(newName);
-            }
+            store.Name.Should().Be(newName);
         }
     }
 }

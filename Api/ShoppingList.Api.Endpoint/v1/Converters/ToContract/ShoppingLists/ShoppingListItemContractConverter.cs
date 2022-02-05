@@ -8,59 +8,58 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShopping
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
 
-namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.ShoppingLists
+namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.ShoppingLists;
+
+public class ShoppingListItemContractConverter : IToContractConverter<ShoppingListItemReadModel, ShoppingListItemContract>
 {
-    public class ShoppingListItemContractConverter : IToContractConverter<ShoppingListItemReadModel, ShoppingListItemContract>
+    private readonly IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> _itemCategoryContractConverter;
+    private readonly IToContractConverter<ManufacturerReadModel, ManufacturerContract> _manufacturerContractConverter;
+    private readonly IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> _quantityTypeContractConverter;
+    private readonly IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> _quantityTypeInPacketContractConverter;
+
+    public ShoppingListItemContractConverter(
+        IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> itemCategoryContractConverter,
+        IToContractConverter<ManufacturerReadModel, ManufacturerContract> manufacturerContractConverter,
+        IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeContractConverter,
+        IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketContractConverter)
     {
-        private readonly IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> _itemCategoryContractConverter;
-        private readonly IToContractConverter<ManufacturerReadModel, ManufacturerContract> _manufacturerContractConverter;
-        private readonly IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> _quantityTypeContractConverter;
-        private readonly IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> _quantityTypeInPacketContractConverter;
+        _itemCategoryContractConverter = itemCategoryContractConverter;
+        _manufacturerContractConverter = manufacturerContractConverter;
+        _quantityTypeContractConverter = quantityTypeContractConverter;
+        _quantityTypeInPacketContractConverter = quantityTypeInPacketContractConverter;
+    }
 
-        public ShoppingListItemContractConverter(
-            IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> itemCategoryContractConverter,
-            IToContractConverter<ManufacturerReadModel, ManufacturerContract> manufacturerContractConverter,
-            IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeContractConverter,
-            IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketContractConverter)
-        {
-            _itemCategoryContractConverter = itemCategoryContractConverter;
-            _manufacturerContractConverter = manufacturerContractConverter;
-            _quantityTypeContractConverter = quantityTypeContractConverter;
-            _quantityTypeInPacketContractConverter = quantityTypeInPacketContractConverter;
-        }
+    public ShoppingListItemContract ToContract(ShoppingListItemReadModel source)
+    {
+        if (source is null)
+            throw new System.ArgumentNullException(nameof(source));
 
-        public ShoppingListItemContract ToContract(ShoppingListItemReadModel source)
-        {
-            if (source is null)
-                throw new System.ArgumentNullException(nameof(source));
+        ItemCategoryContract? itemCategoryContract = null;
+        if (source.ItemCategory != null)
+            itemCategoryContract = _itemCategoryContractConverter.ToContract(source.ItemCategory);
 
-            ItemCategoryContract? itemCategoryContract = null;
-            if (source.ItemCategory != null)
-                itemCategoryContract = _itemCategoryContractConverter.ToContract(source.ItemCategory);
+        ManufacturerContract? manufacturerContract = null;
+        if (source.Manufacturer != null)
+            manufacturerContract = _manufacturerContractConverter.ToContract(source.Manufacturer);
 
-            ManufacturerContract? manufacturerContract = null;
-            if (source.Manufacturer != null)
-                manufacturerContract = _manufacturerContractConverter.ToContract(source.Manufacturer);
+        QuantityTypeContract quantityTypeContract = _quantityTypeContractConverter.ToContract(source.QuantityType);
+        QuantityTypeInPacketContract quantityTypeInPacketContract =
+            _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket);
 
-            QuantityTypeContract quantityTypeContract = _quantityTypeContractConverter.ToContract(source.QuantityType);
-            QuantityTypeInPacketContract quantityTypeInPacketContract =
-                _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket);
-
-            return new ShoppingListItemContract(
-                source.Id.Value,
-                source.TypeId?.Value,
-                source.Name,
-                source.IsDeleted,
-                source.Comment,
-                source.IsTemporary,
-                source.PricePerQuantity,
-                quantityTypeContract,
-                source.QuantityInPacket,
-                quantityTypeInPacketContract,
-                itemCategoryContract,
-                manufacturerContract,
-                source.IsInBasket,
-                source.Quantity);
-        }
+        return new ShoppingListItemContract(
+            source.Id.Value,
+            source.TypeId?.Value,
+            source.Name,
+            source.IsDeleted,
+            source.Comment,
+            source.IsTemporary,
+            source.PricePerQuantity,
+            quantityTypeContract,
+            source.QuantityInPacket,
+            quantityTypeInPacketContract,
+            itemCategoryContract,
+            manufacturerContract,
+            source.IsInBasket,
+            source.Quantity);
     }
 }

@@ -2,12 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure
-{
-    public interface ITransaction : IDisposable
-    {
-        Task CommitAsync(CancellationToken cancellationToken);
+namespace ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 
-        Task RollbackAsync(CancellationToken cancellationToken);
-    }
+public interface ITransaction : IDisposable
+{
+    Task CommitAsync(CancellationToken cancellationToken);
+
+    Task RollbackAsync(CancellationToken cancellationToken);
 }

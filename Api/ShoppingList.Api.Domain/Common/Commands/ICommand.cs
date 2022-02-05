@@ -1,6 +1,5 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Commands
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+
+public interface ICommand<out T>
 {
-    public interface ICommand<out T>
-    {
-    }
 }

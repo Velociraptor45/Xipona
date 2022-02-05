@@ -1,10 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+﻿using System.Collections.Generic;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
-using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.AllActiveItemCategories
+namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.AllActiveItemCategories;
+
+public class AllActiveItemCategoriesQuery : IQuery<IEnumerable<ItemCategoryReadModel>>
 {
-    public class AllActiveItemCategoriesQuery : IQuery<IEnumerable<ItemCategoryReadModel>>
-    {
-    }
 }

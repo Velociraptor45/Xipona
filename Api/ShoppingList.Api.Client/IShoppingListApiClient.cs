@@ -1,4 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Queries.AllActiveItemCategories;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturer.Queries.AllActiveManufacturers;
@@ -24,8 +26,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
 using RestEase;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.Client
 {

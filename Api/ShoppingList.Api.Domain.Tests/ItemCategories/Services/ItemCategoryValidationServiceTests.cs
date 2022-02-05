@@ -1,4 +1,6 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Threading.Tasks;
+using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
@@ -9,86 +11,83 @@ using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services;
+
+public class ItemCategoryValidationServiceTests
 {
-    public class ItemCategoryValidationServiceTests
+    [Fact]
+    public async Task ValidateAsync_WithInvalidItemCategoryId_ShouldThrowDomainException()
     {
-        [Fact]
-        public async Task ValidateAsync_WithInvalidItemCategoryId_ShouldThrowDomainException()
+        // Arrange
+        var local = new LocalFixture();
+        var service = local.CreateService();
+        local.SetupItemCategory();
+        local.SetupFindingNoItemCategory();
+
+        // Act
+        Func<Task> function = async () => await service.ValidateAsync(local.ItemCategory.Id, default);
+
+        // Assert
+        using (new AssertionScope())
         {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateService();
-            local.SetupItemCategory();
-            local.SetupFindingNoItemCategory();
+            await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemCategoryNotFound);
+        }
+    }
 
-            // Act
-            Func<Task> function = async () => await service.ValidateAsync(local.ItemCategory.Id, default);
+    [Fact]
+    public async Task ValidateAsync_WithValidItemCategoryId_ShouldNotThrow()
+    {
+        // Arrange
+        var local = new LocalFixture();
+        var service = local.CreateService();
 
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemCategoryNotFound);
-            }
+        local.SetupItemCategory();
+        local.SetupFindingItemCategory();
+
+        // Act
+        Func<Task> function = async () => await service.ValidateAsync(local.ItemCategory.Id, default);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            await function.Should().NotThrowAsync();
+        }
+    }
+
+    private class LocalFixture
+    {
+        public Fixture Fixture { get; }
+        public CommonFixture CommonFixture { get; } = new CommonFixture();
+        public ItemCategoryRepositoryMock ItemCategoryRepositoryMock { get; }
+        public ItemCategory ItemCategory { get; private set; }
+
+        public LocalFixture()
+        {
+            Fixture = CommonFixture.GetNewFixture();
+
+            ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
         }
 
-        [Fact]
-        public async Task ValidateAsync_WithValidItemCategoryId_ShouldNotThrow()
+        public ItemCategoryValidationService CreateService()
         {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateService();
-
-            local.SetupItemCategory();
-            local.SetupFindingItemCategory();
-
-            // Act
-            Func<Task> function = async () => await service.ValidateAsync(local.ItemCategory.Id, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().NotThrowAsync();
-            }
+            return new ItemCategoryValidationService(ItemCategoryRepositoryMock.Object);
         }
 
-        private class LocalFixture
+        public void SetupItemCategory()
         {
-            public Fixture Fixture { get; }
-            public CommonFixture CommonFixture { get; } = new CommonFixture();
-            public ItemCategoryRepositoryMock ItemCategoryRepositoryMock { get; }
-            public ItemCategory ItemCategory { get; private set; }
+            ItemCategory = new ItemCategoryBuilder().Create();
+        }
 
-            public LocalFixture()
-            {
-                Fixture = CommonFixture.GetNewFixture();
+        public void SetupFindingItemCategory()
+        {
+            ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategory.Id, ItemCategory);
+        }
 
-                ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
-            }
-
-            public ItemCategoryValidationService CreateService()
-            {
-                return new ItemCategoryValidationService(ItemCategoryRepositoryMock.Object);
-            }
-
-            public void SetupItemCategory()
-            {
-                ItemCategory = new ItemCategoryBuilder().Create();
-            }
-
-            public void SetupFindingItemCategory()
-            {
-                ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategory.Id, ItemCategory);
-            }
-
-            public void SetupFindingNoItemCategory()
-            {
-                ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategory.Id, null);
-            }
+        public void SetupFindingNoItemCategory()
+        {
+            ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategory.Id, null);
         }
     }
 }

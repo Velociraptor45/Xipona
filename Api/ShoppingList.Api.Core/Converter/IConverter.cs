@@ -1,6 +1,5 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Core.Converter
+﻿namespace ProjectHermes.ShoppingList.Api.Core.Converter;
+
+public interface IConverter
 {
-    public interface IConverter
-    {
-    }
 }

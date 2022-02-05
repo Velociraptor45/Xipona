@@ -1,23 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Core.Converter
+namespace ProjectHermes.ShoppingList.Api.Core.Converter;
+
+public interface IToDomainConverter : IConverter
+{ }
+
+public interface IToDomainConverter<in TSource, out TDestination> : IToDomainConverter
 {
-    public interface IToDomainConverter : IConverter
-    { }
+    TDestination ToDomain(TSource source);
 
-    public interface IToDomainConverter<in TSource, out TDestination> : IToDomainConverter
+    IEnumerable<TDestination> ToDomain(IEnumerable<TSource> sources)
     {
-        TDestination ToDomain(TSource source);
+        var sourcesList = sources.ToList();
 
-        IEnumerable<TDestination> ToDomain(IEnumerable<TSource> sources)
+        foreach (var source in sourcesList)
         {
-            var sourcesList = sources.ToList();
-
-            foreach (var source in sourcesList)
-            {
-                yield return ToDomain(source);
-            }
+            yield return ToDomain(source);
         }
     }
 }

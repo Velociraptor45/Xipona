@@ -6,39 +6,37 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Converters.ToDomain;
 using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
-using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
+namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain;
+
+public class ItemCategoryConverterTests : ToDomainConverterTestBase<ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities.ItemCategory, IItemCategory>
 {
-    public class ItemCategoryConverterTests : ToDomainConverterTestBase<Entities.ItemCategory, IItemCategory>
+    protected override (ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities.ItemCategory, IItemCategory) CreateTestObjects()
     {
-        protected override (Entities.ItemCategory, IItemCategory) CreateTestObjects()
-        {
-            var destination = new ItemCategoryBuilder().Create();
-            var source = GetSource(destination);
+        var destination = new ItemCategoryBuilder().Create();
+        var source = GetSource(destination);
 
-            return (source, destination);
-        }
+        return (source, destination);
+    }
 
-        protected override void SetupServiceCollection()
-        {
-            AddDependencies(serviceCollection);
-        }
+    protected override void SetupServiceCollection()
+    {
+        AddDependencies(serviceCollection);
+    }
 
-        public static Entities.ItemCategory GetSource(IItemCategory destination)
+    public static ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities.ItemCategory GetSource(IItemCategory destination)
+    {
+        return new ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities.ItemCategory()
         {
-            return new Entities.ItemCategory()
-            {
-                Id = destination.Id.Value,
-                Deleted = destination.IsDeleted,
-                Name = destination.Name
-            };
-        }
+            Id = destination.Id.Value,
+            Deleted = destination.IsDeleted,
+            Name = destination.Name
+        };
+    }
 
-        public static void AddDependencies(IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddImplementationOfGenericType(typeof(ItemCategoryConverter).Assembly, typeof(IToDomainConverter<,>));
-            serviceCollection.AddImplementationOfNonGenericType(typeof(IItemCategoryFactory).Assembly, typeof(IItemCategoryFactory));
-        }
+    public static void AddDependencies(IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddImplementationOfGenericType(typeof(ItemCategoryConverter).Assembly, typeof(IToDomainConverter<,>));
+        serviceCollection.AddImplementationOfNonGenericType(typeof(IItemCategoryFactory).Assembly, typeof(IItemCategoryFactory));
     }
 }

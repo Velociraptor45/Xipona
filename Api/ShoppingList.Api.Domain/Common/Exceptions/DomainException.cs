@@ -1,15 +1,14 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using System;
+﻿using System;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions
+namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+
+public class DomainException : Exception
 {
-    public class DomainException : Exception
+    public DomainException(IReason reason)
     {
-        public DomainException(IReason reason)
-        {
-            Reason = reason;
-        }
-
-        public IReason Reason { get; }
+        Reason = reason;
     }
+
+    public IReason Reason { get; }
 }

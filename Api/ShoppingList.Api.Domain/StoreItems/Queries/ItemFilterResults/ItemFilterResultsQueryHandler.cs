@@ -1,36 +1,35 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterResults
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterResults;
+
+public class ItemFilterResultsQueryHandler : IQueryHandler<ItemFilterResultsQuery, IEnumerable<ItemFilterResultReadModel>>
 {
-    public class ItemFilterResultsQueryHandler : IQueryHandler<ItemFilterResultsQuery, IEnumerable<ItemFilterResultReadModel>>
+    private readonly IItemRepository itemRepository;
+
+    public ItemFilterResultsQueryHandler(IItemRepository itemRepository)
     {
-        private readonly IItemRepository itemRepository;
+        this.itemRepository = itemRepository;
+    }
 
-        public ItemFilterResultsQueryHandler(IItemRepository itemRepository)
+    public async Task<IEnumerable<ItemFilterResultReadModel>> HandleAsync(
+        ItemFilterResultsQuery query, CancellationToken cancellationToken)
+    {
+        if (query is null)
         {
-            this.itemRepository = itemRepository;
+            throw new System.ArgumentNullException(nameof(query));
         }
 
-        public async Task<IEnumerable<ItemFilterResultReadModel>> HandleAsync(
-            ItemFilterResultsQuery query, CancellationToken cancellationToken)
-        {
-            if (query is null)
-            {
-                throw new System.ArgumentNullException(nameof(query));
-            }
+        var storeItems = await itemRepository.FindPermanentByAsync(query.StoreIds, query.ItemCategoriesIds,
+            query.ManufacturerIds, cancellationToken);
 
-            var storeItems = await itemRepository.FindPermanentByAsync(query.StoreIds, query.ItemCategoriesIds,
-                    query.ManufacturerIds, cancellationToken);
-
-            return storeItems
-                .Where(model => !model.IsDeleted)
-                .Select(model => model.ToItemFilterResultReadModel());
-        }
+        return storeItems
+            .Where(model => !model.IsDeleted)
+            .Select(model => model.ToItemFilterResultReadModel());
     }
 }

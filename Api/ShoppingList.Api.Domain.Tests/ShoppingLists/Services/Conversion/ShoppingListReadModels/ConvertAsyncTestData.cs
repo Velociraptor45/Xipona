@@ -1,4 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Attributes;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using ProjectHermes.ShoppingList.Api.Core.Attributes;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
@@ -15,232 +18,228 @@ using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Conversion.ShoppingListReadModels
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Conversion.ShoppingListReadModels;
+
+public class ConvertAsyncTestData : IEnumerable<object[]>
 {
-    public class ConvertAsyncTestData : IEnumerable<object[]>
+    public IEnumerator<object[]> GetEnumerator()
     {
-        public IEnumerator<object[]> GetEnumerator()
+        yield return NoItemCategory();
+        yield return NoManufacturer();
+        yield return NeitherItemCategoryNorManufacturer();
+        yield return WithItemCategoryAndManufacturer();
+        yield return EmptyList();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+
+    private object[] NoItemCategory()
+    {
+        IStore store = StoreMother.Initial().Create();
+        var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
+        IManufacturer manufacturer = ManufacturerMother.NotDeleted().Create();
+
+        var availability = GetAvailabilityFrom(store);
+
+        IStoreItem item = new StoreItemBuilder()
+            .WithoutItemCategoryId()
+            .WithManufacturerId(manufacturer.Id)
+            .WithId(list.Sections.First().Items.First().Id)
+            .WithAvailabilities(availability.ToMonoList())
+            .AsItem()
+            .Create();
+        var listReadModel = ToSimpleReadModel(list, store, item, null, manufacturer);
+
+        return new object[]
         {
-            yield return NoItemCategory();
-            yield return NoManufacturer();
-            yield return NeitherItemCategoryNorManufacturer();
-            yield return WithItemCategoryAndManufacturer();
-            yield return EmptyList();
-        }
+            list,
+            store,
+            item.ToMonoList(),
+            Enumerable.Empty<IItemCategory>(),
+            manufacturer.ToMonoList(),
+            listReadModel
+        };
+    }
 
-        IEnumerator IEnumerable.GetEnumerator()
+    private object[] NoManufacturer()
+    {
+        IStore store = StoreMother.Initial().Create();
+        var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
+        IItemCategory itemCategory = ItemCategoryMother.NotDeleted().Create();
+
+        var availability = GetAvailabilityFrom(store);
+        IStoreItem item = new StoreItemBuilder()
+            .WithItemCategoryId(itemCategory.Id)
+            .WithoutManufacturerId()
+            .WithAvailabilities(availability.ToMonoList())
+            .WithId(list.Sections.First().Items.First().Id)
+            .AsItem()
+            .Create();
+
+        var listReadModel = ToSimpleReadModel(list, store, item, itemCategory, null);
+
+        return new object[]
         {
-            return GetEnumerator();
-        }
+            list,
+            store,
+            item.ToMonoList(),
+            itemCategory.ToMonoList(),
+            Enumerable.Empty<IManufacturer>(),
+            listReadModel
+        };
+    }
 
-        private object[] NoItemCategory()
+    private object[] NeitherItemCategoryNorManufacturer()
+    {
+        IStore store = StoreMother.Initial().Create();
+        var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
+
+        var availability = GetAvailabilityFrom(store);
+        IStoreItem item = StoreItemMother.InitialTemporary()
+            .WithAvailabilities(availability.ToMonoList())
+            .WithId(list.Sections.First().Items.First().Id)
+            .Create();
+        var listReadModel = ToSimpleReadModel(list, store, item, null, null);
+
+        return new object[]
         {
-            IStore store = StoreMother.Initial().Create();
-            var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
-            IManufacturer manufacturer = ManufacturerMother.NotDeleted().Create();
+            list,
+            store,
+            item.ToMonoList(),
+            Enumerable.Empty<IItemCategory>(),
+            Enumerable.Empty<IManufacturer>(),
+            listReadModel
+        };
+    }
 
-            var availability = GetAvailabilityFrom(store);
+    private object[] WithItemCategoryAndManufacturer()
+    {
+        IStore store = StoreMother.Initial().Create();
+        var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
+        IManufacturer manufacturer = ManufacturerMother.NotDeleted().Create();
+        IItemCategory itemCategory = ItemCategoryMother.NotDeleted().Create();
 
-            IStoreItem item = new StoreItemBuilder()
-                .WithoutItemCategoryId()
-                .WithManufacturerId(manufacturer.Id)
-                .WithId(list.Sections.First().Items.First().Id)
-                .WithAvailabilities(availability.ToMonoList())
-                .AsItem()
-                .Create();
-            var listReadModel = ToSimpleReadModel(list, store, item, null, manufacturer);
+        var availability = GetAvailabilityFrom(store);
+        IStoreItem item = new StoreItemBuilder()
+            .WithItemCategoryId(itemCategory.Id)
+            .WithManufacturerId(manufacturer.Id)
+            .WithAvailabilities(availability.ToMonoList())
+            .WithId(list.Sections.First().Items.First().Id)
+            .AsItem()
+            .Create();
+        var listReadModel = ToSimpleReadModel(list, store, item, itemCategory, manufacturer);
 
-            return new object[]
-            {
-                list,
-                store,
-                item.ToMonoList(),
-                Enumerable.Empty<IItemCategory>(),
-                manufacturer.ToMonoList(),
-                listReadModel
-            };
-        }
-
-        private object[] NoManufacturer()
+        return new object[]
         {
-            IStore store = StoreMother.Initial().Create();
-            var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
-            IItemCategory itemCategory = ItemCategoryMother.NotDeleted().Create();
+            list,
+            store,
+            item.ToMonoList(),
+            itemCategory.ToMonoList(),
+            manufacturer.ToMonoList(),
+            listReadModel
+        };
+    }
 
-            var availability = GetAvailabilityFrom(store);
-            IStoreItem item = new StoreItemBuilder()
-                .WithItemCategoryId(itemCategory.Id)
-                .WithoutManufacturerId()
-                .WithAvailabilities(availability.ToMonoList())
-                .WithId(list.Sections.First().Items.First().Id)
-                .AsItem()
-                .Create();
+    private object[] EmptyList()
+    {
+        IStore store = StoreMother.Initial().Create();
+        var list = ShoppingListMother.NoSections().WithStoreId(store.Id).Create();
+        var listReadModel = ToSimpleReadModel(list, store, null, null, null);
 
-            var listReadModel = ToSimpleReadModel(list, store, item, itemCategory, null);
-
-            return new object[]
-            {
-                list,
-                store,
-                item.ToMonoList(),
-                itemCategory.ToMonoList(),
-                Enumerable.Empty<IManufacturer>(),
-                listReadModel
-            };
-        }
-
-        private object[] NeitherItemCategoryNorManufacturer()
+        return new object[]
         {
-            IStore store = StoreMother.Initial().Create();
-            var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
+            list,
+            store,
+            Enumerable.Empty<IStoreItem>(),
+            Enumerable.Empty<IItemCategory>(),
+            Enumerable.Empty<IManufacturer>(),
+            listReadModel
+        };
+    }
 
-            var availability = GetAvailabilityFrom(store);
-            IStoreItem item = StoreItemMother.InitialTemporary()
-                .WithAvailabilities(availability.ToMonoList())
-                .WithId(list.Sections.First().Items.First().Id)
-                .Create();
-            var listReadModel = ToSimpleReadModel(list, store, item, null, null);
+    private IShoppingList GetShoppingListContainingOneItem(StoreId storeId, SectionId sectionId)
+    {
+        var section = ShoppingListSectionMother.OneItemInBasket()
+            .WithId(sectionId)
+            .Create();
+        return new ShoppingListBuilder()
+            .WithStoreId(storeId)
+            .WithSection(section)
+            .Create();
+    }
 
-            return new object[]
-            {
-                list,
-                store,
-                item.ToMonoList(),
-                Enumerable.Empty<IItemCategory>(),
-                Enumerable.Empty<IManufacturer>(),
-                listReadModel
-            };
-        }
+    private IStoreItemAvailability GetAvailabilityFrom(IStore store)
+    {
+        return new StoreItemAvailabilityBuilder()
+            .WithStoreId(store.Id)
+            .WithDefaultSectionId(store.Sections.First().Id)
+            .Create();
+    }
 
-        private object[] WithItemCategoryAndManufacturer()
-        {
-            IStore store = StoreMother.Initial().Create();
-            var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
-            IManufacturer manufacturer = ManufacturerMother.NotDeleted().Create();
-            IItemCategory itemCategory = ItemCategoryMother.NotDeleted().Create();
+    private ShoppingListReadModel ToSimpleReadModel(IShoppingList list, IStore store, IStoreItem item,
+        IItemCategory itemCategory, IManufacturer manufacturer)
+    {
+        var manufacturerReadModel = manufacturer == null
+            ? null
+            : new ManufacturerReadModel(
+                manufacturer.Id,
+                manufacturer.Name,
+                manufacturer.IsDeleted);
 
-            var availability = GetAvailabilityFrom(store);
-            IStoreItem item = new StoreItemBuilder()
-                .WithItemCategoryId(itemCategory.Id)
-                .WithManufacturerId(manufacturer.Id)
-                .WithAvailabilities(availability.ToMonoList())
-                .WithId(list.Sections.First().Items.First().Id)
-                .AsItem()
-                .Create();
-            var listReadModel = ToSimpleReadModel(list, store, item, itemCategory, manufacturer);
+        var itemCategoryReadModel = itemCategory == null
+            ? null
+            : new ItemCategoryReadModel(
+                itemCategory.Id,
+                itemCategory.Name,
+                itemCategory.IsDeleted);
 
-            return new object[]
-            {
-                list,
-                store,
-                item.ToMonoList(),
-                itemCategory.ToMonoList(),
-                manufacturer.ToMonoList(),
-                listReadModel
-            };
-        }
+        var sectionReadModels = list.Sections.Any()
+            ? new ShoppingListSectionReadModel(
+                list.Sections.First().Id,
+                store.Sections.First().Name,
+                store.Sections.First().SortingIndex,
+                store.Sections.First().IsDefaultSection,
+                new List<ShoppingListItemReadModel>
+                {
+                    new ShoppingListItemReadModel(
+                        item.Id,
+                        null,
+                        item.Name,
+                        item.IsDeleted,
+                        item.Comment,
+                        item.IsTemporary,
+                        item.Availabilities.First().Price,
+                        new QuantityTypeReadModel(
+                            (int)item.QuantityType,
+                            item.QuantityType.ToString(),
+                            item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                            item.QuantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                            item.QuantityType.GetAttribute<QuantityLabelAttribute>().QuantityLabel,
+                            item.QuantityType.GetAttribute<QuantityNormalizerAttribute>().Value),
+                        item.QuantityInPacket,
+                        new QuantityTypeInPacketReadModel(
+                            (int)item.QuantityTypeInPacket,
+                            item.QuantityTypeInPacket.ToString(),
+                            item.QuantityTypeInPacket.GetAttribute<QuantityLabelAttribute>().QuantityLabel),
+                        itemCategoryReadModel,
+                        manufacturerReadModel,
+                        list.Sections.First().Items.First().IsInBasket,
+                        list.Sections.First().Items.First().Quantity)
+                })
+            : null;
 
-        private object[] EmptyList()
-        {
-            IStore store = StoreMother.Initial().Create();
-            var list = ShoppingListMother.NoSections().WithStoreId(store.Id).Create();
-            var listReadModel = ToSimpleReadModel(list, store, null, null, null);
-
-            return new object[]
-            {
-                list,
-                store,
-                Enumerable.Empty<IStoreItem>(),
-                Enumerable.Empty<IItemCategory>(),
-                Enumerable.Empty<IManufacturer>(),
-                listReadModel
-            };
-        }
-
-        private IShoppingList GetShoppingListContainingOneItem(StoreId storeId, SectionId sectionId)
-        {
-            var section = ShoppingListSectionMother.OneItemInBasket()
-                .WithId(sectionId)
-                .Create();
-            return new ShoppingListBuilder()
-                .WithStoreId(storeId)
-                .WithSection(section)
-                .Create();
-        }
-
-        private IStoreItemAvailability GetAvailabilityFrom(IStore store)
-        {
-            return new StoreItemAvailabilityBuilder()
-                .WithStoreId(store.Id)
-                .WithDefaultSectionId(store.Sections.First().Id)
-                .Create();
-        }
-
-        private ShoppingListReadModel ToSimpleReadModel(IShoppingList list, IStore store, IStoreItem item,
-            IItemCategory itemCategory, IManufacturer manufacturer)
-        {
-            var manufacturerReadModel = manufacturer == null
-                ? null
-                : new ManufacturerReadModel(
-                    manufacturer.Id,
-                    manufacturer.Name,
-                    manufacturer.IsDeleted);
-
-            var itemCategoryReadModel = itemCategory == null
-                ? null
-                : new ItemCategoryReadModel(
-                    itemCategory.Id,
-                    itemCategory.Name,
-                    itemCategory.IsDeleted);
-
-            var sectionReadModels = list.Sections.Any()
-                ? new ShoppingListSectionReadModel(
-                        list.Sections.First().Id,
-                        store.Sections.First().Name,
-                        store.Sections.First().SortingIndex,
-                        store.Sections.First().IsDefaultSection,
-                        new List<ShoppingListItemReadModel>
-                        {
-                            new ShoppingListItemReadModel(
-                                item.Id,
-                                null,
-                                item.Name,
-                                item.IsDeleted,
-                                item.Comment,
-                                item.IsTemporary,
-                                item.Availabilities.First().Price,
-                                new QuantityTypeReadModel(
-                                    (int)item.QuantityType,
-                                    item.QuantityType.ToString(),
-                                    item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-                                    item.QuantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
-                                    item.QuantityType.GetAttribute<QuantityLabelAttribute>().QuantityLabel,
-                                    item.QuantityType.GetAttribute<QuantityNormalizerAttribute>().Value),
-                                item.QuantityInPacket,
-                                new QuantityTypeInPacketReadModel(
-                                    (int)item.QuantityTypeInPacket,
-                                    item.QuantityTypeInPacket.ToString(),
-                                    item.QuantityTypeInPacket.GetAttribute<QuantityLabelAttribute>().QuantityLabel),
-                                itemCategoryReadModel,
-                                manufacturerReadModel,
-                                list.Sections.First().Items.First().IsInBasket,
-                                list.Sections.First().Items.First().Quantity)
-                        })
-                : null;
-
-            return new ShoppingListReadModel(
-                list.Id,
-                list.CompletionDate,
-                new ShoppingListStoreReadModel(
-                    store.Id,
-                    store.Name),
-                sectionReadModels != null
-                    ? sectionReadModels.ToMonoList()
-                    : Enumerable.Empty<ShoppingListSectionReadModel>());
-        }
+        return new ShoppingListReadModel(
+            list.Id,
+            list.CompletionDate,
+            new ShoppingListStoreReadModel(
+                store.Id,
+                store.Name),
+            sectionReadModels != null
+                ? sectionReadModels.ToMonoList()
+                : Enumerable.Empty<ShoppingListSectionReadModel>());
     }
 }

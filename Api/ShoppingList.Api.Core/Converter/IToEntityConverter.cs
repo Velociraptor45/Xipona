@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Core.Converter
+namespace ProjectHermes.ShoppingList.Api.Core.Converter;
+
+public interface IToEntityConverter<in TSource, out TDestination>
 {
-    public interface IToEntityConverter<in TSource, out TDestination>
+    TDestination ToEntity(TSource source);
+
+    IEnumerable<TDestination> ToEntity(IEnumerable<TSource> sources)
     {
-        TDestination ToEntity(TSource source);
+        var sourcesList = sources.ToList();
 
-        IEnumerable<TDestination> ToEntity(IEnumerable<TSource> sources)
+        foreach (var source in sourcesList)
         {
-            var sourcesList = sources.ToList();
-
-            foreach (var source in sourcesList)
-            {
-                yield return ToEntity(source);
-            }
+            yield return ToEntity(source);
         }
     }
 }

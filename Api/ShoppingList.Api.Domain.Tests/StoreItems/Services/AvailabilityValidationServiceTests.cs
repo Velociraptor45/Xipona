@@ -1,4 +1,8 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoFixture;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
@@ -6,197 +10,192 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Ports;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using Xunit;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services;
+
+public class AvailabilityValidationServiceTests
 {
-    public class AvailabilityValidationServiceTests
+    private readonly LocalFixture _local;
+
+    public AvailabilityValidationServiceTests()
     {
-        private readonly LocalFixture _local;
+        _local = new LocalFixture();
+    }
 
-        public AvailabilityValidationServiceTests()
+    [Fact]
+    public async Task ValidateAsync_WithAvailabilitiesIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var service = _local.CreateSut();
+
+        // Act
+        Func<Task> function = async () => await service.ValidateAsync(null, default);
+
+        // Assert
+        using (new AssertionScope())
         {
-            _local = new LocalFixture();
+            await function.Should().ThrowAsync<ArgumentNullException>();
+        }
+    }
+
+    [Fact]
+    public async Task ValidateAsync_WithDuplicatedStoreIds_ShouldThrowDomainException()
+    {
+        // Arrange
+        var service = _local.CreateSut();
+        _local.SetupAvailabilitiesWithDuplicatedStoreIds();
+
+        // Act
+        Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.MultipleAvailabilitiesForStore);
+        }
+    }
+
+    [Fact]
+    public async Task ValidateAsync_WithInvalidStoreId_ShouldThrowDomainException()
+    {
+        // Arrange
+        var service = _local.CreateSut();
+        _local.SetupAvailabilities();
+        _local.SetupFindingNoStores();
+
+        // Act
+        Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.StoreNotFound);
+        }
+    }
+
+    [Fact]
+    public async Task ValidateAsync_WithSectionIdNotInStore_ShouldThrowDomainException()
+    {
+        // Arrange
+        var service = _local.CreateSut();
+        _local.SetupAvailabilities();
+        _local.SetupStoresWithInvalidSectionIds();
+        _local.SetupFindingStores();
+
+        // Act
+        Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.SectionInStoreNotFound);
+        }
+    }
+
+    [Fact]
+    public async Task ValidateAsync_WithValidData_ShouldNotThrow()
+    {
+        // Arrange
+        var service = _local.CreateSut();
+        _local.SetupAvailabilities();
+        _local.SetupStores();
+        _local.SetupFindingStores();
+
+        // Act
+        Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            await function.Should().NotThrowAsync();
+        }
+    }
+
+    private class LocalFixture
+    {
+        public Fixture Fixture { get; }
+        public CommonFixture CommonFixture { get; } = new CommonFixture();
+        public StoreRepositoryMock StoreRepositoryMock { get; }
+
+        public List<IStoreItemAvailability> Availabilities { get; private set; }
+        public List<IStore> Stores { get; private set; }
+
+        public LocalFixture()
+        {
+            Fixture = CommonFixture.GetNewFixture();
+
+            StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
         }
 
-        [Fact]
-        public async Task ValidateAsync_WithAvailabilitiesIsNull_ShouldThrowArgumentNullException()
+        public AvailabilityValidationService CreateSut()
         {
-            // Arrange
-            var service = _local.CreateSut();
+            return new AvailabilityValidationService(StoreRepositoryMock.Object);
+        }
 
-            // Act
-            Func<Task> function = async () => await service.ValidateAsync(null, default);
+        public void SetupAvailabilitiesWithDuplicatedStoreIds()
+        {
+            Availabilities = new List<IStoreItemAvailability>();
+            var availability = StoreItemAvailabilityMother.Initial().Create();
+            var availability2 = StoreItemAvailabilityMother.Initial().WithStoreId(availability.StoreId).Create();
+            Availabilities.Add(availability);
+            Availabilities.Add(availability2);
+        }
 
-            // Assert
-            using (new AssertionScope())
+        public void SetupAvailabilities()
+        {
+            Availabilities =
+                ((IEnumerable<IStoreItemAvailability>)StoreItemAvailabilityMother.Initial().CreateMany(3))
+                .ToList();
+        }
+
+        public void SetupStores()
+        {
+            Stores = new List<IStore>();
+
+            foreach (var availability in Availabilities)
             {
-                await function.Should().ThrowAsync<ArgumentNullException>();
+                var section = new StoreSectionBuilder().WithId(availability.DefaultSectionId).Create();
+                var store = StoreMother.Initial()
+                    .WithSection(section)
+                    .WithId(availability.StoreId)
+                    .Create();
+                Stores.Add(store);
             }
         }
 
-        [Fact]
-        public async Task ValidateAsync_WithDuplicatedStoreIds_ShouldThrowDomainException()
+        public void SetupStoresWithInvalidSectionIds()
         {
-            // Arrange
-            var service = _local.CreateSut();
-            _local.SetupAvailabilitiesWithDuplicatedStoreIds();
+            Stores = new List<IStore>();
 
-            // Act
-            Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
-
-            // Assert
-            using (new AssertionScope())
+            foreach (var availability in Availabilities)
             {
-                await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.MultipleAvailabilitiesForStore);
+                var store = StoreMother.Initial()
+                    .WithId(availability.StoreId)
+                    .Create();
+                Stores.Add(store);
             }
         }
 
-        [Fact]
-        public async Task ValidateAsync_WithInvalidStoreId_ShouldThrowDomainException()
+        #region Mock Setup
+
+        public void SetupFindingStores()
         {
-            // Arrange
-            var service = _local.CreateSut();
-            _local.SetupAvailabilities();
-            _local.SetupFindingNoStores();
-
-            // Act
-            Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.StoreNotFound);
-            }
+            var storeIds = Availabilities.Select(av => av.StoreId);
+            StoreRepositoryMock.SetupFindByAsync(storeIds, Stores);
         }
 
-        [Fact]
-        public async Task ValidateAsync_WithSectionIdNotInStore_ShouldThrowDomainException()
+        public void SetupFindingNoStores()
         {
-            // Arrange
-            var service = _local.CreateSut();
-            _local.SetupAvailabilities();
-            _local.SetupStoresWithInvalidSectionIds();
-            _local.SetupFindingStores();
-
-            // Act
-            Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.SectionInStoreNotFound);
-            }
+            var storeIds = Availabilities.Select(av => av.StoreId);
+            StoreRepositoryMock.SetupFindByAsync(storeIds, Enumerable.Empty<IStore>());
         }
 
-        [Fact]
-        public async Task ValidateAsync_WithValidData_ShouldNotThrow()
-        {
-            // Arrange
-            var service = _local.CreateSut();
-            _local.SetupAvailabilities();
-            _local.SetupStores();
-            _local.SetupFindingStores();
-
-            // Act
-            Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().NotThrowAsync();
-            }
-        }
-
-        private class LocalFixture
-        {
-            public Fixture Fixture { get; }
-            public CommonFixture CommonFixture { get; } = new CommonFixture();
-            public StoreRepositoryMock StoreRepositoryMock { get; }
-
-            public List<IStoreItemAvailability> Availabilities { get; private set; }
-            public List<IStore> Stores { get; private set; }
-
-            public LocalFixture()
-            {
-                Fixture = CommonFixture.GetNewFixture();
-
-                StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
-            }
-
-            public AvailabilityValidationService CreateSut()
-            {
-                return new AvailabilityValidationService(StoreRepositoryMock.Object);
-            }
-
-            public void SetupAvailabilitiesWithDuplicatedStoreIds()
-            {
-                Availabilities = new List<IStoreItemAvailability>();
-                var availability = StoreItemAvailabilityMother.Initial().Create();
-                var availability2 = StoreItemAvailabilityMother.Initial().WithStoreId(availability.StoreId).Create();
-                Availabilities.Add(availability);
-                Availabilities.Add(availability2);
-            }
-
-            public void SetupAvailabilities()
-            {
-                Availabilities =
-                    ((IEnumerable<IStoreItemAvailability>)StoreItemAvailabilityMother.Initial().CreateMany(3))
-                    .ToList();
-            }
-
-            public void SetupStores()
-            {
-                Stores = new List<IStore>();
-
-                foreach (var availability in Availabilities)
-                {
-                    var section = new StoreSectionBuilder().WithId(availability.DefaultSectionId).Create();
-                    var store = StoreMother.Initial()
-                        .WithSection(section)
-                        .WithId(availability.StoreId)
-                        .Create();
-                    Stores.Add(store);
-                }
-            }
-
-            public void SetupStoresWithInvalidSectionIds()
-            {
-                Stores = new List<IStore>();
-
-                foreach (var availability in Availabilities)
-                {
-                    var store = StoreMother.Initial()
-                        .WithId(availability.StoreId)
-                        .Create();
-                    Stores.Add(store);
-                }
-            }
-
-            #region Mock Setup
-
-            public void SetupFindingStores()
-            {
-                var storeIds = Availabilities.Select(av => av.StoreId);
-                StoreRepositoryMock.SetupFindByAsync(storeIds, Stores);
-            }
-
-            public void SetupFindingNoStores()
-            {
-                var storeIds = Availabilities.Select(av => av.StoreId);
-                StoreRepositoryMock.SetupFindByAsync(storeIds, Enumerable.Empty<IStore>());
-            }
-
-            #endregion Mock Setup
-        }
+        #endregion Mock Setup
     }
 }

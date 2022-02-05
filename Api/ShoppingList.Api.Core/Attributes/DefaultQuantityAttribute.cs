@@ -1,14 +1,13 @@
 ﻿using System;
 
-namespace ProjectHermes.ShoppingList.Api.Core.Attributes
-{
-    public class DefaultQuantityAttribute : Attribute
-    {
-        public DefaultQuantityAttribute(int defaultQuantity)
-        {
-            DefaultQuantity = defaultQuantity;
-        }
+namespace ProjectHermes.ShoppingList.Api.Core.Attributes;
 
-        public int DefaultQuantity { get; }
+public class DefaultQuantityAttribute : Attribute
+{
+    public DefaultQuantityAttribute(int defaultQuantity)
+    {
+        DefaultQuantity = defaultQuantity;
     }
+
+    public int DefaultQuantity { get; }
 }

@@ -6,32 +6,31 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
+namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity;
+
+public class SectionConverterTests : ToEntityConverterTestBase<IStoreSection, Section>
 {
-    public class SectionConverterTests : ToEntityConverterTestBase<IStoreSection, Section>
+    protected override (IStoreSection, Section) CreateTestObjects()
     {
-        protected override (IStoreSection, Section) CreateTestObjects()
-        {
-            var source = StoreSectionMother.Default().Create();
-            var destination = GetDestination(source);
+        var source = StoreSectionMother.Default().Create();
+        var destination = GetDestination(source);
 
-            return (source, destination);
-        }
+        return (source, destination);
+    }
 
-        public static Section GetDestination(IStoreSection source)
+    public static Section GetDestination(IStoreSection source)
+    {
+        return new Section
         {
-            return new Section
-            {
-                Id = source.Id.Value,
-                Name = source.Name,
-                SortIndex = source.SortingIndex,
-                IsDefaultSection = source.IsDefaultSection
-            };
-        }
+            Id = source.Id.Value,
+            Name = source.Name,
+            SortIndex = source.SortingIndex,
+            IsDefaultSection = source.IsDefaultSection
+        };
+    }
 
-        protected override void SetupServiceCollection()
-        {
-            serviceCollection.AddImplementationOfGenericType(typeof(SectionConverter).Assembly, typeof(IToEntityConverter<,>));
-        }
+    protected override void SetupServiceCollection()
+    {
+        serviceCollection.AddImplementationOfGenericType(typeof(SectionConverter).Assembly, typeof(IToEntityConverter<,>));
     }
 }

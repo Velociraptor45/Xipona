@@ -1,28 +1,27 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
+﻿using System;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
-using System;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToDomain
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToDomain;
+
+public class ItemTypeAvailabilityConverter : IToDomainConverter<ItemTypeAvailableAt, IStoreItemAvailability>
 {
-    public class ItemTypeAvailabilityConverter : IToDomainConverter<ItemTypeAvailableAt, IStoreItemAvailability>
+    private readonly IStoreItemAvailabilityFactory _storeItemAvailabilityFactory;
+
+    public ItemTypeAvailabilityConverter(IStoreItemAvailabilityFactory storeItemAvailabilityFactory)
     {
-        private readonly IStoreItemAvailabilityFactory _storeItemAvailabilityFactory;
+        _storeItemAvailabilityFactory = storeItemAvailabilityFactory;
+    }
 
-        public ItemTypeAvailabilityConverter(IStoreItemAvailabilityFactory storeItemAvailabilityFactory)
-        {
-            _storeItemAvailabilityFactory = storeItemAvailabilityFactory;
-        }
+    public IStoreItemAvailability ToDomain(ItemTypeAvailableAt source)
+    {
+        if (source is null)
+            throw new ArgumentNullException(nameof(source));
 
-        public IStoreItemAvailability ToDomain(ItemTypeAvailableAt source)
-        {
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
-
-            return _storeItemAvailabilityFactory.Create(new StoreId(source.StoreId), source.Price,
-                new SectionId(source.DefaultSectionId));
-        }
+        return _storeItemAvailabilityFactory.Create(new StoreId(source.StoreId), source.Price,
+            new SectionId(source.DefaultSectionId));
     }
 }

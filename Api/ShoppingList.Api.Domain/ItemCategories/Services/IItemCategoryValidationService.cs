@@ -1,11 +1,10 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services
+namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
+
+public interface IItemCategoryValidationService
 {
-    public interface IItemCategoryValidationService
-    {
-        Task ValidateAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);
-    }
+    Task ValidateAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);
 }
