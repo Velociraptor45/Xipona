@@ -6,6 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 public class ItemTypeAvailableAt
 {
     [Key]
+    [ForeignKey("ItemType")]
     [Column(Order = 1)]
     public int ItemTypeId { get; set; }
 
