@@ -1,35 +1,31 @@
 ﻿using AutoFixture.Kernel;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors
+namespace ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
+
+public class IdConstructorQuery : IMethodQuery
 {
-    public class IdConstructorQuery : IMethodQuery
+    private readonly List<Type> _types;
+
+    public IdConstructorQuery()
     {
-        private readonly List<Type> _types;
-
-        public IdConstructorQuery()
+        _types = new List<Type>
         {
-            _types = new List<Type>
-            {
-                typeof(int),
-                typeof(Guid),
-            };
-        }
+            typeof(int),
+            typeof(Guid),
+        };
+    }
 
-        public IEnumerable<IMethod> SelectMethods(Type type)
-        {
-            if (type is null)
-                throw new ArgumentNullException(nameof(type));
+    public IEnumerable<IMethod> SelectMethods(Type type)
+    {
+        if (type is null)
+            throw new ArgumentNullException(nameof(type));
 
-            var ctors = type.GetConstructors();
-            var ctor = ctors.Single(ctor =>
-                ctor.GetParameters().Length == 1 &&
-                ctor.GetParameters().Any(p => _types.Contains(p.ParameterType)));
+        var ctors = type.GetConstructors();
+        var ctor = ctors.Single(ctor =>
+            ctor.GetParameters().Length == 1 &&
+            ctor.GetParameters().Any(p => _types.Contains(p.ParameterType)));
 
-            return new ConstructorMethod(ctor).ToMonoList();
-        }
+        return new ConstructorMethod(ctor).ToMonoList();
     }
 }

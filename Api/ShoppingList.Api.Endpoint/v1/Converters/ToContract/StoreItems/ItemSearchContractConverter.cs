@@ -3,35 +3,33 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
-using System;
 
-namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.StoreItems
+namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.StoreItems;
+
+public class ItemSearchContractConverter :
+    IToContractConverter<ItemSearchReadModel, ItemSearchContract>
 {
-    public class ItemSearchContractConverter :
-        IToContractConverter<ItemSearchReadModel, ItemSearchContract>
+    private readonly IToContractConverter<StoreSectionReadModel, StoreSectionContract> _storeItemSectionContractConverter;
+
+    public ItemSearchContractConverter(
+        IToContractConverter<StoreSectionReadModel, StoreSectionContract> storeItemSectionContractConverter)
     {
-        private readonly IToContractConverter<StoreSectionReadModel, StoreSectionContract> storeItemSectionContractConverter;
+        _storeItemSectionContractConverter = storeItemSectionContractConverter;
+    }
 
-        public ItemSearchContractConverter(
-            IToContractConverter<StoreSectionReadModel, StoreSectionContract> storeItemSectionContractConverter)
-        {
-            this.storeItemSectionContractConverter = storeItemSectionContractConverter;
-        }
+    public ItemSearchContract ToContract(ItemSearchReadModel source)
+    {
+        if (source is null)
+            throw new ArgumentNullException(nameof(source));
 
-        public ItemSearchContract ToContract(ItemSearchReadModel source)
-        {
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
-
-            return new ItemSearchContract(
-                source.Id.Value,
-                source.TypeId?.Value,
-                source.Name,
-                source.DefaultQuantity,
-                source.Price,
-                source.ItemCategory?.Name ?? "",
-                source.Manufacturer?.Name ?? "",
-                storeItemSectionContractConverter.ToContract(source.DefaultSection));
-        }
+        return new ItemSearchContract(
+            source.Id.Value,
+            source.TypeId?.Value,
+            source.Name,
+            source.DefaultQuantity,
+            source.Price,
+            source.ItemCategory?.Name ?? "",
+            source.Manufacturer?.Name ?? "",
+            _storeItemSectionContractConverter.ToContract(source.DefaultSection));
     }
 }

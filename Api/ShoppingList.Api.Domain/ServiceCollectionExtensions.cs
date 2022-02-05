@@ -22,109 +22,106 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdate;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
-using System;
 using System.Reflection;
-using System.Threading;
 
-namespace ProjectHermes.ShoppingList.Api.Domain
+namespace ProjectHermes.ShoppingList.Api.Domain;
+
+public static class ServiceCollectionExtensions
 {
-    public static class ServiceCollectionExtensions
+    public static void AddDomain(this IServiceCollection services)
     {
-        public static void AddDomain(this IServiceCollection services)
+        var assembly = typeof(ServiceCollectionExtensions).Assembly;
+        services.AddHandlersForAssembly(assembly);
+        services.AddImplementationOfGenericType(assembly, typeof(IToReadModelConverter<,>));
+
+        services.AddTransient<IItemCategoryFactory, ItemCategoryFactory>();
+        services.AddTransient<IManufacturerFactory, ManufacturerFactory>();
+
+        services.AddTransient<IStoreItemFactory, StoreItemFactory>();
+        services.AddTransient<IStoreItemAvailabilityFactory, StoreItemAvailabilityFactory>();
+        services.AddTransient<IStoreFactory, StoreFactory>();
+        services.AddTransient<IShoppingListItemFactory, ShoppingListItemFactory>();
+        services.AddTransient<IShoppingListFactory, ShoppingListFactory>();
+        services.AddTransient<IStoreSectionFactory, StoreSectionFactory>();
+        services.AddTransient<IShoppingListSectionFactory, ShoppingListSectionFactory>();
+
+        services.AddTransient<IAvailabilityValidationService, AvailabilityValidationService>();
+        services.AddTransient<IManufacturerValidationService, ManufacturerValidationService>();
+        services.AddTransient<IItemCategoryValidationService, ItemCategoryValidationService>();
+
+        services.AddTransient<IShoppingListUpdateService, ShoppingListUpdateService>();
+        services.AddTransient<IAddItemToShoppingListService, AddItemToShoppingListService>();
+
+        services.AddTransient<IShoppingListReadModelConversionService, ShoppingListReadModelConversionService>();
+        services.AddTransient<IItemSearchReadModelConversionService, ItemSearchReadModelConversionService>();
+        services.AddTransient<IStoreItemReadModelConversionService, StoreItemReadModelConversionService>();
+
+        services.AddTransient<IItemTypeFactory, ItemTypeFactory>();
+
+        // services
+        services.AddTransient<Func<CancellationToken, IItemUpdateService>>(provider =>
         {
-            var assembly = typeof(ServiceCollectionExtensions).Assembly;
-            services.AddHandlersForAssembly(assembly);
-            services.AddImplementationOfGenericType(assembly, typeof(IToReadModelConverter<,>));
+            var itemRepository = provider.GetRequiredService<IItemRepository>();
+            var itemTypeFactory = provider.GetRequiredService<IItemTypeFactory>();
+            var storeItemFactory = provider.GetRequiredService<IStoreItemFactory>();
+            var shoppingListUpdateService = provider.GetRequiredService<IShoppingListUpdateService>();
+            var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
 
-            services.AddTransient<IItemCategoryFactory, ItemCategoryFactory>();
-            services.AddTransient<IManufacturerFactory, ManufacturerFactory>();
+            return (cancellationToken) => new ItemUpdateService(itemRepository, validatorDelegate, itemTypeFactory,
+                storeItemFactory, shoppingListUpdateService, cancellationToken);
+        });
 
-            services.AddTransient<IStoreItemFactory, StoreItemFactory>();
-            services.AddTransient<IStoreItemAvailabilityFactory, StoreItemAvailabilityFactory>();
-            services.AddTransient<IStoreFactory, StoreFactory>();
-            services.AddTransient<IShoppingListItemFactory, ShoppingListItemFactory>();
-            services.AddTransient<IShoppingListFactory, ShoppingListFactory>();
-            services.AddTransient<IStoreSectionFactory, StoreSectionFactory>();
-            services.AddTransient<IShoppingListSectionFactory, ShoppingListSectionFactory>();
-
-            services.AddTransient<IAvailabilityValidationService, AvailabilityValidationService>();
-            services.AddTransient<IManufacturerValidationService, ManufacturerValidationService>();
-            services.AddTransient<IItemCategoryValidationService, ItemCategoryValidationService>();
-
-            services.AddTransient<IShoppingListUpdateService, ShoppingListUpdateService>();
-            services.AddTransient<IAddItemToShoppingListService, AddItemToShoppingListService>();
-
-            services.AddTransient<IShoppingListReadModelConversionService, ShoppingListReadModelConversionService>();
-            services.AddTransient<IItemSearchReadModelConversionService, ItemSearchReadModelConversionService>();
-            services.AddTransient<IStoreItemReadModelConversionService, StoreItemReadModelConversionService>();
-
-            services.AddTransient<IItemTypeFactory, ItemTypeFactory>();
-
-            // services
-            services.AddTransient<Func<CancellationToken, IItemUpdateService>>(provider =>
-            {
-                var itemRepository = provider.GetRequiredService<IItemRepository>();
-                var itemTypeFactory = provider.GetRequiredService<IItemTypeFactory>();
-                var storeItemFactory = provider.GetRequiredService<IStoreItemFactory>();
-                var shoppingListUpdateService = provider.GetRequiredService<IShoppingListUpdateService>();
-                var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
-
-                return (cancellationToken) => new ItemUpdateService(itemRepository, validatorDelegate, itemTypeFactory,
-                    storeItemFactory, shoppingListUpdateService, cancellationToken);
-            });
-
-            services.AddTransient<Func<CancellationToken, IItemQueryService>>(provider =>
-            {
-                var itemRepository = provider.GetRequiredService<IItemRepository>();
-                var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
-                var storeRepository = provider.GetRequiredService<IStoreRepository>();
-                var itemTypeReadRepository = provider.GetRequiredService<IItemTypeReadRepository>();
-                var conversionService = provider.GetRequiredService<IItemSearchReadModelConversionService>();
-                return (cancellationToken) => new ItemQueryService(itemRepository, shoppingListRepository,
-                    storeRepository, itemTypeReadRepository, conversionService, cancellationToken);
-            });
-
-            services.AddTransient<Func<CancellationToken, IItemCreationService>>(provider =>
-            {
-                var itemRepository = provider.GetRequiredService<IItemRepository>();
-                return (cancellationToken) => new ItemCreationService(itemRepository, cancellationToken);
-            });
-
-            services.AddTransient<Func<CancellationToken, IItemModificationService>>(provider =>
-            {
-                var itemRepository = provider.GetRequiredService<IItemRepository>();
-                var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
-                var validatorDelegat = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
-                return (cancellationToken) => new ItemModificationService(itemRepository, validatorDelegat,
-                    shoppingListRepository, cancellationToken);
-            });
-
-            services.AddTransient<Func<CancellationToken, IValidator>>(provider =>
-            {
-                var availabilityValidationService = provider.GetRequiredService<IAvailabilityValidationService>();
-                var itemCategoryValidationService = provider.GetRequiredService<IItemCategoryValidationService>();
-                var manufacturerValidationService = provider.GetRequiredService<IManufacturerValidationService>();
-                return (cancellationToken) => new Validator(availabilityValidationService,
-                    itemCategoryValidationService, manufacturerValidationService, cancellationToken);
-            });
-        }
-
-        private static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)
+        services.AddTransient<Func<CancellationToken, IItemQueryService>>(provider =>
         {
-            services.AddQueryHandlersForAssembly(assembly);
-            services.AddCommandHandlersForAssembly(assembly);
-        }
+            var itemRepository = provider.GetRequiredService<IItemRepository>();
+            var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
+            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            var itemTypeReadRepository = provider.GetRequiredService<IItemTypeReadRepository>();
+            var conversionService = provider.GetRequiredService<IItemSearchReadModelConversionService>();
+            return (cancellationToken) => new ItemQueryService(itemRepository, shoppingListRepository,
+                storeRepository, itemTypeReadRepository, conversionService, cancellationToken);
+        });
 
-        private static void AddQueryHandlersForAssembly(this IServiceCollection services, Assembly assembly)
+        services.AddTransient<Func<CancellationToken, IItemCreationService>>(provider =>
         {
-            var handlerType = typeof(IQueryHandler<,>);
-            services.AddImplementationOfGenericType(assembly, handlerType);
-        }
+            var itemRepository = provider.GetRequiredService<IItemRepository>();
+            return (cancellationToken) => new ItemCreationService(itemRepository, cancellationToken);
+        });
 
-        private static void AddCommandHandlersForAssembly(this IServiceCollection services, Assembly assembly)
+        services.AddTransient<Func<CancellationToken, IItemModificationService>>(provider =>
         {
-            var handlerType = typeof(ICommandHandler<,>);
-            services.AddImplementationOfGenericType(assembly, handlerType);
-        }
+            var itemRepository = provider.GetRequiredService<IItemRepository>();
+            var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
+            var validatorDelegat = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
+            return (cancellationToken) => new ItemModificationService(itemRepository, validatorDelegat,
+                shoppingListRepository, cancellationToken);
+        });
+
+        services.AddTransient<Func<CancellationToken, IValidator>>(provider =>
+        {
+            var availabilityValidationService = provider.GetRequiredService<IAvailabilityValidationService>();
+            var itemCategoryValidationService = provider.GetRequiredService<IItemCategoryValidationService>();
+            var manufacturerValidationService = provider.GetRequiredService<IManufacturerValidationService>();
+            return (cancellationToken) => new Validator(availabilityValidationService,
+                itemCategoryValidationService, manufacturerValidationService, cancellationToken);
+        });
+    }
+
+    private static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)
+    {
+        services.AddQueryHandlersForAssembly(assembly);
+        services.AddCommandHandlersForAssembly(assembly);
+    }
+
+    private static void AddQueryHandlersForAssembly(this IServiceCollection services, Assembly assembly)
+    {
+        var handlerType = typeof(IQueryHandler<,>);
+        services.AddImplementationOfGenericType(assembly, handlerType);
+    }
+
+    private static void AddCommandHandlersForAssembly(this IServiceCollection services, Assembly assembly)
+    {
+        var handlerType = typeof(ICommandHandler<,>);
+        services.AddImplementationOfGenericType(assembly, handlerType);
     }
 }

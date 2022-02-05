@@ -1,31 +1,28 @@
 ﻿using AutoFixture.Kernel;
 using ShoppingList.Api.Domain.TestKit.Shared;
-using System;
-using System.Linq;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders
+namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
+
+public class EnumSpecimenBuilder<TEnum> : ISpecimenBuilder
+    where TEnum : Enum
 {
-    public class EnumSpecimenBuilder<TEnum> : ISpecimenBuilder
-        where TEnum : Enum
+    private readonly CommonFixture _commonFixture;
+
+    public EnumSpecimenBuilder()
     {
-        private readonly CommonFixture commonFixture;
+        _commonFixture = new CommonFixture();
+    }
 
-        public EnumSpecimenBuilder()
+    public object Create(object request, ISpecimenContext context)
+    {
+        if (!(request is TEnum))
         {
-            commonFixture = new CommonFixture();
+            return new NoSpecimen();
         }
 
-        public object Create(object request, ISpecimenContext context)
-        {
-            if (!(request is TEnum))
-            {
-                return new NoSpecimen();
-            }
+        var values = ((TEnum[])Enum.GetValues(typeof(TEnum)))
+            .ToList();
 
-            var values = ((TEnum[])Enum.GetValues(typeof(TEnum)))
-                .ToList();
-
-            return commonFixture.ChooseRandom(values);
-        }
+        return _commonFixture.ChooseRandom(values);
     }
 }

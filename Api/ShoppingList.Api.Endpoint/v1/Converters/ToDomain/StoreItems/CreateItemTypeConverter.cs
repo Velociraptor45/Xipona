@@ -4,26 +4,25 @@ using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 
-namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreItems
+namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreItems;
+
+public class CreateItemTypeConverter : IToDomainConverter<CreateItemTypeContract, IItemType>
 {
-    public class CreateItemTypeConverter : IToDomainConverter<CreateItemTypeContract, IItemType>
+    private readonly IItemTypeFactory _itemTypeFactory;
+    private readonly IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> _itemAvailabilityConverter;
+
+    public CreateItemTypeConverter(IItemTypeFactory itemTypeFactory,
+        IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> itemAvailabilityConverter)
     {
-        private readonly IItemTypeFactory _itemTypeFactory;
-        private readonly IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> _itemAvailabilityConverter;
+        _itemTypeFactory = itemTypeFactory;
+        _itemAvailabilityConverter = itemAvailabilityConverter;
+    }
 
-        public CreateItemTypeConverter(IItemTypeFactory itemTypeFactory,
-            IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> itemAvailabilityConverter)
-        {
-            _itemTypeFactory = itemTypeFactory;
-            _itemAvailabilityConverter = itemAvailabilityConverter;
-        }
-
-        public IItemType ToDomain(CreateItemTypeContract source)
-        {
-            return _itemTypeFactory.CreateNew(
-                source.Name,
-                _itemAvailabilityConverter.ToDomain(source.Availabilities),
-                null);
-        }
+    public IItemType ToDomain(CreateItemTypeContract source)
+    {
+        return _itemTypeFactory.CreateNew(
+            source.Name,
+            _itemAvailabilityConverter.ToDomain(source.Availabilities),
+            null);
     }
 }

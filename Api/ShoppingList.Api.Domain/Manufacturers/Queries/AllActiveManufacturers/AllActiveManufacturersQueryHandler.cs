@@ -2,29 +2,24 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.AllActiveManufacturers
+namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.AllActiveManufacturers;
+
+public class AllActiveManufacturersQueryHandler
+    : IQueryHandler<AllActiveManufacturersQuery, IEnumerable<ManufacturerReadModel>>
 {
-    public class AllActiveManufacturersQueryHandler
-        : IQueryHandler<AllActiveManufacturersQuery, IEnumerable<ManufacturerReadModel>>
+    private readonly IManufacturerRepository _manufacturerRepository;
+
+    public AllActiveManufacturersQueryHandler(IManufacturerRepository manufacturerRepository)
     {
-        private readonly IManufacturerRepository manufacturerRepository;
+        _manufacturerRepository = manufacturerRepository;
+    }
 
-        public AllActiveManufacturersQueryHandler(IManufacturerRepository manufacturerRepository)
-        {
-            this.manufacturerRepository = manufacturerRepository;
-        }
+    public async Task<IEnumerable<ManufacturerReadModel>> HandleAsync(AllActiveManufacturersQuery query,
+        CancellationToken cancellationToken)
+    {
+        var manufacturers = await _manufacturerRepository.FindByAsync(false, cancellationToken);
 
-        public async Task<IEnumerable<ManufacturerReadModel>> HandleAsync(AllActiveManufacturersQuery query,
-            CancellationToken cancellationToken)
-        {
-            var manufacturers = await manufacturerRepository.FindByAsync(false, cancellationToken);
-
-            return manufacturers.Select(m => m.ToReadModel());
-        }
+        return manufacturers.Select(m => m.ToReadModel());
     }
 }

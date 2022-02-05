@@ -2,36 +2,32 @@
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Converters.ToDomain
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Converters.ToDomain;
+
+public class StoreConverter : IToDomainConverter<Entities.Store, IStore>
 {
-    public class StoreConverter : IToDomainConverter<Entities.Store, IStore>
+    private readonly IStoreFactory _storeFactory;
+    private readonly IToDomainConverter<Section, IStoreSection> _storeSectionConverter;
+
+    public StoreConverter(IStoreFactory storeFactory,
+        IToDomainConverter<Section, IStoreSection> storeSectionConverter)
     {
-        private readonly IStoreFactory storeFactory;
-        private readonly IToDomainConverter<Section, IStoreSection> storeSectionConverter;
+        _storeFactory = storeFactory;
+        _storeSectionConverter = storeSectionConverter;
+    }
 
-        public StoreConverter(IStoreFactory storeFactory,
-            IToDomainConverter<Section, IStoreSection> storeSectionConverter)
-        {
-            this.storeFactory = storeFactory;
-            this.storeSectionConverter = storeSectionConverter;
-        }
+    public IStore ToDomain(Entities.Store source)
+    {
+        if (source is null)
+            throw new ArgumentNullException(nameof(source));
 
-        public IStore ToDomain(Entities.Store source)
-        {
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
+        List<IStoreSection> sections = _storeSectionConverter.ToDomain(source.Sections).ToList();
 
-            List<IStoreSection> sections = storeSectionConverter.ToDomain(source.Sections).ToList();
-
-            return storeFactory.Create(
-                new StoreId(source.Id),
-                source.Name,
-                source.Deleted,
-                sections);
-        }
+        return _storeFactory.Create(
+            new StoreId(source.Id),
+            source.Name,
+            source.Deleted,
+            sections);
     }
 }

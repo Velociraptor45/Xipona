@@ -1,6 +1,5 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Queries
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+
+public interface IQuery<out T>
 {
-    public interface IQuery<out T>
-    {
-    }
 }

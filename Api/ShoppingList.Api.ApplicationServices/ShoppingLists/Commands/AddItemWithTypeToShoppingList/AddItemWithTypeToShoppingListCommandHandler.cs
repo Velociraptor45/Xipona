@@ -1,39 +1,35 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.AddItemWithTypeToShoppingList
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+
+public class AddItemWithTypeToShoppingListCommandHandler
+    : ICommandHandler<AddItemWithTypeToShoppingListCommand, bool>
 {
-    public class AddItemWithTypeToShoppingListCommandHandler
-        : ICommandHandler<AddItemWithTypeToShoppingListCommand, bool>
+    private readonly IAddItemToShoppingListService _addItemToShoppingListService;
+    private readonly ITransactionGenerator _transactionGenerator;
+
+    public AddItemWithTypeToShoppingListCommandHandler(IAddItemToShoppingListService addItemToShoppingListService,
+        ITransactionGenerator transactionGenerator)
     {
-        private readonly IAddItemToShoppingListService _addItemToShoppingListService;
-        private readonly ITransactionGenerator _transactionGenerator;
+        _addItemToShoppingListService = addItemToShoppingListService;
+        _transactionGenerator = transactionGenerator;
+    }
 
-        public AddItemWithTypeToShoppingListCommandHandler(IAddItemToShoppingListService addItemToShoppingListService,
-            ITransactionGenerator transactionGenerator)
-        {
-            _addItemToShoppingListService = addItemToShoppingListService;
-            _transactionGenerator = transactionGenerator;
-        }
+    public async Task<bool> HandleAsync(AddItemWithTypeToShoppingListCommand command,
+        CancellationToken cancellationToken)
+    {
+        if (command is null)
+            throw new ArgumentNullException(nameof(command));
 
-        public async Task<bool> HandleAsync(AddItemWithTypeToShoppingListCommand command,
-            CancellationToken cancellationToken)
-        {
-            if (command is null)
-                throw new ArgumentNullException(nameof(command));
+        using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
-            using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
+        await _addItemToShoppingListService.AddItemWithTypeToShoppingList(command.ShoppingListId, command.ItemId,
+            command.ItemTypeId, command.SectionId, command.Quantity, cancellationToken);
 
-            await _addItemToShoppingListService.AddItemWithTypeToShoppingList(command.ShoppingListId, command.ItemId,
-                command.ItemTypeId, command.SectionId, command.Quantity, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
 
-            await transaction.CommitAsync(cancellationToken);
-
-            return true;
-        }
+        return true;
     }
 }

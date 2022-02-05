@@ -1,19 +1,17 @@
 ﻿using AutoFixture;
-using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture
+namespace ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
+
+public static class AutoFixtureExtensions
 {
-    public static class AutoFixtureExtensions
+    public static IFixture ConstructorArgumentFor<TTargetType, TValueType>(this IFixture fixture,
+        string paramName, TValueType value)
     {
-        public static IFixture ConstructorArgumentFor<TTargetType, TValueType>(this IFixture fixture,
-            string paramName, TValueType value)
-        {
-            var item = fixture.Customizations.FirstOrDefault(c => c is ConstructorArgumentRelay<TTargetType, TValueType>);
-            if (item != null)
-                fixture.Customizations.Remove(item);
+        var item = fixture.Customizations.FirstOrDefault(c => c is ConstructorArgumentRelay<TTargetType, TValueType>);
+        if (item != null)
+            fixture.Customizations.Remove(item);
 
-            fixture.Customizations.Add(new ConstructorArgumentRelay<TTargetType, TValueType>(paramName, value));
-            return fixture;
-        }
+        fixture.Customizations.Add(new ConstructorArgumentRelay<TTargetType, TValueType>(paramName, value));
+        return fixture;
     }
 }

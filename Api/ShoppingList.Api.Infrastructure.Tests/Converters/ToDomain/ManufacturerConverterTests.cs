@@ -6,39 +6,37 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Converters.ToDomain;
 using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
-using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
+namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain;
+
+public class ManufacturerConverterTests : ToDomainConverterTestBase<ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities.Manufacturer, IManufacturer>
 {
-    public class ManufacturerConverterTests : ToDomainConverterTestBase<Entities.Manufacturer, IManufacturer>
+    protected override (ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities.Manufacturer, IManufacturer) CreateTestObjects()
     {
-        protected override (Entities.Manufacturer, IManufacturer) CreateTestObjects()
-        {
-            var destination = new ManufacturerBuilder().Create();
-            var source = GetSource(destination);
+        var destination = new ManufacturerBuilder().Create();
+        var source = GetSource(destination);
 
-            return (source, destination);
-        }
+        return (source, destination);
+    }
 
-        protected override void SetupServiceCollection()
-        {
-            AddDependencies(serviceCollection);
-        }
+    protected override void SetupServiceCollection()
+    {
+        AddDependencies(ServiceCollection);
+    }
 
-        public static Entities.Manufacturer GetSource(IManufacturer destination)
+    public static ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities.Manufacturer GetSource(IManufacturer destination)
+    {
+        return new ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities.Manufacturer()
         {
-            return new Entities.Manufacturer()
-            {
-                Id = destination.Id.Value,
-                Deleted = destination.IsDeleted,
-                Name = destination.Name
-            };
-        }
+            Id = destination.Id.Value,
+            Deleted = destination.IsDeleted,
+            Name = destination.Name
+        };
+    }
 
-        public static void AddDependencies(IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddImplementationOfGenericType(typeof(ManufacturerConverter).Assembly, typeof(IToDomainConverter<,>));
-            serviceCollection.AddImplementationOfNonGenericType(typeof(IManufacturerFactory).Assembly, typeof(IManufacturerFactory));
-        }
+    public static void AddDependencies(IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddImplementationOfGenericType(typeof(ManufacturerConverter).Assembly, typeof(IToDomainConverter<,>));
+        serviceCollection.AddImplementationOfNonGenericType(typeof(IManufacturerFactory).Assembly, typeof(IManufacturerFactory));
     }
 }

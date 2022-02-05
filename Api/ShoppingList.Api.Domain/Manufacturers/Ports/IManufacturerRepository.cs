@@ -1,20 +1,16 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports
+namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+
+public interface IManufacturerRepository
 {
-    public interface IManufacturerRepository
-    {
-        Task<IManufacturer?> FindByAsync(ManufacturerId id, CancellationToken cancellationToken);
+    Task<IManufacturer?> FindByAsync(ManufacturerId id, CancellationToken cancellationToken);
 
-        Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput, CancellationToken cancellationToken);
+    Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput, CancellationToken cancellationToken);
 
-        Task<IEnumerable<IManufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids, CancellationToken cancellationToken);
+    Task<IEnumerable<IManufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids, CancellationToken cancellationToken);
 
-        Task<IEnumerable<IManufacturer>> FindByAsync(bool includeDeleted, CancellationToken cancellationToken);
+    Task<IEnumerable<IManufacturer>> FindByAsync(bool includeDeleted, CancellationToken cancellationToken);
 
-        Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken);
-    }
+    Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken);
 }

@@ -1,7 +1,6 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
+
+public interface IStoreSectionFactory
 {
-    public interface IStoreSectionFactory
-    {
-        IStoreSection Create(SectionId id, string name, int sortingIndex, bool isDefaultSection);
-    }
+    IStoreSection Create(SectionId id, string name, int sortingIndex, bool isDefaultSection);
 }

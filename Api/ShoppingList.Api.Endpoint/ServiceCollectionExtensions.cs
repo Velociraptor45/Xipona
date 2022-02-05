@@ -3,63 +3,59 @@ using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
-namespace ProjectHermes.ShoppingList.Api.Endpoint
+namespace ProjectHermes.ShoppingList.Api.Endpoint;
+
+public static class ServiceCollectionExtensions
 {
-    public static class ServiceCollectionExtensions
+    public static void AddEndpointControllers(this IServiceCollection services)
     {
-        public static void AddEndpointControllers(this IServiceCollection services)
+        services.AddTransient<ShoppingListController>();
+        services.AddTransient<ItemCategoryController>();
+        services.AddTransient<ManufacturerController>();
+        services.AddTransient<ItemController>();
+        services.AddTransient<StoreController>();
+
+        var assembly = typeof(ServiceCollectionExtensions).Assembly;
+        services.AddImplementationOfGenericType(assembly, typeof(IToContractConverter<,>));
+        services.AddImplementationOfGenericType(assembly, typeof(IToDomainConverter<,>));
+
+        services.AddSingleton<IEndpointConverters>(provider =>
         {
-            services.AddTransient<ShoppingListController>();
-            services.AddTransient<ItemCategoryController>();
-            services.AddTransient<ManufacturerController>();
-            services.AddTransient<ItemController>();
-            services.AddTransient<StoreController>();
+            var toContract = new EndpointToContractConverters();
+            var toDomain = new EndpointToDomainConverters();
 
-            var assembly = typeof(ServiceCollectionExtensions).Assembly;
-            services.AddImplementationOfGenericType(assembly, typeof(IToContractConverter<,>));
-            services.AddImplementationOfGenericType(assembly, typeof(IToDomainConverter<,>));
+            AddConverters(provider, toContract, Assembly.GetExecutingAssembly(), typeof(IToContractConverter<,>));
+            AddConverters(provider, toDomain, Assembly.GetExecutingAssembly(), typeof(IToDomainConverter<,>));
+            return new EndpointConverters(toDomain, toContract);
+        });
+    }
 
-            services.AddSingleton<IEndpointConverters>(provider =>
-            {
-                var toContract = new EndpointToContractConverters();
-                var toDomain = new EndpointToDomainConverters();
-
-                AddConverters(provider, toContract, Assembly.GetExecutingAssembly(), typeof(IToContractConverter<,>));
-                AddConverters(provider, toDomain, Assembly.GetExecutingAssembly(), typeof(IToDomainConverter<,>));
-                return new EndpointConverters(toDomain, toContract);
-            });
-        }
-
-        private static void AddConverters<TConverter>(IServiceProvider provider,
-            Dictionary<(Type, Type), TConverter> dict, Assembly assembly, Type type)
-            where TConverter : class, IConverter
+    private static void AddConverters<TConverter>(IServiceProvider provider,
+        Dictionary<(Type, Type), TConverter> dict, Assembly assembly, Type type)
+        where TConverter : class, IConverter
+    {
+        var assemblyTypes = assembly
+            .GetTypes()
+            .Where(t => !t.IsAbstract)
+            .ToList();
+        foreach (var assemblyType in assemblyTypes)
         {
-            var assemblyTypes = assembly
-                .GetTypes()
-                .Where(t => !t.IsAbstract)
-                .ToList();
-            foreach (var assemblyType in assemblyTypes)
-            {
-                var interfaceType = assemblyType
-                    .GetInterfaces()
-                    .SingleOrDefault(t => t.IsGenericType
-                        && t.GetGenericTypeDefinition() == type);
+            var interfaceType = assemblyType
+                .GetInterfaces()
+                .SingleOrDefault(t => t.IsGenericType
+                                      && t.GetGenericTypeDefinition() == type);
 
-                if (interfaceType == null)
-                    continue;
+            if (interfaceType == null)
+                continue;
 
-                var args = interfaceType.GetGenericArguments();
-                var implemetation = provider.GetRequiredService(interfaceType) as TConverter;
-                if (implemetation == null || args.Length != 2)
-                    continue;
+            var args = interfaceType.GetGenericArguments();
+            var implemetation = provider.GetRequiredService(interfaceType) as TConverter;
+            if (implemetation == null || args.Length != 2)
+                continue;
 
-                dict.Add((args[0], args[1]), implemetation);
-            }
+            dict.Add((args[0], args[1]), implemetation);
         }
     }
 }

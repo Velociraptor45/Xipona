@@ -5,188 +5,182 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters;
+
+public class ShoppingListRepository : IShoppingListRepository
 {
-    public class ShoppingListRepository : IShoppingListRepository
+    private readonly ShoppingListContext _dbContext;
+    private readonly IToDomainConverter<Entities.ShoppingList, IShoppingList> _toDomainConverter;
+    private readonly IToEntityConverter<IShoppingList, Entities.ShoppingList> _toEntityConverter;
+
+    public ShoppingListRepository(ShoppingListContext dbContext,
+        IToDomainConverter<Entities.ShoppingList, IShoppingList> toDomainConverter,
+        IToEntityConverter<IShoppingList, Entities.ShoppingList> toEntityConverter)
     {
-        private readonly ShoppingListContext _dbContext;
-        private readonly IToDomainConverter<Entities.ShoppingList, IShoppingList> _toDomainConverter;
-        private readonly IToEntityConverter<IShoppingList, Entities.ShoppingList> _toEntityConverter;
+        _dbContext = dbContext;
+        _toDomainConverter = toDomainConverter;
+        _toEntityConverter = toEntityConverter;
+    }
 
-        public ShoppingListRepository(ShoppingListContext dbContext,
-            IToDomainConverter<Entities.ShoppingList, IShoppingList> toDomainConverter,
-            IToEntityConverter<IShoppingList, Entities.ShoppingList> toEntityConverter)
+    #region public methods
+
+    public async Task StoreAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
+    {
+        if (shoppingList is null)
+            throw new ArgumentNullException(nameof(shoppingList));
+
+        if (shoppingList.Id.Value <= 0)
         {
-            _dbContext = dbContext;
-            _toDomainConverter = toDomainConverter;
-            _toEntityConverter = toEntityConverter;
+            await StoreAsNewListAsync(shoppingList, cancellationToken);
+            return;
         }
 
-        #region public methods
+        cancellationToken.ThrowIfCancellationRequested();
 
-        public async Task StoreAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
-        {
-            if (shoppingList is null)
-                throw new ArgumentNullException(nameof(shoppingList));
+        var listEntity = await FindEntityByIdAsync(shoppingList.Id);
 
-            if (shoppingList.Id.Value <= 0)
-            {
-                await StoreAsNewListAsync(shoppingList, cancellationToken);
-                return;
-            }
+        cancellationToken.ThrowIfCancellationRequested();
 
-            cancellationToken.ThrowIfCancellationRequested();
+        await StoreModifiedListAsync(listEntity, shoppingList, cancellationToken);
 
-            var listEntity = await FindEntityByIdAsync(shoppingList.Id);
+        _dbContext.ChangeTracker.Clear();
+    }
 
-            cancellationToken.ThrowIfCancellationRequested();
+    public async Task<IShoppingList?> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)
+    {
+        var entity = await GetShoppingListQuery()
+            .FirstOrDefaultAsync(list => list.Id == id.Value, cancellationToken);
 
-            await StoreModifiedListAsync(listEntity, shoppingList, cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
 
-            _dbContext.ChangeTracker.Clear();
-        }
+        if (entity == null)
+            return null;
 
-        public async Task<IShoppingList?> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)
-        {
-            var entity = await GetShoppingListQuery()
-                .FirstOrDefaultAsync(list => list.Id == id.Value, cancellationToken);
+        return _toDomainConverter.ToDomain(entity);
+    }
 
-            cancellationToken.ThrowIfCancellationRequested();
+    public async Task<IEnumerable<IShoppingList>> FindByAsync(ItemId storeItemId,
+        CancellationToken cancellationToken)
+    {
+        List<Entities.ShoppingList> entities = await GetShoppingListQuery()
+            .Where(l => l.ItemsOnList.Any(i => i.ItemId == storeItemId.Value))
+            .ToListAsync(cancellationToken: cancellationToken);
 
-            if (entity == null)
-                return null;
+        cancellationToken.ThrowIfCancellationRequested();
 
-            return _toDomainConverter.ToDomain(entity);
-        }
+        return _toDomainConverter.ToDomain(entities);
+    }
 
-        public async Task<IEnumerable<IShoppingList>> FindByAsync(ItemId storeItemId,
-            CancellationToken cancellationToken)
-        {
-            List<Entities.ShoppingList> entities = await GetShoppingListQuery()
-                .Where(l => l.ItemsOnList.Any(i => i.ItemId == storeItemId.Value))
-                .ToListAsync(cancellationToken: cancellationToken);
+    public async Task<IEnumerable<IShoppingList>> FindByAsync(ItemTypeId typeId,
+        CancellationToken cancellationToken)
+    {
+        var entities = await GetShoppingListQuery()
+            .Where(l => l.ItemsOnList.Any(i => i.ItemTypeId.HasValue && i.ItemTypeId == typeId.Value))
+            .ToListAsync(cancellationToken);
 
-            cancellationToken.ThrowIfCancellationRequested();
+        return _toDomainConverter.ToDomain(entities);
+    }
 
-            return _toDomainConverter.ToDomain(entities);
-        }
+    public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(ItemId storeItemId,
+        CancellationToken cancellationToken)
+    {
+        List<Entities.ShoppingList> entities = await GetShoppingListQuery()
+            .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Value) != null
+                        && l.CompletionDate == null)
+            .ToListAsync(cancellationToken: cancellationToken);
 
-        public async Task<IEnumerable<IShoppingList>> FindByAsync(ItemTypeId typeId,
-            CancellationToken cancellationToken)
-        {
-            var entities = await GetShoppingListQuery()
-                .Where(l => l.ItemsOnList.Any(i => i.ItemTypeId.HasValue && i.ItemTypeId == typeId.Value))
-                .ToListAsync(cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
 
-            return _toDomainConverter.ToDomain(entities);
-        }
+        return _toDomainConverter.ToDomain(entities);
+    }
 
-        public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(ItemId storeItemId,
-            CancellationToken cancellationToken)
-        {
-            List<Entities.ShoppingList> entities = await GetShoppingListQuery()
-                .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Value) != null
-                    && l.CompletionDate == null)
-                .ToListAsync(cancellationToken: cancellationToken);
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            return _toDomainConverter.ToDomain(entities);
-        }
-
-        public async Task<IShoppingList?> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
-        {
-            var entity = await GetShoppingListQuery()
-                .FirstOrDefaultAsync(list =>
+    public async Task<IShoppingList?> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
+    {
+        var entity = await GetShoppingListQuery()
+            .FirstOrDefaultAsync(list =>
                     list.CompletionDate == null
                     && list.StoreId == storeId.Value,
-                    cancellationToken);
+                cancellationToken);
 
-            cancellationToken.ThrowIfCancellationRequested();
+        cancellationToken.ThrowIfCancellationRequested();
 
-            if (entity == null)
-                return null;
+        if (entity == null)
+            return null;
 
-            return _toDomainConverter.ToDomain(entity);
-        }
-
-        #endregion public methods
-
-        #region private methods
-
-        private async Task StoreModifiedListAsync(Entities.ShoppingList existingShoppingListEntity,
-            IShoppingList shoppingList, CancellationToken cancellationToken)
-        {
-            var shoppingListEntityToStore = _toEntityConverter.ToEntity(shoppingList);
-            var onListMappings = existingShoppingListEntity.ItemsOnList.ToDictionary(map => (map.ItemId, map.ItemTypeId));
-
-            _dbContext.Entry(shoppingListEntityToStore).State = EntityState.Modified;
-            foreach (var map in shoppingListEntityToStore.ItemsOnList)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                if (onListMappings.TryGetValue((map.ItemId, map.ItemTypeId), out var existingMapping))
-                {
-                    // mapping was modified
-                    map.Id = existingMapping.Id;
-                    _dbContext.Entry(map).State = EntityState.Modified;
-                    onListMappings.Remove((map.ItemId, map.ItemTypeId));
-                }
-                else
-                {
-                    // mapping was added
-                    _dbContext.Entry(map).State = EntityState.Added;
-                }
-            }
-
-            // mapping was deleted
-            foreach (var map in onListMappings.Values)
-            {
-                _dbContext.Entry(map).State = EntityState.Deleted;
-            }
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
-        }
-
-        private async Task StoreAsNewListAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
-        {
-            var entity = _toEntityConverter.ToEntity(shoppingList);
-
-            _dbContext.Entry(entity).State = EntityState.Added;
-            foreach (var onListMap in entity.ItemsOnList)
-            {
-                _dbContext.Entry(onListMap).State = EntityState.Added;
-            }
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
-        }
-
-        private async Task<Entities.ShoppingList> FindEntityByIdAsync(ShoppingListId id)
-        {
-            var list = await GetShoppingListQuery()
-                .FirstOrDefaultAsync(list => list.Id == id.Value);
-
-            if (list is null)
-                throw new InvalidOperationException($"list with id {id.Value} not found");
-
-            return list;
-        }
-
-        private IQueryable<Entities.ShoppingList> GetShoppingListQuery()
-        {
-            return _dbContext.ShoppingLists.AsNoTracking()
-                .Include(l => l.ItemsOnList);
-        }
-
-        #endregion private methods
+        return _toDomainConverter.ToDomain(entity);
     }
+
+    #endregion public methods
+
+    #region private methods
+
+    private async Task StoreModifiedListAsync(Entities.ShoppingList existingShoppingListEntity,
+        IShoppingList shoppingList, CancellationToken cancellationToken)
+    {
+        var shoppingListEntityToStore = _toEntityConverter.ToEntity(shoppingList);
+        var onListMappings = existingShoppingListEntity.ItemsOnList.ToDictionary(map => (map.ItemId, map.ItemTypeId));
+
+        _dbContext.Entry(shoppingListEntityToStore).State = EntityState.Modified;
+        foreach (var map in shoppingListEntityToStore.ItemsOnList)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (onListMappings.TryGetValue((map.ItemId, map.ItemTypeId), out var existingMapping))
+            {
+                // mapping was modified
+                map.Id = existingMapping.Id;
+                _dbContext.Entry(map).State = EntityState.Modified;
+                onListMappings.Remove((map.ItemId, map.ItemTypeId));
+            }
+            else
+            {
+                // mapping was added
+                _dbContext.Entry(map).State = EntityState.Added;
+            }
+        }
+
+        // mapping was deleted
+        foreach (var map in onListMappings.Values)
+        {
+            _dbContext.Entry(map).State = EntityState.Deleted;
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task StoreAsNewListAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
+    {
+        var entity = _toEntityConverter.ToEntity(shoppingList);
+
+        _dbContext.Entry(entity).State = EntityState.Added;
+        foreach (var onListMap in entity.ItemsOnList)
+        {
+            _dbContext.Entry(onListMap).State = EntityState.Added;
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task<Entities.ShoppingList> FindEntityByIdAsync(ShoppingListId id)
+    {
+        var list = await GetShoppingListQuery()
+            .FirstOrDefaultAsync(list => list.Id == id.Value);
+
+        if (list is null)
+            throw new InvalidOperationException($"list with id {id.Value} not found");
+
+        return list;
+    }
+
+    private IQueryable<Entities.ShoppingList> GetShoppingListQuery()
+    {
+        return _dbContext.ShoppingLists.AsNoTracking()
+            .Include(l => l.ItemsOnList);
+    }
+
+    #endregion private methods
 }

@@ -1,20 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿namespace ProjectHermes.ShoppingList.Api.Core.Converter;
 
-namespace ProjectHermes.ShoppingList.Api.Core.Converter
+public interface IToReadModelConverter<in TSource, out TDestination>
 {
-    public interface IToReadModelConverter<in TSource, out TDestination>
+    TDestination ToReadModel(TSource source);
+
+    IEnumerable<TDestination> ToReadModel(IEnumerable<TSource> sources)
     {
-        TDestination ToReadModel(TSource source);
+        var sourcesList = sources.ToList();
 
-        IEnumerable<TDestination> ToReadModel(IEnumerable<TSource> sources)
+        foreach (var source in sourcesList)
         {
-            var sourcesList = sources.ToList();
-
-            foreach (var source in sourcesList)
-            {
-                yield return ToReadModel(source);
-            }
+            yield return ToReadModel(source);
         }
     }
 }

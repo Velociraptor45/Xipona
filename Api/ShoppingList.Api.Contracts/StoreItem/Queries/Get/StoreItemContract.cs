@@ -1,7 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get
 {

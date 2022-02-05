@@ -1,21 +1,18 @@
-﻿using Moq;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
-using System.Threading;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
 
-namespace ShoppingList.Api.Domain.TestKit.Common.Mocks
+namespace ShoppingList.Api.Domain.TestKit.Common.Mocks;
+
+public class TransactionMock : Mock<ITransaction>
 {
-    public class TransactionMock : Mock<ITransaction>
+    public TransactionMock()
     {
-        public TransactionMock()
-        {
-        }
+    }
 
-        public void VerifyCommitAsyncOnce()
-        {
-            Verify(
-                i => i.CommitAsync(
-                    It.IsAny<CancellationToken>()),
-                Times.Once);
-        }
+    public void VerifyCommitAsyncOnce()
+    {
+        Verify(
+            i => i.CommitAsync(
+                It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 }

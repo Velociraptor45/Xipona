@@ -1,7 +1,6 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
+
+public interface IManufacturerFactory
 {
-    public interface IManufacturerFactory
-    {
-        IManufacturer Create(ManufacturerId id, string name, bool isDeleted);
-    }
+    IManufacturer Create(ManufacturerId id, string name, bool isDeleted);
 }

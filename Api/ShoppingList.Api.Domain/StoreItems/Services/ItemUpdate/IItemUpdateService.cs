@@ -1,9 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdate;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdate
+public interface IItemUpdateService
 {
-    public interface IItemUpdateService
-    {
-        Task UpdateItemWithTypesAsync(ItemWithTypesUpdate update);
-    }
+    Task UpdateItemWithTypesAsync(ItemWithTypesUpdate update);
 }

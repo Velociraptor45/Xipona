@@ -1,12 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories
+public class ManufacturerFactory : IManufacturerFactory
 {
-    public class ManufacturerFactory : IManufacturerFactory
+    public IManufacturer Create(ManufacturerId id, string name, bool isDeleted)
     {
-        public IManufacturer Create(ManufacturerId id, string name, bool isDeleted)
-        {
-            return new Manufacturer(id, name, isDeleted);
-        }
+        return new Manufacturer(id, name, isDeleted);
     }
 }
