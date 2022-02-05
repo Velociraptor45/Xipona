@@ -15,8 +15,4 @@ public class ShoppingListContext : DbContext
         : base(options)
     {
     }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-    }
 }

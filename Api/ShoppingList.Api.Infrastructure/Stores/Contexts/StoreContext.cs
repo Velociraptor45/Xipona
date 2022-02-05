@@ -15,8 +15,4 @@ public class StoreContext : DbContext
         : base(options)
     {
     }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-    }
 }

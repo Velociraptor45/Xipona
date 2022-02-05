@@ -14,8 +14,4 @@ public class ManufacturerContext : DbContext
         : base(options)
     {
     }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-    }
 }

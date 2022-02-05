@@ -22,12 +22,12 @@ public class TransactionGenerator : ITransactionGenerator
         {
             var dbTransaction = connection.BeginTransactionAsync(cancellationToken)
                 .GetAwaiter().GetResult();
-            foreach (var context in dbContexts)
+            foreach (var database in dbContexts.Select(ctx => ctx.Database))
             {
-                if (context.Database.CurrentTransaction != null)
+                if (database.CurrentTransaction != null)
                     throw new InvalidOperationException("Transaction already open");
 
-                context.Database.UseTransactionAsync(dbTransaction, cancellationToken)
+                database.UseTransactionAsync(dbTransaction, cancellationToken)
                     .GetAwaiter().GetResult();
             }
             return Task.FromResult(new Transaction(dbTransaction) as ITransaction);

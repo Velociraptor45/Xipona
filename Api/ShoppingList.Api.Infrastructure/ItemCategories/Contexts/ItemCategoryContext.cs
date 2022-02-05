@@ -14,8 +14,4 @@ public class ItemCategoryContext : DbContext
         : base(options)
     {
     }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-    }
 }
