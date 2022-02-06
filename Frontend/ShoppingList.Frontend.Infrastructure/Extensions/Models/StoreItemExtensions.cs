@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
@@ -86,6 +87,21 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models
                 ItemCategoryId = model.ItemCategoryId.Value,
                 ManufacturerId = model.ManufacturerId,
                 Availabilities = model.Availabilities.Select(av => av.ToItemAvailabilityContract())
+            };
+        }
+
+        public static CreateItemWithTypesContract ToCreateItemWithTypesContract(this StoreItem model)
+        {
+            return new CreateItemWithTypesContract()
+            {
+                Name = model.Name,
+                Comment = model.Comment,
+                QuantityType = model.QuantityType.Id,
+                QuantityInPacket = model.QuantityInPacket,
+                QuantityTypeInPacket = model.QuantityInPacketType.Id,
+                ItemCategoryId = model.ItemCategoryId.Value,
+                ManufacturerId = model.ManufacturerId,
+                ItemTypes = model.ItemTypes.Select(t => t.ToCreateItemTypeContract())
             };
         }
     }
