@@ -6,11 +6,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 public class ItemTypeAvailableAt
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
-
+    [ForeignKey("ItemType")]
+    [Column(Order = 1)]
     public int ItemTypeId { get; set; }
+
+    [Key]
+    [Column(Order = 2)]
     public int StoreId { get; set; }
+
     public float Price { get; set; }
     public int DefaultSectionId { get; set; }
 

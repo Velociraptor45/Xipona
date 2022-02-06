@@ -17,4 +17,13 @@ public class ItemContext : DbContext
         : base(options)
     {
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<AvailableAt>()
+            .HasKey(av => new { av.ItemId, av.StoreId });
+        modelBuilder.Entity<ItemTypeAvailableAt>()
+            .HasKey(av => new { av.ItemTypeId, av.StoreId });
+    }
 }
