@@ -134,6 +134,24 @@
 
     private async Task OnCreateButtonClickedAsync()
     {
+        if (State.EditedItem.ItemTypes.Any())
+        {
+            var withTypesRequest = new CreateItemWithTypesRequest(Guid.NewGuid(), State.EditedItem);
+            try
+            {
+                await apiClient.CreateItemWithTypesAsync(withTypesRequest);
+            }
+            catch (Exception e)
+            {
+                var fragment = ErrorHandler.CreateAsyncRetryFragment(async () => await OnCreateButtonClickedAsync());
+                notificationService.NotifyError("Creating item failed", e.Message, fragment);
+                return;
+            }
+            State.LeaveEditor();
+            return;
+
+        }
+
         var request = new CreateItemRequest(Guid.NewGuid(), State.EditedItem);
         try
         {

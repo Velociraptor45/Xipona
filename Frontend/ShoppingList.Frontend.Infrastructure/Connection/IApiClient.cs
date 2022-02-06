@@ -67,5 +67,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         Task AddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request);
 
         Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request);
+        Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request);
     }
 }

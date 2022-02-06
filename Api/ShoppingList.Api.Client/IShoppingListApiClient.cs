@@ -15,6 +15,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
@@ -72,6 +73,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Post("item/create")]
         Task CreateItem([Body] CreateItemContract createItemContract);
+
+        [Post("item/create-with-types")]
+        Task CreateItemWithTypes([Body] CreateItemWithTypesContract createItemWithTypesContract);
 
         [Get("item/search/{searchInput}/{storeId}")]
         Task<IEnumerable<ItemSearchContract>> GetItemSearchResults([Path] string searchInput, [Path] int storeId);

@@ -87,6 +87,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             await client.CreateItem(request.StoreItem.ToCreateItemContract());
         }
 
+        public async Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request)
+        {
+            await client.CreateItemWithTypes(request.StoreItem.ToCreateItemWithTypesContract());
+        }
+
         public async Task DeleteItemAsync(DeleteItemRequest request)
         {
             await client.DeleteItemAsync(request.ItemId);
