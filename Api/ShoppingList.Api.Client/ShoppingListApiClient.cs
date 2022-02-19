@@ -25,11 +25,11 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemForShoppingLists;
 using RestEase;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemForShoppingLists;
 
 namespace ProjectHermes.ShoppingList.Api.Client
 {
@@ -149,6 +149,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
         public async Task<IEnumerable<ItemForShoppingListSearchContract>> SearchItemForShoppingListAsync(string searchInput, int storeId)
         {
             return await _apiClient.SearchItemForShoppingListAsync(searchInput, storeId);
+        }
+
+        public async Task<IEnumerable<ItemFilterResultContract>> SearchItemAsync(string searchInput)
+        {
+            return await _apiClient.SearchItemAsync(searchInput);
         }
 
         public async Task<IEnumerable<ItemFilterResultContract>> GetItemFilterResult(IEnumerable<int> storeIds,

@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearchForShoppingLists;
 
 public class SearchItemForShoppingListQuery : IQuery<IEnumerable<ItemForShoppingListSearchReadModel>>
 {

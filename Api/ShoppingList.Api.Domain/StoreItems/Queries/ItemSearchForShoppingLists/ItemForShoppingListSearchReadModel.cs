@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearchForShoppingLists;
 
 public class ItemForShoppingListSearchReadModel
 {

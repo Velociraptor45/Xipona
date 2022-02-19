@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearchForShoppingLists;
 
 public class SearchItemForShoppingListQueryHandler : IQueryHandler<SearchItemForShoppingListQuery, IEnumerable<ItemForShoppingListSearchReadModel>>
 {
@@ -21,6 +21,6 @@ public class SearchItemForShoppingListQueryHandler : IQueryHandler<SearchItemFor
             return Enumerable.Empty<ItemForShoppingListSearchReadModel>();
 
         var itemQueryService = _itemQueryServiceDelegate(cancellationToken);
-        return await itemQueryService.SearchAsync(query.SearchInput, query.StoreId);
+        return await itemQueryService.SearchForShoppingListAsync(query.SearchInput, query.StoreId);
     }
 }

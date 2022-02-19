@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ItemUpdateWithTypes;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ModifyItemWithTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItems;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
@@ -26,7 +27,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemById;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterResults;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearchForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -186,6 +187,33 @@ public class ItemController : ControllerBase
 
         var contracts =
             _converters.ToContract<ItemForShoppingListSearchReadModel, ItemForShoppingListSearchContract>(readModels);
+
+        return Ok(contracts);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(204)]
+    [Route("search/{searchInput}")]
+    public async Task<IActionResult> SearchItemAsync([FromRoute(Name = "searchInput")] string searchInput)
+    {
+        var query = new SearchItemQuery(searchInput);
+
+        List<ItemFilterResultReadModel> readModels;
+        try
+        {
+            readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+        }
+        catch (DomainException e)
+        {
+            return BadRequest(e.Reason);
+        }
+
+        if (!readModels.Any())
+            return NoContent();
+
+        var contracts =
+            _converters.ToContract<ItemFilterResultReadModel, ItemFilterResultContract>(readModels);
 
         return Ok(contracts);
     }

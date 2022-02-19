@@ -4,7 +4,8 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterResults;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearchForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemSearchReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
@@ -33,7 +34,17 @@ public class ItemQueryService : IItemQueryService
         _cancellationToken = cancellationToken;
     }
 
-    public async Task<IEnumerable<ItemForShoppingListSearchReadModel>> SearchAsync(string name, StoreId storeId)
+    public async Task<IEnumerable<ItemFilterResultReadModel>> SearchAsync(string searchInput)
+    {
+        ArgumentNullException.ThrowIfNull(searchInput);
+        if (string.IsNullOrWhiteSpace(searchInput))
+            return Enumerable.Empty<ItemFilterResultReadModel>();
+
+        var items = await _itemRepository.FindActiveByAsync(searchInput, _cancellationToken);
+        return items.Select(i => new ItemFilterResultReadModel(i.Id, i.Name));
+    }
+
+    public async Task<IEnumerable<ItemForShoppingListSearchReadModel>> SearchForShoppingListAsync(string name, StoreId storeId)
     {
         if (name == null)
             throw new ArgumentNullException(nameof(name));
