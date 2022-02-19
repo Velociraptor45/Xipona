@@ -5,8 +5,8 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearchForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemSearchReadModels;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
@@ -238,7 +238,7 @@ public class ItemSearchReadModelConversionServiceTests
             }
         }
 
-        public IEnumerable<ItemForShoppingListSearchReadModel> CreateSimpleReadModels()
+        public IEnumerable<SearchItemForShoppingResultReadModel> CreateSimpleReadModels()
         {
             foreach (IStoreItem item in StoreItems)
             {
@@ -270,7 +270,7 @@ public class ItemSearchReadModelConversionServiceTests
                 var sectionReadModel = new StoreSectionReadModel(section.Id, section.Name,
                     section.SortingIndex, section.IsDefaultSection);
 
-                yield return new ItemForShoppingListSearchReadModel(
+                yield return new SearchItemForShoppingResultReadModel(
                     item.Id,
                     null,
                     item.Name,

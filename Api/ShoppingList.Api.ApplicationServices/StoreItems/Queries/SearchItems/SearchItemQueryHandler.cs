@@ -1,26 +1,24 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterResults;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
-using System.Collections.Generic;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItems
 {
-    public class SearchItemQueryHandler : IQueryHandler<SearchItemQuery, IEnumerable<ItemFilterResultReadModel>>
+    public class SearchItemQueryHandler : IQueryHandler<SearchItemQuery, IEnumerable<SearchItemResultReadModel>>
     {
-        private readonly Func<CancellationToken, IItemQueryService> _itemQueryServiceDelegate;
+        private readonly Func<CancellationToken, IItemSearchService> _itemQueryServiceDelegate;
 
-        public SearchItemQueryHandler(Func<CancellationToken, IItemQueryService> itemQueryServiceDelegate)
+        public SearchItemQueryHandler(Func<CancellationToken, IItemSearchService> itemSearchServiceDelegate)
         {
-            _itemQueryServiceDelegate = itemQueryServiceDelegate;
+            _itemQueryServiceDelegate = itemSearchServiceDelegate;
         }
 
-        public async Task<IEnumerable<ItemFilterResultReadModel>> HandleAsync(SearchItemQuery query,
+        public async Task<IEnumerable<SearchItemResultReadModel>> HandleAsync(SearchItemQuery query,
             CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(query);
 
-            var itemQueryService = _itemQueryServiceDelegate(cancellationToken);
-            return await itemQueryService.SearchAsync(query.SearchInput);
+            var itemSearchService = _itemQueryServiceDelegate(cancellationToken);
+            return await itemSearchService.SearchAsync(query.SearchInput);
         }
     }
 }

@@ -4,6 +4,8 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.Cre
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ItemUpdateWithTypes;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItems;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItemsByFilters;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
@@ -13,8 +15,8 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWith
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemForShoppingLists;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
@@ -26,10 +28,9 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryIte
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemById;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterResults;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearchForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 
@@ -169,13 +170,13 @@ public class ItemController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    [Route("search/{searchInput}/{storeId}")]
-    public async Task<IActionResult> SearchItemForShoppingListAsync([FromRoute(Name = "searchInput")] string searchInput,
+    [Route("search-for-shopping-list/{searchInput}/{storeId}")]
+    public async Task<IActionResult> SearchItemsForShoppingListAsync([FromRoute(Name = "searchInput")] string searchInput,
         [FromRoute(Name = "storeId")] int storeId)
     {
-        var query = new SearchItemForShoppingListQuery(searchInput, new StoreId(storeId));
+        var query = new SearchItemsForShoppingListQuery(searchInput, new StoreId(storeId));
 
-        IEnumerable<ItemForShoppingListSearchReadModel> readModels;
+        IEnumerable<SearchItemForShoppingResultReadModel> readModels;
         try
         {
             readModels = await _queryDispatcher.DispatchAsync(query, default);
@@ -186,7 +187,7 @@ public class ItemController : ControllerBase
         }
 
         var contracts =
-            _converters.ToContract<ItemForShoppingListSearchReadModel, ItemForShoppingListSearchContract>(readModels);
+            _converters.ToContract<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>(readModels);
 
         return Ok(contracts);
     }
@@ -195,11 +196,11 @@ public class ItemController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [Route("search/{searchInput}")]
-    public async Task<IActionResult> SearchItemAsync([FromRoute(Name = "searchInput")] string searchInput)
+    public async Task<IActionResult> SearchItemsAsync([FromRoute(Name = "searchInput")] string searchInput)
     {
         var query = new SearchItemQuery(searchInput);
 
-        List<ItemFilterResultReadModel> readModels;
+        List<SearchItemResultReadModel> readModels;
         try
         {
             readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
@@ -213,25 +214,25 @@ public class ItemController : ControllerBase
             return NoContent();
 
         var contracts =
-            _converters.ToContract<ItemFilterResultReadModel, ItemFilterResultContract>(readModels);
+            _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels);
 
         return Ok(contracts);
     }
 
     [HttpGet]
     [ProducesResponseType(200)]
-    [Route("filter")]
-    public async Task<IActionResult> GetItemFilterResults([FromQuery] IEnumerable<int> storeIds,
+    [Route("search-by-filter")]
+    public async Task<IActionResult> SearchItemsByFilterAsync([FromQuery] IEnumerable<int> storeIds,
         [FromQuery] IEnumerable<int> itemCategoryIds,
         [FromQuery] IEnumerable<int> manufacturerIds)
     {
-        var query = new ItemFilterResultsQuery(
+        var query = new SearchItemsByFilterQuery(
             storeIds.Select(id => new StoreId(id)),
             itemCategoryIds.Select(id => new ItemCategoryId(id)),
             manufacturerIds.Select(id => new ManufacturerId(id)));
 
         var readModels = await _queryDispatcher.DispatchAsync(query, default);
-        var contracts = _converters.ToContract<ItemFilterResultReadModel, ItemFilterResultContract>(readModels);
+        var contracts = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels);
 
         return Ok(contracts);
     }

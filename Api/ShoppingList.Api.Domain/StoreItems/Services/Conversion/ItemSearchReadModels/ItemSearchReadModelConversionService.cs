@@ -6,7 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearchForShoppingLists;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemSearchReadModels;
@@ -23,7 +23,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
         _manufacturerRepository = manufacturerRepository;
     }
 
-    public async Task<IEnumerable<ItemForShoppingListSearchReadModel>> ConvertAsync(IEnumerable<IStoreItem> items,
+    public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(IEnumerable<IStoreItem> items,
         IStore store, CancellationToken cancellationToken)
     {
         var itemsList = items.ToList();
@@ -44,7 +44,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
 
                 var section = store.Sections.Single(s => s.Id == storeAvailability.DefaultSectionId);
 
-                return new ItemForShoppingListSearchReadModel(
+                return new SearchItemForShoppingResultReadModel(
                     item.Id,
                     null,
                     item.Name,
@@ -56,7 +56,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
             });
     }
 
-    public async Task<IEnumerable<ItemForShoppingListSearchReadModel>> ConvertAsync(
+    public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(
         IEnumerable<ItemWithMatchingItemTypeIds> itemTypes, IStore store,
         CancellationToken cancellationToken)
     {
@@ -84,7 +84,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
 
                 var section = store.Sections.Single(s => s.Id == storeAvailability.DefaultSectionId);
 
-                return new ItemForShoppingListSearchReadModel(
+                return new SearchItemForShoppingResultReadModel(
                     item.Id,
                     type.Id,
                     $"{item.Name} {type.Name}",

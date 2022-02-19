@@ -1,10 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
 
-namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemForShoppingLists
+namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists
 {
-    public class ItemForShoppingListSearchContract
+    public class SearchItemForShoppingListResultContract
     {
-        public ItemForShoppingListSearchContract(int id, int? typeId, string name, int defaultQuantity, float price,
+        public SearchItemForShoppingListResultContract(int id, int? typeId, string name, int defaultQuantity, float price,
             string itemCategoryName, string manufacturerName, StoreSectionContract defaultSection)
         {
             Id = id;

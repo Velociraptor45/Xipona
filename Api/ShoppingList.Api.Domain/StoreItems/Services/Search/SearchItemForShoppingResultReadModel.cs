@@ -3,11 +3,11 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearchForShoppingLists;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 
-public class ItemForShoppingListSearchReadModel
+public class SearchItemForShoppingResultReadModel
 {
-    public ItemForShoppingListSearchReadModel(ItemId id, ItemTypeId? typeId, string name, int defaultQuantity, float price,
+    public SearchItemForShoppingResultReadModel(ItemId id, ItemTypeId? typeId, string name, int defaultQuantity, float price,
         ManufacturerReadModel? manufacturer, ItemCategoryReadModel? itemCategory,
         StoreSectionReadModel defaultSection)
     {
