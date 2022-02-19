@@ -3,22 +3,22 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
 
-public class ItemSearchQueryHandler : IQueryHandler<ItemSearchQuery, IEnumerable<ItemSearchReadModel>>
+public class SearchItemForShoppingListQueryHandler : IQueryHandler<SearchItemForShoppingListQuery, IEnumerable<ItemForShoppingListSearchReadModel>>
 {
     private readonly Func<CancellationToken, IItemQueryService> _itemQueryServiceDelegate;
 
-    public ItemSearchQueryHandler(Func<CancellationToken, IItemQueryService> itemQueryServiceDelegate)
+    public SearchItemForShoppingListQueryHandler(Func<CancellationToken, IItemQueryService> itemQueryServiceDelegate)
     {
         _itemQueryServiceDelegate = itemQueryServiceDelegate;
     }
 
-    public async Task<IEnumerable<ItemSearchReadModel>> HandleAsync(ItemSearchQuery query,
+    public async Task<IEnumerable<ItemForShoppingListSearchReadModel>> HandleAsync(SearchItemForShoppingListQuery query,
         CancellationToken cancellationToken)
     {
         if (query == null)
             throw new ArgumentNullException(nameof(query));
         if (string.IsNullOrWhiteSpace(query.SearchInput))
-            return Enumerable.Empty<ItemSearchReadModel>();
+            return Enumerable.Empty<ItemForShoppingListSearchReadModel>();
 
         var itemQueryService = _itemQueryServiceDelegate(cancellationToken);
         return await itemQueryService.SearchAsync(query.SearchInput, query.StoreId);

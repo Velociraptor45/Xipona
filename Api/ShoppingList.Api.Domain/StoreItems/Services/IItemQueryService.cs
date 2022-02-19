@@ -5,5 +5,5 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 
 public interface IItemQueryService
 {
-    Task<IEnumerable<ItemSearchReadModel>> SearchAsync(string name, StoreId storeId);
+    Task<IEnumerable<ItemForShoppingListSearchReadModel>> SearchAsync(string name, StoreId storeId);
 }

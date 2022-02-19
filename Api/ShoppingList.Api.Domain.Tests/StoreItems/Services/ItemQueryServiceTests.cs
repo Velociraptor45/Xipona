@@ -423,7 +423,7 @@ public class ItemQueryServiceTests
         public string Name { get; private set; }
         public StoreId StoreId { get; private set; }
 
-        public List<ItemSearchReadModel> Result { get; } = new();
+        public List<ItemForShoppingListSearchReadModel> Result { get; } = new();
 
         public ItemQueryService CreateSut()
         {
@@ -675,12 +675,12 @@ public class ItemQueryServiceTests
         public void SetupConversionServiceReceivingEmptyItemList()
         {
             _conversionServiceMock.SetupConvertAsync(Enumerable.Empty<IStoreItem>(), _store,
-                Enumerable.Empty<ItemSearchReadModel>());
+                Enumerable.Empty<ItemForShoppingListSearchReadModel>());
         }
 
         public void SetupConversionServiceReceivingItemList()
         {
-            var itemReadModels = _fixture.CreateMany<ItemSearchReadModel>().ToList();
+            var itemReadModels = _fixture.CreateMany<ItemForShoppingListSearchReadModel>().ToList();
             Result.AddRange(itemReadModels);
             var items = _items.Where(i => !i.HasItemTypes);
             _conversionServiceMock.SetupConvertAsync(items, _store, itemReadModels);
@@ -689,7 +689,7 @@ public class ItemQueryServiceTests
         public void SetupConversionServiceReceivingItemWithTypeList()
         {
             var itemReadModels = _fixture
-                .CreateMany<ItemSearchReadModel>(_itemToTypeIdMappings.Select(m => m.MatchingItemTypeIds).Count())
+                .CreateMany<ItemForShoppingListSearchReadModel>(_itemToTypeIdMappings.Select(m => m.MatchingItemTypeIds).Count())
                 .ToList();
             Result.AddRange(itemReadModels);
             _conversionServiceMock.SetupConvertAsync(_itemToTypeIdMappings, _store, itemReadModels);
@@ -698,7 +698,7 @@ public class ItemQueryServiceTests
         public void SetupConversionServiceReceivingEmptyItemWithTypesList()
         {
             _conversionServiceMock.SetupConvertAsync(Enumerable.Empty<ItemWithMatchingItemTypeIds>(), _store,
-                Enumerable.Empty<ItemSearchReadModel>());
+                Enumerable.Empty<ItemForShoppingListSearchReadModel>());
         }
     }
 }

@@ -13,7 +13,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
@@ -169,12 +169,12 @@ public class ItemController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [Route("search/{searchInput}/{storeId}")]
-    public async Task<IActionResult> GetItemSearchResults([FromRoute(Name = "searchInput")] string searchInput,
+    public async Task<IActionResult> SearchItemForShoppingListAsync([FromRoute(Name = "searchInput")] string searchInput,
         [FromRoute(Name = "storeId")] int storeId)
     {
-        var query = new ItemSearchQuery(searchInput, new StoreId(storeId));
+        var query = new SearchItemForShoppingListQuery(searchInput, new StoreId(storeId));
 
-        IEnumerable<ItemSearchReadModel> readModels;
+        IEnumerable<ItemForShoppingListSearchReadModel> readModels;
         try
         {
             readModels = await _queryDispatcher.DispatchAsync(query, default);
@@ -184,7 +184,8 @@ public class ItemController : ControllerBase
             return BadRequest(e.Reason);
         }
 
-        var contracts = _converters.ToContract<ItemSearchReadModel, ItemSearchContract>(readModels);
+        var contracts =
+            _converters.ToContract<ItemForShoppingListSearchReadModel, ItemForShoppingListSearchContract>(readModels);
 
         return Ok(contracts);
     }

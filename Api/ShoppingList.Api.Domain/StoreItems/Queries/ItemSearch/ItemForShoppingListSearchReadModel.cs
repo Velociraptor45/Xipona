@@ -5,9 +5,9 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
 
-public class ItemSearchReadModel
+public class ItemForShoppingListSearchReadModel
 {
-    public ItemSearchReadModel(ItemId id, ItemTypeId? typeId, string name, int defaultQuantity, float price,
+    public ItemForShoppingListSearchReadModel(ItemId id, ItemTypeId? typeId, string name, int defaultQuantity, float price,
         ManufacturerReadModel? manufacturer, ItemCategoryReadModel? itemCategory,
         StoreSectionReadModel defaultSection)
     {

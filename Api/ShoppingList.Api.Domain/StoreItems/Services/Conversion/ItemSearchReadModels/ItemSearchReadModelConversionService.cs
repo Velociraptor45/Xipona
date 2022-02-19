@@ -23,7 +23,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
         _manufacturerRepository = manufacturerRepository;
     }
 
-    public async Task<IEnumerable<ItemSearchReadModel>> ConvertAsync(IEnumerable<IStoreItem> items,
+    public async Task<IEnumerable<ItemForShoppingListSearchReadModel>> ConvertAsync(IEnumerable<IStoreItem> items,
         IStore store, CancellationToken cancellationToken)
     {
         var itemsList = items.ToList();
@@ -44,7 +44,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
 
                 var section = store.Sections.Single(s => s.Id == storeAvailability.DefaultSectionId);
 
-                return new ItemSearchReadModel(
+                return new ItemForShoppingListSearchReadModel(
                     item.Id,
                     null,
                     item.Name,
@@ -56,7 +56,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
             });
     }
 
-    public async Task<IEnumerable<ItemSearchReadModel>> ConvertAsync(
+    public async Task<IEnumerable<ItemForShoppingListSearchReadModel>> ConvertAsync(
         IEnumerable<ItemWithMatchingItemTypeIds> itemTypes, IStore store,
         CancellationToken cancellationToken)
     {
@@ -84,7 +84,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
 
                 var section = store.Sections.Single(s => s.Id == storeAvailability.DefaultSectionId);
 
-                return new ItemSearchReadModel(
+                return new ItemForShoppingListSearchReadModel(
                     item.Id,
                     type.Id,
                     $"{item.Name} {type.Name}",

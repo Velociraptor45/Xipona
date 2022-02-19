@@ -14,7 +14,7 @@ public class ItemSearchReadModelConversionServiceMock : Mock<IItemSearchReadMode
     }
 
     public void SetupConvertAsync(IEnumerable<IStoreItem> items, IStore store,
-        IEnumerable<ItemSearchReadModel> returnValue)
+        IEnumerable<ItemForShoppingListSearchReadModel> returnValue)
     {
         Setup(m => m.ConvertAsync(
                 It.Is<IEnumerable<IStoreItem>>(i => i.IsEquivalentTo(items)),
@@ -24,7 +24,7 @@ public class ItemSearchReadModelConversionServiceMock : Mock<IItemSearchReadMode
     }
 
     public void SetupConvertAsync(IEnumerable<ItemWithMatchingItemTypeIds> mappings, IStore store,
-        IEnumerable<ItemSearchReadModel> returnValue)
+        IEnumerable<ItemForShoppingListSearchReadModel> returnValue)
     {
         Setup(m => m.ConvertAsync(
                 It.Is<IEnumerable<ItemWithMatchingItemTypeIds>>(maps => maps.IsEquivalentTo(mappings)),

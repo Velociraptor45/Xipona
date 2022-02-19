@@ -33,12 +33,12 @@ public class ItemQueryService : IItemQueryService
         _cancellationToken = cancellationToken;
     }
 
-    public async Task<IEnumerable<ItemSearchReadModel>> SearchAsync(string name, StoreId storeId)
+    public async Task<IEnumerable<ItemForShoppingListSearchReadModel>> SearchAsync(string name, StoreId storeId)
     {
         if (name == null)
             throw new ArgumentNullException(nameof(name));
         if (string.IsNullOrWhiteSpace(name))
-            return Enumerable.Empty<ItemSearchReadModel>();
+            return Enumerable.Empty<ItemForShoppingListSearchReadModel>();
 
         var store = await LoadStoreAsync(storeId);
 

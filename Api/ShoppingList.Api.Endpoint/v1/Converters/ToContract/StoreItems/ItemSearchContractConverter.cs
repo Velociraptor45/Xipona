@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
@@ -7,7 +7,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.StoreItems;
 
 public class ItemSearchContractConverter :
-    IToContractConverter<ItemSearchReadModel, ItemSearchContract>
+    IToContractConverter<ItemForShoppingListSearchReadModel, ItemForShoppingListSearchContract>
 {
     private readonly IToContractConverter<StoreSectionReadModel, StoreSectionContract> _storeItemSectionContractConverter;
 
@@ -17,12 +17,12 @@ public class ItemSearchContractConverter :
         _storeItemSectionContractConverter = storeItemSectionContractConverter;
     }
 
-    public ItemSearchContract ToContract(ItemSearchReadModel source)
+    public ItemForShoppingListSearchContract ToContract(ItemForShoppingListSearchReadModel source)
     {
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        return new ItemSearchContract(
+        return new ItemForShoppingListSearchContract(
             source.Id.Value,
             source.TypeId?.Value,
             source.Name,

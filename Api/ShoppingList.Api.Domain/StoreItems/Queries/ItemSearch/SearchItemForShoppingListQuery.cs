@@ -3,9 +3,9 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
 
-public class ItemSearchQuery : IQuery<IEnumerable<ItemSearchReadModel>>
+public class SearchItemForShoppingListQuery : IQuery<IEnumerable<ItemForShoppingListSearchReadModel>>
 {
-    public ItemSearchQuery(string searchInput, StoreId storeId)
+    public SearchItemForShoppingListQuery(string searchInput, StoreId storeId)
     {
         SearchInput = searchInput;
         StoreId = storeId;

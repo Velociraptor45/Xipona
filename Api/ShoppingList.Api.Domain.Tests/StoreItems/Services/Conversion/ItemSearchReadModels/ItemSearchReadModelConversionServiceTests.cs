@@ -238,7 +238,7 @@ public class ItemSearchReadModelConversionServiceTests
             }
         }
 
-        public IEnumerable<ItemSearchReadModel> CreateSimpleReadModels()
+        public IEnumerable<ItemForShoppingListSearchReadModel> CreateSimpleReadModels()
         {
             foreach (IStoreItem item in StoreItems)
             {
@@ -270,7 +270,7 @@ public class ItemSearchReadModelConversionServiceTests
                 var sectionReadModel = new StoreSectionReadModel(section.Id, section.Name,
                     section.SortingIndex, section.IsDefaultSection);
 
-                yield return new ItemSearchReadModel(
+                yield return new ItemForShoppingListSearchReadModel(
                     item.Id,
                     null,
                     item.Name,
