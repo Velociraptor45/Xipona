@@ -19,6 +19,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         void InitializeCommandQueue(ICommandQueueErrorHandler errorHandler);
         Task<ShoppingListRoot> LoadActiveShoppingListAsync(int storeId, Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator);
         Task<IEnumerable<Store>> LoadAllActiveStoresAsync(Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator);
-        Task<IEnumerable<ItemSearchResult>> LoadItemSearchResultAsync(string input, int storeId, Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator);
+        Task<IEnumerable<SearchItemForShoppingListResult>> LoadItemSearchResultAsync(string input, int storeId, Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Client;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converter;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contracts;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests;
@@ -133,21 +134,25 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return itemCategories.Select(cat => cat.ToModel());
         }
 
-        public async Task<IEnumerable<ItemSearchResult>> GetItemSearchResultsAsync(string searchInput, int storeId)
+        public async Task<IEnumerable<SearchItemForShoppingListResult>> GetItemSearchResultsAsync(string searchInput, int storeId)
         {
-            var result = await client.GetItemSearchResults(searchInput, storeId);
-            return result.Select(result => result.ToModel());
+            var converter = new SearchItemForShoppingListResultConverter();
+
+            var result = await client.SearchItemsForShoppingListAsync(searchInput, storeId);
+            return result.Select(converter.ToDomain);
         }
 
-        public async Task<IEnumerable<ItemFilterResult>> GetItemFilterResultAsync(IEnumerable<int> storeIds,
+        public async Task<IEnumerable<SearchItemResult>> GetItemFilterResultAsync(IEnumerable<int> storeIds,
             IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds)
         {
-            var result = await client.GetItemFilterResult(
+            var converter = new SearchItemResultConverter();
+
+            var result = await client.SearchItemsByFilterAsync(
                 storeIds,
                 itemCategoryIds,
                 manufacturerIds);
 
-            return result.Select(r => r.ToModel());
+            return result.Select(converter.ToDomain);
         }
 
         public async Task<StoreItem> GetItemByIdAsync(int itemId)

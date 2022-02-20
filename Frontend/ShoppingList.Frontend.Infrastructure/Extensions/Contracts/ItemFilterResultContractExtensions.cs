@@ -1,13 +1,13 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using ProjectHermes.ShoppingList.Frontend.Models.Items;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contracts
 {
     public static class ItemFilterResultContractExtensions
     {
-        public static ItemFilterResult ToModel(this ItemFilterResultContract contract)
+        public static SearchItemResult ToModel(this SearchItemResultContract contract)
         {
-            return new ItemFilterResult(contract.ItemId, contract.ItemName);
+            return new SearchItemResult(contract.ItemId, contract.ItemName);
         }
     }
 }
