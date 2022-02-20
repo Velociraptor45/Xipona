@@ -1,28 +1,28 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.StoreItems;
 
-public class ItemSearchContractConverter :
-    IToContractConverter<ItemSearchReadModel, ItemSearchContract>
+public class SearchItemForShoppingListResultContractConverter :
+    IToContractConverter<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>
 {
     private readonly IToContractConverter<StoreSectionReadModel, StoreSectionContract> _storeItemSectionContractConverter;
 
-    public ItemSearchContractConverter(
+    public SearchItemForShoppingListResultContractConverter(
         IToContractConverter<StoreSectionReadModel, StoreSectionContract> storeItemSectionContractConverter)
     {
         _storeItemSectionContractConverter = storeItemSectionContractConverter;
     }
 
-    public ItemSearchContract ToContract(ItemSearchReadModel source)
+    public SearchItemForShoppingListResultContract ToContract(SearchItemForShoppingResultReadModel source)
     {
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        return new ItemSearchContract(
+        return new SearchItemForShoppingListResultContract(
             source.Id.Value,
             source.TypeId?.Value,
             source.Name,

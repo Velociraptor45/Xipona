@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Shared;
@@ -14,13 +14,13 @@ using ShoppingList.Api.Domain.TestKit.StoreItems.Services.Conversion.ItemSearchR
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Ports;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services;
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Search;
 
-public class ItemQueryServiceTests
+public class ItemSearchServiceTests
 {
     private readonly LocalFixture _fixture;
 
-    public ItemQueryServiceTests()
+    public ItemSearchServiceTests()
     {
         _fixture = new LocalFixture();
     }
@@ -33,7 +33,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        var result = await sut.SearchAsync(string.Empty, _fixture.StoreId);
+        var result = await sut.SearchForShoppingListAsync(string.Empty, _fixture.StoreId);
 
         // Assert
         result.Should().BeEmpty();
@@ -47,7 +47,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        var result = await sut.SearchAsync("  ", _fixture.StoreId);
+        var result = await sut.SearchForShoppingListAsync("  ", _fixture.StoreId);
 
         // Assert
         result.Should().BeEmpty();
@@ -61,7 +61,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        Func<Task> func = async () => await sut.SearchAsync(null!, _fixture.StoreId);
+        Func<Task> func = async () => await sut.SearchForShoppingListAsync(null!, _fixture.StoreId);
 
         // Assert
         await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*name*");
@@ -76,7 +76,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        Func<Task> func = async () => await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        Func<Task> func = async () => await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.StoreNotFound);
@@ -93,7 +93,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        Func<Task> func = async () => await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        Func<Task> func = async () => await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListNotFound);
@@ -114,7 +114,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        var result = await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        var result = await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         result.Should().BeEmpty();
@@ -135,7 +135,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        var result = await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        var result = await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         result.Should().BeEquivalentTo(_fixture.Result);
@@ -160,7 +160,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        var result = await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        var result = await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         result.Should().BeEmpty();
@@ -182,7 +182,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        var result = await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        var result = await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         result.Should().BeEquivalentTo(_fixture.Result);
@@ -204,7 +204,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        var result = await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        var result = await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         result.Should().BeEmpty();
@@ -226,7 +226,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        var result = await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        var result = await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         result.Should().BeEquivalentTo(_fixture.Result);
@@ -248,7 +248,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        var result = await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        var result = await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         result.Should().BeEquivalentTo(_fixture.Result);
@@ -275,7 +275,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        var result = await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        var result = await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         result.Should().BeEquivalentTo(_fixture.Result);
@@ -302,7 +302,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        Func<Task> func = async () => await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        Func<Task> func = async () => await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemNotFound);
@@ -329,7 +329,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        var result = await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        var result = await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         result.Should().BeEmpty();
@@ -357,7 +357,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        var result = await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        var result = await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         result.Should().BeEquivalentTo(_fixture.Result);
@@ -385,7 +385,7 @@ public class ItemQueryServiceTests
         var sut = _fixture.CreateSut();
 
         // Act
-        var result = await sut.SearchAsync(_fixture.Name, _fixture.StoreId);
+        var result = await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
 
         // Assert
         result.Should().BeEmpty();
@@ -423,11 +423,11 @@ public class ItemQueryServiceTests
         public string Name { get; private set; }
         public StoreId StoreId { get; private set; }
 
-        public List<ItemSearchReadModel> Result { get; } = new();
+        public List<SearchItemForShoppingResultReadModel> Result { get; } = new();
 
-        public ItemQueryService CreateSut()
+        public ItemSearchService CreateSut()
         {
-            return new ItemQueryService(
+            return new ItemSearchService(
                 _itemRepositoryMock.Object,
                 _shoppingListRepositoryMock.Object,
                 _storeRepositoryMock.Object,
@@ -675,12 +675,12 @@ public class ItemQueryServiceTests
         public void SetupConversionServiceReceivingEmptyItemList()
         {
             _conversionServiceMock.SetupConvertAsync(Enumerable.Empty<IStoreItem>(), _store,
-                Enumerable.Empty<ItemSearchReadModel>());
+                Enumerable.Empty<SearchItemForShoppingResultReadModel>());
         }
 
         public void SetupConversionServiceReceivingItemList()
         {
-            var itemReadModels = _fixture.CreateMany<ItemSearchReadModel>().ToList();
+            var itemReadModels = _fixture.CreateMany<SearchItemForShoppingResultReadModel>().ToList();
             Result.AddRange(itemReadModels);
             var items = _items.Where(i => !i.HasItemTypes);
             _conversionServiceMock.SetupConvertAsync(items, _store, itemReadModels);
@@ -689,7 +689,7 @@ public class ItemQueryServiceTests
         public void SetupConversionServiceReceivingItemWithTypeList()
         {
             var itemReadModels = _fixture
-                .CreateMany<ItemSearchReadModel>(_itemToTypeIdMappings.Select(m => m.MatchingItemTypeIds).Count())
+                .CreateMany<SearchItemForShoppingResultReadModel>(_itemToTypeIdMappings.Select(m => m.MatchingItemTypeIds).Count())
                 .ToList();
             Result.AddRange(itemReadModels);
             _conversionServiceMock.SetupConvertAsync(_itemToTypeIdMappings, _store, itemReadModels);
@@ -698,7 +698,7 @@ public class ItemQueryServiceTests
         public void SetupConversionServiceReceivingEmptyItemWithTypesList()
         {
             _conversionServiceMock.SetupConvertAsync(Enumerable.Empty<ItemWithMatchingItemTypeIds>(), _store,
-                Enumerable.Empty<ItemSearchReadModel>());
+                Enumerable.Empty<SearchItemForShoppingResultReadModel>());
         }
     }
 }

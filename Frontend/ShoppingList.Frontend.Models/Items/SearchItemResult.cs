@@ -1,8 +1,8 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Models.Items
 {
-    public class ItemFilterResult
+    public class SearchItemResult
     {
-        public ItemFilterResult(int itemId, string name)
+        public SearchItemResult(int itemId, string name)
         {
             ItemId = itemId;
             Name = name;

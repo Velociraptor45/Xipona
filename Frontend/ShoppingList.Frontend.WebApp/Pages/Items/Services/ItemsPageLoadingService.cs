@@ -45,12 +45,12 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
             return null;
         }
 
-        public async Task<IEnumerable<ItemFilterResult>> LoadItemsAsync(IEnumerable<int> storeIds, IEnumerable<int> itemCategoryIds,
+        public async Task<IEnumerable<SearchItemResult>> LoadItemsAsync(IEnumerable<int> storeIds, IEnumerable<int> itemCategoryIds,
             IEnumerable<int> manufacturerIds, IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
             {
-                return await apiClient.GetItemFilterResultAsync(
+                return await apiClient.SearchItemsByFilterAsync(
                         storeIds,
                         itemCategoryIds,
                         manufacturerIds);

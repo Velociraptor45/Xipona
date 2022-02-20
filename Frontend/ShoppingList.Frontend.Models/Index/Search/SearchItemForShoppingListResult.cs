@@ -1,8 +1,8 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Models.Index.Search
 {
-    public class ItemSearchResult
+    public class SearchItemForShoppingListResult
     {
-        public ItemSearchResult(int itemId, int? itemTypeId, string name, float price, string priceLabel,
+        public SearchItemForShoppingListResult(int itemId, int? itemTypeId, string name, float price, string priceLabel,
             string itemCategoryName, string manufacturerName, int defaultSectionId)
         {
             ItemId = itemId;

@@ -8,8 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-
-
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 {
     public class ShoppingListCommunicationService : IShoppingListCommunicationService
@@ -52,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             return null;
         }
 
-        public async Task<bool> FinishListAsync(FinishListRequest request, Func<Task> OnFailure, 
+        public async Task<bool> FinishListAsync(FinishListRequest request, Func<Task> OnFailure,
             IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
@@ -69,12 +67,12 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             return false;
         }
 
-        public async Task<IEnumerable<ItemSearchResult>> LoadItemSearchResultAsync(string input, int storeId, 
+        public async Task<IEnumerable<SearchItemForShoppingListResult>> LoadItemSearchResultAsync(string input, int storeId,
             Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
             {
-                return await apiClient.GetItemSearchResultsAsync(input, storeId);
+                return await apiClient.SearchItemsForShoppingListAsync(input, storeId);
             }
             catch (Exception e)
             {

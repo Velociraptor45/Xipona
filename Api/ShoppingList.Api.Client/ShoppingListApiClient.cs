@@ -24,8 +24,8 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWith
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using RestEase;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -146,15 +146,21 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await _apiClient.DeleteItemAsync(itemId);
         }
 
-        public async Task<IEnumerable<ItemSearchContract>> GetItemSearchResults(string searchInput, int storeId)
+        public async Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync(
+            string searchInput, int storeId)
         {
-            return await _apiClient.GetItemSearchResults(searchInput, storeId);
+            return await _apiClient.SearchItemsForShoppingListAsync(searchInput, storeId);
         }
 
-        public async Task<IEnumerable<ItemFilterResultContract>> GetItemFilterResult(IEnumerable<int> storeIds,
+        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync(string searchInput)
+        {
+            return await _apiClient.SearchItemsAsync(searchInput);
+        }
+
+        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync(IEnumerable<int> storeIds,
             IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds)
         {
-            return await _apiClient.GetItemFilterResult(storeIds, itemCategoryIds, manufacturerIds);
+            return await _apiClient.SearchItemsByFilterAsync(storeIds, itemCategoryIds, manufacturerIds);
         }
 
         public async Task<StoreItemContract> Get(int itemId)

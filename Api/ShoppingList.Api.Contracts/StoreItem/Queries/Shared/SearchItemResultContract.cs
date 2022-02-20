@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults
+namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared
 {
-    public class ItemFilterResultContract
+    public class SearchItemResultContract
     {
-        public ItemFilterResultContract(int itemId, string itemName)
+        public SearchItemResultContract(int itemId, string itemName)
         {
             if (string.IsNullOrWhiteSpace(itemName))
             {

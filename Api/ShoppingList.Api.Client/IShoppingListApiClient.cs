@@ -22,8 +22,8 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWith
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using RestEase;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -77,8 +77,16 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Post("item/create-with-types")]
         Task CreateItemWithTypes([Body] CreateItemWithTypesContract createItemWithTypesContract);
 
-        [Get("item/search/{searchInput}/{storeId}")]
-        Task<IEnumerable<ItemSearchContract>> GetItemSearchResults([Path] string searchInput, [Path] int storeId);
+        [Get("item/search-for-shopping-list/{searchInput}/{storeId}")]
+        Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync([Path] string searchInput,
+            [Path] int storeId);
+
+        [Get("item/search/{searchInput}")]
+        Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync([Path] string searchInput);
+
+        [Get("item/search-by-filter")]
+        Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] IEnumerable<int> storeIds,
+            [Query] IEnumerable<int> itemCategoryIds, [Query] IEnumerable<int> manufacturerIds);
 
         [Post("item/modify")]
         Task ModifyItem([Body] ModifyItemContract modifyItemContract);
@@ -94,10 +102,6 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Post("item/delete/{itemId}")]
         Task DeleteItemAsync([Path] int itemId);
-
-        [Get("item/filter")]
-        Task<IEnumerable<ItemFilterResultContract>> GetItemFilterResult([Query] IEnumerable<int> storeIds,
-            [Query] IEnumerable<int> itemCategoryIds, [Query] IEnumerable<int> manufacturerIds);
 
         [Get("item/{itemId}")]
         Task<StoreItemContract> Get([Path] int itemId);

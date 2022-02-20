@@ -41,10 +41,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         Task<StoreItem> GetItemByIdAsync(int itemId);
 
-        Task<IEnumerable<ItemFilterResult>> GetItemFilterResultAsync(IEnumerable<int> storeIds,
+        Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput);
+
+        Task<IEnumerable<SearchItemResult>> SearchItemsByFilterAsync(IEnumerable<int> storeIds,
             IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds);
 
-        Task<IEnumerable<ItemSearchResult>> GetItemSearchResultsAsync(string searchInput, int storeId);
+        Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(string searchInput, int storeId);
 
         Task IsAliveAsync();
 
@@ -67,6 +69,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         Task AddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request);
 
         Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request);
+
         Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request);
     }
 }

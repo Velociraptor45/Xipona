@@ -1,14 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemSearch;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemSearchReadModels;
 
 public interface IItemSearchReadModelConversionService
 {
-    Task<IEnumerable<ItemSearchReadModel>> ConvertAsync(IEnumerable<IStoreItem> items, IStore store,
+    Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(IEnumerable<IStoreItem> items, IStore store,
         CancellationToken cancellationToken);
 
-    Task<IEnumerable<ItemSearchReadModel>> ConvertAsync(IEnumerable<ItemWithMatchingItemTypeIds> itemTypes,
+    Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(IEnumerable<ItemWithMatchingItemTypeIds> itemTypes,
         IStore store, CancellationToken cancellationToken);
 }

@@ -23,6 +23,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System.Reflection;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 
 namespace ProjectHermes.ShoppingList.Api.Domain;
 
@@ -71,14 +72,14 @@ public static class ServiceCollectionExtensions
                 storeItemFactory, shoppingListUpdateService, cancellationToken);
         });
 
-        services.AddTransient<Func<CancellationToken, IItemQueryService>>(provider =>
+        services.AddTransient<Func<CancellationToken, IItemSearchService>>(provider =>
         {
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
             var storeRepository = provider.GetRequiredService<IStoreRepository>();
             var itemTypeReadRepository = provider.GetRequiredService<IItemTypeReadRepository>();
             var conversionService = provider.GetRequiredService<IItemSearchReadModelConversionService>();
-            return (cancellationToken) => new ItemQueryService(itemRepository, shoppingListRepository,
+            return (cancellationToken) => new ItemSearchService(itemRepository, shoppingListRepository,
                 storeRepository, itemTypeReadRepository, conversionService, cancellationToken);
         });
 

@@ -1,10 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemFilterResults;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 
-public class ItemFilterResultReadModel
+public class SearchItemResultReadModel
 {
-    public ItemFilterResultReadModel(ItemId id, string itemName)
+    public SearchItemResultReadModel(ItemId id, string itemName)
     {
         if (string.IsNullOrEmpty(itemName))
         {
