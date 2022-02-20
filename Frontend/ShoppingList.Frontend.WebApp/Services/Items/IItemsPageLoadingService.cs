@@ -14,9 +14,12 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items
 
         Task<IEnumerable<ItemCategory>> LoadItemCategoriesAsync(IAsyncRetryFragmentCreator fragmentCreator);
 
-        Task<IEnumerable<SearchItemResult>> LoadItemsAsync(IEnumerable<int> storeIds, IEnumerable<int> itemCategoryIds,
+        Task<IEnumerable<SearchItemResult>> SearchItemsAsync(IEnumerable<int> storeIds, IEnumerable<int> itemCategoryIds,
             IEnumerable<int> manufacturerIds, IAsyncRetryFragmentCreator fragmentCreator);
 
         Task<IEnumerable<Manufacturer>> LoadManufacturersAsync(IAsyncRetryFragmentCreator fragmentCreator);
+
+        Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput,
+            IAsyncRetryFragmentCreator fragmentCreator);
     }
 }

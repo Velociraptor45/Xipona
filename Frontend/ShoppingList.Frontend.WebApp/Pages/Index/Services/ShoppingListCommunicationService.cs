@@ -72,7 +72,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         {
             try
             {
-                return await apiClient.GetItemSearchResultsAsync(input, storeId);
+                return await apiClient.SearchItemsForShoppingListAsync(input, storeId);
             }
             catch (Exception e)
             {

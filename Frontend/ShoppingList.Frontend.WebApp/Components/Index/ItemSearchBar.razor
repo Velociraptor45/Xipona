@@ -10,10 +10,10 @@
     <Select OnFocus="OnSearchBarFocusIn"
             Class="@(searchBar.Active ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
             DataSource="searchBar.Options"
-            TItem="@ItemSearchResult"
+            TItem="@SearchItemForShoppingListResult"
             TItemValue="@int"
-            ValueName="@nameof(ItemSearchResult.ItemId)"
-            LabelName="@nameof(ItemSearchResult.DisplayValue)"
+            ValueName="@nameof(SearchItemForShoppingListResult.ItemId)"
+            LabelName="@nameof(SearchItemForShoppingListResult.DisplayValue)"
             AutoClearSearchValue="true"
             AllowClear="true"
             OnSearch="(s) => OnSearch(s)"
@@ -77,7 +77,7 @@
         State.AddItemToList(item, State.ShoppingList.DefaultSectionId);
     }
 
-    private async Task OnSearchItemSelected(ItemSearchResult item)
+    private async Task OnSearchItemSelected(SearchItemForShoppingListResult item)
     {
         if (item == null)
             return;

@@ -134,7 +134,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return itemCategories.Select(cat => cat.ToModel());
         }
 
-        public async Task<IEnumerable<SearchItemForShoppingListResult>> GetItemSearchResultsAsync(string searchInput, int storeId)
+        public async Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(string searchInput, int storeId)
         {
             var converter = new SearchItemForShoppingListResultConverter();
 
@@ -142,7 +142,14 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return result.Select(converter.ToDomain);
         }
 
-        public async Task<IEnumerable<SearchItemResult>> GetItemFilterResultAsync(IEnumerable<int> storeIds,
+        public async Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput)
+        {
+            var converter = new SearchItemResultConverter();
+            var result = await client.SearchItemsAsync(searchInput);
+            return result.Select(converter.ToDomain);
+        }
+
+        public async Task<IEnumerable<SearchItemResult>> SearchItemsByFilterAsync(IEnumerable<int> storeIds,
             IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds)
         {
             var converter = new SearchItemResultConverter();

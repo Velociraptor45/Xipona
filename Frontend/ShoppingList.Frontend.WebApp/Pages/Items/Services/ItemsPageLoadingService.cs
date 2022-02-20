@@ -50,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
         {
             try
             {
-                return await apiClient.GetItemFilterResultAsync(
+                return await apiClient.SearchItemsByFilterAsync(
                         storeIds,
                         itemCategoryIds,
                         manufacturerIds);
