@@ -29,11 +29,6 @@
 
     private string newItemName = "";
 
-    protected override void OnParametersSet()
-    {
-        Class += " min-w-100";
-    }
-
     private async void OnSelectedItemChanged(TItem item)
     {
         await OnItemChanged.InvokeAsync(item);

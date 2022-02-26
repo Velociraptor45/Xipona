@@ -1,35 +1,45 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Items;
 
-<div class="d-flex flex-column py-2">
-    <SingleSelect Class="max-w-200"
-                  TItem="QuantityType"
-                  TValue="int"
-                  ValueName="@nameof(QuantityType.Id)"
-                  LabelName="@nameof(QuantityType.Name)"
-                  Placeholder="QuantityType"
-                  DefaultValue="@State.EditedItem.QuantityType.Id"
-                  DataSource="@State.QuantityTypes.ToList()"
-                  OnItemChanged="@OnQuantityTypeChanged">
-    </SingleSelect>
+<div class="d-flex flex-row py-2">
+    <div>
+        <div class="font-weight-bold">Quantity&nbsp;Type</div>
+        <SingleSelect 
+            Class="max-w-100 mt-1"
+            TItem="QuantityType"
+            TValue="int"
+            ValueName="@nameof(QuantityType.Id)"
+            LabelName="@nameof(QuantityType.Name)"
+            Placeholder="QuantityType"
+            DefaultValue="@State.EditedItem.QuantityType.Id"
+            DataSource="@State.QuantityTypes.ToList()"
+            OnItemChanged="@OnQuantityTypeChanged">
+        </SingleSelect>
+    </div>
     @if (State.EditedItem.QuantityType.Id == 0)
     {
-        <div class="ml-4 mt-1 d-flex">
-            <SingleSelect Class="max-w-100"
-                          TItem="QuantityTypeInPacket"
-                          TValue="int"
-                          ValueName="@nameof(QuantityTypeInPacket.Id)"
-                          LabelName="@nameof(QuantityTypeInPacket.Name)"
-                          Placeholder="QuantityInPacketType"
-                          DefaultValue="@State.EditedItem.QuantityInPacketType.Id"
-                          DataSource="@State.QuantityTypesInPacket.ToList()"
-                          OnItemChanged="@OnQuantityInPacketTypeChanged">
-            </SingleSelect>
-            <div class="ml-2 d-flex">
-                <div class="max-w-50">
-                    <Input @bind-Value="@State.EditedItem.QuantityInPacket" />
+        <div class="ml-4 d-flex">
+            <div>
+                <div class="font-weight-bold">In&nbsp;Packet</div>
+                <SingleSelect 
+                    Class="mt-1"
+                    TItem="QuantityTypeInPacket"
+                    TValue="int"
+                    ValueName="@nameof(QuantityTypeInPacket.Id)"
+                    LabelName="@nameof(QuantityTypeInPacket.Name)"
+                    Placeholder="QuantityInPacketType"
+                    DefaultValue="@State.EditedItem.QuantityInPacketType.Id"
+                    DataSource="@State.QuantityTypesInPacket.ToList()"
+                    OnItemChanged="@OnQuantityInPacketTypeChanged">
+                </SingleSelect>
+            </div>
+            <div class="d-flex align-self-end">
+                <div class="ml-2 d-flex max-w-80">
+                    <div>
+                        <Input @bind-Value="@State.EditedItem.QuantityInPacket"/>
+                    </div>
+                    <div class="mt-1">@State.EditedItem.QuantityInPacketType.QuantityLabel</div>
                 </div>
-                <div class="mt-1">@State.EditedItem.QuantityInPacketType.QuantityLabel</div>
             </div>
         </div>
     }

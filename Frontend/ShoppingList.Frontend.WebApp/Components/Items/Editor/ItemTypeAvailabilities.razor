@@ -3,7 +3,7 @@
 <div>
     <div class="mt-3 d-flex justify-content-start align-items-center">
         <div class="mr-2">Stores</div>
-        <Button class="d-flex align-items-center" OnClick="OnAddStoreButtonClicked"
+        <Button class="d-flex align-items-center" Size="@ButtonSize.Small" OnClick="OnAddStoreButtonClicked"
                 Disabled="@(!State.EditedItem.ItemTypes[ItemTypeIndex].GetNotRegisteredStores(State.Stores).Any())">
             <Icon Type="plus"></Icon>
         </Button>
