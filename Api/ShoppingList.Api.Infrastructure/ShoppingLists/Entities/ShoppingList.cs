@@ -15,7 +15,7 @@ public class ShoppingList
     public Guid Id { get; set; }
 
     public DateTime? CompletionDate { get; set; }
-    public int StoreId { get; set; }
+    public Guid StoreId { get; set; }
 
     [InverseProperty("ShoppingList")]
     public ICollection<ItemsOnList> ItemsOnList { get; set; }

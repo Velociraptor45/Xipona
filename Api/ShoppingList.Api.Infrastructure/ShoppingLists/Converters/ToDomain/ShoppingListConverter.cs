@@ -52,7 +52,7 @@ public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, I
             sectionModels);
     }
 
-    public IShoppingListSection CreateSection(int sectionId, IEnumerable<IShoppingListItem> items)
+    public IShoppingListSection CreateSection(Guid sectionId, IEnumerable<IShoppingListItem> items)
     {
         return _shoppingListSectionFactory.Create(
             new SectionId(sectionId),

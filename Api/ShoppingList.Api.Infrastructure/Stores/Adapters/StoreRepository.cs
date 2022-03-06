@@ -67,7 +67,7 @@ public class StoreRepository : IStoreRepository
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        List<int> idsList = ids.Select(id => id.Value).ToList();
+        var idsList = ids.Select(id => id.Value).ToList();
 
         var entities = await GetStoreQuery()
             .Where(store => idsList.Contains(store.Id))
@@ -85,14 +85,45 @@ public class StoreRepository : IStoreRepository
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (store.Id.Value == 0)
+        var existingEntity = await FindEntityById(store.Id.Value, cancellationToken);
+
+        if (existingEntity is null)
         {
             return await StoreAsNew(store, cancellationToken);
         }
-        else
+        var existingSections = existingEntity.Sections.ToDictionary(s => s.Id);
+        var incomingEntity = _toEntityConverter.ToEntity(store);
+
+        _dbContext.Entry(incomingEntity).State = EntityState.Modified;
+
+        foreach (var section in incomingEntity.Sections)
         {
-            return await StoreAsModified(store, cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (existingSections.ContainsKey(section.Id))
+            {
+                // section was modified
+                _dbContext.Entry(section).State = EntityState.Modified;
+                existingSections.Remove(section.Id);
+            }
+            else
+            {
+                // section was added
+                _dbContext.Entry(section).State = EntityState.Added;
+            }
         }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        foreach (var section in existingSections.Values)
+        {
+            _dbContext.Entry(section).State = EntityState.Deleted;
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return _toDomainConverter.ToDomain(incomingEntity);
     }
 
     #region private methods
@@ -152,19 +183,14 @@ public class StoreRepository : IStoreRepository
         return _toDomainConverter.ToDomain(incomingEntity);
     }
 
-    private async Task<Entities.Store> FindEntityById(int id, CancellationToken cancellationToken)
+    private async Task<Entities.Store?> FindEntityById(Guid id, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var store = await _dbContext.Stores.AsNoTracking()
+        return await _dbContext.Stores.AsNoTracking()
             .Include(s => s.Sections)
             .Where(store => !store.Deleted)
             .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
-
-        if (store is null)
-            throw new InvalidOperationException($"No store with id {id} found.");
-
-        return store;
     }
 
     private IQueryable<Entities.Store> GetStoreQuery()

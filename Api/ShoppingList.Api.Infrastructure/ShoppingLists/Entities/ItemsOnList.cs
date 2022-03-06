@@ -14,7 +14,7 @@ public class ItemsOnList
     public Guid? ItemTypeId { get; set; }
     public bool InBasket { get; set; }
     public float Quantity { get; set; }
-    public int SectionId { get; set; }
+    public Guid SectionId { get; set; }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
