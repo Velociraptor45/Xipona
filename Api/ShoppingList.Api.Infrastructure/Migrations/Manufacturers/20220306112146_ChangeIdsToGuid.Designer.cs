@@ -2,24 +2,26 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
 
 #nullable disable
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.ItemCategories
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.Manufacturers
 {
-    [DbContext(typeof(ItemCategoryContext))]
-    partial class ItemCategoryContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ManufacturerContext))]
+    [Migration("20220306112146_ChangeIdsToGuid")]
+    partial class ChangeIdsToGuid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities.ItemCategory", b =>
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities.Manufacturer", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
@@ -33,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.ItemCategorie
 
                     b.HasKey("Id");
 
-                    b.ToTable("ItemCategories");
+                    b.ToTable("Manufacturers");
                 });
 #pragma warning restore 612, 618
         }

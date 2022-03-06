@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
 
@@ -10,9 +11,10 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.ItemCategories
 {
     [DbContext(typeof(ItemCategoryContext))]
-    partial class ItemCategoryContextModelSnapshot : ModelSnapshot
+    [Migration("20220306112055_ChangeIdsToGuid")]
+    partial class ChangeIdsToGuid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

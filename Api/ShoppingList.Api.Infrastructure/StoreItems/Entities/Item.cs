@@ -26,8 +26,8 @@ public class Item
     public int QuantityType { get; set; }
     public float QuantityInPacket { get; set; }
     public int QuantityTypeInPacket { get; set; }
-    public int? ItemCategoryId { get; set; }
-    public int? ManufacturerId { get; set; }
+    public Guid? ItemCategoryId { get; set; }
+    public Guid? ManufacturerId { get; set; }
     public Guid? CreatedFrom { get; set; }
     public Guid? PredecessorId { get; set; }
 
