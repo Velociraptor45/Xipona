@@ -87,7 +87,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Get("item/search-by-filter")]
         Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] IEnumerable<Guid> storeIds,
-            [Query] IEnumerable<int> itemCategoryIds, [Query] IEnumerable<int> manufacturerIds);
+            [Query] IEnumerable<Guid> itemCategoryIds, [Query] IEnumerable<Guid> manufacturerIds);
 
         [Post("item/modify")]
         Task ModifyItem([Body] ModifyItemContract modifyItemContract);

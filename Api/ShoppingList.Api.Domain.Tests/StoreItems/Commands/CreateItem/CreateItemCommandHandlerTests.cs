@@ -260,7 +260,7 @@ public class CreateItemCommandHandlerTests
 
         public void SetupManufacturerId()
         {
-            ManufacturerId = new ManufacturerId(CommonFixture.NextInt());
+            ManufacturerId = new ManufacturerId(Guid.NewGuid());
         }
 
         public void SetupManufacturerIdNull()

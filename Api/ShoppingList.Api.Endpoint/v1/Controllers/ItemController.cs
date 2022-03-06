@@ -223,8 +223,8 @@ public class ItemController : ControllerBase
     [ProducesResponseType(200)]
     [Route("search-by-filter")]
     public async Task<IActionResult> SearchItemsByFilterAsync([FromQuery] IEnumerable<Guid> storeIds,
-        [FromQuery] IEnumerable<int> itemCategoryIds,
-        [FromQuery] IEnumerable<int> manufacturerIds)
+        [FromQuery] IEnumerable<Guid> itemCategoryIds,
+        [FromQuery] IEnumerable<Guid> manufacturerIds)
     {
         var query = new SearchItemsByFilterQuery(
             storeIds.Select(id => new StoreId(id)),
