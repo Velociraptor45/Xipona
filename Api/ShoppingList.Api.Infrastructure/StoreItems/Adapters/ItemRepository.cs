@@ -225,6 +225,7 @@ public class ItemRepository : IItemRepository
         else
         {
             var updatedEntity = _toEntityConverter.ToEntity(storeItem);
+            updatedEntity.Id = existingEntity.Id;
             _dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
             _dbContext.Entry(existingEntity).State = EntityState.Modified;
 

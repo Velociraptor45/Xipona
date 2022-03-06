@@ -7,12 +7,12 @@ public readonly record struct ItemTypeId
         throw new NotSupportedException("Use 'New' property to create initial value.");
     }
 
-    public ItemTypeId(int value)
+    public ItemTypeId(Guid value)
     {
         Value = value;
     }
 
-    public static ItemTypeId New => new(0);
+    public static ItemTypeId New => new(Guid.NewGuid());
 
-    public int Value { get; }
+    public Guid Value { get; }
 }

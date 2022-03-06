@@ -14,8 +14,8 @@ public class Item
     }
 
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public Guid Id { get; set; }
 
     [Required]
     public string Name { get; set; }
@@ -29,7 +29,7 @@ public class Item
     public int? ItemCategoryId { get; set; }
     public int? ManufacturerId { get; set; }
     public Guid? CreatedFrom { get; set; }
-    public int? PredecessorId { get; set; }
+    public Guid? PredecessorId { get; set; }
 
     [ForeignKey("PredecessorId")]
     public Item? Predecessor { get; set; }

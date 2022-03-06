@@ -10,8 +10,8 @@ public class ItemsOnList
     public int Id { get; set; }
 
     public int ShoppingListId { get; set; }
-    public int ItemId { get; set; }
-    public int? ItemTypeId { get; set; }
+    public Guid ItemId { get; set; }
+    public Guid? ItemTypeId { get; set; }
     public bool InBasket { get; set; }
     public float Quantity { get; set; }
     public int SectionId { get; set; }

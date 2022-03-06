@@ -6,9 +6,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 public class AvailableAt
 {
     [Key]
-    [ForeignKey("Item")]
     [Column(Order = 1)]
-    public int ItemId { get; set; }
+    public Guid ItemId { get; set; }
 
     [Key]
     [Column(Order = 2)]
