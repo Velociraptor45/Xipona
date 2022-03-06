@@ -58,7 +58,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.IsAlive();
         }
 
-        public async Task<ShoppingListContract> GetActiveShoppingListByStoreId(int storeId)
+        public async Task<ShoppingListContract> GetActiveShoppingListByStoreId(Guid storeId)
         {
             return await _apiClient.GetActiveShoppingListByStoreId(storeId);
         }
@@ -148,7 +148,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
         }
 
         public async Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync(
-            string searchInput, int storeId)
+            string searchInput, Guid storeId)
         {
             return await _apiClient.SearchItemsForShoppingListAsync(searchInput, storeId);
         }
@@ -158,7 +158,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.SearchItemsAsync(searchInput);
         }
 
-        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync(IEnumerable<int> storeIds,
+        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,
             IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds)
         {
             return await _apiClient.SearchItemsByFilterAsync(storeIds, itemCategoryIds, manufacturerIds);

@@ -1,8 +1,10 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores
+﻿using System;
+
+namespace ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores
 {
     public class StoreSectionContract
     {
-        public StoreSectionContract(int id, string name, int sortingIndex, bool isDefautlSection)
+        public StoreSectionContract(Guid id, string name, int sortingIndex, bool isDefautlSection)
         {
             Id = id;
             Name = name;
@@ -10,7 +12,7 @@
             IsDefautlSection = isDefautlSection;
         }
 
-        public int Id { get; }
+        public Guid Id { get; }
         public string Name { get; }
         public int SortingIndex { get; }
         public bool IsDefautlSection { get; }

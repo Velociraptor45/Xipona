@@ -172,7 +172,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(400)]
     [Route("search-for-shopping-list/{searchInput}/{storeId}")]
     public async Task<IActionResult> SearchItemsForShoppingListAsync([FromRoute(Name = "searchInput")] string searchInput,
-        [FromRoute(Name = "storeId")] int storeId)
+        [FromRoute(Name = "storeId")] Guid storeId)
     {
         var query = new SearchItemsForShoppingListQuery(searchInput, new StoreId(storeId));
 
@@ -222,7 +222,7 @@ public class ItemController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200)]
     [Route("search-by-filter")]
-    public async Task<IActionResult> SearchItemsByFilterAsync([FromQuery] IEnumerable<int> storeIds,
+    public async Task<IActionResult> SearchItemsByFilterAsync([FromQuery] IEnumerable<Guid> storeIds,
         [FromQuery] IEnumerable<int> itemCategoryIds,
         [FromQuery] IEnumerable<int> manufacturerIds)
     {

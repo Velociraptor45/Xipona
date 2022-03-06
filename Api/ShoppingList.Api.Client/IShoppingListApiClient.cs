@@ -51,7 +51,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task FinishList([Path] Guid shoppingListId);
 
         [Get("shopping-list/active/{storeId}")]
-        Task<ShoppingListContract> GetActiveShoppingListByStoreId([Path] int storeId);
+        Task<ShoppingListContract> GetActiveShoppingListByStoreId([Path] Guid storeId);
 
         [Post("shopping-list/items/put-in-basket")]
         Task PutItemInBasket([Body] PutItemInBasketContract contract);
@@ -80,13 +80,13 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Get("item/search-for-shopping-list/{searchInput}/{storeId}")]
         Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync([Path] string searchInput,
-            [Path] int storeId);
+            [Path] Guid storeId);
 
         [Get("item/search/{searchInput}")]
         Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync([Path] string searchInput);
 
         [Get("item/search-by-filter")]
-        Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] IEnumerable<int> storeIds,
+        Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] IEnumerable<Guid> storeIds,
             [Query] IEnumerable<int> itemCategoryIds, [Query] IEnumerable<int> manufacturerIds);
 
         [Post("item/modify")]

@@ -12,10 +12,4 @@ public static class StoreIdMother
         var id = _commonFixture.ChooseRandom(availabilities).StoreId;
         return new StoreIdBuilder().WithValue(id.Value);
     }
-
-    public static StoreIdBuilder OneNotFrom(IEnumerable<IStoreItemAvailability> availabilities)
-    {
-        var id = _commonFixture.NextInt(availabilities.Select(av => av.StoreId.Value));
-        return new StoreIdBuilder().WithValue(id);
-    }
 }

@@ -372,8 +372,7 @@ public class AddItemToShoppingListServiceTests
 
             public void SetupShoppingListMockNotMatchingStoreItem()
             {
-                var excludedStoreIds = StoreItem.Availabilities.Select(av => av.StoreId.Value);
-                var storeId = new StoreId(CommonFixture.NextInt(excludedStoreIds));
+                var storeId = new StoreIdBuilder().Create();
 
                 var list = ShoppingListMother.Sections(3).WithStoreId(storeId).Create();
                 ShoppingListMock = new ShoppingListMock(list, MockBehavior.Strict);
@@ -993,7 +992,7 @@ public class AddItemToShoppingListServiceTests
 
         public void SetupSectionId()
         {
-            SectionId = new SectionId(CommonFixture.NextInt());
+            SectionId = new SectionId(Guid.NewGuid());
         }
 
         public void SetupSectionIdMatchingShoppingList()
@@ -1003,7 +1002,7 @@ public class AddItemToShoppingListServiceTests
 
         public void SetupStoreNotMatchingSectionId()
         {
-            var sectionId = new SectionId(CommonFixture.NextInt(SectionId.Value.Value));
+            var sectionId = new SectionId(Guid.NewGuid());
             var section = StoreSectionMother.Default().WithId(sectionId).Create();
 
             Store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSection(section).Create();

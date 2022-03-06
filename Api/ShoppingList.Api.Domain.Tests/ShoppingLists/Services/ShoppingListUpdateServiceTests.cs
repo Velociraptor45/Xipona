@@ -10,6 +10,7 @@ using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using ShoppingList.Api.Domain.TestKit.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services;
 
@@ -837,7 +838,7 @@ public class ShoppingListUpdateServiceTests
 
         public void SetupNewItemNotMatchingShoppingList()
         {
-            var storeId = new StoreId(CommonFixture.NextInt(ShoppingListMock.Object.StoreId.Value));
+            var storeId = new StoreIdBuilder().Create();
             SetupNewItemForStore(storeId);
         }
 

@@ -457,7 +457,7 @@ public class ItemModificationServiceTests
             {
                 var storeId =
                     type.Id == _removedStoreByTypeId.Item1
-                        ? StoreIdMother.OneNotFrom(type.Availabilities).Create()
+                        ? new StoreIdBuilder().Create()
                         : StoreIdMother.OneFrom(type.Availabilities).Create();
                 var shoppingListMocks = new ShoppingListBuilder()
                     .WithStoreId(storeId)

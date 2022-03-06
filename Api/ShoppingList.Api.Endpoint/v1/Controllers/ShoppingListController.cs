@@ -69,7 +69,7 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [Route("active/{storeId}")]
-    public async Task<IActionResult> GetActiveShoppingListByStoreId([FromRoute(Name = "storeId")] int storeId)
+    public async Task<IActionResult> GetActiveShoppingListByStoreId([FromRoute(Name = "storeId")] Guid storeId)
     {
         var query = new ActiveShoppingListByStoreIdQuery(new StoreId(storeId));
         ShoppingListReadModel readModel;
