@@ -9,7 +9,7 @@ public class ItemsOnList
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
-    public int ShoppingListId { get; set; }
+    public Guid ShoppingListId { get; set; }
     public Guid ItemId { get; set; }
     public Guid? ItemTypeId { get; set; }
     public bool InBasket { get; set; }

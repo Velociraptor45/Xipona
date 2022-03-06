@@ -30,17 +30,17 @@ public class ShoppingListRepository : IShoppingListRepository
         if (shoppingList is null)
             throw new ArgumentNullException(nameof(shoppingList));
 
-        if (shoppingList.Id.Value <= 0)
-        {
-            await StoreAsNewListAsync(shoppingList, cancellationToken);
-            return;
-        }
-
         cancellationToken.ThrowIfCancellationRequested();
 
         var listEntity = await FindEntityByIdAsync(shoppingList.Id);
 
         cancellationToken.ThrowIfCancellationRequested();
+
+        if (listEntity is null)
+        {
+            await StoreAsNewListAsync(shoppingList, cancellationToken);
+            return;
+        }
 
         await StoreModifiedListAsync(listEntity, shoppingList, cancellationToken);
 
@@ -165,15 +165,10 @@ public class ShoppingListRepository : IShoppingListRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    private async Task<Entities.ShoppingList> FindEntityByIdAsync(ShoppingListId id)
+    private async Task<Entities.ShoppingList?> FindEntityByIdAsync(ShoppingListId id)
     {
-        var list = await GetShoppingListQuery()
+        return await GetShoppingListQuery()
             .FirstOrDefaultAsync(list => list.Id == id.Value);
-
-        if (list is null)
-            throw new InvalidOperationException($"list with id {id.Value} not found");
-
-        return list;
     }
 
     private IQueryable<Entities.ShoppingList> GetShoppingListQuery()

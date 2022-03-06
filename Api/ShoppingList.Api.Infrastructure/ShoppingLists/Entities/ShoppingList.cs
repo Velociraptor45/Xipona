@@ -11,8 +11,8 @@ public class ShoppingList
     }
 
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public Guid Id { get; set; }
 
     public DateTime? CompletionDate { get; set; }
     public int StoreId { get; set; }
