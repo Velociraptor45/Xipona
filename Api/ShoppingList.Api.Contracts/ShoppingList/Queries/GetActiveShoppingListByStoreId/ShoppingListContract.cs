@@ -8,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
     {
         private readonly IEnumerable<ShoppingListSectionContract> _sections;
 
-        public ShoppingListContract(int id, ShoppingListStoreContract store, IEnumerable<ShoppingListSectionContract> sections,
+        public ShoppingListContract(Guid id, ShoppingListStoreContract store, IEnumerable<ShoppingListSectionContract> sections,
             DateTime? completionDate)
         {
             Id = id;
@@ -17,7 +17,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
             CompletionDate = completionDate;
         }
 
-        public int Id { get; }
+        public Guid Id { get; }
         public ShoppingListStoreContract Store { get; }
         public IReadOnlyCollection<ShoppingListSectionContract> Sections { get => _sections.ToList().AsReadOnly(); }
         public DateTime? CompletionDate { get; }

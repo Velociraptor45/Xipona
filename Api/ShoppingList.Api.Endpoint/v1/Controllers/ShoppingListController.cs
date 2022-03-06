@@ -283,7 +283,7 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [Route("{shoppingListId}/finish")]
-    public async Task<IActionResult> FinishList([FromRoute(Name = "shoppingListId")] int shoppingListId)
+    public async Task<IActionResult> FinishList([FromRoute(Name = "shoppingListId")] Guid shoppingListId)
     {
         var command = new FinishShoppingListCommand(new ShoppingListId(shoppingListId), DateTime.UtcNow);
         try

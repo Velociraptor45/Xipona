@@ -25,6 +25,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using RestEase;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -47,7 +48,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task ChangeItemQuantityOnShoppingList([Body] ChangeItemQuantityOnShoppingListContract contract);
 
         [Post("shopping-list/{shoppingListId}/finish")]
-        Task FinishList([Path] int shoppingListId);
+        Task FinishList([Path] Guid shoppingListId);
 
         [Get("shopping-list/active/{storeId}")]
         Task<ShoppingListContract> GetActiveShoppingListByStoreId([Path] int storeId);
@@ -101,10 +102,10 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task UpdateItemWithTypesAsync([Body] UpdateItemWithTypesContract contract);
 
         [Post("item/delete/{itemId}")]
-        Task DeleteItemAsync([Path] int itemId);
+        Task DeleteItemAsync([Path] Guid itemId);
 
         [Get("item/{itemId}")]
-        Task<StoreItemContract> Get([Path] int itemId);
+        Task<StoreItemContract> Get([Path] Guid itemId);
 
         [Post("item/create/temporary")]
         Task CreateTemporaryItem([Body] CreateTemporaryItemContract contract);

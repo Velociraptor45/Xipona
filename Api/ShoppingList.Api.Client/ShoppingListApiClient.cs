@@ -27,6 +27,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using RestEase;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -92,7 +93,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await _apiClient.ChangeItemQuantityOnShoppingList(contract);
         }
 
-        public async Task FinishList(int shoppingListId)
+        public async Task FinishList(Guid shoppingListId)
         {
             await _apiClient.FinishList(shoppingListId);
         }
@@ -141,7 +142,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await _apiClient.UpdateItemWithTypesAsync(contract);
         }
 
-        public async Task DeleteItemAsync(int itemId)
+        public async Task DeleteItemAsync(Guid itemId)
         {
             await _apiClient.DeleteItemAsync(itemId);
         }
@@ -163,7 +164,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.SearchItemsByFilterAsync(storeIds, itemCategoryIds, manufacturerIds);
         }
 
-        public async Task<StoreItemContract> Get(int itemId)
+        public async Task<StoreItemContract> Get(Guid itemId)
         {
             return await _apiClient.Get(itemId);
         }
