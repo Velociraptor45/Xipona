@@ -116,8 +116,7 @@ public class ShoppingListTests
             .WithSections(sectionMocks.Select(s => s.Object))
             .Create();
 
-        var itemIdsToExclude = list.Items.Select(i => i.Id.Value);
-        var shoppingListItemId = new ItemId(_commonFixture.NextInt(itemIdsToExclude));
+        var shoppingListItemId = new ItemId(Guid.NewGuid());
 
         // Act
         list.RemoveItem(shoppingListItemId);
@@ -173,8 +172,7 @@ public class ShoppingListTests
     {
         // Arrange
         var list = ShoppingListMother.ThreeSections().Create();
-        var itemIdsToExclude = list.Items.Select(i => i.Id.Value);
-        var shoppingListItemId = new ItemId(_commonFixture.NextInt(itemIdsToExclude));
+        var shoppingListItemId = new ItemId(Guid.NewGuid());
 
         // Act
         Action action = () => list.PutItemInBasket(shoppingListItemId);
@@ -228,8 +226,7 @@ public class ShoppingListTests
     {
         // Arrange
         var list = ShoppingListMother.ThreeSections().Create();
-        var itemIdsToExclude = list.Items.Select(i => i.Id.Value);
-        var shoppingListItemId = new ItemId(_commonFixture.NextInt(itemIdsToExclude));
+        var shoppingListItemId = new ItemId(Guid.NewGuid());
 
         // Act
         Action action = () => list.RemoveFromBasket(shoppingListItemId, null);
@@ -283,8 +280,7 @@ public class ShoppingListTests
     {
         // Arrange
         var list = ShoppingListMother.ThreeSections().Create();
-        var itemIdsToExclude = list.Items.Select(i => i.Id.Value);
-        var shoppingListItemId = new ItemId(_commonFixture.NextInt(itemIdsToExclude));
+        var shoppingListItemId = new ItemId(Guid.NewGuid());
 
         // Act
         Action action = () => list.ChangeItemQuantity(shoppingListItemId, null, _commonFixture.NextFloat());

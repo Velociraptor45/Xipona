@@ -240,7 +240,7 @@ public class ItemController : ControllerBase
     [HttpPost]
     [ProducesResponseType(200)]
     [Route("delete/{itemId}")]
-    public async Task<IActionResult> DeleteItem([FromRoute(Name = "itemId")] int itemId)
+    public async Task<IActionResult> DeleteItem([FromRoute(Name = "itemId")] Guid itemId)
     {
         var command = new DeleteItemCommand(new ItemId(itemId));
         await _commandDispatcher.DispatchAsync(command, default);
@@ -252,7 +252,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [Route("{itemId}")]
-    public async Task<IActionResult> Get([FromRoute(Name = "itemId")] int itemId)
+    public async Task<IActionResult> Get([FromRoute(Name = "itemId")] Guid itemId)
     {
         var query = new ItemByIdQuery(new ItemId(itemId));
         StoreItemReadModel result;

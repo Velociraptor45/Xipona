@@ -1,10 +1,11 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
+using System;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists
 {
     public class SearchItemForShoppingListResultContract
     {
-        public SearchItemForShoppingListResultContract(int id, int? typeId, string name, int defaultQuantity, float price,
+        public SearchItemForShoppingListResultContract(Guid id, Guid? typeId, string name, int defaultQuantity, float price,
             string itemCategoryName, string manufacturerName, StoreSectionContract defaultSection)
         {
             Id = id;
@@ -17,8 +18,8 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItems
             DefaultSection = defaultSection;
         }
 
-        public int Id { get; }
-        public int? TypeId { get; }
+        public Guid Id { get; }
+        public Guid? TypeId { get; }
         public string Name { get; }
         public int DefaultQuantity { get; }
         public float Price { get; }

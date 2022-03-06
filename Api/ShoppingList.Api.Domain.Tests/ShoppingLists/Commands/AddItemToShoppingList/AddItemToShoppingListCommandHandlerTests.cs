@@ -125,7 +125,7 @@ public class AddItemToShoppingListCommandHandlerTests
         public void SetupCommandWithActualId()
         {
             _fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, OfflineTolerantItemId>("itemId",
-                new OfflineTolerantItemId(_commonFixture.NextInt()));
+                OfflineTolerantItemId.FromActualId(Guid.NewGuid()));
 
             Command = _fixture.Create<AddItemToShoppingListCommand>();
         }
@@ -133,7 +133,7 @@ public class AddItemToShoppingListCommandHandlerTests
         public void SetupCommandWithOfflineId()
         {
             _fixture.ConstructorArgumentFor<AddItemToShoppingListCommand, OfflineTolerantItemId>("itemId",
-                new OfflineTolerantItemId(Guid.NewGuid()));
+                OfflineTolerantItemId.FromOfflineId(Guid.NewGuid()));
 
             Command = _fixture.Create<AddItemToShoppingListCommand>();
         }

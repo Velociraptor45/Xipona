@@ -155,13 +155,13 @@ public class ChangeItemQuantityOnShoppingListCommandHandlerTests
             OfflineTolerantItemId offlineTolerantItemId;
             if (_temporaryItemId == null)
             {
-                offlineTolerantItemId = new OfflineTolerantItemId(_commonFixture.NextInt());
+                offlineTolerantItemId = OfflineTolerantItemId.FromActualId(Guid.NewGuid());
             }
             else
             {
                 _fixture.ConstructorArgumentFor<ChangeItemQuantityOnShoppingListCommand, ItemTypeId?>("itemTypeId",
                     null);
-                offlineTolerantItemId = new OfflineTolerantItemId(_temporaryItemId.Value.Value);
+                offlineTolerantItemId = OfflineTolerantItemId.FromOfflineId(_temporaryItemId.Value.Value);
             }
 
             _fixture.ConstructorArgumentFor<ChangeItemQuantityOnShoppingListCommand, OfflineTolerantItemId>("itemId",

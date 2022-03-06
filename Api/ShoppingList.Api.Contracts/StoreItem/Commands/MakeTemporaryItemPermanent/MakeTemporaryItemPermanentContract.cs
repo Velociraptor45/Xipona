@@ -1,11 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
+using System;
 using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent
 {
     public class MakeTemporaryItemPermanentContract
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Comment { get; set; }
         public int QuantityType { get; set; }

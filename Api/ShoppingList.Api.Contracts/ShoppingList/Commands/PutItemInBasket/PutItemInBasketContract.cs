@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.Shared;
+using System;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket
 {
@@ -6,6 +7,6 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItem
     {
         public int ShoppingListId { get; set; }
         public ItemIdContract ItemId { get; set; }
-        public int? ItemTypeId { get; set; }
+        public Guid? ItemTypeId { get; set; }
     }
 }

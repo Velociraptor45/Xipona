@@ -189,8 +189,8 @@ public class ShoppingListController : ControllerBase
             return BadRequest("At least one item id must be specified");
 
         var itemId = contract.ItemId.Actual != null
-            ? new OfflineTolerantItemId(contract.ItemId.Actual.Value)
-            : new OfflineTolerantItemId(contract.ItemId.Offline!.Value);
+            ? OfflineTolerantItemId.FromActualId(contract.ItemId.Actual.Value)
+            : OfflineTolerantItemId.FromOfflineId(contract.ItemId.Offline!.Value);
 
         var itemTypeId = contract.ItemTypeId.HasValue
             ? new ItemTypeId(contract.ItemTypeId.Value)
