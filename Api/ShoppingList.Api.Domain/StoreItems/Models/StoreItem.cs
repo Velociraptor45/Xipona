@@ -111,7 +111,7 @@ public class StoreItem : IStoreItem
         IsTemporary = false;
     }
 
-    public void Modify(ItemModify itemChange, IEnumerable<IStoreItemAvailability> availabilities)
+    public void Modify(ItemModification itemChange, IEnumerable<IStoreItemAvailability> availabilities)
     {
         Name = itemChange.Name;
         Comment = itemChange.Comment;

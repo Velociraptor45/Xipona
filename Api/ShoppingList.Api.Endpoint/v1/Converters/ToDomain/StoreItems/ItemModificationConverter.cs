@@ -10,22 +10,22 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreItems;
 
-public class ItemModifyConverter : IToDomainConverter<ModifyItemContract, ItemModify>
+public class ItemModificationConverter : IToDomainConverter<ModifyItemContract, ItemModification>
 {
     private readonly IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> _storeItemAvailabilityConverter;
 
-    public ItemModifyConverter(
+    public ItemModificationConverter(
         IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> storeItemAvailabilityConverter)
     {
         _storeItemAvailabilityConverter = storeItemAvailabilityConverter;
     }
 
-    public ItemModify ToDomain(ModifyItemContract source)
+    public ItemModification ToDomain(ModifyItemContract source)
     {
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        return new ItemModify(
+        return new ItemModification(
             new ItemId(source.Id),
             source.Name,
             source.Comment,

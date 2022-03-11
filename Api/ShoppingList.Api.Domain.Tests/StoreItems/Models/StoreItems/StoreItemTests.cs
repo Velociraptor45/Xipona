@@ -122,7 +122,7 @@ public class StoreItemTests
         Fixture fixture = _commonFixture.GetNewFixture();
 
         IStoreItem testObject = StoreItemMother.Initial().WithIsTemporary(isTemporary).Create();
-        ItemModify itemModify = fixture.Create<ItemModify>();
+        ItemModification itemModify = fixture.Create<ItemModification>();
         IEnumerable<IStoreItemAvailability> availabilities =
             StoreItemAvailabilityMother.Initial().CreateMany(3).ToList();
 

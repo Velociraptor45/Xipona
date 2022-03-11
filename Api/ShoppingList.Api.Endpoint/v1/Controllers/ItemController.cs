@@ -111,7 +111,7 @@ public class ItemController : ControllerBase
     [Route("modify")]
     public async Task<IActionResult> ModifyItemAsync([FromBody] ModifyItemContract modifyItemContract)
     {
-        var model = _converters.ToDomain<ModifyItemContract, ItemModify>(modifyItemContract);
+        var model = _converters.ToDomain<ModifyItemContract, ItemModification>(modifyItemContract);
         var command = new ModifyItemCommand(model);
 
         try

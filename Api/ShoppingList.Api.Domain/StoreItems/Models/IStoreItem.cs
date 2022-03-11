@@ -35,7 +35,7 @@ public interface IStoreItem
 
     void MakePermanent(PermanentItem permanentItem, IEnumerable<IStoreItemAvailability> availabilities);
 
-    void Modify(ItemModify itemChange, IEnumerable<IStoreItemAvailability> availabilities);
+    void Modify(ItemModification itemChange, IEnumerable<IStoreItemAvailability> availabilities);
 
     Task ModifyAsync(ItemWithTypesModification modification, IValidator validator);
 

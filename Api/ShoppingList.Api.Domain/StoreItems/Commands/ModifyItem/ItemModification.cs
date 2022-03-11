@@ -5,11 +5,11 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 
-public class ItemModify
+public class ItemModification
 {
     private readonly IEnumerable<IStoreItemAvailability> _availabilities;
 
-    public ItemModify(ItemId id, string name, string comment,
+    public ItemModification(ItemId id, string name, string comment,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
         IEnumerable<IStoreItemAvailability> availabilities)
