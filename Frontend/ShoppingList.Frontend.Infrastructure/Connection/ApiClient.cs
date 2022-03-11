@@ -1,5 +1,9 @@
 ﻿using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converter;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToContract;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Stores.ToContract;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Stores.ToDomain;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contracts;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests;
@@ -50,12 +54,14 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task RemoveItemFromShoppingListAsync(RemoveItemFromShoppingListRequest request)
         {
-            await client.RemoveItemFromShoppingList(request.ToContract());
+            var converter = new RemoveItemFromShoppingListContractConverter();
+            await client.RemoveItemFromShoppingList(converter.ToContract(request));
         }
 
         public async Task AddItemToShoppingListAsync(AddItemToShoppingListRequest request)
         {
-            await client.AddItemToShoppingList(request.ToContract());
+            var converter = new AddItemToShoppingListContractConverter();
+            await client.AddItemToShoppingList(converter.ToContract(request));
         }
 
         public async Task AddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request)
@@ -81,7 +87,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task ModifyItemWithTypesAsync(ModifyItemWithTypesRequest request)
         {
-            await client.ModifyItemWithTypesAsync(request.StoreItem.ToModifyItemWithTypesContract());
+            var converter = new ModifyItemWithTypesContractConverter();
+            await client.ModifyItemWithTypesAsync(converter.ToContract(request));
         }
 
         public async Task CreateItemAsync(CreateItemRequest request)
@@ -117,8 +124,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task<IEnumerable<Store>> GetAllActiveStoresAsync()
         {
-            var stores = await client.GetAllActiveStores();
-            return stores.Select(store => store.ToModel());
+            var contracts = await client.GetAllActiveStores();
+            var converter = new StoreConverter();
+            return contracts.Select(c => converter.ToDomain(c));
         }
 
         public async Task<IEnumerable<Manufacturer>> GetAllActiveManufacturersAsync()
@@ -193,12 +201,14 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task CreateStoreAsync(CreateStoreRequest request)
         {
-            await client.CreateStore(request.ToContract());
+            var contract = new CreateStoreContractConverter().ToContract(request);
+            await client.CreateStore(contract);
         }
 
         public async Task ModifyStoreAsync(ModifyStoreRequest request)
         {
-            await client.UpdateStore(request.ToContract());
+            var converter = new UpdateStoreContractConverter();
+            await client.UpdateStore(converter.ToContract(request));
         }
     }
 }
