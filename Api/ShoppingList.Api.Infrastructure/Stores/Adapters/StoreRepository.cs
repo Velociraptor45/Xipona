@@ -145,44 +145,6 @@ public class StoreRepository : IStoreRepository
         return _toDomainConverter.ToDomain(entity);
     }
 
-    private async Task<IStore> StoreAsModified(IStore store, CancellationToken cancellationToken)
-    {
-        var existingEntity = await FindEntityById(store.Id.Value, cancellationToken);
-        var existingSections = existingEntity.Sections.ToDictionary(s => s.Id);
-        var incomingEntity = _toEntityConverter.ToEntity(store);
-
-        _dbContext.Entry(incomingEntity).State = EntityState.Modified;
-
-        foreach (var section in incomingEntity.Sections)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (existingSections.ContainsKey(section.Id))
-            {
-                // section was modified
-                _dbContext.Entry(section).State = EntityState.Modified;
-                existingSections.Remove(section.Id);
-            }
-            else
-            {
-                // section was added
-                _dbContext.Entry(section).State = EntityState.Added;
-            }
-        }
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        foreach (var section in existingSections.Values)
-        {
-            _dbContext.Entry(section).State = EntityState.Deleted;
-        }
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return _toDomainConverter.ToDomain(incomingEntity);
-    }
-
     private async Task<Entities.Store?> FindEntityById(Guid id, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();

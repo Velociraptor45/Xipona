@@ -9,7 +9,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contract
         public static ShoppingListItem ToModel(this ShoppingListItemContract contract)
         {
             return new ShoppingListItem(
-                    new ItemId(contract.Id),
+                    ItemId.FromActualId(contract.Id),
                     contract.TypeId,
                     contract.Name,
                     contract.IsTemporary,

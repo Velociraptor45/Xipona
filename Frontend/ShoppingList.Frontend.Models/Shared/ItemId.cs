@@ -5,20 +5,24 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared
 {
     public class ItemId
     {
-        public ItemId(int actualId)
-        {
-            ActualId = actualId;
-            OfflineId = null;
-        }
+        public Guid? ActualId { get; }
+        public Guid? OfflineId { get; }
 
-        public ItemId(Guid offlineId)
+        private ItemId(Guid? offlineId, Guid? actualId)
         {
             OfflineId = offlineId;
-            ActualId = null;
+            ActualId = actualId;
         }
 
-        public int? ActualId { get; }
-        public Guid? OfflineId { get; }
+        public static ItemId FromOfflineId(Guid offlineId)
+        {
+            return new(offlineId, null);
+        }
+
+        public static ItemId FromActualId(Guid actualId)
+        {
+            return new(null, actualId);
+        }
 
         public static bool operator ==(ItemId left, ItemId right)
         {
@@ -43,7 +47,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared
         public override bool Equals(object obj)
         {
             return obj is ItemId primitive
-                   && EqualityComparer<int?>.Default.Equals(ActualId, primitive.ActualId)
+                   && EqualityComparer<Guid?>.Default.Equals(ActualId, primitive.ActualId)
                    && EqualityComparer<Guid?>.Default.Equals(OfflineId, primitive.OfflineId);
         }
 

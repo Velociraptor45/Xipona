@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
 {
     public class RemoveItemFromBasketRequest : IApiRequest
     {
-        public RemoveItemFromBasketRequest(Guid requestId, int shoppingListId, ItemId itemId, int? itemTypeId)
+        public RemoveItemFromBasketRequest(Guid requestId, Guid shoppingListId, ItemId itemId, Guid? itemTypeId)
         {
             RequestId = requestId;
             ShoppingListId = shoppingListId;
@@ -13,8 +13,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
         }
 
         public Guid RequestId { get; }
-        public int ShoppingListId { get; }
+        public Guid ShoppingListId { get; }
         public ItemId ItemId { get; }
-        public int? ItemTypeId { get; }
+        public Guid? ItemTypeId { get; }
     }
 }

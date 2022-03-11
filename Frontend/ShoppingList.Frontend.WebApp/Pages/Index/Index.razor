@@ -107,7 +107,7 @@
         await LoadShoppingListAsync(state.ShoppingList.Store.Id);
     }
 
-    private async Task LoadShoppingListAsync(int storeId)
+    private async Task LoadShoppingListAsync(Guid storeId)
     {
         var shoppingList = await communicationService.LoadActiveShoppingListAsync(storeId,
             async () => await LoadShoppingListAsync(storeId), errorHandler);

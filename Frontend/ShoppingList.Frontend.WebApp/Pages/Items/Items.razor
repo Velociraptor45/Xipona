@@ -25,7 +25,7 @@
 }
 
 @code {
-    [Parameter] public int? ItemId { get; set; }
+    [Parameter] public Guid? ItemId { get; set; }
 
     private ItemsState state;
     private ErrorHandler errorHandler;
@@ -80,7 +80,7 @@
         state.UpdateItemCategories(itemCategories);
     }
 
-    private async Task OnItemClickedAsync(int itemId)
+    private async Task OnItemClickedAsync(Guid itemId)
     {
         var item = await loadingService.LoadItemAsync(itemId, errorHandler);
         if (item == null)

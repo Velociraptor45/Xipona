@@ -60,7 +60,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         {
             // todo: ugly
             var item =
-                new StoreItem(0, "", false, "", false,
+                new StoreItem(Guid.Empty, "", false, "", false,
                     new QuantityType(0, "", 0, "", "", 0), 0,
                     new QuantityTypeInPacket(0, "", ""), null, null,
                     new List<StoreItemAvailability>(),

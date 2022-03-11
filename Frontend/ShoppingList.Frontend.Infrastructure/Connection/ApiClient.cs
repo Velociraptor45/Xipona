@@ -7,6 +7,7 @@ using ProjectHermes.ShoppingList.Frontend.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
 using ProjectHermes.ShoppingList.Frontend.Models.Items;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -108,7 +109,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             await client.CreateItemCategory(name);
         }
 
-        public async Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(int storeId)
+        public async Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(Guid storeId)
         {
             var list = await client.GetActiveShoppingListByStoreId(storeId);
             return list.ToModel();
@@ -134,7 +135,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return itemCategories.Select(cat => cat.ToModel());
         }
 
-        public async Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(string searchInput, int storeId)
+        public async Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(string searchInput, Guid storeId)
         {
             var converter = new SearchItemForShoppingListResultConverter();
 
@@ -149,8 +150,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return result.Select(converter.ToDomain);
         }
 
-        public async Task<IEnumerable<SearchItemResult>> SearchItemsByFilterAsync(IEnumerable<int> storeIds,
-            IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds)
+        public async Task<IEnumerable<SearchItemResult>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,
+            IEnumerable<Guid> itemCategoryIds, IEnumerable<Guid> manufacturerIds)
         {
             var converter = new SearchItemResultConverter();
 
@@ -162,7 +163,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return result.Select(converter.ToDomain);
         }
 
-        public async Task<StoreItem> GetItemByIdAsync(int itemId)
+        public async Task<StoreItem> GetItemByIdAsync(Guid itemId)
         {
             var result = await client.Get(itemId);
             return result.ToModel();

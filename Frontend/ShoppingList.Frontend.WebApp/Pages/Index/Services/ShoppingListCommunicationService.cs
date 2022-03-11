@@ -34,7 +34,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             await commandQueue.Enqueue(request);
         }
 
-        public async Task<ShoppingListRoot> LoadActiveShoppingListAsync(int storeId, Func<Task> OnFailure,
+        public async Task<ShoppingListRoot> LoadActiveShoppingListAsync(Guid storeId, Func<Task> OnFailure,
             IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
@@ -67,8 +67,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             return false;
         }
 
-        public async Task<IEnumerable<SearchItemForShoppingListResult>> LoadItemSearchResultAsync(string input, int storeId,
-            Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task<IEnumerable<SearchItemForShoppingListResult>> LoadItemSearchResultAsync(string input,
+            Guid storeId, Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
             {

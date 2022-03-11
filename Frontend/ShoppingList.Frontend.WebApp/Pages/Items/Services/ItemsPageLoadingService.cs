@@ -45,8 +45,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
             return null;
         }
 
-        public async Task<IEnumerable<SearchItemResult>> LoadItemsAsync(IEnumerable<int> storeIds, IEnumerable<int> itemCategoryIds,
-            IEnumerable<int> manufacturerIds, IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task<IEnumerable<SearchItemResult>> LoadItemsAsync(IEnumerable<Guid> storeIds, IEnumerable<Guid> itemCategoryIds,
+            IEnumerable<Guid> manufacturerIds, IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
             return null;
         }
 
-        public async Task<StoreItem> LoadItemAsync(int itemId, IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task<StoreItem> LoadItemAsync(Guid itemId, IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
             {

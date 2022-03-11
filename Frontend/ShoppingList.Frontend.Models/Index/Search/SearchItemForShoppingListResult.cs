@@ -1,9 +1,11 @@
-﻿namespace ProjectHermes.ShoppingList.Frontend.Models.Index.Search
+﻿using System;
+
+namespace ProjectHermes.ShoppingList.Frontend.Models.Index.Search
 {
     public class SearchItemForShoppingListResult
     {
-        public SearchItemForShoppingListResult(int itemId, int? itemTypeId, string name, float price, string priceLabel,
-            string itemCategoryName, string manufacturerName, int defaultSectionId)
+        public SearchItemForShoppingListResult(Guid itemId, Guid? itemTypeId, string name, float price, string priceLabel,
+            string itemCategoryName, string manufacturerName, Guid defaultSectionId)
         {
             ItemId = itemId;
             ItemTypeId = itemTypeId;
@@ -15,14 +17,14 @@
             DefaultSectionId = defaultSectionId;
         }
 
-        public int ItemId { get; set; }
-        public int? ItemTypeId { get; }
+        public Guid ItemId { get; set; }
+        public Guid? ItemTypeId { get; }
         public string Name { get; }
         public float Price { get; }
         public string PriceLabel { get; }
         public string ItemCategoryName { get; }
         public string ManufacturerName { get; }
-        public int DefaultSectionId { get; }
+        public Guid DefaultSectionId { get; }
 
         public string DisplayValue => $"{Name} | {ManufacturerName} | {Price}{PriceLabel}";
     }

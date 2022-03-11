@@ -4,8 +4,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
 {
     public class AddItemWithTypeToShoppingListRequest
     {
-        public AddItemWithTypeToShoppingListRequest(Guid requestId, int shoppingListId, int itemId, int itemTypeId,
-            float quantity, int? sectionId)
+        public AddItemWithTypeToShoppingListRequest(Guid requestId, Guid shoppingListId, Guid itemId, Guid itemTypeId,
+            float quantity, Guid? sectionId)
         {
             RequestId = requestId;
             ShoppingListId = shoppingListId;
@@ -16,10 +16,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
         }
 
         public Guid RequestId { get; }
-        public int ShoppingListId { get; }
-        public int ItemId { get; }
-        public int ItemTypeId { get; }
+        public Guid ShoppingListId { get; }
+        public Guid ItemId { get; }
+        public Guid ItemTypeId { get; }
         public float Quantity { get; }
-        public int? SectionId { get; }
+        public Guid? SectionId { get; }
     }
 }

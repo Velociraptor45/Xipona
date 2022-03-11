@@ -1,11 +1,12 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
+﻿using System;
+using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class ShoppingListItem
     {
-        public ShoppingListItem(ItemId id, int? typeId, string name, bool isTemporary, float pricePerQuantity, QuantityType quantityType,
+        public ShoppingListItem(ItemId id, Guid? typeId, string name, bool isTemporary, float pricePerQuantity, QuantityType quantityType,
             float quantityInPacket, QuantityTypeInPacket quantityInPacketType, string itemCategory,
             string manufacturer, bool isInBasket, float quantity)
         {
@@ -24,7 +25,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         }
 
         public ItemId Id { get; }
-        public int? TypeId { get; }
+        public Guid? TypeId { get; }
         public string Name { get; }
         public bool IsTemporary { get; }
         public float PricePerQuantity { get; }
