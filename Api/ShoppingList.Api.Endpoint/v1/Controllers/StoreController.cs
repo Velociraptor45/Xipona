@@ -19,22 +19,15 @@ public class StoreController : ControllerBase
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly IToContractConverter<StoreReadModel, ActiveStoreContract> _activeStoreToContractConverter;
-    private readonly IToDomainConverter<UpdateStoreContract, StoreUpdate> _storeUpdateConverter;
-
-    //private readonly IToDomainConverter<CreateStoreContract, StoreCreationInfo> _storeCreationInfoConverter;
     private readonly IEndpointConverters _converters;
 
     public StoreController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
         IToContractConverter<StoreReadModel, ActiveStoreContract> activeStoreToContractConverter,
-        IToDomainConverter<UpdateStoreContract, StoreUpdate> storeUpdateConverter,
-        //IToDomainConverter<CreateStoreContract, StoreCreationInfo> storeCreationInfoConverter,
         IEndpointConverters converters)
     {
         _queryDispatcher = queryDispatcher;
         _commandDispatcher = commandDispatcher;
         _activeStoreToContractConverter = activeStoreToContractConverter;
-        _storeUpdateConverter = storeUpdateConverter;
-        //_storeCreationInfoConverter = storeCreationInfoConverter;
         _converters = converters;
     }
 
@@ -67,8 +60,7 @@ public class StoreController : ControllerBase
     [Route("update")]
     public async Task<IActionResult> UpdateStore([FromBody] UpdateStoreContract updateStoreContract)
     {
-        var model = _storeUpdateConverter.ToDomain(updateStoreContract);
-        var command = new UpdateStoreCommand(model);
+        var command = _converters.ToDomain<UpdateStoreContract, UpdateStoreCommand>(updateStoreContract);
 
         try
         {

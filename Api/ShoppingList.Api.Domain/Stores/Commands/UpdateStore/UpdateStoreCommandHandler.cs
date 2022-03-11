@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
@@ -8,10 +9,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
 public class UpdateStoreCommandHandler : ICommandHandler<UpdateStoreCommand, bool>
 {
     private readonly IStoreRepository _storeRepository;
+    private readonly IStoreSectionFactory _sectionFactory;
 
-    public UpdateStoreCommandHandler(IStoreRepository storeRepository)
+    public UpdateStoreCommandHandler(IStoreRepository storeRepository, IStoreSectionFactory sectionFactory)
     {
         _storeRepository = storeRepository;
+        _sectionFactory = sectionFactory;
     }
 
     public async Task<bool> HandleAsync(UpdateStoreCommand command, CancellationToken cancellationToken)
@@ -24,7 +27,7 @@ public class UpdateStoreCommandHandler : ICommandHandler<UpdateStoreCommand, boo
             throw new DomainException(new StoreNotFoundReason(command.StoreUpdate.Id));
 
         store.ChangeName(command.StoreUpdate.Name);
-        store.UpdateStores(command.StoreUpdate.Sections);
+        store.UpdateSections(command.StoreUpdate.Sections);
 
         cancellationToken.ThrowIfCancellationRequested();
 

@@ -1,15 +1,17 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 public class Store : IStore
 {
-    private StoreSections _sections;
+    private readonly StoreSections _sections;
 
-    public Store(StoreId id, string name, bool isDeleted, IEnumerable<IStoreSection> sections)
+    public Store(StoreId id, string name, bool isDeleted, StoreSections sections)
     {
         Id = id;
         Name = name;
         IsDeleted = isDeleted;
-        _sections = new StoreSections(sections);
+        _sections = sections;
     }
 
     public StoreId Id { get; }
@@ -32,8 +34,8 @@ public class Store : IStore
         Name = name;
     }
 
-    public void UpdateStores(IEnumerable<IStoreSection> storeSections)
+    public void UpdateSections(IEnumerable<SectionUpdate> sectionUpdates)
     {
-        _sections = new StoreSections(storeSections);
+        _sections.UpdateMany(sectionUpdates);
     }
 }

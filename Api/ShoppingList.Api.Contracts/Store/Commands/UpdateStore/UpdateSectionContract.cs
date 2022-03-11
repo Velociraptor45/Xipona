@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.Shared
+namespace ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore
 {
-    public class StoreSectionContract
+    public class UpdateSectionContract
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string Name { get; set; }
         public int SortingIndex { get; set; }
         public bool IsDefaultSection { get; set; }

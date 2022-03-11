@@ -6,4 +6,5 @@ public interface IStoreSectionFactory
 {
     IStoreSection Create(SectionId id, string name, int sortingIndex, bool isDefaultSection);
     IStoreSection CreateNew(SectionCreationInfo creationInfo);
+    IStoreSection CreateNew(string name, int sortingIndex, bool isDefaultSection);
 }

@@ -9,9 +9,14 @@ public class StoreSectionFactory : IStoreSectionFactory
         return new StoreSection(id, name, sortingIndex, isDefaultSection);
     }
 
+    public IStoreSection CreateNew(string name, int sortingIndex, bool isDefaultSection)
+    {
+        return Create(SectionId.New, name, sortingIndex, isDefaultSection);
+    }
+
     public IStoreSection CreateNew(SectionCreationInfo creationInfo)
     {
-        return Create(new SectionId(Guid.NewGuid()), creationInfo.Name, creationInfo.SortingIndex,
+        return Create(SectionId.New, creationInfo.Name, creationInfo.SortingIndex,
             creationInfo.IsDefaultSection);
     }
 }
