@@ -14,9 +14,9 @@ public class StoreSectionFactory : IStoreSectionFactory
         return Create(SectionId.New, name, sortingIndex, isDefaultSection);
     }
 
-    public IStoreSection CreateNew(SectionCreationInfo creationInfo)
+    public IStoreSection CreateNew(SectionCreation creation)
     {
-        return Create(SectionId.New, creationInfo.Name, creationInfo.SortingIndex,
-            creationInfo.IsDefaultSection);
+        return Create(SectionId.New, creation.Name, creation.SortingIndex,
+            creation.IsDefaultSection);
     }
 }

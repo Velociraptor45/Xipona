@@ -1,8 +1,8 @@
 ﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore
 {
-    public class SectionCreationInfo
+    public class SectionCreation
     {
-        public SectionCreationInfo(string name, int sortingIndex, bool isDefaultSection)
+        public SectionCreation(string name, int sortingIndex, bool isDefaultSection)
         {
             Name = name;
             SortingIndex = sortingIndex;

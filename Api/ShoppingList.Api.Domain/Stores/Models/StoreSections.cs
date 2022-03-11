@@ -20,8 +20,10 @@ public class StoreSections : IEnumerable<IStoreSection>
 
     public void UpdateMany(IEnumerable<SectionUpdate> updates)
     {
-        var sectionsToUpdate = updates.Where(s => s.Id.HasValue).ToDictionary(update => update.Id!.Value);
-        var sectionsToCreate = updates.Where(s => !s.Id.HasValue);
+        var updatesList = updates.ToList();
+
+        var sectionsToUpdate = updatesList.Where(s => s.Id.HasValue).ToDictionary(update => update.Id!.Value);
+        var sectionsToCreate = updatesList.Where(s => !s.Id.HasValue);
         var sectionIdsToDelete = _sections.Keys.Where(id => !sectionsToUpdate.ContainsKey(id));
         var newSections = sectionsToCreate
             .Select(section => _sectionFactory.CreateNew(section.Name, section.SortingIndex, section.IsDefaultSection))

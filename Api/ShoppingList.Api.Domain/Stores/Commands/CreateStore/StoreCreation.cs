@@ -1,13 +1,13 @@
 ﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore;
 
-public class StoreCreationInfo
+public class StoreCreation
 {
-    public StoreCreationInfo(string name, IEnumerable<SectionCreationInfo> sections)
+    public StoreCreation(string name, IEnumerable<SectionCreation> sections)
     {
         Name = name;
         Sections = sections.ToList().AsReadOnly();
     }
 
     public string Name { get; }
-    public IReadOnlyCollection<SectionCreationInfo> Sections { get; }
+    public IReadOnlyCollection<SectionCreation> Sections { get; }
 }

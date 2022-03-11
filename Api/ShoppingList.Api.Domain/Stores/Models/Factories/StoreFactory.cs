@@ -16,7 +16,7 @@ public class StoreFactory : IStoreFactory
         return new Store(id, name, isDeleted, new StoreSections(sections, _sectionFactory));
     }
 
-    public IStore CreateNew(StoreCreationInfo creationInfo)
+    public IStore CreateNew(StoreCreation creationInfo)
     {
         var sections = creationInfo.Sections.Select(s => _sectionFactory.CreateNew(s));
 

@@ -9,9 +9,9 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Stores
         public CreateStoreCommand ToDomain(CreateStoreContract source)
         {
             var sections =
-                source.Sections.Select(s => new SectionCreationInfo(s.Name, s.SortingIndex, s.IsDefaultSection));
+                source.Sections.Select(s => new SectionCreation(s.Name, s.SortingIndex, s.IsDefaultSection));
 
-            return new CreateStoreCommand(new StoreCreationInfo(source.Name, sections));
+            return new CreateStoreCommand(new StoreCreation(source.Name, sections));
         }
     }
 }
