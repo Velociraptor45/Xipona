@@ -10,6 +10,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 
 public class StoreItemFactory : IStoreItemFactory
 {
+    private readonly IItemTypeFactory _itemTypeFactory;
+
+    public StoreItemFactory(IItemTypeFactory itemTypeFactory)
+    {
+        _itemTypeFactory = itemTypeFactory;
+    }
+
     public IStoreItem Create(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
@@ -50,7 +57,7 @@ public class StoreItemFactory : IStoreItemFactory
             quantityTypeInPacket,
             itemCategoryId,
             manufacturerId,
-            itemTypes);
+            new ItemTypes(itemTypes, _itemTypeFactory));
 
         if (predecessor != null)
             item.SetPredecessor(predecessor);
@@ -127,7 +134,7 @@ public class StoreItemFactory : IStoreItemFactory
             quantityTypeInPacket,
             itemCategoryId,
             manufacturerId,
-            itemTypes);
+            new ItemTypes(itemTypes, _itemTypeFactory));
 
         if (predecessor != null)
             item.SetPredecessor(predecessor);

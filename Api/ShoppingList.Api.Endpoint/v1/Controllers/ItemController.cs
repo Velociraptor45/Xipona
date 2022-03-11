@@ -29,7 +29,6 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemById;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
@@ -90,8 +89,7 @@ public class ItemController : ControllerBase
     [Route("modify-with-types")]
     public async Task<IActionResult> ModifyItemWithTypesAsync([FromBody] ModifyItemWithTypesContract contract)
     {
-        var model = _converters.ToDomain<ModifyItemWithTypesContract, ItemWithTypesModification>(contract);
-        var command = new ModifyItemWithTypesCommand(model);
+        var command = _converters.ToDomain<ModifyItemWithTypesContract, ModifyItemWithTypesCommand>(contract);
 
         try
         {

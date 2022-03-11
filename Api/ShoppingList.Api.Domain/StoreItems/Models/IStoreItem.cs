@@ -24,7 +24,7 @@ public interface IStoreItem
     IStoreItem? Predecessor { get; }
     TemporaryItemId? TemporaryId { get; }
     IReadOnlyCollection<IStoreItemAvailability> Availabilities { get; }
-    ItemTypes ItemTypes { get; }
+    IReadOnlyCollection<IItemType> ItemTypes { get; }
     bool HasItemTypes { get; }
 
     void Delete();
@@ -40,4 +40,10 @@ public interface IStoreItem
     Task ModifyAsync(ItemWithTypesModification modification, IValidator validator);
 
     void SetPredecessor(IStoreItem predecessor);
+
+    bool TryGetType(ItemTypeId itemTypeId, out IItemType? itemType);
+
+    IReadOnlyCollection<IItemType> GetTypesFor(StoreId storeId);
+
+    bool TryGetTypeWithPredecessor(ItemTypeId predecessorTypeId, out IItemType? predecessor);
 }

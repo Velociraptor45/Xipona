@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
+﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ModifyItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
@@ -10,21 +11,27 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreItems;
 
-public class ItemWithTypesModificationConverter : IToDomainConverter<ModifyItemWithTypesContract, ItemWithTypesModification>
+public class ItemWithTypesModificationConverter : IToDomainConverter<ModifyItemWithTypesContract, ModifyItemWithTypesCommand>
 {
-    private readonly IToDomainConverter<ItemTypeContract, ItemTypeModification> _itemTypeConverter;
+    private readonly IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> _availabilityConverter;
 
-    public ItemWithTypesModificationConverter(IToDomainConverter<ItemTypeContract, ItemTypeModification> itemTypeConverter)
+    public ItemWithTypesModificationConverter(
+        IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> availabilityConverter)
     {
-        _itemTypeConverter = itemTypeConverter;
+        _availabilityConverter = availabilityConverter;
     }
 
-    public ItemWithTypesModification ToDomain(ModifyItemWithTypesContract source)
+    public ModifyItemWithTypesCommand ToDomain(ModifyItemWithTypesContract source)
     {
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        return new ItemWithTypesModification(
+        var types = source.ItemTypes.Select(t => new ItemTypeModification(
+            t.Id.HasValue ? new ItemTypeId(t.Id.Value) : null,
+            t.Name,
+            _availabilityConverter.ToDomain(t.Availabilities)));
+
+        var modification = new ItemWithTypesModification(
             new ItemId(source.Id),
             source.Name,
             source.Comment,
@@ -35,6 +42,8 @@ public class ItemWithTypesModificationConverter : IToDomainConverter<ModifyItemW
             source.ManufacturerId.HasValue ?
                 new ManufacturerId(source.ManufacturerId.Value) :
                 null,
-            _itemTypeConverter.ToDomain(source.ItemTypes));
+            types);
+
+        return new ModifyItemWithTypesCommand(modification);
     }
 }

@@ -58,7 +58,7 @@ public class ItemUpdateService : IItemUpdateService
         var types = new List<IItemType>();
         foreach (var typeUpdate in update.TypeUpdates)
         {
-            oldItem.ItemTypes.TryGetValue(typeUpdate.OldId, out var predecessorType);
+            oldItem.TryGetType(typeUpdate.OldId, out var predecessorType);
             var type = _itemTypeFactory.CreateNew(typeUpdate.Name, typeUpdate.Availabilities, predecessorType);
 
             await _validator.ValidateAsync(type.Availabilities);

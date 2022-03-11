@@ -72,7 +72,7 @@ public class ShoppingListUpdateService : IShoppingListUpdateService
                     throw new DomainException(new ShoppingListItemHasNoTypeReason(list.Id, oldListItem.Id));
 
                 list.RemoveItem(oldItemId, oldListItem.TypeId);
-                if (!newItem.ItemTypes.TryGetWithPredecessor(oldListItem.TypeId.Value, out var itemType)
+                if (!newItem.TryGetTypeWithPredecessor(oldListItem.TypeId.Value, out var itemType)
                     || !itemType!.IsAvailableAtStore(list.StoreId))
                     continue;
 

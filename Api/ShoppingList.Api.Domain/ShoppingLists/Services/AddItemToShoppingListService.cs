@@ -125,7 +125,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     internal async Task AddItemToShoppingList(IShoppingList shoppingList, IStoreItem item,
         ItemTypeId itemTypeId, SectionId? sectionId, float quantity, CancellationToken cancellationToken)
     {
-        if (!item.ItemTypes.TryGetValue(itemTypeId, out var itemType))
+        if (!item.TryGetType(itemTypeId, out var itemType))
             throw new DomainException(new ItemTypeNotPartOfItemReason(item.Id, itemTypeId));
 
         ValidateItemTypeIsAvailableAtStore(itemType!, shoppingList.StoreId, out var availability);

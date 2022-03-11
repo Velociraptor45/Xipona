@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes
@@ -14,6 +13,6 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItem
         public int QuantityTypeInPacket { get; set; }
         public Guid ItemCategoryId { get; set; }
         public Guid? ManufacturerId { get; set; }
-        public IEnumerable<ItemTypeContract> ItemTypes { get; set; }
+        public IEnumerable<ModifyItemTypeContract> ItemTypes { get; set; }
     }
 }

@@ -12,6 +12,11 @@ public class ItemTypeFactory : IItemTypeFactory
         return type;
     }
 
+    public IItemType CreateNew(string name, IEnumerable<IStoreItemAvailability> availabilities)
+    {
+        return Create(ItemTypeId.New, name, availabilities, null);
+    }
+
     public IItemType CreateNew(string name, IEnumerable<IStoreItemAvailability> availabilities,
         IItemType? predecessor)
     {

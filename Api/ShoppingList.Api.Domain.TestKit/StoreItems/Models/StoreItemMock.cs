@@ -25,7 +25,7 @@ public class StoreItemMock : Mock<IStoreItem>
 
     public bool ModifyWithTypeCalled { get; set; }
 
-    private void SetupItemTypes(ItemTypes itemTypes)
+    private void SetupItemTypes(IReadOnlyCollection<IItemType> itemTypes)
     {
         Setup(i => i.ItemTypes)
             .Returns(itemTypes);
@@ -37,7 +37,7 @@ public class StoreItemMock : Mock<IStoreItem>
             .Returns(hasItemTypes);
     }
 
-    public ISetup<IStoreItem, ItemTypes> SetupItemTypes()
+    public ISetup<IStoreItem, IReadOnlyCollection<IItemType>> SetupItemTypes()
     {
         return Setup(i => i.ItemTypes);
     }
