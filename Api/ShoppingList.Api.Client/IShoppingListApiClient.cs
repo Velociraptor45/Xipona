@@ -1,7 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
-using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Queries.AllActiveItemCategories;
-using ProjectHermes.ShoppingList.Api.Contracts.Manufacturer.Queries.AllActiveManufacturers;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
@@ -134,7 +132,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResults([Path] string searchInput);
 
         [Get("manufacturer/all/active")]
-        Task<IEnumerable<ActiveManufacturerContract>> GetAllActiveManufacturers();
+        Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturers();
 
         [Post("manufacturer/create/{name}")]
         Task CreateManufacturer([Path] string name);
@@ -147,7 +145,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task<IEnumerable<ItemCategoryContract>> GetItemCategorySearchResults([Path] string searchInput);
 
         [Get("item-category/all/active")]
-        Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveItemCategories();
+        Task<IEnumerable<ItemCategoryContract>> GetAllActiveItemCategories();
 
         [Post("item-category/create/{name}")]
         Task CreateItemCategory([Path] string name);

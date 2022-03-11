@@ -2,8 +2,6 @@
 using Newtonsoft.Json.Serialization;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
-using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Queries.AllActiveItemCategories;
-using ProjectHermes.ShoppingList.Api.Contracts.Manufacturer.Queries.AllActiveManufacturers;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
@@ -207,7 +205,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.GetManufacturerSearchResults(searchInput);
         }
 
-        public async Task<IEnumerable<ActiveManufacturerContract>> GetAllActiveManufacturers()
+        public async Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturers()
         {
             return await _apiClient.GetAllActiveManufacturers();
         }
@@ -226,7 +224,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.GetItemCategorySearchResults(searchInput);
         }
 
-        public async Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveItemCategories()
+        public async Task<IEnumerable<ItemCategoryContract>> GetAllActiveItemCategories()
         {
             return await _apiClient.GetAllActiveItemCategories();
         }
