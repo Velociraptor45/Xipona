@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId
@@ -7,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
     {
         private readonly IEnumerable<ShoppingListItemContract> _items;
 
-        public ShoppingListSectionContract(int id, string name, int sortingIndex, bool isDefaultSection,
+        public ShoppingListSectionContract(Guid id, string name, int sortingIndex, bool isDefaultSection,
             IEnumerable<ShoppingListItemContract> items)
         {
             Id = id;
@@ -17,7 +18,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
             _items = items;
         }
 
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public int SortingIndex { get; set; }
         public bool IsDefaultSection { get; set; }

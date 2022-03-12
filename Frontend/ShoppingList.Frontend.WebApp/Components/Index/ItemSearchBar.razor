@@ -11,7 +11,7 @@
             Class="@(searchBar.Active ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
             DataSource="searchBar.Options"
             TItem="@SearchItemForShoppingListResult"
-            TItemValue="@int"
+            TItemValue="@Guid"
             ValueName="@nameof(SearchItemForShoppingListResult.ItemId)"
             LabelName="@nameof(SearchItemForShoppingListResult.DisplayValue)"
             AutoClearSearchValue="true"
@@ -85,7 +85,7 @@
         bool success;
         if(item.ItemTypeId == null)
         {
-            var request = new AddItemToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, new ItemId(item.ItemId), 1,
+            var request = new AddItemToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, ItemId.FromActualId(item.ItemId), 1,
                 item.DefaultSectionId); //todo default item quantity
 
             success = await communicationService.AddItemToShoppingListAsync(request, async () => await OnSearchItemSelected(item), ErrorHandler);

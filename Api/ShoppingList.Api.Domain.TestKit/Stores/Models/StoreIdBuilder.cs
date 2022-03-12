@@ -5,7 +5,7 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Models;
 
 public class StoreIdBuilder : DomainTestBuilderBase<StoreId>
 {
-    public StoreIdBuilder WithValue(int value)
+    public StoreIdBuilder WithValue(Guid value)
     {
         FillConstructorWith("value", value);
         return this;

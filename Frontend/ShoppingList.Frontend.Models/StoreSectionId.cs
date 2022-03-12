@@ -6,17 +6,17 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
     {
         public StoreSectionId(Guid frontendId)
         {
-            BackendId = 0;
+            BackendId = Guid.Empty;
             FrontendId = frontendId;
         }
 
-        public StoreSectionId(int backendId, Guid frontendId)
+        public StoreSectionId(Guid backendId, Guid frontendId)
         {
             BackendId = backendId;
             FrontendId = frontendId;
         }
 
-        public int BackendId { get; }
+        public Guid BackendId { get; }
         public Guid FrontendId { get; set; }
     }
 }

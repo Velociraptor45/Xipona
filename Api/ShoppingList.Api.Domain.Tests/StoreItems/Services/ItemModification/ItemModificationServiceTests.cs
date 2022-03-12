@@ -382,7 +382,8 @@ public class ItemModificationServiceTests
             _itemMock.SetupItemTypes()
                 .Returns(() =>
                     _itemMock.ModifyWithTypeCalled ?
-                        new ItemTypes(Modification.ItemTypes.Select(t => new ItemType(t.Id, t.Name, t.Availabilities))) :
+                        new List<IItemType>(Modification.ItemTypes
+                            .Select(t => new ItemType(t.Id.Value, t.Name, t.Availabilities))).AsReadOnly() :
                         originalItemTypes);
         }
 
@@ -457,7 +458,7 @@ public class ItemModificationServiceTests
             {
                 var storeId =
                     type.Id == _removedStoreByTypeId.Item1
-                        ? StoreIdMother.OneNotFrom(type.Availabilities).Create()
+                        ? new StoreIdBuilder().Create()
                         : StoreIdMother.OneFrom(type.Availabilities).Create();
                 var shoppingListMocks = new ShoppingListBuilder()
                     .WithStoreId(storeId)

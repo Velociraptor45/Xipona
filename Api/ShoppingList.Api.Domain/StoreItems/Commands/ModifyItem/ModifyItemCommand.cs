@@ -4,10 +4,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
 
 public class ModifyItemCommand : ICommand<bool>
 {
-    public ModifyItemCommand(ItemModify itemModify)
+    public ModifyItemCommand(ItemModification itemModify)
     {
         ItemModify = itemModify ?? throw new ArgumentNullException(nameof(itemModify));
     }
 
-    public ItemModify ItemModify { get; }
+    public ItemModification ItemModify { get; }
 }

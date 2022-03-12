@@ -1,18 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Items
 {
     public class ItemType
     {
-        public ItemType(int id, string name, IEnumerable<StoreItemAvailability> availabilities)
+        public ItemType(Guid id, string name, IEnumerable<StoreItemAvailability> availabilities)
         {
             Id = id;
             Name = name;
             Availabilities = availabilities.ToList();
         }
 
-        public int Id { get; }
+        public Guid Id { get; }
         public string Name { get; set; }
         public List<StoreItemAvailability> Availabilities { get; }
 

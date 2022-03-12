@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
 
 public class StoreUpdate
 {
-    public StoreUpdate(StoreId id, string name, IEnumerable<IStoreSection> sections)
+    public StoreUpdate(StoreId id, string name, IEnumerable<SectionUpdate> sections)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -18,5 +18,5 @@ public class StoreUpdate
 
     public StoreId Id { get; }
     public string Name { get; }
-    public IReadOnlyCollection<IStoreSection> Sections { get; }
+    public IReadOnlyCollection<SectionUpdate> Sections { get; }
 }

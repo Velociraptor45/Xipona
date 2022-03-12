@@ -81,12 +81,19 @@ public class ManufacturerRepository : IManufacturerRepository
     public async Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken)
     {
         var entity = _toEntityConverter.ToEntity(model);
+        var existingManufacturer = await FindTrackedEntityById(model.Id, cancellationToken);
 
-        _dbContext.Entry(entity).State = entity.Id <= 0 ? EntityState.Added : EntityState.Modified;
+        _dbContext.Entry(entity).State = existingManufacturer is null ? EntityState.Added : EntityState.Modified;
 
         cancellationToken.ThrowIfCancellationRequested();
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         return _toModelConverter.ToDomain(entity);
+    }
+
+    private async Task<Entities.Manufacturer?> FindTrackedEntityById(ManufacturerId id, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Manufacturers
+            .FirstOrDefaultAsync(i => i.Id == id.Value, cancellationToken);
     }
 }

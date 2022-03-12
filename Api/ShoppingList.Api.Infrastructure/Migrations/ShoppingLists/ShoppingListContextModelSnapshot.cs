@@ -28,20 +28,20 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.ShoppingLists
                     b.Property<bool>("InBasket")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<int?>("ItemTypeId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ItemTypeId")
+                        .HasColumnType("char(36)");
 
                     b.Property<float>("Quantity")
                         .HasColumnType("float");
 
-                    b.Property<int>("SectionId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("SectionId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<int>("ShoppingListId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ShoppingListId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -52,15 +52,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.ShoppingLists
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities.ShoppingList", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime?>("CompletionDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 

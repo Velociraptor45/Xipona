@@ -1,11 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
+using System;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId
 {
     public class ShoppingListItemContract
     {
-        public ShoppingListItemContract(int id, int? typeId, string name, bool isDeleted, string comment, bool isTemporary,
+        public ShoppingListItemContract(Guid id, Guid? typeId, string name, bool isDeleted, string comment, bool isTemporary,
             float pricePerQuantity, QuantityTypeContract quantityType, float quantityInPacket,
             QuantityTypeInPacketContract quantityTypeInPacket,
             ItemCategoryContract itemCategory, ManufacturerContract manufacturer, bool isInBasket, float quantity)
@@ -29,8 +30,8 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
             Quantity = quantity;
         }
 
-        public int Id { get; }
-        public int? TypeId { get; }
+        public Guid Id { get; }
+        public Guid? TypeId { get; }
         public string Name { get; }
         public bool IsDeleted { get; }
         public string Comment { get; }

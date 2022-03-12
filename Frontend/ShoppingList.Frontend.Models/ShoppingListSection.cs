@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,9 +8,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class ShoppingListSection
     {
-        private readonly Dictionary<(ItemId, int?), ShoppingListItem> _items;
+        private readonly Dictionary<(ItemId, Guid?), ShoppingListItem> _items;
 
-        public ShoppingListSection(int id, string name, int sortingIndex, bool isDefaultSection,
+        public ShoppingListSection(Guid id, string name, int sortingIndex, bool isDefaultSection,
             IEnumerable<ShoppingListItem> items)
         {
             _items = items.ToDictionary(i => (i.Id, i.TypeId));
@@ -20,7 +21,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             IsExpanded = true;
         }
 
-        public int Id { get; }
+        public Guid Id { get; }
         public string Name { get; }
         public int SortingIndex { get; }
         public bool IsDefaultSection { get; }
@@ -29,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         public bool SomeItemsInBasket => !AllItemsInBasket && Items.Any(i => i.IsInBasket);
         public IReadOnlyCollection<ShoppingListItem> Items => _items.Values.ToList().AsReadOnly();
 
-        public void RemoveItem(ItemId itemId, int? itemTypeId)
+        public void RemoveItem(ItemId itemId, Guid? itemTypeId)
         {
             _items.Remove((itemId, itemTypeId));
         }

@@ -1,4 +1,6 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 public class StoreSection : IStoreSection
 {
@@ -14,4 +16,13 @@ public class StoreSection : IStoreSection
     public string Name { get; }
     public int SortingIndex { get; }
     public bool IsDefaultSection { get; }
+
+    public IStoreSection Update(SectionUpdate update)
+    {
+        return new StoreSection(
+            Id,
+            update.Name,
+            update.SortingIndex,
+            update.IsDefaultSection);
+    }
 }

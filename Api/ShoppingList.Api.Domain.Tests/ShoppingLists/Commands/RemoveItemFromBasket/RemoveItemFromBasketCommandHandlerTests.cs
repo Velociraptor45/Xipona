@@ -206,12 +206,12 @@ public class RemoveItemFromBasketCommandHandlerTests
 
         public void SetupCommandWithActualId()
         {
-            SetupCommand(new OfflineTolerantItemId(_commonFixture.NextInt()));
+            SetupCommand(OfflineTolerantItemId.FromActualId(Guid.NewGuid()));
         }
 
         public void SetupCommandWithOfflineId()
         {
-            SetupCommand(new OfflineTolerantItemId(Guid.NewGuid()));
+            SetupCommand(OfflineTolerantItemId.FromOfflineId(Guid.NewGuid()));
         }
 
         private void SetupCommand(OfflineTolerantItemId id)

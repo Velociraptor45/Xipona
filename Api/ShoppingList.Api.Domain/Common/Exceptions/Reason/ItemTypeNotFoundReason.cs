@@ -9,6 +9,11 @@ public class ItemTypeNotFoundReason : IReason
         Message = $"Item {itemId.Value} does not contain item type {itemTypeId.Value}.";
     }
 
+    public ItemTypeNotFoundReason(ItemTypeId itemTypeId)
+    {
+        Message = $"Item type {itemTypeId.Value} not found.";
+    }
+
     public string Message { get; }
 
     public ErrorReasonCode ErrorCode => ErrorReasonCode.ItemTypeNotFound;

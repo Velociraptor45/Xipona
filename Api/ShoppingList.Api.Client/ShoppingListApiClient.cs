@@ -2,8 +2,6 @@
 using Newtonsoft.Json.Serialization;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
-using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Queries.AllActiveItemCategories;
-using ProjectHermes.ShoppingList.Api.Contracts.Manufacturer.Queries.AllActiveManufacturers;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
@@ -27,6 +25,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using RestEase;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -57,7 +56,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.IsAlive();
         }
 
-        public async Task<ShoppingListContract> GetActiveShoppingListByStoreId(int storeId)
+        public async Task<ShoppingListContract> GetActiveShoppingListByStoreId(Guid storeId)
         {
             return await _apiClient.GetActiveShoppingListByStoreId(storeId);
         }
@@ -92,7 +91,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await _apiClient.ChangeItemQuantityOnShoppingList(contract);
         }
 
-        public async Task FinishList(int shoppingListId)
+        public async Task FinishList(Guid shoppingListId)
         {
             await _apiClient.FinishList(shoppingListId);
         }
@@ -141,13 +140,13 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await _apiClient.UpdateItemWithTypesAsync(contract);
         }
 
-        public async Task DeleteItemAsync(int itemId)
+        public async Task DeleteItemAsync(Guid itemId)
         {
             await _apiClient.DeleteItemAsync(itemId);
         }
 
         public async Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync(
-            string searchInput, int storeId)
+            string searchInput, Guid storeId)
         {
             return await _apiClient.SearchItemsForShoppingListAsync(searchInput, storeId);
         }
@@ -157,13 +156,13 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.SearchItemsAsync(searchInput);
         }
 
-        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync(IEnumerable<int> storeIds,
-            IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds)
+        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,
+            IEnumerable<Guid> itemCategoryIds, IEnumerable<Guid> manufacturerIds)
         {
             return await _apiClient.SearchItemsByFilterAsync(storeIds, itemCategoryIds, manufacturerIds);
         }
 
-        public async Task<StoreItemContract> Get(int itemId)
+        public async Task<StoreItemContract> Get(Guid itemId)
         {
             return await _apiClient.Get(itemId);
         }
@@ -206,7 +205,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.GetManufacturerSearchResults(searchInput);
         }
 
-        public async Task<IEnumerable<ActiveManufacturerContract>> GetAllActiveManufacturers()
+        public async Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturers()
         {
             return await _apiClient.GetAllActiveManufacturers();
         }
@@ -225,7 +224,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.GetItemCategorySearchResults(searchInput);
         }
 
-        public async Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveItemCategories()
+        public async Task<IEnumerable<ItemCategoryContract>> GetAllActiveItemCategories()
         {
             return await _apiClient.GetAllActiveItemCategories();
         }

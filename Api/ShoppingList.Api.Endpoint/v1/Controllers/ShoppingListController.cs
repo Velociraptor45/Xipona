@@ -69,7 +69,7 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [Route("active/{storeId}")]
-    public async Task<IActionResult> GetActiveShoppingListByStoreId([FromRoute(Name = "storeId")] int storeId)
+    public async Task<IActionResult> GetActiveShoppingListByStoreId([FromRoute(Name = "storeId")] Guid storeId)
     {
         var query = new ActiveShoppingListByStoreIdQuery(new StoreId(storeId));
         ShoppingListReadModel readModel;
@@ -189,8 +189,8 @@ public class ShoppingListController : ControllerBase
             return BadRequest("At least one item id must be specified");
 
         var itemId = contract.ItemId.Actual != null
-            ? new OfflineTolerantItemId(contract.ItemId.Actual.Value)
-            : new OfflineTolerantItemId(contract.ItemId.Offline!.Value);
+            ? OfflineTolerantItemId.FromActualId(contract.ItemId.Actual.Value)
+            : OfflineTolerantItemId.FromOfflineId(contract.ItemId.Offline!.Value);
 
         var itemTypeId = contract.ItemTypeId.HasValue
             ? new ItemTypeId(contract.ItemTypeId.Value)
@@ -283,7 +283,7 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [Route("{shoppingListId}/finish")]
-    public async Task<IActionResult> FinishList([FromRoute(Name = "shoppingListId")] int shoppingListId)
+    public async Task<IActionResult> FinishList([FromRoute(Name = "shoppingListId")] Guid shoppingListId)
     {
         var command = new FinishShoppingListCommand(new ShoppingListId(shoppingListId), DateTime.UtcNow);
         try

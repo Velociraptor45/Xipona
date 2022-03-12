@@ -1,7 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
-using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Queries.AllActiveItemCategories;
-using ProjectHermes.ShoppingList.Api.Contracts.Manufacturer.Queries.AllActiveManufacturers;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
@@ -25,6 +23,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using RestEase;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -47,10 +46,10 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task ChangeItemQuantityOnShoppingList([Body] ChangeItemQuantityOnShoppingListContract contract);
 
         [Post("shopping-list/{shoppingListId}/finish")]
-        Task FinishList([Path] int shoppingListId);
+        Task FinishList([Path] Guid shoppingListId);
 
         [Get("shopping-list/active/{storeId}")]
-        Task<ShoppingListContract> GetActiveShoppingListByStoreId([Path] int storeId);
+        Task<ShoppingListContract> GetActiveShoppingListByStoreId([Path] Guid storeId);
 
         [Post("shopping-list/items/put-in-basket")]
         Task PutItemInBasket([Body] PutItemInBasketContract contract);
@@ -79,14 +78,14 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Get("item/search-for-shopping-list/{searchInput}/{storeId}")]
         Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync([Path] string searchInput,
-            [Path] int storeId);
+            [Path] Guid storeId);
 
         [Get("item/search/{searchInput}")]
         Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync([Path] string searchInput);
 
         [Get("item/search-by-filter")]
-        Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] IEnumerable<int> storeIds,
-            [Query] IEnumerable<int> itemCategoryIds, [Query] IEnumerable<int> manufacturerIds);
+        Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] IEnumerable<Guid> storeIds,
+            [Query] IEnumerable<Guid> itemCategoryIds, [Query] IEnumerable<Guid> manufacturerIds);
 
         [Post("item/modify")]
         Task ModifyItem([Body] ModifyItemContract modifyItemContract);
@@ -101,10 +100,10 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task UpdateItemWithTypesAsync([Body] UpdateItemWithTypesContract contract);
 
         [Post("item/delete/{itemId}")]
-        Task DeleteItemAsync([Path] int itemId);
+        Task DeleteItemAsync([Path] Guid itemId);
 
         [Get("item/{itemId}")]
-        Task<StoreItemContract> Get([Path] int itemId);
+        Task<StoreItemContract> Get([Path] Guid itemId);
 
         [Post("item/create/temporary")]
         Task CreateTemporaryItem([Body] CreateTemporaryItemContract contract);
@@ -133,7 +132,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResults([Path] string searchInput);
 
         [Get("manufacturer/all/active")]
-        Task<IEnumerable<ActiveManufacturerContract>> GetAllActiveManufacturers();
+        Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturers();
 
         [Post("manufacturer/create/{name}")]
         Task CreateManufacturer([Path] string name);
@@ -146,7 +145,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task<IEnumerable<ItemCategoryContract>> GetItemCategorySearchResults([Path] string searchInput);
 
         [Get("item-category/all/active")]
-        Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveItemCategories();
+        Task<IEnumerable<ItemCategoryContract>> GetAllActiveItemCategories();
 
         [Post("item-category/create/{name}")]
         Task CreateItemCategory([Path] string name);

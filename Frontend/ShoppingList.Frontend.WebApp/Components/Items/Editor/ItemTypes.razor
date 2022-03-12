@@ -32,7 +32,7 @@
     private void OnAddItemTypeButtonClicked()
     {
         State.EditedItem.ItemTypes.Add(
-            new Models.ItemType(0, "New type", Enumerable.Empty<StoreItemAvailability>()));
+            new Models.ItemType(Guid.Empty, "New type", Enumerable.Empty<StoreItemAvailability>()));
 
         State.StateChanged();
     }

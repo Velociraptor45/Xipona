@@ -2,19 +2,23 @@
 
 public class OfflineTolerantItemId
 {
-    public OfflineTolerantItemId(Guid offlineId)
+    private OfflineTolerantItemId(Guid? offlineId, Guid? actualId)
     {
         OfflineId = offlineId;
-        ActualId = null;
-    }
-
-    public OfflineTolerantItemId(int actualId)
-    {
         ActualId = actualId;
-        OfflineId = null;
     }
 
-    public int? ActualId { get; }
+    public static OfflineTolerantItemId FromOfflineId(Guid offlineId)
+    {
+        return new(offlineId, null);
+    }
+
+    public static OfflineTolerantItemId FromActualId(Guid actualId)
+    {
+        return new(null, actualId);
+    }
+
+    public Guid? ActualId { get; }
     public Guid? OfflineId { get; }
 
     public bool IsActualId => ActualId != null;

@@ -34,8 +34,7 @@ public class CreateStoreCommandHandler : ICommandHandler<CreateStoreCommand, boo
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        IStore store = _storeFactory.Create(command.StoreCreationInfo.Id, command.StoreCreationInfo.Name, false,
-            command.StoreCreationInfo.Sections);
+        IStore store = _storeFactory.CreateNew(command.StoreCreation);
 
         using ITransaction transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
         store = await _storeRepository.StoreAsync(store, cancellationToken);

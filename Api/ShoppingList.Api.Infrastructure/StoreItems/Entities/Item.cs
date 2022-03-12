@@ -14,8 +14,8 @@ public class Item
     }
 
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public Guid Id { get; set; }
 
     [Required]
     public string Name { get; set; }
@@ -26,10 +26,10 @@ public class Item
     public int QuantityType { get; set; }
     public float QuantityInPacket { get; set; }
     public int QuantityTypeInPacket { get; set; }
-    public int? ItemCategoryId { get; set; }
-    public int? ManufacturerId { get; set; }
+    public Guid? ItemCategoryId { get; set; }
+    public Guid? ManufacturerId { get; set; }
     public Guid? CreatedFrom { get; set; }
-    public int? PredecessorId { get; set; }
+    public Guid? PredecessorId { get; set; }
 
     [ForeignKey("PredecessorId")]
     public Item? Predecessor { get; set; }

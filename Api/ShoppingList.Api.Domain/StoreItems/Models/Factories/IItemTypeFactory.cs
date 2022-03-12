@@ -6,4 +6,5 @@ public interface IItemTypeFactory
         IItemType? predecessor);
 
     IItemType CreateNew(string name, IEnumerable<IStoreItemAvailability> availabilities, IItemType? predecessor);
+    IItemType CreateNew(string name, IEnumerable<IStoreItemAvailability> availabilities);
 }

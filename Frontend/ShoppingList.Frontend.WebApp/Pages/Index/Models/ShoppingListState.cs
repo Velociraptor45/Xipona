@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
     public class ShoppingListState
     {
         public Action StateChanged { get; set; }
-        public Func<int, Task> ReloadRequestedAsync { get; set; }
+        public Func<Guid, Task> ReloadRequestedAsync { get; set; }
         public ShoppingListRoot ShoppingList { get; private set; }
         public bool ItemsInBasketVisible { get; private set; }
         public bool ItemsInEditMode { get; private set; }
@@ -36,7 +36,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
             StateChanged?.Invoke();
         }
 
-        public void AddItemToList(ShoppingListItem item, int sectionId)
+        public void AddItemToList(ShoppingListItem item, Guid sectionId)
         {
             ShoppingList.AddItem(item, sectionId);
             StateChanged?.Invoke();
@@ -48,7 +48,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
             StateChanged?.Invoke();
         }
 
-        public async Task ChangeStoreAsync(int storeId)
+        public async Task ChangeStoreAsync(Guid storeId)
         {
             ResetItemEditMode();
             await RequestReloadAsync(storeId);
@@ -59,7 +59,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
             await RequestReloadAsync(ShoppingList.Store.Id);
         }
 
-        public async Task RequestReloadAsync(int storeId)
+        public async Task RequestReloadAsync(Guid storeId)
         {
             await ReloadRequestedAsync(storeId);
             StateChanged?.Invoke();

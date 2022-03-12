@@ -8,6 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
@@ -18,19 +19,16 @@ public class StoreController : ControllerBase
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly IToContractConverter<StoreReadModel, ActiveStoreContract> _activeStoreToContractConverter;
-    private readonly IToDomainConverter<UpdateStoreContract, StoreUpdate> _storeUpdateConverter;
-    private readonly IToDomainConverter<CreateStoreContract, StoreCreationInfo> _storeCreationInfoConverter;
+    private readonly IEndpointConverters _converters;
 
     public StoreController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
         IToContractConverter<StoreReadModel, ActiveStoreContract> activeStoreToContractConverter,
-        IToDomainConverter<UpdateStoreContract, StoreUpdate> storeUpdateConverter,
-        IToDomainConverter<CreateStoreContract, StoreCreationInfo> storeCreationInfoConverter)
+        IEndpointConverters converters)
     {
         _queryDispatcher = queryDispatcher;
         _commandDispatcher = commandDispatcher;
         _activeStoreToContractConverter = activeStoreToContractConverter;
-        _storeUpdateConverter = storeUpdateConverter;
-        _storeCreationInfoConverter = storeCreationInfoConverter;
+        _converters = converters;
     }
 
     [HttpGet]
@@ -50,9 +48,7 @@ public class StoreController : ControllerBase
     [Route("create")]
     public async Task<IActionResult> CreateStore([FromBody] CreateStoreContract createStoreContract)
     {
-        var model = _storeCreationInfoConverter.ToDomain(createStoreContract);
-        var command = new CreateStoreCommand(model);
-
+        var command = _converters.ToDomain<CreateStoreContract, CreateStoreCommand>(createStoreContract);
         await _commandDispatcher.DispatchAsync(command, default);
 
         return Ok();
@@ -64,8 +60,7 @@ public class StoreController : ControllerBase
     [Route("update")]
     public async Task<IActionResult> UpdateStore([FromBody] UpdateStoreContract updateStoreContract)
     {
-        var model = _storeUpdateConverter.ToDomain(updateStoreContract);
-        var command = new UpdateStoreCommand(model);
+        var command = _converters.ToDomain<UpdateStoreContract, UpdateStoreCommand>(updateStoreContract);
 
         try
         {

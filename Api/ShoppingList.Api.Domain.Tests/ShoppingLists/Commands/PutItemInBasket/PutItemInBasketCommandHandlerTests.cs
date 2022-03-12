@@ -158,12 +158,12 @@ public class PutItemInBasketCommandHandlerTests
             OfflineTolerantItemId offlineTolerantItemId;
             if (TemporaryItemId == null)
             {
-                offlineTolerantItemId = new OfflineTolerantItemId(CommonFixture.NextInt());
+                offlineTolerantItemId = OfflineTolerantItemId.FromActualId(Guid.NewGuid());
             }
             else
             {
                 Fixture.ConstructorArgumentFor<PutItemInBasketCommand, ItemTypeId?>("itemTypeId", null);
-                offlineTolerantItemId = new OfflineTolerantItemId(TemporaryItemId.Value.Value);
+                offlineTolerantItemId = OfflineTolerantItemId.FromOfflineId(TemporaryItemId.Value.Value);
             }
 
             Fixture.ConstructorArgumentFor<PutItemInBasketCommand, OfflineTolerantItemId>("itemId",

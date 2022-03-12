@@ -12,7 +12,7 @@
         <Select Mode="tags"
                 DataSource="@State.Stores.ToList()"
                 TItem="Store"
-                TItemValue="int"
+                TItemValue="Guid"
                 ValueName="@nameof(Store.Id)"
                 LabelName="@nameof(Store.Name)"
                 @ref="@storeSelectRef"></Select>
@@ -24,7 +24,7 @@
         <Select Mode="tags"
                 DataSource="@State.ItemCategories.ToList()"
                 TItem="ItemCategory"
-                TItemValue="int"
+                TItemValue="Guid"
                 ValueName="@nameof(ItemCategory.Id)"
                 LabelName="@nameof(ItemCategory.Name)"
                 @ref="@itemCategoriesSelectRef"></Select>
@@ -36,7 +36,7 @@
         <Select Mode="tags"
                 DataSource="@State.Manufacturers.ToList()"
                 TItem="Manufacturer"
-                TItemValue="int"
+                TItemValue="Guid"
                 ValueName="@nameof(Manufacturer.Id)"
                 LabelName="@nameof(Manufacturer.Name)"
                 @ref="@manufacturersSelectRef"></Select>
@@ -48,9 +48,9 @@
     [Parameter] public ItemsState State { get; set; }
     [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
 
-    private Select<int, Store> storeSelectRef;
-    private Select<int, ItemCategory> itemCategoriesSelectRef;
-    private Select<int, Manufacturer> manufacturersSelectRef;
+    private Select<Guid, Store> storeSelectRef;
+    private Select<Guid, ItemCategory> itemCategoriesSelectRef;
+    private Select<Guid, Manufacturer> manufacturersSelectRef;
 
     private async Task OnLoadButtonClickedAsync()
     {

@@ -6,13 +6,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Index
 {
     public class AvailableStores
     {
-        public AvailableStores(IEnumerable<Store> stores, int selectedStoreId)
+        public AvailableStores(IEnumerable<Store> stores, Guid selectedStoreId)
         {
             Stores = stores?.ToList() ?? throw new ArgumentNullException(nameof(stores));
             SelectedStoreId = selectedStoreId;
         }
 
         public List<Store> Stores { get; }
-        public int SelectedStoreId { get; set; }
+        public Guid SelectedStoreId { get; set; }
     }
 }

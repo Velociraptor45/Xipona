@@ -1,4 +1,6 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 public interface IStore
 {
@@ -13,5 +15,5 @@ public interface IStore
 
     IStoreSection GetDefaultSection();
 
-    void UpdateStores(IEnumerable<IStoreSection> storeSections);
+    void UpdateSections(IEnumerable<SectionUpdate> sectionUpdates);
 }

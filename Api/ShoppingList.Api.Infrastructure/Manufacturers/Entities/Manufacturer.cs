@@ -6,8 +6,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities;
 public class Manufacturer
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public Guid Id { get; set; }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 

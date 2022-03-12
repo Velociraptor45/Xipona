@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using ShoppingList.Api.Domain.TestKit.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Models.StoreItems;
 
@@ -45,10 +46,9 @@ public class StoreItemTests
     {
         // Arrange
         IStoreItem testObject = StoreItemMother.Initial().Create();
-        var availabilityStoreIds = testObject.Availabilities.Select(av => av.StoreId.Value).ToList();
 
         // Act
-        StoreId storeId = new StoreId(_commonFixture.NextInt(availabilityStoreIds));
+        StoreId storeId = new StoreIdBuilder().Create();
         bool result = testObject.IsAvailableInStore(storeId);
 
         // Assert
@@ -122,7 +122,7 @@ public class StoreItemTests
         Fixture fixture = _commonFixture.GetNewFixture();
 
         IStoreItem testObject = StoreItemMother.Initial().WithIsTemporary(isTemporary).Create();
-        ItemModify itemModify = fixture.Create<ItemModify>();
+        ItemModification itemModify = fixture.Create<ItemModification>();
         IEnumerable<IStoreItemAvailability> availabilities =
             StoreItemAvailabilityMother.Initial().CreateMany(3).ToList();
 
@@ -153,8 +153,7 @@ public class StoreItemTests
     {
         // Arrange
         IStoreItem testObject = StoreItemMother.Initial().Create();
-        var allStoreIds = testObject.Availabilities.Select(av => av.StoreId.Value);
-        var requestStoreId = new StoreId(_commonFixture.NextInt(allStoreIds));
+        var requestStoreId = new StoreIdBuilder().Create();
 
         // Act
         Action action = () => testObject.GetDefaultSectionIdForStore(requestStoreId);

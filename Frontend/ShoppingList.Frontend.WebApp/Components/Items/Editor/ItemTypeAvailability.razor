@@ -9,14 +9,14 @@
     <Select Class="mr-2"
             DataSource="State.Stores.ToList()"
             TItem="Store"
-            TItemValue="int"
+            TItemValue="Guid"
             DefaultValue="availability.Store.Id"
             ValueName="@nameof(Store.Id)"
             LabelName="@nameof(Store.Name)"
             OnSelectedItemChanged="@OnStoreChanged">
     </Select>
     <SingleSelect TItem="StoreItemSection"
-                  TValue="int"
+                  TValue="Guid"
                   ValueName="@nameof(StoreItemSection.Id)"
                   LabelName="@nameof(StoreItemSection.Name)"
                   DataSource="@availability.Store.Sections.ToList()"

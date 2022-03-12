@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared
 {
     public class SearchItemResultContract
     {
-        public SearchItemResultContract(int itemId, string itemName)
+        public SearchItemResultContract(Guid itemId, string itemName)
         {
             if (string.IsNullOrWhiteSpace(itemName))
             {
@@ -15,7 +15,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared
             ItemName = itemName;
         }
 
-        public int ItemId { get; }
+        public Guid ItemId { get; }
         public string ItemName { get; }
     }
 }

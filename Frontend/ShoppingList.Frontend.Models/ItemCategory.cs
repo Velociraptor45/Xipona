@@ -1,14 +1,16 @@
-﻿namespace ProjectHermes.ShoppingList.Frontend.Models
+﻿using System;
+
+namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class ItemCategory
     {
-        public ItemCategory(int id, string name)
+        public ItemCategory(Guid id, string name)
         {
             Id = id;
             Name = name;
         }
 
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
     }
 }

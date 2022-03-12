@@ -4,10 +4,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore;
 
 public class CreateStoreCommand : ICommand<bool>
 {
-    public CreateStoreCommand(StoreCreationInfo storeCreationInfo)
+    public CreateStoreCommand(StoreCreation storeCreation)
     {
-        StoreCreationInfo = storeCreationInfo;
+        StoreCreation = storeCreation;
     }
 
-    public StoreCreationInfo StoreCreationInfo { get; }
+    public StoreCreation StoreCreation { get; }
 }

@@ -80,12 +80,19 @@ public class ItemCategoryRepository : IItemCategoryRepository
         CancellationToken cancellationToken)
     {
         var entity = _toEntityConverter.ToEntity(model);
+        var existingItemCategory = await FindTrackedEntityById(model.Id, cancellationToken);
 
-        _dbContext.Entry(entity).State = entity.Id <= 0 ? EntityState.Added : EntityState.Modified;
+        _dbContext.Entry(entity).State = existingItemCategory is null ? EntityState.Added : EntityState.Modified;
 
         cancellationToken.ThrowIfCancellationRequested();
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         return _toModelConverter.ToDomain(entity);
+    }
+
+    private async Task<Entities.ItemCategory?> FindTrackedEntityById(ItemCategoryId id, CancellationToken cancellationToken)
+    {
+        return await _dbContext.ItemCategories
+            .FirstOrDefaultAsync(i => i.Id == id.Value, cancellationToken);
     }
 }

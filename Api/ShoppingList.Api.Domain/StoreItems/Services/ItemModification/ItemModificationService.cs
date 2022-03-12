@@ -34,6 +34,8 @@ public class ItemModificationService : IItemModificationService
         var item = await _itemRepository.FindByAsync(modification.Id, _cancellationToken);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(modification.Id));
+        if (!item.HasItemTypes)
+            throw new DomainException(new CannotModifyItemAsItemWithTypesReason(item.Id));
 
         var itemTypesBefore = item.ItemTypes.ToDictionary(t => t.Id);
 

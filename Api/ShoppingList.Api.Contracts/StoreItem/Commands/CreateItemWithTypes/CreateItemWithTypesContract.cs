@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes
 {
@@ -9,8 +10,8 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem
         public int QuantityType { get; set; }
         public float QuantityInPacket { get; set; }
         public int QuantityTypeInPacket { get; set; }
-        public int ItemCategoryId { get; set; }
-        public int? ManufacturerId { get; set; }
+        public Guid ItemCategoryId { get; set; }
+        public Guid? ManufacturerId { get; set; }
         public IEnumerable<CreateItemTypeContract> ItemTypes { get; set; }
     }
 }

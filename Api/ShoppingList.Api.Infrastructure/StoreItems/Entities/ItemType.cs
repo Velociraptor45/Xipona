@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 
@@ -12,10 +13,13 @@ public class ItemType
         AvailableAt ??= new List<ItemTypeAvailableAt>();
     }
 
-    public int Id { get; set; }
-    public int ItemId { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public Guid Id { get; set; }
+
+    public Guid ItemId { get; set; }
     public string Name { get; set; }
-    public int? PredecessorId { get; set; }
+    public Guid? PredecessorId { get; set; }
 
     [ForeignKey("ItemId")]
     public Item Item { get; set; }

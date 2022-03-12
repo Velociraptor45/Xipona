@@ -29,7 +29,6 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.ItemById;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
@@ -90,8 +89,7 @@ public class ItemController : ControllerBase
     [Route("modify-with-types")]
     public async Task<IActionResult> ModifyItemWithTypesAsync([FromBody] ModifyItemWithTypesContract contract)
     {
-        var model = _converters.ToDomain<ModifyItemWithTypesContract, ItemWithTypesModification>(contract);
-        var command = new ModifyItemWithTypesCommand(model);
+        var command = _converters.ToDomain<ModifyItemWithTypesContract, ModifyItemWithTypesCommand>(contract);
 
         try
         {
@@ -111,7 +109,7 @@ public class ItemController : ControllerBase
     [Route("modify")]
     public async Task<IActionResult> ModifyItemAsync([FromBody] ModifyItemContract modifyItemContract)
     {
-        var model = _converters.ToDomain<ModifyItemContract, ItemModify>(modifyItemContract);
+        var model = _converters.ToDomain<ModifyItemContract, ItemModification>(modifyItemContract);
         var command = new ModifyItemCommand(model);
 
         try
@@ -172,7 +170,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(400)]
     [Route("search-for-shopping-list/{searchInput}/{storeId}")]
     public async Task<IActionResult> SearchItemsForShoppingListAsync([FromRoute(Name = "searchInput")] string searchInput,
-        [FromRoute(Name = "storeId")] int storeId)
+        [FromRoute(Name = "storeId")] Guid storeId)
     {
         var query = new SearchItemsForShoppingListQuery(searchInput, new StoreId(storeId));
 
@@ -222,9 +220,9 @@ public class ItemController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200)]
     [Route("search-by-filter")]
-    public async Task<IActionResult> SearchItemsByFilterAsync([FromQuery] IEnumerable<int> storeIds,
-        [FromQuery] IEnumerable<int> itemCategoryIds,
-        [FromQuery] IEnumerable<int> manufacturerIds)
+    public async Task<IActionResult> SearchItemsByFilterAsync([FromQuery] IEnumerable<Guid> storeIds,
+        [FromQuery] IEnumerable<Guid> itemCategoryIds,
+        [FromQuery] IEnumerable<Guid> manufacturerIds)
     {
         var query = new SearchItemsByFilterQuery(
             storeIds.Select(id => new StoreId(id)),
@@ -240,7 +238,7 @@ public class ItemController : ControllerBase
     [HttpPost]
     [ProducesResponseType(200)]
     [Route("delete/{itemId}")]
-    public async Task<IActionResult> DeleteItem([FromRoute(Name = "itemId")] int itemId)
+    public async Task<IActionResult> DeleteItem([FromRoute(Name = "itemId")] Guid itemId)
     {
         var command = new DeleteItemCommand(new ItemId(itemId));
         await _commandDispatcher.DispatchAsync(command, default);
@@ -252,7 +250,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [Route("{itemId}")]
-    public async Task<IActionResult> Get([FromRoute(Name = "itemId")] int itemId)
+    public async Task<IActionResult> Get([FromRoute(Name = "itemId")] Guid itemId)
     {
         var query = new ItemByIdQuery(new ItemId(itemId));
         StoreItemReadModel result;

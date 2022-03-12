@@ -33,5 +33,6 @@ public enum ErrorReasonCode
     TemporaryItemCannotHaveTypeIdReason = 30,
     CannotUpdateItemAsItemWithTypesReason = 31,
     ShoppingListItemHasNoType = 32,
-    ShoppingListItemHasType = 33
+    ShoppingListItemHasType = 33,
+    SectionNotFound = 34,
 }

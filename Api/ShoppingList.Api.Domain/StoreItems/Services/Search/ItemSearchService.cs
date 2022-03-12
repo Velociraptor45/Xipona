@@ -114,7 +114,7 @@ public class ItemSearchService : IItemSearchService
         {
             if (!itemsWithTypesOnShoppingList.Contains(item.Id))
             {
-                var itemTypeIds = item.ItemTypes.GetForStore(storeId).Select(t => t.Id).ToList();
+                var itemTypeIds = item.GetTypesFor(storeId).Select(t => t.Id).ToList();
                 if (!itemTypeIds.Any())
                     continue;
 
@@ -123,8 +123,8 @@ public class ItemSearchService : IItemSearchService
             }
 
             var typeIdsOnList = itemsWithTypesOnShoppingList[item.Id].ToList();
-            var typeIdsNotOnList = item.ItemTypes
-                .GetForStore(storeId)
+            var typeIdsNotOnList = item
+                .GetTypesFor(storeId)
                 .Select(t => t.Id)
                 .Except(typeIdsOnList)
                 .ToList();

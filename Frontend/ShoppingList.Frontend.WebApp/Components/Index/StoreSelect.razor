@@ -16,7 +16,7 @@
     [Parameter] public ShoppingListState Page { get; set; }
     [Parameter] public ErrorHandler ErrorHandler { get; set; }
 
-    private AvailableStores availableStores = new AvailableStores(Enumerable.Empty<Store>(), 0);
+    private AvailableStores availableStores = new(Enumerable.Empty<Store>(), Guid.Empty);
 
     protected override async Task OnInitializedAsync()
     {
@@ -34,7 +34,7 @@
 
         List<Store> storesList = stores.ToList();
 
-        availableStores = new AvailableStores(storesList, storesList.FirstOrDefault()?.Id ?? 0);
+        availableStores = new AvailableStores(storesList, storesList.FirstOrDefault()?.Id ?? Guid.Empty);
         Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
     }
 

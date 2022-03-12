@@ -14,6 +14,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 public class StoreItem : IStoreItem
 {
     private List<IStoreItemAvailability> _availabilities;
+    private readonly ItemTypes? _itemTypes;
 
     public StoreItem(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
@@ -31,7 +32,7 @@ public class StoreItem : IStoreItem
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
         TemporaryId = temporaryId;
-        ItemTypes = new ItemTypes(Enumerable.Empty<IItemType>());
+        _itemTypes = null;
         _availabilities = availabilities.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
 
         // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
@@ -42,11 +43,8 @@ public class StoreItem : IStoreItem
     public StoreItem(ItemId id, string name, bool isDeleted, string comment,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
-        IEnumerable<IItemType> itemTypes)
+        ItemTypes itemTypes)
     {
-        if (itemTypes is null)
-            throw new ArgumentNullException(nameof(itemTypes));
-
         Id = id;
         Name = name;
         IsDeleted = isDeleted;
@@ -58,10 +56,10 @@ public class StoreItem : IStoreItem
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
         TemporaryId = null;
-        ItemTypes = new ItemTypes(itemTypes);
+        _itemTypes = itemTypes ?? throw new ArgumentNullException(nameof(itemTypes));
         _availabilities = new List<IStoreItemAvailability>();
 
-        if (!ItemTypes.Any())
+        if (!_itemTypes.Any())
             throw new DomainException(new CannotCreateItemWithTypesWithoutTypesReason(Id));
 
         // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
@@ -77,16 +75,16 @@ public class StoreItem : IStoreItem
     public QuantityType QuantityType { get; private set; }
     public float QuantityInPacket { get; private set; }
     public QuantityTypeInPacket QuantityTypeInPacket { get; private set; }
-
     public ItemCategoryId? ItemCategoryId { get; private set; }
     public ManufacturerId? ManufacturerId { get; private set; }
     public TemporaryItemId? TemporaryId { get; }
     public IStoreItem? Predecessor { get; private set; } // todo: change this to an IItemPredecessor model to satisfy DDD
-    public ItemTypes ItemTypes { get; private set; }
+
+    public IReadOnlyCollection<IItemType> ItemTypes =>
+        _itemTypes?.ToList().AsReadOnly() ?? new List<IItemType>().AsReadOnly();
 
     public IReadOnlyCollection<IStoreItemAvailability> Availabilities => _availabilities.AsReadOnly();
-
-    public bool HasItemTypes => ItemTypes.Any();
+    public bool HasItemTypes => _itemTypes?.Any() ?? false;
 
     public void Delete()
     {
@@ -111,7 +109,7 @@ public class StoreItem : IStoreItem
         IsTemporary = false;
     }
 
-    public void Modify(ItemModify itemChange, IEnumerable<IStoreItemAvailability> availabilities)
+    public void Modify(ItemModification itemChange, IEnumerable<IStoreItemAvailability> availabilities)
     {
         Name = itemChange.Name;
         Comment = itemChange.Comment;
@@ -128,7 +126,7 @@ public class StoreItem : IStoreItem
         if (modification is null)
             throw new ArgumentNullException(nameof(modification));
 
-        if (!ItemTypes.Any())
+        if (!HasItemTypes)
             throw new DomainException(new CannotModifyItemAsItemWithTypesReason(Id));
 
         if (!modification.ItemTypes.Any())
@@ -142,24 +140,7 @@ public class StoreItem : IStoreItem
         ItemCategoryId = modification.ItemCategoryId;
         ManufacturerId = modification.ManufacturerId;
 
-        var newTypes = new List<IItemType>();
-        foreach (var modifiedType in modification.ItemTypes)
-        {
-            IItemType newType;
-            if (ItemTypes.TryGetValue(modifiedType.Id, out var currentType))
-            {
-                newType = await currentType!.ModifyAsync(modifiedType, validator);
-            }
-            else
-            {
-                await validator.ValidateAsync(modifiedType.Availabilities);
-                newType = new ItemType(ItemTypeId.New, modifiedType.Name, modifiedType.Availabilities);
-            }
-
-            newTypes.Add(newType);
-        }
-
-        ItemTypes = new ItemTypes(newTypes);
+        await _itemTypes!.ModifyManyAsync(modification.ItemTypes, validator);
     }
 
     public SectionId GetDefaultSectionIdForStore(StoreId storeId)
@@ -174,5 +155,28 @@ public class StoreItem : IStoreItem
     public void SetPredecessor(IStoreItem predecessor)
     {
         Predecessor = predecessor;
+    }
+
+    public bool TryGetType(ItemTypeId itemTypeId, out IItemType? itemType)
+    {
+        if (_itemTypes is not null)
+            return _itemTypes.TryGetValue(itemTypeId, out itemType);
+
+        itemType = null;
+        return false;
+    }
+
+    public IReadOnlyCollection<IItemType> GetTypesFor(StoreId storeId)
+    {
+        return _itemTypes?.GetForStore(storeId) ?? new List<IItemType>().AsReadOnly();
+    }
+
+    public bool TryGetTypeWithPredecessor(ItemTypeId predecessorTypeId, out IItemType? predecessor)
+    {
+        if (HasItemTypes)
+            return _itemTypes!.TryGetWithPredecessor(predecessorTypeId, out predecessor);
+
+        predecessor = null;
+        return false;
     }
 }

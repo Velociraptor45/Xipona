@@ -13,7 +13,7 @@
         <div class="mx-3">
             <Input @bind-Value="@State.EditedItem.Name" />
         </div>
-        @if (State.EditedItem.Id != 0)
+        @if (State.EditedItem.Id != Guid.Empty)
         {
             <Button Danger="true"
                     Class="ml-auto"
@@ -44,7 +44,7 @@
         <TextArea Placeholder="Comment" MinRows="2" @bind-Value="@State.EditedItem.Comment"></TextArea>
     </div>
     <div class="d-flex justify-content-end">
-        @if (State.EditedItem.Id == 0)
+        @if (State.EditedItem.Id == Guid.Empty)
         {
             <Button OnClick="@OnCreateButtonClickedAsync">Create</Button>
         }

@@ -21,16 +21,16 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.AvailableAt", b =>
                 {
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(2);
 
-                    b.Property<int>("DefaultSectionId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("DefaultSectionId")
+                        .HasColumnType("char(36)");
 
                     b.Property<float>("Price")
                         .HasColumnType("float");
@@ -42,9 +42,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Comment")
                         .IsRequired()
@@ -59,18 +58,18 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
                     b.Property<bool>("IsTemporary")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int?>("ItemCategoryId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ItemCategoryId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<int?>("ManufacturerId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ManufacturerId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("PredecessorId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("PredecessorId")
+                        .HasColumnType("char(36)");
 
                     b.Property<float>("QuantityInPacket")
                         .HasColumnType("float");
@@ -90,19 +89,18 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("PredecessorId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("PredecessorId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -115,16 +113,16 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemTypeAvailableAt", b =>
                 {
-                    b.Property<int>("ItemTypeId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("ItemTypeId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(2);
 
-                    b.Property<int>("DefaultSectionId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("DefaultSectionId")
+                        .HasColumnType("char(36)");
 
                     b.Property<float>("Price")
                         .HasColumnType("float");

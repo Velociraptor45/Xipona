@@ -13,12 +13,12 @@ public class ShoppingListItemIdConverter : IToDomainConverter<ItemIdContract, Of
 
         if (source.Actual != null)
         {
-            return new OfflineTolerantItemId(source.Actual.Value);
+            return OfflineTolerantItemId.FromActualId(source.Actual.Value);
         }
 
         if (source.Offline != null)
         {
-            return new OfflineTolerantItemId(source.Offline.Value);
+            return OfflineTolerantItemId.FromOfflineId(source.Offline.Value);
         }
 
         throw new ArgumentException($"All values in {nameof(ItemIdContract)} are null.");

@@ -39,7 +39,7 @@
         StateHasChanged();
     }
 
-    private StoreItemSection GetSectionForStoreId(int storeId)
+    private StoreItemSection GetSectionForStoreId(Guid storeId)
     {
         var section = State.Stores.Single(s => s.Id == storeId).Sections.Single(s => s.IsDefaultSection);
         return section.AsStoreItemSection();
