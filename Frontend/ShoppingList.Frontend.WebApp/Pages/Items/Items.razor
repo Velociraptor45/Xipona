@@ -1,5 +1,5 @@
 ﻿@page "/items"
-@page "/items/{ItemId:int}"
+@page "/items/{ItemId:guid}"
 
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Filter;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Editor;
@@ -32,7 +32,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        errorHandler = new ErrorHandler((func, label) => GetButtonRenderFragment(func, label));
+        errorHandler = new ErrorHandler(GetButtonRenderFragment);
         await InitialLoadAsync();
 
         await base.OnInitializedAsync();
@@ -59,7 +59,7 @@
         state.ManufacturerCreated += async () => await LoadManufacturerListAsync();
         state.ItemCategoryCreated += async () => await LoadItemCategoryListAsync();
 
-        state.StateChanged += () => StateHasChanged();
+        state.StateChanged += StateHasChanged;
     }
 
     private async Task LoadManufacturerListAsync()
@@ -91,6 +91,6 @@
 
     private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")
     {
-        return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
-}
+        return @<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
+    }
 }
