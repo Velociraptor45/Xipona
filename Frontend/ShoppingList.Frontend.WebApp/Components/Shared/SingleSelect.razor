@@ -6,10 +6,10 @@
         ValueName="@ValueName"
         LabelName="@LabelName"
         DataSource="@DataSource"
-        DefaultValue="@DefaultValue"
         OnSelectedItemChanged="OnSelectedItemChanged"
         AllowClear="@AllowClear"
-        DropdownRender="@OnRender">
+        DropdownRender="@OnRender"
+        Value="@DefaultValue">
 </Select>
 
 @code {
@@ -43,23 +43,23 @@
     private RenderFragment OnRender(RenderFragment originNode)
     {
         RenderFragment customDropdownRender =
-    @<Template>
-        <div>
-            @originNode
-            @if (CanAddItem)
-            {
-                <Divider Class="my-1"></Divider>
-                <div class="d-flex p-2">
-                    <div class="max-w-100">
-                        <Input @bind-Value="@newItemName" />
-                    </div>
-                    <a class="d-flex align-items-center min-w-50 px-2 py-1" @onclick="OnAddNewItem">
-                        <Icon Type="plus" Theme="outline"></Icon>
-                    </a>
+            @<Template>
+                <div>
+                    @originNode
+                    @if (CanAddItem)
+                    {
+                        <Divider Class="my-1"></Divider>
+                        <div class="d-flex p-2">
+                            <div class="max-w-100">
+                                <Input @bind-Value="@newItemName" />
+                            </div>
+                            <a class="d-flex align-items-center min-w-50 px-2 py-1" @onclick="OnAddNewItem">
+                                <Icon Type="plus" Theme="outline"></Icon>
+                            </a>
+                        </div>
+                    }
                 </div>
-            }
-        </div>
-    </Template>;
-return customDropdownRender;
-}
+            </Template>;
+        return customDropdownRender;
+    }
 }

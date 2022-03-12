@@ -38,7 +38,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared
         {
             if (left is null)
             {
-                return !(right is null);
+                return right is not null;
             }
 
             return !left.Equals(right);
