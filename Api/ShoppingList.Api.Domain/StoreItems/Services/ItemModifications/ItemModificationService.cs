@@ -6,7 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModifications;
 
 public class ItemModificationService : IItemModificationService
 {
@@ -63,6 +63,53 @@ public class ItemModificationService : IItemModificationService
         }
 
         await _itemRepository.StoreAsync(item, _cancellationToken);
+    }
+
+    public async Task Modify(ItemModification modification)
+    {
+        ArgumentNullException.ThrowIfNull(modification);
+
+        var storeItem = await _itemRepository.FindByAsync(modification.Id, _cancellationToken);
+
+        if (storeItem == null)
+            throw new DomainException(new ItemNotFoundReason(modification.Id));
+        if (storeItem.IsTemporary)
+            throw new DomainException(new TemporaryItemNotModifyableReason(modification.Id));
+
+        var itemCategoryId = modification.ItemCategoryId;
+        var manufacturerId = modification.ManufacturerId;
+
+        await _validator.ValidateAsync(itemCategoryId);
+
+        _cancellationToken.ThrowIfCancellationRequested();
+
+        if (manufacturerId != null)
+        {
+            await _validator.ValidateAsync(manufacturerId.Value);
+        }
+
+        _cancellationToken.ThrowIfCancellationRequested();
+
+        var availabilities = modification.Availabilities;
+        await _validator.ValidateAsync(availabilities);
+
+        _cancellationToken.ThrowIfCancellationRequested();
+
+        storeItem.Modify(modification, availabilities);
+
+        var availableAtStoreIds = storeItem.Availabilities.Select(av => av.StoreId);
+        var shoppingListsWithItem = (await _shoppingListRepository.FindByAsync(storeItem.Id, _cancellationToken))
+            .Where(list => availableAtStoreIds.All(storeId => storeId != list.StoreId))
+            .ToList();
+
+        await _itemRepository.StoreAsync(storeItem, _cancellationToken);
+        foreach (var list in shoppingListsWithItem)
+        {
+            _cancellationToken.ThrowIfCancellationRequested();
+            // remove items from all shopping lists where item is not available anymore
+            list.RemoveItem(storeItem.Id);
+            await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+        }
     }
 
     private async Task RemoveItemTypeFromShoppingList(IEnumerable<IShoppingList> lists, IStoreItem item,

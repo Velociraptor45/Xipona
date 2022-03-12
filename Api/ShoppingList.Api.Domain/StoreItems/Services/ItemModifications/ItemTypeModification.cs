@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModifications;
 
 public class ItemTypeModification
 {

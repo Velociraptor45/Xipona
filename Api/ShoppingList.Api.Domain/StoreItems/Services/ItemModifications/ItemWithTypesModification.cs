@@ -3,16 +3,14 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModifications;
 
-public class ItemModification
+public class ItemWithTypesModification
 {
-    private readonly IEnumerable<IStoreItemAvailability> _availabilities;
-
-    public ItemModification(ItemId id, string name, string comment,
+    public ItemWithTypesModification(ItemId id, string name, string comment,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
-        IEnumerable<IStoreItemAvailability> availabilities)
+        IEnumerable<ItemTypeModification> itemTypes)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -27,7 +25,7 @@ public class ItemModification
         QuantityTypeInPacket = quantityTypeInPacket;
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
-        _availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
+        ItemTypes = itemTypes?.ToList() ?? throw new ArgumentNullException(nameof(itemTypes));
     }
 
     public ItemId Id { get; }
@@ -38,6 +36,5 @@ public class ItemModification
     public QuantityTypeInPacket QuantityTypeInPacket { get; }
     public ItemCategoryId ItemCategoryId { get; }
     public ManufacturerId? ManufacturerId { get; }
-
-    public IReadOnlyCollection<IStoreItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
+    public IReadOnlyCollection<ItemTypeModification> ItemTypes { get; }
 }

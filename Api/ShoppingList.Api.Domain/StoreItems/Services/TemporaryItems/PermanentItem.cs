@@ -3,14 +3,15 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.TemporaryItems;
 
-public class ItemWithTypesModification
+public class PermanentItem
 {
-    public ItemWithTypesModification(ItemId id, string name, string comment,
-        QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-        ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
-        IEnumerable<ItemTypeModification> itemTypes)
+    private readonly IEnumerable<IStoreItemAvailability> _availabilities;
+
+    public PermanentItem(ItemId id, string name, string comment, QuantityType quantityType,
+        float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
+        ManufacturerId? manufacturerId, IEnumerable<IStoreItemAvailability> availabilities)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -19,14 +20,16 @@ public class ItemWithTypesModification
 
         Id = id;
         Name = name;
-        Comment = comment;
+        Comment = comment ?? throw new ArgumentNullException(nameof(comment));
         QuantityType = quantityType;
         QuantityInPacket = quantityInPacket;
         QuantityTypeInPacket = quantityTypeInPacket;
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
-        ItemTypes = itemTypes?.ToList() ?? throw new ArgumentNullException(nameof(itemTypes));
+        _availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
     }
+
+    public IReadOnlyCollection<IStoreItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
 
     public ItemId Id { get; }
     public string Name { get; }
@@ -36,5 +39,4 @@ public class ItemWithTypesModification
     public QuantityTypeInPacket QuantityTypeInPacket { get; }
     public ItemCategoryId ItemCategoryId { get; }
     public ManufacturerId? ManufacturerId { get; }
-    public IReadOnlyCollection<ItemTypeModification> ItemTypes { get; }
 }
