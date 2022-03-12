@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemQueries;
 
 public class ItemTypeReadModel
 {

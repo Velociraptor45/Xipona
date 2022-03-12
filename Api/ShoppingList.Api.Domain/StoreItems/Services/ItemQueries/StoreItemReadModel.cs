@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTyp
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemQueries;
 
 public class StoreItemReadModel
 {

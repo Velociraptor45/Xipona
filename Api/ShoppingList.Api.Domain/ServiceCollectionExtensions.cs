@@ -26,6 +26,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using System.Reflection;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemQueries;
 
 namespace ProjectHermes.ShoppingList.Api.Domain;
 
@@ -108,6 +109,14 @@ public static class ServiceCollectionExtensions
             var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
             return cancellationToken =>
                 new ItemDeletionService(itemRepository, shoppingListRepository, cancellationToken);
+        });
+
+        services.AddTransient<Func<CancellationToken, IItemQueryService>>(provider =>
+        {
+            var itemRepository = provider.GetRequiredService<IItemRepository>();
+            var conversionService = provider.GetRequiredService<IStoreItemReadModelConversionService>();
+            return cancellationToken =>
+                new ItemQueryService(itemRepository, conversionService, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IItemModificationService>>(provider =>
