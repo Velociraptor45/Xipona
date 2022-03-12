@@ -3,17 +3,21 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdate;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdates;
 
-public class ItemWithTypesUpdate
+public class ItemUpdate
 {
-    public ItemWithTypesUpdate(ItemId oldId, string name, string comment,
+    private readonly IEnumerable<IStoreItemAvailability> _availabilities;
+
+    public ItemUpdate(ItemId oldId, string name, string comment,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
-        IEnumerable<ItemTypeUpdate> typeUpdates)
+        IEnumerable<IStoreItemAvailability> availabilities)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace.", nameof(name));
+        {
+            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
+        }
 
         OldId = oldId;
         Name = name;
@@ -23,7 +27,7 @@ public class ItemWithTypesUpdate
         QuantityTypeInPacket = quantityTypeInPacket;
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
-        TypeUpdates = typeUpdates?.ToList() ?? throw new ArgumentNullException(nameof(typeUpdates));
+        _availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
     }
 
     public ItemId OldId { get; }
@@ -34,5 +38,6 @@ public class ItemWithTypesUpdate
     public QuantityTypeInPacket QuantityTypeInPacket { get; }
     public ItemCategoryId ItemCategoryId { get; }
     public ManufacturerId? ManufacturerId { get; }
-    public IReadOnlyCollection<ItemTypeUpdate> TypeUpdates { get; }
+
+    public IReadOnlyCollection<IStoreItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
 }

@@ -6,7 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdate;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdates;
 
 public class ItemUpdateService : IItemUpdateService
 {
@@ -84,6 +84,43 @@ public class ItemUpdateService : IItemUpdateService
         updatedItem = await _itemRepository.StoreAsync(updatedItem, _cancellationToken);
 
         _cancellationToken.ThrowIfCancellationRequested();
+
+        // change existing item references on shopping lists
+        await _shoppingListUpdateService.ExchangeItemAsync(oldItem.Id, updatedItem, _cancellationToken);
+    }
+
+    public async Task Update(ItemUpdate update)
+    {
+        ArgumentNullException.ThrowIfNull(update);
+
+        IStoreItem? oldItem = await _itemRepository.FindByAsync(update.OldId, _cancellationToken);
+        if (oldItem == null)
+            throw new DomainException(new ItemNotFoundReason(update.OldId));
+        if (oldItem.IsTemporary)
+            throw new DomainException(new TemporaryItemNotUpdateableReason(update.OldId));
+
+        oldItem.Delete();
+
+        var itemCategoryId = update.ItemCategoryId;
+        var manufacturerId = update.ManufacturerId;
+
+        await _validator.ValidateAsync(itemCategoryId);
+
+        if (manufacturerId != null)
+        {
+            await _validator.ValidateAsync(manufacturerId.Value);
+        }
+
+        _cancellationToken.ThrowIfCancellationRequested();
+
+        var availabilities = update.Availabilities;
+        await _validator.ValidateAsync(availabilities);
+
+        await _itemRepository.StoreAsync(oldItem, _cancellationToken);
+
+        // create new Item
+        IStoreItem updatedItem = _storeItemFactory.Create(update, oldItem);
+        updatedItem = await _itemRepository.StoreAsync(updatedItem, _cancellationToken);
 
         // change existing item references on shopping lists
         await _shoppingListUpdateService.ExchangeItemAsync(oldItem.Id, updatedItem, _cancellationToken);

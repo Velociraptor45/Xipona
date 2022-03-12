@@ -18,7 +18,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemS
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.StoreItemReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemCreations;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModification;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdate;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdates;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
