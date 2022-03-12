@@ -1,6 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Common;
+using ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
 
 namespace ShoppingList.Api.Domain.TestKit.Stores.Models;
 
@@ -18,19 +18,15 @@ public class StoreBuilder : DomainTestBuilderBase<Store>
         return this;
     }
 
-    public StoreBuilder WithSections(IEnumerable<IStoreSection> sections)
+    public StoreBuilder WithSections(StoreSections sections)
     {
         FillConstructorWith("sections", sections);
         return this;
     }
 
-    public StoreBuilder WithSection(IStoreSection section)
-    {
-        return WithSections(section.ToMonoList());
-    }
-
     public StoreBuilder WithoutSections()
     {
-        return WithSections(Enumerable.Empty<IStoreSection>());
+        return WithSections(new StoreSections(Enumerable.Empty<IStoreSection>(),
+            new StoreSectionFactoryMock(MockBehavior.Strict).Object));
     }
 }

@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
@@ -11,6 +12,7 @@ using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
+using ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
 using ShoppingList.Api.Domain.TestKit.Stores.Ports;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services;
@@ -946,35 +948,39 @@ public class AddItemToShoppingListServiceTests
 
     private abstract class LocalFixture
     {
-        protected readonly CommonFixture CommonFixture = new CommonFixture();
-        protected readonly ShoppingListSectionFactoryMock ShoppingListSectionFactoryMock;
-        protected readonly StoreRepositoryMock StoreRepositoryMock;
+        protected readonly CommonFixture CommonFixture = new();
+        private readonly ShoppingListSectionFactoryMock _shoppingListSectionFactoryMock;
+        private readonly StoreRepositoryMock _storeRepositoryMock;
+        private readonly StoreSectionFactoryMock _sectionFactoryMock;
         protected readonly ItemRepositoryMock ItemRepositoryMock;
         protected readonly ShoppingListItemFactoryMock ShoppingListItemFactoryMock;
         protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
+
+        private IStore _store;
+        private IShoppingListSection _shoppingListSection;
+        protected IStoreItemAvailability Availability;
+
+        protected LocalFixture()
+        {
+            _shoppingListSectionFactoryMock = new ShoppingListSectionFactoryMock(MockBehavior.Strict);
+            _storeRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
+            ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
+            ShoppingListItemFactoryMock = new ShoppingListItemFactoryMock(MockBehavior.Strict);
+            ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+            _sectionFactoryMock = new StoreSectionFactoryMock(MockBehavior.Strict);
+        }
+
         public ShoppingListMock ShoppingListMock { get; protected set; }
         public SectionId? SectionId { get; protected set; }
         public float Quantity { get; protected set; }
         public IStoreItem StoreItem { get; protected set; }
         public IShoppingListItem ShoppingListItem { get; protected set; }
-        public IStore Store { get; protected set; }
-        public IShoppingListSection ShoppingListSection { get; protected set; }
-        protected IStoreItemAvailability Availability;
-
-        protected LocalFixture()
-        {
-            ShoppingListSectionFactoryMock = new ShoppingListSectionFactoryMock(MockBehavior.Strict);
-            StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
-            ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
-            ShoppingListItemFactoryMock = new ShoppingListItemFactoryMock(MockBehavior.Strict);
-            ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
-        }
 
         public AddItemToShoppingListService CreateSut()
         {
             return new AddItemToShoppingListService(
-                ShoppingListSectionFactoryMock.Object,
-                StoreRepositoryMock.Object,
+                _shoppingListSectionFactoryMock.Object,
+                _storeRepositoryMock.Object,
                 ItemRepositoryMock.Object,
                 ShoppingListItemFactoryMock.Object,
                 ShoppingListRepositoryMock.Object);
@@ -1004,16 +1010,18 @@ public class AddItemToShoppingListServiceTests
         {
             var sectionId = new SectionId(Guid.NewGuid());
             var section = StoreSectionMother.Default().WithId(sectionId).Create();
+            var sections = new StoreSections(section.ToMonoList(), _sectionFactoryMock.Object);
 
-            Store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSection(section).Create();
+            _store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSections(sections).Create();
         }
 
         public void SetupStore()
         {
             var sectionId = SectionId ?? Availability.DefaultSectionId;
             var section = StoreSectionMother.Default().WithId(sectionId).Create();
+            var sections = new StoreSections(section.ToMonoList(), _sectionFactoryMock.Object);
 
-            Store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSection(section).Create();
+            _store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSections(sections).Create();
         }
 
         public void SetupEmptyShoppingListSection()
@@ -1022,19 +1030,19 @@ public class AddItemToShoppingListServiceTests
             if (SectionId != null)
                 builder.WithId(SectionId.Value);
 
-            ShoppingListSection = builder.Create();
+            _shoppingListSection = builder.Create();
         }
 
         #region Mock Setup
 
         public void SetupFindingStore()
         {
-            StoreRepositoryMock.SetupFindByAsync(Store.Id, Store);
+            _storeRepositoryMock.SetupFindByAsync(_store.Id, _store);
         }
 
         public void SetupNotFindingStore()
         {
-            StoreRepositoryMock.SetupFindByAsync(ShoppingListMock.Object.StoreId, null);
+            _storeRepositoryMock.SetupFindByAsync(ShoppingListMock.Object.StoreId, null);
         }
 
         public void SetupStoringShoppingList()
@@ -1045,12 +1053,12 @@ public class AddItemToShoppingListServiceTests
         public void SetupCreatingEmptyShoppingListSection()
         {
             var sectionId = SectionId ?? Availability.DefaultSectionId;
-            ShoppingListSectionFactoryMock.SetupCreateEmpty(sectionId, ShoppingListSection);
+            _shoppingListSectionFactoryMock.SetupCreateEmpty(sectionId, _shoppingListSection);
         }
 
         public void SetupAddingSectionToShoppingList()
         {
-            ShoppingListMock.SetupAddSection(ShoppingListSection);
+            ShoppingListMock.SetupAddSection(_shoppingListSection);
         }
 
         public void SetupAddingItemToShoppingList()
@@ -1080,7 +1088,7 @@ public class AddItemToShoppingListServiceTests
 
         public void VerifyAddSectionOnce()
         {
-            ShoppingListMock.VerifyAddSectionOnce(ShoppingListSection);
+            ShoppingListMock.VerifyAddSectionOnce(_shoppingListSection);
         }
 
         public void VerifyAddItemOnce()
@@ -1091,7 +1099,7 @@ public class AddItemToShoppingListServiceTests
 
         public void VerifyCreatingEmptyShoppingListSectionOnce()
         {
-            ShoppingListSectionFactoryMock.VerifyCreateEmptyOnce(SectionId.Value);
+            _shoppingListSectionFactoryMock.VerifyCreateEmptyOnce(SectionId.Value);
         }
 
         public void VerifyStoringShoppingList()

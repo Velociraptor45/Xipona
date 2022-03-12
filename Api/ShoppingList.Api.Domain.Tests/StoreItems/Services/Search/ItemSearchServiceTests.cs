@@ -9,6 +9,7 @@ using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Models.Factories;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services.Conversion.ItemSearchReadModels;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
@@ -401,6 +402,7 @@ public class ItemSearchServiceTests
         private readonly StoreRepositoryMock _storeRepositoryMock;
         private readonly ItemTypeReadRepositoryMock _itemTypeReadRepositoryMock;
         private readonly ItemSearchReadModelConversionServiceMock _conversionServiceMock;
+        private readonly ItemTypeFactoryMock _itemTypeFactoryMock;
 
         private List<IStoreItem> _items;
         private readonly List<IStoreItem> _itemsFromTypeMapping = new();
@@ -418,6 +420,7 @@ public class ItemSearchServiceTests
             _storeRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
             _itemTypeReadRepositoryMock = new ItemTypeReadRepositoryMock(MockBehavior.Strict);
             _conversionServiceMock = new ItemSearchReadModelConversionServiceMock(MockBehavior.Strict);
+            _itemTypeFactoryMock = new ItemTypeFactoryMock(MockBehavior.Strict);
         }
 
         public string Name { get; private set; }
@@ -480,7 +483,7 @@ public class ItemSearchServiceTests
                 typesBuilder.WithAvailabilities(availability);
             }
 
-            var types = typesBuilder.CreateMany(1);
+            var types = new ItemTypes(typesBuilder.CreateMany(1), _itemTypeFactoryMock.Object);
 
             _items = StoreItemMother.InitialWithTypes().WithId(item.Id).WithTypes(types).CreateMany(1)
                 .ToList<IStoreItem>();
@@ -493,7 +496,7 @@ public class ItemSearchServiceTests
             _itemsFromTypeMapping.Add(StoreItemMother.InitialWithTypes().WithTypes(types).Create());
         }
 
-        private IEnumerable<IItemType> GetItemTypes(bool availableAtStore, int count)
+        private ItemTypes GetItemTypes(bool availableAtStore, int count)
         {
             var typesBuilder = new ItemTypeBuilder();
 
@@ -503,7 +506,7 @@ public class ItemSearchServiceTests
                 typesBuilder.WithAvailabilities(availability);
             }
 
-            return typesBuilder.CreateMany(count);
+            return new ItemTypes(typesBuilder.CreateMany(count), _itemTypeFactoryMock.Object);
         }
 
         public void SetupItemsWithoutTypes()

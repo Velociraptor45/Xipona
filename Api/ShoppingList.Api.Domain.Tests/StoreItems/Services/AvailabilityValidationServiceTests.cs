@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -6,6 +7,7 @@ using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
+using ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
 using ShoppingList.Api.Domain.TestKit.Stores.Ports;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services;
@@ -110,23 +112,26 @@ public class AvailabilityValidationServiceTests
 
     private class LocalFixture
     {
-        public Fixture Fixture { get; }
-        public CommonFixture CommonFixture { get; } = new CommonFixture();
-        public StoreRepositoryMock StoreRepositoryMock { get; }
+        private Fixture _fixture;
+        private readonly CommonFixture _commonFixture = new();
+        private readonly StoreRepositoryMock _storeRepositoryMock;
+        private readonly StoreSectionFactoryMock _sectionFactoryMock;
 
-        public List<IStoreItemAvailability> Availabilities { get; private set; }
-        public List<IStore> Stores { get; private set; }
+        private List<IStore> _stores;
 
         public LocalFixture()
         {
-            Fixture = CommonFixture.GetNewFixture();
+            _fixture = _commonFixture.GetNewFixture();
 
-            StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
+            _storeRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
+            _sectionFactoryMock = new StoreSectionFactoryMock(MockBehavior.Strict);
         }
+
+        public List<IStoreItemAvailability> Availabilities { get; private set; }
 
         public AvailabilityValidationService CreateSut()
         {
-            return new AvailabilityValidationService(StoreRepositoryMock.Object);
+            return new AvailabilityValidationService(_storeRepositoryMock.Object);
         }
 
         public void SetupAvailabilitiesWithDuplicatedStoreIds()
@@ -147,29 +152,30 @@ public class AvailabilityValidationServiceTests
 
         public void SetupStores()
         {
-            Stores = new List<IStore>();
+            _stores = new List<IStore>();
 
             foreach (var availability in Availabilities)
             {
                 var section = new StoreSectionBuilder().WithId(availability.DefaultSectionId).Create();
+                var sections = new StoreSections(section.ToMonoList(), _sectionFactoryMock.Object);
                 var store = StoreMother.Initial()
-                    .WithSection(section)
+                    .WithSections(sections)
                     .WithId(availability.StoreId)
                     .Create();
-                Stores.Add(store);
+                _stores.Add(store);
             }
         }
 
         public void SetupStoresWithInvalidSectionIds()
         {
-            Stores = new List<IStore>();
+            _stores = new List<IStore>();
 
             foreach (var availability in Availabilities)
             {
                 var store = StoreMother.Initial()
                     .WithId(availability.StoreId)
                     .Create();
-                Stores.Add(store);
+                _stores.Add(store);
             }
         }
 
@@ -178,13 +184,13 @@ public class AvailabilityValidationServiceTests
         public void SetupFindingStores()
         {
             var storeIds = Availabilities.Select(av => av.StoreId);
-            StoreRepositoryMock.SetupFindByAsync(storeIds, Stores);
+            _storeRepositoryMock.SetupFindByAsync(storeIds, _stores);
         }
 
         public void SetupFindingNoStores()
         {
             var storeIds = Availabilities.Select(av => av.StoreId);
-            StoreRepositoryMock.SetupFindByAsync(storeIds, Enumerable.Empty<IStore>());
+            _storeRepositoryMock.SetupFindByAsync(storeIds, Enumerable.Empty<IStore>());
         }
 
         #endregion Mock Setup

@@ -97,7 +97,7 @@ public class StoreItemBuilder : DomainTestBuilderBase<StoreItem>
         return WithTemporaryId(null);
     }
 
-    public StoreItemBuilder WithTypes(IEnumerable<IItemType> itemTypes)
+    public StoreItemBuilder WithTypes(ItemTypes itemTypes)
     {
         FillConstructorWith("itemTypes", itemTypes);
         return this;
