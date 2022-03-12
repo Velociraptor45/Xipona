@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ItemUpdateWithTypes;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItems;
@@ -22,7 +23,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.DeleteItem;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.UpdateItem;

@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemCreations;
@@ -11,11 +12,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemCr
 {
     public class ItemCreationServiceTests
     {
-        public class ItemCreationService_CreateAsyncTests
+        public class CreateAsyncTests
         {
             private readonly CreateAsyncFixture _fixture;
 
-            public ItemCreationService_CreateAsyncTests()
+            public CreateAsyncTests()
             {
                 _fixture = new CreateAsyncFixture();
             }
@@ -341,16 +342,170 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemCr
             }
         }
 
+        public class CreateTemporaryAsyncTests
+        {
+            private readonly CreateTemporaryAsyncFixture _fixture;
+
+            public CreateTemporaryAsyncTests()
+            {
+                _fixture = new CreateTemporaryAsyncFixture();
+            }
+
+            [Fact]
+            public async Task CreateTemporaryAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> func = async () => await sut.CreateTemporaryAsync(null);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    await func.Should().ThrowAsync<ArgumentNullException>().WithMessage("*creation*");
+                }
+            }
+
+            #region WithValidData
+
+            [Fact]
+            public async Task CreateTemporaryAsync_WithValidData_ShouldNotThrow()
+            {
+                // Arrange
+                var sut = _fixture.CreateSut();
+                _fixture.SetupWithValidData();
+
+                // Act
+                var func = async () => await sut.CreateTemporaryAsync(_fixture.TemporaryItemCreation);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    await func.Should().NotThrowAsync();
+                }
+            }
+
+            [Fact]
+            public async Task CreateTemporaryAsync_WithValidData_ShouldValidateAvailabilities()
+            {
+                // Arrange
+                var sut = _fixture.CreateSut();
+                _fixture.SetupWithValidData();
+
+                // Act
+                await sut.CreateTemporaryAsync(_fixture.TemporaryItemCreation);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyValidatingAvailabilities();
+                }
+            }
+
+            [Fact]
+            public async Task CreateTemporaryAsync_WithValidData_ShouldStoreItem()
+            {
+                // Arrange
+                var sut = _fixture.CreateSut();
+                _fixture.SetupWithValidData();
+
+                // Act
+                await sut.CreateTemporaryAsync(_fixture.TemporaryItemCreation);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyStoringItem();
+                }
+            }
+
+            #endregion WithValidData
+
+            private sealed class CreateTemporaryAsyncFixture : LocalFixture
+            {
+                private IStoreItem _storeItem;
+                private IStoreItemAvailability _availability;
+                public TemporaryItemCreation TemporaryItemCreation { get; private set; }
+
+                public void SetupCommand()
+                {
+                    Fixture.ConstructorArgumentFor<TemporaryItemCreation, IStoreItemAvailability>("availability",
+                        _availability);
+                    TemporaryItemCreation = Fixture.Create<TemporaryItemCreation>();
+                }
+
+                public void SetupStoreItem()
+                {
+                    _storeItem = StoreItemMother.Initial().Create();
+                }
+
+                public void SetupRandomAvailability()
+                {
+                    _availability = CommonFixture.ChooseRandom(_storeItem.Availabilities);
+                }
+
+                #region Mock Setup
+
+                public void SetupCreatingStoreItem()
+                {
+                    StoreItemFactoryMock.SetupCreate(TemporaryItemCreation, _storeItem);
+                }
+
+                public void SetupValidatingAvailabilities()
+                {
+                    ValidatorMock.SetupValidateAsync(_availability.ToMonoList());
+                }
+
+                public void SetupStoringItem()
+                {
+                    ItemRepositoryMock.SetupStoreAsync(_storeItem, _storeItem);
+                }
+
+                #endregion Mock Setup
+
+                #region Verify
+
+                public void VerifyValidatingAvailabilities()
+                {
+                    ValidatorMock.VerifyValidateAsync(TemporaryItemCreation.Availability.ToMonoList(), Times.Once);
+                }
+
+                public void VerifyStoringItem()
+                {
+                    ItemRepositoryMock.VerifyStoreAsyncOnce(_storeItem);
+                }
+
+                #endregion Verify
+
+                #region Aggregates
+
+                public void SetupWithValidData()
+                {
+                    SetupStoreItem();
+                    SetupRandomAvailability();
+                    SetupCommand();
+                    SetupCreatingStoreItem();
+                    SetupStoringItem();
+
+                    SetupValidatingAvailabilities();
+                }
+
+                #endregion Aggregates
+            }
+        }
+
         public abstract class LocalFixture
         {
             protected Fixture Fixture;
+            protected CommonFixture CommonFixture = new();
             protected ItemRepositoryMock ItemRepositoryMock;
             protected StoreItemFactoryMock StoreItemFactoryMock;
             protected ValidatorMock ValidatorMock;
 
             protected LocalFixture()
             {
-                Fixture = new CommonFixture().GetNewFixture();
+                Fixture = CommonFixture.GetNewFixture();
 
                 ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
                 StoreItemFactoryMock = new StoreItemFactoryMock(MockBehavior.Strict);

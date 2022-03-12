@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
@@ -56,5 +57,17 @@ public class ItemCreationService : IItemCreationService
             throw new ArgumentNullException(nameof(item));
 
         await _itemRepository.StoreAsync(item, _cancellationToken);
+    }
+
+    public async Task CreateTemporaryAsync(TemporaryItemCreation creation)
+    {
+        ArgumentNullException.ThrowIfNull(creation);
+
+        var availability = creation.Availability;
+        await _validator.ValidateAsync(availability.ToMonoList());
+
+        var storeItem = _storeItemFactory.Create(creation);
+
+        await _itemRepository.StoreAsync(storeItem, _cancellationToken);
     }
 }
