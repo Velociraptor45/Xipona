@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.CreateItem;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemCreations;
 
 public class ItemCreation
 {

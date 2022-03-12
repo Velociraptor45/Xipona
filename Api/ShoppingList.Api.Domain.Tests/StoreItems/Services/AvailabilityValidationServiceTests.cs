@@ -4,7 +4,6 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
@@ -112,8 +111,6 @@ public class AvailabilityValidationServiceTests
 
     private class LocalFixture
     {
-        private Fixture _fixture;
-        private readonly CommonFixture _commonFixture = new();
         private readonly StoreRepositoryMock _storeRepositoryMock;
         private readonly StoreSectionFactoryMock _sectionFactoryMock;
 
@@ -121,8 +118,6 @@ public class AvailabilityValidationServiceTests
 
         public LocalFixture()
         {
-            _fixture = _commonFixture.GetNewFixture();
-
             _storeRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
             _sectionFactoryMock = new StoreSectionFactoryMock(MockBehavior.Strict);
         }
