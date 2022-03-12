@@ -1,6 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
+﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.CreateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreCreations;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Stores
 {

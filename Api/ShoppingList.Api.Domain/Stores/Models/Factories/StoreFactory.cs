@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.CreateStore;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreCreations;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 

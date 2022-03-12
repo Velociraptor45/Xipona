@@ -19,14 +19,15 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.Store
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemCreations;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemDeletions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModifications;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemQueries;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdates;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.TemporaryItems;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreCreations;
 using System.Reflection;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemQueries;
 
 namespace ProjectHermes.ShoppingList.Api.Domain;
 
@@ -117,6 +118,17 @@ public static class ServiceCollectionExtensions
             var conversionService = provider.GetRequiredService<IStoreItemReadModelConversionService>();
             return cancellationToken =>
                 new ItemQueryService(itemRepository, conversionService, cancellationToken);
+        });
+
+        services.AddTransient<Func<CancellationToken, IStoreCreationService>>(provider =>
+        {
+            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            var storeFactory = provider.GetRequiredService<IStoreFactory>();
+            var shoppingListFactory = provider.GetRequiredService<IShoppingListFactory>();
+            var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
+            return cancellationToken =>
+                new StoreCreationService(storeRepository, storeFactory, shoppingListFactory, shoppingListRepository,
+                    cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IItemModificationService>>(provider =>
