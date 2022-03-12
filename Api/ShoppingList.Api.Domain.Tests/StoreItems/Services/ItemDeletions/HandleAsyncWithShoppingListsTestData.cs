@@ -2,7 +2,7 @@
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Commands.DeleteItem;
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemDeletions;
 
 public class HandleAsyncWithShoppingListsTestData : IEnumerable<object[]>
 {

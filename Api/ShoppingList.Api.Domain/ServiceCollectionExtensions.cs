@@ -17,6 +17,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemSearchReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.StoreItemReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemCreations;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemDeletions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModifications;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdates;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
@@ -69,7 +70,7 @@ public static class ServiceCollectionExtensions
             var shoppingListUpdateService = provider.GetRequiredService<IShoppingListUpdateService>();
             var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
 
-            return (cancellationToken) => new ItemUpdateService(itemRepository, validatorDelegate, itemTypeFactory,
+            return cancellationToken => new ItemUpdateService(itemRepository, validatorDelegate, itemTypeFactory,
                 storeItemFactory, shoppingListUpdateService, cancellationToken);
         });
 
@@ -80,7 +81,7 @@ public static class ServiceCollectionExtensions
             var storeRepository = provider.GetRequiredService<IStoreRepository>();
             var itemTypeReadRepository = provider.GetRequiredService<IItemTypeReadRepository>();
             var conversionService = provider.GetRequiredService<IItemSearchReadModelConversionService>();
-            return (cancellationToken) => new ItemSearchService(itemRepository, shoppingListRepository,
+            return cancellationToken => new ItemSearchService(itemRepository, shoppingListRepository,
                 storeRepository, itemTypeReadRepository, conversionService, cancellationToken);
         });
 
@@ -89,7 +90,7 @@ public static class ServiceCollectionExtensions
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
             var itemFactory = provider.GetRequiredService<IStoreItemFactory>();
-            return (cancellationToken) =>
+            return cancellationToken =>
                 new ItemCreationService(itemRepository, validatorDelegate, itemFactory, cancellationToken);
         });
 
@@ -97,8 +98,16 @@ public static class ServiceCollectionExtensions
         {
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
-            return (cancellationToken) =>
+            return cancellationToken =>
                 new TemporaryItemService(itemRepository, validatorDelegate, cancellationToken);
+        });
+
+        services.AddTransient<Func<CancellationToken, IItemDeletionService>>(provider =>
+        {
+            var itemRepository = provider.GetRequiredService<IItemRepository>();
+            var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
+            return cancellationToken =>
+                new ItemDeletionService(itemRepository, shoppingListRepository, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IItemModificationService>>(provider =>
@@ -106,7 +115,7 @@ public static class ServiceCollectionExtensions
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
             var validatorDelegat = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
-            return (cancellationToken) => new ItemModificationService(itemRepository, validatorDelegat,
+            return cancellationToken => new ItemModificationService(itemRepository, validatorDelegat,
                 shoppingListRepository, cancellationToken);
         });
 
@@ -115,7 +124,7 @@ public static class ServiceCollectionExtensions
             var availabilityValidationService = provider.GetRequiredService<IAvailabilityValidationService>();
             var itemCategoryValidationService = provider.GetRequiredService<IItemCategoryValidationService>();
             var manufacturerValidationService = provider.GetRequiredService<IManufacturerValidationService>();
-            return (cancellationToken) => new Validator(availabilityValidationService,
+            return cancellationToken => new Validator(availabilityValidationService,
                 itemCategoryValidationService, manufacturerValidationService, cancellationToken);
         });
     }

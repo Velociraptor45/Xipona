@@ -21,5 +21,9 @@
       </AssemblyAttribute>
   </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="StoreItems\Commands\" />
+    </ItemGroup>
+
   
 </Project>
