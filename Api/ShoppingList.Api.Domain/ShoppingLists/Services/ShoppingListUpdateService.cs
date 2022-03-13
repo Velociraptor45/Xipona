@@ -47,7 +47,7 @@ public class ShoppingListUpdateService : IShoppingListUpdateService
             if (newItem.IsAvailableInStore(list.StoreId))
             {
                 var sectionId = newItem.GetDefaultSectionIdForStore(list.StoreId);
-                await _addItemToShoppingListService.AddItemToShoppingList(list, newItem.Id, sectionId,
+                await _addItemToShoppingListService.AddItemToShoppingListAsync(list, newItem.Id, sectionId,
                     oldListItem.Quantity, cancellationToken);
 
                 if (oldListItem.IsInBasket)

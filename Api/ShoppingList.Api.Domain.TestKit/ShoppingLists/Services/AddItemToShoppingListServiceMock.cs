@@ -14,7 +14,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
     public void SetupAddItemToShoppingList(IShoppingList shoppingList,
         ItemId itemId, SectionId? sectionId, float quantity)
     {
-        Setup(m => m.AddItemToShoppingList(
+        Setup(m => m.AddItemToShoppingListAsync(
                 shoppingList,
                 itemId,
                 sectionId,
@@ -26,7 +26,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
     public void SetupAddItemToShoppingList(IShoppingList shoppingList,
         TemporaryItemId temporaryItemId, SectionId? sectionId, float quantity)
     {
-        Setup(m => m.AddItemToShoppingList(
+        Setup(m => m.AddItemToShoppingListAsync(
                 shoppingList,
                 temporaryItemId,
                 sectionId,
@@ -64,7 +64,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
     public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
         float quantity)
     {
-        Verify(i => i.AddItemToShoppingList(
+        Verify(i => i.AddItemToShoppingListAsync(
                 shoppingList,
                 itemId,
                 sectionId,
@@ -76,7 +76,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
     public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
         SectionId? sectionId, float quantity)
     {
-        Verify(i => i.AddItemToShoppingList(
+        Verify(i => i.AddItemToShoppingListAsync(
                 shoppingList,
                 temporaryItemId,
                 sectionId,
