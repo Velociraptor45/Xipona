@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.ShoppingListExchanges;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
@@ -13,7 +13,7 @@ public class ItemUpdateService : IItemUpdateService
     private readonly IItemRepository _itemRepository;
     private readonly IItemTypeFactory _itemTypeFactory;
     private readonly IStoreItemFactory _storeItemFactory;
-    private readonly IShoppingListUpdateService _shoppingListUpdateService;
+    private readonly IShoppingListExchangeService _shoppingListUpdateService;
     private readonly IValidator _validator;
     private readonly CancellationToken _cancellationToken;
 
@@ -22,7 +22,7 @@ public class ItemUpdateService : IItemUpdateService
         Func<CancellationToken, IValidator> validatorDelegate,
         IItemTypeFactory itemTypeFactory,
         IStoreItemFactory storeItemFactory,
-        IShoppingListUpdateService shoppingListUpdateService,
+        IShoppingListExchangeService shoppingListUpdateService,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;

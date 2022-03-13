@@ -7,13 +7,13 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands
 public class UpdateItemWithTypesCommandHandler : ICommandHandler<UpdateItemWithTypesCommand, bool>
 {
     private readonly ITransactionGenerator _transactionGenerator;
-    private readonly Func<CancellationToken, IItemUpdateService> _itemUpdateServiceDelegat;
+    private readonly Func<CancellationToken, IItemUpdateService> _itemExchangeServiceDelegat;
 
     public UpdateItemWithTypesCommandHandler(ITransactionGenerator transactionGenerator,
-        Func<CancellationToken, IItemUpdateService> itemUpdateServiceDelegat)
+        Func<CancellationToken, IItemUpdateService> itemExchangeServiceDelegate)
     {
         _transactionGenerator = transactionGenerator;
-        _itemUpdateServiceDelegat = itemUpdateServiceDelegat;
+        _itemExchangeServiceDelegat = itemExchangeServiceDelegate;
     }
 
     public async Task<bool> HandleAsync(UpdateItemWithTypesCommand command, CancellationToken cancellationToken)
@@ -23,7 +23,7 @@ public class UpdateItemWithTypesCommandHandler : ICommandHandler<UpdateItemWithT
 
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
-        var service = _itemUpdateServiceDelegat(cancellationToken);
+        var service = _itemExchangeServiceDelegat(cancellationToken);
         await service.UpdateItemWithTypesAsync(command.ItemWithTypesUpdate);
 
         await transaction.CommitAsync(cancellationToken);

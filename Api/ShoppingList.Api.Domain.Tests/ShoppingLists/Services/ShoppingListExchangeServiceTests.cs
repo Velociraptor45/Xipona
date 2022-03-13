@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.ShoppingListExchanges;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
@@ -15,7 +15,7 @@ using ShoppingList.Api.Domain.TestKit.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services;
 
-public class ShoppingListUpdateServiceTests
+public class ShoppingListExchangeServiceTests
 {
     public class ExchangeItemAsyncTestsWithoutTypes
     {
@@ -703,7 +703,7 @@ public class ShoppingListUpdateServiceTests
         {
             private readonly ItemTypeFactoryMock _itemTypeFactoryMock;
 
-            public ExchangeItemAsyncWithTypesFixture() : base()
+            public ExchangeItemAsyncWithTypesFixture()
             {
                 _itemTypeFactoryMock = new ItemTypeFactoryMock(MockBehavior.Strict);
             }
@@ -934,9 +934,9 @@ public class ShoppingListUpdateServiceTests
             AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(MockBehavior.Strict);
         }
 
-        public ShoppingListUpdateService CreateSut()
+        public ShoppingListExchangeService CreateSut()
         {
-            return new ShoppingListUpdateService(
+            return new ShoppingListExchangeService(
                 ShoppingListRepositoryMock.Object,
                 AddItemToShoppingListServiceMock.Object);
         }

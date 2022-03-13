@@ -4,14 +4,14 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.ShoppingListExchanges;
 
-public class ShoppingListUpdateService : IShoppingListUpdateService
+public class ShoppingListExchangeService : IShoppingListExchangeService
 {
     private readonly IShoppingListRepository _shoppingListRepository;
     private readonly IAddItemToShoppingListService _addItemToShoppingListService;
 
-    public ShoppingListUpdateService(IShoppingListRepository shoppingListRepository,
+    public ShoppingListExchangeService(IShoppingListRepository shoppingListRepository,
         IAddItemToShoppingListService addItemToShoppingListService)
     {
         _shoppingListRepository = shoppingListRepository;

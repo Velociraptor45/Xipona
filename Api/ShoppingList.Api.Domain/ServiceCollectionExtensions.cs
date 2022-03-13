@@ -11,6 +11,8 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.ShoppingListExchanges;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.ShoppingListModifications;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
@@ -56,7 +58,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IManufacturerValidationService, ManufacturerValidationService>();
         services.AddTransient<IItemCategoryValidationService, ItemCategoryValidationService>();
 
-        services.AddTransient<IShoppingListUpdateService, ShoppingListUpdateService>();
+        services.AddTransient<IShoppingListExchangeService, ShoppingListExchangeService>();
         services.AddTransient<IAddItemToShoppingListService, AddItemToShoppingListService>();
 
         services.AddTransient<IShoppingListReadModelConversionService, ShoppingListReadModelConversionService>();
@@ -71,7 +73,7 @@ public static class ServiceCollectionExtensions
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             var itemTypeFactory = provider.GetRequiredService<IItemTypeFactory>();
             var storeItemFactory = provider.GetRequiredService<IStoreItemFactory>();
-            var shoppingListUpdateService = provider.GetRequiredService<IShoppingListUpdateService>();
+            var shoppingListUpdateService = provider.GetRequiredService<IShoppingListExchangeService>();
             var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
 
             return cancellationToken => new ItemUpdateService(itemRepository, validatorDelegate, itemTypeFactory,
@@ -144,6 +146,14 @@ public static class ServiceCollectionExtensions
             var storeRepository = provider.GetRequiredService<IStoreRepository>();
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             return cancellationToken => new StoreQueryService(storeRepository, itemRepository, cancellationToken);
+        });
+
+        services.AddTransient<Func<CancellationToken, IShoppingListModificationService>>(provider =>
+        {
+            var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
+            var itemRepository = provider.GetRequiredService<IItemRepository>();
+            return cancellationToken =>
+                new ShoppingListModificationService(shoppingListRepository, itemRepository, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IItemModificationService>>(provider =>
