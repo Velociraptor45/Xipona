@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.CreateStore;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 

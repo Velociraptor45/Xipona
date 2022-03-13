@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreUpdate;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.UpdateStore;
 
 public class UpdateStoreCommand : ICommand<bool>
 {
