@@ -822,6 +822,238 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Sho
             }
         }
 
+        public class PutItemInBasketAsyncTests
+        {
+            private readonly PutItemInBasketAsyncFixture _fixture;
+
+            public PutItemInBasketAsyncTests()
+            {
+                _fixture = new PutItemInBasketAsyncFixture();
+            }
+
+            [Fact]
+            public async Task PutItemInBasketAsync_WithOfflineTolerantItemIdNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                var handler = _fixture.CreateSut();
+
+                // Act
+                Func<Task> function = async () => await handler.PutItemInBasketAsync(_fixture.ShoppingListId, null,
+                    _fixture.ItemTypeId);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    await function.Should().ThrowAsync<ArgumentNullException>();
+                }
+            }
+
+            [Fact]
+            public async Task PutItemInBasketAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
+            {
+                // Arrange
+                var handler = _fixture.CreateSut();
+                _fixture.SetupShoppingListId();
+                _fixture.SetupTemporaryItemId();
+                _fixture.SetupItemTypeIdNull();
+
+                _fixture.SetupShoppingListRepositoryFindingNoList();
+
+                // Act
+                Func<Task> function = async () => await handler.PutItemInBasketAsync(_fixture.ShoppingListId,
+                    _fixture.OfflineTolerantItemId, _fixture.ItemTypeId);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    (await function.Should().ThrowAsync<DomainException>())
+                        .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ShoppingListNotFound);
+                }
+            }
+
+            [Fact]
+            public async Task PutItemInBasketAsync_WithInvalidOfflineId_ShouldThrowDomainException()
+            {
+                // Arrange
+                var handler = _fixture.CreateSut();
+                _fixture.SetupShoppingListId();
+                _fixture.SetupTemporaryItemId();
+                _fixture.SetupItemTypeIdNull();
+
+                _fixture.SetupShoppingListMock();
+
+                _fixture.SetupShoppingListRepositoryFindBy();
+                _fixture.SetupItemRepositoryFindingNoItem();
+
+                // Act
+                Func<Task> function = async () => await handler.PutItemInBasketAsync(_fixture.ShoppingListId,
+                    _fixture.OfflineTolerantItemId, _fixture.ItemTypeId);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    (await function.Should().ThrowAsync<DomainException>())
+                        .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound);
+                }
+            }
+
+            [Fact]
+            public async Task PutItemInBasketAsync_WithActualId_ShouldPutItemInBasket()
+            {
+                // Arrange
+                var handler = _fixture.CreateSut();
+                _fixture.SetupShoppingListId();
+                _fixture.SetupActualItemId();
+                _fixture.SetupItemTypeId();
+
+                _fixture.SetupShoppingListMock();
+                _fixture.SetupShoppingListRepositoryFindBy();
+                _fixture.SetupStoringShoppingList();
+
+                // Act
+                await handler.PutItemInBasketAsync(_fixture.ShoppingListId, _fixture.OfflineTolerantItemId,
+                    _fixture.ItemTypeId);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyPutItemInBasketWithOfflineIdOnce();
+                    _fixture.VerifyStoreAsync();
+                }
+            }
+
+            [Fact]
+            public async Task PutItemInBasketAsync_WithValidOfflineId_ShouldPutItemInBasket()
+            {
+                // Arrange
+                var handler = _fixture.CreateSut();
+                _fixture.SetupShoppingListId();
+                _fixture.SetupTemporaryItemId();
+                _fixture.SetupItemTypeIdNull();
+
+                _fixture.SetupStoreItem();
+                _fixture.SetupShoppingListMock();
+
+                _fixture.SetupShoppingListRepositoryFindBy();
+                _fixture.SetupItemRepositoryFindBy();
+                _fixture.SetupStoringShoppingList();
+
+                // Act
+                await handler.PutItemInBasketAsync(_fixture.ShoppingListId, _fixture.OfflineTolerantItemId,
+                    _fixture.ItemTypeId);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyItemRepositoryFindByWithTemporaryItemId();
+                    _fixture.VerifyPutItemInBasketOnce();
+                    _fixture.VerifyStoreAsync();
+                }
+            }
+
+            private sealed class PutItemInBasketAsyncFixture : LocalFixture
+            {
+                private ShoppingListMock _shoppingListMock;
+                private IStoreItem _storeItem;
+
+                public ShoppingListId ShoppingListId { get; private set; }
+                public ItemTypeId? ItemTypeId { get; private set; }
+                public OfflineTolerantItemId OfflineTolerantItemId { get; private set; }
+
+                public void SetupActualItemId()
+                {
+                    OfflineTolerantItemId = OfflineTolerantItemId.FromActualId(Guid.NewGuid());
+                }
+
+                public void SetupTemporaryItemId()
+                {
+                    OfflineTolerantItemId = OfflineTolerantItemId.FromOfflineId(Guid.NewGuid());
+                }
+
+                public void SetupShoppingListId()
+                {
+                    ShoppingListId = ShoppingListId.New;
+                }
+
+                public void SetupItemTypeId()
+                {
+                    ItemTypeId = Domain.StoreItems.Models.ItemTypeId.New;
+                }
+
+                public void SetupItemTypeIdNull()
+                {
+                    ItemTypeId = null;
+                }
+
+                public void SetupShoppingListMock()
+                {
+                    _shoppingListMock = new ShoppingListMock(ShoppingListMother.Sections(2).Create());
+                }
+
+                public void SetupStoreItem()
+                {
+                    _storeItem = StoreItemMother.Initial().Create();
+                }
+
+                #region Fixture Setup
+
+                public void SetupShoppingListRepositoryFindBy()
+                {
+                    ShoppingListRepositoryMock.SetupFindByAsync(ShoppingListId, _shoppingListMock.Object);
+                }
+
+                public void SetupShoppingListRepositoryFindingNoList()
+                {
+                    ShoppingListRepositoryMock.SetupFindByAsync(ShoppingListId, null);
+                }
+
+                public void SetupStoringShoppingList()
+                {
+                    ShoppingListRepositoryMock.SetupStoreAsync(_shoppingListMock.Object);
+                }
+
+                public void SetupItemRepositoryFindBy()
+                {
+                    var itemId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
+                    ItemRepositoryMock.SetupFindByAsync(itemId, _storeItem);
+                }
+
+                public void SetupItemRepositoryFindingNoItem()
+                {
+                    var itemId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
+                    ItemRepositoryMock.SetupFindByAsync(itemId, null);
+                }
+
+                #endregion Fixture Setup
+
+                #region Verify
+
+                public void VerifyStoreAsync()
+                {
+                    ShoppingListRepositoryMock.VerifyStoreAsyncOnce(_shoppingListMock.Object);
+                }
+
+                public void VerifyPutItemInBasketOnce()
+                {
+                    _shoppingListMock.VerifyPutItemInBasket(_storeItem.Id, ItemTypeId, Times.Once);
+                }
+
+                public void VerifyPutItemInBasketWithOfflineIdOnce()
+                {
+                    _shoppingListMock.VerifyPutItemInBasket(new ItemId(OfflineTolerantItemId.ActualId.Value),
+                        ItemTypeId, Times.Once);
+                }
+
+                public void VerifyItemRepositoryFindByWithTemporaryItemId()
+                {
+                    var itemId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
+                    ItemRepositoryMock.VerifyFindByAsync(itemId);
+                }
+
+                #endregion Verify
+            }
+        }
+
         private abstract class LocalFixture
         {
             protected readonly Fixture Fixture;

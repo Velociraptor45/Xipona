@@ -137,5 +137,40 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.ShoppingL
 
             await _shoppingListRepository.StoreAsync(list, _cancellationToken);
         }
+
+        public async Task PutItemInBasketAsync(ShoppingListId shoppingListId,
+            OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId)
+        {
+            ArgumentNullException.ThrowIfNull(offlineTolerantItemId);
+
+            var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
+            if (shoppingList == null)
+                throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
+
+            ItemId itemId;
+            if (offlineTolerantItemId.IsActualId)
+            {
+                itemId = new ItemId(offlineTolerantItemId.ActualId!.Value);
+            }
+            else
+            {
+                if (itemTypeId != null)
+                    throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
+
+                var temporaryId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
+                IStoreItem? item = await _itemRepository.FindByAsync(temporaryId, _cancellationToken);
+
+                if (item == null)
+                    throw new DomainException(new ItemNotFoundReason(temporaryId));
+
+                itemId = item.Id;
+            }
+
+            shoppingList.PutItemInBasket(itemId, itemTypeId);
+
+            _cancellationToken.ThrowIfCancellationRequested();
+
+            await _shoppingListRepository.StoreAsync(shoppingList, _cancellationToken);
+        }
     }
 }
