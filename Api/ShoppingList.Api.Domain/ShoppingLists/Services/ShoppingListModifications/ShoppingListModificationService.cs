@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 
@@ -171,6 +171,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.ShoppingL
             _cancellationToken.ThrowIfCancellationRequested();
 
             await _shoppingListRepository.StoreAsync(shoppingList, _cancellationToken);
+        }
+
+        public async Task FinishAsync(ShoppingListId shoppingListId, DateTime completionDate)
+        {
+            var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
+            if (shoppingList == null)
+                throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
+
+            _cancellationToken.ThrowIfCancellationRequested();
+
+            IShoppingList nextShoppingList = shoppingList.Finish(completionDate);
+
+            _cancellationToken.ThrowIfCancellationRequested();
+
+            await _shoppingListRepository.StoreAsync(shoppingList, _cancellationToken);
+            await _shoppingListRepository.StoreAsync(nextShoppingList, _cancellationToken);
         }
     }
 }

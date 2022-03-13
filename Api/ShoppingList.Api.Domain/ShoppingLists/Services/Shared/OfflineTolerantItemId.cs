@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.Shared;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 
 public class OfflineTolerantItemId
 {

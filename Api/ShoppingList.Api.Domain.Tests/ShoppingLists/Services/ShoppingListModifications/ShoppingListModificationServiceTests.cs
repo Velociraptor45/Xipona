@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.ShoppingListModifications;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
@@ -1051,6 +1051,137 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Sho
                 }
 
                 #endregion Verify
+            }
+        }
+
+        public class FinishAsyncTests
+        {
+            private readonly FinishAsyncFixture _fixture;
+
+            public FinishAsyncTests()
+            {
+                _fixture = new FinishAsyncFixture();
+            }
+
+            [Fact]
+            public async Task HandleAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
+            {
+                // Arrange
+                _fixture.SetupShoppingListId();
+                _fixture.SetupCompletionDate();
+                _fixture.SetupNotFindingShoppingList();
+
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> function = async () =>
+                    await sut.FinishAsync(_fixture.ShoppingListId, _fixture.CompletionDate);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    (await function.Should().ThrowAsync<DomainException>())
+                        .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ShoppingListNotFound);
+                }
+            }
+
+            [Fact]
+            public async Task HandleAsync_WithValidData_ShouldFinishShoppingList()
+            {
+                // Arrange
+                _fixture.SetupShoppingListId();
+                _fixture.SetupCompletionDate();
+                _fixture.SetupShoppingListMock();
+                _fixture.SetupCreatedShoppingListMock();
+                _fixture.SetupFindingShoppingList();
+                _fixture.SetupFinishingShoppingList();
+                _fixture.SetupStoringShoppingListMock();
+                _fixture.SetupStoringCreatedShoppingListMock();
+
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.FinishAsync(_fixture.ShoppingListId, _fixture.CompletionDate);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyFinishingShoppingList();
+                    _fixture.VerifyStoringShoppingList();
+                    _fixture.VerifyStoringCreatedShoppingList();
+                }
+            }
+
+            private sealed class FinishAsyncFixture : LocalFixture
+            {
+                private ShoppingListMock _shoppingListMock;
+                private ShoppingListMock _createdShoppingListMock;
+
+                public ShoppingListId ShoppingListId { get; private set; }
+
+                public DateTime CompletionDate { get; private set; }
+
+                public void SetupShoppingListId()
+                {
+                    ShoppingListId = ShoppingListId.New;
+                }
+
+                public void SetupCompletionDate()
+                {
+                    CompletionDate = DateTime.UtcNow;
+                }
+
+                public void SetupShoppingListMock()
+                {
+                    _shoppingListMock =
+                        new ShoppingListMock(ShoppingListMother.Initial().Create(), MockBehavior.Strict);
+                }
+
+                public void SetupCreatedShoppingListMock()
+                {
+                    _createdShoppingListMock =
+                        new ShoppingListMock(ShoppingListMother.Initial().Create(), MockBehavior.Strict);
+                }
+
+                public void SetupFindingShoppingList()
+                {
+                    ShoppingListRepositoryMock.SetupFindByAsync(ShoppingListId, _shoppingListMock.Object);
+                }
+
+                public void SetupNotFindingShoppingList()
+                {
+                    ShoppingListRepositoryMock.SetupFindByAsync(ShoppingListId, null);
+                }
+
+                public void SetupFinishingShoppingList()
+                {
+                    _shoppingListMock.SetupFinish(CompletionDate, _createdShoppingListMock.Object);
+                }
+
+                public void SetupStoringShoppingListMock()
+                {
+                    ShoppingListRepositoryMock.SetupStoreAsync(_shoppingListMock.Object);
+                }
+
+                public void SetupStoringCreatedShoppingListMock()
+                {
+                    ShoppingListRepositoryMock.SetupStoreAsync(_createdShoppingListMock.Object);
+                }
+
+                public void VerifyFinishingShoppingList()
+                {
+                    _shoppingListMock.VerifyFinish(CompletionDate, Times.Once);
+                }
+
+                public void VerifyStoringShoppingList()
+                {
+                    ShoppingListRepositoryMock.VerifyStoreAsync(_shoppingListMock.Object, Times.Once);
+                }
+
+                public void VerifyStoringCreatedShoppingList()
+                {
+                    ShoppingListRepositoryMock.VerifyStoreAsync(_createdShoppingListMock.Object, Times.Once);
+                }
             }
         }
 
