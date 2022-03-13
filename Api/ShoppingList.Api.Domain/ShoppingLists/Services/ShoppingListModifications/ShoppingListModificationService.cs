@@ -58,5 +58,51 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.ShoppingL
 
             await _shoppingListRepository.StoreAsync(list, _cancellationToken);
         }
+
+        public async Task RemoveItemAsync(ShoppingListId shoppingListId, OfflineTolerantItemId offlineTolerantItemId,
+            ItemTypeId? itemTypeId)
+        {
+            ArgumentNullException.ThrowIfNull(offlineTolerantItemId);
+
+            var list = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
+            if (list == null)
+                throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
+
+            _cancellationToken.ThrowIfCancellationRequested();
+
+            IStoreItem? item;
+            if (offlineTolerantItemId.IsActualId)
+            {
+                ItemId itemId = new ItemId(offlineTolerantItemId.ActualId!.Value);
+
+                item = await _itemRepository.FindByAsync(itemId, _cancellationToken);
+                if (item == null)
+                    throw new DomainException(new ItemNotFoundReason(itemId));
+            }
+            else
+            {
+                if (itemTypeId != null)
+                    throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
+
+                TemporaryItemId itemId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
+
+                item = await _itemRepository.FindByAsync(itemId, _cancellationToken);
+                if (item == null)
+                    throw new DomainException(new ItemNotFoundReason(itemId));
+            }
+
+            _cancellationToken.ThrowIfCancellationRequested();
+
+            list.RemoveItem(item.Id, itemTypeId);
+            if (item.IsTemporary)
+            {
+                item.Delete();
+                await _itemRepository.StoreAsync(item, _cancellationToken);
+            }
+
+            _cancellationToken.ThrowIfCancellationRequested();
+
+            await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+        }
     }
 }

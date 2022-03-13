@@ -8,4 +8,7 @@ public interface IShoppingListModificationService
 {
     Task ChangeItemQuantityAsync(ShoppingListId shoppingListId,
         OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId, float quantity);
+
+    Task RemoveItemAsync(ShoppingListId shoppingListId, OfflineTolerantItemId offlineTolerantItemId,
+        ItemTypeId? itemTypeId);
 }
