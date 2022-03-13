@@ -251,11 +251,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Sho
             }
         }
 
-        public class RemoveItemAsync
+        public class RemoveItemAsyncTests
         {
             private readonly RemoveItemAsyncFixture _fixture;
 
-            public RemoveItemAsync()
+            public RemoveItemAsyncTests()
             {
                 _fixture = new RemoveItemAsyncFixture();
             }
@@ -548,11 +548,285 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Sho
             }
         }
 
+        public class RemoveItemFromBasketAsyncTests
+        {
+            private readonly RemoveItemFromBasketAsyncFixture _fixture;
+
+            public RemoveItemFromBasketAsyncTests()
+            {
+                _fixture = new RemoveItemFromBasketAsyncFixture();
+            }
+
+            [Fact]
+            public async Task RemoveItemFromBasketAsync_WithOfflineTolerantItemIdNull_ShouldThrowArgumentNullException()
+            {
+                // Arrange
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> function = async () => await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId,
+                    null, _fixture.ItemTypeId);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    await function.Should().ThrowAsync<ArgumentNullException>().WithMessage("*offlineTolerantItemId*");
+                }
+            }
+
+            [Fact]
+            public async Task RemoveItemFromBasketAsync_WithInvalidOfflineId_ShouldThrowDomainException()
+            {
+                // Arrange
+                _fixture.SetupShoppingListId();
+                _fixture.SetupTemporaryItemId();
+                _fixture.SetupItemTypeIdNull();
+                _fixture.SetupShoppingListMock();
+                _fixture.SetupFindingShoppingList();
+                _fixture.SetupFindingNoItemByOfflineId();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> function = async () => await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId,
+                    _fixture.OfflineTolerantItemId, _fixture.ItemTypeId);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemNotFound);
+                }
+            }
+
+            [Fact]
+            public async Task RemoveItemFromBasketAsync_WithInvalidListId_ShouldThrowDomainException()
+            {
+                // Arrange
+                _fixture.SetupShoppingListId();
+                _fixture.SetupTemporaryItemId();
+                _fixture.SetupItemTypeIdNull();
+                _fixture.SetupFindingNoShoppingList();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                Func<Task> function = async () => await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId,
+                    _fixture.OfflineTolerantItemId, _fixture.ItemTypeId);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListNotFound);
+                }
+            }
+
+            #region WithActualId
+
+            [Fact]
+            public async Task RemoveItemFromBasketAsync_WithActualId_ShouldRemoveItemFromBasket()
+            {
+                // Arrange
+                _fixture.SetupWithActualId();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId, _fixture.OfflineTolerantItemId,
+                    _fixture.ItemTypeId);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyRemoveItemFromBasketWithCommandActualId();
+                }
+            }
+
+            [Fact]
+            public async Task RemoveItemFromBasketAsync_WithActualId_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithActualId();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId, _fixture.OfflineTolerantItemId,
+                    _fixture.ItemTypeId);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyStoringShoppingList();
+                }
+            }
+
+            #endregion WithActualId
+
+            #region WithValidOfflineId
+
+            [Fact]
+            public async Task RemoveItemFromBasketAsync_WithValidOfflineId_ShouldRemoveItemFromBasket()
+            {
+                // Arrange
+                _fixture.SetupWithValidOfflineId();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId, _fixture.OfflineTolerantItemId,
+                    _fixture.ItemTypeId);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyRemoveItemFromBasketWithStoreItemId();
+                }
+            }
+
+            [Fact]
+            public async Task RemoveItemFromBasketAsync_WithValidOfflineId_ShouldStoreShoppingList()
+            {
+                // Arrange
+                _fixture.SetupWithValidOfflineId();
+                var sut = _fixture.CreateSut();
+
+                // Act
+                await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId, _fixture.OfflineTolerantItemId,
+                    _fixture.ItemTypeId);
+
+                // Assert
+                using (new AssertionScope())
+                {
+                    _fixture.VerifyStoringShoppingList();
+                }
+            }
+
+            #endregion WithValidOfflineId
+
+            private sealed class RemoveItemFromBasketAsyncFixture : LocalFixture
+            {
+                private IStoreItem _storeItem;
+                private ShoppingListMock _shoppingListMock;
+
+                public ShoppingListId ShoppingListId { get; private set; }
+                public ItemTypeId? ItemTypeId { get; private set; }
+                public OfflineTolerantItemId OfflineTolerantItemId { get; private set; }
+
+                public void SetupActualItemId()
+                {
+                    OfflineTolerantItemId = OfflineTolerantItemId.FromActualId(Guid.NewGuid());
+                }
+
+                public void SetupTemporaryItemId()
+                {
+                    OfflineTolerantItemId = OfflineTolerantItemId.FromOfflineId(Guid.NewGuid());
+                }
+
+                public void SetupShoppingListId()
+                {
+                    ShoppingListId = ShoppingListId.New;
+                }
+
+                public void SetupItemTypeId()
+                {
+                    ItemTypeId = Domain.StoreItems.Models.ItemTypeId.New;
+                }
+
+                public void SetupItemTypeIdNull()
+                {
+                    ItemTypeId = null;
+                }
+
+                public void SetupItem()
+                {
+                    _storeItem = StoreItemMother.Initial().Create();
+                }
+
+                public void SetupShoppingListMock()
+                {
+                    _shoppingListMock = new ShoppingListMock(ShoppingListMother.Sections(3).Create());
+                }
+
+                #region Mock Setup
+
+                public void SetupFindingShoppingList()
+                {
+                    ShoppingListRepositoryMock.SetupFindByAsync(ShoppingListId, _shoppingListMock.Object);
+                }
+
+                public void SetupFindingNoShoppingList()
+                {
+                    ShoppingListRepositoryMock.SetupFindByAsync(ShoppingListId, null);
+                }
+
+                public void SetupStoringShoppingList()
+                {
+                    ShoppingListRepositoryMock.SetupStoreAsync(_shoppingListMock.Object);
+                }
+
+                public void SetupFindingItemByOfflineId()
+                {
+                    var tempId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
+                    ItemRepositoryMock.SetupFindByAsync(tempId, _storeItem);
+                }
+
+                public void SetupFindingNoItemByOfflineId()
+                {
+                    var tempId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
+                    ItemRepositoryMock.SetupFindByAsync(tempId, null);
+                }
+
+                #endregion Mock Setup
+
+                #region Verify
+
+                public void VerifyRemoveItemFromBasketWithStoreItemId()
+                {
+                    _shoppingListMock.VerifyRemoveItemFromBasketOnce(_storeItem.Id, ItemTypeId);
+                }
+
+                public void VerifyRemoveItemFromBasketWithCommandActualId()
+                {
+                    _shoppingListMock.VerifyRemoveItemFromBasketOnce(
+                        new ItemId(OfflineTolerantItemId.ActualId.Value),
+                        ItemTypeId);
+                }
+
+                public void VerifyStoringShoppingList()
+                {
+                    ShoppingListRepositoryMock.VerifyStoreAsyncOnce(_shoppingListMock.Object);
+                }
+
+                #endregion Verify
+
+                #region Aggregates
+
+                public void SetupWithValidOfflineId()
+                {
+                    SetupShoppingListId();
+                    SetupTemporaryItemId();
+                    SetupItemTypeIdNull();
+                    SetupItem();
+                    SetupShoppingListMock();
+                    SetupFindingShoppingList();
+                    SetupFindingItemByOfflineId();
+                    SetupStoringShoppingList();
+                }
+
+                public void SetupWithActualId()
+                {
+                    SetupShoppingListId();
+                    SetupActualItemId();
+                    SetupItemTypeId();
+                    SetupShoppingListMock();
+                    SetupFindingShoppingList();
+                    SetupStoringShoppingList();
+                }
+
+                #endregion Aggregates
+            }
+        }
+
         private abstract class LocalFixture
         {
-            protected Fixture Fixture;
-            protected ShoppingListRepositoryMock ShoppingListRepositoryMock;
-            protected ItemRepositoryMock ItemRepositoryMock;
+            protected readonly Fixture Fixture;
+            protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
+            protected readonly ItemRepositoryMock ItemRepositoryMock;
 
             protected LocalFixture()
             {

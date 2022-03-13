@@ -11,4 +11,7 @@ public interface IShoppingListModificationService
 
     Task RemoveItemAsync(ShoppingListId shoppingListId, OfflineTolerantItemId offlineTolerantItemId,
         ItemTypeId? itemTypeId);
+
+    Task RemoveItemFromBasketAsync(ShoppingListId shoppingListId,
+        OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId);
 }
