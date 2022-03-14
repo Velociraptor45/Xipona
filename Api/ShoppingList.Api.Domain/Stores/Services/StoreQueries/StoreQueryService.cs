@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
@@ -36,6 +35,6 @@ public class StoreQueryService : IStoreQueryService
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        return activeStores.Select(store => store.ToStoreReadModel(itemCountPerStoreDict[store.Id]));
+        return activeStores.Select(store => new StoreReadModel(store, itemCountPerStoreDict[store.Id]));
     }
 }

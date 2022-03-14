@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
 
@@ -24,6 +23,6 @@ public class AllActiveItemCategoriesQueryHandler
 
         var results = await _itemCategoryRepository.FindActiveByAsync(cancellationToken);
 
-        return results.Select(r => r.ToReadModel());
+        return results.Select(r => new ItemCategoryReadModel(r));
     }
 }

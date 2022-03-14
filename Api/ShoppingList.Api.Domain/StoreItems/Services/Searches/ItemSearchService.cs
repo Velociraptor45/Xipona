@@ -5,7 +5,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemSearchReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -47,7 +46,7 @@ public class ItemSearchService : IItemSearchService
 
         return storeItems
             .Where(model => !model.IsDeleted)
-            .Select(model => model.ToSearchItemResultReadModel());
+            .Select(model => new SearchItemResultReadModel(model));
     }
 
     public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(string searchInput)

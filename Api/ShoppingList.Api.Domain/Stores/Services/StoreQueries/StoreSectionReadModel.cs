@@ -12,6 +12,11 @@ public class StoreSectionReadModel
         IsDefaultSection = isDefaultSection;
     }
 
+    public StoreSectionReadModel(IStoreSection section) :
+        this(section.Id, section.Name, section.SortingIndex, section.IsDefaultSection)
+    {
+    }
+
     public SectionId Id { get; }
     public string Name { get; }
     public int SortingIndex { get; }

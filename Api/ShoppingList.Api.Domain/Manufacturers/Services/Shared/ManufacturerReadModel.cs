@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
+namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 
 public class ManufacturerReadModel
 {
@@ -9,6 +9,15 @@ public class ManufacturerReadModel
         Id = id;
         Name = name;
         IsDeleted = isDeleted;
+    }
+
+    public ManufacturerReadModel(IManufacturer manufacturer)
+    {
+        ArgumentNullException.ThrowIfNull(manufacturer);
+
+        Id = manufacturer.Id;
+        Name = manufacturer.Name;
+        IsDeleted = manufacturer.IsDeleted;
     }
 
     public ManufacturerId Id { get; }

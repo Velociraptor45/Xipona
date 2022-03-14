@@ -1,13 +1,15 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Attributes;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreQueries;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemSearchReadModels;
 
@@ -50,9 +52,13 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                     item.Name,
                     item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                     storeAvailability.Price,
-                    manufacturer?.ToReadModel(),
-                    itemCategory?.ToReadModel(),
-                    section.ToReadModel());
+                    manufacturer is null ?
+                        null :
+                        new ManufacturerReadModel(manufacturer),
+                    itemCategory is null ?
+                        null :
+                        new ItemCategoryReadModel(itemCategory),
+                    new StoreSectionReadModel(section));
             });
     }
 
@@ -90,9 +96,13 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                     $"{item.Name} {type.Name}",
                     item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                     storeAvailability.Price,
-                    manufacturer?.ToReadModel(),
-                    itemCategory?.ToReadModel(),
-                    section.ToReadModel());
+                    manufacturer is null ?
+                        null :
+                        new ManufacturerReadModel(manufacturer),
+                    itemCategory is null ?
+                        null :
+                        new ItemCategoryReadModel(itemCategory),
+                    new StoreSectionReadModel(section));
             });
         });
     }

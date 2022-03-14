@@ -1,4 +1,8 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
+﻿using ProjectHermes.ShoppingList.Api.Core.Attributes;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 
 public class QuantityTypeReadModel
 {
@@ -11,6 +15,17 @@ public class QuantityTypeReadModel
         PriceLabel = priceLabel;
         QuantityLabel = quantityLabel;
         QuantityNormalizer = quantityNormalizer;
+    }
+
+    public QuantityTypeReadModel(QuantityType quantityType) :
+        this(
+            (int)quantityType,
+            quantityType.ToString(),
+            quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+            quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
+            quantityType.GetAttribute<QuantityLabelAttribute>().QuantityLabel,
+            quantityType.GetAttribute<QuantityNormalizerAttribute>().Value)
+    {
     }
 
     public int Id { get; }

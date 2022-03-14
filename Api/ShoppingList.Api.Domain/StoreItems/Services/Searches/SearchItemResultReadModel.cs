@@ -15,6 +15,11 @@ public class SearchItemResultReadModel
         ItemName = itemName;
     }
 
+    public SearchItemResultReadModel(IStoreItem item) :
+        this(item.Id, item.Name)
+    {
+    }
+
     public ItemId Id { get; }
     public string ItemName { get; }
 }

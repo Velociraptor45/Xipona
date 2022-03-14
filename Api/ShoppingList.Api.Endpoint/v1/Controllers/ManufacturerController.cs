@@ -5,7 +5,7 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Manufactu
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Commands.CreateManufacturer;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 

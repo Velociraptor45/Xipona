@@ -1,6 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Queries;
 
@@ -21,7 +20,7 @@ public class ManufacturerQueryService : IManufacturerQueryService
     {
         var manufacturers = await _manufacturerRepository.FindByAsync(false, _cancellationToken);
 
-        return manufacturers.Select(m => m.ToReadModel());
+        return manufacturers.Select(m => new ManufacturerReadModel(m));
     }
 
     public async Task<IEnumerable<ManufacturerReadModel>> Get(string searchInput)
@@ -31,6 +30,6 @@ public class ManufacturerQueryService : IManufacturerQueryService
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        return manufacturerModels.Select(model => model.ToReadModel());
+        return manufacturerModels.Select(model => new ManufacturerReadModel(model));
     }
 }

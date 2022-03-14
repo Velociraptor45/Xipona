@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Updates;

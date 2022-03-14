@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.AllActiveManufacturers;
 

@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Attributes;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
 public enum QuantityTypeInPacket
 {

@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
 
@@ -22,6 +21,6 @@ public class ItemCategorySearchQueryHandler : IQueryHandler<ItemCategorySearchQu
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        return itemCategoryModels.Select(model => model.ToReadModel());
+        return itemCategoryModels.Select(model => new ItemCategoryReadModel(model));
     }
 }

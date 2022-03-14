@@ -1,14 +1,16 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
@@ -96,13 +98,13 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
                     storeItem.Comment,
                     storeItem.IsTemporary,
                     price,
-                    storeItem.QuantityType.ToReadModel(),
+                    new QuantityTypeReadModel(storeItem.QuantityType),
                     storeItem.QuantityInPacket,
-                    storeItem.QuantityTypeInPacket.ToReadModel(),
+                    new QuantityTypeInPacketReadModel(storeItem.QuantityTypeInPacket),
                     storeItem.ItemCategoryId == null ?
-                        null : itemCategories[storeItem.ItemCategoryId.Value].ToReadModel(),
+                        null : new ItemCategoryReadModel(itemCategories[storeItem.ItemCategoryId.Value]),
                     storeItem.ManufacturerId == null ?
-                        null : manufacturers[storeItem.ManufacturerId.Value].ToReadModel(),
+                        null : new ManufacturerReadModel(manufacturers[storeItem.ManufacturerId.Value]),
                     item.IsInBasket,
                     item.Quantity);
 
@@ -124,7 +126,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
         return new ShoppingListReadModel(
             shoppingList.Id,
             shoppingList.CompletionDate,
-            store.ToShoppingListStoreReadModel(),
+            new ShoppingListStoreReadModel(store.Id, store.Name),
             sectionReadModels);
     }
 }

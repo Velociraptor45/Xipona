@@ -1,13 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
@@ -75,11 +76,15 @@ public class StoreItemReadModelConversionService : IStoreItemReadModelConversion
             model.IsDeleted,
             model.Comment,
             model.IsTemporary,
-            model.QuantityType.ToReadModel(),
+            new QuantityTypeReadModel(model.QuantityType),
             model.QuantityInPacket,
-            model.QuantityTypeInPacket.ToReadModel(),
-            itemCategory?.ToReadModel(),
-            manufacturer?.ToReadModel(),
+            new QuantityTypeInPacketReadModel(model.QuantityTypeInPacket),
+            itemCategory is null ?
+                null :
+                new ItemCategoryReadModel(itemCategory),
+            manufacturer is null ?
+                null :
+                new ManufacturerReadModel(manufacturer),
             availabilityReadModels,
             itemTypeReadModels);
     }
@@ -92,7 +97,7 @@ public class StoreItemReadModelConversionService : IStoreItemReadModelConversion
             var store = stores[av.StoreId];
             var section = store.Sections.First(s => s.Id == av.DefaultSectionId);
 
-            yield return av.ToReadModel(store, section);
+            yield return new StoreItemAvailabilityReadModel(av, store, section);
         }
     }
 }

@@ -12,6 +12,11 @@ public class StoreItemStoreReadModel
         Sections = sections.ToList().AsReadOnly();
     }
 
+    public StoreItemStoreReadModel(IStore store) :
+        this(store.Id, store.Name, store.Sections.Select(s => new StoreSectionReadModel(s)))
+    {
+    }
+
     public StoreId Id { get; }
     public string Name { get; }
     public IReadOnlyCollection<StoreSectionReadModel> Sections { get; }

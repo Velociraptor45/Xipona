@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Validations;
 
 namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Services;
