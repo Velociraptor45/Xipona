@@ -6,7 +6,8 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
@@ -70,6 +71,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IItemTypeFactory, ItemTypeFactory>();
 
         // services
+        services.AddTransient<IManufacturerQueryService, ManufacturerQueryService>();
+
         services.AddTransient<Func<CancellationToken, IItemUpdateService>>(provider =>
         {
             var itemRepository = provider.GetRequiredService<IItemRepository>();

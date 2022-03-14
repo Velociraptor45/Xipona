@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.AllActiveManufacturers;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Commands.CreateManufacturer;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.AllActiveManufacturers;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.ManufacturerSearch;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 
