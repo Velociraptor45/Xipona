@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemDeletions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Deletions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.DeleteItem;
 

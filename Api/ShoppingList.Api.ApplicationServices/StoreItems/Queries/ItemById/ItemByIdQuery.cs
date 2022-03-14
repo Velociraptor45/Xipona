@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemQueries;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.ItemById;
 

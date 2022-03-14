@@ -28,12 +28,12 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemCreations;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModifications;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemQueries;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdates;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.TemporaryItems;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 

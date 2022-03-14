@@ -1,0 +1,18 @@
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreQueries;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
+
+public class StoreItemAvailabilityReadModel
+{
+    public StoreItemAvailabilityReadModel(StoreItemStoreReadModel store, float price,
+        StoreSectionReadModel defaultSection)
+    {
+        Store = store;
+        Price = price;
+        DefaultSection = defaultSection;
+    }
+
+    public StoreItemStoreReadModel Store { get; }
+    public float Price { get; }
+    public StoreSectionReadModel DefaultSection { get; }
+}

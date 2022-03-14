@@ -9,22 +9,24 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.ShoppingListExchanges;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.ShoppingListModifications;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Exchanges;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemSearchReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.StoreItemReadModels;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemCreations;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemDeletions;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemModifications;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemQueries;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdates;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Deletions;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.TemporaryItems;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
@@ -124,6 +126,8 @@ public static class ServiceCollectionExtensions
                 new ItemQueryService(itemRepository, conversionService, cancellationToken);
         });
 
+        services.AddTransient<IQuantitiesQueryService, QuantitiesQueryService>();
+
         services.AddTransient<Func<CancellationToken, IStoreCreationService>>(provider =>
         {
             var storeRepository = provider.GetRequiredService<IStoreRepository>();
@@ -154,6 +158,14 @@ public static class ServiceCollectionExtensions
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             return cancellationToken =>
                 new ShoppingListModificationService(shoppingListRepository, itemRepository, cancellationToken);
+        });
+
+        services.AddTransient<Func<CancellationToken, IShoppingListQueryService>>(provider =>
+        {
+            var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
+            var conversionService = provider.GetRequiredService<IShoppingListReadModelConversionService>();
+            return cancellationToken =>
+                new ShoppingListQueryService(shoppingListRepository, conversionService, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IItemModificationService>>(provider =>

@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
+﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Extensions;
 
