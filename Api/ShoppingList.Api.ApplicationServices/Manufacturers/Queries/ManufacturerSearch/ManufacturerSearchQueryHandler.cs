@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 
-namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.ManufacturerSearch;
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.ManufacturerSearch;
 
 public class ManufacturerSearchQueryHandler
     : IQueryHandler<ManufacturerSearchQuery, IEnumerable<ManufacturerReadModel>>

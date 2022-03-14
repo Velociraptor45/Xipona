@@ -4,8 +4,12 @@ using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
@@ -178,6 +182,20 @@ public static class ServiceCollectionExtensions
             var validatorDelegat = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
             return cancellationToken => new ItemModificationService(itemRepository, validatorDelegat,
                 shoppingListRepository, cancellationToken);
+        });
+
+        services.AddTransient<Func<CancellationToken, IManufacturerCreationService>>(provider =>
+        {
+            var manufacturerRepository = provider.GetRequiredService<IManufacturerRepository>();
+            var manufacturerFactory = provider.GetRequiredService<IManufacturerFactory>();
+            return cancellationToken => new ManufacturerCreationService(manufacturerRepository, manufacturerFactory,
+                cancellationToken);
+        });
+
+        services.AddTransient<Func<CancellationToken, IItemCategoryQueryService>>(provider =>
+        {
+            var itemCategoryRepository = provider.GetRequiredService<IItemCategoryRepository>();
+            return cancellationToken => new ItemCategoryQueryService(itemCategoryRepository, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IValidator>>(provider =>

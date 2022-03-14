@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Validations;
 using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;

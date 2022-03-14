@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
+namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Validations;
 
 public class ItemCategoryValidationService : IItemCategoryValidationService
 {

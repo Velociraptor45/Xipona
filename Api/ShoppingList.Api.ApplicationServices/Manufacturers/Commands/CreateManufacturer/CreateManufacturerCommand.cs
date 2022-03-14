@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Commands.CreateManufacturer;
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
 
 public class CreateManufacturerCommand : ICommand<bool>
 {
