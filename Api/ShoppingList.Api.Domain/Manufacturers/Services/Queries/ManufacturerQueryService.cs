@@ -23,4 +23,14 @@ public class ManufacturerQueryService : IManufacturerQueryService
 
         return manufacturers.Select(m => m.ToReadModel());
     }
+
+    public async Task<IEnumerable<ManufacturerReadModel>> Get(string searchInput)
+    {
+        var manufacturerModels = await _manufacturerRepository.FindByAsync(searchInput,
+            _cancellationToken);
+
+        _cancellationToken.ThrowIfCancellationRequested();
+
+        return manufacturerModels.Select(model => model.ToReadModel());
+    }
 }

@@ -2,25 +2,24 @@
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Queries;
 
-namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.AllActiveManufacturers;
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.ManufacturerSearch;
 
-public class AllActiveManufacturersQueryHandler
-    : IQueryHandler<AllActiveManufacturersQuery, IEnumerable<ManufacturerReadModel>>
+public class ManufacturerSearchQueryHandler
+    : IQueryHandler<ManufacturerSearchQuery, IEnumerable<ManufacturerReadModel>>
 {
     private readonly Func<CancellationToken, IManufacturerQueryService> _manufacturerQueryServiceDelegate;
 
-    public AllActiveManufacturersQueryHandler(
+    public ManufacturerSearchQueryHandler(
         Func<CancellationToken, IManufacturerQueryService> manufacturerQueryServiceDelegate)
     {
         _manufacturerQueryServiceDelegate = manufacturerQueryServiceDelegate;
     }
 
-    public async Task<IEnumerable<ManufacturerReadModel>> HandleAsync(AllActiveManufacturersQuery query,
-        CancellationToken cancellationToken)
+    public async Task<IEnumerable<ManufacturerReadModel>> HandleAsync(ManufacturerSearchQuery query, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);
 
         var service = _manufacturerQueryServiceDelegate(cancellationToken);
-        return await service.GetAllActive();
+        return await service.Get(query.SearchInput);
     }
 }

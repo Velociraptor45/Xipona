@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.ManufacturerSearch;
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.ManufacturerSearch;
 
 public class ManufacturerSearchQuery : IQuery<IEnumerable<ManufacturerReadModel>>
 {
