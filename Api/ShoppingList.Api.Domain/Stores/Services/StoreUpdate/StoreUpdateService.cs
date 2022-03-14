@@ -2,35 +2,34 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreUpdate
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreUpdate;
+
+public class StoreUpdateService : IStoreUpdateService
 {
-    public class StoreUpdateService : IStoreUpdateService
+    private readonly IStoreRepository _storeRepository;
+    private readonly CancellationToken _cancellationToken;
+
+    public StoreUpdateService(
+        IStoreRepository storeRepository,
+        CancellationToken cancellationToken)
     {
-        private readonly IStoreRepository _storeRepository;
-        private readonly CancellationToken _cancellationToken;
+        _storeRepository = storeRepository;
+        _cancellationToken = cancellationToken;
+    }
 
-        public StoreUpdateService(
-            IStoreRepository storeRepository,
-            CancellationToken cancellationToken)
-        {
-            _storeRepository = storeRepository;
-            _cancellationToken = cancellationToken;
-        }
+    public async Task UpdateAsync(StoreUpdate update)
+    {
+        ArgumentNullException.ThrowIfNull(update);
 
-        public async Task UpdateAsync(StoreUpdate update)
-        {
-            ArgumentNullException.ThrowIfNull(update);
+        var store = await _storeRepository.FindByAsync(update.Id, _cancellationToken);
+        if (store == null)
+            throw new DomainException(new StoreNotFoundReason(update.Id));
 
-            var store = await _storeRepository.FindByAsync(update.Id, _cancellationToken);
-            if (store == null)
-                throw new DomainException(new StoreNotFoundReason(update.Id));
+        store.ChangeName(update.Name);
+        store.UpdateSections(update.Sections);
 
-            store.ChangeName(update.Name);
-            store.UpdateSections(update.Sections);
+        _cancellationToken.ThrowIfCancellationRequested();
 
-            _cancellationToken.ThrowIfCancellationRequested();
-
-            await _storeRepository.StoreAsync(store, _cancellationToken);
-        }
+        await _storeRepository.StoreAsync(store, _cancellationToken);
     }
 }

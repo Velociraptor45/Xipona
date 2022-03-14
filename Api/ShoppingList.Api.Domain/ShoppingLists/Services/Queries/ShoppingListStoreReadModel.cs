@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId;
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
 
 public class ShoppingListStoreReadModel
 {

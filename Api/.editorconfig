@@ -15,3 +15,4 @@ dotnet_diagnostic.S4457.severity = none
 
 # CS8625: Cannot convert null literal to non-nullable reference type.
 dotnet_diagnostic.CS8625.severity = error
+csharp_style_namespace_declarations=file_scoped:silent
