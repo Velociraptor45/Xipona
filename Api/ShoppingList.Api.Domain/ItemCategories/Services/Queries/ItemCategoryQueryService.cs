@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Queries;
 
@@ -22,5 +22,12 @@ public class ItemCategoryQueryService : IItemCategoryQueryService
         _cancellationToken.ThrowIfCancellationRequested();
 
         return itemCategoryModels.Select(model => new ItemCategoryReadModel(model));
+    }
+
+    public async Task<IEnumerable<ItemCategoryReadModel>> GetAllActive()
+    {
+        var results = await _itemCategoryRepository.FindActiveByAsync(_cancellationToken);
+
+        return results.Select(r => new ItemCategoryReadModel(r));
     }
 }

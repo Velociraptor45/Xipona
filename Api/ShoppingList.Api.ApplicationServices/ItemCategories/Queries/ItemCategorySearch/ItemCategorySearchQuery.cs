@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.ItemCategorySearch;
 
