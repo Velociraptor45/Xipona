@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+﻿namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 
 public interface IQueryHandler<in TQuery, TValue>
     where TQuery : IQuery<TValue>

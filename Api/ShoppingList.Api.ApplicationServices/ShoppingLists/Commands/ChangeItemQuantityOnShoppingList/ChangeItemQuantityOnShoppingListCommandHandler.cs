@@ -1,6 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
+﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 

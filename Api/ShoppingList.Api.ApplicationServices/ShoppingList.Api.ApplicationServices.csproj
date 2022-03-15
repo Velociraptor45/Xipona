@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ShoppingList.Api.Domain\ShoppingList.Api.Domain.csproj" />
+    <ProjectReference Include="..\ShoppingList.Api.Infrastructure\ShoppingList.Api.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

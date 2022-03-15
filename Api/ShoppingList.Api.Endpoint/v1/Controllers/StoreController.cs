@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.AllActiveStores;

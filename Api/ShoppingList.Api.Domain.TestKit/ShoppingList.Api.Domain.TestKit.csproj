@@ -27,4 +27,8 @@
     <ProjectReference Include="..\ShoppingList.Api.Domain\ShoppingList.Api.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Common\Mocks\" />
+  </ItemGroup>
+
 </Project>

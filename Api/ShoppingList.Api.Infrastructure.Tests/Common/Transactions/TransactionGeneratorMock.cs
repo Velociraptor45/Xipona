@@ -1,6 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
+﻿using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 
-namespace ShoppingList.Api.Domain.TestKit.Common.Mocks;
+namespace ShoppingList.Api.Infrastructure.Tests.Common.Transactions;
 
 public class TransactionGeneratorMock : Mock<ITransactionGenerator>
 {

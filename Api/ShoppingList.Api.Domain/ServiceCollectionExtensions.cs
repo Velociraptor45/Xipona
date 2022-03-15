@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Creations;
@@ -40,7 +38,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreCreations;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreQueries;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreUpdate;
-using System.Reflection;
 
 namespace ProjectHermes.ShoppingList.Api.Domain;
 
@@ -49,7 +46,6 @@ public static class ServiceCollectionExtensions
     public static void AddDomain(this IServiceCollection services)
     {
         var assembly = typeof(ServiceCollectionExtensions).Assembly;
-        services.AddHandlersForAssembly(assembly);
         services.AddImplementationOfGenericType(assembly, typeof(IToReadModelConverter<,>));
 
         services.AddTransient<IItemCategoryFactory, ItemCategoryFactory>();
@@ -181,8 +177,8 @@ public static class ServiceCollectionExtensions
         {
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
-            var validatorDelegat = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
-            return cancellationToken => new ItemModificationService(itemRepository, validatorDelegat,
+            var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
+            return cancellationToken => new ItemModificationService(itemRepository, validatorDelegate,
                 shoppingListRepository, cancellationToken);
         });
 
@@ -225,23 +221,5 @@ public static class ServiceCollectionExtensions
             return cancellationToken => new Validator(availabilityValidationService,
                 itemCategoryValidationService, manufacturerValidationService, cancellationToken);
         });
-    }
-
-    private static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)
-    {
-        services.AddQueryHandlersForAssembly(assembly);
-        services.AddCommandHandlersForAssembly(assembly);
-    }
-
-    private static void AddQueryHandlersForAssembly(this IServiceCollection services, Assembly assembly)
-    {
-        var handlerType = typeof(IQueryHandler<,>);
-        services.AddImplementationOfGenericType(assembly, handlerType);
-    }
-
-    private static void AddCommandHandlersForAssembly(this IServiceCollection services, Assembly assembly)
-    {
-        var handlerType = typeof(ICommandHandler<,>);
-        services.AddImplementationOfGenericType(assembly, handlerType);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
+﻿namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 
 public interface ITransaction : IDisposable
 {

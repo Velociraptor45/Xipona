@@ -1,6 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
-
-namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
+﻿namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 
 public class QueryDispatcher : IQueryDispatcher
 {

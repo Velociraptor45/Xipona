@@ -1,6 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
-
-namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
+﻿namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 
 public class CommandDispatcher : ICommandDispatcher
 {
