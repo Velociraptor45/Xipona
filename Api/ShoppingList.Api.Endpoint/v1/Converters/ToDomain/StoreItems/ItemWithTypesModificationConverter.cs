@@ -27,7 +27,7 @@ public class ItemWithTypesModificationConverter : IToDomainConverter<ModifyItemW
 
         var types = source.ItemTypes.Select(t => new ItemTypeModification(
             t.Id.HasValue ? new ItemTypeId(t.Id.Value) : null,
-            t.Name,
+            new ItemTypeName(t.Name),
             _availabilityConverter.ToDomain(t.Availabilities)));
 
         var modification = new ItemWithTypesModification(

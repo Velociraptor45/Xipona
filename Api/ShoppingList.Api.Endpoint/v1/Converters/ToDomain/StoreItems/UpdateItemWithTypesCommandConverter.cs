@@ -28,7 +28,7 @@ public class UpdateItemWithTypesCommandConverter
 
         var itemTypeUpdates = source.ItemTypes.Select(t => new ItemTypeUpdate(
             new ItemTypeId(t.OldId),
-            t.Name,
+            new ItemTypeName(t.Name),
             _availabilityConverter.ToDomain(t.Availabilities)));
 
         var itemUpdate = new ItemWithTypesUpdate(

@@ -24,7 +24,7 @@ public class ItemTypeContractConverter : IToContractConverter<ItemTypeReadModel,
         return new ItemTypeContract()
         {
             Id = source.Id.Value,
-            Name = source.Name,
+            Name = source.Name.Value,
             Availabilities = _storeItemAvailabilityContractConverter.ToContract(source.Availabilities)
         };
     }

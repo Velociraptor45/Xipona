@@ -22,7 +22,7 @@ public class ItemTypeBuilder : DomainTestBuilderBase<ItemType>
         return this;
     }
 
-    public ItemTypeBuilder WithName(string name)
+    public ItemTypeBuilder WithName(ItemTypeName name)
     {
         FillConstructorWith("name", name);
         return this;

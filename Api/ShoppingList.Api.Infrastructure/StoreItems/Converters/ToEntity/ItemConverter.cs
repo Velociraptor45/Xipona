@@ -48,7 +48,7 @@ public class ItemConverter : IToEntityConverter<IStoreItem, Item>
         {
             Id = itemType.Id.Value,
             ItemId = source.Id.Value,
-            Name = itemType.Name,
+            Name = itemType.Name.Value,
             AvailableAt = itemType.Availabilities.Select(av => ToItemTypeAvailableAt(av, itemType)).ToList(),
             PredecessorId = itemType.Predecessor?.Id.Value
         };

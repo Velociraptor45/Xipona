@@ -22,13 +22,13 @@ public class ItemTypeConverterTests : ToDomainConverterTestBase<ProjectHermes.Sh
     public static ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType GetSource(IItemType destination)
     {
         var availabilities = destination.Availabilities
-            .Select(av => ItemTypeAvailabilityConverterTests.GetSource(av))
+            .Select(ItemTypeAvailabilityConverterTests.GetSource)
             .ToList();
 
         return new ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType
         {
             Id = destination.Id.Value,
-            Name = destination.Name,
+            Name = destination.Name.Value,
             AvailableAt = availabilities
         };
     }

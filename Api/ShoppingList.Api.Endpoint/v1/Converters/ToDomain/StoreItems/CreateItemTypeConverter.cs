@@ -21,7 +21,7 @@ public class CreateItemTypeConverter : IToDomainConverter<CreateItemTypeContract
     public IItemType ToDomain(CreateItemTypeContract source)
     {
         return _itemTypeFactory.CreateNew(
-            source.Name,
+            new ItemTypeName(source.Name),
             _itemAvailabilityConverter.ToDomain(source.Availabilities),
             null);
     }
