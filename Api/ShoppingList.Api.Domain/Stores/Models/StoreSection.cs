@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Commands.UpdateStore;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 

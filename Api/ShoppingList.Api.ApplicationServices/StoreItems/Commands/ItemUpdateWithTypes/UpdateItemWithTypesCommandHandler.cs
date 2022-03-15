@@ -1,19 +1,19 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.ItemUpdate;
+﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Updates;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ItemUpdateWithTypes;
 
 public class UpdateItemWithTypesCommandHandler : ICommandHandler<UpdateItemWithTypesCommand, bool>
 {
     private readonly ITransactionGenerator _transactionGenerator;
-    private readonly Func<CancellationToken, IItemUpdateService> _itemUpdateServiceDelegat;
+    private readonly Func<CancellationToken, IItemUpdateService> _itemExchangeServiceDelegat;
 
     public UpdateItemWithTypesCommandHandler(ITransactionGenerator transactionGenerator,
-        Func<CancellationToken, IItemUpdateService> itemUpdateServiceDelegat)
+        Func<CancellationToken, IItemUpdateService> itemExchangeServiceDelegate)
     {
         _transactionGenerator = transactionGenerator;
-        _itemUpdateServiceDelegat = itemUpdateServiceDelegat;
+        _itemExchangeServiceDelegat = itemExchangeServiceDelegate;
     }
 
     public async Task<bool> HandleAsync(UpdateItemWithTypesCommand command, CancellationToken cancellationToken)
@@ -23,7 +23,7 @@ public class UpdateItemWithTypesCommandHandler : ICommandHandler<UpdateItemWithT
 
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
-        var service = _itemUpdateServiceDelegat(cancellationToken);
+        var service = _itemExchangeServiceDelegat(cancellationToken);
         await service.UpdateItemWithTypesAsync(command.ItemWithTypesUpdate);
 
         await transaction.CommitAsync(cancellationToken);

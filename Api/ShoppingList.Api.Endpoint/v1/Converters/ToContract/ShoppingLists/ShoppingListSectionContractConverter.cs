@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.ShoppingLists;
 

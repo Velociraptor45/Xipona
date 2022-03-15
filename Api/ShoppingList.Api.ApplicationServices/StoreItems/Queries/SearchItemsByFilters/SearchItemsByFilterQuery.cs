@@ -1,7 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
+﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItemsByFilters;

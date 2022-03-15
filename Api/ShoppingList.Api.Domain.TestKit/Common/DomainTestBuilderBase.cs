@@ -1,5 +1,4 @@
 ﻿using AutoFixture.Kernel;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -14,7 +13,6 @@ namespace ShoppingList.Api.Domain.TestKit.Common;
 public class DomainTestBuilderBase<TModel> : TestBuilderBase<TModel>
 {
     public DomainTestBuilderBase()
-        : base()
     {
         Customizations.Add(new EnumSpecimenBuilder<QuantityType>());
         Customizations.Add(new TypeRelay(typeof(IStoreItemAvailability), typeof(StoreItemAvailability)));

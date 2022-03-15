@@ -1,15 +1,14 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Search;
+﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 
-namespace ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItems
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItems;
+
+public class SearchItemQuery : IQuery<IEnumerable<SearchItemResultReadModel>>
 {
-    public class SearchItemQuery : IQuery<IEnumerable<SearchItemResultReadModel>>
+    public SearchItemQuery(string searchInput)
     {
-        public SearchItemQuery(string searchInput)
-        {
-            SearchInput = searchInput;
-        }
-
-        public string SearchInput { get; }
+        SearchInput = searchInput;
     }
+
+    public string SearchInput { get; }
 }

@@ -148,10 +148,9 @@ public class ShoppingListMock : Mock<IShoppingList>
             Times.Never);
     }
 
-    public void VerifyFinishOnce(DateTime completionDate)
+    public void VerifyFinish(DateTime completionDate, Func<Times> times)
     {
-        Verify(i => i.Finish(completionDate),
-            Times.Once);
+        Verify(i => i.Finish(completionDate), times);
     }
 
     public void VerifyChangeItemQuantityOnce(ItemId itemId, ItemTypeId? itemTypeId, float quantity)

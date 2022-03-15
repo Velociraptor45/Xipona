@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Validations;
 
 namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Services;
 

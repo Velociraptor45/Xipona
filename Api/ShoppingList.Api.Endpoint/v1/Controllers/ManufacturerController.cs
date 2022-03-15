@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.AllActiveManufacturers;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.ManufacturerSearch;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Commands.CreateManufacturer;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.AllActiveManufacturers;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.ManufacturerSearch;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 

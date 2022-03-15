@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.Common;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Commands.CreateItemCategory;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.AllActiveItemCategories;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.ItemCategorySearch;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.CreateItemCategory;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.DeleteItemCategory;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.AllActiveItemCategories;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.ItemCategorySearch;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 

@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Ports.Infrastructure;
-using System.Data.Common;
+﻿using System.Data.Common;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 

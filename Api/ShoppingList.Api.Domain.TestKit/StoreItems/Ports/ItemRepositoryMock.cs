@@ -49,15 +49,6 @@ public class ItemRepositoryMock : Mock<IItemRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void VerifyFindByAsync(ItemId storeItemId)
-    {
-        Verify(
-            i => i.FindByAsync(
-                It.Is<ItemId>(id => id == storeItemId),
-                It.IsAny<CancellationToken>()),
-            Times.Once);
-    }
-
     public void VerifyFindByAsync(TemporaryItemId temporaryItemId)
     {
         Verify(

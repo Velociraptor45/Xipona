@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.StoreItems;
 
