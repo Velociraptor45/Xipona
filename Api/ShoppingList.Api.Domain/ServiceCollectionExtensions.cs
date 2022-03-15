@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Deletions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
@@ -205,6 +206,15 @@ public static class ServiceCollectionExtensions
             var itemCategoryFactory = provider.GetRequiredService<IItemCategoryFactory>();
             return cancellationToken => new ItemCategoryCreationService(itemCategoryRepository, itemCategoryFactory,
                 cancellationToken);
+        });
+
+        services.AddTransient<Func<CancellationToken, IItemCategoryDeletionService>>(provider =>
+        {
+            var itemCategoryRepository = provider.GetRequiredService<IItemCategoryRepository>();
+            var itemRepository = provider.GetRequiredService<IItemRepository>();
+            var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
+            return cancellationToken => new ItemCategoryDeletionService(itemCategoryRepository, itemRepository,
+                shoppingListRepository, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IValidator>>(provider =>
