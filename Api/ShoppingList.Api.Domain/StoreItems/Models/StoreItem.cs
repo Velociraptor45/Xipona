@@ -14,7 +14,7 @@ public class StoreItem : IStoreItem
     private List<IStoreItemAvailability> _availabilities;
     private readonly ItemTypes? _itemTypes;
 
-    public StoreItem(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
+    public StoreItem(ItemId id, ItemName name, bool isDeleted, string comment, bool isTemporary,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
         IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId? temporaryId)
@@ -38,7 +38,7 @@ public class StoreItem : IStoreItem
         Predecessor = null;
     }
 
-    public StoreItem(ItemId id, string name, bool isDeleted, string comment,
+    public StoreItem(ItemId id, ItemName name, bool isDeleted, string comment,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
         ItemTypes itemTypes)
@@ -66,7 +66,7 @@ public class StoreItem : IStoreItem
     }
 
     public ItemId Id { get; }
-    public string Name { get; private set; }
+    public ItemName Name { get; private set; }
     public bool IsDeleted { get; private set; }
     public string Comment { get; private set; }
     public bool IsTemporary { get; private set; }

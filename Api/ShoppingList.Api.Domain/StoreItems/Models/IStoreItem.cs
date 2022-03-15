@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 public interface IStoreItem
 {
     ItemId Id { get; }
-    string Name { get; }
+    ItemName Name { get; }
     bool IsDeleted { get; }
     string Comment { get; }
     bool IsTemporary { get; }

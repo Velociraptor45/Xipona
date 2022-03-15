@@ -6,16 +6,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Modification
 
 public class ItemWithTypesModification
 {
-    public ItemWithTypesModification(ItemId id, string name, string comment,
+    public ItemWithTypesModification(ItemId id, ItemName name, string comment,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
         IEnumerable<ItemTypeModification> itemTypes)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
-        }
-
         Id = id;
         Name = name;
         Comment = comment;
@@ -28,7 +23,7 @@ public class ItemWithTypesModification
     }
 
     public ItemId Id { get; }
-    public string Name { get; }
+    public ItemName Name { get; }
     public string Comment { get; }
     public QuantityType QuantityType { get; }
     public float QuantityInPacket { get; }

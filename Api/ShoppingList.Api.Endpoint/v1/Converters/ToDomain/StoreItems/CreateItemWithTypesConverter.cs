@@ -27,7 +27,7 @@ public class CreateItemWithTypesConverter : IToDomainConverter<CreateItemWithTyp
 
         return _itemFactory.Create(
             ItemId.New,
-            source.Name,
+            new ItemName(source.Name),
             false,
             source.Comment,
             source.QuantityType.ToEnum<QuantityType>(),

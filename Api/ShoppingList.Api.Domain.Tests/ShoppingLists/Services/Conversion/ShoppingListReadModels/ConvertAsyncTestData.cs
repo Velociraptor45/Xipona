@@ -201,10 +201,10 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
                 store.Sections.First().IsDefaultSection,
                 new List<ShoppingListItemReadModel>
                 {
-                    new ShoppingListItemReadModel(
+                    new(
                         item.Id,
                         null,
-                        item.Name,
+                        item.Name.Value,
                         item.IsDeleted,
                         item.Comment,
                         item.IsTemporary,

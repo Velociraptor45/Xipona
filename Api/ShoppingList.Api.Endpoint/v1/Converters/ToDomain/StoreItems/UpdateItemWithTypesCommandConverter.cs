@@ -33,7 +33,7 @@ public class UpdateItemWithTypesCommandConverter
 
         var itemUpdate = new ItemWithTypesUpdate(
             new ItemId(source.OldId),
-            source.Name,
+            new ItemName(source.Name),
             source.Comment,
             source.QuantityType.ToEnum<QuantityType>(),
             source.QuantityInPacket,

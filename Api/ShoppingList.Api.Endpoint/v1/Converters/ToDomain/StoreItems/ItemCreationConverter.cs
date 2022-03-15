@@ -25,7 +25,7 @@ public class ItemCreationConverter : IToDomainConverter<CreateItemContract, Item
             throw new ArgumentNullException(nameof(source));
 
         return new ItemCreation(
-            source.Name,
+            new ItemName(source.Name),
             source.Comment,
             source.QuantityType.ToEnum<QuantityType>(),
             source.QuantityInPacket,

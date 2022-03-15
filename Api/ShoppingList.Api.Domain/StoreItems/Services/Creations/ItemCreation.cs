@@ -8,15 +8,10 @@ public class ItemCreation
 {
     private readonly IEnumerable<IStoreItemAvailability> _availabilities;
 
-    public ItemCreation(string name, string comment, QuantityType quantityType,
+    public ItemCreation(ItemName name, string comment, QuantityType quantityType,
         float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
         ManufacturerId? manufacturerId, IEnumerable<IStoreItemAvailability> availabilities)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
-        }
-
         Name = name;
         Comment = comment;
         QuantityType = quantityType;
@@ -27,7 +22,7 @@ public class ItemCreation
         _availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
     }
 
-    public string Name { get; }
+    public ItemName Name { get; }
     public string Comment { get; }
     public QuantityType QuantityType { get; }
     public float QuantityInPacket { get; }

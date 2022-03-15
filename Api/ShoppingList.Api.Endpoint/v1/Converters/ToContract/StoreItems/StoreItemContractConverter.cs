@@ -51,7 +51,7 @@ public class StoreItemContractConverter :
         return new StoreItemContract
         {
             Id = source.Id.Value,
-            Name = source.Name,
+            Name = source.Name.Value,
             IsDeleted = source.IsDeleted,
             Comment = source.Comment,
             IsTemporary = source.IsTemporary,

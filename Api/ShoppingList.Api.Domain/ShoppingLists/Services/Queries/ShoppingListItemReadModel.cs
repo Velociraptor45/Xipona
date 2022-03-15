@@ -13,11 +13,6 @@ public class ShoppingListItemReadModel
         ItemCategoryReadModel? itemCategory, ManufacturerReadModel? manufacturer,
         bool isInBasket, float quantity)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
-        }
-
         Id = id;
         TypeId = typeId;
         Name = name;

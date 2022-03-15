@@ -49,7 +49,7 @@ public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
 
             return _storeItemFactory.Create(
                 new ItemId(source.Id),
-                source.Name,
+                new ItemName(source.Name),
                 source.Deleted,
                 source.Comment,
                 source.QuantityType.ToEnum<QuantityType>(),
@@ -66,7 +66,7 @@ public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
 
         return _storeItemFactory.Create(
             new ItemId(source.Id),
-            source.Name,
+            new ItemName(source.Name),
             source.Deleted,
             source.Comment,
             source.IsTemporary,

@@ -6,14 +6,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Updates;
 
 public class ItemWithTypesUpdate
 {
-    public ItemWithTypesUpdate(ItemId oldId, string name, string comment,
+    public ItemWithTypesUpdate(ItemId oldId, ItemName name, string comment,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
         IEnumerable<ItemTypeUpdate> typeUpdates)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace.", nameof(name));
-
         OldId = oldId;
         Name = name;
         Comment = comment;
@@ -26,7 +23,7 @@ public class ItemWithTypesUpdate
     }
 
     public ItemId OldId { get; }
-    public string Name { get; }
+    public ItemName Name { get; }
     public string Comment { get; }
     public QuantityType QuantityType { get; }
     public float QuantityInPacket { get; }

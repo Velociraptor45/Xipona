@@ -8,16 +8,11 @@ public class ItemUpdate
 {
     private readonly IEnumerable<IStoreItemAvailability> _availabilities;
 
-    public ItemUpdate(ItemId oldId, string name, string comment,
+    public ItemUpdate(ItemId oldId, ItemName name, string comment,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
         IEnumerable<IStoreItemAvailability> availabilities)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
-        }
-
         OldId = oldId;
         Name = name;
         Comment = comment;
@@ -30,7 +25,7 @@ public class ItemUpdate
     }
 
     public ItemId OldId { get; }
-    public string Name { get; }
+    public ItemName Name { get; }
     public string Comment { get; }
     public QuantityType QuantityType { get; }
     public float QuantityInPacket { get; }

@@ -26,7 +26,7 @@ public class PermanentItemConverter : IToDomainConverter<MakeTemporaryItemPerman
 
         return new PermanentItem(
             new ItemId(source.Id),
-            source.Name,
+            new ItemName(source.Name),
             source.Comment,
             source.QuantityType.ToEnum<QuantityType>(),
             source.QuantityInPacket,

@@ -4,13 +4,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 
 public class SearchItemResultReadModel
 {
-    public SearchItemResultReadModel(ItemId id, string itemName)
+    public SearchItemResultReadModel(ItemId id, ItemName itemName)
     {
-        if (string.IsNullOrEmpty(itemName))
-        {
-            throw new ArgumentException($"'{nameof(itemName)}' cannot be null or empty", nameof(itemName));
-        }
-
         Id = id;
         ItemName = itemName;
     }
@@ -21,5 +16,5 @@ public class SearchItemResultReadModel
     }
 
     public ItemId Id { get; }
-    public string ItemName { get; }
+    public ItemName ItemName { get; }
 }

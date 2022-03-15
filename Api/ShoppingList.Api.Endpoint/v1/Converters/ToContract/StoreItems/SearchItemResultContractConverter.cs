@@ -12,6 +12,6 @@ public class SearchItemResultContractConverter :
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        return new SearchItemResultContract(source.Id.Value, source.ItemName);
+        return new SearchItemResultContract(source.Id.Value, source.ItemName.Value);
     }
 }

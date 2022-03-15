@@ -15,7 +15,7 @@ public class StoreItemFactory : IStoreItemFactory
         _itemTypeFactory = itemTypeFactory;
     }
 
-    public IStoreItem Create(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
+    public IStoreItem Create(ItemId id, ItemName name, bool isDeleted, string comment, bool isTemporary,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
         IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId? temporaryId)
@@ -40,7 +40,7 @@ public class StoreItemFactory : IStoreItemFactory
         return item;
     }
 
-    public IStoreItem Create(ItemId id, string name, bool isDeleted, string comment,
+    public IStoreItem Create(ItemId id, ItemName name, bool isDeleted, string comment,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
         IEnumerable<IItemType> itemTypes)
@@ -117,7 +117,7 @@ public class StoreItemFactory : IStoreItemFactory
         return model;
     }
 
-    public IStoreItem CreateNew(string name, string comment,
+    public IStoreItem CreateNew(ItemName name, string comment,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
         IEnumerable<IItemType> itemTypes)

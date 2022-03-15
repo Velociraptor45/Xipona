@@ -8,15 +8,10 @@ public class PermanentItem
 {
     private readonly IEnumerable<IStoreItemAvailability> _availabilities;
 
-    public PermanentItem(ItemId id, string name, string comment, QuantityType quantityType,
+    public PermanentItem(ItemId id, ItemName name, string comment, QuantityType quantityType,
         float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
         ManufacturerId? manufacturerId, IEnumerable<IStoreItemAvailability> availabilities)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
-        }
-
         Id = id;
         Name = name;
         Comment = comment ?? throw new ArgumentNullException(nameof(comment));
@@ -31,7 +26,7 @@ public class PermanentItem
     public IReadOnlyCollection<IStoreItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
 
     public ItemId Id { get; }
-    public string Name { get; }
+    public ItemName Name { get; }
     public string Comment { get; }
     public QuantityType QuantityType { get; }
     public float QuantityInPacket { get; }

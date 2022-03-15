@@ -7,16 +7,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 
 public class StoreItemReadModel
 {
-    public StoreItemReadModel(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
+    public StoreItemReadModel(ItemId id, ItemName name, bool isDeleted, string comment, bool isTemporary,
         QuantityTypeReadModel quantityType, float quantityInPacket, QuantityTypeInPacketReadModel quantityTypeInPacket,
         ItemCategoryReadModel? itemCategory, ManufacturerReadModel? manufacturer,
         IEnumerable<StoreItemAvailabilityReadModel> availabilities, IEnumerable<ItemTypeReadModel> itemTypes)
     {
-        if (string.IsNullOrEmpty(name))
-        {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or empty", nameof(name));
-        }
-
         Id = id;
         Name = name;
         IsDeleted = isDeleted;
@@ -32,7 +27,7 @@ public class StoreItemReadModel
     }
 
     public ItemId Id { get; }
-    public string Name { get; }
+    public ItemName Name { get; }
     public bool IsDeleted { get; }
     public string Comment { get; }
     public bool IsTemporary { get; }

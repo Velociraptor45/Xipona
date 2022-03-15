@@ -32,7 +32,7 @@ public class ItemWithTypesModificationConverter : IToDomainConverter<ModifyItemW
 
         var modification = new ItemWithTypesModification(
             new ItemId(source.Id),
-            source.Name,
+            new ItemName(source.Name),
             source.Comment,
             source.QuantityType.ToEnum<QuantityType>(),
             source.QuantityInPacket,

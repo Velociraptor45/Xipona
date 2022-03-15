@@ -26,7 +26,7 @@ public class ItemUpdateConverter : IToDomainConverter<UpdateItemContract, ItemUp
 
         return new ItemUpdate(
             new ItemId(source.OldId),
-            source.Name,
+            new ItemName(source.Name),
             source.Comment,
             source.QuantityType.ToEnum<QuantityType>(),
             source.QuantityInPacket,
