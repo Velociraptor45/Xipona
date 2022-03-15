@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Commands;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.CreateItemCategory;
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Commands.CreateItemCategory;
 
 public class CreateItemCategoryCommand : ICommand<bool>
 {
