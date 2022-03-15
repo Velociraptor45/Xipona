@@ -8,7 +8,7 @@ public class ItemCreation
 {
     private readonly IEnumerable<IStoreItemAvailability> _availabilities;
 
-    public ItemCreation(ItemName name, string comment, QuantityType quantityType,
+    public ItemCreation(ItemName name, Comment comment, QuantityType quantityType,
         float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
         ManufacturerId? manufacturerId, IEnumerable<IStoreItemAvailability> availabilities)
     {
@@ -23,7 +23,7 @@ public class ItemCreation
     }
 
     public ItemName Name { get; }
-    public string Comment { get; }
+    public Comment Comment { get; }
     public QuantityType QuantityType { get; }
     public float QuantityInPacket { get; }
     public QuantityTypeInPacket QuantityTypeInPacket { get; }

@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Modification
 
 public class ItemWithTypesModification
 {
-    public ItemWithTypesModification(ItemId id, ItemName name, string comment,
+    public ItemWithTypesModification(ItemId id, ItemName name, Comment comment,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
         IEnumerable<ItemTypeModification> itemTypes)
@@ -24,7 +24,7 @@ public class ItemWithTypesModification
 
     public ItemId Id { get; }
     public ItemName Name { get; }
-    public string Comment { get; }
+    public Comment Comment { get; }
     public QuantityType QuantityType { get; }
     public float QuantityInPacket { get; }
     public QuantityTypeInPacket QuantityTypeInPacket { get; }

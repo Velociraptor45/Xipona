@@ -26,7 +26,7 @@ public class ItemCreationConverter : IToDomainConverter<CreateItemContract, Item
 
         return new ItemCreation(
             new ItemName(source.Name),
-            source.Comment,
+            new Comment(source.Comment),
             source.QuantityType.ToEnum<QuantityType>(),
             source.QuantityInPacket,
             source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),

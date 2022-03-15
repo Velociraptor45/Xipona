@@ -8,7 +8,7 @@ public class PermanentItem
 {
     private readonly IEnumerable<IStoreItemAvailability> _availabilities;
 
-    public PermanentItem(ItemId id, ItemName name, string comment, QuantityType quantityType,
+    public PermanentItem(ItemId id, ItemName name, Comment comment, QuantityType quantityType,
         float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
         ManufacturerId? manufacturerId, IEnumerable<IStoreItemAvailability> availabilities)
     {
@@ -27,7 +27,7 @@ public class PermanentItem
 
     public ItemId Id { get; }
     public ItemName Name { get; }
-    public string Comment { get; }
+    public Comment Comment { get; }
     public QuantityType QuantityType { get; }
     public float QuantityInPacket { get; }
     public QuantityTypeInPacket QuantityTypeInPacket { get; }

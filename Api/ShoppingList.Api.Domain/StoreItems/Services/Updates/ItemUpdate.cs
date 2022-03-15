@@ -8,7 +8,7 @@ public class ItemUpdate
 {
     private readonly IEnumerable<IStoreItemAvailability> _availabilities;
 
-    public ItemUpdate(ItemId oldId, ItemName name, string comment,
+    public ItemUpdate(ItemId oldId, ItemName name, Comment comment,
         QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
         IEnumerable<IStoreItemAvailability> availabilities)
@@ -26,7 +26,7 @@ public class ItemUpdate
 
     public ItemId OldId { get; }
     public ItemName Name { get; }
-    public string Comment { get; }
+    public Comment Comment { get; }
     public QuantityType QuantityType { get; }
     public float QuantityInPacket { get; }
     public QuantityTypeInPacket QuantityTypeInPacket { get; }

@@ -44,7 +44,7 @@ public class StoreItemConverterTests : ToDomainConverterTestBase<Item, IStoreIte
             Id = destination.Id.Value,
             Name = destination.Name.Value,
             Deleted = destination.IsDeleted,
-            Comment = destination.Comment,
+            Comment = destination.Comment.Value,
             IsTemporary = destination.IsTemporary,
             QuantityType = destination.QuantityType.ToInt(),
             QuantityInPacket = destination.QuantityInPacket,

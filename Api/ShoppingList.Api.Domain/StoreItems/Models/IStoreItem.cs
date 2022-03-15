@@ -12,7 +12,7 @@ public interface IStoreItem
     ItemId Id { get; }
     ItemName Name { get; }
     bool IsDeleted { get; }
-    string Comment { get; }
+    Comment Comment { get; }
     bool IsTemporary { get; }
     QuantityType QuantityType { get; }
     float QuantityInPacket { get; }

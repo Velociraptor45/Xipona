@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 
 public class StoreItemReadModel
 {
-    public StoreItemReadModel(ItemId id, ItemName name, bool isDeleted, string comment, bool isTemporary,
+    public StoreItemReadModel(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         QuantityTypeReadModel quantityType, float quantityInPacket, QuantityTypeInPacketReadModel quantityTypeInPacket,
         ItemCategoryReadModel? itemCategory, ManufacturerReadModel? manufacturer,
         IEnumerable<StoreItemAvailabilityReadModel> availabilities, IEnumerable<ItemTypeReadModel> itemTypes)
@@ -29,7 +29,7 @@ public class StoreItemReadModel
     public ItemId Id { get; }
     public ItemName Name { get; }
     public bool IsDeleted { get; }
-    public string Comment { get; }
+    public Comment Comment { get; }
     public bool IsTemporary { get; }
     public QuantityTypeReadModel QuantityType { get; }
     public float QuantityInPacket { get; }

@@ -29,7 +29,7 @@ public class CreateItemWithTypesConverter : IToDomainConverter<CreateItemWithTyp
             ItemId.New,
             new ItemName(source.Name),
             false,
-            source.Comment,
+            new Comment(source.Comment),
             source.QuantityType.ToEnum<QuantityType>(),
             source.QuantityInPacket,
             source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),

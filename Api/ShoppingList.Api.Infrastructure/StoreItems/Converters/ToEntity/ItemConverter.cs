@@ -17,7 +17,7 @@ public class ItemConverter : IToEntityConverter<IStoreItem, Item>
             Id = source.Id.Value,
             Name = source.Name.Value,
             Deleted = source.IsDeleted,
-            Comment = source.Comment,
+            Comment = source.Comment.Value,
             IsTemporary = source.IsTemporary,
             QuantityType = source.QuantityType.ToInt(),
             QuantityInPacket = source.QuantityInPacket,

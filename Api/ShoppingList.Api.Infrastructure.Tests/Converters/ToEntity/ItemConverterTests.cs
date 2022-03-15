@@ -25,7 +25,7 @@ public class ItemConverterTests : ToEntityConverterTestBase<IStoreItem, Item>
             Id = source.Id.Value,
             Name = source.Name.Value,
             Deleted = source.IsDeleted,
-            Comment = source.Comment,
+            Comment = source.Comment.Value,
             IsTemporary = source.IsTemporary,
             QuantityType = source.QuantityType.ToInt(),
             QuantityInPacket = source.QuantityInPacket,
@@ -35,7 +35,7 @@ public class ItemConverterTests : ToEntityConverterTestBase<IStoreItem, Item>
             CreatedFrom = source.TemporaryId?.Value,
             AvailableAt = source.Availabilities
                 .Select(av =>
-                    new AvailableAt()
+                    new AvailableAt
                     {
                         StoreId = av.StoreId.Value,
                         Price = av.Price,

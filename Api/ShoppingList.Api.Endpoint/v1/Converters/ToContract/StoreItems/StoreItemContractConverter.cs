@@ -53,7 +53,7 @@ public class StoreItemContractConverter :
             Id = source.Id.Value,
             Name = source.Name.Value,
             IsDeleted = source.IsDeleted,
-            Comment = source.Comment,
+            Comment = source.Comment.Value,
             IsTemporary = source.IsTemporary,
             QuantityType = _quantityTypeContractConverter.ToContract(source.QuantityType),
             QuantityInPacket = source.QuantityInPacket,
