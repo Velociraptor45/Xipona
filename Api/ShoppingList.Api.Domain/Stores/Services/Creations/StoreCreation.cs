@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreCreations;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Creations;
 
 public class StoreCreation
 {

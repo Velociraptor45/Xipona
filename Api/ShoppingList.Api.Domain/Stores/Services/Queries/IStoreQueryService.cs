@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreQueries;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
 
 public interface IStoreQueryService
 {

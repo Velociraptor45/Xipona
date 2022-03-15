@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreQueries;
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
 
 public class StoreQueryService : IStoreQueryService
 {

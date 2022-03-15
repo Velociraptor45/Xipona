@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreCreations;
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Creations;
 
 public class StoreCreationService : IStoreCreationService
 {

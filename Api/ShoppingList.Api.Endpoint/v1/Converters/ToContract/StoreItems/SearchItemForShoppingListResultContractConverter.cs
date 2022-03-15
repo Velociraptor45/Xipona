@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreQueries;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.StoreItems;
 

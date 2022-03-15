@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreUpdate;
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
 
 public class StoreUpdateService : IStoreUpdateService
 {

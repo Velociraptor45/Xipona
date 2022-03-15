@@ -4,9 +4,9 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreCreations;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreQueries;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreUpdate;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores;
 

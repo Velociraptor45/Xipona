@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.StoreUpdate;
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
 
 public class StoreUpdate
 {
