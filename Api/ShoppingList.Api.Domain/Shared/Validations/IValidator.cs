@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validation;
+namespace ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
 public interface IValidator
 {
