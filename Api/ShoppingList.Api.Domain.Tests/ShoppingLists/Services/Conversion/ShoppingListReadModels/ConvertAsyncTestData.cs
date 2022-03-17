@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Attributes;
-using ProjectHermes.ShoppingList.Api.Core.Extensions;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
@@ -176,7 +175,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             .Create();
     }
 
-    private ShoppingListReadModel ToSimpleReadModel(IShoppingList list, IStore store, IStoreItem item,
+    private static ShoppingListReadModel ToSimpleReadModel(IShoppingList list, IStore store, IStoreItem item,
         IItemCategory itemCategory, IManufacturer manufacturer)
     {
         var manufacturerReadModel = manufacturer == null
@@ -193,39 +192,39 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
                 itemCategory.Name,
                 itemCategory.IsDeleted);
 
+        var listItemReadModels = new List<ShoppingListItemReadModel>();
+        if (item is not null)
+        {
+            var itemQuantityInPacket = item.ItemQuantity.InPacket;
+            var quantityTypeInPacketReadModel = itemQuantityInPacket is null
+                ? null
+                : new QuantityTypeInPacketReadModel(itemQuantityInPacket.Type);
+
+            var listItem = new ShoppingListItemReadModel(
+                item.Id,
+                null,
+                item.Name.Value,
+                item.IsDeleted,
+                item.Comment,
+                item.IsTemporary,
+                item.Availabilities.First().Price,
+                new QuantityTypeReadModel(item.ItemQuantity.Type),
+                itemQuantityInPacket?.Quantity,
+                quantityTypeInPacketReadModel,
+                itemCategoryReadModel,
+                manufacturerReadModel,
+                list.Sections.First().Items.First().IsInBasket,
+                list.Sections.First().Items.First().Quantity);
+            listItemReadModels.Add(listItem);
+        }
+
         var sectionReadModels = list.Sections.Any()
             ? new ShoppingListSectionReadModel(
                 list.Sections.First().Id,
                 store.Sections.First().Name,
                 store.Sections.First().SortingIndex,
                 store.Sections.First().IsDefaultSection,
-                new List<ShoppingListItemReadModel>
-                {
-                    new(
-                        item.Id,
-                        null,
-                        item.Name.Value,
-                        item.IsDeleted,
-                        item.Comment,
-                        item.IsTemporary,
-                        item.Availabilities.First().Price,
-                        new QuantityTypeReadModel(
-                            (int)item.QuantityType,
-                            item.QuantityType.ToString(),
-                            item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-                            item.QuantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
-                            item.QuantityType.GetAttribute<QuantityLabelAttribute>().QuantityLabel,
-                            item.QuantityType.GetAttribute<QuantityNormalizerAttribute>().Value),
-                        item.QuantityInPacket,
-                        new QuantityTypeInPacketReadModel(
-                            (int)item.QuantityTypeInPacket,
-                            item.QuantityTypeInPacket.ToString(),
-                            item.QuantityTypeInPacket.GetAttribute<QuantityLabelAttribute>().QuantityLabel),
-                        itemCategoryReadModel,
-                        manufacturerReadModel,
-                        list.Sections.First().Items.First().IsInBasket,
-                        list.Sections.First().Items.First().Quantity)
-                })
+                listItemReadModels)
             : null;
 
         return new ShoppingListReadModel(
@@ -234,8 +233,6 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             new ShoppingListStoreReadModel(
                 store.Id,
                 store.Name),
-            sectionReadModels != null
-                ? sectionReadModels.ToMonoList()
-                : Enumerable.Empty<ShoppingListSectionReadModel>());
+            sectionReadModels?.ToMonoList() ?? Enumerable.Empty<ShoppingListSectionReadModel>());
     }
 }

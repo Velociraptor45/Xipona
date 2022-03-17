@@ -274,7 +274,7 @@ public class ItemSearchReadModelConversionServiceTests
                     item.Id,
                     null,
                     item.Name.Value,
-                    item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                    item.ItemQuantity.Type.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                     availability.Price,
                     manufacturerReadModel,
                     itemCategoryReadModel,

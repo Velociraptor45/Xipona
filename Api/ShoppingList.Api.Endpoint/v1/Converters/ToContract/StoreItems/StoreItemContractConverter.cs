@@ -56,7 +56,7 @@ public class StoreItemContractConverter :
             Comment = source.Comment.Value,
             IsTemporary = source.IsTemporary,
             QuantityType = _quantityTypeContractConverter.ToContract(source.QuantityType),
-            QuantityInPacket = source.QuantityInPacket,
+            QuantityInPacket = source.QuantityInPacket?.Value,
             QuantityTypeInPacket = _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket),
             ItemCategory = itemCategoryContract,
             Manufacturer = manufacturerContract,

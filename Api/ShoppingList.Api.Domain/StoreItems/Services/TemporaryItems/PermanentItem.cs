@@ -8,16 +8,13 @@ public class PermanentItem
 {
     private readonly IEnumerable<IStoreItemAvailability> _availabilities;
 
-    public PermanentItem(ItemId id, ItemName name, Comment comment, QuantityType quantityType,
-        float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
+    public PermanentItem(ItemId id, ItemName name, Comment comment, ItemQuantity itemQuantity, ItemCategoryId itemCategoryId,
         ManufacturerId? manufacturerId, IEnumerable<IStoreItemAvailability> availabilities)
     {
         Id = id;
-        Name = name;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
         Comment = comment ?? throw new ArgumentNullException(nameof(comment));
-        QuantityType = quantityType;
-        QuantityInPacket = quantityInPacket;
-        QuantityTypeInPacket = quantityTypeInPacket;
+        ItemQuantity = itemQuantity ?? throw new ArgumentNullException(nameof(itemQuantity));
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
         _availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
@@ -28,9 +25,7 @@ public class PermanentItem
     public ItemId Id { get; }
     public ItemName Name { get; }
     public Comment Comment { get; }
-    public QuantityType QuantityType { get; }
-    public float QuantityInPacket { get; }
-    public QuantityTypeInPacket QuantityTypeInPacket { get; }
+    public ItemQuantity ItemQuantity { get; }
     public ItemCategoryId ItemCategoryId { get; }
     public ManufacturerId? ManufacturerId { get; }
 }

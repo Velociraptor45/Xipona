@@ -50,7 +50,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                     item.Id,
                     null,
                     item.Name.Value,
-                    item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                    item.ItemQuantity.Type.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                     storeAvailability.Price,
                     manufacturer is null ?
                         null :
@@ -94,7 +94,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                     item.Id,
                     type.Id,
                     $"{item.Name} {type.Name}",
-                    item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                    item.ItemQuantity.Type.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                     storeAvailability.Price,
                     manufacturer is null ?
                         null :

@@ -8,17 +8,14 @@ public class ItemModification
 {
     private readonly IEnumerable<IStoreItemAvailability> _availabilities;
 
-    public ItemModification(ItemId id, ItemName name, Comment comment,
-        QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+    public ItemModification(ItemId id, ItemName name, Comment comment, ItemQuantity itemQuantity,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
         IEnumerable<IStoreItemAvailability> availabilities)
     {
         Id = id;
-        Name = name;
-        Comment = comment;
-        QuantityType = quantityType;
-        QuantityInPacket = quantityInPacket;
-        QuantityTypeInPacket = quantityTypeInPacket;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Comment = comment ?? throw new ArgumentNullException(nameof(comment));
+        ItemQuantity = itemQuantity ?? throw new ArgumentNullException(nameof(itemQuantity));
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
         _availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
@@ -27,9 +24,7 @@ public class ItemModification
     public ItemId Id { get; }
     public ItemName Name { get; }
     public Comment Comment { get; }
-    public QuantityType QuantityType { get; }
-    public float QuantityInPacket { get; }
-    public QuantityTypeInPacket QuantityTypeInPacket { get; }
+    public ItemQuantity ItemQuantity { get; }
     public ItemCategoryId ItemCategoryId { get; }
     public ManufacturerId? ManufacturerId { get; }
 

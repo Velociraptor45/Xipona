@@ -90,6 +90,11 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
                     name = storeItem.Name.Value;
                 }
 
+                var itemQuantityInPacket = storeItem.ItemQuantity.InPacket;
+                var quantityTypeInPacketReadModel = itemQuantityInPacket is null
+                    ? null
+                    : new QuantityTypeInPacketReadModel(itemQuantityInPacket.Type);
+
                 var itemReadModel = new ShoppingListItemReadModel(
                     item.Id,
                     item.TypeId,
@@ -98,9 +103,9 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
                     storeItem.Comment,
                     storeItem.IsTemporary,
                     price,
-                    new QuantityTypeReadModel(storeItem.QuantityType),
-                    storeItem.QuantityInPacket,
-                    new QuantityTypeInPacketReadModel(storeItem.QuantityTypeInPacket),
+                    new QuantityTypeReadModel(storeItem.ItemQuantity.Type),
+                    itemQuantityInPacket?.Quantity,
+                    quantityTypeInPacketReadModel,
                     storeItem.ItemCategoryId == null ?
                         null : new ItemCategoryReadModel(itemCategories[storeItem.ItemCategoryId.Value]),
                     storeItem.ManufacturerId == null ?

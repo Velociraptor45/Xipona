@@ -8,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 public class StoreItemReadModel
 {
     public StoreItemReadModel(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
-        QuantityTypeReadModel quantityType, float quantityInPacket, QuantityTypeInPacketReadModel quantityTypeInPacket,
+        QuantityTypeReadModel quantityType, Quantity? quantityInPacket, QuantityTypeInPacketReadModel? quantityTypeInPacket,
         ItemCategoryReadModel? itemCategory, ManufacturerReadModel? manufacturer,
         IEnumerable<StoreItemAvailabilityReadModel> availabilities, IEnumerable<ItemTypeReadModel> itemTypes)
     {
@@ -19,7 +19,7 @@ public class StoreItemReadModel
         IsTemporary = isTemporary;
         QuantityType = quantityType ?? throw new ArgumentNullException(nameof(quantityType));
         QuantityInPacket = quantityInPacket;
-        QuantityTypeInPacket = quantityTypeInPacket ?? throw new ArgumentNullException(nameof(quantityTypeInPacket));
+        QuantityTypeInPacket = quantityTypeInPacket;
         ItemCategory = itemCategory;
         Manufacturer = manufacturer;
         Availabilities = availabilities?.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
@@ -32,8 +32,8 @@ public class StoreItemReadModel
     public Comment Comment { get; }
     public bool IsTemporary { get; }
     public QuantityTypeReadModel QuantityType { get; }
-    public float QuantityInPacket { get; }
-    public QuantityTypeInPacketReadModel QuantityTypeInPacket { get; }
+    public Quantity? QuantityInPacket { get; }
+    public QuantityTypeInPacketReadModel? QuantityTypeInPacket { get; }
     public ItemCategoryReadModel? ItemCategory { get; }
     public ManufacturerReadModel? Manufacturer { get; }
     public IReadOnlyCollection<StoreItemAvailabilityReadModel> Availabilities { get; }

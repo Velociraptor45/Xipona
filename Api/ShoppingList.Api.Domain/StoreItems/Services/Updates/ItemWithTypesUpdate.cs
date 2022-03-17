@@ -6,17 +6,13 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Updates;
 
 public class ItemWithTypesUpdate
 {
-    public ItemWithTypesUpdate(ItemId oldId, ItemName name, Comment comment,
-        QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-        ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
-        IEnumerable<ItemTypeUpdate> typeUpdates)
+    public ItemWithTypesUpdate(ItemId oldId, ItemName name, Comment comment, ItemQuantity itemQuantity,
+        ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IEnumerable<ItemTypeUpdate> typeUpdates)
     {
         OldId = oldId;
-        Name = name;
-        Comment = comment;
-        QuantityType = quantityType;
-        QuantityInPacket = quantityInPacket;
-        QuantityTypeInPacket = quantityTypeInPacket;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Comment = comment ?? throw new ArgumentNullException(nameof(comment));
+        ItemQuantity = itemQuantity ?? throw new ArgumentNullException(nameof(itemQuantity));
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
         TypeUpdates = typeUpdates?.ToList() ?? throw new ArgumentNullException(nameof(typeUpdates));
@@ -25,9 +21,7 @@ public class ItemWithTypesUpdate
     public ItemId OldId { get; }
     public ItemName Name { get; }
     public Comment Comment { get; }
-    public QuantityType QuantityType { get; }
-    public float QuantityInPacket { get; }
-    public QuantityTypeInPacket QuantityTypeInPacket { get; }
+    public ItemQuantity ItemQuantity { get; }
     public ItemCategoryId ItemCategoryId { get; }
     public ManufacturerId? ManufacturerId { get; }
     public IReadOnlyCollection<ItemTypeUpdate> TypeUpdates { get; }

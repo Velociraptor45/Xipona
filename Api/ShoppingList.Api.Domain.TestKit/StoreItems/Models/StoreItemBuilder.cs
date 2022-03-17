@@ -10,6 +10,11 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 
 public class StoreItemBuilder : DomainTestBuilderBase<StoreItem>
 {
+    public StoreItemBuilder()
+    {
+        Customize(new ItemQuantityCustomization());
+    }
+
     public StoreItemBuilder AsItem()
     {
         Customize<StoreItem>(c => c.FromFactory(new MethodInvoker(new ItemConstructorQuery())));
@@ -34,21 +39,9 @@ public class StoreItemBuilder : DomainTestBuilderBase<StoreItem>
         return this;
     }
 
-    public StoreItemBuilder WithQuantityType(QuantityType quantityType)
+    public StoreItemBuilder WithItemQuantity(ItemQuantity itemQuantity)
     {
-        FillConstructorWith("quantityType", quantityType);
-        return this;
-    }
-
-    public StoreItemBuilder WithQuantityInPacket(float quantityInPacket)
-    {
-        FillConstructorWith("quantityInPacket", quantityInPacket);
-        return this;
-    }
-
-    public StoreItemBuilder WithQuantityTypeInPacket(QuantityTypeInPacket quantityTypeInPacket)
-    {
-        FillConstructorWith("quantityTypeInPacket", quantityTypeInPacket);
+        FillConstructorWith(nameof(itemQuantity), itemQuantity);
         return this;
     }
 

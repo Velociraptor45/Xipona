@@ -13,7 +13,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get
         public string Comment { get; set; }
         public bool IsTemporary { get; set; }
         public QuantityTypeContract QuantityType { get; set; }
-        public float QuantityInPacket { get; set; }
+        public float? QuantityInPacket { get; set; }
         public QuantityTypeInPacketContract QuantityTypeInPacket { get; set; }
         public ItemCategoryContract ItemCategory { get; set; }
         public ManufacturerContract Manufacturer { get; set; }

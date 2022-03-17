@@ -28,9 +28,11 @@ public class ItemModificationConverter : IToDomainConverter<ModifyItemContract, 
             new ItemId(source.Id),
             new ItemName(source.Name),
             new Comment(source.Comment),
-            source.QuantityType.ToEnum<QuantityType>(),
-            source.QuantityInPacket,
-            source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),
+            new ItemQuantity(
+                source.QuantityType.ToEnum<QuantityType>(),
+                new ItemQuantityInPacket(
+                    new Quantity(source.QuantityInPacket),
+                    source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>())),
             new ItemCategoryId(source.ItemCategoryId),
             source.ManufacturerId.HasValue ?
                 new ManufacturerId(source.ManufacturerId.Value) :

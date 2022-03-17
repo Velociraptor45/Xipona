@@ -14,9 +14,7 @@ public interface IStoreItem
     bool IsDeleted { get; }
     Comment Comment { get; }
     bool IsTemporary { get; }
-    QuantityType QuantityType { get; }
-    float QuantityInPacket { get; }
-    QuantityTypeInPacket QuantityTypeInPacket { get; }
+    public ItemQuantity ItemQuantity { get; }
     ItemCategoryId? ItemCategoryId { get; }
     ManufacturerId? ManufacturerId { get; }
     IStoreItem? Predecessor { get; }

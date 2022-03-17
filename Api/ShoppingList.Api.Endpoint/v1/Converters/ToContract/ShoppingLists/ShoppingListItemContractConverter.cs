@@ -42,8 +42,9 @@ public class ShoppingListItemContractConverter : IToContractConverter<ShoppingLi
             manufacturerContract = _manufacturerContractConverter.ToContract(source.Manufacturer);
 
         QuantityTypeContract quantityTypeContract = _quantityTypeContractConverter.ToContract(source.QuantityType);
-        QuantityTypeInPacketContract quantityTypeInPacketContract =
-            _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket);
+        QuantityTypeInPacketContract? quantityTypeInPacketContract = source.QuantityTypeInPacket is null
+            ? null
+            : _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket);
 
         return new ShoppingListItemContract(
             source.Id.Value,
@@ -54,7 +55,7 @@ public class ShoppingListItemContractConverter : IToContractConverter<ShoppingLi
             source.IsTemporary,
             source.PricePerQuantity,
             quantityTypeContract,
-            source.QuantityInPacket,
+            source.QuantityInPacket?.Value,
             quantityTypeInPacketContract,
             itemCategoryContract,
             manufacturerContract,

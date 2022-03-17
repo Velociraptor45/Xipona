@@ -52,9 +52,11 @@ public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
                 new ItemName(source.Name),
                 source.Deleted,
                 new Comment(source.Comment),
-                source.QuantityType.ToEnum<QuantityType>(),
-                source.QuantityInPacket,
-                source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),
+                new ItemQuantity(
+                    source.QuantityType.ToEnum<QuantityType>(),
+                    new ItemQuantityInPacket(
+                        new Quantity(source.QuantityInPacket),
+                        source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>())),
                 itemCategoryId.Value,
                 manufacturerId,
                 predecessor,
@@ -70,9 +72,11 @@ public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
             source.Deleted,
             new Comment(source.Comment),
             source.IsTemporary,
-            source.QuantityType.ToEnum<QuantityType>(),
-            source.QuantityInPacket,
-            source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),
+            new ItemQuantity(
+                source.QuantityType.ToEnum<QuantityType>(),
+                new ItemQuantityInPacket( //todo check for null
+                    new Quantity(source.QuantityInPacket),
+                    source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>())),
             itemCategoryId,
             manufacturerId,
             predecessor,
