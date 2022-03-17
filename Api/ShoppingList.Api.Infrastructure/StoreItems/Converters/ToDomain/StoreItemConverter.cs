@@ -40,6 +40,24 @@ public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
             ? new TemporaryItemId(source.CreatedFrom.Value)
             : (TemporaryItemId?)null;
 
+        ItemQuantityInPacket? itemQuantityInPacket = null;
+        if (source.QuantityInPacket is null)
+        {
+            if (source.QuantityTypeInPacket is not null)
+                throw new InvalidOperationException(
+                    $"Invalid data state for item {source.Id}: QuantityInPacket is null but QuantityTypeInPacket isn't.");
+        }
+        else
+        {
+            if (source.QuantityTypeInPacket is null)
+                throw new InvalidOperationException(
+                    $"Invalid data state for item {source.Id}: QuantityInPacket isn't null but QuantityTypeInPacket is.");
+
+            itemQuantityInPacket = new ItemQuantityInPacket(
+                new Quantity(source.QuantityInPacket.Value),
+                source.QuantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
+        }
+
         if (source.ItemTypes.Any())
         {
             var itemTypes = _itemTypeConverter.ToDomain(source.ItemTypes);
@@ -54,9 +72,7 @@ public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
                 new Comment(source.Comment),
                 new ItemQuantity(
                     source.QuantityType.ToEnum<QuantityType>(),
-                    new ItemQuantityInPacket(
-                        new Quantity(source.QuantityInPacket),
-                        source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>())),
+                    itemQuantityInPacket),
                 itemCategoryId.Value,
                 manufacturerId,
                 predecessor,
@@ -74,9 +90,7 @@ public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
             source.IsTemporary,
             new ItemQuantity(
                 source.QuantityType.ToEnum<QuantityType>(),
-                new ItemQuantityInPacket( //todo check for null
-                    new Quantity(source.QuantityInPacket),
-                    source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>())),
+                itemQuantityInPacket),
             itemCategoryId,
             manufacturerId,
             predecessor,

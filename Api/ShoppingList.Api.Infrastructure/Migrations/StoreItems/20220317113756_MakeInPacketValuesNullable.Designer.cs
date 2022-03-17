@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts;
 
@@ -10,9 +11,10 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts;
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
 {
     [DbContext(typeof(ItemContext))]
-    partial class ItemContextModelSnapshot : ModelSnapshot
+    [Migration("20220317113756_MakeInPacketValuesNullable")]
+    partial class MakeInPacketValuesNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
