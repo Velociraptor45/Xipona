@@ -1,5 +1,6 @@
 ﻿namespace ProjectHermes.ShoppingList.Api.Domain.Shared.Models;
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S4035:Classes implementing \"IEquatable<T>\" should be sealed", Justification = "<Pending>")]
 public abstract class Name : IEqualityComparer<Name>, IEquatable<Name>
 {
     protected Name(string value)

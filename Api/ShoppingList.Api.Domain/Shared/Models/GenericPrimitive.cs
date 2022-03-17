@@ -1,5 +1,6 @@
 ﻿namespace ProjectHermes.ShoppingList.Api.Domain.Shared.Models;
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S4035:Classes implementing \"IEquatable<T>\" should be sealed", Justification = "<Pending>")]
 public class GenericPrimitive<T> : IEquatable<GenericPrimitive<T>>
         where T : struct
 {
@@ -35,11 +36,6 @@ public class GenericPrimitive<T> : IEquatable<GenericPrimitive<T>>
         return ReferenceEquals(this, obj) || obj is GenericPrimitive<T> other && Equals(other);
     }
 
-    public override int GetHashCode()
-    {
-        return Value.GetHashCode();
-    }
-
     public bool Equals(GenericPrimitive<T>? other)
     {
         if (ReferenceEquals(null, other))
@@ -47,5 +43,10 @@ public class GenericPrimitive<T> : IEquatable<GenericPrimitive<T>>
         if (ReferenceEquals(this, other))
             return true;
         return Value.Equals(other.Value);
+    }
+
+    public override int GetHashCode()
+    {
+        return Value.GetHashCode();
     }
 }
