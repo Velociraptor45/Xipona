@@ -18,9 +18,9 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
             Comment = comment;
             IsTemporary = isTemporary;
             PricePerQuantity = pricePerQuantity;
-            QuantityType = quantityType ?? throw new System.ArgumentNullException(nameof(quantityType));
+            QuantityType = quantityType ?? throw new ArgumentNullException(nameof(quantityType));
             QuantityInPacket = quantityInPacket;
-            QuantityTypeInPacket = quantityTypeInPacket ?? throw new System.ArgumentNullException(nameof(quantityTypeInPacket));
+            QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
             IsInBasket = isInBasket;
