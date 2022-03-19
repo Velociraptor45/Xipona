@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
         private readonly IEnumerable<StoreItemAvailability> availabilities;
 
         public MakeTemporaryItemPermanentRequest(Guid id, string name, string comment, int quantityType,
-            float quantityInPacket, int quantityTypeInPacket, Guid itemCategoryId, Guid? manufacturerId,
+            float? quantityInPacket, int? quantityTypeInPacket, Guid itemCategoryId, Guid? manufacturerId,
             IEnumerable<StoreItemAvailability> availabilities)
         {
             Id = id;
@@ -28,8 +28,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
         public string Name { get; }
         public string Comment { get; }
         public int QuantityType { get; }
-        public float QuantityInPacket { get; }
-        public int QuantityTypeInPacket { get; }
+        public float? QuantityInPacket { get; }
+        public int? QuantityTypeInPacket { get; }
         public Guid ItemCategoryId { get; }
         public Guid? ManufacturerId { get; }
 

@@ -1,13 +1,13 @@
-﻿using System;
-using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+using System;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class ShoppingListItem
     {
         public ShoppingListItem(ItemId id, Guid? typeId, string name, bool isTemporary, float pricePerQuantity, QuantityType quantityType,
-            float quantityInPacket, QuantityTypeInPacket quantityInPacketType, string itemCategory,
+            float? quantityInPacket, QuantityTypeInPacket quantityInPacketType, string itemCategory,
             string manufacturer, bool isInBasket, float quantity)
         {
             Id = id ?? throw new System.ArgumentNullException(nameof(id));
@@ -15,9 +15,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             Name = name;
             IsTemporary = isTemporary;
             PricePerQuantity = pricePerQuantity;
-            QuantityType = quantityType ?? throw new System.ArgumentNullException(nameof(quantityType));
+            QuantityType = quantityType ?? throw new ArgumentNullException(nameof(quantityType));
             QuantityInPacket = quantityInPacket;
-            QuantityInPacketType = quantityInPacketType ?? throw new System.ArgumentNullException(nameof(quantityInPacketType));
+            QuantityInPacketType = quantityInPacketType;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
             IsInBasket = isInBasket;
@@ -30,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         public bool IsTemporary { get; }
         public float PricePerQuantity { get; }
         public QuantityType QuantityType { get; }
-        public float QuantityInPacket { get; }
+        public float? QuantityInPacket { get; }
         public QuantityTypeInPacket QuantityInPacketType { get; }
         public string ItemCategory { get; }
         public string Manufacturer { get; }
