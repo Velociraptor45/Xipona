@@ -12,7 +12,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
     }
 
     public void SetupAddItemToShoppingList(IShoppingList shoppingList,
-        ItemId itemId, SectionId? sectionId, float quantity)
+        ItemId itemId, SectionId? sectionId, QuantityInBasket quantity)
     {
         Setup(m => m.AddItemToShoppingListAsync(
                 shoppingList,
@@ -24,7 +24,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
     }
 
     public void SetupAddItemToShoppingList(IShoppingList shoppingList,
-        TemporaryItemId temporaryItemId, SectionId? sectionId, float quantity)
+        TemporaryItemId temporaryItemId, SectionId? sectionId, QuantityInBasket quantity)
     {
         Setup(m => m.AddItemToShoppingListAsync(
                 shoppingList,
@@ -36,7 +36,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
     }
 
     public void SetupAddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
-        ItemTypeId typeId, SectionId? sectionId, float quantity)
+        ItemTypeId typeId, SectionId? sectionId, QuantityInBasket quantity)
     {
         Setup(m => m.AddItemWithTypeToShoppingList(
                 shoppingList,
@@ -49,7 +49,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
     }
 
     public void VerifyAddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
-        ItemTypeId typeId, SectionId? sectionId, float quantity, Func<Times> times)
+        ItemTypeId typeId, SectionId? sectionId, QuantityInBasket quantity, Func<Times> times)
     {
         Verify(m => m.AddItemWithTypeToShoppingList(
                 shoppingList,
@@ -62,7 +62,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
     }
 
     public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
-        float quantity)
+        QuantityInBasket quantity)
     {
         Verify(i => i.AddItemToShoppingListAsync(
                 shoppingList,
@@ -74,7 +74,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
     }
 
     public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
-        SectionId? sectionId, float quantity)
+        SectionId? sectionId, QuantityInBasket quantity)
     {
         Verify(i => i.AddItemToShoppingListAsync(
                 shoppingList,

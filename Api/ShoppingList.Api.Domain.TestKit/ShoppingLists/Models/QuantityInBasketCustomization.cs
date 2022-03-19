@@ -1,20 +1,20 @@
 ﻿using AutoFixture.Kernel;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
-namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
-public class PriceCustomization : ICustomization
+public class QuantityInBasketCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customizations.Add(new PriceSpecimenBuilder());
+        fixture.Customizations.Add(new ItemQuantitySpecimenBuilder());
     }
 
-    private class PriceSpecimenBuilder : ISpecimenBuilder
+    private class ItemQuantitySpecimenBuilder : ISpecimenBuilder
     {
         private readonly RandomNumericSequenceGenerator _numberGenerator;
 
-        public PriceSpecimenBuilder()
+        public ItemQuantitySpecimenBuilder()
         {
             _numberGenerator = new RandomNumericSequenceGenerator(1, 100);
         }
@@ -27,16 +27,16 @@ public class PriceCustomization : ICustomization
             return CreateInstance(context);
         }
 
-        private static bool MatchesType(object request)
+        private bool MatchesType(object request)
         {
             var t = request as Type;
-            return typeof(Price) == t;
+            return typeof(QuantityInBasket) == t;
         }
 
-        private Price CreateInstance(ISpecimenContext context)
+        private QuantityInBasket CreateInstance(ISpecimenContext context)
         {
             var value = (float)_numberGenerator.Create(typeof(float), context);
-            return new Price(value);
+            return new QuantityInBasket(value);
         }
     }
 }

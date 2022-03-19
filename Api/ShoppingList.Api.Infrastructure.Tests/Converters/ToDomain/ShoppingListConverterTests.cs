@@ -38,7 +38,7 @@ public class ShoppingListConverterTests : ToDomainConverterTestBase<ProjectHerme
                     ItemId = item.Id.Value,
                     ItemTypeId = item.TypeId?.Value,
                     InBasket = item.IsInBasket,
-                    Quantity = item.Quantity
+                    Quantity = item.Quantity.Value
                 };
                 itemsOnListMap.Add(map);
             }

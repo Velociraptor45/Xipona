@@ -80,7 +80,7 @@ public class ShoppingListSection : IShoppingListSection
         return new ShoppingListSection(Id, items.Values);
     }
 
-    public IShoppingListSection ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
+    public IShoppingListSection ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity)
     {
         if (!_shoppingListItems.ContainsKey((itemId, itemTypeId)))
             throw new DomainException(new ItemNotInSectionReason(itemId, Id));

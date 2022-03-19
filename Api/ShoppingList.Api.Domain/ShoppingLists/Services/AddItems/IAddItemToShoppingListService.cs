@@ -7,18 +7,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
 
 public interface IAddItemToShoppingListService
 {
-    Task AddItemToShoppingListAsync(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId, float quantity,
+    Task AddItemToShoppingListAsync(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId, QuantityInBasket quantity,
         CancellationToken cancellationToken);
 
     Task AddItemToShoppingListAsync(IShoppingList shoppingList, TemporaryItemId temporaryItemId, SectionId? sectionId,
-        float quantity, CancellationToken cancellationToken);
+        QuantityInBasket quantity, CancellationToken cancellationToken);
 
     Task AddItemWithTypeToShoppingListAsync(ShoppingListId shoppingListId, ItemId itemId, ItemTypeId itemTypeId,
-        SectionId? sectionId, float quantity, CancellationToken cancellationToken);
+        SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken);
 
     Task AddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item, ItemTypeId itemTypeId,
-        SectionId? sectionId, float quantity, CancellationToken cancellationToken);
+        SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken);
 
     Task AddAsync(ShoppingListId shoppingListId, OfflineTolerantItemId itemId, SectionId? sectionId,
-        float quantity, CancellationToken cancellationToken);
+        QuantityInBasket quantity, CancellationToken cancellationToken);
 }

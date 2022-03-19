@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
 public class ShoppingListItem : IShoppingListItem
 {
-    public ShoppingListItem(ItemId id, ItemTypeId? typeId, bool isInBasket, float quantity)
+    public ShoppingListItem(ItemId id, ItemTypeId? typeId, bool isInBasket, QuantityInBasket quantity)
     {
         Id = id;
         TypeId = typeId;
@@ -15,7 +15,7 @@ public class ShoppingListItem : IShoppingListItem
     public ItemId Id { get; }
     public ItemTypeId? TypeId { get; }
     public bool IsInBasket { get; }
-    public float Quantity { get; }
+    public QuantityInBasket Quantity { get; }
 
     public IShoppingListItem PutInBasket()
     {
@@ -27,7 +27,7 @@ public class ShoppingListItem : IShoppingListItem
         return new ShoppingListItem(Id, TypeId, false, Quantity);
     }
 
-    public IShoppingListItem ChangeQuantity(float quantity)
+    public IShoppingListItem ChangeQuantity(QuantityInBasket quantity)
     {
         return new ShoppingListItem(Id, TypeId, IsInBasket, quantity);
     }

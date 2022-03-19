@@ -96,7 +96,7 @@ public class ShoppingListSectionMock : Mock<IShoppingListSection>
             Times.Never);
     }
 
-    public void VerifyChangeItemQuantityOnce(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
+    public void VerifyChangeItemQuantityOnce(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity)
     {
         Verify(i => i.ChangeItemQuantity(itemId, itemTypeId, quantity),
             Times.Once);
@@ -107,7 +107,7 @@ public class ShoppingListSectionMock : Mock<IShoppingListSection>
         Verify(i => i.ChangeItemQuantity(
                 It.IsAny<ItemId>(),
                 It.IsAny<ItemTypeId?>(),
-                It.IsAny<float>()),
+                It.IsAny<QuantityInBasket>()),
             Times.Never);
     }
 }

@@ -6,6 +6,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
 public class ShoppingListItemBuilder : DomainTestBuilderBase<ShoppingListItem>
 {
+    public ShoppingListItemBuilder()
+    {
+        Customize(new QuantityInBasketCustomization());
+    }
+
     public ShoppingListItemBuilder WithId(ItemId id)
     {
         FillConstructorWith("id", id);
@@ -18,7 +23,7 @@ public class ShoppingListItemBuilder : DomainTestBuilderBase<ShoppingListItem>
         return this;
     }
 
-    public ShoppingListItemBuilder WithQuantity(float quantity)
+    public ShoppingListItemBuilder WithQuantity(QuantityInBasket quantity)
     {
         FillConstructorWith("quantity", quantity);
         return this;

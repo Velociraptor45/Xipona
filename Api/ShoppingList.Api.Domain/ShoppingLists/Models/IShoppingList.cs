@@ -23,7 +23,7 @@ public interface IShoppingList
 
     void RemoveFromBasket(ItemId itemId, ItemTypeId? itemTypeId);
 
-    void ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, float quantity);
+    void ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity);
 
     IShoppingList Finish(DateTime completionDate);
 

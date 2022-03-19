@@ -60,6 +60,6 @@ public class ShoppingListItemContractConverter : IToContractConverter<ShoppingLi
             itemCategoryContract,
             manufacturerContract,
             source.IsInBasket,
-            source.Quantity);
+            source.Quantity.Value);
     }
 }

@@ -8,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Comma
 public class ChangeItemQuantityOnShoppingListCommand : ICommand<bool>
 {
     public ChangeItemQuantityOnShoppingListCommand(ShoppingListId shoppingListId, OfflineTolerantItemId itemId,
-        ItemTypeId? itemTypeId, float quantity)
+        ItemTypeId? itemTypeId, QuantityInBasket quantity)
     {
         ShoppingListId = shoppingListId;
         OfflineTolerantItemId = itemId ?? throw new ArgumentNullException(nameof(itemId));
@@ -19,5 +19,5 @@ public class ChangeItemQuantityOnShoppingListCommand : ICommand<bool>
     public ShoppingListId ShoppingListId { get; }
     public OfflineTolerantItemId OfflineTolerantItemId { get; }
     public ItemTypeId? ItemTypeId { get; }
-    public float Quantity { get; }
+    public QuantityInBasket Quantity { get; }
 }

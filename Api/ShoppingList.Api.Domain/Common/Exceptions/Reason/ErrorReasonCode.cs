@@ -3,7 +3,7 @@
 public enum ErrorReasonCode
 {
     ItemNotFound = 0,
-    InvalidItemQuantity = 2,
+    InvalidQuantityInBasket = 2,
     ItemAlreadyOnShoppingList = 3,
     ItemAtStoreNotAvailable = 4,
     ItemCategoryNotFound = 5,

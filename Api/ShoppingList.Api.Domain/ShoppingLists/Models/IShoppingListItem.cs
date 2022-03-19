@@ -6,12 +6,12 @@ public interface IShoppingListItem
 {
     ItemId Id { get; }
     bool IsInBasket { get; }
-    float Quantity { get; }
+    QuantityInBasket Quantity { get; }
     ItemTypeId? TypeId { get; }
 
     IShoppingListItem PutInBasket();
 
     IShoppingListItem RemoveFromBasket();
 
-    IShoppingListItem ChangeQuantity(float quantity);
+    IShoppingListItem ChangeQuantity(QuantityInBasket quantity);
 }

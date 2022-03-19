@@ -153,7 +153,7 @@ public class ShoppingListMock : Mock<IShoppingList>
         Verify(i => i.Finish(completionDate), times);
     }
 
-    public void VerifyChangeItemQuantityOnce(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
+    public void VerifyChangeItemQuantityOnce(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity)
     {
         Verify(i => i.ChangeItemQuantity(itemId, itemTypeId, quantity),
             Times.Once);

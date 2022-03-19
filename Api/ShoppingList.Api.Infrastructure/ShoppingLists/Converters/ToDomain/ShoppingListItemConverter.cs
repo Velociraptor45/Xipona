@@ -23,6 +23,6 @@ public class ShoppingListItemConverter : IToDomainConverter<ItemsOnList, IShoppi
             new ItemId(source.ItemId),
             itemTypeId,
             source.InBasket,
-            source.Quantity);
+            new QuantityInBasket(source.Quantity));
     }
 }

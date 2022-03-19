@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 
@@ -11,7 +12,7 @@ public class ShoppingListItemReadModel
         bool isTemporary, Price pricePerQuantity, QuantityTypeReadModel quantityType, Quantity? quantityInPacket,
         QuantityTypeInPacketReadModel? quantityTypeInPacket,
         ItemCategoryReadModel? itemCategory, ManufacturerReadModel? manufacturer,
-        bool isInBasket, float quantity)
+        bool isInBasket, QuantityInBasket quantity)
     {
         Id = id;
         TypeId = typeId;
@@ -42,5 +43,5 @@ public class ShoppingListItemReadModel
     public ItemCategoryReadModel? ItemCategory { get; }
     public ManufacturerReadModel? Manufacturer { get; }
     public bool IsInBasket { get; }
-    public float Quantity { get; }
+    public QuantityInBasket Quantity { get; }
 }

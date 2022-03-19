@@ -154,7 +154,7 @@ public class ShoppingListModificationServiceTests
             public ShoppingListId ShoppingListId { get; private set; }
             public ItemTypeId? ItemTypeId { get; private set; }
             public OfflineTolerantItemId OfflineTolerantItemId { get; private set; }
-            public float Quantity { get; private set; }
+            public QuantityInBasket Quantity { get; private set; }
 
             public void SetupActualItemId()
             {
@@ -183,7 +183,7 @@ public class ShoppingListModificationServiceTests
 
             public void SetupQuantity()
             {
-                Quantity = Fixture.Create<float>();
+                Quantity = new QuantityInBasketBuilder().Create();
             }
 
             public void SetupShoppingListMock()

@@ -20,6 +20,6 @@ public class AddItemWithTypeToShoppingListCommandConverter
             new ItemId(source.ItemId),
             new ItemTypeId(source.ItemTypeId),
             source.SectionId.HasValue ? new SectionId(source.SectionId.Value) : null,
-            source.Quantity);
+            new QuantityInBasket(source.Quantity));
     }
 }
