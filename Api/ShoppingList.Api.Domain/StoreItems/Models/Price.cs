@@ -1,4 +1,7 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 public record struct Price
 {
     public Price()
@@ -9,6 +12,10 @@ public record struct Price
     public Price(float value)
     {
         Value = value;
+
+        if (value <= 0)
+            throw new DomainException(new PriceNotValidReason());
     }
+
     public float Value { get; }
 }

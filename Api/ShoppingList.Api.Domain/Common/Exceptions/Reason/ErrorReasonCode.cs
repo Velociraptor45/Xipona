@@ -36,5 +36,6 @@ public enum ErrorReasonCode
     ShoppingListItemHasType = 33,
     SectionNotFound = 34,
     QuantityTypeHasNoInPacketValues = 35,
-    QuantityTypeHasInPacketValues = 36
+    QuantityTypeHasInPacketValues = 36,
+    PriceNotValid = 37
 }

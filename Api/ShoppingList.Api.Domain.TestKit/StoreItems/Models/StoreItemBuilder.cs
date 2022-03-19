@@ -13,6 +13,7 @@ public class StoreItemBuilder : DomainTestBuilderBase<StoreItem>
     public StoreItemBuilder()
     {
         Customize(new ItemQuantityCustomization());
+        Customize(new PriceCustomization());
     }
 
     public StoreItemBuilder AsItem()
