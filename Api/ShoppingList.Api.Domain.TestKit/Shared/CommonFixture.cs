@@ -28,6 +28,7 @@ public class CommonFixture
         fixture.Customize<TemporaryItemId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<StoreId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<SectionId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+        fixture.Customize<Price>(c => c.FromFactory(new MethodInvoker(new PriceConstructorQuery())));
         return fixture;
     }
 

@@ -36,7 +36,7 @@ public class ItemConverter : IToEntityConverter<IStoreItem, Item>
         return new AvailableAt
         {
             StoreId = availability.StoreId.Value,
-            Price = availability.Price,
+            Price = availability.Price.Value,
             ItemId = source.Id.Value,
             DefaultSectionId = availability.DefaultSectionId.Value
         };
@@ -59,7 +59,7 @@ public class ItemConverter : IToEntityConverter<IStoreItem, Item>
         return new ItemTypeAvailableAt
         {
             StoreId = availability.StoreId.Value,
-            Price = availability.Price,
+            Price = availability.Price.Value,
             ItemTypeId = itemType.Id.Value,
             DefaultSectionId = availability.DefaultSectionId.Value
         };

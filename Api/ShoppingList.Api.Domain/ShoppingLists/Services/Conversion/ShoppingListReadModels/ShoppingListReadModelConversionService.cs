@@ -70,7 +70,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
             {
                 var storeItem = storeItems[item.Id];
 
-                float price;
+                Price price;
                 string name;
                 if (storeItem.HasItemTypes)
                 {

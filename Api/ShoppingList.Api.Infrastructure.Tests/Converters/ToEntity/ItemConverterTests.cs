@@ -38,7 +38,7 @@ public class ItemConverterTests : ToEntityConverterTestBase<IStoreItem, Item>
                     new AvailableAt
                     {
                         StoreId = av.StoreId.Value,
-                        Price = av.Price,
+                        Price = av.Price.Value,
                         ItemId = source.Id.Value,
                         DefaultSectionId = av.DefaultSectionId.Value
                     }).ToList(),

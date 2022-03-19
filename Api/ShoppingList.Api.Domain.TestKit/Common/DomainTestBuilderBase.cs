@@ -27,5 +27,6 @@ public class DomainTestBuilderBase<TModel> : TestBuilderBase<TModel>
         Customize<TemporaryItemId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         Customize<StoreId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         Customize<SectionId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+        Customize<Price>(c => c.FromFactory(new MethodInvoker(new PriceConstructorQuery())));
     }
 }

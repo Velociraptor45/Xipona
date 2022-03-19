@@ -8,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
 public class ShoppingListItemReadModel
 {
     public ShoppingListItemReadModel(ItemId id, ItemTypeId? typeId, string name, bool isDeleted, Comment comment,
-        bool isTemporary, float pricePerQuantity, QuantityTypeReadModel quantityType, Quantity? quantityInPacket,
+        bool isTemporary, Price pricePerQuantity, QuantityTypeReadModel quantityType, Quantity? quantityInPacket,
         QuantityTypeInPacketReadModel? quantityTypeInPacket,
         ItemCategoryReadModel? itemCategory, ManufacturerReadModel? manufacturer,
         bool isInBasket, float quantity)
@@ -35,7 +35,7 @@ public class ShoppingListItemReadModel
     public bool IsDeleted { get; }
     public Comment Comment { get; }
     public bool IsTemporary { get; }
-    public float PricePerQuantity { get; }
+    public Price PricePerQuantity { get; }
     public QuantityTypeReadModel QuantityType { get; }
     public Quantity? QuantityInPacket { get; }
     public QuantityTypeInPacketReadModel? QuantityTypeInPacket { get; }

@@ -22,7 +22,7 @@ public class StoreItemAvailabilityConverter : IToDomainConverter<ItemAvailabilit
 
         return _storeItemAvailabilityFactory.Create(
             new StoreId(source.StoreId),
-            source.Price,
+            new Price(source.Price),
             new SectionId(source.DefaultSectionId));
     }
 }
