@@ -30,15 +30,22 @@ public class ItemWithTypesModificationConverter : IToDomainConverter<ModifyItemW
             new ItemTypeName(t.Name),
             _availabilityConverter.ToDomain(t.Availabilities)));
 
+        ItemQuantityInPacket? itemQuantityInPacket = null;
+        //todo improve this check
+        if (source.QuantityInPacket is not null && source.QuantityTypeInPacket is not null)
+        {
+            itemQuantityInPacket = new ItemQuantityInPacket(
+                new Quantity(source.QuantityInPacket.Value),
+                source.QuantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
+        }
+
         var modification = new ItemWithTypesModification(
             new ItemId(source.Id),
             new ItemName(source.Name),
             new Comment(source.Comment),
             new ItemQuantity(
                 source.QuantityType.ToEnum<QuantityType>(),
-                new ItemQuantityInPacket(
-                    new Quantity(source.QuantityInPacket),
-                    source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>())),
+                itemQuantityInPacket),
             new ItemCategoryId(source.ItemCategoryId),
             source.ManufacturerId.HasValue ?
                 new ManufacturerId(source.ManufacturerId.Value) :
