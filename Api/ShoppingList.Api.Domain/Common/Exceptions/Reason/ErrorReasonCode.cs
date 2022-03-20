@@ -37,5 +37,6 @@ public enum ErrorReasonCode
     SectionNotFound = 34,
     QuantityTypeHasNoInPacketValues = 35,
     QuantityTypeHasInPacketValues = 36,
-    PriceNotValid = 37
+    PriceNotValid = 37,
+    InvalidQuantity = 38,
 }
