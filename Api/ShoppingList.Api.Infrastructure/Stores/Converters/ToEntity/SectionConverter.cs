@@ -14,7 +14,7 @@ public class SectionConverter : IToEntityConverter<IStoreSection, Section>
         return new Section
         {
             Id = source.Id.Value,
-            Name = source.Name,
+            Name = source.Name.Value,
             SortIndex = source.SortingIndex,
             IsDefaultSection = source.IsDefaultSection
         };

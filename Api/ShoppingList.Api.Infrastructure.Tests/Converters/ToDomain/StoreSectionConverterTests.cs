@@ -30,7 +30,7 @@ public class StoreSectionConverterTests : ToDomainConverterTestBase<Section, ISt
         return new Section()
         {
             Id = destination.Id.Value,
-            Name = destination.Name,
+            Name = destination.Name.Value,
             SortIndex = destination.SortingIndex,
             IsDefaultSection = destination.IsDefaultSection
         };

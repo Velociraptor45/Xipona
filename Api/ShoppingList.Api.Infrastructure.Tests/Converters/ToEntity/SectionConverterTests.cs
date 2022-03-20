@@ -23,7 +23,7 @@ public class SectionConverterTests : ToEntityConverterTestBase<IStoreSection, Se
         return new Section
         {
             Id = source.Id.Value,
-            Name = source.Name,
+            Name = source.Name.Value,
             SortIndex = source.SortingIndex,
             IsDefaultSection = source.IsDefaultSection
         };

@@ -10,8 +10,8 @@ public class CreateStoreCommandConverter : IToDomainConverter<CreateStoreContrac
 {
     public CreateStoreCommand ToDomain(CreateStoreContract source)
     {
-        var sections =
-            source.Sections.Select(s => new SectionCreation(s.Name, s.SortingIndex, s.IsDefaultSection));
+        var sections = source.Sections.Select(
+                s => new SectionCreation(new SectionName(s.Name), s.SortingIndex, s.IsDefaultSection));
 
         return new CreateStoreCommand(new StoreCreation(new StoreName(source.Name), sections));
     }
