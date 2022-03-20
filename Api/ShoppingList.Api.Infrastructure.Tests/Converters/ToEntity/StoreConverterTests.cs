@@ -22,7 +22,7 @@ public class StoreConverterTests : ToEntityConverterTestBase<IStore, ProjectHerm
         return new ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Store
         {
             Id = source.Id.Value,
-            Name = source.Name,
+            Name = source.Name.Value,
             Deleted = source.IsDeleted,
             Sections = source.Sections.Select(s => SectionConverterTests.GetDestination(s)).ToList()
         };

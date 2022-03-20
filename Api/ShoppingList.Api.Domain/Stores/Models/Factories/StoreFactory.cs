@@ -11,7 +11,7 @@ public class StoreFactory : IStoreFactory
         _sectionFactory = sectionFactory;
     }
 
-    public IStore Create(StoreId id, string name, bool isDeleted, IEnumerable<IStoreSection> sections)
+    public IStore Create(StoreId id, StoreName name, bool isDeleted, IEnumerable<IStoreSection> sections)
     {
         return new Store(id, name, isDeleted, new StoreSections(sections, _sectionFactory));
     }

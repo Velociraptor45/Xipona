@@ -26,7 +26,7 @@ public class StoreConverter : IToDomainConverter<Entities.Store, IStore>
 
         return _storeFactory.Create(
             new StoreId(source.Id),
-            source.Name,
+            new StoreName(source.Name),
             source.Deleted,
             sections);
     }

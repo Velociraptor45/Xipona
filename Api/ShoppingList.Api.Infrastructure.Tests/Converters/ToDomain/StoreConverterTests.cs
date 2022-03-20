@@ -33,7 +33,7 @@ public class StoreConverterTests : ToDomainConverterTestBase<ProjectHermes.Shopp
         return new ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Store
         {
             Id = destination.Id.Value,
-            Name = destination.Name,
+            Name = destination.Name.Value,
             Deleted = destination.IsDeleted,
             Sections = sections
         };

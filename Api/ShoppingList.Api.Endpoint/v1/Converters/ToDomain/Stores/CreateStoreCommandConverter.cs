@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Creations;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Stores;
@@ -12,6 +13,6 @@ public class CreateStoreCommandConverter : IToDomainConverter<CreateStoreContrac
         var sections =
             source.Sections.Select(s => new SectionCreation(s.Name, s.SortingIndex, s.IsDefaultSection));
 
-        return new CreateStoreCommand(new StoreCreation(source.Name, sections));
+        return new CreateStoreCommand(new StoreCreation(new StoreName(source.Name), sections));
     }
 }
