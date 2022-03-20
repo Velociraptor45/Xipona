@@ -7,6 +7,7 @@ public class ItemTypeBuilder : DomainTestBuilderBase<ItemType>
 {
     public ItemTypeBuilder()
     {
+        Customize(new PriceCustomization());
     }
 
     public ItemTypeBuilder(IItemType itemType)

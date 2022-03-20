@@ -14,6 +14,7 @@ public class StoreItemBuilder : DomainTestBuilderBase<StoreItem>
     {
         Customize(new ItemQuantityCustomization());
         Customize(new PriceCustomization());
+        Customize(new QuantityCustomization());
     }
 
     public StoreItemBuilder AsItem()

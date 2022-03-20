@@ -4,7 +4,7 @@ public sealed class ItemQuantityInPacket : IEquatable<ItemQuantityInPacket>
 {
     public ItemQuantityInPacket(Quantity quantity, QuantityTypeInPacket type)
     {
-        Quantity = quantity ?? throw new ArgumentNullException(nameof(quantity));
+        Quantity = quantity;
         Type = type;
     }
 

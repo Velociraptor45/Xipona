@@ -7,6 +7,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 
 namespace ShoppingList.Api.Domain.TestKit.Shared;
 
@@ -28,7 +29,8 @@ public class CommonFixture
         fixture.Customize<TemporaryItemId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<StoreId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<SectionId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
-        fixture.Customize<Price>(c => c.FromFactory(new MethodInvoker(new PriceConstructorQuery())));
+        fixture.Customize(new PriceCustomization());
+        fixture.Customize(new QuantityCustomization());
         return fixture;
     }
 

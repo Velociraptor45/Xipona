@@ -5,4 +5,8 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 
 public class ItemQuantityInPacketBuilder : DomainTestBuilderBase<ItemQuantityInPacket>
 {
+    public ItemQuantityInPacketBuilder()
+    {
+        Customize(new QuantityCustomization());
+    }
 }

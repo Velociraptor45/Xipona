@@ -1,10 +1,16 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Shared.Models;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-
-public class Quantity : GenericPrimitive<float>
+public record struct Quantity
 {
-    public Quantity(float value) : base(value)
+    public Quantity()
     {
+        throw new NotSupportedException("Empty constructor for Quantity not supported.");
     }
+
+    public Quantity(float value)
+    {
+        Value = value;
+    }
+
+    public float Value { get; }
 }
