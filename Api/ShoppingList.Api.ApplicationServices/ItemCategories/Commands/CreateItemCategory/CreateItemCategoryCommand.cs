@@ -1,18 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Commands.CreateItemCategory;
 
 public class CreateItemCategoryCommand : ICommand<bool>
 {
-    public CreateItemCategoryCommand(string name)
+    public CreateItemCategoryCommand(ItemCategoryName name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
-        }
-
-        Name = name;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
     }
 
-    public string Name { get; }
+    public ItemCategoryName Name { get; }
 }

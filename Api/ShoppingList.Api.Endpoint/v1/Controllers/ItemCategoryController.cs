@@ -66,7 +66,7 @@ public class ItemCategoryController : ControllerBase
     [Route("create/{name}")]
     public async Task<IActionResult> CreateItemCategory([FromRoute(Name = "name")] string name)
     {
-        var command = new CreateItemCategoryCommand(name);
+        var command = new CreateItemCategoryCommand(new ItemCategoryName(name));
         await _commandDispatcher.DispatchAsync(command, default);
 
         return Ok();

@@ -20,7 +20,7 @@ public class ItemCategoryConverter : IToDomainConverter<Entities.ItemCategory, I
 
         return _itemCategoryFactory.Create(
             new ItemCategoryId(source.Id),
-            source.Name,
+            new ItemCategoryName(source.Name),
             source.Deleted);
     }
 }

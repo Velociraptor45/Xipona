@@ -30,7 +30,7 @@ public class ItemCategoryConverterTests : ToDomainConverterTestBase<ProjectHerme
         {
             Id = destination.Id.Value,
             Deleted = destination.IsDeleted,
-            Name = destination.Name
+            Name = destination.Name.Value
         };
     }
 
