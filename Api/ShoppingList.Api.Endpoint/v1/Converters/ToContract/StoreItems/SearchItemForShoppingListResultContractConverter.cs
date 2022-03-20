@@ -29,7 +29,7 @@ public class SearchItemForShoppingListResultContractConverter :
             source.DefaultQuantity,
             source.Price.Value,
             source.ItemCategory?.Name ?? "",
-            source.Manufacturer?.Name ?? "",
+            source.Manufacturer?.Name.Value ?? "",
             _storeItemSectionContractConverter.ToContract(source.DefaultSection));
     }
 }

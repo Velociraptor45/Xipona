@@ -3,6 +3,6 @@
 public interface IManufacturer
 {
     ManufacturerId Id { get; }
-    string Name { get; }
+    ManufacturerName Name { get; }
     bool IsDeleted { get; }
 }

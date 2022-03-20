@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.A
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.ManufacturerSearch;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
@@ -62,7 +63,7 @@ public class ManufacturerController : ControllerBase
     [Route("create/{name}")]
     public async Task<IActionResult> CreateManufacturer([FromRoute(Name = "name")] string name)
     {
-        var command = new CreateManufacturerCommand(name);
+        var command = new CreateManufacturerCommand(new ManufacturerName(name));
         await _commandDispatcher.DispatchAsync(command, default);
 
         return Ok();

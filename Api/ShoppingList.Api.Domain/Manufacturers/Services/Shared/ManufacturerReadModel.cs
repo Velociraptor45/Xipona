@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 
 public class ManufacturerReadModel
 {
-    public ManufacturerReadModel(ManufacturerId id, string name, bool isDeleted)
+    public ManufacturerReadModel(ManufacturerId id, ManufacturerName name, bool isDeleted)
     {
         Id = id;
         Name = name;
@@ -21,6 +21,6 @@ public class ManufacturerReadModel
     }
 
     public ManufacturerId Id { get; }
-    public string Name { get; }
+    public ManufacturerName Name { get; }
     public bool IsDeleted { get; }
 }
