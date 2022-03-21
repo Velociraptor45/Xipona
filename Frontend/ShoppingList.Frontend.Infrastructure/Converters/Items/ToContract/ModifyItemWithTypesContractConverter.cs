@@ -1,11 +1,13 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 using System;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract
 {
-    public class ModifyItemWithTypesContractConverter
+    public class ModifyItemWithTypesContractConverter :
+        IToContractConverter<ModifyItemWithTypesRequest, ModifyItemWithTypesContract>
     {
         public ModifyItemWithTypesContract ToContract(ModifyItemWithTypesRequest request)
         {

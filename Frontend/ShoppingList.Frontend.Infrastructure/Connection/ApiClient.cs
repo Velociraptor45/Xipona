@@ -1,10 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.Client;
+using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converter;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToContract;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Stores.ToContract;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Stores.ToDomain;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contracts;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests;
@@ -21,195 +25,193 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 {
     public class ApiClient : IApiClient
     {
-        private readonly IShoppingListApiClient client;
+        private readonly IShoppingListApiClient _client;
+        private readonly IApiConverters _converters;
 
-        public ApiClient(IShoppingListApiClient client)
+        public ApiClient(IShoppingListApiClient client, IApiConverters converters)
         {
-            this.client = client;
+            _client = client;
+            _converters = converters;
         }
 
         public async Task IsAliveAsync()
         {
-            _ = await client.IsAlive();
+            _ = await _client.IsAlive();
         }
 
         public async Task PutItemInBasketAsync(PutItemInBasketRequest request)
         {
-            await client.PutItemInBasket(request.ToContract());
+            await _client.PutItemInBasket(request.ToContract());
         }
 
         public async Task RemoveItemFromBasketAsync(RemoveItemFromBasketRequest request)
         {
-            await client.RemoveItemFromBasket(request.ToContract());
+            await _client.RemoveItemFromBasket(request.ToContract());
         }
 
         public async Task ChangeItemQuantityOnShoppingListAsync(ChangeItemQuantityOnShoppingListRequest request)
         {
-            await client.ChangeItemQuantityOnShoppingList(request.ToContract());
+            await _client.ChangeItemQuantityOnShoppingList(request.ToContract());
         }
 
         public async Task FinishListAsync(FinishListRequest request)
         {
-            await client.FinishList(request.ShoppingListId);
+            await _client.FinishList(request.ShoppingListId);
         }
 
         public async Task RemoveItemFromShoppingListAsync(RemoveItemFromShoppingListRequest request)
         {
-            var converter = new RemoveItemFromShoppingListContractConverter();
-            await client.RemoveItemFromShoppingList(converter.ToContract(request));
+            var contract =
+                _converters.ToContract<RemoveItemFromShoppingListRequest, RemoveItemFromShoppingListContract>(request);
+            await _client.RemoveItemFromShoppingList(contract);
         }
 
         public async Task AddItemToShoppingListAsync(AddItemToShoppingListRequest request)
         {
-            var converter = new AddItemToShoppingListContractConverter();
-            await client.AddItemToShoppingList(converter.ToContract(request));
+            var contract = _converters.ToContract<AddItemToShoppingListRequest, AddItemToShoppingListContract>(request);
+            await _client.AddItemToShoppingList(contract);
         }
 
         public async Task AddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request)
         {
-            await client.AddItemWithTypeToShoppingList(request.ToContract());
+            await _client.AddItemWithTypeToShoppingList(request.ToContract());
         }
 
         public async Task UpdateItemAsync(UpdateItemRequest request)
         {
-            await client.UpdateItemAsync(request.StoreItem.ToUpdateItemContract());
+            await _client.UpdateItemAsync(request.StoreItem.ToUpdateItemContract());
         }
 
         public async Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request)
         {
             var contract = request.StoreItem.ToUpdateItemWithTypesContract();
-            await client.UpdateItemWithTypesAsync(contract);
+            await _client.UpdateItemWithTypesAsync(contract);
         }
 
         public async Task ModifyItemAsync(ModifyItemRequest request)
         {
-            await client.ModifyItem(request.StoreItem.ToModifyItemContract());
+            await _client.ModifyItem(request.StoreItem.ToModifyItemContract());
         }
 
         public async Task ModifyItemWithTypesAsync(ModifyItemWithTypesRequest request)
         {
-            var converter = new ModifyItemWithTypesContractConverter();
-            await client.ModifyItemWithTypesAsync(converter.ToContract(request));
+            var contract = _converters.ToContract<ModifyItemWithTypesRequest, ModifyItemWithTypesContract>(request);
+            await _client.ModifyItemWithTypesAsync(contract);
         }
 
         public async Task CreateItemAsync(CreateItemRequest request)
         {
-            await client.CreateItem(request.StoreItem.ToCreateItemContract());
+            await _client.CreateItem(request.StoreItem.ToCreateItemContract());
         }
 
         public async Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request)
         {
-            await client.CreateItemWithTypes(request.StoreItem.ToCreateItemWithTypesContract());
+            await _client.CreateItemWithTypes(request.StoreItem.ToCreateItemWithTypesContract());
         }
 
         public async Task DeleteItemAsync(DeleteItemRequest request)
         {
-            await client.DeleteItemAsync(request.ItemId);
+            await _client.DeleteItemAsync(request.ItemId);
         }
 
         public async Task CreateManufacturerAsync(string name)
         {
-            await client.CreateManufacturer(name);
+            await _client.CreateManufacturer(name);
         }
 
         public async Task CreateItemCategoryAsync(string name)
         {
-            await client.CreateItemCategory(name);
+            await _client.CreateItemCategory(name);
         }
 
         public async Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(Guid storeId)
         {
-            var list = await client.GetActiveShoppingListByStoreId(storeId);
+            var list = await _client.GetActiveShoppingListByStoreId(storeId);
             return list.ToModel();
         }
 
         public async Task<IEnumerable<Store>> GetAllActiveStoresAsync()
         {
-            var contracts = await client.GetAllActiveStores();
-            var converter = new StoreConverter();
-            return contracts.Select(c => converter.ToDomain(c));
+            var contracts = await _client.GetAllActiveStores();
+            return contracts.Select(_converters.ToDomain<ActiveStoreContract, Store>);
         }
 
         public async Task<IEnumerable<Manufacturer>> GetAllActiveManufacturersAsync()
         {
-            var manufacturers = await client.GetAllActiveManufacturers();
+            var manufacturers = await _client.GetAllActiveManufacturers();
 
             return manufacturers.Select(man => man.ToModel());
         }
 
         public async Task<IEnumerable<ItemCategory>> GetAllActiveItemCategoriesAsync()
         {
-            var itemCategories = await client.GetAllActiveItemCategories();
+            var itemCategories = await _client.GetAllActiveItemCategories();
 
-            return itemCategories.Select(cat => cat.ToModel());
+            return itemCategories.Select(_converters.ToDomain<ItemCategoryContract, ItemCategory>);
         }
 
-        public async Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(string searchInput, Guid storeId)
+        public async Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(
+            string searchInput, Guid storeId)
         {
-            var converter = new SearchItemForShoppingListResultConverter();
-
-            var result = await client.SearchItemsForShoppingListAsync(searchInput, storeId);
-            return result.Select(converter.ToDomain);
+            var result = await _client.SearchItemsForShoppingListAsync(searchInput, storeId);
+            return result
+                .Select(_converters.ToDomain<SearchItemForShoppingListResultContract, SearchItemForShoppingListResult>);
         }
 
         public async Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput)
         {
-            var converter = new SearchItemResultConverter();
-            var result = await client.SearchItemsAsync(searchInput) ?? Enumerable.Empty<SearchItemResultContract>();
-            return result.Select(converter.ToDomain);
+            var result = await _client.SearchItemsAsync(searchInput) ?? Enumerable.Empty<SearchItemResultContract>();
+            return result.Select(_converters.ToDomain<SearchItemResultContract, SearchItemResult>);
         }
 
         public async Task<IEnumerable<SearchItemResult>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,
             IEnumerable<Guid> itemCategoryIds, IEnumerable<Guid> manufacturerIds)
         {
-            var converter = new SearchItemResultConverter();
-
-            var result = await client.SearchItemsByFilterAsync(
+            var result = await _client.SearchItemsByFilterAsync(
                 storeIds,
                 itemCategoryIds,
                 manufacturerIds);
 
-            return result.Select(converter.ToDomain);
+            return result.Select(_converters.ToDomain<SearchItemResultContract, SearchItemResult>);
         }
 
         public async Task<StoreItem> GetItemByIdAsync(Guid itemId)
         {
-            var result = await client.Get(itemId);
+            var result = await _client.Get(itemId);
             return result.ToModel();
         }
 
         public async Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync()
         {
-            var result = await client.GetAllQuantityTypes();
+            var result = await _client.GetAllQuantityTypes();
             return result.Select(r => r.ToModel());
         }
 
         public async Task<IEnumerable<QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync()
         {
-            var result = await client.GetAllQuantityTypesInPacket();
+            var result = await _client.GetAllQuantityTypesInPacket();
             return result.Select(r => r.ToModel());
         }
 
         public async Task CreateTemporaryItem(CreateTemporaryItemRequest request)
         {
-            await client.CreateTemporaryItem(request.ToContract());
+            await _client.CreateTemporaryItem(request.ToContract());
         }
 
         public async Task MakeTemporaryItemPermanent(MakeTemporaryItemPermanentRequest request)
         {
-            await client.MakeTemporaryItemPermanent(request.ToContract());
+            await _client.MakeTemporaryItemPermanent(request.ToContract());
         }
 
         public async Task CreateStoreAsync(CreateStoreRequest request)
         {
-            var contract = new CreateStoreContractConverter().ToContract(request);
-            await client.CreateStore(contract);
+            var contract = _converters.ToContract<CreateStoreRequest, CreateStoreContract>(request);
+            await _client.CreateStore(contract);
         }
 
         public async Task ModifyStoreAsync(ModifyStoreRequest request)
         {
-            var converter = new UpdateStoreContractConverter();
-            await client.UpdateStore(converter.ToContract(request));
+            await _client.UpdateStore(_converters.ToContract<ModifyStoreRequest, UpdateStoreContract>(request));
         }
     }
 }

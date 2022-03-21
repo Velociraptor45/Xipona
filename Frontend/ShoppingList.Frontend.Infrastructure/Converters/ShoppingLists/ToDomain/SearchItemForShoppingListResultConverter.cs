@@ -1,9 +1,11 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
 
-namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converter
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain
 {
-    public class SearchItemForShoppingListResultConverter
+    public class SearchItemForShoppingListResultConverter :
+        IToDomainConverter<SearchItemForShoppingListResultContract, SearchItemForShoppingListResult>
     {
         public SearchItemForShoppingListResult ToDomain(SearchItemForShoppingListResultContract contract)
         {

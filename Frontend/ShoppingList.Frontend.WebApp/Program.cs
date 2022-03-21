@@ -1,16 +1,17 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Client;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp
 {
@@ -49,6 +50,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddTransient<IShoppingListCommunicationService, ShoppingListCommunicationService>();
             builder.Services.AddTransient<IItemsPageLoadingService, ItemsPageLoadingService>();
             builder.Services.AddTransient<IStoresPageCommunicationService, StoresPageCommunicationService>();
+
+            builder.Services.AddInfrastructure();
         }
     }
 }
