@@ -1,10 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToContract
 {
-    public class AddItemToShoppingListContractConverter
+    public class AddItemToShoppingListContractConverter :
+        IToContractConverter<AddItemToShoppingListRequest, AddItemToShoppingListContract>
     {
         private readonly ItemIdContractConverter _itemIdConverter;
 

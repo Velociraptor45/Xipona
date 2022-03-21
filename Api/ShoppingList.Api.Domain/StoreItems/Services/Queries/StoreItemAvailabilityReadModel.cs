@@ -1,13 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 
 public class StoreItemAvailabilityReadModel
 {
     public StoreItemAvailabilityReadModel(StoreItemStoreReadModel store, Price price,
-        StoreSectionReadModel defaultSection)
+        StoreItemSectionReadModel defaultSection)
     {
         Store = store;
         Price = price;
@@ -15,11 +14,11 @@ public class StoreItemAvailabilityReadModel
     }
 
     public StoreItemAvailabilityReadModel(IStoreItemAvailability availability, IStore store, IStoreSection section) :
-        this(new StoreItemStoreReadModel(store), availability.Price, new StoreSectionReadModel(section))
+        this(new StoreItemStoreReadModel(store), availability.Price, new StoreItemSectionReadModel(section))
     {
     }
 
     public StoreItemStoreReadModel Store { get; }
     public Price Price { get; }
-    public StoreSectionReadModel DefaultSection { get; }
+    public StoreItemSectionReadModel DefaultSection { get; }
 }

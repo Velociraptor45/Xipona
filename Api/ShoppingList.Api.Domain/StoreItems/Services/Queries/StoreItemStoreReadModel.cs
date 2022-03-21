@@ -1,11 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 
 public class StoreItemStoreReadModel
 {
-    public StoreItemStoreReadModel(StoreId id, StoreName name, IEnumerable<StoreSectionReadModel> sections)
+    public StoreItemStoreReadModel(StoreId id, StoreName name, IEnumerable<StoreItemSectionReadModel> sections)
     {
         Id = id;
         Name = name;
@@ -13,11 +12,11 @@ public class StoreItemStoreReadModel
     }
 
     public StoreItemStoreReadModel(IStore store) :
-        this(store.Id, store.Name, store.Sections.Select(s => new StoreSectionReadModel(s)))
+        this(store.Id, store.Name, store.Sections.Select(s => new StoreItemSectionReadModel(s)))
     {
     }
 
     public StoreId Id { get; }
     public StoreName Name { get; }
-    public IReadOnlyCollection<StoreSectionReadModel> Sections { get; }
+    public IReadOnlyCollection<StoreItemSectionReadModel> Sections { get; }
 }

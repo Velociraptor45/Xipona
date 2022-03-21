@@ -12,6 +12,6 @@ public class StoreItemSectionContractConverter :
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        return new StoreItemSectionContract(source.Id.Value, source.Name, source.SortingIndex);
+        return new StoreItemSectionContract(source.Id.Value, source.Name.Value, source.SortingIndex);
     }
 }
