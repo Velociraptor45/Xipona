@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Client;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converter;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToContract;
@@ -154,7 +155,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput)
         {
             var converter = new SearchItemResultConverter();
-            var result = await client.SearchItemsAsync(searchInput);
+            var result = await client.SearchItemsAsync(searchInput) ?? Enumerable.Empty<SearchItemResultContract>();
             return result.Select(converter.ToDomain);
         }
 
