@@ -10,11 +10,11 @@ public class StoreItemAvailabilityContractConverter :
     IToContractConverter<StoreItemAvailabilityReadModel, StoreItemAvailabilityContract>
 {
     private readonly IToContractConverter<StoreItemStoreReadModel, StoreItemStoreContract> _storeItemStoreContractConverter;
-    private readonly IToContractConverter<StoreSectionReadModel, StoreSectionContract> _storeSectionContractConverter;
+    private readonly IToContractConverter<StoreItemSectionReadModel, StoreItemSectionContract> _storeSectionContractConverter;
 
     public StoreItemAvailabilityContractConverter(
         IToContractConverter<StoreItemStoreReadModel, StoreItemStoreContract> storeItemStoreContractConverter,
-        IToContractConverter<StoreSectionReadModel, StoreSectionContract> storeSectionContractConverter)
+        IToContractConverter<StoreItemSectionReadModel, StoreItemSectionContract> storeSectionContractConverter)
     {
         _storeItemStoreContractConverter = storeItemStoreContractConverter;
         _storeSectionContractConverter = storeSectionContractConverter;

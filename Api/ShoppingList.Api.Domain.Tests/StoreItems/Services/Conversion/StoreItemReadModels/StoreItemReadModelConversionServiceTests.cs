@@ -9,7 +9,6 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.Store
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
 using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
@@ -330,11 +329,10 @@ public class StoreItemReadModelConversionServiceTests
             IStoreItemAvailability availability)
         {
             var section = store.Sections.First();
-            var storeSectionReadModel = new StoreSectionReadModel(
+            var storeSectionReadModel = new StoreItemSectionReadModel(
                 section.Id,
                 section.Name,
-                section.SortingIndex,
-                section.IsDefaultSection);
+                section.SortingIndex);
 
             var storeReadModel = new StoreItemStoreReadModel(
                 store.Id,

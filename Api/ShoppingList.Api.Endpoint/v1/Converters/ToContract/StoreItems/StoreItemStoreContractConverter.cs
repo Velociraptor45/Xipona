@@ -1,20 +1,18 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.StoreItems;
 
 public class StoreItemStoreContractConverter :
     IToContractConverter<StoreItemStoreReadModel, StoreItemStoreContract>
 {
-    private readonly IToContractConverter<StoreSectionReadModel, StoreSectionContract> _storeSectionContractConverter;
+    private readonly IToContractConverter<StoreItemSectionReadModel, StoreItemSectionContract> _storeItemSectionContractConverter;
 
     public StoreItemStoreContractConverter(
-        IToContractConverter<StoreSectionReadModel, StoreSectionContract> storeSectionContractConverter)
+        IToContractConverter<StoreItemSectionReadModel, StoreItemSectionContract> storeItemSectionContractConverter)
     {
-        _storeSectionContractConverter = storeSectionContractConverter;
+        _storeItemSectionContractConverter = storeItemSectionContractConverter;
     }
 
     public StoreItemStoreContract ToContract(StoreItemStoreReadModel source)
@@ -25,6 +23,6 @@ public class StoreItemStoreContractConverter :
         return new StoreItemStoreContract(
             source.Id.Value,
             source.Name.Value,
-            _storeSectionContractConverter.ToContract(source.Sections));
+            _storeItemSectionContractConverter.ToContract(source.Sections));
     }
 }
