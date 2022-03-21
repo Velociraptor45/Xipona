@@ -1,19 +1,24 @@
 ﻿using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests;
 using ProjectHermes.ShoppingList.Frontend.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
 using ProjectHermes.ShoppingList.Frontend.Models.Items;
@@ -43,17 +48,23 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task PutItemInBasketAsync(PutItemInBasketRequest request)
         {
-            await _client.PutItemInBasket(request.ToContract());
+            var contract = _converters.ToContract<PutItemInBasketRequest, PutItemInBasketContract>(request);
+            await _client.PutItemInBasket(contract);
         }
 
         public async Task RemoveItemFromBasketAsync(RemoveItemFromBasketRequest request)
         {
-            await _client.RemoveItemFromBasket(request.ToContract());
+            var contract = _converters.ToContract<RemoveItemFromBasketRequest, RemoveItemFromBasketContract>(request);
+            await _client.RemoveItemFromBasket(contract);
         }
 
         public async Task ChangeItemQuantityOnShoppingListAsync(ChangeItemQuantityOnShoppingListRequest request)
         {
-            await _client.ChangeItemQuantityOnShoppingList(request.ToContract());
+            var contract =
+                _converters
+                    .ToContract<ChangeItemQuantityOnShoppingListRequest, ChangeItemQuantityOnShoppingListContract>(
+                        request);
+            await _client.ChangeItemQuantityOnShoppingList(contract);
         }
 
         public async Task FinishListAsync(FinishListRequest request)
@@ -76,7 +87,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task AddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request)
         {
-            await _client.AddItemWithTypeToShoppingList(request.ToContract());
+            var contract =
+                _converters.ToContract<AddItemWithTypeToShoppingListRequest, AddItemWithTypeToShoppingListContract>(
+                    request);
+            await _client.AddItemWithTypeToShoppingList(contract);
         }
 
         public async Task UpdateItemAsync(UpdateItemRequest request)
@@ -197,12 +211,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task CreateTemporaryItem(CreateTemporaryItemRequest request)
         {
-            await _client.CreateTemporaryItem(request.ToContract());
+            var contract = _converters.ToContract<CreateTemporaryItemRequest, CreateTemporaryItemContract>(request);
+            await _client.CreateTemporaryItem(contract);
         }
 
         public async Task MakeTemporaryItemPermanent(MakeTemporaryItemPermanentRequest request)
         {
-            await _client.MakeTemporaryItemPermanent(request.ToContract());
+            var contract =
+                _converters.ToContract<MakeTemporaryItemPermanentRequest, MakeTemporaryItemPermanentContract>(request);
+            await _client.MakeTemporaryItemPermanent(contract);
         }
 
         public async Task CreateStoreAsync(CreateStoreRequest request)
