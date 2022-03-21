@@ -4,7 +4,8 @@ using ProjectHermes.ShoppingList.Frontend.Models.Items;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract
 {
-    public class ItemAvailabilityContractConverter : IToContractConverter<StoreItemAvailability, ItemAvailabilityContract>
+    public class ItemAvailabilityContractConverter :
+        IToContractConverter<StoreItemAvailability, ItemAvailabilityContract>
     {
         public ItemAvailabilityContract ToContract(StoreItemAvailability model)
         {
