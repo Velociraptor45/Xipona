@@ -2,14 +2,16 @@
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contracts;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Requests;
 using ProjectHermes.ShoppingList.Frontend.Models;
@@ -127,7 +129,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(Guid storeId)
         {
             var list = await _client.GetActiveShoppingListByStoreId(storeId);
-            return list.ToModel();
+            return _converters.ToDomain<ShoppingListContract, ShoppingListRoot>(list);
         }
 
         public async Task<IEnumerable<Store>> GetAllActiveStoresAsync()
@@ -140,7 +142,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         {
             var manufacturers = await _client.GetAllActiveManufacturers();
 
-            return manufacturers.Select(man => man.ToModel());
+            return manufacturers.Select(_converters.ToDomain<ManufacturerContract, Manufacturer>);
         }
 
         public async Task<IEnumerable<ItemCategory>> GetAllActiveItemCategoriesAsync()
@@ -178,19 +180,19 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task<StoreItem> GetItemByIdAsync(Guid itemId)
         {
             var result = await _client.Get(itemId);
-            return result.ToModel();
+            return _converters.ToDomain<StoreItemContract, StoreItem>(result);
         }
 
         public async Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync()
         {
             var result = await _client.GetAllQuantityTypes();
-            return result.Select(r => r.ToModel());
+            return result.Select(_converters.ToDomain<QuantityTypeContract, QuantityType>);
         }
 
         public async Task<IEnumerable<QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync()
         {
             var result = await _client.GetAllQuantityTypesInPacket();
-            return result.Select(r => r.ToModel());
+            return result.Select(_converters.ToDomain<QuantityTypeInPacketContract, QuantityTypeInPacket>);
         }
 
         public async Task CreateTemporaryItem(CreateTemporaryItemRequest request)
