@@ -24,7 +24,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
                 Comment = request.StoreItem.Comment,
                 QuantityType = request.StoreItem.QuantityType.Id,
                 QuantityInPacket = request.StoreItem.QuantityInPacket,
-                QuantityTypeInPacket = request.StoreItem.QuantityInPacketType.Id,
+                QuantityTypeInPacket = request.StoreItem.QuantityInPacketType?.Id,
                 ItemCategoryId = request.StoreItem.ItemCategoryId.Value,
                 ManufacturerId = request.StoreItem.ManufacturerId,
                 ItemTypes = types

@@ -16,7 +16,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Contract
                     contract.PricePerQuantity,
                     contract.QuantityType.ToModel(),
                     contract.QuantityInPacket,
-                    contract.QuantityTypeInPacket.ToModel(),
+                    contract.QuantityTypeInPacket?.ToModel(),
                     contract.ItemCategory?.Name ?? "",
                     contract.Manufacturer?.Name ?? "",
                     contract.IsInBasket,

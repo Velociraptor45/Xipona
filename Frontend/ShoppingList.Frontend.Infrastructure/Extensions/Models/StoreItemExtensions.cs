@@ -19,7 +19,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models
                 Comment = model.Comment,
                 QuantityType = model.QuantityType.Id,
                 QuantityInPacket = model.QuantityInPacket,
-                QuantityTypeInPacket = model.QuantityInPacketType.Id,
+                QuantityTypeInPacket = model.QuantityInPacketType?.Id,
                 ItemCategoryId = model.ItemCategoryId.Value,
                 ManufacturerId = model.ManufacturerId,
                 Availabilities = model.Availabilities.Select(av => av.ToItemAvailabilityContract())
@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models
                 Comment = model.Comment,
                 QuantityType = model.QuantityType.Id,
                 QuantityInPacket = model.QuantityInPacket,
-                QuantityTypeInPacket = model.QuantityInPacketType.Id,
+                QuantityTypeInPacket = model.QuantityInPacketType?.Id,
                 ItemCategoryId = model.ItemCategoryId.Value,
                 ManufacturerId = model.ManufacturerId,
                 ItemTypes = model.ItemTypes.Select(t => t.ToUpdateItemTypeContract())
@@ -51,7 +51,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models
                 Comment = model.Comment,
                 QuantityType = model.QuantityType.Id,
                 QuantityInPacket = model.QuantityInPacket,
-                QuantityTypeInPacket = model.QuantityInPacketType.Id,
+                QuantityTypeInPacket = model.QuantityInPacketType?.Id,
                 ItemCategoryId = model.ItemCategoryId.Value,
                 ManufacturerId = model.ManufacturerId,
                 Availabilities = model.Availabilities.Select(av => av.ToItemAvailabilityContract())
@@ -66,7 +66,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models
                 Comment = model.Comment,
                 QuantityType = model.QuantityType.Id,
                 QuantityInPacket = model.QuantityInPacket,
-                QuantityTypeInPacket = model.QuantityInPacketType.Id,
+                QuantityTypeInPacket = model.QuantityInPacketType?.Id,
                 ItemCategoryId = model.ItemCategoryId.Value,
                 ManufacturerId = model.ManufacturerId,
                 Availabilities = model.Availabilities.Select(av => av.ToItemAvailabilityContract())
@@ -81,7 +81,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Extensions.Models
                 Comment = model.Comment,
                 QuantityType = model.QuantityType.Id,
                 QuantityInPacket = model.QuantityInPacket,
-                QuantityTypeInPacket = model.QuantityInPacketType.Id,
+                QuantityTypeInPacket = model.QuantityInPacketType?.Id,
                 ItemCategoryId = model.ItemCategoryId.Value,
                 ManufacturerId = model.ManufacturerId,
                 ItemTypes = model.ItemTypes.Select(t => t.ToCreateItemTypeContract())
