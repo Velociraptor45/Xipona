@@ -10,9 +10,8 @@ public class ShoppingListItemReadModel
 {
     public ShoppingListItemReadModel(ItemId id, ItemTypeId? typeId, string name, bool isDeleted, Comment comment,
         bool isTemporary, Price pricePerQuantity, QuantityTypeReadModel quantityType, Quantity? quantityInPacket,
-        QuantityTypeInPacketReadModel? quantityTypeInPacket,
-        ItemCategoryReadModel? itemCategory, ManufacturerReadModel? manufacturer,
-        bool isInBasket, QuantityInBasket quantity)
+        QuantityTypeInPacketReadModel? quantityTypeInPacket, ItemCategoryReadModel? itemCategory,
+        ManufacturerReadModel? manufacturer, bool isInBasket, QuantityInBasket quantity)
     {
         Id = id;
         TypeId = typeId;

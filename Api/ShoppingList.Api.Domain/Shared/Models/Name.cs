@@ -69,4 +69,9 @@ public abstract class Name : IEqualityComparer<Name>, IEquatable<Name>
     {
         return obj.Value.GetHashCode();
     }
+
+    public override string ToString()
+    {
+        return Value;
+    }
 }
