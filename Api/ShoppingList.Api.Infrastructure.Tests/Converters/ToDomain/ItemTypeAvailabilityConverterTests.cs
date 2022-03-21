@@ -20,10 +20,10 @@ internal class ItemTypeAvailabilityConverterTests : ToDomainConverterTestBase<It
 
     public static ItemTypeAvailableAt GetSource(IStoreItemAvailability destination)
     {
-        return new ItemTypeAvailableAt()
+        return new ItemTypeAvailableAt
         {
             StoreId = destination.StoreId.Value,
-            Price = destination.Price,
+            Price = destination.Price.Value,
             DefaultSectionId = destination.DefaultSectionId.Value
         };
     }

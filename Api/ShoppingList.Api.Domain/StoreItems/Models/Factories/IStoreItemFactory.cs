@@ -13,16 +13,14 @@ public interface IStoreItemFactory
 
     IStoreItem Create(ItemUpdate itemUpdate, IStoreItem predecessor);
 
-    IStoreItem Create(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
-        QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-        ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
-        IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId? temporaryId);
+    IStoreItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
+        ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
+        IStoreItem? predecessor, IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId? temporaryId);
 
-    IStoreItem Create(ItemId id, string name, bool isDeleted, string comment, QuantityType quantityType,
-        float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
+    IStoreItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, ItemQuantity itemQuantity,
+        ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
+        IEnumerable<IItemType> itemTypes);
+
+    IStoreItem CreateNew(ItemName name, Comment comment, ItemQuantity itemQuantity, ItemCategoryId itemCategoryId,
         ManufacturerId? manufacturerId, IStoreItem? predecessor, IEnumerable<IItemType> itemTypes);
-
-    IStoreItem CreateNew(string name, string comment, QuantityType quantityType, float quantityInPacket,
-        QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
-        IStoreItem? predecessor, IEnumerable<IItemType> itemTypes);
 }

@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
 
 public class ItemCategoryReadModel
 {
-    public ItemCategoryReadModel(ItemCategoryId id, string name, bool isDeleted)
+    public ItemCategoryReadModel(ItemCategoryId id, ItemCategoryName name, bool isDeleted)
     {
         Id = id;
         Name = name;
@@ -21,6 +21,6 @@ public class ItemCategoryReadModel
     }
 
     public ItemCategoryId Id { get; }
-    public string Name { get; }
+    public ItemCategoryName Name { get; }
     public bool IsDeleted { get; }
 }

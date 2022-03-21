@@ -24,13 +24,22 @@ public class PermanentItemConverter : IToDomainConverter<MakeTemporaryItemPerman
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
+        ItemQuantityInPacket? itemQuantityInPacket = null;
+        //todo improve this check
+        if (source.QuantityInPacket is not null && source.QuantityTypeInPacket is not null)
+        {
+            itemQuantityInPacket = new ItemQuantityInPacket(
+                new Quantity(source.QuantityInPacket.Value),
+                source.QuantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
+        }
+
         return new PermanentItem(
             new ItemId(source.Id),
-            source.Name,
-            source.Comment,
-            source.QuantityType.ToEnum<QuantityType>(),
-            source.QuantityInPacket,
-            source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),
+            new ItemName(source.Name),
+            new Comment(source.Comment),
+            new ItemQuantity(
+                source.QuantityType.ToEnum<QuantityType>(),
+                itemQuantityInPacket),
             new ItemCategoryId(source.ItemCategoryId),
             source.ManufacturerId.HasValue ?
                 new ManufacturerId(source.ManufacturerId.Value) :

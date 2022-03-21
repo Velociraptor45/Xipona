@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
 public class StoreItemAvailability : IStoreItemAvailability
 {
-    public StoreItemAvailability(StoreId storeId, float price, SectionId defaultSectionId)
+    public StoreItemAvailability(StoreId storeId, Price price, SectionId defaultSectionId)
     {
         StoreId = storeId;
         Price = price;
@@ -12,6 +12,6 @@ public class StoreItemAvailability : IStoreItemAvailability
     }
 
     public StoreId StoreId { get; }
-    public float Price { get; }
+    public Price Price { get; }
     public SectionId DefaultSectionId { get; }
 }

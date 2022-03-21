@@ -1,18 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
 
 public class CreateManufacturerCommand : ICommand<bool>
 {
-    public CreateManufacturerCommand(string name)
+    public CreateManufacturerCommand(ManufacturerName name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
-        }
-
         Name = name;
     }
 
-    public string Name { get; }
+    public ManufacturerName Name { get; }
 }

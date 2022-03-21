@@ -2,5 +2,5 @@
 
 public interface IManufacturerFactory
 {
-    IManufacturer Create(ManufacturerId id, string name, bool isDeleted);
+    IManufacturer Create(ManufacturerId id, ManufacturerName name, bool isDeleted);
 }

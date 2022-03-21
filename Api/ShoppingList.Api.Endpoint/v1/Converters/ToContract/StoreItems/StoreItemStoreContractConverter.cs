@@ -24,7 +24,7 @@ public class StoreItemStoreContractConverter :
 
         return new StoreItemStoreContract(
             source.Id.Value,
-            source.Name,
+            source.Name.Value,
             _storeSectionContractConverter.ToContract(source.Sections));
     }
 }

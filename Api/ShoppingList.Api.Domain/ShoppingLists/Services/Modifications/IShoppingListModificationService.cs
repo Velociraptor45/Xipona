@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modificat
 public interface IShoppingListModificationService
 {
     Task ChangeItemQuantityAsync(ShoppingListId shoppingListId,
-        OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId, float quantity);
+        OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId, QuantityInBasket quantity);
 
     Task RemoveItemAsync(ShoppingListId shoppingListId, OfflineTolerantItemId offlineTolerantItemId,
         ItemTypeId? itemTypeId);

@@ -13,10 +13,10 @@ public class UpdateStoreCommandConverter : IToDomainConverter<UpdateStoreContrac
         var sections =
             source.Sections.Select(s => new SectionUpdate(
                 s.Id is null ? null : new SectionId(s.Id.Value),
-                s.Name,
+                new SectionName(s.Name),
                 s.SortingIndex,
                 s.IsDefaultSection));
 
-        return new UpdateStoreCommand(new StoreUpdate(new StoreId(source.Id), source.Name, sections));
+        return new UpdateStoreCommand(new StoreUpdate(new StoreId(source.Id), new StoreName(source.Name), sections));
     }
 }

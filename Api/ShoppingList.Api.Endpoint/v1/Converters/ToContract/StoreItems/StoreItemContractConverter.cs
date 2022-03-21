@@ -51,13 +51,15 @@ public class StoreItemContractConverter :
         return new StoreItemContract
         {
             Id = source.Id.Value,
-            Name = source.Name,
+            Name = source.Name.Value,
             IsDeleted = source.IsDeleted,
-            Comment = source.Comment,
+            Comment = source.Comment.Value,
             IsTemporary = source.IsTemporary,
             QuantityType = _quantityTypeContractConverter.ToContract(source.QuantityType),
-            QuantityInPacket = source.QuantityInPacket,
-            QuantityTypeInPacket = _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket),
+            QuantityInPacket = source.QuantityInPacket?.Value,
+            QuantityTypeInPacket = source.QuantityTypeInPacket is null ?
+                null :
+                _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket),
             ItemCategory = itemCategoryContract,
             Manufacturer = manufacturerContract,
             Availabilities = _storeItemAvailabilityContractConverter.ToContract(source.Availabilities),

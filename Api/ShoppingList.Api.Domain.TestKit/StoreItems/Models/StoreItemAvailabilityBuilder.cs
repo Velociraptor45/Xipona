@@ -6,6 +6,11 @@ namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 
 public class StoreItemAvailabilityBuilder : DomainTestBuilderBase<StoreItemAvailability>
 {
+    public StoreItemAvailabilityBuilder()
+    {
+        Customize(new PriceCustomization());
+    }
+
     public StoreItemAvailabilityBuilder WithStoreId(StoreId storeId)
     {
         FillConstructorWith("storeId", storeId);

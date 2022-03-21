@@ -4,12 +4,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
 
 public class ShoppingListStoreReadModel
 {
-    public ShoppingListStoreReadModel(StoreId id, string name)
+    public ShoppingListStoreReadModel(StoreId id, StoreName name)
     {
         Id = id;
         Name = name;
     }
 
     public StoreId Id { get; }
-    public string Name { get; }
+    public StoreName Name { get; }
 }

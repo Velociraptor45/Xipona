@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
     public class StoreItem
     {
         public StoreItem(Guid id, string name, bool isDeleted, string comment, bool isTemporary,
-            QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityInPacketType,
+            QuantityType quantityType, float? quantityInPacket, QuantityTypeInPacket quantityInPacketType,
             Guid? itemCategoryId, Guid? manufacturerId, IEnumerable<StoreItemAvailability> availabilities,
             IEnumerable<ItemType> itemTypes)
         {
@@ -32,7 +32,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         public string Comment { get; set; }
         public bool IsTemporary { get; set; }
         public QuantityType QuantityType { get; set; }
-        public float QuantityInPacket { get; set; }
+        public float? QuantityInPacket { get; set; }
         public QuantityTypeInPacket QuantityInPacketType { get; set; }
         public Guid? ItemCategoryId { get; set; }
         public Guid? ManufacturerId { get; set; }

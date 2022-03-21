@@ -8,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Comma
 public class AddItemWithTypeToShoppingListCommand : ICommand<bool>
 {
     public AddItemWithTypeToShoppingListCommand(ShoppingListId shoppingListId, ItemId itemId,
-        ItemTypeId itemTypeId, SectionId? sectionId, float quantity)
+        ItemTypeId itemTypeId, SectionId? sectionId, QuantityInBasket quantity)
     {
         ShoppingListId = shoppingListId;
         ItemId = itemId;
@@ -21,5 +21,5 @@ public class AddItemWithTypeToShoppingListCommand : ICommand<bool>
     public ItemId ItemId { get; }
     public ItemTypeId ItemTypeId { get; }
     public SectionId? SectionId { get; }
-    public float Quantity { get; }
+    public QuantityInBasket Quantity { get; }
 }

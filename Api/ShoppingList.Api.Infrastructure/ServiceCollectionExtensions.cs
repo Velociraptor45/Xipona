@@ -84,6 +84,8 @@ public static class ServiceCollectionExtensions
         services.AddImplementationOfGenericType(assembly, typeof(IToDomainConverter<,>));
     }
 
+#pragma warning disable S1172 // Unused method parameters should be removed
+
     private static IEnumerable<DbContext> GetAllDbContextInstances(IServiceProvider serviceProvider)
     {
         var types = GetAllDbContextTypes();
@@ -93,6 +95,8 @@ public static class ServiceCollectionExtensions
             yield return (DbContext)instance;
         }
     }
+
+#pragma warning restore S1172 // Unused method parameters should be removed
 
     private static IEnumerable<Type> GetAllDbContextTypes()
     {

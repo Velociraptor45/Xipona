@@ -7,6 +7,7 @@ public class ItemTypeBuilder : DomainTestBuilderBase<ItemType>
 {
     public ItemTypeBuilder()
     {
+        Customize(new PriceCustomization());
     }
 
     public ItemTypeBuilder(IItemType itemType)
@@ -22,7 +23,7 @@ public class ItemTypeBuilder : DomainTestBuilderBase<ItemType>
         return this;
     }
 
-    public ItemTypeBuilder WithName(string name)
+    public ItemTypeBuilder WithName(ItemTypeName name)
     {
         FillConstructorWith("name", name);
         return this;

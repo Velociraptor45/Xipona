@@ -4,19 +4,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
 
 public class TemporaryItemCreation
 {
-    public TemporaryItemCreation(Guid clientSideId, string name, IStoreItemAvailability availability)
+    public TemporaryItemCreation(Guid clientSideId, ItemName name, IStoreItemAvailability availability)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
-        }
-
         ClientSideId = clientSideId;
-        Name = name;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
         Availability = availability ?? throw new ArgumentNullException(nameof(availability));
     }
 
     public Guid ClientSideId { get; }
-    public string Name { get; }
+    public ItemName Name { get; }
     public IStoreItemAvailability Availability { get; }
 }

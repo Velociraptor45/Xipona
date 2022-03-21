@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 
 public class ItemTypeReadModel
 {
-    public ItemTypeReadModel(ItemTypeId id, string name, IEnumerable<StoreItemAvailabilityReadModel> availabilities)
+    public ItemTypeReadModel(ItemTypeId id, ItemTypeName name, IEnumerable<StoreItemAvailabilityReadModel> availabilities)
     {
         Id = id;
         Name = name;
@@ -12,6 +12,6 @@ public class ItemTypeReadModel
     }
 
     public ItemTypeId Id { get; }
-    public string Name { get; }
+    public ItemTypeName Name { get; }
     public IReadOnlyCollection<StoreItemAvailabilityReadModel> Availabilities { get; }
 }

@@ -40,6 +40,24 @@ public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
             ? new TemporaryItemId(source.CreatedFrom.Value)
             : (TemporaryItemId?)null;
 
+        ItemQuantityInPacket? itemQuantityInPacket = null;
+        if (source.QuantityInPacket is null)
+        {
+            if (source.QuantityTypeInPacket is not null)
+                throw new InvalidOperationException(
+                    $"Invalid data state for item {source.Id}: QuantityInPacket is null but QuantityTypeInPacket isn't.");
+        }
+        else
+        {
+            if (source.QuantityTypeInPacket is null)
+                throw new InvalidOperationException(
+                    $"Invalid data state for item {source.Id}: QuantityInPacket isn't null but QuantityTypeInPacket is.");
+
+            itemQuantityInPacket = new ItemQuantityInPacket(
+                new Quantity(source.QuantityInPacket.Value),
+                source.QuantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
+        }
+
         if (source.ItemTypes.Any())
         {
             var itemTypes = _itemTypeConverter.ToDomain(source.ItemTypes);
@@ -49,12 +67,12 @@ public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
 
             return _storeItemFactory.Create(
                 new ItemId(source.Id),
-                source.Name,
+                new ItemName(source.Name),
                 source.Deleted,
-                source.Comment,
-                source.QuantityType.ToEnum<QuantityType>(),
-                source.QuantityInPacket,
-                source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),
+                new Comment(source.Comment),
+                new ItemQuantity(
+                    source.QuantityType.ToEnum<QuantityType>(),
+                    itemQuantityInPacket),
                 itemCategoryId.Value,
                 manufacturerId,
                 predecessor,
@@ -66,13 +84,13 @@ public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
 
         return _storeItemFactory.Create(
             new ItemId(source.Id),
-            source.Name,
+            new ItemName(source.Name),
             source.Deleted,
-            source.Comment,
+            new Comment(source.Comment),
             source.IsTemporary,
-            source.QuantityType.ToEnum<QuantityType>(),
-            source.QuantityInPacket,
-            source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),
+            new ItemQuantity(
+                source.QuantityType.ToEnum<QuantityType>(),
+                itemQuantityInPacket),
             itemCategoryId,
             manufacturerId,
             predecessor,

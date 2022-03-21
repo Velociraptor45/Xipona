@@ -28,16 +28,25 @@ public class UpdateItemWithTypesCommandConverter
 
         var itemTypeUpdates = source.ItemTypes.Select(t => new ItemTypeUpdate(
             new ItemTypeId(t.OldId),
-            t.Name,
+            new ItemTypeName(t.Name),
             _availabilityConverter.ToDomain(t.Availabilities)));
+
+        ItemQuantityInPacket? itemQuantityInPacket = null;
+        //todo improve this check
+        if (source.QuantityInPacket is not null && source.QuantityTypeInPacket is not null)
+        {
+            itemQuantityInPacket = new ItemQuantityInPacket(
+                new Quantity(source.QuantityInPacket.Value),
+                source.QuantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
+        }
 
         var itemUpdate = new ItemWithTypesUpdate(
             new ItemId(source.OldId),
-            source.Name,
-            source.Comment,
-            source.QuantityType.ToEnum<QuantityType>(),
-            source.QuantityInPacket,
-            source.QuantityTypeInPacket.ToEnum<QuantityTypeInPacket>(),
+            new ItemName(source.Name),
+            new Comment(source.Comment),
+            new ItemQuantity(
+                source.QuantityType.ToEnum<QuantityType>(),
+                itemQuantityInPacket),
             new ItemCategoryId(source.ItemCategoryId),
             source.ManufacturerId.HasValue ? new ManufacturerId(source.ManufacturerId.Value) : null,
             itemTypeUpdates);

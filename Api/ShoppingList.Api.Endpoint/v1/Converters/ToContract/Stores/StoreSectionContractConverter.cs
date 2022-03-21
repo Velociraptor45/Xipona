@@ -13,7 +13,7 @@ public class StoreSectionContractConverter : IToContractConverter<StoreSectionRe
 
         return new StoreSectionContract(
             source.Id.Value,
-            source.Name,
+            source.Name.Value,
             source.SortingIndex,
             source.IsDefaultSection);
     }

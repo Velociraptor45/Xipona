@@ -7,6 +7,11 @@ namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
 public class ShoppingListBuilder : DomainTestBuilderBase<DomainModels.ShoppingList>
 {
+    public ShoppingListBuilder()
+    {
+        Customize(new QuantityInBasketCustomization());
+    }
+
     public ShoppingListBuilder WithId(DomainModels.ShoppingListId id)
     {
         FillConstructorWith("id", id);

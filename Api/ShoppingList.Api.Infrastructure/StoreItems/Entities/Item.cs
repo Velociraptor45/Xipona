@@ -24,8 +24,8 @@ public class Item
     public string Comment { get; set; }
     public bool IsTemporary { get; set; }
     public int QuantityType { get; set; }
-    public float QuantityInPacket { get; set; }
-    public int QuantityTypeInPacket { get; set; }
+    public float? QuantityInPacket { get; set; }
+    public int? QuantityTypeInPacket { get; set; }
     public Guid? ItemCategoryId { get; set; }
     public Guid? ManufacturerId { get; set; }
     public Guid? CreatedFrom { get; set; }

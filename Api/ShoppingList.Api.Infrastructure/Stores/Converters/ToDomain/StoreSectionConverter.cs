@@ -21,7 +21,7 @@ public class StoreSectionConverter : IToDomainConverter<Section, IStoreSection>
 
         return _storeSectionFactory.Create(
             new SectionId(source.Id),
-            source.Name,
+            new SectionName(source.Name),
             source.SortIndex,
             source.IsDefaultSection);
     }

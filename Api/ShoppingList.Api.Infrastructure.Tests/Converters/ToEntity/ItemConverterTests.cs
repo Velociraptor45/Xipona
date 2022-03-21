@@ -23,22 +23,22 @@ public class ItemConverterTests : ToEntityConverterTestBase<IStoreItem, Item>
         return new Item
         {
             Id = source.Id.Value,
-            Name = source.Name,
+            Name = source.Name.Value,
             Deleted = source.IsDeleted,
-            Comment = source.Comment,
+            Comment = source.Comment.Value,
             IsTemporary = source.IsTemporary,
-            QuantityType = source.QuantityType.ToInt(),
-            QuantityInPacket = source.QuantityInPacket,
-            QuantityTypeInPacket = source.QuantityTypeInPacket.ToInt(),
+            QuantityType = source.ItemQuantity.Type.ToInt(),
+            QuantityInPacket = source.ItemQuantity.InPacket?.Quantity.Value,
+            QuantityTypeInPacket = source.ItemQuantity.InPacket?.Type.ToInt(),
             ItemCategoryId = source.ItemCategoryId?.Value,
             ManufacturerId = source.ManufacturerId?.Value,
             CreatedFrom = source.TemporaryId?.Value,
             AvailableAt = source.Availabilities
                 .Select(av =>
-                    new AvailableAt()
+                    new AvailableAt
                     {
                         StoreId = av.StoreId.Value,
-                        Price = av.Price,
+                        Price = av.Price.Value,
                         ItemId = source.Id.Value,
                         DefaultSectionId = av.DefaultSectionId.Value
                     }).ToList(),

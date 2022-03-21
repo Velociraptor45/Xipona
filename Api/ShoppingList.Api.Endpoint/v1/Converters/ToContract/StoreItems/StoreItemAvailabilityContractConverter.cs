@@ -27,7 +27,7 @@ public class StoreItemAvailabilityContractConverter :
 
         return new StoreItemAvailabilityContract(
             _storeItemStoreContractConverter.ToContract(source.Store),
-            source.Price,
+            source.Price.Value,
             _storeSectionContractConverter.ToContract(source.DefaultSection));
     }
 }

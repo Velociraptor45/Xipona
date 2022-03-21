@@ -11,6 +11,6 @@ public class ItemCategoryContractConverter : IToContractConverter<ItemCategoryRe
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        return new ItemCategoryContract(source.Id.Value, source.Name, source.IsDeleted);
+        return new ItemCategoryContract(source.Id.Value, source.Name.Value, source.IsDeleted);
     }
 }

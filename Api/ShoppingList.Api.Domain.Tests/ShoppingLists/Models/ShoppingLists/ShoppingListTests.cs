@@ -279,33 +279,16 @@ public class ShoppingListTests
         // Arrange
         var list = ShoppingListMother.ThreeSections().Create();
         var shoppingListItemId = new ItemId(Guid.NewGuid());
+        var quantity = new QuantityInBasketBuilder().Create();
 
         // Act
-        Action action = () => list.ChangeItemQuantity(shoppingListItemId, null, _commonFixture.NextFloat());
+        Action action = () => list.ChangeItemQuantity(shoppingListItemId, null, quantity);
 
         // Assert
         using (new AssertionScope())
         {
             action.Should().Throw<DomainException>()
                 .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemNotOnShoppingList);
-        }
-    }
-
-    [Fact]
-    public void ChangeItemQuantity_WithInvalidQuantity_ShouldThrowDomainException()
-    {
-        // Arrange
-        var shoppinglist = ShoppingListMother.ThreeSections().Create();
-        var chosenShoppingListItem = _commonFixture.ChooseRandom(shoppinglist.Items);
-
-        // Act
-        Action action = () => shoppinglist.ChangeItemQuantity(chosenShoppingListItem.Id, null, -_commonFixture.NextFloat());
-
-        // Assert
-        using (new AssertionScope())
-        {
-            action.Should().Throw<DomainException>()
-                .Where(e => e.Reason.ErrorCode == ErrorReasonCode.InvalidItemQuantity);
         }
     }
 
@@ -326,7 +309,7 @@ public class ShoppingListTests
             sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId, sectionMock.IsSameOrEqualTo(chosenSectionMock));
         }
 
-        float quantity = _commonFixture.NextFloat();
+        var quantity = new QuantityInBasketBuilder().Create();
 
         // Act
         shoppingList.ChangeItemQuantity(chosenItem.Id, chosenItem.TypeId, quantity);

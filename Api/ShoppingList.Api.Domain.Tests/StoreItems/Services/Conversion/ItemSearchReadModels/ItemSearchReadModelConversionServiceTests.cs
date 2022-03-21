@@ -273,8 +273,8 @@ public class ItemSearchReadModelConversionServiceTests
                 yield return new SearchItemForShoppingResultReadModel(
                     item.Id,
                     null,
-                    item.Name,
-                    item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                    item.Name.Value,
+                    item.ItemQuantity.Type.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                     availability.Price,
                     manufacturerReadModel,
                     itemCategoryReadModel,

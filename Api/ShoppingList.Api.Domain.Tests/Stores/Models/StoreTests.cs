@@ -17,7 +17,7 @@ public class StoreTests
     public void ChangeName_WithValidData_ShouldChangeName()
     {
         // Arrange
-        string newName = _commonFixture.GetNewFixture().Create<string>();
+        var newName = new StoreNameBuilder().Create();
         IStore store = StoreMother.Sections(3).Create();
 
         // Act

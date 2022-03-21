@@ -25,7 +25,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
     }
 
     public async Task ChangeItemQuantityAsync(ShoppingListId shoppingListId,
-        OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId, float quantity)
+        OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId, QuantityInBasket quantity)
     {
         ArgumentNullException.ThrowIfNull(offlineTolerantItemId);
 

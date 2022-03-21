@@ -15,13 +15,13 @@ public class ItemConverter : IToEntityConverter<IStoreItem, Item>
         return new Item
         {
             Id = source.Id.Value,
-            Name = source.Name,
+            Name = source.Name.Value,
             Deleted = source.IsDeleted,
-            Comment = source.Comment,
+            Comment = source.Comment.Value,
             IsTemporary = source.IsTemporary,
-            QuantityType = source.QuantityType.ToInt(),
-            QuantityInPacket = source.QuantityInPacket,
-            QuantityTypeInPacket = source.QuantityTypeInPacket.ToInt(),
+            QuantityType = source.ItemQuantity.Type.ToInt(),
+            QuantityInPacket = source.ItemQuantity.InPacket?.Quantity.Value,
+            QuantityTypeInPacket = source.ItemQuantity.InPacket?.Type.ToInt(),
             ItemCategoryId = source.ItemCategoryId?.Value,
             ManufacturerId = source.ManufacturerId?.Value,
             CreatedFrom = source.TemporaryId?.Value,
@@ -36,7 +36,7 @@ public class ItemConverter : IToEntityConverter<IStoreItem, Item>
         return new AvailableAt
         {
             StoreId = availability.StoreId.Value,
-            Price = availability.Price,
+            Price = availability.Price.Value,
             ItemId = source.Id.Value,
             DefaultSectionId = availability.DefaultSectionId.Value
         };
@@ -48,7 +48,7 @@ public class ItemConverter : IToEntityConverter<IStoreItem, Item>
         {
             Id = itemType.Id.Value,
             ItemId = source.Id.Value,
-            Name = itemType.Name,
+            Name = itemType.Name.Value,
             AvailableAt = itemType.Availabilities.Select(av => ToItemTypeAvailableAt(av, itemType)).ToList(),
             PredecessorId = itemType.Predecessor?.Id.Value
         };
@@ -59,7 +59,7 @@ public class ItemConverter : IToEntityConverter<IStoreItem, Item>
         return new ItemTypeAvailableAt
         {
             StoreId = availability.StoreId.Value,
-            Price = availability.Price,
+            Price = availability.Price.Value,
             ItemTypeId = itemType.Id.Value,
             DefaultSectionId = availability.DefaultSectionId.Value
         };

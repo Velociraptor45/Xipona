@@ -10,13 +10,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 public interface IStoreItem
 {
     ItemId Id { get; }
-    string Name { get; }
+    ItemName Name { get; }
     bool IsDeleted { get; }
-    string Comment { get; }
+    Comment Comment { get; }
     bool IsTemporary { get; }
-    QuantityType QuantityType { get; }
-    float QuantityInPacket { get; }
-    QuantityTypeInPacket QuantityTypeInPacket { get; }
+    public ItemQuantity ItemQuantity { get; }
     ItemCategoryId? ItemCategoryId { get; }
     ManufacturerId? ManufacturerId { get; }
     IStoreItem? Predecessor { get; }

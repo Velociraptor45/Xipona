@@ -8,30 +8,20 @@ public class ItemCreation
 {
     private readonly IEnumerable<IStoreItemAvailability> _availabilities;
 
-    public ItemCreation(string name, string comment, QuantityType quantityType,
-        float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket, ItemCategoryId itemCategoryId,
+    public ItemCreation(ItemName name, Comment comment, ItemQuantity itemQuantity, ItemCategoryId itemCategoryId,
         ManufacturerId? manufacturerId, IEnumerable<IStoreItemAvailability> availabilities)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
-        }
-
-        Name = name;
-        Comment = comment;
-        QuantityType = quantityType;
-        QuantityInPacket = quantityInPacket;
-        QuantityTypeInPacket = quantityTypeInPacket;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Comment = comment ?? throw new ArgumentNullException(nameof(comment));
+        ItemQuantity = itemQuantity ?? throw new ArgumentNullException(nameof(itemQuantity));
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
         _availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
     }
 
-    public string Name { get; }
-    public string Comment { get; }
-    public QuantityType QuantityType { get; }
-    public float QuantityInPacket { get; }
-    public QuantityTypeInPacket QuantityTypeInPacket { get; }
+    public ItemName Name { get; }
+    public Comment Comment { get; }
+    public ItemQuantity ItemQuantity { get; }
     public ItemCategoryId ItemCategoryId { get; }
     public ManufacturerId? ManufacturerId { get; }
 

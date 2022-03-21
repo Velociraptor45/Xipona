@@ -71,13 +71,13 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
                     b.Property<Guid?>("PredecessorId")
                         .HasColumnType("char(36)");
 
-                    b.Property<float>("QuantityInPacket")
+                    b.Property<float?>("QuantityInPacket")
                         .HasColumnType("float");
 
                     b.Property<int>("QuantityType")
                         .HasColumnType("int");
 
-                    b.Property<int>("QuantityTypeInPacket")
+                    b.Property<int?>("QuantityTypeInPacket")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

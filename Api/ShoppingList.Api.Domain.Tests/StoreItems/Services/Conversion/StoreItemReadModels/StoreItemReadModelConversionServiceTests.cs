@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Attributes;
-using ProjectHermes.ShoppingList.Api.Core.Extensions;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
@@ -307,24 +306,20 @@ public class StoreItemReadModelConversionServiceTests
                     itemTypeAvailabilityReadModel.ToMonoList()));
             }
 
+            var itemQuantityInPacket = StoreItem.ItemQuantity.InPacket;
+            var quantityTypeInPacketReadModel = itemQuantityInPacket is null
+                ? null
+                : new QuantityTypeInPacketReadModel(itemQuantityInPacket.Type);
+
             return new StoreItemReadModel(
                 StoreItem.Id,
                 StoreItem.Name,
                 StoreItem.IsDeleted,
                 StoreItem.Comment,
                 StoreItem.IsTemporary,
-                new QuantityTypeReadModel(
-                    (int)StoreItem.QuantityType,
-                    StoreItem.QuantityType.ToString(),
-                    StoreItem.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-                    StoreItem.QuantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
-                    StoreItem.QuantityType.GetAttribute<QuantityLabelAttribute>().QuantityLabel,
-                    StoreItem.QuantityType.GetAttribute<QuantityNormalizerAttribute>().Value),
-                StoreItem.QuantityInPacket,
-                new QuantityTypeInPacketReadModel(
-                    (int)StoreItem.QuantityTypeInPacket,
-                    StoreItem.QuantityTypeInPacket.ToString(),
-                    StoreItem.QuantityTypeInPacket.GetAttribute<QuantityLabelAttribute>().QuantityLabel),
+                new QuantityTypeReadModel(StoreItem.ItemQuantity.Type),
+                itemQuantityInPacket?.Quantity,
+                quantityTypeInPacketReadModel,
                 itemCategoryReadModel,
                 manufacturerReadModel,
                 availabilityReadModel.ToMonoList(),

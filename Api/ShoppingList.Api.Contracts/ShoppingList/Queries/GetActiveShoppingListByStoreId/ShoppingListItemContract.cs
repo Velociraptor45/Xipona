@@ -7,13 +7,10 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
     public class ShoppingListItemContract
     {
         public ShoppingListItemContract(Guid id, Guid? typeId, string name, bool isDeleted, string comment, bool isTemporary,
-            float pricePerQuantity, QuantityTypeContract quantityType, float quantityInPacket,
+            float pricePerQuantity, QuantityTypeContract quantityType, float? quantityInPacket,
             QuantityTypeInPacketContract quantityTypeInPacket,
             ItemCategoryContract itemCategory, ManufacturerContract manufacturer, bool isInBasket, float quantity)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new System.ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
-
             Id = id;
             TypeId = typeId;
             Name = name;
@@ -21,9 +18,9 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
             Comment = comment;
             IsTemporary = isTemporary;
             PricePerQuantity = pricePerQuantity;
-            QuantityType = quantityType ?? throw new System.ArgumentNullException(nameof(quantityType));
+            QuantityType = quantityType ?? throw new ArgumentNullException(nameof(quantityType));
             QuantityInPacket = quantityInPacket;
-            QuantityTypeInPacket = quantityTypeInPacket ?? throw new System.ArgumentNullException(nameof(quantityTypeInPacket));
+            QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategory = itemCategory;
             Manufacturer = manufacturer;
             IsInBasket = isInBasket;
@@ -38,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
         public bool IsTemporary { get; }
         public float PricePerQuantity { get; }
         public QuantityTypeContract QuantityType { get; }
-        public float QuantityInPacket { get; }
+        public float? QuantityInPacket { get; }
         public QuantityTypeInPacketContract QuantityTypeInPacket { get; }
         public ItemCategoryContract ItemCategory { get; }
         public ManufacturerContract Manufacturer { get; }

@@ -972,7 +972,7 @@ public class AddItemToShoppingListServiceTests
 
         public ShoppingListMock ShoppingListMock { get; protected set; }
         public SectionId? SectionId { get; protected set; }
-        public float Quantity { get; protected set; }
+        public QuantityInBasket Quantity { get; protected set; }
         public IStoreItem StoreItem { get; protected set; }
         public IShoppingListItem ShoppingListItem { get; protected set; }
 
@@ -993,7 +993,7 @@ public class AddItemToShoppingListServiceTests
 
         public void SetupQuantity()
         {
-            Quantity = CommonFixture.NextFloat();
+            Quantity = new QuantityInBasketBuilder().Create();
         }
 
         public void SetupSectionId()

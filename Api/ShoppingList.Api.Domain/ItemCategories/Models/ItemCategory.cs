@@ -2,7 +2,7 @@
 
 public class ItemCategory : IItemCategory
 {
-    public ItemCategory(ItemCategoryId id, string name, bool isDeleted)
+    public ItemCategory(ItemCategoryId id, ItemCategoryName name, bool isDeleted)
     {
         Id = id;
         Name = name;
@@ -10,7 +10,7 @@ public class ItemCategory : IItemCategory
     }
 
     public ItemCategoryId Id { get; }
-    public string Name { get; }
+    public ItemCategoryName Name { get; }
     public bool IsDeleted { get; set; }
 
     public void Delete()

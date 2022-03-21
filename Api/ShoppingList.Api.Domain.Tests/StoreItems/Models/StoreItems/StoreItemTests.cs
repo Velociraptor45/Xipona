@@ -99,9 +99,7 @@ public class StoreItemTests
         {
             testObject.Name.Should().Be(permanentItem.Name);
             testObject.Comment.Should().Be(permanentItem.Comment);
-            testObject.QuantityType.Should().Be(permanentItem.QuantityType);
-            testObject.QuantityInPacket.Should().Be(permanentItem.QuantityInPacket);
-            testObject.QuantityTypeInPacket.Should().Be(permanentItem.QuantityTypeInPacket);
+            testObject.ItemQuantity.Should().Be(permanentItem.ItemQuantity);
             testObject.Availabilities.Should().BeEquivalentTo(availabilities);
             testObject.ItemCategoryId.Should().Be(permanentItem.ItemCategoryId);
             testObject.ManufacturerId.Should().Be(permanentItem.ManufacturerId);
@@ -134,9 +132,7 @@ public class StoreItemTests
         {
             testObject.Name.Should().Be(itemModify.Name);
             testObject.Comment.Should().Be(itemModify.Comment);
-            testObject.QuantityType.Should().Be(itemModify.QuantityType);
-            testObject.QuantityInPacket.Should().Be(itemModify.QuantityInPacket);
-            testObject.QuantityTypeInPacket.Should().Be(itemModify.QuantityTypeInPacket);
+            testObject.ItemQuantity.Should().Be(itemModify.ItemQuantity);
             testObject.Availabilities.Should().BeEquivalentTo(availabilities);
             testObject.ItemCategoryId.Should().Be(itemModify.ItemCategoryId);
             testObject.ManufacturerId.Should().Be(itemModify.ManufacturerId);

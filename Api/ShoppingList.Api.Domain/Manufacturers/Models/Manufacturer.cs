@@ -2,7 +2,7 @@
 
 public class Manufacturer : IManufacturer
 {
-    public Manufacturer(ManufacturerId id, string name, bool isDeleted)
+    public Manufacturer(ManufacturerId id, ManufacturerName name, bool isDeleted)
     {
         Id = id;
         Name = name;
@@ -10,6 +10,6 @@ public class Manufacturer : IManufacturer
     }
 
     public ManufacturerId Id { get; }
-    public string Name { get; }
+    public ManufacturerName Name { get; }
     public bool IsDeleted { get; }
 }

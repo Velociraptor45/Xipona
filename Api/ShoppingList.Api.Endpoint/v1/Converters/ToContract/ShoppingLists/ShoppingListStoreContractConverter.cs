@@ -9,6 +9,6 @@ public class ShoppingListStoreContractConverter :
 {
     public ShoppingListStoreContract ToContract(ShoppingListStoreReadModel source)
     {
-        return new ShoppingListStoreContract(source.Id.Value, source.Name);
+        return new ShoppingListStoreContract(source.Id.Value, source.Name.Value);
     }
 }

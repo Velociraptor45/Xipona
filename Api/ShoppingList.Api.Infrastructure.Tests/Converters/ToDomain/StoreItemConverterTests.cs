@@ -32,23 +32,23 @@ public class StoreItemConverterTests : ToDomainConverterTestBase<Item, IStoreIte
             predecessor = GetSource(destination.Predecessor);
 
         var availabilities = destination.Availabilities
-            .Select(av => StoreItemAvailabilityConverterTests.GetSource(av))
+            .Select(StoreItemAvailabilityConverterTests.GetSource)
             .ToList();
 
         var itemTypes = destination.ItemTypes
-            .Select(t => ItemTypeConverterTests.GetSource(t))
+            .Select(ItemTypeConverterTests.GetSource)
             .ToList();
 
         return new Item
         {
             Id = destination.Id.Value,
-            Name = destination.Name,
+            Name = destination.Name.Value,
             Deleted = destination.IsDeleted,
-            Comment = destination.Comment,
+            Comment = destination.Comment.Value,
             IsTemporary = destination.IsTemporary,
-            QuantityType = destination.QuantityType.ToInt(),
-            QuantityInPacket = destination.QuantityInPacket,
-            QuantityTypeInPacket = destination.QuantityTypeInPacket.ToInt(),
+            QuantityType = destination.ItemQuantity.Type.ToInt(),
+            QuantityInPacket = destination.ItemQuantity.InPacket?.Quantity.Value,
+            QuantityTypeInPacket = destination.ItemQuantity.InPacket?.Type.ToInt(),
             ItemCategoryId = destination.ItemCategoryId?.Value,
             ManufacturerId = destination.ManufacturerId?.Value,
             PredecessorId = predecessor?.Id,

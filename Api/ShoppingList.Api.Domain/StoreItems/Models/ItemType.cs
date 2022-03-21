@@ -8,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
 public class ItemType : IItemType
 {
-    public ItemType(ItemTypeId id, string name, IEnumerable<IStoreItemAvailability> availabilities)
+    public ItemType(ItemTypeId id, ItemTypeName name, IEnumerable<IStoreItemAvailability> availabilities)
     {
         Id = id;
         Name = name;
@@ -20,7 +20,7 @@ public class ItemType : IItemType
     }
 
     public ItemTypeId Id { get; }
-    public string Name { get; }
+    public ItemTypeName Name { get; }
     public IReadOnlyCollection<IStoreItemAvailability> Availabilities { get; }
     public IItemType? Predecessor { get; private set; }
 

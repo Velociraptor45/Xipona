@@ -20,7 +20,7 @@ public class ManufacturerConverter : IToDomainConverter<Entities.Manufacturer, I
 
         return _manufacturerFactory.Create(
             new ManufacturerId(source.Id),
-            source.Name,
+            new ManufacturerName(source.Name),
             source.Deleted);
     }
 }

@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 
 public class StoreItemAvailabilityFactory : IStoreItemAvailabilityFactory
 {
-    public IStoreItemAvailability Create(StoreId storeId, float price, SectionId defaultSectionId)
+    public IStoreItemAvailability Create(StoreId storeId, Price price, SectionId defaultSectionId)
     {
         return new StoreItemAvailability(storeId, price, defaultSectionId);
     }

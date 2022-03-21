@@ -173,7 +173,7 @@
 
         var item = State.EditedItem;
         var request = new MakeTemporaryItemPermanentRequest(item.Id, item.Name, item.Comment,
-            item.QuantityType.Id, item.QuantityInPacket, item.QuantityInPacketType.Id,
+            item.QuantityType.Id, item.QuantityInPacket, item.QuantityInPacketType?.Id,
             item.ItemCategoryId.Value, item.ManufacturerId, item.Availabilities);
         try
         {

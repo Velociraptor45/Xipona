@@ -7,8 +7,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 
 public class SearchItemForShoppingResultReadModel
 {
-    public SearchItemForShoppingResultReadModel(ItemId id, ItemTypeId? typeId, string name, int defaultQuantity, float price,
-        ManufacturerReadModel? manufacturer, ItemCategoryReadModel? itemCategory,
+    public SearchItemForShoppingResultReadModel(ItemId id, ItemTypeId? typeId, string name, int defaultQuantity,
+        Price price, ManufacturerReadModel? manufacturer, ItemCategoryReadModel? itemCategory,
         StoreSectionReadModel defaultSection)
     {
         Id = id;
@@ -25,7 +25,7 @@ public class SearchItemForShoppingResultReadModel
     public ItemTypeId? TypeId { get; }
     public string Name { get; }
     public int DefaultQuantity { get; }
-    public float Price { get; }
+    public Price Price { get; }
     public ManufacturerReadModel? Manufacturer { get; }
     public ItemCategoryReadModel? ItemCategory { get; }
     public StoreSectionReadModel DefaultSection { get; }

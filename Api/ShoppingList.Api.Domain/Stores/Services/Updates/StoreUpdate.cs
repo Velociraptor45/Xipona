@@ -4,19 +4,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
 
 public class StoreUpdate
 {
-    public StoreUpdate(StoreId id, string name, IEnumerable<SectionUpdate> sections)
+    public StoreUpdate(StoreId id, StoreName name, IEnumerable<SectionUpdate> sections)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
-        }
-
         Id = id;
-        Name = name;
-        Sections = sections.ToList().AsReadOnly();
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Sections = sections?.ToList().AsReadOnly() ?? throw new ArgumentNullException(nameof(sections));
     }
 
     public StoreId Id { get; }
-    public string Name { get; }
+    public StoreName Name { get; }
     public IReadOnlyCollection<SectionUpdate> Sections { get; }
 }

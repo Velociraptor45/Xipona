@@ -31,7 +31,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     }
 
     public async Task AddAsync(ShoppingListId shoppingListId, OfflineTolerantItemId itemId, SectionId? sectionId,
-        float quantity, CancellationToken cancellationToken)
+        QuantityInBasket quantity, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(itemId);
 
@@ -60,7 +60,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     }
 
     public async Task AddItemWithTypeToShoppingListAsync(ShoppingListId shoppingListId, ItemId itemId, ItemTypeId itemTypeId,
-        SectionId? sectionId, float quantity, CancellationToken cancellationToken)
+        SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
         var shoppingList = await LoadShoppingListAsync(shoppingListId, cancellationToken);
         var item = await LoadItemAsync(itemId, cancellationToken);
@@ -71,7 +71,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     }
 
     public async Task AddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
-        ItemTypeId itemTypeId, SectionId? sectionId, float quantity, CancellationToken cancellationToken)
+        ItemTypeId itemTypeId, SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
         if (shoppingList is null)
             throw new ArgumentNullException(nameof(shoppingList));
@@ -84,7 +84,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     }
 
     public async Task AddItemToShoppingListAsync(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
-        float quantity, CancellationToken cancellationToken)
+        QuantityInBasket quantity, CancellationToken cancellationToken)
     {
         if (shoppingList is null)
             throw new ArgumentNullException(nameof(shoppingList));
@@ -94,7 +94,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     }
 
     public async Task AddItemToShoppingListAsync(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
-        SectionId? sectionId, float quantity, CancellationToken cancellationToken)
+        SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
         if (shoppingList is null)
             throw new ArgumentNullException(nameof(shoppingList));
@@ -131,7 +131,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         return item;
     }
 
-    private IShoppingListItem CreateShoppingListItem(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
+    private IShoppingListItem CreateShoppingListItem(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity)
     {
         return _shoppingListItemFactory.Create(itemId, itemTypeId, false, quantity);
     }
@@ -153,7 +153,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     }
 
     internal async Task AddItemToShoppingListAsync(IShoppingList shoppingList, IStoreItem item,
-        ItemTypeId itemTypeId, SectionId? sectionId, float quantity, CancellationToken cancellationToken)
+        ItemTypeId itemTypeId, SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
         if (!item.TryGetType(itemTypeId, out var itemType))
             throw new DomainException(new ItemTypeNotPartOfItemReason(item.Id, itemTypeId));
@@ -169,7 +169,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     }
 
     internal async Task AddItemToShoppingListAsync(IShoppingList shoppingList, IStoreItem item,
-        SectionId? sectionId, float quantity, CancellationToken cancellationToken)
+        SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
         if (item.HasItemTypes)
             throw new DomainException(new CannotAddTypedItemToShoppingListWithoutTypeIdReason(item.Id));

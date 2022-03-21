@@ -15,10 +15,9 @@ public class StoreItemFactory : IStoreItemFactory
         _itemTypeFactory = itemTypeFactory;
     }
 
-    public IStoreItem Create(ItemId id, string name, bool isDeleted, string comment, bool isTemporary,
-        QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
-        ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
-        IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId? temporaryId)
+    public IStoreItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
+        ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
+        IStoreItem? predecessor, IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId? temporaryId)
     {
         var item = new StoreItem(
             id,
@@ -26,9 +25,7 @@ public class StoreItemFactory : IStoreItemFactory
             isDeleted,
             comment,
             isTemporary,
-            quantityType,
-            quantityInPacket,
-            quantityTypeInPacket,
+            itemQuantity,
             itemCategoryId,
             manufacturerId,
             availabilities,
@@ -40,8 +37,7 @@ public class StoreItemFactory : IStoreItemFactory
         return item;
     }
 
-    public IStoreItem Create(ItemId id, string name, bool isDeleted, string comment,
-        QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+    public IStoreItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, ItemQuantity itemQuantity,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
         IEnumerable<IItemType> itemTypes)
     {
@@ -50,9 +46,7 @@ public class StoreItemFactory : IStoreItemFactory
             name,
             isDeleted,
             comment,
-            quantityType,
-            quantityInPacket,
-            quantityTypeInPacket,
+            itemQuantity,
             itemCategoryId,
             manufacturerId,
             new ItemTypes(itemTypes, _itemTypeFactory));
@@ -71,9 +65,7 @@ public class StoreItemFactory : IStoreItemFactory
             false,
             itemCreation.Comment,
             false,
-            itemCreation.QuantityType,
-            itemCreation.QuantityInPacket,
-            itemCreation.QuantityTypeInPacket,
+            itemCreation.ItemQuantity,
             itemCreation.ItemCategoryId,
             itemCreation.ManufacturerId,
             itemCreation.Availabilities,
@@ -86,11 +78,9 @@ public class StoreItemFactory : IStoreItemFactory
             ItemId.New,
             model.Name,
             false,
-            string.Empty,
+            Comment.Empty,
             true,
-            QuantityType.Unit,
-            1,
-            QuantityTypeInPacket.Unit,
+            new ItemQuantity(QuantityType.Unit, null),
             null,
             null,
             model.Availability.ToMonoList(),
@@ -105,9 +95,7 @@ public class StoreItemFactory : IStoreItemFactory
             isDeleted: false,
             itemUpdate.Comment,
             isTemporary: false,
-            itemUpdate.QuantityType,
-            itemUpdate.QuantityInPacket,
-            itemUpdate.QuantityTypeInPacket,
+            itemUpdate.ItemQuantity,
             itemUpdate.ItemCategoryId,
             itemUpdate.ManufacturerId,
             itemUpdate.Availabilities,
@@ -117,8 +105,7 @@ public class StoreItemFactory : IStoreItemFactory
         return model;
     }
 
-    public IStoreItem CreateNew(string name, string comment,
-        QuantityType quantityType, float quantityInPacket, QuantityTypeInPacket quantityTypeInPacket,
+    public IStoreItem CreateNew(ItemName name, Comment comment, ItemQuantity itemQuantity,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
         IEnumerable<IItemType> itemTypes)
     {
@@ -127,9 +114,7 @@ public class StoreItemFactory : IStoreItemFactory
             name,
             isDeleted: false,
             comment,
-            quantityType,
-            quantityInPacket,
-            quantityTypeInPacket,
+            itemQuantity,
             itemCategoryId,
             manufacturerId,
             new ItemTypes(itemTypes, _itemTypeFactory));

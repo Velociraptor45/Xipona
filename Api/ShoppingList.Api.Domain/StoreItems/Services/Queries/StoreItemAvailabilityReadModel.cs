@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 
 public class StoreItemAvailabilityReadModel
 {
-    public StoreItemAvailabilityReadModel(StoreItemStoreReadModel store, float price,
+    public StoreItemAvailabilityReadModel(StoreItemStoreReadModel store, Price price,
         StoreSectionReadModel defaultSection)
     {
         Store = store;
@@ -20,6 +20,6 @@ public class StoreItemAvailabilityReadModel
     }
 
     public StoreItemStoreReadModel Store { get; }
-    public float Price { get; }
+    public Price Price { get; }
     public StoreSectionReadModel DefaultSection { get; }
 }

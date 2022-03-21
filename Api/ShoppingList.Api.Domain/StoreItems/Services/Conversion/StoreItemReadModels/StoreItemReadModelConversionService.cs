@@ -57,8 +57,8 @@ public class StoreItemReadModelConversionService : IStoreItemReadModelConversion
         return ToReadModel(item, itemCategory, manufacturer, storeDict);
     }
 
-    public StoreItemReadModel ToReadModel(IStoreItem model, IItemCategory? itemCategory,
-        IManufacturer? manufacturer, Dictionary<StoreId, IStore> stores)
+    private static StoreItemReadModel ToReadModel(IStoreItem model, IItemCategory? itemCategory,
+        IManufacturer? manufacturer, IReadOnlyDictionary<StoreId, IStore> stores)
     {
         var availabilityReadModels = ToAvailabilityReadModel(model.Availabilities, stores).ToList();
 
@@ -70,15 +70,20 @@ public class StoreItemReadModelConversionService : IStoreItemReadModelConversion
             itemTypeReadModels.Add(itemTypeReadModel);
         }
 
+        var itemQuantityInPacket = model.ItemQuantity.InPacket;
+        var quantityTypeInPacketReadModel = itemQuantityInPacket is null
+            ? null
+            : new QuantityTypeInPacketReadModel(itemQuantityInPacket.Type);
+
         return new StoreItemReadModel(
             model.Id,
             model.Name,
             model.IsDeleted,
             model.Comment,
             model.IsTemporary,
-            new QuantityTypeReadModel(model.QuantityType),
-            model.QuantityInPacket,
-            new QuantityTypeInPacketReadModel(model.QuantityTypeInPacket),
+            new QuantityTypeReadModel(model.ItemQuantity.Type),
+            itemQuantityInPacket?.Quantity,
+            quantityTypeInPacketReadModel,
             itemCategory is null ?
                 null :
                 new ItemCategoryReadModel(itemCategory),
@@ -90,7 +95,7 @@ public class StoreItemReadModelConversionService : IStoreItemReadModelConversion
     }
 
     private static IEnumerable<StoreItemAvailabilityReadModel> ToAvailabilityReadModel(
-        IEnumerable<IStoreItemAvailability> availabilities, Dictionary<StoreId, IStore> stores)
+        IEnumerable<IStoreItemAvailability> availabilities, IReadOnlyDictionary<StoreId, IStore> stores)
     {
         foreach (var av in availabilities)
         {

@@ -1,15 +1,17 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Creations;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Creations;
 
 public class SectionCreation
 {
-    public SectionCreation(string name, int sortingIndex, bool isDefaultSection)
+    public SectionCreation(SectionName name, int sortingIndex, bool isDefaultSection)
     {
         Name = name;
         SortingIndex = sortingIndex;
         IsDefaultSection = isDefaultSection;
     }
 
-    public string Name { get; }
+    public SectionName Name { get; }
     public int SortingIndex { get; }
     public bool IsDefaultSection { get; }
 }

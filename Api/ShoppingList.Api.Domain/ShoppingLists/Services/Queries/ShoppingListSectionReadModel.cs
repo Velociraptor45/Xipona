@@ -6,11 +6,11 @@ public class ShoppingListSectionReadModel
 {
     private readonly IEnumerable<ShoppingListItemReadModel> _itemReadModels;
 
-    public ShoppingListSectionReadModel(SectionId id, string name, int sortingIndex,
+    public ShoppingListSectionReadModel(SectionId id, SectionName name, int sortingIndex,
         bool isDefaultSection, IEnumerable<ShoppingListItemReadModel> itemReadModels)
     {
         Id = id;
-        Name = name;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
         SortingIndex = sortingIndex;
         IsDefaultSection = isDefaultSection;
         _itemReadModels = itemReadModels;
@@ -19,7 +19,7 @@ public class ShoppingListSectionReadModel
     public IReadOnlyCollection<ShoppingListItemReadModel> ItemReadModels => _itemReadModels.ToList().AsReadOnly();
 
     public SectionId Id { get; }
-    public string Name { get; }
+    public SectionName Name { get; }
     public int SortingIndex { get; }
     public bool IsDefaultSection { get; }
 }

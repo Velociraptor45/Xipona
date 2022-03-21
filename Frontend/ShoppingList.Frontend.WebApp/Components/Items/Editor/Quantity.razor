@@ -51,6 +51,18 @@
     private void OnQuantityTypeChanged(QuantityType quantityType)
     {
         State.EditedItem.QuantityType = quantityType;
+        if (quantityType.Id == 1)
+        {
+            State.EditedItem.QuantityInPacket = null;
+            State.EditedItem.QuantityInPacketType = null;
+        }
+        else if(State.EditedItem.QuantityInPacketType is null)
+        {
+            State.EditedItem.QuantityInPacket = 1;
+            State.EditedItem.QuantityInPacketType = State.QuantityTypesInPacket.First();
+        }
+
+        State.StateChanged();
     }
 
     private void OnQuantityInPacketTypeChanged(QuantityTypeInPacket quantityTypeInPacket)

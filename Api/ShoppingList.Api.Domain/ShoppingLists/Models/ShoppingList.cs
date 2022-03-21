@@ -78,11 +78,8 @@ public class ShoppingList : IShoppingList
         _sections[section.Id] = section.RemoveItemFromBasket(itemId, itemTypeId);
     }
 
-    public void ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, float quantity)
+    public void ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity)
     {
-        if (quantity <= 0f)
-            throw new DomainException(new InvalidItemQuantityReason(quantity));
-
         IShoppingListSection? section = _sections.Values.FirstOrDefault(s => s.ContainsItem(itemId, itemTypeId));
         if (section == null)
             throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId));

@@ -11,21 +11,21 @@ public class StoreItemAvailabilityFactoryMock : Mock<IStoreItemAvailabilityFacto
     {
     }
 
-    public void SetupCreate(StoreId storeId, float price, SectionId sectionId,
+    public void SetupCreate(StoreId storeId, Price price, SectionId sectionId,
         IStoreItemAvailability returnValue)
     {
         Setup(i => i.Create(
                 It.Is<StoreId>(id => id == storeId),
-                It.Is<float>(p => p == price),
+                It.Is<Price>(p => p == price),
                 It.Is<SectionId>(id => id == sectionId)))
             .Returns(returnValue);
     }
 
-    public void VerifyCreateOnce(StoreId storeId, float price, SectionId sectionId)
+    public void VerifyCreateOnce(StoreId storeId, Price price, SectionId sectionId)
     {
         Verify(i => i.Create(
                 It.Is<StoreId>(id => id == storeId),
-                It.Is<float>(p => p == price),
+                It.Is<Price>(p => p == price),
                 It.Is<SectionId>(id => id == sectionId)),
             Times.Once);
     }

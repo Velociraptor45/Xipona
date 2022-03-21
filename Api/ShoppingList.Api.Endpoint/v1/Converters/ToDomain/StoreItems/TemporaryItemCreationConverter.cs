@@ -23,7 +23,7 @@ public class TemporaryItemCreationConverter : IToDomainConverter<CreateTemporary
 
         return new TemporaryItemCreation(
             source.ClientSideId,
-            source.Name,
+            new ItemName(source.Name),
             _storeItemAvailabilityConverter.ToDomain(source.Availability));
     }
 }

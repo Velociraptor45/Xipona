@@ -10,7 +10,7 @@ public class ShoppingListItemFactoryMock : Mock<IShoppingListItemFactory>
     {
     }
 
-    public void SetupCreate(ItemId itemId, ItemTypeId? itemTypeId, bool isInBasket, float quantity,
+    public void SetupCreate(ItemId itemId, ItemTypeId? itemTypeId, bool isInBasket, QuantityInBasket quantity,
         IShoppingListItem returnValue)
     {
         Setup(instance => instance.Create(
@@ -21,7 +21,7 @@ public class ShoppingListItemFactoryMock : Mock<IShoppingListItemFactory>
             .Returns(returnValue);
     }
 
-    public void VerifyCreateOnce(ItemId itemId, ItemTypeId? itemTypeId, bool isInBasket, float quantity)
+    public void VerifyCreateOnce(ItemId itemId, ItemTypeId? itemTypeId, bool isInBasket, QuantityInBasket quantity)
     {
         Verify(i => i.Create(
                 itemId,

@@ -72,9 +72,7 @@ public class ItemUpdateService : IItemUpdateService
         var updatedItem = _storeItemFactory.CreateNew(
             update.Name,
             update.Comment,
-            update.QuantityType,
-            update.QuantityInPacket,
-            update.QuantityTypeInPacket,
+            update.ItemQuantity,
             update.ItemCategoryId,
             update.ManufacturerId,
             oldItem,

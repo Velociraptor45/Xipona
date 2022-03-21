@@ -10,7 +10,7 @@ public interface IShoppingListSection
 
     IShoppingListSection AddItem(IShoppingListItem item);
 
-    IShoppingListSection ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, float quantity);
+    IShoppingListSection ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity);
 
     bool ContainsItem(ItemId itemId);
 

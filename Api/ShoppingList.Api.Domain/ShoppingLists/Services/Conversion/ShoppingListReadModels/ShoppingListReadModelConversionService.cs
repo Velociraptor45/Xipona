@@ -70,7 +70,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
             {
                 var storeItem = storeItems[item.Id];
 
-                float price;
+                Price price;
                 string name;
                 if (storeItem.HasItemTypes)
                 {
@@ -87,8 +87,13 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
                 else
                 {
                     price = storeItem.Availabilities.First(av => av.StoreId == store.Id).Price;
-                    name = storeItem.Name;
+                    name = storeItem.Name.Value;
                 }
+
+                var itemQuantityInPacket = storeItem.ItemQuantity.InPacket;
+                var quantityTypeInPacketReadModel = itemQuantityInPacket is null
+                    ? null
+                    : new QuantityTypeInPacketReadModel(itemQuantityInPacket.Type);
 
                 var itemReadModel = new ShoppingListItemReadModel(
                     item.Id,
@@ -98,9 +103,9 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
                     storeItem.Comment,
                     storeItem.IsTemporary,
                     price,
-                    new QuantityTypeReadModel(storeItem.QuantityType),
-                    storeItem.QuantityInPacket,
-                    new QuantityTypeInPacketReadModel(storeItem.QuantityTypeInPacket),
+                    new QuantityTypeReadModel(storeItem.ItemQuantity.Type),
+                    itemQuantityInPacket?.Quantity,
+                    quantityTypeInPacketReadModel,
                     storeItem.ItemCategoryId == null ?
                         null : new ItemCategoryReadModel(itemCategories[storeItem.ItemCategoryId.Value]),
                     storeItem.ManufacturerId == null ?

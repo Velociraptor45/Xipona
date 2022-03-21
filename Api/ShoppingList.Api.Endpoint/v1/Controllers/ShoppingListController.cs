@@ -146,7 +146,7 @@ public class ShoppingListController : ControllerBase
             new ShoppingListId(contract.ShoppingListId),
             itemId,
             contract.SectionId.HasValue ? new SectionId(contract.SectionId.Value) : null,
-            contract.Quantity);
+            new QuantityInBasket(contract.Quantity));
 
         try
         {
@@ -268,7 +268,7 @@ public class ShoppingListController : ControllerBase
             ? new ItemTypeId(contract.ItemTypeId.Value)
             : (ItemTypeId?)null;
         var command = new ChangeItemQuantityOnShoppingListCommand(new ShoppingListId(contract.ShoppingListId),
-            itemId, itemTypeId, contract.Quantity);
+            itemId, itemTypeId, new QuantityInBasket(contract.Quantity));
 
         try
         {
