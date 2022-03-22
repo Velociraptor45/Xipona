@@ -20,6 +20,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         public SortedSet<StoreSection> Sections { get; private set; }
         public int MaxSortingIndex => Sections.Max(s => s.SortingIndex);
         public int MinSortingIndex => Sections.Min(s => s.SortingIndex);
+        public StoreSection DefaultSection => Sections.Single(s => s.IsDefaultSection);
 
         public void ChangeDefaultSection(Guid sectionId)
         {

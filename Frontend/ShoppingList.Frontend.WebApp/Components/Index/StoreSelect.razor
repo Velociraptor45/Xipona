@@ -34,7 +34,9 @@
 
         List<Store> storesList = stores.ToList();
 
+
         availableStores = new AvailableStores(storesList, storesList.FirstOrDefault()?.Id ?? Guid.Empty);
+        Page.RegisterAvailableStores(availableStores);
         Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
     }
 
