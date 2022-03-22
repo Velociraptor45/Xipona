@@ -1,14 +1,11 @@
-﻿using System;
+﻿namespace ProjectHermes.ShoppingList.Api.Core.Attributes;
 
-namespace ProjectHermes.ShoppingList.Api.Core.Attributes
+public class PriceLabelAttribute : Attribute
 {
-    public class PriceLabelAttribute : Attribute
+    public PriceLabelAttribute(string priceLabel)
     {
-        public PriceLabelAttribute(string priceLabel)
-        {
-            PriceLabel = priceLabel;
-        }
-
-        public string PriceLabel { get; }
+        PriceLabel = priceLabel;
     }
+
+    public string PriceLabel { get; }
 }

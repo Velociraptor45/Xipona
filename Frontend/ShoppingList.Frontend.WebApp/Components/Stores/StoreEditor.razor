@@ -19,7 +19,7 @@
         <Sections State="@State"></Sections>
 
         <div class="d-flex justify-content-end mt-2">
-            @if (State.EditedStore.Id == 0)
+            @if (State.EditedStore.Id == Guid.Empty)
             {
                 <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
             }

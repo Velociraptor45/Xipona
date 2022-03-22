@@ -2,22 +2,24 @@
 @using ProjectHermes.ShoppingList.Frontend.Models.Items;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 
-@inject ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection.IApiClient apiClient;
+@inject Infrastructure.Connection.IApiClient apiClient;
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification.IShoppingListNotificationService notificationService;
 
 <div class="ml-3">
     <div class="font-weight-bold">Manufacturer</div>
-    <SingleSelect TItem="Manufacturer"
-                  TValue="int"
-                  ValueName="@nameof(Manufacturer.Id)"
-                  LabelName="@nameof(Manufacturer.Name)"
-                  DataSource="@State.Manufacturers.ToList()"
-                  OnItemChanged="@OnManfacturerChanged"
-                  OnItemAdded="@OnNewManufacturerCreated"
-                  Placeholder="Manufacturer"
-                  DefaultValue="@State.EditedItem.ManufacturerId.GetValueOrDefault()"
-                  CanAddItem="true"
-                  AllowClear="true">
+    <SingleSelect
+        Class="mt-1 min-w-150"
+        TItem="Manufacturer"
+        TValue="Guid"
+        ValueName="@nameof(Manufacturer.Id)"
+        LabelName="@nameof(Manufacturer.Name)"
+        DataSource="@State.Manufacturers.ToList()"
+        OnItemChanged="@OnManfacturerChanged"
+        OnItemAdded="@OnNewManufacturerCreated"
+        Placeholder="Manufacturer"
+        DefaultValue="@State.EditedItem.ManufacturerId.GetValueOrDefault()"
+        CanAddItem="true"
+        AllowClear="true">
     </SingleSelect>
 </div>
 

@@ -1,29 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.IO;
-using System.Reflection;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Contexts
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Contexts;
+
+public class ContextFactoryBase
 {
-    public class ContextFactoryBase
+    protected string GetDbConnectionString()
     {
-        protected string GetDbConnectionString()
-        {
-            string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.User);
+        string? env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.User);
 
-            var config = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../ShoppingList.Api.WebApp/"))
-                .AddJsonFile($"appsettings.{env}.json", optional: false, true)
-                .Build();
+        if (env is null)
+            throw new InvalidOperationException("Environment variable 'ASPNETCORE_ENVIRONMENT' not found.");
 
-            return config["ConnectionStrings:Shopping-Database"];
-        }
+        if (string.IsNullOrWhiteSpace(env))
+            throw new InvalidOperationException("Environment variable 'ASPNETCORE_ENVIRONMENT' is empty.");
 
-        protected MySqlServerVersion GetVersion()
-        {
-            var version = Assembly.GetEntryAssembly().GetName().Version;
-            return new MySqlServerVersion(new Version(version.Major, version.Minor, version.Build));
-        }
+        var config = new ConfigurationBuilder()
+            .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../ShoppingList.Api.WebApp/"))
+            .AddJsonFile($"appsettings.{env}.json", optional: false, true)
+            .Build();
+
+        return config["ConnectionStrings:Shopping-Database"];
+    }
+
+    protected MySqlServerVersion GetVersion()
+    {
+        return new MySqlServerVersion(new Version(5, 7));
     }
 }

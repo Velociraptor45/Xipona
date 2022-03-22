@@ -1,42 +1,87 @@
-﻿using AutoFixture;
-using Moq;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using System.Threading;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services
+namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
+
+public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListService>
 {
-    public class AddItemToShoppingListServiceMock
+    public AddItemToShoppingListServiceMock(MockBehavior behavior) : base(behavior)
     {
-        private readonly Mock<IAddItemToShoppingListService> mock;
+    }
 
-        public AddItemToShoppingListServiceMock(Fixture fixture)
-        {
-            mock = fixture.Freeze<Mock<IAddItemToShoppingListService>>();
-        }
-
-        public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, ItemId itemId, SectionId sectionId,
-            float quantity)
-        {
-            mock.Verify(i => i.AddItemToShoppingList(
+    public void SetupAddItemToShoppingList(IShoppingList shoppingList,
+        ItemId itemId, SectionId? sectionId, QuantityInBasket quantity)
+    {
+        Setup(m => m.AddItemToShoppingListAsync(
                 shoppingList,
                 itemId,
                 sectionId,
                 quantity,
-                It.IsAny<CancellationToken>()));
-        }
+                It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+    }
 
-        public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
-            SectionId sectionId, float quantity)
-        {
-            mock.Verify(i => i.AddItemToShoppingList(
+    public void SetupAddItemToShoppingList(IShoppingList shoppingList,
+        TemporaryItemId temporaryItemId, SectionId? sectionId, QuantityInBasket quantity)
+    {
+        Setup(m => m.AddItemToShoppingListAsync(
                 shoppingList,
                 temporaryItemId,
                 sectionId,
                 quantity,
-                It.IsAny<CancellationToken>()));
-        }
+                It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupAddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
+        ItemTypeId typeId, SectionId? sectionId, QuantityInBasket quantity)
+    {
+        Setup(m => m.AddItemWithTypeToShoppingList(
+                shoppingList,
+                item,
+                typeId,
+                sectionId,
+                quantity,
+                It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void VerifyAddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
+        ItemTypeId typeId, SectionId? sectionId, QuantityInBasket quantity, Func<Times> times)
+    {
+        Verify(m => m.AddItemWithTypeToShoppingList(
+                shoppingList,
+                item,
+                typeId,
+                sectionId,
+                quantity,
+                It.IsAny<CancellationToken>()),
+            times);
+    }
+
+    public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
+        QuantityInBasket quantity)
+    {
+        Verify(i => i.AddItemToShoppingListAsync(
+                shoppingList,
+                itemId,
+                sectionId,
+                quantity,
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
+        SectionId? sectionId, QuantityInBasket quantity)
+    {
+        Verify(i => i.AddItemToShoppingListAsync(
+                shoppingList,
+                temporaryItemId,
+                sectionId,
+                quantity,
+                It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 }

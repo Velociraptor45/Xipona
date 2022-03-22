@@ -1,14 +1,11 @@
-﻿using System;
+﻿namespace ProjectHermes.ShoppingList.Api.Core.Attributes;
 
-namespace ProjectHermes.ShoppingList.Api.Core.Attributes
+public class QuantityLabelAttribute : Attribute
 {
-    public class QuantityLabelAttribute : Attribute
+    public QuantityLabelAttribute(string quantityLabel)
     {
-        public QuantityLabelAttribute(string quantityLabel)
-        {
-            QuantityLabel = quantityLabel;
-        }
-
-        public string QuantityLabel { get; }
+        QuantityLabel = quantityLabel;
     }
+
+    public string QuantityLabel { get; }
 }

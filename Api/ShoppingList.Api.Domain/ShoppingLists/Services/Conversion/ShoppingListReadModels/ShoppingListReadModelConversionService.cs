@@ -1,106 +1,137 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models.Extensions;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.ActiveShoppingListByStoreId;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
+
+public class ShoppingListReadModelConversionService : IShoppingListReadModelConversionService
 {
-    public class ShoppingListReadModelConversionService : IShoppingListReadModelConversionService
+    private readonly IStoreRepository _storeRepository;
+    private readonly IItemRepository _itemRepository;
+    private readonly IItemCategoryRepository _itemCategoryRepository;
+    private readonly IManufacturerRepository _manufacturerRepository;
+
+    public ShoppingListReadModelConversionService(IStoreRepository storeRepository, IItemRepository itemRepository,
+        IItemCategoryRepository itemCategoryRepository, IManufacturerRepository manufacturerRepository)
     {
-        private readonly IStoreRepository storeRepository;
-        private readonly IItemRepository itemRepository;
-        private readonly IItemCategoryRepository itemCategoryRepository;
-        private readonly IManufacturerRepository manufacturerRepository;
+        _storeRepository = storeRepository;
+        _itemRepository = itemRepository;
+        _itemCategoryRepository = itemCategoryRepository;
+        _manufacturerRepository = manufacturerRepository;
+    }
 
-        public ShoppingListReadModelConversionService(IStoreRepository storeRepository, IItemRepository itemRepository,
-            IItemCategoryRepository itemCategoryRepository, IManufacturerRepository manufacturerRepository)
+    public async Task<ShoppingListReadModel> ConvertAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
+    {
+        if (shoppingList is null)
+            throw new ArgumentNullException(nameof(shoppingList));
+
+        var itemIds = shoppingList.Items.Select(i => i.Id);
+        var itemsDict = (await _itemRepository.FindByAsync(itemIds, cancellationToken))
+            .ToDictionary(i => i.Id);
+
+        var itemCategoryIds = itemsDict.Values.Where(i => i.ItemCategoryId != null)
+            .Select(i => i.ItemCategoryId!.Value);
+        var itemCategoriesDict = (await _itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
+            .ToDictionary(cat => cat.Id);
+
+        var manufacturerIds = itemsDict.Values.Where(i => i.ManufacturerId != null)
+            .Select(i => i.ManufacturerId!.Value);
+        var manufacturersDict = (await _manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
+            .ToDictionary(man => man.Id);
+
+        IStore? store = await _storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
+        if (store is null)
+            throw new DomainException(new StoreNotFoundReason(shoppingList.StoreId));
+
+        return ToReadModel(shoppingList, store, itemsDict, itemCategoriesDict, manufacturersDict);
+    }
+
+    private static ShoppingListReadModel ToReadModel(IShoppingList shoppingList, IStore store,
+        IReadOnlyDictionary<ItemId, IStoreItem> storeItems, IReadOnlyDictionary<ItemCategoryId,
+            IItemCategory> itemCategories, IReadOnlyDictionary<ManufacturerId, IManufacturer> manufacturers)
+    {
+        List<ShoppingListSectionReadModel> sectionReadModels = new();
+        foreach (var section in shoppingList.Sections)
         {
-            this.storeRepository = storeRepository;
-            this.itemRepository = itemRepository;
-            this.itemCategoryRepository = itemCategoryRepository;
-            this.manufacturerRepository = manufacturerRepository;
-        }
-
-        public async Task<ShoppingListReadModel> ConvertAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
-        {
-            if (shoppingList is null)
-                throw new System.ArgumentNullException(nameof(shoppingList));
-
-            var ItemIds = shoppingList.Items.Select(i => i.Id);
-            var itemsDict = (await itemRepository.FindByAsync(ItemIds, cancellationToken))
-                .ToDictionary(i => i.Id);
-
-            var itemCategoryIds = itemsDict.Values.Where(i => i.ItemCategoryId != null).Select(i => i.ItemCategoryId);
-            var itemCategoriesDict = (await itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
-                .ToDictionary(cat => cat.Id);
-
-            var manufacturerIds = itemsDict.Values.Where(i => i.ManufacturerId != null).Select(i => i.ManufacturerId);
-            var manufacturersDict = (await manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
-                .ToDictionary(man => man.Id);
-
-            IStore store = await storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
-
-            return ToReadModel(shoppingList, store, itemsDict, itemCategoriesDict, manufacturersDict);
-        }
-
-        private ShoppingListReadModel ToReadModel(IShoppingList shoppingList, IStore store,
-            Dictionary<ItemId, IStoreItem> storeItems, Dictionary<ItemCategoryId, IItemCategory> itemCategories,
-            Dictionary<ManufacturerId, IManufacturer> manufacturers)
-        {
-            List<ShoppingListSectionReadModel> sectionReadModels = new List<ShoppingListSectionReadModel>();
-            foreach (var section in shoppingList.Sections)
+            List<ShoppingListItemReadModel> itemReadModels = new();
+            foreach (var item in section.Items)
             {
-                List<ShoppingListItemReadModel> itemReadModels = new List<ShoppingListItemReadModel>();
-                foreach (var item in section.Items)
+                var storeItem = storeItems[item.Id];
+
+                Price price;
+                string name;
+                if (storeItem.HasItemTypes)
                 {
-                    var storeItem = storeItems[item.Id];
+                    if (item.TypeId == null)
+                        throw new DomainException(new ShoppingListItemMissingTypeReason(item.Id));
 
-                    var itemReadModel = new ShoppingListItemReadModel(
-                        item.Id,
-                        storeItem.Name,
-                        storeItem.IsDeleted,
-                        storeItem.Comment,
-                        storeItem.IsTemporary,
-                        storeItem.Availabilities.First(av => av.StoreId == store.Id).Price,
-                        storeItem.QuantityType.ToReadModel(),
-                        storeItem.QuantityInPacket,
-                        storeItem.QuantityTypeInPacket.ToReadModel(),
-                        storeItem.ItemCategoryId == null ? null : itemCategories[storeItem.ItemCategoryId].ToReadModel(),
-                        storeItem.ManufacturerId == null ? null : manufacturers[storeItem.ManufacturerId].ToReadModel(),
-                        item.IsInBasket,
-                        item.Quantity);
+                    var itemType = storeItem.ItemTypes.FirstOrDefault(t => t.Id == item.TypeId);
+                    if (itemType == null)
+                        throw new DomainException(new ItemTypeNotFoundReason(item.Id, item.TypeId.Value));
 
-                    itemReadModels.Add(itemReadModel);
+                    price = itemType.Availabilities.First(av => av.StoreId == store.Id).Price;
+                    name = $"{storeItem.Name} {itemType.Name}";
+                }
+                else
+                {
+                    price = storeItem.Availabilities.First(av => av.StoreId == store.Id).Price;
+                    name = storeItem.Name.Value;
                 }
 
-                var storeSection = store.Sections.First(s => s.Id == section.Id);
+                var itemQuantityInPacket = storeItem.ItemQuantity.InPacket;
+                var quantityTypeInPacketReadModel = itemQuantityInPacket is null
+                    ? null
+                    : new QuantityTypeInPacketReadModel(itemQuantityInPacket.Type);
 
-                var sectionReadModel = new ShoppingListSectionReadModel(
-                    section.Id,
-                    storeSection.Name,
-                    storeSection.SortingIndex,
-                    storeSection.IsDefaultSection,
-                    itemReadModels);
+                var itemReadModel = new ShoppingListItemReadModel(
+                    item.Id,
+                    item.TypeId,
+                    name,
+                    storeItem.IsDeleted,
+                    storeItem.Comment,
+                    storeItem.IsTemporary,
+                    price,
+                    new QuantityTypeReadModel(storeItem.ItemQuantity.Type),
+                    itemQuantityInPacket?.Quantity,
+                    quantityTypeInPacketReadModel,
+                    storeItem.ItemCategoryId == null ?
+                        null : new ItemCategoryReadModel(itemCategories[storeItem.ItemCategoryId.Value]),
+                    storeItem.ManufacturerId == null ?
+                        null : new ManufacturerReadModel(manufacturers[storeItem.ManufacturerId.Value]),
+                    item.IsInBasket,
+                    item.Quantity);
 
-                sectionReadModels.Add(sectionReadModel);
+                itemReadModels.Add(itemReadModel);
             }
 
-            return new ShoppingListReadModel(
-                shoppingList.Id,
-                shoppingList.CompletionDate,
-                store.ToShoppingListStoreReadModel(),
-                sectionReadModels);
+            var storeSection = store.Sections.First(s => s.Id == section.Id);
+
+            var sectionReadModel = new ShoppingListSectionReadModel(
+                section.Id,
+                storeSection.Name,
+                storeSection.SortingIndex,
+                storeSection.IsDefaultSection,
+                itemReadModels);
+
+            sectionReadModels.Add(sectionReadModel);
         }
+
+        return new ShoppingListReadModel(
+            shoppingList.Id,
+            shoppingList.CompletionDate,
+            new ShoppingListStoreReadModel(store.Id, store.Name),
+            sectionReadModels);
     }
 }

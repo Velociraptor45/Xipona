@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts;
 
+#nullable disable
+
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
 {
     [DbContext(typeof(ItemContext))]
@@ -14,42 +16,38 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 64)
-                .HasAnnotation("ProductVersion", "5.0.3");
+                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.AvailableAt", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("char(36)")
+                        .HasColumnOrder(1);
 
-                    b.Property<int>("DefaultSectionId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("char(36)")
+                        .HasColumnOrder(2);
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("DefaultSectionId")
+                        .HasColumnType("char(36)");
 
                     b.Property<float>("Price")
                         .HasColumnType("float");
 
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
+                    b.HasKey("ItemId", "StoreId");
 
                     b.ToTable("AvailableAts");
                 });
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Comment")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<Guid?>("CreatedFrom")
                         .HasColumnType("char(36)");
@@ -60,26 +58,26 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
                     b.Property<bool>("IsTemporary")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int?>("ItemCategoryId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ItemCategoryId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<int?>("ManufacturerId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ManufacturerId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
-                    b.Property<int?>("PredecessorId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("PredecessorId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<float>("QuantityInPacket")
+                    b.Property<float?>("QuantityInPacket")
                         .HasColumnType("float");
 
                     b.Property<int>("QuantityType")
                         .HasColumnType("int");
 
-                    b.Property<int>("QuantityTypeInPacket")
+                    b.Property<int?>("QuantityTypeInPacket")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -87,6 +85,51 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
                     b.HasIndex("PredecessorId");
 
                     b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("PredecessorId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("PredecessorId");
+
+                    b.ToTable("ItemTypes");
+                });
+
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemTypeAvailableAt", b =>
+                {
+                    b.Property<Guid>("ItemTypeId")
+                        .HasColumnType("char(36)")
+                        .HasColumnOrder(1);
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("char(36)")
+                        .HasColumnOrder(2);
+
+                    b.Property<Guid>("DefaultSectionId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("float");
+
+                    b.HasKey("ItemTypeId", "StoreId");
+
+                    b.ToTable("ItemTypeAvailableAts");
                 });
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.AvailableAt", b =>
@@ -109,7 +152,42 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.StoreItems
                     b.Navigation("Predecessor");
                 });
 
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType", b =>
+                {
+                    b.HasOne("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item", "Item")
+                        .WithMany("ItemTypes")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType", "Predecessor")
+                        .WithMany()
+                        .HasForeignKey("PredecessorId");
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Predecessor");
+                });
+
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemTypeAvailableAt", b =>
+                {
+                    b.HasOne("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType", "ItemType")
+                        .WithMany("AvailableAt")
+                        .HasForeignKey("ItemTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ItemType");
+                });
+
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item", b =>
+                {
+                    b.Navigation("AvailableAt");
+
+                    b.Navigation("ItemTypes");
+                });
+
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType", b =>
                 {
                     b.Navigation("AvailableAt");
                 });

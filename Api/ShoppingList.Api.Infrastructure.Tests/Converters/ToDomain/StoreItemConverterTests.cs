@@ -6,68 +6,67 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToDomain;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
-using System.Linq;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
+namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain;
+
+public class StoreItemConverterTests : ToDomainConverterTestBase<Item, IStoreItem>
 {
-    public class StoreItemConverterTests : ToDomainConverterTestBase<Item, IStoreItem>
+    protected override (Item, IStoreItem) CreateTestObjects()
     {
-        protected override (Item, IStoreItem) CreateTestObjects()
+        var destination = StoreItemMother.Initial().Create();
+        var source = GetSource(destination);
+
+        return (source, destination);
+    }
+
+    protected override void SetupServiceCollection()
+    {
+        AddDependencies(ServiceCollection);
+    }
+
+    public static Item GetSource(IStoreItem destination)
+    {
+        Item predecessor = null;
+        if (destination.Predecessor != null)
+            predecessor = GetSource(destination.Predecessor);
+
+        var availabilities = destination.Availabilities
+            .Select(StoreItemAvailabilityConverterTests.GetSource)
+            .ToList();
+
+        var itemTypes = destination.ItemTypes
+            .Select(ItemTypeConverterTests.GetSource)
+            .ToList();
+
+        return new Item
         {
-            var commonFixture = new CommonFixture();
-            var availabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
-            var storeItemFixture = new StoreItemFixture(availabilityFixture, commonFixture);
+            Id = destination.Id.Value,
+            Name = destination.Name.Value,
+            Deleted = destination.IsDeleted,
+            Comment = destination.Comment.Value,
+            IsTemporary = destination.IsTemporary,
+            QuantityType = destination.ItemQuantity.Type.ToInt(),
+            QuantityInPacket = destination.ItemQuantity.InPacket?.Quantity.Value,
+            QuantityTypeInPacket = destination.ItemQuantity.InPacket?.Type.ToInt(),
+            ItemCategoryId = destination.ItemCategoryId?.Value,
+            ManufacturerId = destination.ManufacturerId?.Value,
+            PredecessorId = predecessor?.Id,
+            Predecessor = predecessor,
+            AvailableAt = availabilities,
+            CreatedFrom = destination.TemporaryId?.Value,
+            ItemTypes = itemTypes
+        };
+    }
 
-            var destination = storeItemFixture.CreateValid();
-            var source = GetSource(destination, commonFixture);
+    public static void AddDependencies(IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddImplementationOfGenericType(typeof(StoreItemConverter).Assembly, typeof(IToDomainConverter<,>));
+        serviceCollection.AddImplementationOfNonGenericType(typeof(IStoreItemFactory).Assembly, typeof(IStoreItemFactory));
 
-            return (source, destination);
-        }
-
-        protected override void SetupServiceCollection()
-        {
-            AddDependencies(serviceCollection);
-        }
-
-        public static Item GetSource(IStoreItem destination, CommonFixture commonFixture)
-        {
-            Item predecessor = null;
-            if (destination.Predecessor != null)
-                predecessor = GetSource(destination.Predecessor, commonFixture);
-
-            var availabilities = destination.Availabilities
-                .Select(av => StoreItemAvailabilityConverterTests.GetSource(av))
-                .ToList();
-
-            return new Item
-            {
-                Id = destination.Id.Value,
-                Name = destination.Name,
-                Deleted = destination.IsDeleted,
-                Comment = destination.Comment,
-                IsTemporary = destination.IsTemporary,
-                QuantityType = destination.QuantityType.ToInt(),
-                QuantityInPacket = destination.QuantityInPacket,
-                QuantityTypeInPacket = destination.QuantityTypeInPacket.ToInt(),
-                ItemCategoryId = destination.ItemCategoryId?.Value,
-                ManufacturerId = destination.ManufacturerId?.Value,
-                PredecessorId = predecessor?.Id,
-                Predecessor = predecessor,
-                AvailableAt = availabilities,
-                CreatedFrom = destination.TemporaryId?.Value
-            };
-        }
-
-        public static void AddDependencies(IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddInstancesOfGenericType(typeof(StoreItemConverter).Assembly, typeof(IToDomainConverter<,>));
-            serviceCollection.AddInstancesOfNonGenericType(typeof(IStoreItemFactory).Assembly, typeof(IStoreItemFactory));
-
-            StoreItemAvailabilityConverterTests.AddDependencies(serviceCollection);
-            ManufacturerConverterTests.AddDependencies(serviceCollection);
-            ItemCategoryConverterTests.AddDependencies(serviceCollection);
-        }
+        StoreItemAvailabilityConverterTests.AddDependencies(serviceCollection);
+        ManufacturerConverterTests.AddDependencies(serviceCollection);
+        ItemCategoryConverterTests.AddDependencies(serviceCollection);
+        ItemTypeConverterTests.AddDependencies(serviceCollection);
     }
 }

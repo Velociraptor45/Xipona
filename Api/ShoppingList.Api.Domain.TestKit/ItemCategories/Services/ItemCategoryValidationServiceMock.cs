@@ -1,31 +1,26 @@
-﻿using AutoFixture;
-using Moq;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services;
-using System.Threading;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Validations;
 
-namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Services
+namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Services;
+
+public class ItemCategoryValidationServiceMock : Mock<IItemCategoryValidationService>
 {
-    public class ItemCategoryValidationServiceMock
+    public ItemCategoryValidationServiceMock(MockBehavior behavior) : base(behavior)
     {
-        private readonly Mock<IItemCategoryValidationService> mock;
+    }
 
-        public ItemCategoryValidationServiceMock(Mock<IItemCategoryValidationService> mock)
-        {
-            this.mock = mock;
-        }
+    public void VerifyValidateAsyncOnce(ItemCategoryId itemCategoryId)
+    {
+        Verify(i => i.ValidateAsync(
+                itemCategoryId,
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
 
-        public ItemCategoryValidationServiceMock(Fixture fixture)
-        {
-            mock = fixture.Freeze<Mock<IItemCategoryValidationService>>();
-        }
-
-        public void VerifyValidateAsyncOnce(ItemCategoryId itemCategoryId)
-        {
-            mock.Verify(i => i.ValidateAsync(
-                    itemCategoryId,
-                    It.IsAny<CancellationToken>()),
-                Times.Once);
-        }
+    public void SetupValidateAsync(ItemCategoryId itemCategoryId)
+    {
+        Setup(m => m.ValidateAsync(itemCategoryId, It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
     }
 }

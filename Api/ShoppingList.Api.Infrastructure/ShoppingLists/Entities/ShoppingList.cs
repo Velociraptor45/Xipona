@@ -1,21 +1,22 @@
-﻿using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities;
+
+public class ShoppingList
 {
-    public class ShoppingList
+    public ShoppingList()
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        public DateTime? CompletionDate { get; set; }
-        public int StoreId { get; set; }
-
-        [InverseProperty("ShoppingList")]
-        public ICollection<ItemsOnList> ItemsOnList { get; set; }
+        ItemsOnList ??= new List<ItemsOnList>();
     }
+
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public Guid Id { get; set; }
+
+    public DateTime? CompletionDate { get; set; }
+    public Guid StoreId { get; set; }
+
+    [InverseProperty("ShoppingList")]
+    public ICollection<ItemsOnList> ItemsOnList { get; set; }
 }

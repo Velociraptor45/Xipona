@@ -4,57 +4,51 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToEntity;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
-using System.Linq;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity
+namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity;
+
+public class ItemConverterTests : ToEntityConverterTestBase<IStoreItem, Item>
 {
-    public class ItemConverterTests : ToEntityConverterTestBase<IStoreItem, Item>
+    protected override (IStoreItem, Item) CreateTestObjects()
     {
-        protected override (IStoreItem, Item) CreateTestObjects()
+        var source = StoreItemMother.Initial().Create();
+        var destination = GetDestination(source);
+
+        return (source, destination);
+    }
+
+    public static Item GetDestination(IStoreItem source)
+    {
+        return new Item
         {
-            var commonFixture = new CommonFixture();
-            var availabilityFixture = new StoreItemAvailabilityFixture(commonFixture);
-            var storeItemFixture = new StoreItemFixture(availabilityFixture, commonFixture);
+            Id = source.Id.Value,
+            Name = source.Name.Value,
+            Deleted = source.IsDeleted,
+            Comment = source.Comment.Value,
+            IsTemporary = source.IsTemporary,
+            QuantityType = source.ItemQuantity.Type.ToInt(),
+            QuantityInPacket = source.ItemQuantity.InPacket?.Quantity.Value,
+            QuantityTypeInPacket = source.ItemQuantity.InPacket?.Type.ToInt(),
+            ItemCategoryId = source.ItemCategoryId?.Value,
+            ManufacturerId = source.ManufacturerId?.Value,
+            CreatedFrom = source.TemporaryId?.Value,
+            AvailableAt = source.Availabilities
+                .Select(av =>
+                    new AvailableAt
+                    {
+                        StoreId = av.StoreId.Value,
+                        Price = av.Price.Value,
+                        ItemId = source.Id.Value,
+                        DefaultSectionId = av.DefaultSectionId.Value
+                    }).ToList(),
+            PredecessorId = source.Predecessor?.Id.Value,
+            ItemTypes = new List<ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType>()
+        };
+    }
 
-            var source = storeItemFixture.CreateValid();
-            var destination = GetDestination(source);
-
-            return (source, destination);
-        }
-
-        public static Item GetDestination(IStoreItem source)
-        {
-            return new Item
-            {
-                Id = source.Id?.Value ?? 0,
-                Name = source.Name,
-                Deleted = source.IsDeleted,
-                Comment = source.Comment,
-                IsTemporary = source.IsTemporary,
-                QuantityType = source.QuantityType.ToInt(),
-                QuantityInPacket = source.QuantityInPacket,
-                QuantityTypeInPacket = source.QuantityTypeInPacket.ToInt(),
-                ItemCategoryId = source.ItemCategoryId?.Value,
-                ManufacturerId = source.ManufacturerId?.Value,
-                CreatedFrom = source.TemporaryId?.Value,
-                AvailableAt = source.Availabilities
-                    .Select(av =>
-                        new AvailableAt()
-                        {
-                            StoreId = av.StoreId.Value,
-                            Price = av.Price,
-                            ItemId = source.Id?.Value ?? 0,
-                            DefaultSectionId = av.DefaultSectionId.Value
-                        }).ToList(),
-                PredecessorId = source.Predecessor?.Id.Value
-            };
-        }
-
-        protected override void SetupServiceCollection()
-        {
-            serviceCollection.AddInstancesOfGenericType(typeof(ItemConverter).Assembly, typeof(IToEntityConverter<,>));
-        }
+    protected override void SetupServiceCollection()
+    {
+        ServiceCollection.AddImplementationOfGenericType(typeof(ItemConverter).Assembly, typeof(IToEntityConverter<,>));
     }
 }

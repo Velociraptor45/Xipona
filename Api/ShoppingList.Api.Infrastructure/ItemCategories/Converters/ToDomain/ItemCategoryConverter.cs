@@ -1,28 +1,26 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
-using System;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Converters.ToDomain
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Converters.ToDomain;
+
+public class ItemCategoryConverter : IToDomainConverter<Entities.ItemCategory, IItemCategory>
 {
-    public class ItemCategoryConverter : IToDomainConverter<Entities.ItemCategory, IItemCategory>
+    private readonly IItemCategoryFactory _itemCategoryFactory;
+
+    public ItemCategoryConverter(IItemCategoryFactory itemCategoryFactory)
     {
-        private readonly IItemCategoryFactory itemCategoryFactory;
+        _itemCategoryFactory = itemCategoryFactory;
+    }
 
-        public ItemCategoryConverter(IItemCategoryFactory itemCategoryFactory)
-        {
-            this.itemCategoryFactory = itemCategoryFactory;
-        }
+    public IItemCategory ToDomain(Entities.ItemCategory source)
+    {
+        if (source is null)
+            throw new ArgumentNullException(nameof(source));
 
-        public IItemCategory ToDomain(Entities.ItemCategory source)
-        {
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
-
-            return itemCategoryFactory.Create(
-                new ItemCategoryId(source.Id),
-                source.Name,
-                source.Deleted);
-        }
+        return _itemCategoryFactory.Create(
+            new ItemCategoryId(source.Id),
+            new ItemCategoryName(source.Name),
+            source.Deleted);
     }
 }

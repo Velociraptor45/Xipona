@@ -6,65 +6,58 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Converters.ToDomain;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
-using System.Collections.Generic;
+using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
-using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities;
+namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
+public class ShoppingListConverterTests : ToDomainConverterTestBase<ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities.ShoppingList, IShoppingList>
 {
-    public class ShoppingListConverterTests : ToDomainConverterTestBase<Entities.ShoppingList, IShoppingList>
+    protected override (ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities.ShoppingList, IShoppingList) CreateTestObjects()
     {
-        protected override (Entities.ShoppingList, IShoppingList) CreateTestObjects()
+        var destination = ShoppingListMother.ThreeSections().Create();
+        var source = GetSource(destination);
+
+        return (source, destination);
+    }
+
+    protected override void SetupServiceCollection()
+    {
+        AddDependencies(ServiceCollection);
+    }
+
+    public static ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities.ShoppingList GetSource(IShoppingList destination)
+    {
+        List<ItemsOnList> itemsOnListMap = new List<ItemsOnList>();
+        foreach (var section in destination.Sections)
         {
-            var commonFixture = new CommonFixture();
-            var shoppingListFixture = new ShoppingListFixture(commonFixture).AsModelFixture();
-
-            var destination = shoppingListFixture.CreateValid();
-            var source = GetSource(destination);
-
-            return (source, destination);
-        }
-
-        protected override void SetupServiceCollection()
-        {
-            AddDependencies(serviceCollection);
-        }
-
-        public static Entities.ShoppingList GetSource(IShoppingList destination)
-        {
-            List<ItemsOnList> itemsOnListMap = new List<ItemsOnList>();
-            foreach (var section in destination.Sections)
+            foreach (var item in section.Items)
             {
-                foreach (var item in section.Items)
+                var map = new ItemsOnList
                 {
-                    var map = new ItemsOnList
-                    {
-                        SectionId = section.Id.Value,
-                        ItemId = item.Id.Value,
-                        InBasket = item.IsInBasket,
-                        Quantity = item.Quantity
-                    };
-                    itemsOnListMap.Add(map);
-                }
+                    SectionId = section.Id.Value,
+                    ItemId = item.Id.Value,
+                    ItemTypeId = item.TypeId?.Value,
+                    InBasket = item.IsInBasket,
+                    Quantity = item.Quantity.Value
+                };
+                itemsOnListMap.Add(map);
             }
-
-            return new Entities.ShoppingList
-            {
-                Id = destination.Id.Value,
-                StoreId = destination.StoreId.Value,
-                ItemsOnList = itemsOnListMap,
-                CompletionDate = destination.CompletionDate
-            };
         }
 
-        public static void AddDependencies(IServiceCollection serviceCollection)
+        return new ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities.ShoppingList
         {
-            serviceCollection.AddInstancesOfGenericType(typeof(ShoppingListConverter).Assembly, typeof(IToDomainConverter<,>));
-            serviceCollection.AddInstancesOfNonGenericType(typeof(IShoppingListFactory).Assembly, typeof(IShoppingListFactory));
-            serviceCollection.AddInstancesOfNonGenericType(typeof(IShoppingListSectionFactory).Assembly, typeof(IShoppingListSectionFactory));
-            serviceCollection.AddInstancesOfNonGenericType(typeof(IShoppingListItemFactory).Assembly, typeof(IShoppingListItemFactory));
-        }
+            Id = destination.Id.Value,
+            StoreId = destination.StoreId.Value,
+            ItemsOnList = itemsOnListMap,
+            CompletionDate = destination.CompletionDate
+        };
+    }
+
+    public static void AddDependencies(IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddImplementationOfGenericType(typeof(ShoppingListConverter).Assembly, typeof(IToDomainConverter<,>));
+        serviceCollection.AddImplementationOfNonGenericType(typeof(IShoppingListFactory).Assembly, typeof(IShoppingListFactory));
+        serviceCollection.AddImplementationOfNonGenericType(typeof(IShoppingListSectionFactory).Assembly, typeof(IShoppingListSectionFactory));
+        serviceCollection.AddImplementationOfNonGenericType(typeof(IShoppingListItemFactory).Assembly, typeof(IShoppingListItemFactory));
     }
 }

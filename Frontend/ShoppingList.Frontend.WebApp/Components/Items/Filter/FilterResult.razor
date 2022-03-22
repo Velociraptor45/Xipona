@@ -10,7 +10,7 @@
 @code {
     [Parameter] public ItemsState State { get; set; }
     [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
-    [Parameter] public ItemFilterResult Item { get; set; }
+    [Parameter] public SearchItemResult Item { get; set; }
 
     private async Task OnItemClicked()
     {

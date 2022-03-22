@@ -1,15 +1,17 @@
-﻿namespace ProjectHermes.ShoppingList.Frontend.Models.Items
+﻿using System;
+
+namespace ProjectHermes.ShoppingList.Frontend.Models.Items
 {
     public class StoreItemSection
     {
-        public StoreItemSection(int id, string name, int sortingIndex)
+        public StoreItemSection(Guid id, string name, int sortingIndex)
         {
             Id = id;
             Name = name;
             SortingIndex = sortingIndex;
         }
 
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public int SortingIndex { get; }
     }

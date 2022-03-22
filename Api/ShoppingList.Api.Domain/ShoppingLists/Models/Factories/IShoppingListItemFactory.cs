@@ -1,9 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories
+namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
+
+public interface IShoppingListItemFactory
 {
-    public interface IShoppingListItemFactory
-    {
-        IShoppingListItem Create(ItemId id, bool isInBasket, float quantity);
-    }
+    IShoppingListItem Create(ItemId id, ItemTypeId? typeId, bool isInBasket, QuantityInBasket quantity);
 }

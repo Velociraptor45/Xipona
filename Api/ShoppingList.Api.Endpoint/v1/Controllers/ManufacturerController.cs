@@ -1,71 +1,71 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectHermes.ShoppingList.Api.ApplicationServices;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.AllActiveManufacturers;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.ManufacturerSearch;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Commands.CreateManufacturer;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.AllActiveManufacturers;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.ManufacturerSearch;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
-using System.Threading.Tasks;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 
-namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers
+namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
+
+[ApiController]
+[Route("v1/manufacturer")]
+public class ManufacturerController : ControllerBase
 {
-    [ApiController]
-    [Route("v1/manufacturer")]
-    public class ManufacturerController : ControllerBase
+    private readonly IQueryDispatcher _queryDispatcher;
+    private readonly ICommandDispatcher _commandDispatcher;
+    private readonly IToContractConverter<ManufacturerReadModel, ManufacturerContract> _manufacturerContractConverter;
+
+    public ManufacturerController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
+        IToContractConverter<ManufacturerReadModel, ManufacturerContract> manufacturerContractConverter)
     {
-        private readonly IQueryDispatcher queryDispatcher;
-        private readonly ICommandDispatcher commandDispatcher;
-        private readonly IToContractConverter<ManufacturerReadModel, ManufacturerContract> manufacturerContractConverter;
+        _queryDispatcher = queryDispatcher;
+        _commandDispatcher = commandDispatcher;
+        _manufacturerContractConverter = manufacturerContractConverter;
+    }
 
-        public ManufacturerController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
-            IToContractConverter<ManufacturerReadModel, ManufacturerContract> manufacturerContractConverter)
+    [HttpGet]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [Route("search/{searchInput}")]
+    public async Task<IActionResult> GetManufacturerSearchResults([FromRoute(Name = "searchInput")] string searchInput)
+    {
+        searchInput = searchInput.Trim();
+        if (string.IsNullOrEmpty(searchInput))
         {
-            this.queryDispatcher = queryDispatcher;
-            this.commandDispatcher = commandDispatcher;
-            this.manufacturerContractConverter = manufacturerContractConverter;
+            return BadRequest("Search input mustn't be null or empty");
         }
 
-        [HttpGet]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [Route("search/{searchInput}")]
-        public async Task<IActionResult> GetManufacturerSearchResults([FromRoute(Name = "searchInput")] string searchInput)
-        {
-            searchInput = searchInput.Trim();
-            if (string.IsNullOrEmpty(searchInput))
-            {
-                return BadRequest("Search input mustn't be null or empty");
-            }
+        var query = new ManufacturerSearchQuery(searchInput);
+        var manufacturerReadModels = await _queryDispatcher.DispatchAsync(query, default);
+        var manufacturerContracts = _manufacturerContractConverter.ToContract(manufacturerReadModels);
 
-            var query = new ManufacturerSearchQuery(searchInput);
-            var manufacturerReadModels = await queryDispatcher.DispatchAsync(query, default);
-            var manufacturerContracts = manufacturerContractConverter.ToContract(manufacturerReadModels);
+        return Ok(manufacturerContracts);
+    }
 
-            return Ok(manufacturerContracts);
-        }
+    [HttpGet]
+    [ProducesResponseType(200)]
+    [Route("all/active")]
+    public async Task<IActionResult> GetAllActiveManufacturers()
+    {
+        var query = new AllActiveManufacturersQuery();
+        var readModels = await _queryDispatcher.DispatchAsync(query, default);
+        var contracts = _manufacturerContractConverter.ToContract(readModels);
 
-        [HttpGet]
-        [ProducesResponseType(200)]
-        [Route("all/active")]
-        public async Task<IActionResult> GetAllActiveManufacturers()
-        {
-            var query = new AllActiveManufacturersQuery();
-            var readModels = await queryDispatcher.DispatchAsync(query, default);
-            var contracts = manufacturerContractConverter.ToContract(readModels);
+        return Ok(contracts);
+    }
 
-            return Ok(contracts);
-        }
+    [HttpPost]
+    [ProducesResponseType(200)]
+    [Route("create/{name}")]
+    public async Task<IActionResult> CreateManufacturer([FromRoute(Name = "name")] string name)
+    {
+        var command = new CreateManufacturerCommand(new ManufacturerName(name));
+        await _commandDispatcher.DispatchAsync(command, default);
 
-        [HttpPost]
-        [ProducesResponseType(200)]
-        [Route("create/{name}")]
-        public async Task<IActionResult> CreateManufacturer([FromRoute(Name = "name")] string name)
-        {
-            var command = new CreateManufacturerCommand(name);
-            await commandDispatcher.DispatchAsync(command, default);
-
-            return Ok();
-        }
+        return Ok();
     }
 }

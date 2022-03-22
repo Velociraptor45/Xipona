@@ -4,8 +4,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
 {
     public class CreateTemporaryItemRequest : IApiRequest
     {
-        public CreateTemporaryItemRequest(Guid requestId, Guid offlineId, string name, int storeId, float price,
-            int defaultSectionId)
+        public CreateTemporaryItemRequest(Guid requestId, Guid offlineId, string name, Guid storeId, float price,
+            Guid defaultSectionId)
         {
             RequestId = requestId;
             OfflineId = offlineId;
@@ -18,8 +18,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
         public Guid RequestId { get; }
         public Guid OfflineId { get; }
         public string Name { get; }
-        public int StoreId { get; }
+        public Guid StoreId { get; }
         public float Price { get; }
-        public int DefaultSectionId { get; }
+        public Guid DefaultSectionId { get; }
     }
 }

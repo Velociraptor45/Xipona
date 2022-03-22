@@ -5,44 +5,38 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Converters.ToDomain;
 using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using Entities = ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain
+namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain;
+
+public class ItemCategoryConverterTests : ToDomainConverterTestBase<ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities.ItemCategory, IItemCategory>
 {
-    public class ItemCategoryConverterTests : ToDomainConverterTestBase<Entities.ItemCategory, IItemCategory>
+    protected override (ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities.ItemCategory, IItemCategory) CreateTestObjects()
     {
-        protected override (Entities.ItemCategory, IItemCategory) CreateTestObjects()
+        var destination = new ItemCategoryBuilder().Create();
+        var source = GetSource(destination);
+
+        return (source, destination);
+    }
+
+    protected override void SetupServiceCollection()
+    {
+        AddDependencies(ServiceCollection);
+    }
+
+    public static ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities.ItemCategory GetSource(IItemCategory destination)
+    {
+        return new ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities.ItemCategory()
         {
-            var commonFixture = new CommonFixture();
-            var domainFixture = new ItemCategoryFixture(commonFixture);
+            Id = destination.Id.Value,
+            Deleted = destination.IsDeleted,
+            Name = destination.Name.Value
+        };
+    }
 
-            var destination = domainFixture.GetItemCategory();
-            var source = GetSource(destination);
-
-            return (source, destination);
-        }
-
-        protected override void SetupServiceCollection()
-        {
-            AddDependencies(serviceCollection);
-        }
-
-        public static Entities.ItemCategory GetSource(IItemCategory destination)
-        {
-            return new Entities.ItemCategory()
-            {
-                Id = destination.Id.Value,
-                Deleted = destination.IsDeleted,
-                Name = destination.Name
-            };
-        }
-
-        public static void AddDependencies(IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddInstancesOfGenericType(typeof(ItemCategoryConverter).Assembly, typeof(IToDomainConverter<,>));
-            serviceCollection.AddInstancesOfNonGenericType(typeof(IItemCategoryFactory).Assembly, typeof(IItemCategoryFactory));
-        }
+    public static void AddDependencies(IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddImplementationOfGenericType(typeof(ItemCategoryConverter).Assembly, typeof(IToDomainConverter<,>));
+        serviceCollection.AddImplementationOfNonGenericType(typeof(IItemCategoryFactory).Assembly, typeof(IItemCategoryFactory));
     }
 }

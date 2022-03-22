@@ -1,14 +1,16 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId
+﻿using System;
+
+namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId
 {
     public class ShoppingListStoreContract
     {
-        public ShoppingListStoreContract(int id, string name)
+        public ShoppingListStoreContract(Guid id, string name)
         {
             Id = id;
             Name = name;
         }
 
-        public int Id { get; }
+        public Guid Id { get; }
         public string Name { get; }
     }
 }

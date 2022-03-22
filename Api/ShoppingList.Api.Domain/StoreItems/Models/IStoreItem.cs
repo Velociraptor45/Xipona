@@ -1,41 +1,45 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.ChangeItem;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.TemporaryItems;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models
+namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+
+public interface IStoreItem
 {
-    public interface IStoreItem
-    {
-        ItemId Id { get; }
-        string Name { get; }
-        bool IsDeleted { get; }
-        string Comment { get; }
-        bool IsTemporary { get; }
-        QuantityType QuantityType { get; }
-        float QuantityInPacket { get; }
-        QuantityTypeInPacket QuantityTypeInPacket { get; }
+    ItemId Id { get; }
+    ItemName Name { get; }
+    bool IsDeleted { get; }
+    Comment Comment { get; }
+    bool IsTemporary { get; }
+    public ItemQuantity ItemQuantity { get; }
+    ItemCategoryId? ItemCategoryId { get; }
+    ManufacturerId? ManufacturerId { get; }
+    IStoreItem? Predecessor { get; }
+    TemporaryItemId? TemporaryId { get; }
+    IReadOnlyCollection<IStoreItemAvailability> Availabilities { get; }
+    IReadOnlyCollection<IItemType> ItemTypes { get; }
+    bool HasItemTypes { get; }
 
-        ItemCategoryId ItemCategoryId { get; }
-        ManufacturerId ManufacturerId { get; }
-        IStoreItem Predecessor { get; }
+    void Delete();
 
-        IReadOnlyCollection<IStoreItemAvailability> Availabilities { get; }
-        TemporaryItemId TemporaryId { get; }
+    SectionId GetDefaultSectionIdForStore(StoreId storeId);
 
-        void Delete();
+    bool IsAvailableInStore(StoreId storeId);
 
-        SectionId GetDefaultSectionIdForStore(StoreId storeId);
+    void MakePermanent(PermanentItem permanentItem, IEnumerable<IStoreItemAvailability> availabilities);
 
-        bool IsAvailableInStore(StoreId storeId);
+    void Modify(ItemModification itemChange, IEnumerable<IStoreItemAvailability> availabilities);
 
-        void MakePermanent(PermanentItem permanentItem, IEnumerable<IStoreItemAvailability> availabilities);
+    Task ModifyAsync(ItemWithTypesModification modification, IValidator validator);
 
-        void Modify(ItemModify itemChange, IEnumerable<IStoreItemAvailability> availabilities);
+    void SetPredecessor(IStoreItem predecessor);
 
-        void SetPredecessor(IStoreItem predecessor);
-    }
+    bool TryGetType(ItemTypeId itemTypeId, out IItemType? itemType);
+
+    IReadOnlyCollection<IItemType> GetTypesFor(StoreId storeId);
+
+    bool TryGetTypeWithPredecessor(ItemTypeId predecessorTypeId, out IItemType? predecessor);
 }

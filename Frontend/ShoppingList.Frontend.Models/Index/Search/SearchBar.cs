@@ -15,7 +15,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Index.Search
         public string Input { get; set; } = "";
 
         public bool Active { get; set; }
-        public IEnumerable<ItemSearchResult> Options { get; set; }
+        public IEnumerable<SearchItemForShoppingListResult> Options { get; set; }
 
         public void ResetInput()
         {
@@ -24,7 +24,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Index.Search
 
         public void ResetOptions()
         {
-            Options = Enumerable.Empty<ItemSearchResult>();
+            Options = Enumerable.Empty<SearchItemForShoppingListResult>();
         }
     }
 }

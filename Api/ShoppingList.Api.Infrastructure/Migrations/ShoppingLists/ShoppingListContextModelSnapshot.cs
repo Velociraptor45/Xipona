@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
 
+#nullable disable
+
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.ShoppingLists
 {
     [DbContext(typeof(ShoppingListContext))]
@@ -14,8 +16,8 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.ShoppingLists
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 64)
-                .HasAnnotation("ProductVersion", "5.0.3");
+                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities.ItemsOnList", b =>
                 {
@@ -26,17 +28,20 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.ShoppingLists
                     b.Property<bool>("InBasket")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("ItemTypeId")
+                        .HasColumnType("char(36)");
 
                     b.Property<float>("Quantity")
                         .HasColumnType("float");
 
-                    b.Property<int?>("SectionId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("SectionId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<int>("ShoppingListId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ShoppingListId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -47,15 +52,14 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.ShoppingLists
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities.ShoppingList", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime?>("CompletionDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 

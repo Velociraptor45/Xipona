@@ -3,105 +3,96 @@ using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Adapters
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Adapters;
+
+public class ItemCategoryRepository : IItemCategoryRepository
 {
-    public class ItemCategoryRepository : IItemCategoryRepository
+    private readonly ItemCategoryContext _dbContext;
+    private readonly IToDomainConverter<Entities.ItemCategory, IItemCategory> _toModelConverter;
+    private readonly IToEntityConverter<IItemCategory, Entities.ItemCategory> _toEntityConverter;
+
+    public ItemCategoryRepository(ItemCategoryContext dbContext,
+        IToDomainConverter<Entities.ItemCategory, IItemCategory> toModelConverter,
+        IToEntityConverter<IItemCategory, Entities.ItemCategory> toEntityConverter)
     {
-        private readonly ItemCategoryContext dbContext;
-        private readonly IToDomainConverter<Entities.ItemCategory, IItemCategory> toModelConverter;
-        private readonly IToEntityConverter<IItemCategory, Entities.ItemCategory> toEntityConverter;
+        _dbContext = dbContext;
+        _toModelConverter = toModelConverter;
+        _toEntityConverter = toEntityConverter;
+    }
 
-        public ItemCategoryRepository(ItemCategoryContext dbContext,
-            IToDomainConverter<Entities.ItemCategory, IItemCategory> toModelConverter,
-            IToEntityConverter<IItemCategory, Entities.ItemCategory> toEntityConverter)
-        {
-            this.dbContext = dbContext;
-            this.toModelConverter = toModelConverter;
-            this.toEntityConverter = toEntityConverter;
-        }
+    public async Task<IEnumerable<IItemCategory>> FindByAsync(string searchInput,
+        CancellationToken cancellationToken)
+    {
+        var itemCategoryEntities = await _dbContext.ItemCategories.AsNoTracking()
+            .Where(category => category.Name.Contains(searchInput))
+            .ToListAsync(cancellationToken);
 
-        public async Task<IEnumerable<IItemCategory>> FindByAsync(string searchInput,
-            CancellationToken cancellationToken)
-        {
-            var itemCategoryEntities = await dbContext.ItemCategories.AsNoTracking()
-                .Where(category => category.Name.Contains(searchInput))
-                .ToListAsync();
+        cancellationToken.ThrowIfCancellationRequested();
 
-            cancellationToken.ThrowIfCancellationRequested();
+        return _toModelConverter.ToDomain(itemCategoryEntities);
+    }
 
-            return toModelConverter.ToDomain(itemCategoryEntities);
-        }
+    public async Task<IItemCategory?> FindByAsync(ItemCategoryId id, CancellationToken cancellationToken)
+    {
+        var entity = await _dbContext.ItemCategories.AsNoTracking()
+            .FirstOrDefaultAsync(category => category.Id == id.Value, cancellationToken);
 
-        public async Task<IItemCategory> FindByAsync(ItemCategoryId id, CancellationToken cancellationToken)
-        {
-            if (id == null)
-                throw new ArgumentNullException(nameof(id));
+        cancellationToken.ThrowIfCancellationRequested();
 
-            var entity = await dbContext.ItemCategories.AsNoTracking()
-                .FirstOrDefaultAsync(category => category.Id == id.Value);
+        if (entity == null)
+            return null;
 
-            cancellationToken.ThrowIfCancellationRequested();
+        return _toModelConverter.ToDomain(entity);
+    }
 
-            if (entity == null)
-                return null;
+    public async Task<IEnumerable<IItemCategory>> FindByAsync(IEnumerable<ItemCategoryId> ids,
+        CancellationToken cancellationToken)
+    {
+        if (ids == null)
+            throw new ArgumentNullException(nameof(ids));
 
-            return toModelConverter.ToDomain(entity);
-        }
+        var idHashSet = ids.Select(id => id.Value).ToHashSet();
 
-        public async Task<IEnumerable<IItemCategory>> FindByAsync(IEnumerable<ItemCategoryId> ids,
-            CancellationToken cancellationToken)
-        {
-            if (ids == null)
-                throw new ArgumentNullException(nameof(ids));
+        cancellationToken.ThrowIfCancellationRequested();
 
-            var idHashSet = ids.Select(id => id.Value).ToHashSet();
+        var entities = await _dbContext.ItemCategories.AsNoTracking()
+            .Where(m => idHashSet.Contains(m.Id))
+            .ToListAsync(cancellationToken);
 
-            cancellationToken.ThrowIfCancellationRequested();
+        cancellationToken.ThrowIfCancellationRequested();
 
-            var entities = await dbContext.ItemCategories.AsNoTracking()
-                .Where(m => idHashSet.Contains(m.Id))
-                .ToListAsync();
+        return _toModelConverter.ToDomain(entities);
+    }
 
-            cancellationToken.ThrowIfCancellationRequested();
+    public async Task<IEnumerable<IItemCategory>> FindActiveByAsync(CancellationToken cancellationToken)
+    {
+        var entities = await _dbContext.ItemCategories.AsNoTracking()
+            .Where(m => !m.Deleted)
+            .ToListAsync(cancellationToken);
 
-            return toModelConverter.ToDomain(entities);
-        }
+        cancellationToken.ThrowIfCancellationRequested();
 
-        public async Task<IEnumerable<IItemCategory>> FindActiveByAsync(CancellationToken cancellationToken)
-        {
-            var entities = await dbContext.ItemCategories.AsNoTracking()
-                .Where(m => !m.Deleted)
-                .ToListAsync();
+        return _toModelConverter.ToDomain(entities);
+    }
 
-            cancellationToken.ThrowIfCancellationRequested();
+    public async Task<IItemCategory> StoreAsync(IItemCategory model,
+        CancellationToken cancellationToken)
+    {
+        var entity = _toEntityConverter.ToEntity(model);
+        var existingItemCategory = await FindTrackedEntityById(model.Id, cancellationToken);
 
-            return toModelConverter.ToDomain(entities);
-        }
+        _dbContext.Entry(entity).State = existingItemCategory is null ? EntityState.Added : EntityState.Modified;
 
-        public async Task<IItemCategory> StoreAsync(IItemCategory model,
-            CancellationToken cancellationToken)
-        {
-            var entity = toEntityConverter.ToEntity(model);
+        cancellationToken.ThrowIfCancellationRequested();
 
-            if (entity.Id <= 0)
-            {
-                dbContext.Entry(entity).State = EntityState.Added;
-            }
-            else
-            {
-                dbContext.Entry(entity).State = EntityState.Modified;
-            }
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return _toModelConverter.ToDomain(entity);
+    }
 
-            cancellationToken.ThrowIfCancellationRequested();
-
-            await dbContext.SaveChangesAsync();
-            return toModelConverter.ToDomain(entity);
-        }
+    private async Task<Entities.ItemCategory?> FindTrackedEntityById(ItemCategoryId id, CancellationToken cancellationToken)
+    {
+        return await _dbContext.ItemCategories
+            .FirstOrDefaultAsync(i => i.Id == id.Value, cancellationToken);
     }
 }

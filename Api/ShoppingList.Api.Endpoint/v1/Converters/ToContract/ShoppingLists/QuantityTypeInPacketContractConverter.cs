@@ -1,15 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 
-namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.ShoppingLists
+namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.ShoppingLists;
+
+public class QuantityTypeInPacketContractConverter :
+    IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract>
 {
-    public class QuantityTypeInPacketContractConverter :
-        IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract>
+    public QuantityTypeInPacketContract ToContract(QuantityTypeInPacketReadModel source)
     {
-        public QuantityTypeInPacketContract ToContract(QuantityTypeInPacketReadModel source)
-        {
-            return new QuantityTypeInPacketContract(source.Id, source.Name, source.QuantityLabel);
-        }
+        return new QuantityTypeInPacketContract(source.Id, source.Name, source.QuantityLabel);
     }
 }

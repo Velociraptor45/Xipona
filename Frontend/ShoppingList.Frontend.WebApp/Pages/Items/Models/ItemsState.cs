@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         private readonly List<Store> stores;
         private List<ItemCategory> itemCategories;
         private List<Manufacturer> manufacturers;
-        private List<ItemFilterResult> items = new();
+        private List<SearchItemResult> items = new();
         private readonly List<QuantityType> quantityTypes;
         private readonly List<QuantityTypeInPacket> quantityTypesInPacket;
 
@@ -27,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         public IReadOnlyCollection<Store> Stores => stores.AsReadOnly();
         public IReadOnlyCollection<ItemCategory> ItemCategories => itemCategories.AsReadOnly();
         public IReadOnlyCollection<Manufacturer> Manufacturers => manufacturers.AsReadOnly();
-        public IReadOnlyCollection<ItemFilterResult> Items => items.AsReadOnly();
+        public IReadOnlyCollection<SearchItemResult> Items => items.AsReadOnly();
         public IReadOnlyCollection<QuantityType> QuantityTypes => quantityTypes.AsReadOnly();
         public IReadOnlyCollection<QuantityTypeInPacket> QuantityTypesInPacket => quantityTypesInPacket.AsReadOnly();
 
@@ -50,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
             StateChanged?.Invoke();
         }
 
-        public void UpdateItems(IEnumerable<ItemFilterResult> items)
+        public void UpdateItems(IEnumerable<SearchItemResult> items)
         {
             this.items = items.ToList();
             StateChanged?.Invoke();
@@ -60,9 +60,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         {
             // todo: ugly
             var item =
-                new StoreItem(0, "", false, "", false,
+                new StoreItem(Guid.Empty, "", false, "", false,
                     new QuantityType(0, "", 0, "", "", 0), 0,
-                    new QuantityTypeInPacket(0, "", ""), null, null, new List<StoreItemAvailability>());
+                    new QuantityTypeInPacket(0, "", ""), null, null,
+                    new List<StoreItemAvailability>(),
+                    new List<ItemType>());
 
             EnterEditor(item);
         }

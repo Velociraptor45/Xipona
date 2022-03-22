@@ -1,11 +1,11 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Models;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using ProjectHermes.ShoppingList.Frontend.Models.Items;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items
 {
@@ -45,12 +45,29 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items
             return null;
         }
 
-        public async Task<IEnumerable<ItemFilterResult>> LoadItemsAsync(IEnumerable<int> storeIds, IEnumerable<int> itemCategoryIds,
-            IEnumerable<int> manufacturerIds, IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput,
+            IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
             {
-                return await apiClient.GetItemFilterResultAsync(
+                return await apiClient.SearchItemsAsync(searchInput);
+            }
+            catch (Exception e)
+            {
+                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
+                    await SearchItemsAsync(searchInput, fragmentCreator));
+                notificationService.NotifyError("Item loading failed", e.Message, fragment);
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<SearchItemResult>> SearchItemsAsync(IEnumerable<Guid> storeIds, IEnumerable<Guid> itemCategoryIds,
+            IEnumerable<Guid> manufacturerIds, IAsyncRetryFragmentCreator fragmentCreator)
+        {
+            try
+            {
+                return await apiClient.SearchItemsByFilterAsync(
                         storeIds,
                         itemCategoryIds,
                         manufacturerIds);
@@ -58,7 +75,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await LoadItemsAsync(storeIds, itemCategoryIds, manufacturerIds, fragmentCreator));
+                    await SearchItemsAsync(storeIds, itemCategoryIds, manufacturerIds, fragmentCreator));
                 notificationService.NotifyError("Item loading failed", e.Message, fragment);
             }
             return null;
@@ -92,7 +109,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items
             return null;
         }
 
-        public async Task<StoreItem> LoadItemAsync(int itemId, IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task<StoreItem> LoadItemAsync(Guid itemId, IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
             {

@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Items;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,8 +9,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
     {
         private readonly IEnumerable<StoreItemAvailability> availabilities;
 
-        public MakeTemporaryItemPermanentRequest(int id, string name, string comment, int quantityType,
-            float quantityInPacket, int quantityTypeInPacket, int itemCategoryId, int? manufacturerId,
+        public MakeTemporaryItemPermanentRequest(Guid id, string name, string comment, int quantityType,
+            float? quantityInPacket, int? quantityTypeInPacket, Guid itemCategoryId, Guid? manufacturerId,
             IEnumerable<StoreItemAvailability> availabilities)
         {
             Id = id;
@@ -23,14 +24,14 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
             this.availabilities = availabilities;
         }
 
-        public int Id { get; }
+        public Guid Id { get; }
         public string Name { get; }
         public string Comment { get; }
         public int QuantityType { get; }
-        public float QuantityInPacket { get; }
-        public int QuantityTypeInPacket { get; }
-        public int ItemCategoryId { get; }
-        public int? ManufacturerId { get; }
+        public float? QuantityInPacket { get; }
+        public int? QuantityTypeInPacket { get; }
+        public Guid ItemCategoryId { get; }
+        public Guid? ManufacturerId { get; }
 
         public IReadOnlyCollection<StoreItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
     }

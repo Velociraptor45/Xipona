@@ -1,11 +1,18 @@
-﻿using ProjectHermes.ShoppingList.Api.Core;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models
+public readonly record struct SectionId
 {
-    public class SectionId : GenericPrimitive<int>
+    public SectionId()
     {
-        public SectionId(int value) : base(value)
-        {
-        }
+        throw new NotSupportedException("Use 'New' property to create initial value.");
     }
+
+    public SectionId(Guid value)
+    {
+        Value = value;
+    }
+
+    public static SectionId New => new(Guid.NewGuid());
+
+    public Guid Value { get; }
 }

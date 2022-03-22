@@ -1,31 +1,29 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities;
-using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Converters.ToEntity
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Converters.ToEntity;
+
+public class StoreConverter : IToEntityConverter<IStore, Entities.Store>
 {
-    public class StoreConverter : IToEntityConverter<IStore, Entities.Store>
+    private readonly IToEntityConverter<IStoreSection, Section> _sectionConverter;
+
+    public StoreConverter(IToEntityConverter<IStoreSection, Section> sectionConverter)
     {
-        private readonly IToEntityConverter<IStoreSection, Section> sectionConverter;
+        _sectionConverter = sectionConverter;
+    }
 
-        public StoreConverter(IToEntityConverter<IStoreSection, Section> sectionConverter)
+    public Entities.Store ToEntity(IStore source)
+    {
+        if (source is null)
+            throw new ArgumentNullException(nameof(source));
+
+        return new Entities.Store()
         {
-            this.sectionConverter = sectionConverter;
-        }
-
-        public Entities.Store ToEntity(IStore source)
-        {
-            if (source is null)
-                throw new System.ArgumentNullException(nameof(source));
-
-            return new Entities.Store()
-            {
-                Id = source.Id.Value,
-                Name = source.Name,
-                Deleted = source.IsDeleted,
-                Sections = sectionConverter.ToEntity(source.Sections).ToList()
-            };
-        }
+            Id = source.Id.Value,
+            Name = source.Name.Value,
+            Deleted = source.IsDeleted,
+            Sections = _sectionConverter.ToEntity(source.Sections).ToList()
+        };
     }
 }

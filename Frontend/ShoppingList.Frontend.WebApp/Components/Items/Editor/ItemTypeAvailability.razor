@@ -1,0 +1,66 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
+@using ProjectHermes.ShoppingList.Frontend.Models;
+
+<div class="d-flex flex-row align-items-center">
+    <div class="max-w-80">
+        <Input @bind-Value="@availability.PricePerQuantity" />
+    </div>
+    <div class="mr-2">@(State.EditedItem.QuantityType.PriceLabel)</div>
+    <Select Class="mr-2"
+            DataSource="State.Stores.ToList()"
+            TItem="Store"
+            TItemValue="Guid"
+            DefaultValue="availability.Store.Id"
+            ValueName="@nameof(Store.Id)"
+            LabelName="@nameof(Store.Name)"
+            OnSelectedItemChanged="@OnStoreChanged">
+    </Select>
+    <SingleSelect TItem="StoreItemSection"
+                  TValue="Guid"
+                  ValueName="@nameof(StoreItemSection.Id)"
+                  LabelName="@nameof(StoreItemSection.Name)"
+                  DataSource="@availability.Store.Sections.ToList()"
+                  OnItemChanged="OnDefaultSectionChanged"
+                  DefaultValue="@availability.DefaultSection.Id"></SingleSelect>
+    <div class="ml-2">
+        <Button Class="d-flex align-items-center"
+                OnClick="@OnRemoveStoreButtonClicked"
+                Danger="true">
+            <Icon Type="minus"></Icon>
+        </Button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public ItemsState State { get; set; }
+    [Parameter] public int ItemTypeIndex { get; set; }
+    [Parameter] public int ComponentIndex { get; set; }
+
+    private StoreItemAvailability availability;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        availability = State.EditedItem.ItemTypes[ItemTypeIndex].Availabilities[ComponentIndex];
+    }
+
+    private void OnStoreChanged(Store store)
+    {
+        availability.Store = store.AsStoreItemStore();
+
+        var defaultSection = store.Sections.Single(s => s.IsDefaultSection);
+        availability.ChangeDefaultSection(defaultSection.AsStoreItemSection());
+        StateHasChanged();
+    }
+
+    private void OnRemoveStoreButtonClicked()
+    {
+        State.EditedItem.ItemTypes[ItemTypeIndex].Availabilities.RemoveAt(ComponentIndex);
+        State.StateChanged();
+    }
+
+    private void OnDefaultSectionChanged(StoreItemSection section)
+    {
+        availability.ChangeDefaultSection(section);
+    }
+}

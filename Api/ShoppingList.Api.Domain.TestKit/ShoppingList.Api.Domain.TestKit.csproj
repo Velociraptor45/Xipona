@@ -1,10 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Common\Mocks\**" />
+    <EmbeddedResource Remove="Common\Mocks\**" />
+    <None Remove="Common\Mocks\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.15.0" />
@@ -22,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ShoppingList.Api.Core.TestKit\ShoppingList.Api.Core.TestKit.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Core\ShoppingList.Api.Core.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Domain\ShoppingList.Api.Domain.csproj" />
   </ItemGroup>

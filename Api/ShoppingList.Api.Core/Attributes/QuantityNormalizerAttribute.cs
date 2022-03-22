@@ -1,14 +1,11 @@
-﻿using System;
+﻿namespace ProjectHermes.ShoppingList.Api.Core.Attributes;
 
-namespace ProjectHermes.ShoppingList.Api.Core.Attributes
+public class QuantityNormalizerAttribute : Attribute
 {
-    public class QuantityNormalizerAttribute : Attribute
+    public QuantityNormalizerAttribute(int value)
     {
-        public QuantityNormalizerAttribute(int value)
-        {
-            Value = value;
-        }
-
-        public int Value { get; }
+        Value = value;
     }
+
+    public int Value { get; }
 }

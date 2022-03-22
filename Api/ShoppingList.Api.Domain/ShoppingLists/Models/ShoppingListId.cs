@@ -1,12 +1,18 @@
-﻿using ProjectHermes.ShoppingList.Api.Core;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models
+public readonly record struct ShoppingListId
 {
-    public class ShoppingListId : GenericPrimitive<int>
+    public ShoppingListId()
     {
-        public ShoppingListId(int id)
-            : base(id)
-        {
-        }
+        throw new NotSupportedException("Use 'New' property to create initial value.");
     }
+
+    public ShoppingListId(Guid value)
+    {
+        Value = value;
+    }
+
+    public static ShoppingListId New => new(Guid.NewGuid());
+
+    public Guid Value { get; }
 }

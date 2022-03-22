@@ -1,30 +1,17 @@
-﻿using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures
+namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
+
+public class ShoppingListMockFixture
 {
-    public class ShoppingListMockFixture
+    public ShoppingListMock Create()
     {
-        private readonly CommonFixture commonFixture;
-        private readonly ShoppingListFixture shoppingListFixture;
+        return CreateMany(1).First();
+    }
 
-        public ShoppingListMockFixture(CommonFixture commonFixture, ShoppingListFixture shoppingListFixture)
-        {
-            this.commonFixture = commonFixture;
-            this.shoppingListFixture = shoppingListFixture;
-        }
-
-        public ShoppingListMock Create()
-        {
-            return CreateMany(1).First();
-        }
-
-        public IEnumerable<ShoppingListMock> CreateMany(int amount)
-        {
-            var shoppingLists = shoppingListFixture.CreateManyValid(amount);
-            return shoppingLists.Select(list => new ShoppingListMock(list));
-        }
+    public IEnumerable<ShoppingListMock> CreateMany(int amount)
+    {
+        var shoppingLists = new ShoppingListBuilder().CreateMany(amount);
+        return shoppingLists.Select(list => new ShoppingListMock(list));
     }
 }

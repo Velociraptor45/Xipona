@@ -1,368 +1,377 @@
-﻿using AutoFixture;
-using FluentAssertions;
-using FluentAssertions.Execution;
-using ProjectHermes.ShoppingList.Api.Core.Attributes;
-using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Queries.SharedModels;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Queries.SharedModels;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypes;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Queries.AllQuantityTypesInPacket;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Queries.SharedModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.StoreItemReadModels;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Queries.AllActiveStores;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Fixtures;
+using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Fixtures;
-using ShoppingList.Api.Domain.TestKit.Stores.Fixtures;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using ShoppingList.Api.Domain.TestKit.Stores.Models;
+using ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
 using ShoppingList.Api.Domain.TestKit.Stores.Ports;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conversion.StoreItemReadModels
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conversion.StoreItemReadModels;
+
+public class StoreItemReadModelConversionServiceTests
 {
-    public class StoreItemReadModelConversionServiceTests
+    [Fact]
+    public async Task ConvertAsync_WithItemIsNull_ShouldThrowArgumentNullException()
     {
-        [Fact]
-        public async Task ConvertAsync_WithItemIsNull_ShouldThrowArgumentNullException()
+        // Arrange
+        var local = new LocalFixture();
+        var service = local.CreateService();
+
+        // Act
+        Func<Task<StoreItemReadModel>> function = async () => await service.ConvertAsync(null, default);
+
+        // Assert
+        using (new AssertionScope())
         {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateService();
+            await function.Should().ThrowAsync<ArgumentNullException>();
+        }
+    }
 
-            // Act
-            Func<Task<StoreItemReadModel>> function = async () => await service.ConvertAsync(null, default);
+    [Fact]
+    public async Task ConvertAsync_WithInvalidItemCategoryId_ShouldConvertToReadModel()
+    {
+        // Arrange
+        var local = new LocalFixture();
+        var service = local.CreateService();
 
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowAsync<ArgumentNullException>();
-            }
+        local.SetupItem();
+        local.SetupManufacturer();
+        local.SetupStore();
+        local.SetupFindingNoItemCategory();
+        local.SetupFindingManufacturer();
+        local.SetupFindingStore();
+
+        // Act
+        Func<Task<StoreItemReadModel>> function = async () => await service.ConvertAsync(local.StoreItem, default);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemCategoryNotFound);
+        }
+    }
+
+    [Fact]
+    public async Task ConvertAsync_WithInvalidManufacturer_ShouldConvertToReadModel()
+    {
+        // Arrange
+        var local = new LocalFixture();
+        var service = local.CreateService();
+
+        local.SetupItem();
+        local.SetupItemCategory();
+        local.SetupStore();
+        local.SetupFindingItemCategory();
+        local.SetupFindingNoManufacturer();
+        local.SetupFindingStore();
+
+        // Act
+        Func<Task<StoreItemReadModel>> function = async () => await service.ConvertAsync(local.StoreItem, default);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            await function.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ManufacturerNotFound);
+        }
+    }
+
+    [Fact]
+    public async Task ConvertAsync_WithItemCategoryIsNull_ShouldConvertToReadModel()
+    {
+        // Arrange
+        var local = new LocalFixture();
+        var service = local.CreateService();
+
+        local.SetupItemWithoutItemCategory();
+        local.SetupManufacturer();
+        local.SetupStore();
+        local.SetupFindingManufacturer();
+        local.SetupFindingStore();
+
+        // Act
+        var result = await service.ConvertAsync(local.StoreItem, default);
+
+        // Assert
+        var expected = local.CreateSimpleReadModel();
+
+        using (new AssertionScope())
+        {
+            result.Should().BeEquivalentTo(expected);
+        }
+    }
+
+    [Fact]
+    public async Task ConvertAsync_WithManufacturerIsNull_ShouldConvertToReadModel()
+    {
+        // Arrange
+        var local = new LocalFixture();
+        var service = local.CreateService();
+
+        local.SetupItemWithoutManufacturer();
+        local.SetupItemCategory();
+        local.SetupStore();
+        local.SetupFindingItemCategory();
+        local.SetupFindingStore();
+
+        // Act
+        var result = await service.ConvertAsync(local.StoreItem, default);
+
+        // Assert
+        var expected = local.CreateSimpleReadModel();
+
+        using (new AssertionScope())
+        {
+            result.Should().BeEquivalentTo(expected);
+        }
+    }
+
+    [Fact]
+    public async Task ConvertAsync_WithItemCategoryAndManufacturerAreNull_ShouldConvertToReadModel()
+    {
+        // Arrange
+        var local = new LocalFixture();
+        var service = local.CreateService();
+
+        local.SetupItemWithNeitherItemCategoryNorManufacturer();
+        local.SetupStore();
+        local.SetupFindingStore();
+
+        // Act
+        var result = await service.ConvertAsync(local.StoreItem, default);
+
+        // Assert
+        var expected = local.CreateSimpleReadModel();
+
+        using (new AssertionScope())
+        {
+            result.Should().BeEquivalentTo(expected);
+        }
+    }
+
+    [Fact]
+    public async Task ConvertAsync_WithItemCategoryAndManufacturer_ShouldConvertToReadModel()
+    {
+        // Arrange
+        var local = new LocalFixture();
+        var service = local.CreateService();
+
+        local.SetupItem();
+        local.SetupItemCategory();
+        local.SetupManufacturer();
+        local.SetupStore();
+
+        local.SetupFindingItemCategory();
+        local.SetupFindingManufacturer();
+        local.SetupFindingStore();
+
+        // Act
+        var result = await service.ConvertAsync(local.StoreItem, default);
+
+        // Assert
+        var expected = local.CreateSimpleReadModel();
+
+        using (new AssertionScope())
+        {
+            result.Should().BeEquivalentTo(expected);
+        }
+    }
+
+    private class LocalFixture
+    {
+        private readonly StoreSectionFactoryMock _sectionFactoryMock;
+        private readonly ItemCategoryRepositoryMock _itemCategoryRepositoryMock;
+        private readonly ManufacturerRepositoryMock _manufacturerRepositoryMock;
+        private readonly StoreRepositoryMock _storeRepositoryMock;
+        private IStore _store;
+        private IItemCategory _itemCategory;
+        private IManufacturer _manufacturer;
+        private ManufacturerId ManufacturerId => StoreItem.ManufacturerId!.Value;
+        private ItemCategoryId ItemCategoryId => StoreItem.ItemCategoryId!.Value;
+
+        public LocalFixture()
+        {
+            _itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
+            _manufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
+            _storeRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
+            _sectionFactoryMock = new StoreSectionFactoryMock(MockBehavior.Strict);
         }
 
-        [Fact]
-        public async Task ConvertAsync_WithInvalidItemCategoryId_ShouldConvertToReadModel()
+        public IStoreItem StoreItem { get; private set; }
+
+        public StoreItemReadModelConversionService CreateService()
         {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateService();
-
-            var item = local.CreateItem();
-            var availability = item.Availabilities.First();
-            var manufacturer = local.CreateManufacturer(item.ManufacturerId);
-            var store = local.CreateStore(availability.StoreId, availability.DefaultSectionId);
-
-            local.ItemCategoryRepositoryMock.SetupFindByAsync(item.ItemCategoryId, null);
-            local.ManufacturerRepositoryMock.SetupFindByAsync(item.ManufacturerId, manufacturer);
-            local.StoreRepositoryMock.SetupFindByAsync(availability.StoreId.ToMonoList(), store.ToMonoList());
-
-            // Act
-            Func<Task<StoreItemReadModel>> function = async () => await service.ConvertAsync(item, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ItemCategoryNotFound);
-            }
+            return new StoreItemReadModelConversionService(
+                _itemCategoryRepositoryMock.Object,
+                _manufacturerRepositoryMock.Object,
+                _storeRepositoryMock.Object);
         }
 
-        [Fact]
-        public async Task ConvertAsync_WithInvalidManufacturer_ShouldConvertToReadModel()
+        public void SetupItem()
         {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateService();
-
-            var item = local.CreateItem();
-            var availability = item.Availabilities.First();
-            var itemCategory = local.CreateItemCategory(item.ItemCategoryId);
-            var store = local.CreateStore(availability.StoreId, availability.DefaultSectionId);
-
-            local.ItemCategoryRepositoryMock.SetupFindByAsync(item.ItemCategoryId, itemCategory);
-            local.ManufacturerRepositoryMock.SetupFindByAsync(item.ManufacturerId, null);
-            local.StoreRepositoryMock.SetupFindByAsync(availability.StoreId.ToMonoList(), store.ToMonoList());
-
-            // Act
-            Func<Task<StoreItemReadModel>> function = async () => await service.ConvertAsync(item, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                (await function.Should().ThrowAsync<DomainException>())
-                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ManufacturerNotFound);
-            }
+            StoreItem = StoreItemMother.Initial()
+                .WithAvailability(StoreItemAvailabilityMother.Initial().Create())
+                .Create();
         }
 
-        [Fact]
-        public async Task ConvertAsync_WithItemCategoryIsNull_ShouldConvertToReadModel()
+        public void SetupItemWithoutItemCategory()
         {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateService();
-
-            var item = local.CreateItemWithoutItemCategory();
-            var availability = item.Availabilities.First();
-            var manufacturer = local.CreateManufacturer(item.ManufacturerId);
-            var store = local.CreateStore(availability.StoreId, availability.DefaultSectionId);
-
-            local.ManufacturerRepositoryMock.SetupFindByAsync(item.ManufacturerId, manufacturer);
-            local.StoreRepositoryMock.SetupFindByAsync(availability.StoreId.ToMonoList(), store.ToMonoList());
-
-            // Act
-            var result = await service.ConvertAsync(item, default);
-
-            // Assert
-            var expected = local.ToSimpleReadModel(item, null, manufacturer, store);
-
-            using (new AssertionScope())
-            {
-                result.Should().BeEquivalentTo(expected);
-            }
+            StoreItem = StoreItemMother.Initial()
+                .WithAvailability(StoreItemAvailabilityMother.Initial().Create())
+                .WithoutItemCategoryId().Create();
         }
 
-        [Fact]
-        public async Task ConvertAsync_WithManufacturerIsNull_ShouldConvertToReadModel()
+        public void SetupItemWithoutManufacturer()
         {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateService();
-
-            var item = local.CreateItemWithoutManufacturer();
-            var availability = item.Availabilities.First();
-            var itemCategory = local.CreateItemCategory(item.ItemCategoryId);
-            var store = local.CreateStore(availability.StoreId, availability.DefaultSectionId);
-
-            local.ItemCategoryRepositoryMock.SetupFindByAsync(item.ItemCategoryId, itemCategory);
-            local.StoreRepositoryMock.SetupFindByAsync(availability.StoreId.ToMonoList(), store.ToMonoList());
-
-            // Act
-            var result = await service.ConvertAsync(item, default);
-
-            // Assert
-            var expected = local.ToSimpleReadModel(item, itemCategory, null, store);
-
-            using (new AssertionScope())
-            {
-                result.Should().BeEquivalentTo(expected);
-            }
+            StoreItem = StoreItemMother.InitialWithoutManufacturer()
+                .WithAvailability(StoreItemAvailabilityMother.Initial().Create())
+                .Create();
         }
 
-        [Fact]
-        public async Task ConvertAsync_WithItemCategoryAndManufacturerAreNull_ShouldConvertToReadModel()
+        public void SetupItemWithNeitherItemCategoryNorManufacturer()
         {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateService();
-
-            var item = local.CreateItemWithNeitherItemCategoryNorManufacturer();
-            var availability = item.Availabilities.First();
-            var store = local.CreateStore(availability.StoreId, availability.DefaultSectionId);
-
-            local.StoreRepositoryMock.SetupFindByAsync(availability.StoreId.ToMonoList(), store.ToMonoList());
-
-            // Act
-            var result = await service.ConvertAsync(item, default);
-
-            // Assert
-            var expected = local.ToSimpleReadModel(item, null, null, store);
-
-            using (new AssertionScope())
-            {
-                result.Should().BeEquivalentTo(expected);
-            }
+            StoreItem = StoreItemMother.InitialTemporary()
+                .WithAvailability(StoreItemAvailabilityMother.Initial().Create())
+                .Create();
         }
 
-        [Fact]
-        public async Task ConvertAsync_WithItemCategoryAndManufacturer_ShouldConvertToReadModel()
+        public void SetupStore()
         {
-            // Arrange
-            var local = new LocalFixture();
-            var service = local.CreateService();
+            var availability = StoreItem.Availabilities.First();
+            var section = StoreSectionMother.Default()
+                .WithId(availability.DefaultSectionId)
+                .Create();
+            var sections = new StoreSections(section.ToMonoList(), _sectionFactoryMock.Object);
 
-            var item = local.CreateItem();
-            var availability = item.Availabilities.First();
-            var itemCategory = local.CreateItemCategory(item.ItemCategoryId);
-            var manufacturer = local.CreateManufacturer(item.ManufacturerId);
-            var store = local.CreateStore(availability.StoreId, availability.DefaultSectionId);
-
-            local.ItemCategoryRepositoryMock.SetupFindByAsync(item.ItemCategoryId, itemCategory);
-            local.ManufacturerRepositoryMock.SetupFindByAsync(item.ManufacturerId, manufacturer);
-            local.StoreRepositoryMock.SetupFindByAsync(availability.StoreId.ToMonoList(), store.ToMonoList());
-
-            // Act
-            var result = await service.ConvertAsync(item, default);
-
-            // Assert
-            var expected = local.ToSimpleReadModel(item, itemCategory, manufacturer, store);
-
-            using (new AssertionScope())
-            {
-                result.Should().BeEquivalentTo(expected);
-            }
+            _store = StoreMother.Initial()
+                .WithId(availability.StoreId)
+                .WithSections(sections)
+                .Create();
         }
 
-        private class LocalFixture
+        public void SetupItemCategory()
         {
-            public Fixture Fixture { get; }
-            public CommonFixture CommonFixture { get; } = new CommonFixture();
-            public StoreItemAvailabilityFixture StoreItemAvailabilityFixture { get; }
-            public StoreItemFixture StoreItemFixture { get; }
-            public StoreSectionFixture StoreSectionFixture { get; }
-            public StoreFixture StoreFixture { get; }
-            public ItemCategoryFixture ItemCategoryFixture { get; }
-            public ManufacturerFixture ManufacturerFixture { get; }
-            public ItemCategoryRepositoryMock ItemCategoryRepositoryMock { get; }
-            public ManufacturerRepositoryMock ManufacturerRepositoryMock { get; }
-            public StoreRepositoryMock StoreRepositoryMock { get; }
+            _itemCategory = ItemCategoryMother.NotDeleted()
+                .WithId(ItemCategoryId)
+                .Create();
+        }
 
-            public LocalFixture()
-            {
-                Fixture = CommonFixture.GetNewFixture();
+        public void SetupManufacturer()
+        {
+            _manufacturer = ManufacturerMother.NotDeleted()
+                .WithId(ManufacturerId)
+                .Create();
+        }
 
-                StoreItemAvailabilityFixture = new StoreItemAvailabilityFixture(CommonFixture);
-                StoreItemFixture = new StoreItemFixture(StoreItemAvailabilityFixture, CommonFixture);
-                StoreSectionFixture = new StoreSectionFixture(CommonFixture);
-                StoreFixture = new StoreFixture(CommonFixture);
-                ItemCategoryFixture = new ItemCategoryFixture(CommonFixture);
-                ManufacturerFixture = new ManufacturerFixture(CommonFixture);
-
-                ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(Fixture);
-                ManufacturerRepositoryMock = new ManufacturerRepositoryMock(Fixture);
-                StoreRepositoryMock = new StoreRepositoryMock(Fixture);
-            }
-
-            public StoreItemReadModelConversionService CreateService()
-            {
-                return Fixture.Create<StoreItemReadModelConversionService>();
-            }
-
-            public IStoreItem CreateItem()
-            {
-                var itemCategoryId = new ItemCategoryId(CommonFixture.NextInt());
-                var manufacturerId = new ManufacturerId(CommonFixture.NextInt());
-                return CreateItem(itemCategoryId, manufacturerId);
-            }
-
-            public IStoreItem CreateItemWithoutItemCategory()
-            {
-                var manufacturerId = new ManufacturerId(CommonFixture.NextInt());
-                return CreateItem(null, manufacturerId);
-            }
-
-            public IStoreItem CreateItemWithoutManufacturer()
-            {
-                var itemCategoryId = new ItemCategoryId(CommonFixture.NextInt());
-                return CreateItem(itemCategoryId, null);
-            }
-
-            public IStoreItem CreateItemWithNeitherItemCategoryNorManufacturer()
-            {
-                return CreateItem(null, null);
-            }
-
-            private IStoreItem CreateItem(ItemCategoryId itemCategoryId, ManufacturerId manufacturerId)
-            {
-                var def = new StoreItemDefinition
-                {
-                    ItemCategoryId = itemCategoryId,
-                    ManufacturerId = manufacturerId,
-                    Availabilities = StoreItemAvailabilityFixture.CreateManyValid(1)
-                };
-
-                return StoreItemFixture.CreateValid(def);
-            }
-
-            public IStore CreateStore(StoreId storeId, SectionId sectionId)
-            {
-                var sectionDef = StoreSectionDefinition.FromId(sectionId);
-
-                var storeDef = new StoreDefinition
-                {
-                    Id = storeId,
-                    Sections = StoreSectionFixture.CreateMany(sectionDef, 1)
-                };
-                return StoreFixture.CreateValid(storeDef);
-            }
-
-            public IItemCategory CreateItemCategory(ItemCategoryId itemCategoryId)
-            {
-                return ItemCategoryFixture.GetItemCategory(itemCategoryId);
-            }
-
-            public IManufacturer CreateManufacturer(ManufacturerId manufacturerId)
-            {
-                var def = ManufacturerDefinition.FromId(manufacturerId);
-                return ManufacturerFixture.Create(def);
-            }
-
-            public StoreItemReadModel ToSimpleReadModel(IStoreItem item, IItemCategory itemCategory,
-                IManufacturer manufacturer, IStore store)
-            {
-                var manufacturerReadModel = manufacturer == null
+        public StoreItemReadModel CreateSimpleReadModel()
+        {
+            var manufacturerReadModel = _manufacturer == null
                 ? null
                 : new ManufacturerReadModel(
-                    manufacturer.Id,
-                    manufacturer.Name,
-                    manufacturer.IsDeleted);
+                    _manufacturer.Id,
+                    _manufacturer.Name,
+                    _manufacturer.IsDeleted);
 
-                var itemCategoryReadModel = itemCategory == null
-                    ? null
-                    : new ItemCategoryReadModel(
-                        itemCategory.Id,
-                        itemCategory.Name,
-                        itemCategory.IsDeleted);
+            var itemCategoryReadModel = _itemCategory == null
+                ? null
+                : new ItemCategoryReadModel(
+                    _itemCategory.Id,
+                    _itemCategory.Name,
+                    _itemCategory.IsDeleted);
 
-                var section = store.Sections.First();
-                var storeSectionReadModel = new StoreSectionReadModel(
-                    section.Id,
-                    section.Name,
-                    section.SortingIndex,
-                    section.IsDefaultSection);
+            var availabilityReadModel = CreateAvailabilityReadModel(_store, StoreItem.Availabilities.First());
 
-                var storeReadModel = new StoreItemStoreReadModel(
-                    store.Id,
-                    store.Name,
-                    storeSectionReadModel.ToMonoList());
-
-                var availability = item.Availabilities.First();
-                var availabilityReadModel = new StoreItemAvailabilityReadModel(
-                    storeReadModel,
-                    availability.Price,
-                    storeSectionReadModel);
-
-                return new StoreItemReadModel(
-                    item.Id,
-                    item.Name,
-                    item.IsDeleted,
-                    item.Comment,
-                    item.IsTemporary,
-                    new QuantityTypeReadModel(
-                        (int)item.QuantityType,
-                        item.QuantityType.ToString(),
-                        item.QuantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-                        item.QuantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
-                        item.QuantityType.GetAttribute<QuantityLabelAttribute>().QuantityLabel,
-                        item.QuantityType.GetAttribute<QuantityNormalizerAttribute>().Value),
-                    item.QuantityInPacket,
-                    new QuantityTypeInPacketReadModel(
-                        (int)item.QuantityTypeInPacket,
-                        item.QuantityTypeInPacket.ToString(),
-                        item.QuantityTypeInPacket.GetAttribute<QuantityLabelAttribute>().QuantityLabel),
-                    itemCategoryReadModel,
-                    manufacturerReadModel,
-                    availabilityReadModel.ToMonoList());
+            var itemType = StoreItem.ItemTypes.FirstOrDefault();
+            List<ItemTypeReadModel> itemTypeReadModels = new();
+            if (itemType != null)
+            {
+                var itemTypeAvailability = itemType.Availabilities.First();
+                var itemTypeAvailabilityReadModel = CreateAvailabilityReadModel(_store, itemTypeAvailability);
+                itemTypeReadModels.Add(new ItemTypeReadModel(
+                    itemType.Id,
+                    itemType.Name,
+                    itemTypeAvailabilityReadModel.ToMonoList()));
             }
+
+            var itemQuantityInPacket = StoreItem.ItemQuantity.InPacket;
+            var quantityTypeInPacketReadModel = itemQuantityInPacket is null
+                ? null
+                : new QuantityTypeInPacketReadModel(itemQuantityInPacket.Type);
+
+            return new StoreItemReadModel(
+                StoreItem.Id,
+                StoreItem.Name,
+                StoreItem.IsDeleted,
+                StoreItem.Comment,
+                StoreItem.IsTemporary,
+                new QuantityTypeReadModel(StoreItem.ItemQuantity.Type),
+                itemQuantityInPacket?.Quantity,
+                quantityTypeInPacketReadModel,
+                itemCategoryReadModel,
+                manufacturerReadModel,
+                availabilityReadModel.ToMonoList(),
+                itemTypeReadModels);
         }
+
+        private static StoreItemAvailabilityReadModel CreateAvailabilityReadModel(IStore store,
+            IStoreItemAvailability availability)
+        {
+            var section = store.Sections.First();
+            var storeSectionReadModel = new StoreItemSectionReadModel(
+                section.Id,
+                section.Name,
+                section.SortingIndex);
+
+            var storeReadModel = new StoreItemStoreReadModel(
+                store.Id,
+                store.Name,
+                storeSectionReadModel.ToMonoList());
+
+            return new StoreItemAvailabilityReadModel(
+                storeReadModel,
+                availability.Price,
+                storeSectionReadModel);
+        }
+
+        #region Mock Setup
+
+        public void SetupFindingItemCategory()
+        {
+            _itemCategoryRepositoryMock.SetupFindByAsync(ItemCategoryId, _itemCategory);
+        }
+
+        public void SetupFindingNoItemCategory()
+        {
+            _itemCategoryRepositoryMock.SetupFindByAsync(ItemCategoryId, null);
+        }
+
+        public void SetupFindingManufacturer()
+        {
+            _manufacturerRepositoryMock.SetupFindByAsync(ManufacturerId, _manufacturer);
+        }
+
+        public void SetupFindingNoManufacturer()
+        {
+            _manufacturerRepositoryMock.SetupFindByAsync(ManufacturerId, null);
+        }
+
+        public void SetupFindingStore()
+        {
+            _storeRepositoryMock.SetupFindByAsync(_store.Id.ToMonoList(), _store.ToMonoList());
+        }
+
+        #endregion Mock Setup
     }
 }

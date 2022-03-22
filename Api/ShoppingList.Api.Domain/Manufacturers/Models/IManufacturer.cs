@@ -1,9 +1,8 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+
+public interface IManufacturer
 {
-    public interface IManufacturer
-    {
-        ManufacturerId Id { get; }
-        string Name { get; }
-        bool IsDeleted { get; }
-    }
+    ManufacturerId Id { get; }
+    ManufacturerName Name { get; }
+    bool IsDeleted { get; }
 }

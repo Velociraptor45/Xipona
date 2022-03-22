@@ -2,8 +2,8 @@
 
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification.IShoppingListNotificationService notificationService;
 @inject ProjectHermes.ShoppingList.Frontend.Models.Index.Services.IItemPriceCalculationService itemPriceCalculationService;
-@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListCommunicationService communicationService;
-@inject IWebAssemblyHostEnvironment Env;
+@inject Services.IShoppingListCommunicationService communicationService;
+@inject IWebAssemblyHostEnvironment env;
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
@@ -34,7 +34,7 @@
                        ErrorHandler="@errorHandler"
                        State="@state"></ItemSearchBar>
         <div>
-            @foreach (var section in GetNonEmptySections())
+            @foreach (var section in GetSections())
             {
                 <Section State="@state"
                          Model="@section"></Section>
@@ -78,9 +78,9 @@
 
         await itemPriceCalculationService.InitializeAsync();
 
-        errorHandler.StateChanged += () => StateHasChanged();
+        errorHandler.StateChanged += StateHasChanged;
         errorHandler.QueueProcessed += async () => await ReloadShoppingListAsync();
-        state.StateChanged += () => StateHasChanged();
+        state.StateChanged += StateHasChanged;
         state.ReloadRequestedAsync += async (storeId) => await LoadShoppingListAsync(storeId);
 
         communicationService.InitializeCommandQueue(errorHandler);
@@ -91,9 +91,10 @@
     public override Task SetParametersAsync(ParameterView parameters)
     {
         state = new ShoppingListState(null, true, false);
-        errorHandler = new ErrorHandler(isDebug: Env.IsDevelopment(),
-            (action, label) => GetButtonRenderFragment(action, label),
-            (func, label) => GetAsyncButtonRenderFragment(func, label),
+        errorHandler = new ErrorHandler(
+            env.IsDevelopment(),
+            GetButtonRenderFragment,
+            GetAsyncButtonRenderFragment,
             notificationService);
 
         return base.SetParametersAsync(parameters);
@@ -106,7 +107,7 @@
         await LoadShoppingListAsync(state.ShoppingList.Store.Id);
     }
 
-    private async Task LoadShoppingListAsync(int storeId)
+    private async Task LoadShoppingListAsync(Guid storeId)
     {
         var shoppingList = await communicationService.LoadActiveShoppingListAsync(storeId,
             async () => await LoadShoppingListAsync(storeId), errorHandler);
@@ -117,9 +118,9 @@
     }
     #endregion
 
-    private IEnumerable<ShoppingListSection> GetNonEmptySections()
+    private IEnumerable<ShoppingListSection> GetSections()
     {
-        return state.ShoppingList?.Sections.Where(s => s.Items.Any()) ?? Enumerable.Empty<ShoppingListSection>();
+        return state.ShoppingList?.GetNonEmptySections(!state.ItemsInBasketVisible) ?? Enumerable.Empty<ShoppingListSection>();
     }
 
     #region Callbacks
@@ -143,13 +144,13 @@
     private string GetTotalListPrice()
     {
         var price = state.ShoppingList.GetTotalPrice(itemPriceCalculationService);
-        return String.Format("{0:0.00}", price);
+        return $"{price:0.00}";
     }
 
     private string GetInBasketPrice()
     {
         var price = state.ShoppingList.GetInBasketPrice(itemPriceCalculationService);
-        return String.Format("{0:0.00}", price);
+        return $"{price:0.00}";
     }
 
     private async Task ReloadAfterProcessingErrorAsync()
@@ -160,11 +161,11 @@
 
     private RenderFragment GetButtonRenderFragment(Action callback, string label = "Retry")
     {
-        return@<Button Type="@ButtonType.Primary" OnClick="() => callback()">@label</Button>;
-}
+        return @<Button Type="@ButtonType.Primary" OnClick="callback">@label</Button>;
+    }
 
-private RenderFragment GetAsyncButtonRenderFragment(Func<Task> callback, string label = "Retry")
-{
-return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
-}
+    private RenderFragment GetAsyncButtonRenderFragment(Func<Task> callback, string label = "Retry")
+    {
+        return @<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
+    }
 }

@@ -2,9 +2,8 @@
 using Newtonsoft.Json.Serialization;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
-using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Queries.AllActiveItemCategories;
-using ProjectHermes.ShoppingList.Api.Contracts.Manufacturer.Queries.AllActiveManufacturers;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
@@ -16,13 +15,17 @@ using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemFilterResults;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.ItemSearch;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using RestEase;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -31,11 +34,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
 {
     public class ShoppingListApiClient : IShoppingListApiClient
     {
-        private readonly IShoppingListApiClient apiClient;
+        private readonly IShoppingListApiClient _apiClient;
 
         public ShoppingListApiClient(HttpClient httpClient)
         {
-            apiClient = new RestClient(httpClient)
+            _apiClient = new RestClient(httpClient)
             {
                 JsonSerializerSettings =
                 new JsonSerializerSettings()
@@ -50,52 +53,57 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         public async Task<bool> IsAlive()
         {
-            return await apiClient.IsAlive();
+            return await _apiClient.IsAlive();
         }
 
-        public async Task<ShoppingListContract> GetActiveShoppingListByStoreId(int storeId)
+        public async Task<ShoppingListContract> GetActiveShoppingListByStoreId(Guid storeId)
         {
-            return await apiClient.GetActiveShoppingListByStoreId(storeId);
+            return await _apiClient.GetActiveShoppingListByStoreId(storeId);
         }
 
         public async Task RemoveItemFromShoppingList(RemoveItemFromShoppingListContract contract)
         {
-            await apiClient.RemoveItemFromShoppingList(contract);
+            await _apiClient.RemoveItemFromShoppingList(contract);
         }
 
         public async Task AddItemToShoppingList(AddItemToShoppingListContract contract)
         {
-            await apiClient.AddItemToShoppingList(contract);
+            await _apiClient.AddItemToShoppingList(contract);
+        }
+
+        public async Task AddItemWithTypeToShoppingList(AddItemWithTypeToShoppingListContract contract)
+        {
+            await _apiClient.AddItemWithTypeToShoppingList(contract);
         }
 
         public async Task PutItemInBasket(PutItemInBasketContract contract)
         {
-            await apiClient.PutItemInBasket(contract);
+            await _apiClient.PutItemInBasket(contract);
         }
 
         public async Task RemoveItemFromBasket(RemoveItemFromBasketContract contract)
         {
-            await apiClient.RemoveItemFromBasket(contract);
+            await _apiClient.RemoveItemFromBasket(contract);
         }
 
         public async Task ChangeItemQuantityOnShoppingList(ChangeItemQuantityOnShoppingListContract contract)
         {
-            await apiClient.ChangeItemQuantityOnShoppingList(contract);
+            await _apiClient.ChangeItemQuantityOnShoppingList(contract);
         }
 
-        public async Task FinishList(int shoppingListId)
+        public async Task FinishList(Guid shoppingListId)
         {
-            await apiClient.FinishList(shoppingListId);
+            await _apiClient.FinishList(shoppingListId);
         }
 
         public async Task<IEnumerable<QuantityTypeContract>> GetAllQuantityTypes()
         {
-            return await apiClient.GetAllQuantityTypes();
+            return await _apiClient.GetAllQuantityTypes();
         }
 
         public async Task<IEnumerable<QuantityTypeInPacketContract>> GetAllQuantityTypesInPacket()
         {
-            return await apiClient.GetAllQuantityTypesInPacket();
+            return await _apiClient.GetAllQuantityTypesInPacket();
         }
 
         #endregion ShoppingListController
@@ -104,48 +112,69 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         public async Task CreateItem(CreateItemContract createItemContract)
         {
-            await apiClient.CreateItem(createItemContract);
+            await _apiClient.CreateItem(createItemContract);
+        }
+
+        public async Task CreateItemWithTypes(CreateItemWithTypesContract createItemWithTypesContract)
+        {
+            await _apiClient.CreateItemWithTypes(createItemWithTypesContract);
         }
 
         public async Task ModifyItem(ModifyItemContract modifyItemContract)
         {
-            await apiClient.ModifyItem(modifyItemContract);
+            await _apiClient.ModifyItem(modifyItemContract);
+        }
+
+        public async Task ModifyItemWithTypesAsync(ModifyItemWithTypesContract contract)
+        {
+            await _apiClient.ModifyItemWithTypesAsync(contract);
         }
 
         public async Task UpdateItemAsync(UpdateItemContract updateItemContract)
         {
-            await apiClient.UpdateItemAsync(updateItemContract);
+            await _apiClient.UpdateItemAsync(updateItemContract);
         }
 
-        public async Task DeleteItemAsync(int itemId)
+        public async Task UpdateItemWithTypesAsync(UpdateItemWithTypesContract contract)
         {
-            await apiClient.DeleteItemAsync(itemId);
+            await _apiClient.UpdateItemWithTypesAsync(contract);
         }
 
-        public async Task<IEnumerable<ItemSearchContract>> GetItemSearchResults(string searchInput, int storeId)
+        public async Task DeleteItemAsync(Guid itemId)
         {
-            return await apiClient.GetItemSearchResults(searchInput, storeId);
+            await _apiClient.DeleteItemAsync(itemId);
         }
 
-        public async Task<IEnumerable<ItemFilterResultContract>> GetItemFilterResult(IEnumerable<int> storeIds,
-            IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds)
+        public async Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync(
+            string searchInput, Guid storeId)
         {
-            return await apiClient.GetItemFilterResult(storeIds, itemCategoryIds, manufacturerIds);
+            return await _apiClient.SearchItemsForShoppingListAsync(searchInput, storeId);
         }
 
-        public async Task<StoreItemContract> Get(int itemId)
+        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync(string searchInput)
         {
-            return await apiClient.Get(itemId);
+            return await _apiClient.SearchItemsAsync(searchInput);
+        }
+
+        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,
+            IEnumerable<Guid> itemCategoryIds, IEnumerable<Guid> manufacturerIds)
+        {
+            return await _apiClient.SearchItemsByFilterAsync(storeIds, itemCategoryIds, manufacturerIds);
+        }
+
+        public async Task<StoreItemContract> Get(Guid itemId)
+        {
+            return await _apiClient.Get(itemId);
         }
 
         public async Task CreateTemporaryItem(CreateTemporaryItemContract contract)
         {
-            await apiClient.CreateTemporaryItem(contract);
+            await _apiClient.CreateTemporaryItem(contract);
         }
 
         public async Task MakeTemporaryItemPermanent(MakeTemporaryItemPermanentContract contract)
         {
-            await apiClient.MakeTemporaryItemPermanent(contract);
+            await _apiClient.MakeTemporaryItemPermanent(contract);
         }
 
         #endregion ItemController
@@ -154,17 +183,17 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         public async Task<IEnumerable<ActiveStoreContract>> GetAllActiveStores()
         {
-            return await apiClient.GetAllActiveStores();
+            return await _apiClient.GetAllActiveStores();
         }
 
         public async Task CreateStore(CreateStoreContract createStoreContract)
         {
-            await apiClient.CreateStore(createStoreContract);
+            await _apiClient.CreateStore(createStoreContract);
         }
 
         public async Task UpdateStore(UpdateStoreContract updateStoreContract)
         {
-            await apiClient.UpdateStore(updateStoreContract);
+            await _apiClient.UpdateStore(updateStoreContract);
         }
 
         #endregion StoreController
@@ -173,17 +202,17 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         public async Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResults(string searchInput)
         {
-            return await apiClient.GetManufacturerSearchResults(searchInput);
+            return await _apiClient.GetManufacturerSearchResults(searchInput);
         }
 
-        public async Task<IEnumerable<ActiveManufacturerContract>> GetAllActiveManufacturers()
+        public async Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturers()
         {
-            return await apiClient.GetAllActiveManufacturers();
+            return await _apiClient.GetAllActiveManufacturers();
         }
 
         public async Task CreateManufacturer(string name)
         {
-            await apiClient.CreateManufacturer(name);
+            await _apiClient.CreateManufacturer(name);
         }
 
         #endregion ManufacturerController
@@ -192,22 +221,22 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         public async Task<IEnumerable<ItemCategoryContract>> GetItemCategorySearchResults(string searchInput)
         {
-            return await apiClient.GetItemCategorySearchResults(searchInput);
+            return await _apiClient.GetItemCategorySearchResults(searchInput);
         }
 
-        public async Task<IEnumerable<ActiveItemCategoryContract>> GetAllActiveItemCategories()
+        public async Task<IEnumerable<ItemCategoryContract>> GetAllActiveItemCategories()
         {
-            return await apiClient.GetAllActiveItemCategories();
+            return await _apiClient.GetAllActiveItemCategories();
         }
 
         public async Task CreateItemCategory(string name)
         {
-            await apiClient.CreateItemCategory(name);
+            await _apiClient.CreateItemCategory(name);
         }
 
         public async Task DeleteItemCategory([Body] DeleteItemCategoryContract contract)
         {
-            await apiClient.DeleteItemCategory(contract);
+            await _apiClient.DeleteItemCategory(contract);
         }
 
         #endregion ItemCategoryController

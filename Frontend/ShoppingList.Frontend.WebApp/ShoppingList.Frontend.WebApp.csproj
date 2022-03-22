@@ -4,11 +4,11 @@
     <TargetFramework>net5.0</TargetFramework>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
     <RootNamespace>ProjectHermes.ShoppingList.Frontend.WebApp</RootNamespace>
-    <Version>0.5.1</Version>
+    <Version>0.6.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AntDesign" Version="0.7.2" />
+    <PackageReference Include="AntDesign" Version="0.10.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.4" PrivateAssets="all" />
     <PackageReference Include="RestEase" Version="1.5.5" />

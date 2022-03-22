@@ -4,13 +4,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
 {
     public class FinishListRequest : IApiRequest
     {
-        public FinishListRequest(Guid requestId, int shoppingListId)
+        public FinishListRequest(Guid requestId, Guid shoppingListId)
         {
             RequestId = requestId;
             ShoppingListId = shoppingListId;
         }
 
         public Guid RequestId { get; }
-        public int ShoppingListId { get; }
+        public Guid ShoppingListId { get; }
     }
 }

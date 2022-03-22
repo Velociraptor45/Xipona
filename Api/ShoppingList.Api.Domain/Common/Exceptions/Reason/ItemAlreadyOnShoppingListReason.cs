@@ -1,17 +1,16 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason
+namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+
+public class ItemAlreadyOnShoppingListReason : IReason
 {
-    public class ItemAlreadyOnShoppingListReason : IReason
+    public ItemAlreadyOnShoppingListReason(ItemId itemId, ShoppingListId listId)
     {
-        public ItemAlreadyOnShoppingListReason(ItemId itemId, ShoppingListId listId)
-        {
-            Message = $"Item {itemId} already exists on shopping list {listId.Value}";
-        }
-
-        public string Message { get; }
-
-        public ErrorReasonCode ErrorCode => ErrorReasonCode.ItemAlreadyOnShoppingList;
+        Message = $"Item {itemId.Value} already exists on shopping list {listId.Value}";
     }
+
+    public string Message { get; }
+
+    public ErrorReasonCode ErrorCode => ErrorReasonCode.ItemAlreadyOnShoppingList;
 }

@@ -8,14 +8,14 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class Store
     {
-        public Store(int id, string name, IEnumerable<StoreSection> sections)
+        public Store(Guid id, string name, IEnumerable<StoreSection> sections)
         {
             Id = id;
             Name = name;
             Sections = new SortedSet<StoreSection>(sections, new SortingIndexComparer());
         }
 
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public SortedSet<StoreSection> Sections { get; private set; }
         public int MaxSortingIndex => Sections.Max(s => s.SortingIndex);

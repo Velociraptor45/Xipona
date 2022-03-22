@@ -8,4 +8,4 @@ dotnet ef database update --context ShoppingListContext
 dotnet ef database update --context ItemContext
 dotnet ef database update --context StoreContext
 
-setx ASPNETCORE_ENVIRONMENT ""
+# setx ASPNETCORE_ENVIRONMENT ""

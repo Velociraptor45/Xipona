@@ -1,42 +1,43 @@
-﻿using System.Collections.Generic;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+
+public class Store : IStore
 {
-    public class Store : IStore
+    private readonly StoreSections _sections;
+
+    public Store(StoreId id, StoreName name, bool isDeleted, StoreSections sections)
     {
-        private StoreSections sections;
+        Id = id;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        IsDeleted = isDeleted;
+        _sections = sections;
+    }
 
-        public Store(StoreId id, string name, bool isDeleted, IEnumerable<IStoreSection> sections)
-        {
-            Id = id;
-            Name = name;
-            IsDeleted = isDeleted;
-            this.sections = new StoreSections(sections);
-        }
+    public StoreId Id { get; }
+    public StoreName Name { get; private set; }
+    public bool IsDeleted { get; }
+    public IReadOnlyCollection<IStoreSection> Sections => _sections.AsReadOnly();
 
-        public StoreId Id { get; }
-        public string Name { get; private set; }
-        public bool IsDeleted { get; }
-        public IReadOnlyCollection<IStoreSection> Sections => sections.AsReadOnly();
+    public IStoreSection GetDefaultSection()
+    {
+        return _sections.GetDefaultSection();
+    }
 
-        public IStoreSection GetDefaultSection()
-        {
-            return sections.GetDefaultSection();
-        }
+    public bool ContainsSection(SectionId sectionId)
+    {
+        return _sections.Contains(sectionId);
+    }
 
-        public bool ContainsSection(SectionId sectionId)
-        {
-            return sections.Contains(sectionId);
-        }
+    public void ChangeName(StoreName name)
+    {
+        ArgumentNullException.ThrowIfNull(name);
 
-        public void ChangeName(string name)
-        {
-            Name = name;
-        }
+        Name = name;
+    }
 
-        public void UpdateStores(IEnumerable<IStoreSection> storeSections)
-        {
-            sections = new StoreSections(storeSections);
-        }
+    public void UpdateSections(IEnumerable<SectionUpdate> sectionUpdates)
+    {
+        _sections.UpdateMany(sectionUpdates);
     }
 }

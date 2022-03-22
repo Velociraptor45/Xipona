@@ -1,0 +1,26 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
+@using ProjectHermes.ShoppingList.Frontend.Models.Items
+
+
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items.IItemsPageLoadingService loadingService;
+
+<div>
+    <Input TValue="string" @bind-value="@input"></Input>
+    <Button @onclick="@OnLoadButtonClickedAsync" Class="mt-2">Load</Button>
+</div>
+
+@code {
+    [Parameter] public ItemsState State { get; set; }
+    [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
+
+    private string input = "";
+
+    private async Task OnLoadButtonClickedAsync()
+    {
+        var items = await loadingService.SearchItemsAsync(input, FragmentCreator);
+        if(items == null)
+            return;
+
+        State.UpdateItems(items);
+    }
+}

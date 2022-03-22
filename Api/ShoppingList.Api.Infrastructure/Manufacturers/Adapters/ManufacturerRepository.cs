@@ -3,106 +3,97 @@ using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Adapters
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Adapters;
+
+public class ManufacturerRepository : IManufacturerRepository
 {
-    public class ManufacturerRepository : IManufacturerRepository
+    private readonly ManufacturerContext _dbContext;
+    private readonly IToDomainConverter<Entities.Manufacturer, IManufacturer> _toModelConverter;
+    private readonly IToEntityConverter<IManufacturer, Entities.Manufacturer> _toEntityConverter;
+
+    public ManufacturerRepository(ManufacturerContext dbContext,
+        IToDomainConverter<Entities.Manufacturer, IManufacturer> toModelConverter,
+        IToEntityConverter<IManufacturer, Entities.Manufacturer> toEntityConverter)
     {
-        private readonly ManufacturerContext dbContext;
-        private readonly IToDomainConverter<Entities.Manufacturer, IManufacturer> toModelConverter;
-        private readonly IToEntityConverter<IManufacturer, Entities.Manufacturer> toEntityConverter;
+        _dbContext = dbContext;
+        _toModelConverter = toModelConverter;
+        _toEntityConverter = toEntityConverter;
+    }
 
-        public ManufacturerRepository(ManufacturerContext dbContext,
-            IToDomainConverter<Entities.Manufacturer, IManufacturer> toModelConverter,
-            IToEntityConverter<IManufacturer, Entities.Manufacturer> toEntityConverter)
-        {
-            this.dbContext = dbContext;
-            this.toModelConverter = toModelConverter;
-            this.toEntityConverter = toEntityConverter;
-        }
+    public async Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput,
+        CancellationToken cancellationToken)
+    {
+        var manufacturerEntities = await _dbContext.Manufacturers.AsNoTracking()
+            .Where(category => category.Name.Contains(searchInput))
+            .ToListAsync(cancellationToken);
 
-        public async Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput,
-            CancellationToken cancellationToken)
-        {
-            var manufacturerEntities = await dbContext.Manufacturers.AsNoTracking()
-                .Where(category => category.Name.Contains(searchInput))
-                .ToListAsync();
+        cancellationToken.ThrowIfCancellationRequested();
 
-            cancellationToken.ThrowIfCancellationRequested();
+        return _toModelConverter.ToDomain(manufacturerEntities);
+    }
 
-            return toModelConverter.ToDomain(manufacturerEntities);
-        }
+    public async Task<IManufacturer?> FindByAsync(ManufacturerId id,
+        CancellationToken cancellationToken)
+    {
+        var entity = await _dbContext.Manufacturers.AsNoTracking()
+            .FirstOrDefaultAsync(m => m.Id == id.Value, cancellationToken);
 
-        public async Task<IManufacturer> FindByAsync(ManufacturerId id,
-            CancellationToken cancellationToken)
-        {
-            if (id == null)
-                throw new ArgumentNullException(nameof(id));
+        cancellationToken.ThrowIfCancellationRequested();
 
-            var entity = await dbContext.Manufacturers.AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == id.Value);
+        if (entity == null)
+            return null;
 
-            cancellationToken.ThrowIfCancellationRequested();
+        return _toModelConverter.ToDomain(entity);
+    }
 
-            if (entity == null)
-                return null;
+    public async Task<IEnumerable<IManufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids,
+        CancellationToken cancellationToken)
+    {
+        if (ids == null)
+            throw new ArgumentNullException(nameof(ids));
 
-            return toModelConverter.ToDomain(entity);
-        }
+        var idHashSet = ids.Select(id => id.Value).ToHashSet();
 
-        public async Task<IEnumerable<IManufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids,
-            CancellationToken cancellationToken)
-        {
-            if (ids == null)
-                throw new ArgumentNullException(nameof(ids));
+        cancellationToken.ThrowIfCancellationRequested();
 
-            var idHashSet = ids.Select(id => id.Value).ToHashSet();
+        var entities = await _dbContext.Manufacturers.AsNoTracking()
+            .Where(m => idHashSet.Contains(m.Id))
+            .ToListAsync(cancellationToken);
 
-            cancellationToken.ThrowIfCancellationRequested();
+        cancellationToken.ThrowIfCancellationRequested();
 
-            var entities = await dbContext.Manufacturers.AsNoTracking()
-                .Where(m => idHashSet.Contains(m.Id))
-                .ToListAsync();
+        return _toModelConverter.ToDomain(entities);
+    }
 
-            cancellationToken.ThrowIfCancellationRequested();
+    public async Task<IEnumerable<IManufacturer>> FindByAsync(bool includeDeleted,
+        CancellationToken cancellationToken)
+    {
+        var entities = await _dbContext.Manufacturers.AsNoTracking()
+            .Where(m => !m.Deleted || includeDeleted)
+            .ToListAsync(cancellationToken);
 
-            return toModelConverter.ToDomain(entities);
-        }
+        cancellationToken.ThrowIfCancellationRequested();
 
-        public async Task<IEnumerable<IManufacturer>> FindByAsync(bool includeDeleted,
-            CancellationToken cancellationToken)
-        {
-            var entities = await dbContext.Manufacturers.AsNoTracking()
-                .Where(m => !m.Deleted || includeDeleted)
-                .ToListAsync();
+        return _toModelConverter.ToDomain(entities);
+    }
 
-            cancellationToken.ThrowIfCancellationRequested();
+    public async Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken)
+    {
+        var entity = _toEntityConverter.ToEntity(model);
+        var existingManufacturer = await FindTrackedEntityById(model.Id, cancellationToken);
 
-            return toModelConverter.ToDomain(entities);
-        }
+        _dbContext.Entry(entity).State = existingManufacturer is null ? EntityState.Added : EntityState.Modified;
 
-        public async Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken)
-        {
-            var entity = toEntityConverter.ToEntity(model);
+        cancellationToken.ThrowIfCancellationRequested();
 
-            if (entity.Id <= 0)
-            {
-                dbContext.Entry(entity).State = EntityState.Added;
-            }
-            else
-            {
-                dbContext.Entry(entity).State = EntityState.Modified;
-            }
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return _toModelConverter.ToDomain(entity);
+    }
 
-            cancellationToken.ThrowIfCancellationRequested();
-
-            await dbContext.SaveChangesAsync();
-            return toModelConverter.ToDomain(entity);
-        }
+    private async Task<Entities.Manufacturer?> FindTrackedEntityById(ManufacturerId id, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Manufacturers
+            .FirstOrDefaultAsync(i => i.Id == id.Value, cancellationToken);
     }
 }

@@ -8,8 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-
-
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 {
     public class ShoppingListCommunicationService : IShoppingListCommunicationService
@@ -36,7 +34,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             await commandQueue.Enqueue(request);
         }
 
-        public async Task<ShoppingListRoot> LoadActiveShoppingListAsync(int storeId, Func<Task> OnFailure,
+        public async Task<ShoppingListRoot> LoadActiveShoppingListAsync(Guid storeId, Func<Task> OnFailure,
             IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
@@ -52,7 +50,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             return null;
         }
 
-        public async Task<bool> FinishListAsync(FinishListRequest request, Func<Task> OnFailure, 
+        public async Task<bool> FinishListAsync(FinishListRequest request, Func<Task> OnFailure,
             IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
@@ -69,12 +67,12 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             return false;
         }
 
-        public async Task<IEnumerable<ItemSearchResult>> LoadItemSearchResultAsync(string input, int storeId, 
-            Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task<IEnumerable<SearchItemForShoppingListResult>> LoadItemSearchResultAsync(string input,
+            Guid storeId, Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
             {
-                return await apiClient.GetItemSearchResultsAsync(input, storeId);
+                return await apiClient.SearchItemsForShoppingListAsync(input, storeId);
             }
             catch (Exception e)
             {
@@ -91,6 +89,23 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             try
             {
                 await apiClient.AddItemToShoppingListAsync(request);
+                return true;
+            }
+            catch (Exception e)
+            {
+                var fragment = fragmentCreator.CreateAsyncRetryFragment(OnFailure);
+                notificationService.NotifyError("Adding item failed", e.Message, fragment);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> AddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request,
+            Func<Task> OnFailure, IAsyncRetryFragmentCreator fragmentCreator)
+        {
+            try
+            {
+                await apiClient.AddItemWithTypeToShoppingListAsync(request);
                 return true;
             }
             catch (Exception e)

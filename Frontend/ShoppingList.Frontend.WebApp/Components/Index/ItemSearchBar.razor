@@ -10,10 +10,10 @@
     <Select OnFocus="OnSearchBarFocusIn"
             Class="@(searchBar.Active ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
             DataSource="searchBar.Options"
-            TItem="@ItemSearchResult"
-            TItemValue="@int"
-            ValueName="@nameof(ItemSearchResult.ItemId)"
-            LabelName="@nameof(ItemSearchResult.DisplayValue)"
+            TItem="@SearchItemForShoppingListResult"
+            TItemValue="@Guid"
+            ValueName="@nameof(SearchItemForShoppingListResult.ItemId)"
+            LabelName="@nameof(SearchItemForShoppingListResult.DisplayValue)"
             AutoClearSearchValue="true"
             AllowClear="true"
             OnSearch="(s) => OnSearch(s)"
@@ -77,17 +77,30 @@
         State.AddItemToList(item, State.ShoppingList.DefaultSectionId);
     }
 
-    private async Task OnSearchItemSelected(ItemSearchResult item)
+    private async Task OnSearchItemSelected(SearchItemForShoppingListResult item)
     {
         if (item == null)
             return;
 
-        var request = new AddItemToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, new ItemId(item.ItemId), 1,
-            item.DefaultSectionId); //todo default item quantity
+        bool success;
+        if(item.ItemTypeId == null)
+        {
+            var request = new AddItemToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, ItemId.FromActualId(item.ItemId), 1,
+                item.DefaultSectionId); //todo default item quantity
 
-        var result = await communicationService.AddItemToShoppingListAsync(request, async () => await OnSearchItemSelected(item), ErrorHandler);
-        if (!result)
+            success = await communicationService.AddItemToShoppingListAsync(request, async () => await OnSearchItemSelected(item), ErrorHandler);
+        }
+        else
+        {
+            var request = new AddItemWithTypeToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, 
+                item.ItemId, item.ItemTypeId.Value, 1, item.DefaultSectionId); //todo default item quantity
+
+            success = await communicationService.AddItemWithTypeToShoppingListAsync(request, async () => await OnSearchItemSelected(item), ErrorHandler);
+        }
+
+        if (!success)
             return;
+
 
         searchBar.ResetInput();
         searchBar.ResetOptions();

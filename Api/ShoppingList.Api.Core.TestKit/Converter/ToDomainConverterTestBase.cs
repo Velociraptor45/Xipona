@@ -1,68 +1,63 @@
-﻿using FluentAssertions;
-using FluentAssertions.Execution;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using System;
-using Xunit;
 
-namespace ShoppingList.Api.Core.TestKit.Converter
+namespace ShoppingList.Api.Core.TestKit.Converter;
+
+public abstract class ToDomainConverterTestBase<TSource, TDestination>
+    where TSource : class
+    where TDestination : class
 {
-    public abstract class ToDomainConverterTestBase<TSource, TDestination>
-        where TSource : class
-        where TDestination : class
+    protected readonly TSource Source;
+    protected readonly TDestination Destination;
+    protected readonly IServiceCollection ServiceCollection;
+
+    protected ToDomainConverterTestBase()
     {
-        protected readonly TSource source;
-        protected readonly TDestination destination;
-        protected readonly IServiceCollection serviceCollection;
+        (Source, Destination) = CreateTestObjects();
+        ServiceCollection = new ServiceCollection();
+        SetupServiceCollection();
+    }
 
-        protected ToDomainConverterTestBase()
+    protected abstract (TSource, TDestination) CreateTestObjects();
+
+    protected abstract void SetupServiceCollection();
+
+    protected IToDomainConverter<TSource, TDestination> CreateConverter()
+    {
+        var serviceProvider = ServiceCollection.BuildServiceProvider();
+
+        return serviceProvider.GetRequiredService<IToDomainConverter<TSource, TDestination>>();
+    }
+
+    [Fact]
+    public void ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var converter = CreateConverter();
+
+        // Act
+        Action act = () => converter.ToDomain((TSource)null);
+
+        // Assert
+        using (new AssertionScope())
         {
-            (source, destination) = CreateTestObjects();
-            serviceCollection = new ServiceCollection();
-            SetupServiceCollection();
+            act.Should().Throw<ArgumentNullException>();
         }
+    }
 
-        protected abstract (TSource, TDestination) CreateTestObjects();
+    [Fact]
+    public void ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject()
+    {
+        // Arrange
+        var converter = CreateConverter();
 
-        protected abstract void SetupServiceCollection();
+        // Act
+        TDestination result = converter.ToDomain(Source);
 
-        protected IToDomainConverter<TSource, TDestination> CreateConverter()
+        // Assert
+        using (new AssertionScope())
         {
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-
-            return serviceProvider.GetRequiredService<IToDomainConverter<TSource, TDestination>>();
-        }
-
-        [Fact]
-        public void ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var converter = CreateConverter();
-
-            // Act
-            Action act = () => converter.ToDomain((TSource)null);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                act.Should().Throw<ArgumentNullException>();
-            }
-        }
-
-        [Fact]
-        public void ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject()
-        {
-            // Arrange
-            var converter = CreateConverter();
-
-            // Act
-            TDestination result = converter.ToDomain(source);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                result.Should().BeEquivalentTo(destination);
-            }
+            result.Should().BeEquivalentTo(Destination);
         }
     }
 }

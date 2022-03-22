@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
     {
         private readonly SortedSet<ShoppingListSection> sections;
 
-        public ShoppingListRoot(int id, DateTime? completionDate, Store store, IEnumerable<ShoppingListSection> sections)
+        public ShoppingListRoot(Guid id, DateTime? completionDate, Store store, IEnumerable<ShoppingListSection> sections)
         {
             Id = id;
             CompletionDate = completionDate;
@@ -19,28 +19,28 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             this.sections = new SortedSet<ShoppingListSection>(sections, new SortingIndexComparer());
         }
 
-        public int Id { get; }
+        public Guid Id { get; }
         public DateTime? CompletionDate { get; }
         public Store Store { get; }
         public IReadOnlyCollection<ShoppingListSection> Sections => sections.ToList().AsReadOnly();
         public IReadOnlyCollection<ShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
         public bool AnyItemInBasket => Items.Any(item => item.IsInBasket);
 
-        public int DefaultSectionId => Sections.Single(s => s.IsDefaultSection).Id;
+        public Guid DefaultSectionId => Sections.Single(s => s.IsDefaultSection).Id;
 
-        public ShoppingListItem GetItemById(int id)
+        public ShoppingListItem GetItemById(Guid id)
         {
             return Items.FirstOrDefault(item => item.Id.ActualId == id);
         }
 
-        public void Remove(ItemId itemId)
+        public void Remove(ItemId itemId, Guid? itemTypeId)
         {
             var section = sections.FirstOrDefault(s => s.Items.Any(i => i.Id == itemId));
 
-            section?.RemoveItem(itemId);
+            section?.RemoveItem(itemId, itemTypeId);
         }
 
-        public void AddItem(ShoppingListItem item, int sectionId)
+        public void AddItem(ShoppingListItem item, Guid sectionId)
         {
             var section = sections.FirstOrDefault(s => s.Id == sectionId);
 
@@ -55,6 +55,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         public float GetInBasketPrice(IItemPriceCalculationService priceCalculationService)
         {
             return Sections.Sum(s => s.GetInBasketPrice(priceCalculationService));
+        }
+
+        public IReadOnlyCollection<ShoppingListSection> GetNonEmptySections(bool excludeWithAllItemsInBasket)
+        {
+            return sections.Where(s => s.Items.Any() && (!s.AllItemsInBasket || !excludeWithAllItemsInBasket)).ToList();
         }
     }
 }

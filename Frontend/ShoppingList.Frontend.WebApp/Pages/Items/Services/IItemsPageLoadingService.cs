@@ -11,12 +11,12 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
     {
         Task<ItemsState> LoadInitialPageState(Func<Task> OnFailureCallback, IAsyncRetryFragmentCreator fragmentCreator);
 
-        Task<StoreItem> LoadItemAsync(int itemId, IAsyncRetryFragmentCreator fragmentCreator);
+        Task<StoreItem> LoadItemAsync(Guid itemId, IAsyncRetryFragmentCreator fragmentCreator);
 
         Task<IEnumerable<ItemCategory>> LoadItemCategoriesAsync(IAsyncRetryFragmentCreator fragmentCreator);
 
-        Task<IEnumerable<ItemFilterResult>> LoadItemsAsync(IEnumerable<int> storeIds, IEnumerable<int> itemCategoryIds,
-            IEnumerable<int> manufacturerIds, IAsyncRetryFragmentCreator fragmentCreator);
+        Task<IEnumerable<SearchItemResult>> LoadItemsAsync(IEnumerable<Guid> storeIds, IEnumerable<Guid> itemCategoryIds,
+            IEnumerable<Guid> manufacturerIds, IAsyncRetryFragmentCreator fragmentCreator);
 
         Task<IEnumerable<Manufacturer>> LoadManufacturersAsync(IAsyncRetryFragmentCreator fragmentCreator);
     }

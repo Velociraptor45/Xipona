@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
 using ProjectHermes.ShoppingList.Frontend.Models.Items;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -27,7 +28,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         Task FinishListAsync(FinishListRequest request);
 
-        Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(int storeId);
+        Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(Guid storeId);
 
         Task<IEnumerable<ItemCategory>> GetAllActiveItemCategoriesAsync();
 
@@ -39,11 +40,14 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync();
 
-        Task<StoreItem> GetItemByIdAsync(int itemId);
+        Task<StoreItem> GetItemByIdAsync(Guid itemId);
 
-        Task<IEnumerable<ItemFilterResult>> GetItemFilterResultAsync(IEnumerable<int> storeIds, IEnumerable<int> itemCategoryIds, IEnumerable<int> manufacturerIds);
+        Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput);
 
-        Task<IEnumerable<ItemSearchResult>> GetItemSearchResultsAsync(string searchInput, int storeId);
+        Task<IEnumerable<SearchItemResult>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,
+            IEnumerable<Guid> itemCategoryIds, IEnumerable<Guid> manufacturerIds);
+
+        Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(string searchInput, Guid storeId);
 
         Task IsAliveAsync();
 
@@ -56,7 +60,17 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         Task RemoveItemFromShoppingListAsync(RemoveItemFromShoppingListRequest request);
 
         Task UpdateItemAsync(UpdateItemRequest request);
+
         Task CreateStoreAsync(CreateStoreRequest request);
+
         Task ModifyStoreAsync(ModifyStoreRequest request);
+
+        Task ModifyItemWithTypesAsync(ModifyItemWithTypesRequest request);
+
+        Task AddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request);
+
+        Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request);
+
+        Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request);
     }
 }

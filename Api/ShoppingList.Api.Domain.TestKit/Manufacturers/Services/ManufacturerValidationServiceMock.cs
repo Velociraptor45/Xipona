@@ -1,39 +1,33 @@
-﻿using AutoFixture;
-using Moq;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services;
-using System.Threading;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Validations;
 
-namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Services
+namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Services;
+
+public class ManufacturerValidationServiceMock : Mock<IManufacturerValidationService>
 {
-    public class ManufacturerValidationServiceMock
+    public ManufacturerValidationServiceMock(MockBehavior behavior) : base(behavior)
     {
-        private readonly Mock<IManufacturerValidationService> mock;
+    }
 
-        public ManufacturerValidationServiceMock(Mock<IManufacturerValidationService> mock)
-        {
-            this.mock = mock;
-        }
+    public void VerifyValidateAsyncOnce(ManufacturerId manufacturerId)
+    {
+        Verify(i => i.ValidateAsync(
+                manufacturerId,
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
 
-        public ManufacturerValidationServiceMock(Fixture fixture)
-        {
-            mock = fixture.Freeze<Mock<IManufacturerValidationService>>();
-        }
+    public void VerifyValidateAsyncNever()
+    {
+        Verify(i => i.ValidateAsync(
+                It.IsAny<ManufacturerId>(),
+                It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
 
-        public void VerifyValidateAsyncOnce(ManufacturerId manufacturerId)
-        {
-            mock.Verify(i => i.ValidateAsync(
-                    manufacturerId,
-                    It.IsAny<CancellationToken>()),
-                Times.Once);
-        }
-
-        public void VerifyValidateAsyncNever()
-        {
-            mock.Verify(i => i.ValidateAsync(
-                    It.IsAny<ManufacturerId>(),
-                    It.IsAny<CancellationToken>()),
-                Times.Never);
-        }
+    public void SetupValidateAsync(ManufacturerId manufacturerId)
+    {
+        Setup(m => m.ValidateAsync(manufacturerId, It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
     }
 }
