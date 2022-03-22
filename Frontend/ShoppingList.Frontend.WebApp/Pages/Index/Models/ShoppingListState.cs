@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Index;
 using System;
 using System.Threading.Tasks;
 
@@ -9,14 +10,21 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
         public Action StateChanged { get; set; }
         public Func<Guid, Task> ReloadRequestedAsync { get; set; }
         public ShoppingListRoot ShoppingList { get; private set; }
+        public AvailableStores AvailableStores { get; private set; }
         public bool ItemsInBasketVisible { get; private set; }
         public bool ItemsInEditMode { get; private set; }
+        public Store SelectedStore => AvailableStores.SelectedStore;
 
         public ShoppingListState(ShoppingListRoot shoppingList, bool itemsInBasketVisible, bool itemsInEditMode)
         {
             ShoppingList = shoppingList;
             ItemsInBasketVisible = itemsInBasketVisible;
             ItemsInEditMode = itemsInEditMode;
+        }
+
+        public void RegisterAvailableStores(AvailableStores stores)
+        {
+            AvailableStores = stores;
         }
 
         public void ToggleItemEditMode()

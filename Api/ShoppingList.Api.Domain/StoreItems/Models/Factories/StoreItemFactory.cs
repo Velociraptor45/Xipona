@@ -80,7 +80,7 @@ public class StoreItemFactory : IStoreItemFactory
             false,
             Comment.Empty,
             true,
-            new ItemQuantity(QuantityType.Unit, null),
+            new ItemQuantity(QuantityType.Unit, new ItemQuantityInPacket(new Quantity(1), QuantityTypeInPacket.Unit)),
             null,
             null,
             model.Availability.ToMonoList(),
