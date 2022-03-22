@@ -14,5 +14,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Index
 
         public List<Store> Stores { get; }
         public Guid SelectedStoreId { get; set; }
+        public Store SelectedStore => Stores.Single(s => s.Id == SelectedStoreId);
     }
 }
