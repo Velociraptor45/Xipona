@@ -85,15 +85,24 @@
         bool success;
         if(item.ItemTypeId == null)
         {
-            var request = new AddItemToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, ItemId.FromActualId(item.ItemId), 1,
-                item.DefaultSectionId); //todo default item quantity
+            var request = new AddItemToShoppingListRequest(
+                Guid.NewGuid(), 
+                State.ShoppingList.Id, 
+                ItemId.FromActualId(item.ItemId), 
+                item.DefaultQuantity,
+                item.DefaultSectionId);
 
             success = await communicationService.AddItemToShoppingListAsync(request, async () => await OnSearchItemSelected(item), ErrorHandler);
         }
         else
         {
-            var request = new AddItemWithTypeToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, 
-                item.ItemId, item.ItemTypeId.Value, 1, item.DefaultSectionId); //todo default item quantity
+            var request = new AddItemWithTypeToShoppingListRequest(
+                Guid.NewGuid(),
+                State.ShoppingList.Id,
+                item.ItemId,
+                item.ItemTypeId.Value,
+                item.DefaultQuantity,
+                item.DefaultSectionId);
 
             success = await communicationService.AddItemWithTypeToShoppingListAsync(request, async () => await OnSearchItemSelected(item), ErrorHandler);
         }
