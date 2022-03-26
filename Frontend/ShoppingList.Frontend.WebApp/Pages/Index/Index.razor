@@ -81,7 +81,7 @@
         errorHandler.StateChanged += StateHasChanged;
         errorHandler.QueueProcessed += async () => await ReloadShoppingListAsync();
         state.StateChanged += StateHasChanged;
-        state.ReloadRequestedAsync += async (storeId) => await LoadShoppingListAsync(storeId);
+        state.ReloadRequestedAsync += async storeId => await LoadShoppingListAsync(storeId);
 
         communicationService.InitializeCommandQueue(errorHandler);
 

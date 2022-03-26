@@ -37,7 +37,7 @@
 
         availableStores = new AvailableStores(storesList, storesList.FirstOrDefault()?.Id ?? Guid.Empty);
         Page.RegisterAvailableStores(availableStores);
-        Console.WriteLine($"{availableStores.Stores.Count} stores loaded");
+        await Page.ReloadRequestedAsync?.Invoke(availableStores.SelectedStoreId);
     }
 
     private async void OnSelectionChanged(Store store)
