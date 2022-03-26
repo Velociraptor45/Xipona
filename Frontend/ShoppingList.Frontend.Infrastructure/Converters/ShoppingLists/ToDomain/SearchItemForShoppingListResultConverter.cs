@@ -14,6 +14,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
                 contract.TypeId,
                 contract.Name,
                 contract.Price,
+                contract.DefaultQuantity,
                 "€",
                 contract.ItemCategoryName,
                 contract.ManufacturerName,
