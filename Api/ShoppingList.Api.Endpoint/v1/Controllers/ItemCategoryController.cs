@@ -68,8 +68,8 @@ public class ItemCategoryController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    [Route("create/{name}")]
-    public async Task<IActionResult> CreateItemCategory([FromRoute(Name = "name")] string name)
+    [Route("")]
+    public async Task<IActionResult> CreateItemCategory([FromQuery] string name)
     {
         var command = new CreateItemCategoryCommand(new ItemCategoryName(name));
         var model = await _commandDispatcher.DispatchAsync(command, default);
