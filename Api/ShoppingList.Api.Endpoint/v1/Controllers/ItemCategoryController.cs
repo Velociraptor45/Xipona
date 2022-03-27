@@ -37,10 +37,11 @@ public class ItemCategoryController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("search/{searchInput}")]
-    public async Task<IActionResult> GetItemCategorySearchResults([FromRoute(Name = "searchInput")] string searchInput)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [Route("")]
+    public async Task<IActionResult> SearchItemCategoriesByName([FromQuery] string searchInput)
     {
         searchInput = searchInput.Trim();
         if (string.IsNullOrEmpty(searchInput))
@@ -50,6 +51,10 @@ public class ItemCategoryController : ControllerBase
 
         var query = new ItemCategorySearchQuery(searchInput);
         var itemCategoryReadModels = await _queryDispatcher.DispatchAsync(query, default);
+
+        if (!itemCategoryReadModels.Any())
+            return NoContent();
+
         var itemCategoryContracts = _itemCategoryContractConverter.ToContract(itemCategoryReadModels);
 
         return Ok(itemCategoryContracts);

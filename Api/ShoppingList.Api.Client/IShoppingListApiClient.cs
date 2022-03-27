@@ -140,8 +140,8 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ItemCategoryController
 
-        [Get("item-categories/search/{searchInput}")]
-        Task<IEnumerable<ItemCategoryContract>> GetItemCategorySearchResults([Path] string searchInput);
+        [Get("item-categories")]
+        Task<IEnumerable<ItemCategoryContract>> SearchItemCategoriesByName([Query] string searchInput);
 
         [Get("item-categories/active")]
         Task<IEnumerable<ItemCategoryContract>> GetAllActiveItemCategories();

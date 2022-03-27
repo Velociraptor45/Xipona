@@ -218,9 +218,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ItemCategoryController
 
-        public async Task<IEnumerable<ItemCategoryContract>> GetItemCategorySearchResults(string searchInput)
+        public async Task<IEnumerable<ItemCategoryContract>> SearchItemCategoriesByName(string searchInput)
         {
-            return await _apiClient.GetItemCategorySearchResults(searchInput);
+            return await _apiClient.SearchItemCategoriesByName(searchInput);
         }
 
         public async Task<IEnumerable<ItemCategoryContract>> GetAllActiveItemCategories()
