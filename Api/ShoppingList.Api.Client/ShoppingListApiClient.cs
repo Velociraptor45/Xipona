@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
@@ -234,9 +233,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.CreateItemCategory(name);
         }
 
-        public async Task DeleteItemCategory([Body] DeleteItemCategoryContract contract)
+        public async Task DeleteItemCategory(Guid id)
         {
-            await _apiClient.DeleteItemCategory(contract);
+            await _apiClient.DeleteItemCategory(id);
         }
 
         #endregion ItemCategoryController

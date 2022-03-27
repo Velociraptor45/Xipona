@@ -5,10 +5,11 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Commands.CreateItemCategory;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.AllActiveItemCategories;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.ItemCategorySearch;
+using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.DeleteItemCategory;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
@@ -80,20 +81,26 @@ public class ItemCategoryController : ControllerBase
         return Created("", contract);
     }
 
-    [HttpPost]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("delete")]
-    public async Task<IActionResult> DeleteItemCategory([FromBody] DeleteItemCategoryContract contract)
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id}")]
+    public async Task<IActionResult> DeleteItemCategory([FromRoute] Guid id)
     {
-        var command = new DeleteItemCategoryCommand(new ItemCategoryId(contract.ItemCategoryId));
         try
         {
+            var command = new DeleteItemCategoryCommand(new ItemCategoryId(id));
             await _commandDispatcher.DispatchAsync(command, default);
         }
         catch (DomainException e)
         {
-            return BadRequest(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemCategoryNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
         }
 
         return Ok();
