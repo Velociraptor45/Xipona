@@ -36,7 +36,7 @@
         fetch = async (url, options) => {
             const response = await originalFetch(url, options);
             return url.endsWith('/blazor.boot.json')
-                ? new Response(await response.blob(), { headers: { 'blazor-environment': 'Development' } })
+                ? new Response(await response.blob(), { headers: { 'blazor-environment': 'Local' } })
                 : response;
         };
     </script>
