@@ -18,7 +18,7 @@ using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
 [ApiController]
-[Route("v1/item-category")]
+[Route("v1/item-categories")]
 public class ItemCategoryController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;
@@ -56,12 +56,17 @@ public class ItemCategoryController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(200)]
-    [Route("all/active")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [Route("active")]
     public async Task<IActionResult> GetAllActiveItemCategories()
     {
         var query = new AllActiveItemCategoriesQuery();
         var readModels = await _queryDispatcher.DispatchAsync(query, default);
+
+        if (!readModels.Any())
+            return NoContent();
+
         var contracts = _itemCategoryContractConverter.ToContract(readModels);
 
         return Ok(contracts);

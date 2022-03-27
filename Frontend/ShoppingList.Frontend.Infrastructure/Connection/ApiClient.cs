@@ -171,6 +171,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         {
             var itemCategories = await _client.GetAllActiveItemCategories();
 
+            if (itemCategories is null)
+                return Enumerable.Empty<ItemCategory>();
+
             return itemCategories.Select(_converters.ToDomain<ItemCategoryContract, ItemCategory>);
         }
 
