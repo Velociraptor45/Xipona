@@ -4,5 +4,5 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Creation
 
 public interface IItemCategoryCreationService
 {
-    Task CreateAsync(ItemCategoryName name);
+    Task<IItemCategory> CreateAsync(ItemCategoryName name);
 }

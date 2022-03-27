@@ -42,20 +42,19 @@ public static class ServiceCollectionExtensions
             .ToList();
         foreach (var assemblyType in assemblyTypes)
         {
-            var interfaceType = assemblyType
+            var interfaceTypes = assemblyType
                 .GetInterfaces()
-                .SingleOrDefault(t => t.IsGenericType
+                .Where(t => t.IsGenericType
                                       && t.GetGenericTypeDefinition() == type);
 
-            if (interfaceType == null)
-                continue;
+            foreach (var interfaceType in interfaceTypes)
+            {
+                var args = interfaceType.GetGenericArguments();
+                if (provider.GetRequiredService(interfaceType) is not TConverter implementation || args.Length != 2)
+                    continue;
 
-            var args = interfaceType.GetGenericArguments();
-            var implemetation = provider.GetRequiredService(interfaceType) as TConverter;
-            if (implemetation == null || args.Length != 2)
-                continue;
-
-            dict.Add((args[0], args[1]), implemetation);
+                dict.Add((args[0], args[1]), implementation);
+            }
         }
     }
 }

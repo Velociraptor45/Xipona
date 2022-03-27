@@ -229,9 +229,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.GetAllActiveItemCategories();
         }
 
-        public async Task CreateItemCategory(string name)
+        public async Task<ItemCategoryContract> CreateItemCategory(string name)
         {
-            await _apiClient.CreateItemCategory(name);
+            return await _apiClient.CreateItemCategory(name);
         }
 
         public async Task DeleteItemCategory([Body] DeleteItemCategoryContract contract)

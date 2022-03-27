@@ -148,7 +148,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task<IEnumerable<ItemCategoryContract>> GetAllActiveItemCategories();
 
         [Post("item-category/create/{name}")]
-        Task CreateItemCategory([Path] string name);
+        Task<ItemCategoryContract> CreateItemCategory([Path] string name);
 
         [Post("item-category/delete")]
         Task DeleteItemCategory([Body] DeleteItemCategoryContract contract);
