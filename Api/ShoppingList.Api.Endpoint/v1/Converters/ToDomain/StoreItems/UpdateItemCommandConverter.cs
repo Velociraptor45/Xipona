@@ -1,6 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ItemUpdateWithTypes;
+﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
@@ -10,26 +10,20 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Updates;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreItems;
 
-public class UpdateItemWithTypesCommandConverter
-    : IToDomainConverter<(Guid id, UpdateItemWithTypesContract contract), UpdateItemWithTypesCommand>
+public class UpdateItemCommandConverter : IToDomainConverter<(Guid id, UpdateItemContract contract), UpdateItemCommand>
 {
-    private readonly IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> _availabilityConverter;
+    private readonly IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> _storeItemAvailabilityConverter;
 
-    public UpdateItemWithTypesCommandConverter(
-        IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> availabilityConverter)
+    public UpdateItemCommandConverter(
+        IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> storeItemAvailabilityConverter)
     {
-        _availabilityConverter = availabilityConverter;
+        _storeItemAvailabilityConverter = storeItemAvailabilityConverter;
     }
 
-    public UpdateItemWithTypesCommand ToDomain((Guid id, UpdateItemWithTypesContract contract) source)
+    public UpdateItemCommand ToDomain((Guid id, UpdateItemContract contract) source)
     {
         var (id, contract) = source;
         ArgumentNullException.ThrowIfNull(contract);
-
-        var itemTypeUpdates = contract.ItemTypes.Select(t => new ItemTypeUpdate(
-            new ItemTypeId(t.OldId),
-            new ItemTypeName(t.Name),
-            _availabilityConverter.ToDomain(t.Availabilities)));
 
         ItemQuantityInPacket? itemQuantityInPacket = null;
         //todo improve this check
@@ -40,7 +34,7 @@ public class UpdateItemWithTypesCommandConverter
                 contract.QuantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
         }
 
-        var itemUpdate = new ItemWithTypesUpdate(
+        var update = new ItemUpdate(
             new ItemId(id),
             new ItemName(contract.Name),
             new Comment(contract.Comment),
@@ -48,9 +42,11 @@ public class UpdateItemWithTypesCommandConverter
                 contract.QuantityType.ToEnum<QuantityType>(),
                 itemQuantityInPacket),
             new ItemCategoryId(contract.ItemCategoryId),
-            contract.ManufacturerId.HasValue ? new ManufacturerId(contract.ManufacturerId.Value) : null,
-            itemTypeUpdates);
+            contract.ManufacturerId.HasValue ?
+                new ManufacturerId(contract.ManufacturerId.Value) :
+                null,
+            _storeItemAvailabilityConverter.ToDomain(contract.Availabilities));
 
-        return new UpdateItemWithTypesCommand(itemUpdate);
+        return new UpdateItemCommand(update);
     }
 }

@@ -19,28 +19,23 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
 
         public UpdateItemWithTypesContract ToContract(StoreItem source)
         {
-            return new UpdateItemWithTypesContract
-            {
-                OldId = source.Id,
-                Name = source.Name,
-                Comment = source.Comment,
-                QuantityType = source.QuantityType.Id,
-                QuantityInPacket = source.QuantityInPacket,
-                QuantityTypeInPacket = source.QuantityInPacketType?.Id,
-                ItemCategoryId = source.ItemCategoryId.Value,
-                ManufacturerId = source.ManufacturerId,
-                ItemTypes = source.ItemTypes.Select(ToUpdateItemTypeContract)
-            };
+            return new UpdateItemWithTypesContract(
+                source.Name,
+                source.Comment,
+                source.QuantityType.Id,
+                source.QuantityInPacket,
+                source.QuantityInPacketType?.Id,
+                source.ItemCategoryId.Value,
+                source.ManufacturerId,
+                source.ItemTypes.Select(ToUpdateItemTypeContract));
         }
 
         public UpdateItemTypeContract ToUpdateItemTypeContract(ItemType itemType)
         {
-            return new UpdateItemTypeContract
-            {
-                OldId = itemType.Id,
-                Name = itemType.Name,
-                Availabilities = itemType.Availabilities.Select(availabilityConverter.ToContract)
-            };
+            return new UpdateItemTypeContract(
+                itemType.Id,
+                itemType.Name,
+                itemType.Availabilities.Select(availabilityConverter.ToContract));
         }
     }
 }

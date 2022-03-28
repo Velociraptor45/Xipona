@@ -36,7 +36,6 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.TemporaryItems;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 
@@ -109,7 +108,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("with-types/{id}")]
+    [Route("with-types/{id}/modify")]
     public async Task<IActionResult> ModifyItemWithTypesAsync([FromRoute] Guid id,
         [FromBody] ModifyItemWithTypesContract contract)
     {
@@ -136,7 +135,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("without-types/{id}")]
+    [Route("without-types/{id}/modify")]
     public async Task<IActionResult> ModifyItemAsync([FromRoute] Guid id,
         [FromBody] ModifyItemContract contract)
     {
@@ -158,14 +157,15 @@ public class ItemController : ControllerBase
         return Ok();
     }
 
-    [HttpPost]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("update")]
-    public async Task<IActionResult> UpdateItemAsync([FromBody] UpdateItemContract updateItemContract)
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("without-types/{id}/update")]
+    public async Task<IActionResult> UpdateItemAsync([FromRoute] Guid id,
+        [FromBody] UpdateItemContract contract)
     {
-        var model = _converters.ToDomain<UpdateItemContract, ItemUpdate>(updateItemContract);
-        var command = new UpdateItemCommand(model);
+        var command = _converters.ToDomain<(Guid, UpdateItemContract), UpdateItemCommand>((id, contract));
 
         try
         {
@@ -173,19 +173,26 @@ public class ItemController : ControllerBase
         }
         catch (DomainException e)
         {
-            return BadRequest(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
         }
 
         return Ok();
     }
 
-    [HttpPost]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("update-with-types")]
-    public async Task<IActionResult> UpdateItemWithTypesAsync([FromBody] UpdateItemWithTypesContract contract)
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("with-types/{id}/update")]
+    public async Task<IActionResult> UpdateItemWithTypesAsync([FromRoute] Guid id,
+        [FromBody] UpdateItemWithTypesContract contract)
     {
-        var command = _converters.ToDomain<UpdateItemWithTypesContract, UpdateItemWithTypesCommand>(contract);
+        var command =
+            _converters.ToDomain<(Guid, UpdateItemWithTypesContract), UpdateItemWithTypesCommand>((id, contract));
 
         try
         {
@@ -193,7 +200,11 @@ public class ItemController : ControllerBase
         }
         catch (DomainException e)
         {
-            return UnprocessableEntity(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
         }
 
         return Ok();

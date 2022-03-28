@@ -100,13 +100,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task UpdateItemAsync(UpdateItemRequest request)
         {
             var contract = _converters.ToContract<StoreItem, UpdateItemContract>(request.StoreItem);
-            await _client.UpdateItemAsync(contract);
+            await _client.UpdateItemAsync(request.StoreItem.Id, contract);
         }
 
         public async Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request)
         {
             var contract = _converters.ToContract<StoreItem, UpdateItemWithTypesContract>(request.StoreItem);
-            await _client.UpdateItemWithTypesAsync(contract);
+            await _client.UpdateItemWithTypesAsync(request.StoreItem.Id, contract);
         }
 
         public async Task ModifyItemAsync(ModifyItemRequest request)
