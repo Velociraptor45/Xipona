@@ -108,7 +108,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("with-types/{id}/modify")]
+    [Route("with-types/{id:guid}/modify")]
     public async Task<IActionResult> ModifyItemWithTypesAsync([FromRoute] Guid id,
         [FromBody] ModifyItemWithTypesContract contract)
     {
@@ -135,7 +135,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("without-types/{id}/modify")]
+    [Route("without-types/{id:guid}/modify")]
     public async Task<IActionResult> ModifyItemAsync([FromRoute] Guid id,
         [FromBody] ModifyItemContract contract)
     {
@@ -161,7 +161,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("without-types/{id}/update")]
+    [Route("without-types/{id:guid}/update")]
     public async Task<IActionResult> UpdateItemAsync([FromRoute] Guid id,
         [FromBody] UpdateItemContract contract)
     {
@@ -187,7 +187,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("with-types/{id}/update")]
+    [Route("with-types/{id:guid}/update")]
     public async Task<IActionResult> UpdateItemWithTypesAsync([FromRoute] Guid id,
         [FromBody] UpdateItemWithTypesContract contract)
     {
@@ -215,7 +215,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("search/{storeId}")]
+    [Route("search/{storeId:guid}")]
     public async Task<IActionResult> SearchItemsForShoppingListAsync([FromRoute] Guid storeId,
         [FromQuery] string searchInput)
     {
