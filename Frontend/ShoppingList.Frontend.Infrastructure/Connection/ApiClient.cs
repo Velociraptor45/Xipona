@@ -112,7 +112,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task ModifyItemAsync(ModifyItemRequest request)
         {
             var contract = _converters.ToContract<StoreItem, ModifyItemContract>(request.StoreItem);
-            await _client.ModifyItem(contract);
+            await _client.ModifyItemAsync(request.StoreItem.Id, contract);
         }
 
         public async Task ModifyItemWithTypesAsync(ModifyItemWithTypesRequest request)

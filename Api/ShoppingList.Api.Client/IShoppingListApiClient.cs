@@ -86,8 +86,8 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] IEnumerable<Guid> storeIds,
             [Query] IEnumerable<Guid> itemCategoryIds, [Query] IEnumerable<Guid> manufacturerIds);
 
-        [Post("items/modify")]
-        Task ModifyItem([Body] ModifyItemContract modifyItemContract);
+        [Put("items/without-types/{id}")]
+        Task ModifyItemAsync([Path] Guid id, [Body] ModifyItemContract contract);
 
         [Put("items/with-types/{id}")]
         Task ModifyItemWithTypesAsync([Path] Guid id, [Body] ModifyItemWithTypesContract contract);

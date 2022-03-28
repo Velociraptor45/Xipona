@@ -19,18 +19,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
 
         public ModifyItemContract ToContract(StoreItem source)
         {
-            return new ModifyItemContract
-            {
-                Id = source.Id,
-                Name = source.Name,
-                Comment = source.Comment,
-                QuantityType = source.QuantityType.Id,
-                QuantityInPacket = source.QuantityInPacket,
-                QuantityTypeInPacket = source.QuantityInPacketType?.Id,
-                ItemCategoryId = source.ItemCategoryId.Value,
-                ManufacturerId = source.ManufacturerId,
-                Availabilities = source.Availabilities.Select(availabilityConverter.ToContract)
-            };
+            return new ModifyItemContract(
+                source.Name,
+                source.Comment,
+                source.QuantityType.Id,
+                source.QuantityInPacket,
+                source.QuantityInPacketType?.Id,
+                source.ItemCategoryId.Value,
+                source.ManufacturerId,
+                source.Availabilities.Select(availabilityConverter.ToContract));
         }
     }
 }

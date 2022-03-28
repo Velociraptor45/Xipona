@@ -33,7 +33,6 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.TemporaryItems;
@@ -60,8 +59,8 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("without-types")]
     public async Task<IActionResult> CreateItemAsync([FromBody] CreateItemContract createItemContract)
     {
@@ -84,8 +83,8 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("with-types")]
     public async Task<IActionResult> CreateItemWithTypesAsync([FromBody] CreateItemWithTypesContract contract)
     {
@@ -104,13 +103,12 @@ public class ItemController : ControllerBase
             var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
             return UnprocessableEntity(errorContract);
         }
-
-        return Ok();
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("with-types/{id}")]
     public async Task<IActionResult> ModifyItemWithTypesAsync([FromRoute] Guid id,
         [FromBody] ModifyItemWithTypesContract contract)
@@ -125,20 +123,24 @@ public class ItemController : ControllerBase
         catch (DomainException e)
         {
             var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
             return UnprocessableEntity(errorContract);
         }
 
         return Ok();
     }
 
-    [HttpPost]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("modify")]
-    public async Task<IActionResult> ModifyItemAsync([FromBody] ModifyItemContract modifyItemContract)
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("without-types/{id}")]
+    public async Task<IActionResult> ModifyItemAsync([FromRoute] Guid id,
+        [FromBody] ModifyItemContract contract)
     {
-        var model = _converters.ToDomain<ModifyItemContract, ItemModification>(modifyItemContract);
-        var command = new ModifyItemCommand(model);
+        var command = _converters.ToDomain<(Guid, ModifyItemContract), ModifyItemCommand>((id, contract));
 
         try
         {
@@ -146,7 +148,11 @@ public class ItemController : ControllerBase
         }
         catch (DomainException e)
         {
-            return BadRequest(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
         }
 
         return Ok();
