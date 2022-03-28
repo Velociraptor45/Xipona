@@ -180,7 +180,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(
             string searchInput, Guid storeId)
         {
-            var result = await _client.SearchItemsForShoppingListAsync(searchInput, storeId);
+            var result = await _client.SearchItemsForShoppingListAsync(storeId, searchInput);
+            if (result is null)
+                return Enumerable.Empty<SearchItemForShoppingListResult>();
+
             return result
                 .Select(_converters.ToDomain<SearchItemForShoppingListResultContract, SearchItemForShoppingListResult>);
         }

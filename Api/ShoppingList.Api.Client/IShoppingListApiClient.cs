@@ -75,9 +75,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Post("items/with-types")]
         Task CreateItemWithTypesAsync([Body] CreateItemWithTypesContract createItemWithTypesContract);
 
-        [Get("items/search-for-shopping-list/{searchInput}/{storeId}")]
-        Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync([Path] string searchInput,
-            [Path] Guid storeId);
+        [Get("items/search/{storeId}")]
+        Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync(
+            [Path] Guid storeId, [Query] string searchInput);
 
         [Get("items/search/{searchInput}")]
         Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync([Path] string searchInput);

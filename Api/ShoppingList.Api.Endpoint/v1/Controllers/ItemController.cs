@@ -211,11 +211,13 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("search-for-shopping-list/{searchInput}/{storeId}")]
-    public async Task<IActionResult> SearchItemsForShoppingListAsync([FromRoute(Name = "searchInput")] string searchInput,
-        [FromRoute(Name = "storeId")] Guid storeId)
+    [ProducesResponseType(typeof(IEnumerable<SearchItemForShoppingListResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("search/{storeId}")]
+    public async Task<IActionResult> SearchItemsForShoppingListAsync([FromRoute] Guid storeId,
+        [FromQuery] string searchInput)
     {
         var query = new SearchItemsForShoppingListQuery(searchInput, new StoreId(storeId));
 
@@ -226,8 +228,15 @@ public class ItemController : ControllerBase
         }
         catch (DomainException e)
         {
-            return BadRequest(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.StoreNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
         }
+
+        if (!readModels.Any())
+            return NoContent();
 
         var contracts =
             _converters.ToContract<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>(readModels);

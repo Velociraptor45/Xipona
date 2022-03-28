@@ -145,9 +145,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
         }
 
         public async Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync(
-            string searchInput, Guid storeId)
+            Guid storeId, string searchInput)
         {
-            return await _apiClient.SearchItemsForShoppingListAsync(searchInput, storeId);
+            return await _apiClient.SearchItemsForShoppingListAsync(storeId, searchInput);
         }
 
         public async Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync(string searchInput)
