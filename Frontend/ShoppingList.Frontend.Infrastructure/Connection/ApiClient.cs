@@ -124,7 +124,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task CreateItemAsync(CreateItemRequest request)
         {
             var contract = _converters.ToContract<StoreItem, CreateItemContract>(request.StoreItem);
-            await _client.CreateItem(contract);
+            await _client.CreateItemAsync(contract);
         }
 
         public async Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request)

@@ -69,45 +69,45 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ItemController
 
-        [Post("item/create")]
-        Task CreateItem([Body] CreateItemContract createItemContract);
+        [Post("items")]
+        Task CreateItemAsync([Body] CreateItemContract createItemContract);
 
-        [Post("item/create-with-types")]
+        [Post("items/create-with-types")]
         Task CreateItemWithTypes([Body] CreateItemWithTypesContract createItemWithTypesContract);
 
-        [Get("item/search-for-shopping-list/{searchInput}/{storeId}")]
+        [Get("items/search-for-shopping-list/{searchInput}/{storeId}")]
         Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync([Path] string searchInput,
             [Path] Guid storeId);
 
-        [Get("item/search/{searchInput}")]
+        [Get("items/search/{searchInput}")]
         Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync([Path] string searchInput);
 
-        [Get("item/search-by-filter")]
+        [Get("items/search-by-filter")]
         Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] IEnumerable<Guid> storeIds,
             [Query] IEnumerable<Guid> itemCategoryIds, [Query] IEnumerable<Guid> manufacturerIds);
 
-        [Post("item/modify")]
+        [Post("items/modify")]
         Task ModifyItem([Body] ModifyItemContract modifyItemContract);
 
-        [Post("item/modify-with-types")]
+        [Post("items/modify-with-types")]
         Task ModifyItemWithTypesAsync([Body] ModifyItemWithTypesContract contract);
 
-        [Post("item/update")]
+        [Post("items/update")]
         Task UpdateItemAsync([Body] UpdateItemContract updateItemContract);
 
-        [Post("item/update-with-types")]
+        [Post("items/update-with-types")]
         Task UpdateItemWithTypesAsync([Body] UpdateItemWithTypesContract contract);
 
-        [Post("item/delete/{itemId}")]
+        [Post("items/delete/{itemId}")]
         Task DeleteItemAsync([Path] Guid itemId);
 
-        [Get("item/{itemId}")]
+        [Get("items/{itemId}")]
         Task<StoreItemContract> Get([Path] Guid itemId);
 
-        [Post("item/create/temporary")]
+        [Post("items/create/temporary")]
         Task CreateTemporaryItem([Body] CreateTemporaryItemContract contract);
 
-        [Post("item/make-temporary-item-permanent")]
+        [Post("items/make-temporary-item-permanent")]
         Task MakeTemporaryItemPermanent([Body] MakeTemporaryItemPermanentContract contract);
 
         #endregion ItemController

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateItem;
@@ -14,6 +15,7 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.Item
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItems;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItemsByFilters;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
@@ -26,6 +28,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
@@ -41,7 +44,7 @@ using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
 [ApiController]
-[Route("v1/item")]
+[Route("v1/items")]
 public class ItemController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;
@@ -57,16 +60,27 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(200)]
-    [Route("create")]
-    public async Task<IActionResult> CreateItem([FromBody] CreateItemContract createItemContract)
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [Route("")]
+    public async Task<IActionResult> CreateItemAsync([FromBody] CreateItemContract createItemContract)
     {
-        var model = _converters.ToDomain<CreateItemContract, ItemCreation>(createItemContract);
-        var command = new CreateItemCommand(model);
+        try
+        {
+            var model = _converters.ToDomain<CreateItemContract, ItemCreation>(createItemContract);
+            var command = new CreateItemCommand(model);
 
-        await _commandDispatcher.DispatchAsync(command, default);
+            var readModel = await _commandDispatcher.DispatchAsync(command, default);
 
-        return Ok();
+            var contract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
+
+            return CreatedAtAction(nameof(Get), new { itemId = contract.Id }, contract);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            return UnprocessableEntity(errorContract);
+        }
     }
 
     [HttpPost]

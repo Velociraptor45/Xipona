@@ -3,9 +3,11 @@ using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
+using ShoppingList.Api.Domain.TestKit.StoreItems.Services.Conversion.StoreItemReadModels;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services.Validation;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemCreations;
@@ -218,32 +220,34 @@ public class ItemCreationServiceTests
         private sealed class CreateAsyncFixture : LocalFixture
         {
             private IStoreItem _storeItem;
+            private ManufacturerId? _manufacturerId;
+            private List<IStoreItemAvailability> _availabilities;
+
             public ItemCreation ItemCreation { get; private set; }
-            public ManufacturerId? ManufacturerId { get; private set; }
-            public List<IStoreItemAvailability> Availabilities { get; private set; }
+            public StoreItemReadModel StoreItemReadModel { get; private set; }
 
             public void SetupItemCreation()
             {
-                Fixture.ConstructorArgumentFor<ItemCreation, ManufacturerId?>("manufacturerId", ManufacturerId);
+                Fixture.ConstructorArgumentFor<ItemCreation, ManufacturerId?>("manufacturerId", _manufacturerId);
                 Fixture.ConstructorArgumentFor<ItemCreation, IEnumerable<IStoreItemAvailability>>(
-                    "availabilities", Availabilities);
+                    "availabilities", _availabilities);
 
                 ItemCreation = Fixture.Create<ItemCreation>();
             }
 
             public void SetupManufacturerId()
             {
-                ManufacturerId = new ManufacturerId(Guid.NewGuid());
+                _manufacturerId = new ManufacturerId(Guid.NewGuid());
             }
 
             public void SetupManufacturerIdNull()
             {
-                ManufacturerId = null;
+                _manufacturerId = null;
             }
 
             public void SetupAvailabilities()
             {
-                Availabilities = _storeItem.Availabilities.ToList();
+                _availabilities = _storeItem.Availabilities.ToList();
             }
 
             public void SetupStoreItem()
@@ -276,11 +280,17 @@ public class ItemCreationServiceTests
                 ItemRepositoryMock.SetupStoreAsync(_storeItem, _storeItem);
             }
 
+            public void SetupConvertingItem()
+            {
+                StoreItemReadModel = Fixture.Create<StoreItemReadModel>();
+                ConversionServiceMock.SetupConvertAsync(_storeItem, StoreItemReadModel);
+            }
+
             #region Verify
 
             public void VerifyValidateAvailabilitiesOnce()
             {
-                ValidatorMock.VerifyValidateAsync(Availabilities, Times.Once);
+                ValidatorMock.VerifyValidateAsync(_availabilities, Times.Once);
             }
 
             public void VerifyValidateManufacturerOnce()
@@ -320,6 +330,8 @@ public class ItemCreationServiceTests
 
                 SetupValidatingAvailabilities();
                 SetupValidatingItemCategory();
+
+                SetupConvertingItem();
             }
 
             public void SetupWithManufacturerId()
@@ -336,6 +348,8 @@ public class ItemCreationServiceTests
                 SetupValidatingAvailabilities();
                 SetupValidatingItemCategory();
                 SetupValidatingManufacturer();
+
+                SetupConvertingItem();
             }
 
             #endregion Aggregates
@@ -502,6 +516,7 @@ public class ItemCreationServiceTests
         protected ItemRepositoryMock ItemRepositoryMock;
         protected StoreItemFactoryMock StoreItemFactoryMock;
         protected ValidatorMock ValidatorMock;
+        protected StoreItemReadModelConversionServiceMock ConversionServiceMock;
 
         protected LocalFixture()
         {
@@ -510,6 +525,7 @@ public class ItemCreationServiceTests
             ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
             StoreItemFactoryMock = new StoreItemFactoryMock(MockBehavior.Strict);
             ValidatorMock = new ValidatorMock(MockBehavior.Strict);
+            ConversionServiceMock = new StoreItemReadModelConversionServiceMock(MockBehavior.Strict);
         }
 
         public ItemCreationService CreateSut()
@@ -518,6 +534,7 @@ public class ItemCreationServiceTests
                 ItemRepositoryMock.Object,
                 _ => ValidatorMock.Object,
                 StoreItemFactoryMock.Object,
+                ConversionServiceMock.Object,
                 default);
         }
     }

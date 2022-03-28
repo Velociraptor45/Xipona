@@ -68,8 +68,10 @@ public static class ServiceCollectionExtensions
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
             var itemFactory = provider.GetRequiredService<IStoreItemFactory>();
+            var conversionService = provider.GetRequiredService<IStoreItemReadModelConversionService>();
             return cancellationToken =>
-                new ItemCreationService(itemRepository, validatorDelegate, itemFactory, cancellationToken);
+                new ItemCreationService(itemRepository, validatorDelegate, itemFactory, conversionService,
+                    cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, ITemporaryItemService>>(provider =>

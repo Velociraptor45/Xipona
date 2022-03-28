@@ -109,9 +109,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ItemController
 
-        public async Task CreateItem(CreateItemContract createItemContract)
+        public async Task CreateItemAsync(CreateItemContract createItemContract)
         {
-            await _apiClient.CreateItem(createItemContract);
+            await _apiClient.CreateItemAsync(createItemContract);
         }
 
         public async Task CreateItemWithTypes(CreateItemWithTypesContract createItemWithTypesContract)
