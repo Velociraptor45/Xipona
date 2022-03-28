@@ -56,12 +56,14 @@ public class ItemCreationService : IItemCreationService
         return await _conversionService.ConvertAsync(storedItem, _cancellationToken);
     }
 
-    public async Task CreateItemWithTypesAsync(IStoreItem item)
+    public async Task<StoreItemReadModel> CreateItemWithTypesAsync(IStoreItem item)
     {
         if (item is null)
             throw new ArgumentNullException(nameof(item));
 
-        await _itemRepository.StoreAsync(item, _cancellationToken);
+        var storedItem = await _itemRepository.StoreAsync(item, _cancellationToken);
+
+        return await _conversionService.ConvertAsync(storedItem, _cancellationToken);
     }
 
     public async Task CreateTemporaryAsync(TemporaryItemCreation creation)

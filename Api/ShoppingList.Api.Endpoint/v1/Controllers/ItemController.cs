@@ -62,7 +62,7 @@ public class ItemController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    [Route("")]
+    [Route("without-types")]
     public async Task<IActionResult> CreateItemAsync([FromBody] CreateItemContract createItemContract)
     {
         try
@@ -84,19 +84,25 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(200)]
-    [Route("create-with-types")]
-    public async Task<IActionResult> CreateItemWithTypes([FromBody] CreateItemWithTypesContract contract)
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [Route("with-types")]
+    public async Task<IActionResult> CreateItemWithTypesAsync([FromBody] CreateItemWithTypesContract contract)
     {
         try
         {
             var model = _converters.ToDomain<CreateItemWithTypesContract, IStoreItem>(contract);
             var command = new CreateItemWithTypesCommand(model);
-            await _commandDispatcher.DispatchAsync(command, default);
+            var readModel = await _commandDispatcher.DispatchAsync(command, default);
+
+            var returnContract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
+
+            return CreatedAtAction(nameof(Get), new { itemId = returnContract.Id }, returnContract);
         }
         catch (DomainException e)
         {
-            return UnprocessableEntity(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            return UnprocessableEntity(errorContract);
         }
 
         return Ok();

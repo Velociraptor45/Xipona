@@ -69,11 +69,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ItemController
 
-        [Post("items")]
+        [Post("items/without-types")]
         Task CreateItemAsync([Body] CreateItemContract createItemContract);
 
-        [Post("items/create-with-types")]
-        Task CreateItemWithTypes([Body] CreateItemWithTypesContract createItemWithTypesContract);
+        [Post("items/with-types")]
+        Task CreateItemWithTypesAsync([Body] CreateItemWithTypesContract createItemWithTypesContract);
 
         [Get("items/search-for-shopping-list/{searchInput}/{storeId}")]
         Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync([Path] string searchInput,
