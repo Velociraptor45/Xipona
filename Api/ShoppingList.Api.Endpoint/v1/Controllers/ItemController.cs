@@ -245,7 +245,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SearchItemForShoppingListResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("search")]
     public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput)
@@ -264,7 +264,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SearchItemForShoppingListResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("filter")]
     public async Task<IActionResult> SearchItemsByFilterAsync([FromQuery] IEnumerable<Guid> storeIds,
