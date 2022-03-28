@@ -245,10 +245,11 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(204)]
-    [Route("search/{searchInput}")]
-    public async Task<IActionResult> SearchItemsAsync([FromRoute(Name = "searchInput")] string searchInput)
+    [ProducesResponseType(typeof(IEnumerable<SearchItemForShoppingListResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("search")]
+    public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput)
     {
         var query = new SearchItemQuery(searchInput);
 
@@ -259,7 +260,8 @@ public class ItemController : ControllerBase
         }
         catch (DomainException e)
         {
-            return BadRequest(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            return UnprocessableEntity(errorContract);
         }
 
         if (!readModels.Any())
