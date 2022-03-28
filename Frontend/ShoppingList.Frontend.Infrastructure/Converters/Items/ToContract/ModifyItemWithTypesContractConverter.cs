@@ -28,18 +28,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
                 Availabilities = t.Availabilities.Select(av => availabilityConverter.ToContract(av))
             });
 
-            return new ModifyItemWithTypesContract()
-            {
-                Id = request.StoreItem.Id,
-                Name = request.StoreItem.Name,
-                Comment = request.StoreItem.Comment,
-                QuantityType = request.StoreItem.QuantityType.Id,
-                QuantityInPacket = request.StoreItem.QuantityInPacket,
-                QuantityTypeInPacket = request.StoreItem.QuantityInPacketType?.Id,
-                ItemCategoryId = request.StoreItem.ItemCategoryId.Value,
-                ManufacturerId = request.StoreItem.ManufacturerId,
-                ItemTypes = types
-            };
+            return new ModifyItemWithTypesContract(
+                request.StoreItem.Name,
+                request.StoreItem.Comment,
+                request.StoreItem.QuantityType.Id,
+                request.StoreItem.QuantityInPacket,
+                request.StoreItem.QuantityInPacketType?.Id,
+                request.StoreItem.ItemCategoryId.Value,
+                request.StoreItem.ManufacturerId,
+                types);
         }
     }
 }

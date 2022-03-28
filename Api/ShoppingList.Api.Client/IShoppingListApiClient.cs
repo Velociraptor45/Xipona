@@ -89,8 +89,8 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Post("items/modify")]
         Task ModifyItem([Body] ModifyItemContract modifyItemContract);
 
-        [Post("items/modify-with-types")]
-        Task ModifyItemWithTypesAsync([Body] ModifyItemWithTypesContract contract);
+        [Put("items/with-types/{id}")]
+        Task ModifyItemWithTypesAsync([Path] Guid id, [Body] ModifyItemWithTypesContract contract);
 
         [Post("items/update")]
         Task UpdateItemAsync([Body] UpdateItemContract updateItemContract);

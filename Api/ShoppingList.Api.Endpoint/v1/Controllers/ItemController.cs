@@ -108,13 +108,15 @@ public class ItemController : ControllerBase
         return Ok();
     }
 
-    [HttpPost]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("modify-with-types")]
-    public async Task<IActionResult> ModifyItemWithTypesAsync([FromBody] ModifyItemWithTypesContract contract)
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [Route("with-types/{id}")]
+    public async Task<IActionResult> ModifyItemWithTypesAsync([FromRoute] Guid id,
+        [FromBody] ModifyItemWithTypesContract contract)
     {
-        var command = _converters.ToDomain<ModifyItemWithTypesContract, ModifyItemWithTypesCommand>(contract);
+        var command =
+            _converters.ToDomain<(Guid, ModifyItemWithTypesContract), ModifyItemWithTypesCommand>((id, contract));
 
         try
         {
@@ -122,7 +124,8 @@ public class ItemController : ControllerBase
         }
         catch (DomainException e)
         {
-            return BadRequest(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            return UnprocessableEntity(errorContract);
         }
 
         return Ok();
