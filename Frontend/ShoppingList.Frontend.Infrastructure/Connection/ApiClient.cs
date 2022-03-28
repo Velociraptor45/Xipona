@@ -205,7 +205,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 itemCategoryIds,
                 manufacturerIds);
 
-            return result.Select(_converters.ToDomain<SearchItemResultContract, SearchItemResult>);
+            return result is null ?
+                Enumerable.Empty<SearchItemResult>() :
+                result.Select(_converters.ToDomain<SearchItemResultContract, SearchItemResult>);
         }
 
         public async Task<StoreItem> GetItemByIdAsync(Guid itemId)

@@ -247,22 +247,12 @@ public class ItemController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<SearchItemForShoppingListResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("search")]
     public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput)
     {
         var query = new SearchItemQuery(searchInput);
 
-        List<SearchItemResultReadModel> readModels;
-        try
-        {
-            readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
-        }
-        catch (DomainException e)
-        {
-            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
-            return UnprocessableEntity(errorContract);
-        }
+        var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
 
         if (!readModels.Any())
             return NoContent();
@@ -274,8 +264,9 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(200)]
-    [Route("search-by-filter")]
+    [ProducesResponseType(typeof(IEnumerable<SearchItemForShoppingListResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [Route("filter")]
     public async Task<IActionResult> SearchItemsByFilterAsync([FromQuery] IEnumerable<Guid> storeIds,
         [FromQuery] IEnumerable<Guid> itemCategoryIds,
         [FromQuery] IEnumerable<Guid> manufacturerIds)
@@ -286,6 +277,10 @@ public class ItemController : ControllerBase
             manufacturerIds.Select(id => new ManufacturerId(id)));
 
         var readModels = await _queryDispatcher.DispatchAsync(query, default);
+
+        if (!readModels.Any())
+            return NoContent();
+
         var contracts = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels);
 
         return Ok(contracts);
