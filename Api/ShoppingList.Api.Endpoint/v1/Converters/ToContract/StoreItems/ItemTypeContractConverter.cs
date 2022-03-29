@@ -21,11 +21,9 @@ public class ItemTypeContractConverter : IToContractConverter<ItemTypeReadModel,
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        return new ItemTypeContract()
-        {
-            Id = source.Id.Value,
-            Name = source.Name.Value,
-            Availabilities = _storeItemAvailabilityContractConverter.ToContract(source.Availabilities)
-        };
+        return new ItemTypeContract(
+            source.Id.Value,
+            source.Name.Value,
+            _storeItemAvailabilityContractConverter.ToContract(source.Availabilities));
     }
 }

@@ -212,7 +212,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task<StoreItem> GetItemByIdAsync(Guid itemId)
         {
-            var result = await _client.Get(itemId);
+            var result = await _client.GetAsync(itemId);
             return _converters.ToDomain<StoreItemContract, StoreItem>(result);
         }
 

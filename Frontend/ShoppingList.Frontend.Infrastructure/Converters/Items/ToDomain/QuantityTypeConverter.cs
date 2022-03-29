@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
                 source.Id,
                 source.Name,
                 source.DefaultQuantity,
-                source.Pricelabel,
+                source.PriceLabel,
                 source.QuantityLabel,
                 source.QuantityNormalizer);
         }

@@ -161,9 +161,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.SearchItemsByFilterAsync(storeIds, itemCategoryIds, manufacturerIds);
         }
 
-        public async Task<StoreItemContract> Get(Guid itemId)
+        public async Task<StoreItemContract> GetAsync(Guid id)
         {
-            return await _apiClient.Get(itemId);
+            return await _apiClient.GetAsync(id);
         }
 
         public async Task CreateTemporaryItem(CreateTemporaryItemContract contract)

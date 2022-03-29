@@ -72,7 +72,7 @@ public class ItemController : ControllerBase
 
             var contract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
 
-            return CreatedAtAction(nameof(Get), new { itemId = contract.Id }, contract);
+            return CreatedAtAction(nameof(GetAsync), new { id = contract.Id }, contract);
         }
         catch (DomainException e)
         {
@@ -95,7 +95,7 @@ public class ItemController : ControllerBase
 
             var returnContract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
 
-            return CreatedAtAction(nameof(Get), new { itemId = returnContract.Id }, returnContract);
+            return CreatedAtAction(nameof(GetAsync), new { id = returnContract.Id }, returnContract);
         }
         catch (DomainException e)
         {
@@ -311,10 +311,11 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
+    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}")]
-    public async Task<IActionResult> Get([FromRoute] Guid id)
+    public async Task<IActionResult> GetAsync([FromRoute] Guid id)
     {
         var query = new ItemByIdQuery(new ItemId(id));
         StoreItemReadModel result;
@@ -324,7 +325,11 @@ public class ItemController : ControllerBase
         }
         catch (DomainException e)
         {
-            return BadRequest(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
         }
 
         var contract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(result);

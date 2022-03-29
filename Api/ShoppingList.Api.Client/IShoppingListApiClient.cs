@@ -98,11 +98,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Put("items/with-types/{id}/update")]
         Task UpdateItemWithTypesAsync([Path] Guid id, [Body] UpdateItemWithTypesContract contract);
 
-        [Delete("items/{itemId}")]
+        [Delete("items/{id}")]
         Task DeleteItemAsync([Path] Guid id);
 
-        [Get("items/{itemId}")]
-        Task<StoreItemContract> Get([Path] Guid itemId);
+        [Get("items/{id}")]
+        Task<StoreItemContract> GetAsync([Path] Guid id);
 
         [Post("items/create/temporary")]
         Task CreateTemporaryItem([Body] CreateTemporaryItemContract contract);
