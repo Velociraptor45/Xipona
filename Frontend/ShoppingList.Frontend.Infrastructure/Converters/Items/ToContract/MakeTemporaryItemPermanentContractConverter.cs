@@ -20,18 +20,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
 
         public MakeTemporaryItemPermanentContract ToContract(MakeTemporaryItemPermanentRequest source)
         {
-            return new MakeTemporaryItemPermanentContract
-            {
-                Id = source.Id,
-                Name = source.Name,
-                Comment = source.Comment,
-                QuantityType = source.QuantityType,
-                QuantityInPacket = source.QuantityInPacket,
-                QuantityTypeInPacket = source.QuantityTypeInPacket,
-                ItemCategoryId = source.ItemCategoryId,
-                ManufacturerId = source.ManufacturerId,
-                Availabilities = source.Availabilities.Select(availabilityConverter.ToContract)
-            };
+            return new MakeTemporaryItemPermanentContract(
+                source.Name,
+                source.Comment,
+                source.QuantityType,
+                source.QuantityInPacket,
+                source.QuantityTypeInPacket,
+                source.ItemCategoryId,
+                source.ManufacturerId,
+                source.Availabilities.Select(availabilityConverter.ToContract));
         }
     }
 }

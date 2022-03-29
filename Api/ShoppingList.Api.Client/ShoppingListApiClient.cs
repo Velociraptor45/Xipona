@@ -171,9 +171,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await _apiClient.CreateTemporaryItemAsync(contract);
         }
 
-        public async Task MakeTemporaryItemPermanent(MakeTemporaryItemPermanentContract contract)
+        public async Task MakeTemporaryItemPermanentAsync(Guid id, MakeTemporaryItemPermanentContract contract)
         {
-            await _apiClient.MakeTemporaryItemPermanent(contract);
+            await _apiClient.MakeTemporaryItemPermanentAsync(id, contract);
         }
 
         #endregion ItemController

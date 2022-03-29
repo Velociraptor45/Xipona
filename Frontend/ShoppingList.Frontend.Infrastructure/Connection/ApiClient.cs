@@ -238,7 +238,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         {
             var contract =
                 _converters.ToContract<MakeTemporaryItemPermanentRequest, MakeTemporaryItemPermanentContract>(request);
-            await _client.MakeTemporaryItemPermanent(contract);
+            await _client.MakeTemporaryItemPermanentAsync(request.ItemId, contract);
         }
 
         public async Task CreateStoreAsync(CreateStoreRequest request)

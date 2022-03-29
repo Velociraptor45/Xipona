@@ -35,7 +35,6 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.TemporaryItems;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 
@@ -359,21 +358,28 @@ public class ItemController : ControllerBase
         }
     }
 
-    [HttpPost]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("make-temporary-item-permanent")]
-    public async Task<IActionResult> MakeTemporaryItemPermanent([FromBody] MakeTemporaryItemPermanentContract contract)
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("temporary/{id:guid}")]
+    public async Task<IActionResult> MakeTemporaryItemPermanentAsync([FromRoute] Guid id,
+        [FromBody] MakeTemporaryItemPermanentContract contract)
     {
-        var model = _converters.ToDomain<MakeTemporaryItemPermanentContract, PermanentItem>(contract);
-        var command = new MakeTemporaryItemPermanentCommand(model);
+        var command =
+            _converters.ToDomain<(Guid, MakeTemporaryItemPermanentContract), MakeTemporaryItemPermanentCommand>((id,
+                contract));
         try
         {
             await _commandDispatcher.DispatchAsync(command, default);
         }
         catch (DomainException e)
         {
-            return BadRequest(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
         }
 
         return Ok();
