@@ -56,6 +56,109 @@ public class ItemController : ControllerBase
         _converters = converters;
     }
 
+    [HttpGet]
+    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}")]
+    public async Task<IActionResult> GetAsync([FromRoute] Guid id)
+    {
+        var query = new ItemByIdQuery(new ItemId(id));
+        StoreItemReadModel result;
+        try
+        {
+            result = await _queryDispatcher.DispatchAsync(query, default);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+
+        var contract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(result);
+
+        return Ok(contract);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [Route("search")]
+    public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput)
+    {
+        var query = new SearchItemQuery(searchInput);
+
+        var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+
+        if (!readModels.Any())
+            return NoContent();
+
+        var contracts =
+            _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels);
+
+        return Ok(contracts);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [Route("filter")]
+    public async Task<IActionResult> SearchItemsByFilterAsync([FromQuery] IEnumerable<Guid> storeIds,
+        [FromQuery] IEnumerable<Guid> itemCategoryIds,
+        [FromQuery] IEnumerable<Guid> manufacturerIds)
+    {
+        var query = new SearchItemsByFilterQuery(
+            storeIds.Select(id => new StoreId(id)),
+            itemCategoryIds.Select(id => new ItemCategoryId(id)),
+            manufacturerIds.Select(id => new ManufacturerId(id)));
+
+        var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+
+        if (!readModels.Any())
+            return NoContent();
+
+        var contracts = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels);
+
+        return Ok(contracts);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<SearchItemForShoppingListResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("search/{storeId:guid}")]
+    public async Task<IActionResult> SearchItemsForShoppingListAsync([FromRoute] Guid storeId,
+        [FromQuery] string searchInput)
+    {
+        var query = new SearchItemsForShoppingListQuery(searchInput, new StoreId(storeId));
+
+        List<SearchItemForShoppingResultReadModel> readModels;
+        try
+        {
+            readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.StoreNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+
+        if (!readModels.Any())
+            return NoContent();
+
+        var contracts =
+            _converters.ToContract<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>(readModels);
+
+        return Ok(contracts);
+    }
+
     [HttpPost]
     [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
@@ -95,6 +198,28 @@ public class ItemController : ControllerBase
             var returnContract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
 
             return CreatedAtAction(nameof(GetAsync), new { id = returnContract.Id }, returnContract);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            return UnprocessableEntity(errorContract);
+        }
+    }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("temporary")]
+    public async Task<IActionResult> CreateTemporaryItemAsync([FromBody] CreateTemporaryItemContract contract)
+    {
+        var model = _converters.ToDomain<CreateTemporaryItemContract, TemporaryItemCreation>(contract);
+        var command = new CreateTemporaryItemCommand(model);
+        try
+        {
+            var readModel = await _commandDispatcher.DispatchAsync(command, default);
+
+            var returnContract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
+            return Ok(returnContract);
         }
         catch (DomainException e)
         {
@@ -209,90 +334,17 @@ public class ItemController : ControllerBase
         return Ok();
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SearchItemForShoppingListResultContract>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("search/{storeId:guid}")]
-    public async Task<IActionResult> SearchItemsForShoppingListAsync([FromRoute] Guid storeId,
-        [FromQuery] string searchInput)
-    {
-        var query = new SearchItemsForShoppingListQuery(searchInput, new StoreId(storeId));
-
-        IEnumerable<SearchItemForShoppingResultReadModel> readModels;
-        try
-        {
-            readModels = await _queryDispatcher.DispatchAsync(query, default);
-        }
-        catch (DomainException e)
-        {
-            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
-            if (e.Reason.ErrorCode == ErrorReasonCode.StoreNotFound)
-                return NotFound(errorContract);
-
-            return UnprocessableEntity(errorContract);
-        }
-
-        if (!readModels.Any())
-            return NoContent();
-
-        var contracts =
-            _converters.ToContract<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>(readModels);
-
-        return Ok(contracts);
-    }
-
-    [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [Route("search")]
-    public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput)
-    {
-        var query = new SearchItemQuery(searchInput);
-
-        var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
-
-        if (!readModels.Any())
-            return NoContent();
-
-        var contracts =
-            _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels);
-
-        return Ok(contracts);
-    }
-
-    [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [Route("filter")]
-    public async Task<IActionResult> SearchItemsByFilterAsync([FromQuery] IEnumerable<Guid> storeIds,
-        [FromQuery] IEnumerable<Guid> itemCategoryIds,
-        [FromQuery] IEnumerable<Guid> manufacturerIds)
-    {
-        var query = new SearchItemsByFilterQuery(
-            storeIds.Select(id => new StoreId(id)),
-            itemCategoryIds.Select(id => new ItemCategoryId(id)),
-            manufacturerIds.Select(id => new ManufacturerId(id)));
-
-        var readModels = await _queryDispatcher.DispatchAsync(query, default);
-
-        if (!readModels.Any())
-            return NoContent();
-
-        var contracts = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels);
-
-        return Ok(contracts);
-    }
-
-    [HttpDelete]
+    [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> DeleteItemAsync([FromRoute] Guid id)
+    [Route("temporary/{id:guid}")]
+    public async Task<IActionResult> MakeTemporaryItemPermanentAsync([FromRoute] Guid id,
+        [FromBody] MakeTemporaryItemPermanentContract contract)
     {
-        var command = new DeleteItemCommand(new ItemId(id));
+        var command =
+            _converters.ToDomain<(Guid, MakeTemporaryItemPermanentContract), MakeTemporaryItemPermanentCommand>((id,
+                contract));
         try
         {
             await _commandDispatcher.DispatchAsync(command, default);
@@ -309,66 +361,14 @@ public class ItemController : ControllerBase
         return Ok();
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> GetAsync([FromRoute] Guid id)
-    {
-        var query = new ItemByIdQuery(new ItemId(id));
-        StoreItemReadModel result;
-        try
-        {
-            result = await _queryDispatcher.DispatchAsync(query, default);
-        }
-        catch (DomainException e)
-        {
-            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
-            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
-                return NotFound(errorContract);
-
-            return UnprocessableEntity(errorContract);
-        }
-
-        var contract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(result);
-
-        return Ok(contract);
-    }
-
-    [HttpPost]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("temporary")]
-    public async Task<IActionResult> CreateTemporaryItemAsync([FromBody] CreateTemporaryItemContract contract)
-    {
-        var model = _converters.ToDomain<CreateTemporaryItemContract, TemporaryItemCreation>(contract);
-        var command = new CreateTemporaryItemCommand(model);
-        try
-        {
-            var readModel = await _commandDispatcher.DispatchAsync(command, default);
-
-            var returnContract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
-            return Ok(returnContract);
-        }
-        catch (DomainException e)
-        {
-            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
-            return UnprocessableEntity(errorContract);
-        }
-    }
-
-    [HttpPut]
+    [HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("temporary/{id:guid}")]
-    public async Task<IActionResult> MakeTemporaryItemPermanentAsync([FromRoute] Guid id,
-        [FromBody] MakeTemporaryItemPermanentContract contract)
+    [Route("{id:guid}")]
+    public async Task<IActionResult> DeleteItemAsync([FromRoute] Guid id)
     {
-        var command =
-            _converters.ToDomain<(Guid, MakeTemporaryItemPermanentContract), MakeTemporaryItemPermanentCommand>((id,
-                contract));
+        var command = new DeleteItemCommand(new ItemId(id));
         try
         {
             await _commandDispatcher.DispatchAsync(command, default);
