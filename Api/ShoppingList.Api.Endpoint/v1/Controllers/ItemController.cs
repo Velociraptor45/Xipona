@@ -286,13 +286,26 @@ public class ItemController : ControllerBase
         return Ok(contracts);
     }
 
-    [HttpPost]
-    [ProducesResponseType(200)]
-    [Route("delete/{itemId}")]
-    public async Task<IActionResult> DeleteItem([FromRoute(Name = "itemId")] Guid itemId)
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}")]
+    public async Task<IActionResult> DeleteItemAsync([FromRoute] Guid id)
     {
-        var command = new DeleteItemCommand(new ItemId(itemId));
-        await _commandDispatcher.DispatchAsync(command, default);
+        var command = new DeleteItemCommand(new ItemId(id));
+        try
+        {
+            await _commandDispatcher.DispatchAsync(command, default);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
 
         return Ok();
     }
@@ -300,10 +313,10 @@ public class ItemController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    [Route("{itemId}")]
-    public async Task<IActionResult> Get([FromRoute(Name = "itemId")] Guid itemId)
+    [Route("{id:guid}")]
+    public async Task<IActionResult> Get([FromRoute] Guid id)
     {
-        var query = new ItemByIdQuery(new ItemId(itemId));
+        var query = new ItemByIdQuery(new ItemId(id));
         StoreItemReadModel result;
         try
         {

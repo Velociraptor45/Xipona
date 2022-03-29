@@ -139,9 +139,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await _apiClient.UpdateItemWithTypesAsync(id, contract);
         }
 
-        public async Task DeleteItemAsync(Guid itemId)
+        public async Task DeleteItemAsync(Guid id)
         {
-            await _apiClient.DeleteItemAsync(itemId);
+            await _apiClient.DeleteItemAsync(id);
         }
 
         public async Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync(
