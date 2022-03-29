@@ -109,14 +109,14 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ItemController
 
-        public async Task CreateItemAsync(CreateItemContract createItemContract)
+        public async Task CreateItemAsync(CreateItemContract contract)
         {
-            await _apiClient.CreateItemAsync(createItemContract);
+            await _apiClient.CreateItemAsync(contract);
         }
 
-        public async Task CreateItemWithTypesAsync(CreateItemWithTypesContract createItemWithTypesContract)
+        public async Task CreateItemWithTypesAsync(CreateItemWithTypesContract contract)
         {
-            await _apiClient.CreateItemWithTypesAsync(createItemWithTypesContract);
+            await _apiClient.CreateItemWithTypesAsync(contract);
         }
 
         public async Task ModifyItemAsync(Guid id, ModifyItemContract contract)
@@ -166,9 +166,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.GetAsync(id);
         }
 
-        public async Task CreateTemporaryItem(CreateTemporaryItemContract contract)
+        public async Task CreateTemporaryItemAsync(CreateTemporaryItemContract contract)
         {
-            await _apiClient.CreateTemporaryItem(contract);
+            await _apiClient.CreateTemporaryItemAsync(contract);
         }
 
         public async Task MakeTemporaryItemPermanent(MakeTemporaryItemPermanentContract contract)

@@ -49,9 +49,9 @@ public class ItemCreationService : IItemCreationService
         var availabilities = creation.Availabilities;
         await _validator.ValidateAsync(availabilities);
 
-        var storeItem = _storeItemFactory.Create(creation);
+        var item = _storeItemFactory.Create(creation);
 
-        var storedItem = await _itemRepository.StoreAsync(storeItem, _cancellationToken);
+        var storedItem = await _itemRepository.StoreAsync(item, _cancellationToken);
 
         return await _conversionService.ConvertAsync(storedItem, _cancellationToken);
     }
@@ -66,15 +66,17 @@ public class ItemCreationService : IItemCreationService
         return await _conversionService.ConvertAsync(storedItem, _cancellationToken);
     }
 
-    public async Task CreateTemporaryAsync(TemporaryItemCreation creation)
+    public async Task<StoreItemReadModel> CreateTemporaryAsync(TemporaryItemCreation creation)
     {
         ArgumentNullException.ThrowIfNull(creation);
 
         var availability = creation.Availability;
         await _validator.ValidateAsync(availability.ToMonoList());
 
-        var storeItem = _storeItemFactory.Create(creation);
+        var item = _storeItemFactory.Create(creation);
 
-        await _itemRepository.StoreAsync(storeItem, _cancellationToken);
+        var storedItem = await _itemRepository.StoreAsync(item, _cancellationToken);
+
+        return await _conversionService.ConvertAsync(storedItem, _cancellationToken);
     }
 }

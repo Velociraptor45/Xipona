@@ -9,5 +9,5 @@ public interface IItemCreationService
 
     Task<StoreItemReadModel> CreateAsync(ItemCreation creation);
 
-    Task CreateTemporaryAsync(TemporaryItemCreation creation);
+    Task<StoreItemReadModel> CreateTemporaryAsync(TemporaryItemCreation creation);
 }

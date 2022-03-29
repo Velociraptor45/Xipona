@@ -231,7 +231,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task CreateTemporaryItem(CreateTemporaryItemRequest request)
         {
             var contract = _converters.ToContract<CreateTemporaryItemRequest, CreateTemporaryItemContract>(request);
-            await _client.CreateTemporaryItem(contract);
+            await _client.CreateTemporaryItemAsync(contract);
         }
 
         public async Task MakeTemporaryItemPermanent(MakeTemporaryItemPermanentRequest request)

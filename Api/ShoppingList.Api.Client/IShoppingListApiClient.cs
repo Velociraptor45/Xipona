@@ -70,10 +70,16 @@ namespace ProjectHermes.ShoppingList.Api.Client
         #region ItemController
 
         [Post("items/without-types")]
-        Task CreateItemAsync([Body] CreateItemContract createItemContract);
+        Task CreateItemAsync([Body] CreateItemContract contract);
 
         [Post("items/with-types")]
-        Task CreateItemWithTypesAsync([Body] CreateItemWithTypesContract createItemWithTypesContract);
+        Task CreateItemWithTypesAsync([Body] CreateItemWithTypesContract contract);
+
+        [Post("items/create/temporary")]
+        Task CreateTemporaryItemAsync([Body] CreateTemporaryItemContract contract);
+
+        [Get("items/{id}")]
+        Task<StoreItemContract> GetAsync([Path] Guid id);
 
         [Get("items/search/{storeId}")]
         Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync(
@@ -100,12 +106,6 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Delete("items/{id}")]
         Task DeleteItemAsync([Path] Guid id);
-
-        [Get("items/{id}")]
-        Task<StoreItemContract> GetAsync([Path] Guid id);
-
-        [Post("items/create/temporary")]
-        Task CreateTemporaryItem([Body] CreateTemporaryItemContract contract);
 
         [Post("items/make-temporary-item-permanent")]
         Task MakeTemporaryItemPermanent([Body] MakeTemporaryItemPermanentContract contract);

@@ -338,22 +338,25 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(200)]
-    [Route("create/temporary")]
-    public async Task<IActionResult> CreateTemporaryItem([FromBody] CreateTemporaryItemContract contract)
+    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("temporary")]
+    public async Task<IActionResult> CreateTemporaryItemAsync([FromBody] CreateTemporaryItemContract contract)
     {
         var model = _converters.ToDomain<CreateTemporaryItemContract, TemporaryItemCreation>(contract);
         var command = new CreateTemporaryItemCommand(model);
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            var readModel = await _commandDispatcher.DispatchAsync(command, default);
+
+            var returnContract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
+            return Ok(returnContract);
         }
         catch (DomainException e)
         {
-            return BadRequest(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            return UnprocessableEntity(errorContract);
         }
-
-        return Ok();
     }
 
     [HttpPost]
