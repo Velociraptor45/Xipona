@@ -201,19 +201,19 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ManufacturerController
 
-        public async Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResults(string searchInput)
+        public async Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResultsAsync(string searchInput)
         {
-            return await _apiClient.GetManufacturerSearchResults(searchInput);
+            return await _apiClient.GetManufacturerSearchResultsAsync(searchInput);
         }
 
-        public async Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturers()
+        public async Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturersAsync()
         {
-            return await _apiClient.GetAllActiveManufacturers();
+            return await _apiClient.GetAllActiveManufacturersAsync();
         }
 
-        public async Task CreateManufacturer(string name)
+        public async Task<ManufacturerContract> CreateManufacturerAsync(string name)
         {
-            await _apiClient.CreateManufacturer(name);
+            return await _apiClient.CreateManufacturerAsync(name);
         }
 
         #endregion ManufacturerController

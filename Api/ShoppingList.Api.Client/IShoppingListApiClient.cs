@@ -130,14 +130,14 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ManufacturerController
 
-        [Get("manufacturer/search/{searchInput}")]
-        Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResults([Path] string searchInput);
+        [Get("manufacturers/search")]
+        Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResultsAsync([Query] string searchInput);
 
-        [Get("manufacturer/all/active")]
-        Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturers();
+        [Get("manufacturers/active")]
+        Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturersAsync();
 
-        [Post("manufacturer/create/{name}")]
-        Task CreateManufacturer([Path] string name);
+        [Post("manufacturers")]
+        Task<ManufacturerContract> CreateManufacturerAsync([Body] string name);
 
         #endregion ManufacturerController
 

@@ -141,7 +141,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task CreateManufacturerAsync(string name)
         {
-            await _client.CreateManufacturer(name);
+            await _client.CreateManufacturerAsync(name);
         }
 
         public async Task CreateItemCategoryAsync(string name)
@@ -163,9 +163,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task<IEnumerable<Manufacturer>> GetAllActiveManufacturersAsync()
         {
-            var manufacturers = await _client.GetAllActiveManufacturers();
+            var manufacturers = await _client.GetAllActiveManufacturersAsync();
 
-            return manufacturers.Select(_converters.ToDomain<ManufacturerContract, Manufacturer>);
+            return manufacturers is null ?
+                Enumerable.Empty<Manufacturer>() :
+                manufacturers.Select(_converters.ToDomain<ManufacturerContract, Manufacturer>);
         }
 
         public async Task<IEnumerable<ItemCategory>> GetAllActiveItemCategoriesAsync()
@@ -220,13 +222,17 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync()
         {
             var result = await _client.GetAllQuantityTypesAsync();
-            return result.Select(_converters.ToDomain<QuantityTypeContract, QuantityType>);
+            return result is null ?
+                Enumerable.Empty<QuantityType>() :
+                result.Select(_converters.ToDomain<QuantityTypeContract, QuantityType>);
         }
 
         public async Task<IEnumerable<QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync()
         {
             var result = await _client.GetAllQuantityTypesInPacketAsync();
-            return result.Select(_converters.ToDomain<QuantityTypeInPacketContract, QuantityTypeInPacket>);
+            return result is null ?
+                Enumerable.Empty<QuantityTypeInPacket>() :
+                result.Select(_converters.ToDomain<QuantityTypeInPacketContract, QuantityTypeInPacket>);
         }
 
         public async Task CreateTemporaryItem(CreateTemporaryItemRequest request)
