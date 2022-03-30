@@ -38,23 +38,24 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Get("shopping-lists/active/{storeId}")]
         Task<ShoppingListContract> GetActiveShoppingListByStoreIdAsync([Path] Guid storeId);
 
-        [Post("shopping-lists/{shoppingListId:guid}/items")]
+        [Put("shopping-lists/{shoppingListId}/items")]
         Task AddItemToShoppingListAsync([Path] Guid shoppingListId, [Body] AddItemToShoppingListContract contract);
 
-        [Post("shopping-lists/{shoppingListId:guid}/items/{itemId:guid}/{itemTypeId:guid}")]
+        [Put("shopping-lists/{shoppingListId}/items/{itemId}/{itemTypeId}")]
         Task AddItemWithTypeToShoppingListAsync([Path] Guid shoppingListId, [Path] Guid itemId,
             [Path] Guid itemTypeId, [Body] AddItemWithTypeToShoppingListContract contract);
 
-        [Post("shopping-lists/items/change-quantity")]
-        Task ChangeItemQuantityOnShoppingList([Body] ChangeItemQuantityOnShoppingListContract contract);
+        [Put("shopping-lists/{shoppingListId}/items/quantity")]
+        Task ChangeItemQuantityOnShoppingListAsync([Path] Guid shoppingListId,
+            [Body] ChangeItemQuantityOnShoppingListContract contract);
 
-        [Post("shopping-lists/{shoppingListId}/finish")]
-        Task FinishList([Path] Guid shoppingListId);
+        [Put("shopping-lists/{shoppingListId}/finish")]
+        Task FinishListAsync([Path] Guid shoppingListId);
 
-        [Post("shopping-lists/{shoppingListId:guid}/items/basket/add")]
+        [Put("shopping-lists/{shoppingListId}/items/basket/add")]
         Task PutItemInBasketAsync([Path] Guid shoppingListId, [Body] PutItemInBasketContract contract);
 
-        [Post("shopping-lists/{shoppingListId:guid}/items/basket/remove")]
+        [Put("shopping-lists/{shoppingListId}/items/basket/remove")]
         Task RemoveItemFromBasketAsync([Path] Guid shoppingListId, [Body] RemoveItemFromBasketContract contract);
 
         [Delete("shopping-lists/{shoppingListId}/items")]

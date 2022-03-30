@@ -5,7 +5,6 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeI
 {
     public class ChangeItemQuantityOnShoppingListContract
     {
-        public Guid ShoppingListId { get; set; }
         public ItemIdContract ItemId { get; set; }
         public float Quantity { get; set; }
         public Guid? ItemTypeId { get; set; }
