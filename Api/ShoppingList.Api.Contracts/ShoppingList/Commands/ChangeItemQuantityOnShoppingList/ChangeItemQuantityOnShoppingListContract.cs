@@ -5,8 +5,15 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeI
 {
     public class ChangeItemQuantityOnShoppingListContract
     {
+        public ChangeItemQuantityOnShoppingListContract(ItemIdContract itemId, Guid? itemTypeId, float quantity)
+        {
+            ItemId = itemId;
+            ItemTypeId = itemTypeId;
+            Quantity = quantity;
+        }
+
         public ItemIdContract ItemId { get; set; }
-        public float Quantity { get; set; }
         public Guid? ItemTypeId { get; set; }
+        public float Quantity { get; set; }
     }
 }

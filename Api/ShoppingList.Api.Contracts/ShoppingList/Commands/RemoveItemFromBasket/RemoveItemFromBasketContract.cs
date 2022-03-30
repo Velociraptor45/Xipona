@@ -5,6 +5,12 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveI
 {
     public class RemoveItemFromBasketContract
     {
+        public RemoveItemFromBasketContract(ItemIdContract itemId, Guid? itemTypeId)
+        {
+            ItemId = itemId;
+            ItemTypeId = itemTypeId;
+        }
+
         public ItemIdContract ItemId { get; set; }
         public Guid? ItemTypeId { get; set; }
     }
