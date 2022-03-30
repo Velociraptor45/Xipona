@@ -6,7 +6,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQ
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
@@ -19,6 +18,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryI
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
@@ -53,13 +53,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task PutItemInBasketAsync(PutItemInBasketRequest request)
         {
             var contract = _converters.ToContract<PutItemInBasketRequest, PutItemInBasketContract>(request);
-            await _client.PutItemInBasket(contract);
+            await _client.PutItemInBasketAsync(request.ShoppingListId, contract);
         }
 
         public async Task RemoveItemFromBasketAsync(RemoveItemFromBasketRequest request)
         {
             var contract = _converters.ToContract<RemoveItemFromBasketRequest, RemoveItemFromBasketContract>(request);
-            await _client.RemoveItemFromBasket(contract);
+            await _client.RemoveItemFromBasketAsync(request.ShoppingListId, contract);
         }
 
         public async Task ChangeItemQuantityOnShoppingListAsync(ChangeItemQuantityOnShoppingListRequest request)
@@ -68,25 +68,25 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 _converters
                     .ToContract<ChangeItemQuantityOnShoppingListRequest, ChangeItemQuantityOnShoppingListContract>(
                         request);
-            await _client.ChangeItemQuantityOnShoppingList(contract);
+            await _client.ChangeItemQuantityOnShoppingListAsync(request.ShoppingListId, contract);
         }
 
         public async Task FinishListAsync(FinishListRequest request)
         {
-            await _client.FinishList(request.ShoppingListId);
+            await _client.FinishListAsync(request.ShoppingListId);
         }
 
         public async Task RemoveItemFromShoppingListAsync(RemoveItemFromShoppingListRequest request)
         {
             var contract =
                 _converters.ToContract<RemoveItemFromShoppingListRequest, RemoveItemFromShoppingListContract>(request);
-            await _client.RemoveItemFromShoppingList(contract);
+            await _client.RemoveItemFromShoppingListAsync(request.ShoppingListId, contract);
         }
 
         public async Task AddItemToShoppingListAsync(AddItemToShoppingListRequest request)
         {
             var contract = _converters.ToContract<AddItemToShoppingListRequest, AddItemToShoppingListContract>(request);
-            await _client.AddItemToShoppingList(contract);
+            await _client.AddItemToShoppingListAsync(request.ShoppingListId, contract);
         }
 
         public async Task AddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request)
@@ -94,7 +94,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             var contract =
                 _converters.ToContract<AddItemWithTypeToShoppingListRequest, AddItemWithTypeToShoppingListContract>(
                     request);
-            await _client.AddItemWithTypeToShoppingList(contract);
+            await _client.AddItemWithTypeToShoppingListAsync(request.ShoppingListId, request.ItemId, request.ItemTypeId,
+                contract);
         }
 
         public async Task UpdateItemAsync(UpdateItemRequest request)
@@ -150,7 +151,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(Guid storeId)
         {
-            var list = await _client.GetActiveShoppingListByStoreId(storeId);
+            var list = await _client.GetActiveShoppingListByStoreIdAsync(storeId);
             return _converters.ToDomain<ShoppingListContract, ShoppingListRoot>(list);
         }
 
@@ -218,13 +219,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync()
         {
-            var result = await _client.GetAllQuantityTypes();
+            var result = await _client.GetAllQuantityTypesAsync();
             return result.Select(_converters.ToDomain<QuantityTypeContract, QuantityType>);
         }
 
         public async Task<IEnumerable<QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync()
         {
-            var result = await _client.GetAllQuantityTypesInPacket();
+            var result = await _client.GetAllQuantityTypesInPacketAsync();
             return result.Select(_converters.ToDomain<QuantityTypeInPacketContract, QuantityTypeInPacket>);
         }
 

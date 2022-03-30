@@ -19,13 +19,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
 
         public ChangeItemQuantityOnShoppingListContract ToContract(ChangeItemQuantityOnShoppingListRequest source)
         {
-            return new ChangeItemQuantityOnShoppingListContract
-            {
-                ShoppingListId = source.ShoppingListId,
-                ItemId = itemIdConverter.ToContract(source.ItemId),
-                ItemTypeId = source.ItemTypeId,
-                Quantity = source.Quantity
-            };
+            return new ChangeItemQuantityOnShoppingListContract(
+                itemIdConverter.ToContract(source.ItemId),
+                source.ItemTypeId,
+                source.Quantity);
         }
     }
 }
