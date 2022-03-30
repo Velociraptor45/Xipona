@@ -10,18 +10,14 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Stores.T
         public CreateStoreContract ToContract(CreateStoreRequest request)
         {
             var sections = request.Store.Sections.Select(s =>
-                new CreateSectionContract
-                {
-                    Name = s.Name,
-                    SortingIndex = s.SortingIndex,
-                    IsDefaultSection = s.IsDefaultSection
-                });
+                new CreateSectionContract(
+                    s.Name,
+                    s.SortingIndex,
+                    s.IsDefaultSection));
 
-            return new CreateStoreContract
-            {
-                Name = request.Store.Name,
-                Sections = sections
-            };
+            return new CreateStoreContract(
+                request.Store.Name,
+                sections);
         }
     }
 }

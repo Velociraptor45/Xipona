@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
 using System;
+using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists
 {

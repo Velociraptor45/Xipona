@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores
+namespace ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared
 {
     public class StoreSectionContract
     {

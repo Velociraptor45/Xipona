@@ -25,6 +25,7 @@ using RestEase;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.Client
 {
@@ -117,14 +118,14 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region StoreController
 
-        [Get("store/active")]
-        Task<IEnumerable<ActiveStoreContract>> GetAllActiveStores();
+        [Get("stores/active")]
+        Task<IEnumerable<ActiveStoreContract>> GetAllActiveStoresAsync();
 
-        [Post("store/create")]
-        Task CreateStore([Body] CreateStoreContract createStoreContract);
+        [Post("stores")]
+        Task<StoreContract> CreateStoreAsync([Body] CreateStoreContract createStoreContract);
 
-        [Post("store/update")]
-        Task UpdateStore([Body] UpdateStoreContract updateStoreContract);
+        [Put("stores")]
+        Task UpdateStoreAsync([Body] UpdateStoreContract updateStoreContract);
 
         #endregion StoreController
 

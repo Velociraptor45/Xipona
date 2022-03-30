@@ -157,8 +157,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task<IEnumerable<Store>> GetAllActiveStoresAsync()
         {
-            var contracts = await _client.GetAllActiveStores();
-            return contracts.Select(_converters.ToDomain<ActiveStoreContract, Store>);
+            var contracts = await _client.GetAllActiveStoresAsync();
+
+            return contracts is null ?
+                Enumerable.Empty<Store>() :
+                contracts.Select(_converters.ToDomain<ActiveStoreContract, Store>);
         }
 
         public async Task<IEnumerable<Manufacturer>> GetAllActiveManufacturersAsync()
@@ -251,12 +254,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task CreateStoreAsync(CreateStoreRequest request)
         {
             var contract = _converters.ToContract<CreateStoreRequest, CreateStoreContract>(request);
-            await _client.CreateStore(contract);
+            await _client.CreateStoreAsync(contract);
         }
 
         public async Task ModifyStoreAsync(ModifyStoreRequest request)
         {
-            await _client.UpdateStore(_converters.ToContract<ModifyStoreRequest, UpdateStoreContract>(request));
+            await _client.UpdateStoreAsync(_converters.ToContract<ModifyStoreRequest, UpdateStoreContract>(request));
         }
     }
 }

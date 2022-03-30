@@ -11,6 +11,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveSho
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
@@ -182,19 +183,19 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region StoreController
 
-        public async Task<IEnumerable<ActiveStoreContract>> GetAllActiveStores()
+        public async Task<IEnumerable<ActiveStoreContract>> GetAllActiveStoresAsync()
         {
-            return await _apiClient.GetAllActiveStores();
+            return await _apiClient.GetAllActiveStoresAsync();
         }
 
-        public async Task CreateStore(CreateStoreContract createStoreContract)
+        public async Task<StoreContract> CreateStoreAsync(CreateStoreContract createStoreContract)
         {
-            await _apiClient.CreateStore(createStoreContract);
+            return await _apiClient.CreateStoreAsync(createStoreContract);
         }
 
-        public async Task UpdateStore(UpdateStoreContract updateStoreContract)
+        public async Task UpdateStoreAsync(UpdateStoreContract updateStoreContract)
         {
-            await _apiClient.UpdateStore(updateStoreContract);
+            await _apiClient.UpdateStoreAsync(updateStoreContract);
         }
 
         #endregion StoreController

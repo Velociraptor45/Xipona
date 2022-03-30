@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
