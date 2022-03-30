@@ -207,42 +207,14 @@ public class ShoppingListController : ControllerBase
         return Ok();
     }
 
-    [HttpPost]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("items/put-in-basket")]
-    public async Task<IActionResult> PutItemInBasket([FromBody] PutItemInBasketContract contract)
-    {
-        if (contract.ItemId.Actual is null && contract.ItemId.Offline is null)
-            return BadRequest("At least one item id must be specified");
-
-        var itemId = contract.ItemId.Actual != null
-            ? OfflineTolerantItemId.FromActualId(contract.ItemId.Actual.Value)
-            : OfflineTolerantItemId.FromOfflineId(contract.ItemId.Offline!.Value);
-
-        var itemTypeId = contract.ItemTypeId.HasValue
-            ? new ItemTypeId(contract.ItemTypeId.Value)
-            : (ItemTypeId?)null;
-        var command = new PutItemInBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId,
-            itemTypeId);
-
-        try
-        {
-            await _commandDispatcher.DispatchAsync(command, default);
-        }
-        catch (DomainException e)
-        {
-            return BadRequest(e.Reason);
-        }
-
-        return Ok();
-    }
-
-    [HttpPost]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("items/remove-from-basket")]
-    public async Task<IActionResult> RemoveItemFromBasket([FromBody] RemoveItemFromBasketContract contract)
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{shoppingListId:guid}/items/basket/add")]
+    public async Task<IActionResult> PutItemInBasketAsync([FromRoute] Guid shoppingListId,
+        [FromBody] PutItemInBasketContract contract)
     {
         OfflineTolerantItemId itemId;
         try
@@ -257,8 +229,7 @@ public class ShoppingListController : ControllerBase
         var itemTypeId = contract.ItemTypeId.HasValue
             ? new ItemTypeId(contract.ItemTypeId.Value)
             : (ItemTypeId?)null;
-        var command = new RemoveItemFromBasketCommand(new ShoppingListId(contract.ShoppingListId), itemId,
-            itemTypeId);
+        var command = new PutItemInBasketCommand(new ShoppingListId(shoppingListId), itemId, itemTypeId);
 
         try
         {
@@ -266,7 +237,51 @@ public class ShoppingListController : ControllerBase
         }
         catch (DomainException e)
         {
-            return BadRequest(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.ShoppingListNotFound or ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+
+        return Ok();
+    }
+
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{shoppingListId:guid}/items/basket/remove")]
+    public async Task<IActionResult> RemoveItemFromBasketAsync([FromRoute] Guid shoppingListId,
+        [FromBody] RemoveItemFromBasketContract contract)
+    {
+        OfflineTolerantItemId itemId;
+        try
+        {
+            itemId = _offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
+        }
+        catch (ArgumentException)
+        {
+            return BadRequest("No item id was specified.");
+        }
+
+        var itemTypeId = contract.ItemTypeId.HasValue
+            ? new ItemTypeId(contract.ItemTypeId.Value)
+            : (ItemTypeId?)null;
+        var command = new RemoveItemFromBasketCommand(new ShoppingListId(shoppingListId), itemId, itemTypeId);
+
+        try
+        {
+            await _commandDispatcher.DispatchAsync(command, default);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.ShoppingListNotFound or ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
         }
 
         return Ok();

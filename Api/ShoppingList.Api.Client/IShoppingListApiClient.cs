@@ -51,11 +51,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Post("shopping-lists/{shoppingListId}/finish")]
         Task FinishList([Path] Guid shoppingListId);
 
-        [Post("shopping-lists/items/put-in-basket")]
-        Task PutItemInBasket([Body] PutItemInBasketContract contract);
+        [Post("shopping-lists/{shoppingListId:guid}/items/basket/add")]
+        Task PutItemInBasketAsync([Path] Guid shoppingListId, [Body] PutItemInBasketContract contract);
 
-        [Post("shopping-lists/items/remove-from-basket")]
-        Task RemoveItemFromBasket([Body] RemoveItemFromBasketContract contract);
+        [Post("shopping-lists/{shoppingListId:guid}/items/basket/remove")]
+        Task RemoveItemFromBasketAsync([Path] Guid shoppingListId, [Body] RemoveItemFromBasketContract contract);
 
         [Delete("shopping-lists/{shoppingListId}/items")]
         Task RemoveItemFromShoppingListAsync([Path] Guid shoppingListId,
