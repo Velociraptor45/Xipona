@@ -135,11 +135,14 @@ public class ShoppingListController : ControllerBase
         return Ok();
     }
 
-    [HttpPost]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("items/add")]
-    public async Task<IActionResult> AddItemToShoppingList([FromBody] AddItemToShoppingListContract contract)
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{shoppingListId:guid}/items")]
+    public async Task<IActionResult> AddItemToShoppingListAsync([FromRoute] Guid shoppingListId,
+        [FromBody] AddItemToShoppingListContract contract)
     {
         OfflineTolerantItemId itemId;
         try
@@ -152,7 +155,7 @@ public class ShoppingListController : ControllerBase
         }
 
         var command = new AddItemToShoppingListCommand(
-            new ShoppingListId(contract.ShoppingListId),
+            new ShoppingListId(shoppingListId),
             itemId,
             contract.SectionId.HasValue ? new SectionId(contract.SectionId.Value) : null,
             new QuantityInBasket(contract.Quantity));
@@ -163,21 +166,30 @@ public class ShoppingListController : ControllerBase
         }
         catch (DomainException e)
         {
-            return BadRequest(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.ShoppingListNotFound or ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
         }
 
         return Ok();
     }
 
-    [HttpPost]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("items/add-with-type")]
-    public async Task<IActionResult> AddItemWithTypeToShoppingList([FromBody]
-        AddItemWithTypeToShoppingListContract contract)
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{shoppingListId:guid}/items/{itemId:guid}/{itemTypeId:guid}")]
+    public async Task<IActionResult> AddItemWithTypeToShoppingListAsync([FromRoute] Guid shoppingListId,
+        [FromRoute] Guid itemId, [FromRoute] Guid itemTypeId, [FromBody] AddItemWithTypeToShoppingListContract contract)
     {
-        var command = _converters.ToDomain<AddItemWithTypeToShoppingListContract, AddItemWithTypeToShoppingListCommand>(
-            contract);
+        var command = new AddItemWithTypeToShoppingListCommand(
+            new ShoppingListId(shoppingListId),
+            new ItemId(itemId),
+            new ItemTypeId(itemTypeId),
+            contract.SectionId.HasValue ? new SectionId(contract.SectionId.Value) : null,
+            new QuantityInBasket(contract.Quantity));
 
         try
         {
@@ -185,7 +197,11 @@ public class ShoppingListController : ControllerBase
         }
         catch (DomainException e)
         {
-            return UnprocessableEntity(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.ShoppingListNotFound or ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
         }
 
         return Ok();

@@ -38,11 +38,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Get("shopping-lists/active/{storeId}")]
         Task<ShoppingListContract> GetActiveShoppingListByStoreIdAsync([Path] Guid storeId);
 
-        [Post("shopping-lists/items/add")]
-        Task AddItemToShoppingList([Body] AddItemToShoppingListContract contract);
+        [Post("shopping-lists/{shoppingListId:guid}/items")]
+        Task AddItemToShoppingListAsync([Path] Guid shoppingListId, [Body] AddItemToShoppingListContract contract);
 
-        [Post("shopping-lists/items/add-with-type")]
-        Task AddItemWithTypeToShoppingList([Body] AddItemWithTypeToShoppingListContract contract);
+        [Post("shopping-lists/{shoppingListId:guid}/items/{itemId:guid}/{itemTypeId:guid}")]
+        Task AddItemWithTypeToShoppingListAsync([Path] Guid shoppingListId, [Path] Guid itemId,
+            [Path] Guid itemTypeId, [Body] AddItemWithTypeToShoppingListContract contract);
 
         [Post("shopping-lists/items/change-quantity")]
         Task ChangeItemQuantityOnShoppingList([Body] ChangeItemQuantityOnShoppingListContract contract);

@@ -66,14 +66,15 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await _apiClient.RemoveItemFromShoppingListAsync(shoppingListId, contract);
         }
 
-        public async Task AddItemToShoppingList(AddItemToShoppingListContract contract)
+        public async Task AddItemToShoppingListAsync(Guid shoppingListId, AddItemToShoppingListContract contract)
         {
-            await _apiClient.AddItemToShoppingList(contract);
+            await _apiClient.AddItemToShoppingListAsync(shoppingListId, contract);
         }
 
-        public async Task AddItemWithTypeToShoppingList(AddItemWithTypeToShoppingListContract contract)
+        public async Task AddItemWithTypeToShoppingListAsync(Guid shoppingListId, Guid itemId, Guid itemTypeId,
+            AddItemWithTypeToShoppingListContract contract)
         {
-            await _apiClient.AddItemWithTypeToShoppingList(contract);
+            await _apiClient.AddItemWithTypeToShoppingListAsync(shoppingListId, itemId, itemTypeId, contract);
         }
 
         public async Task PutItemInBasket(PutItemInBasketContract contract)
