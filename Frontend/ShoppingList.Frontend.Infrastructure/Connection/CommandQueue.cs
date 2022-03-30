@@ -130,18 +130,19 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 {
                     Console.WriteLine($"Encountered {e.GetType()} during request.");
 
-                    if (e.StatusCode == HttpStatusCode.BadRequest
-                        || e.StatusCode == HttpStatusCode.InternalServerError)
+                    if (e.StatusCode is HttpStatusCode.BadRequest
+                        or HttpStatusCode.InternalServerError
+                        or HttpStatusCode.UnprocessableEntity)
                     {
-                        throw new ApiProcessingException("An error occured while processing the request. See inner exception for more details.", e);
+                        throw new ApiProcessingException("An error occurred while processing the request. See inner exception for more details.", e);
                     }
 
-                    throw new ApiConnectionException("An api error occured while processing the request. See inner exception for more details.", e);
+                    throw new ApiConnectionException("An api error occurred while processing the request. See inner exception for more details.", e);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine($"Encountered {e.GetType()} during request.");
-                    throw new ApiConnectionException("An unknown error occured. See inner exception for more details.", e);
+                    throw new ApiConnectionException("An unknown error occurred. See inner exception for more details.", e);
                 }
 
                 lock (queue)
