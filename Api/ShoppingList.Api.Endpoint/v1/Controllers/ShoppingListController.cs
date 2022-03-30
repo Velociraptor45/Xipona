@@ -10,8 +10,6 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Queries.ActiveShoppingListByStoreId;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.AllQuantityTypes;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.AllQuantityTypesInPacket;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
@@ -20,16 +18,13 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBa
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.Shared;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
-using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 
@@ -41,25 +36,15 @@ public class ShoppingListController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
-    private readonly IToContractConverter<ShoppingListReadModel, ShoppingListContract> _shoppingListToContractConverter;
-    private readonly IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> _quantityTypeToContractConverter;
-    private readonly IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> _quantityTypeInPacketToContractConverter;
-    private readonly IToDomainConverter<ItemIdContract, OfflineTolerantItemId> _offlineTolerantItemIdConverter;
     private readonly IEndpointConverters _converters;
 
-    public ShoppingListController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
-        IToContractConverter<ShoppingListReadModel, ShoppingListContract> shoppingListToContractConverter,
-        IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeToContractConverter,
-        IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketToContractConverter,
-        IToDomainConverter<ItemIdContract, OfflineTolerantItemId> offlineTolerantItemIdConverter,
+    public ShoppingListController(
+        IQueryDispatcher queryDispatcher,
+        ICommandDispatcher commandDispatcher,
         IEndpointConverters converters)
     {
         _queryDispatcher = queryDispatcher;
         _commandDispatcher = commandDispatcher;
-        _shoppingListToContractConverter = shoppingListToContractConverter;
-        _quantityTypeToContractConverter = quantityTypeToContractConverter;
-        _quantityTypeInPacketToContractConverter = quantityTypeInPacketToContractConverter;
-        _offlineTolerantItemIdConverter = offlineTolerantItemIdConverter;
         _converters = converters;
     }
 
@@ -86,7 +71,7 @@ public class ShoppingListController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        var contract = _shoppingListToContractConverter.ToContract(readModel);
+        var contract = _converters.ToContract<ShoppingListReadModel, ShoppingListContract>(readModel);
 
         return Ok(contract);
     }
@@ -103,7 +88,7 @@ public class ShoppingListController : ControllerBase
         OfflineTolerantItemId tolerantItemId;
         try
         {
-            tolerantItemId = _offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
+            tolerantItemId = _converters.ToDomain<ItemIdContract, OfflineTolerantItemId>(contract.ItemId);
         }
         catch (ArgumentException)
         {
@@ -147,7 +132,7 @@ public class ShoppingListController : ControllerBase
         OfflineTolerantItemId itemId;
         try
         {
-            itemId = _offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
+            itemId = _converters.ToDomain<ItemIdContract, OfflineTolerantItemId>(contract.ItemId);
         }
         catch (ArgumentException)
         {
@@ -219,7 +204,7 @@ public class ShoppingListController : ControllerBase
         OfflineTolerantItemId itemId;
         try
         {
-            itemId = _offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
+            itemId = _converters.ToDomain<ItemIdContract, OfflineTolerantItemId>(contract.ItemId);
         }
         catch (ArgumentException)
         {
@@ -259,7 +244,7 @@ public class ShoppingListController : ControllerBase
         OfflineTolerantItemId itemId;
         try
         {
-            itemId = _offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
+            itemId = _converters.ToDomain<ItemIdContract, OfflineTolerantItemId>(contract.ItemId);
         }
         catch (ArgumentException)
         {
@@ -299,7 +284,7 @@ public class ShoppingListController : ControllerBase
         OfflineTolerantItemId itemId;
         try
         {
-            itemId = _offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
+            itemId = _converters.ToDomain<ItemIdContract, OfflineTolerantItemId>(contract.ItemId);
         }
         catch (ArgumentException)
         {
@@ -350,29 +335,5 @@ public class ShoppingListController : ControllerBase
         }
 
         return Ok();
-    }
-
-    [HttpGet]
-    [ProducesResponseType(200)]
-    [Route("quantity-types")]
-    public async Task<IActionResult> GetAllQuantityTypes()
-    {
-        var query = new AllQuantityTypesQuery();
-        var readModels = await _queryDispatcher.DispatchAsync(query, default);
-        var contracts = _quantityTypeToContractConverter.ToContract(readModels);
-
-        return Ok(contracts);
-    }
-
-    [HttpGet]
-    [ProducesResponseType(200)]
-    [Route("quantity-types-in-packet")]
-    public async Task<IActionResult> GetAllQuantityTypesInPacket()
-    {
-        var query = new AllQuantityTypesInPacketQuery();
-        var readModels = await _queryDispatcher.DispatchAsync(query, default);
-        var contracts = _quantityTypeInPacketToContractConverter.ToContract(readModels);
-
-        return Ok(contracts);
     }
 }

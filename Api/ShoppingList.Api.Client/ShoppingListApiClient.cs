@@ -97,16 +97,6 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await _apiClient.FinishListAsync(id);
         }
 
-        public async Task<IEnumerable<QuantityTypeContract>> GetAllQuantityTypes()
-        {
-            return await _apiClient.GetAllQuantityTypes();
-        }
-
-        public async Task<IEnumerable<QuantityTypeInPacketContract>> GetAllQuantityTypesInPacket()
-        {
-            return await _apiClient.GetAllQuantityTypesInPacket();
-        }
-
         #endregion ShoppingListController
 
         #region ItemController
@@ -176,6 +166,16 @@ namespace ProjectHermes.ShoppingList.Api.Client
         public async Task MakeTemporaryItemPermanentAsync(Guid id, MakeTemporaryItemPermanentContract contract)
         {
             await _apiClient.MakeTemporaryItemPermanentAsync(id, contract);
+        }
+
+        public async Task<IEnumerable<QuantityTypeContract>> GetAllQuantityTypesAsync()
+        {
+            return await _apiClient.GetAllQuantityTypesAsync();
+        }
+
+        public async Task<IEnumerable<QuantityTypeInPacketContract>> GetAllQuantityTypesInPacketAsync()
+        {
+            return await _apiClient.GetAllQuantityTypesInPacketAsync();
         }
 
         #endregion ItemController

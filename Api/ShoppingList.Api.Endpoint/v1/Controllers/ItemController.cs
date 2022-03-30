@@ -11,11 +11,14 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.Mak
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ModifyItem;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.AllQuantityTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.AllQuantityTypesInPacket;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.ItemById;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItems;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItemsByFilters;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
@@ -34,6 +37,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
@@ -155,6 +159,40 @@ public class ItemController : ControllerBase
 
         var contracts =
             _converters.ToContract<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>(readModels);
+
+        return Ok(contracts);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<QuantityTypeContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [Route("quantity-types")]
+    public async Task<IActionResult> GetAllQuantityTypesAsync()
+    {
+        var query = new AllQuantityTypesQuery();
+        var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+
+        if (!readModels.Any())
+            return NoContent();
+
+        var contracts = _converters.ToContract<QuantityTypeReadModel, QuantityTypeContract>(readModels);
+
+        return Ok(contracts);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<QuantityTypeInPacketContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [Route("quantity-types-in-packet")]
+    public async Task<IActionResult> GetAllQuantityTypesInPacketAsync()
+    {
+        var query = new AllQuantityTypesInPacketQuery();
+        var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+
+        if (!readModels.Any())
+            return NoContent();
+
+        var contracts = _converters.ToContract<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract>(readModels);
 
         return Ok(contracts);
     }

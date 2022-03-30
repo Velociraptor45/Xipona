@@ -62,12 +62,6 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task RemoveItemFromShoppingListAsync([Path] Guid id,
             [Body] RemoveItemFromShoppingListContract contract);
 
-        [Get("shopping-lists/quantity-types")]
-        Task<IEnumerable<QuantityTypeContract>> GetAllQuantityTypes();
-
-        [Get("shopping-lists/quantity-types-in-packet")]
-        Task<IEnumerable<QuantityTypeInPacketContract>> GetAllQuantityTypesInPacket();
-
         #endregion ShoppingListController
 
         #region ItemController
@@ -94,6 +88,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Get("items/filter")]
         Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] IEnumerable<Guid> storeIds,
             [Query] IEnumerable<Guid> itemCategoryIds, [Query] IEnumerable<Guid> manufacturerIds);
+
+        [Get("items/quantity-types")]
+        Task<IEnumerable<QuantityTypeContract>> GetAllQuantityTypesAsync();
+
+        [Get("items/quantity-types-in-packet")]
+        Task<IEnumerable<QuantityTypeInPacketContract>> GetAllQuantityTypesInPacketAsync();
 
         [Put("items/without-types/{id}/modify")]
         Task ModifyItemAsync([Path] Guid id, [Body] ModifyItemContract contract);
