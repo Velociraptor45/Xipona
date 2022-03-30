@@ -30,39 +30,40 @@ namespace ProjectHermes.ShoppingList.Api.Client
 {
     public interface IShoppingListApiClient
     {
-        #region ShoppingListController
-
-        [Get("shopping-list/is-alive")]
+        [Get("monitoring/alive")]
         Task<bool> IsAlive();
 
-        [Post("shopping-list/items/add")]
+        #region ShoppingListController
+
+        [Get("shopping-lists/active/{storeId}")]
+        Task<ShoppingListContract> GetActiveShoppingListByStoreIdAsync([Path] Guid storeId);
+
+        [Post("shopping-lists/items/add")]
         Task AddItemToShoppingList([Body] AddItemToShoppingListContract contract);
 
-        [Post("shopping-list/items/add-with-type")]
+        [Post("shopping-lists/items/add-with-type")]
         Task AddItemWithTypeToShoppingList([Body] AddItemWithTypeToShoppingListContract contract);
 
-        [Post("shopping-list/items/change-quantity")]
+        [Post("shopping-lists/items/change-quantity")]
         Task ChangeItemQuantityOnShoppingList([Body] ChangeItemQuantityOnShoppingListContract contract);
 
-        [Post("shopping-list/{shoppingListId}/finish")]
+        [Post("shopping-lists/{shoppingListId}/finish")]
         Task FinishList([Path] Guid shoppingListId);
 
-        [Get("shopping-list/active/{storeId}")]
-        Task<ShoppingListContract> GetActiveShoppingListByStoreId([Path] Guid storeId);
-
-        [Post("shopping-list/items/put-in-basket")]
+        [Post("shopping-lists/items/put-in-basket")]
         Task PutItemInBasket([Body] PutItemInBasketContract contract);
 
-        [Post("shopping-list/items/remove-from-basket")]
+        [Post("shopping-lists/items/remove-from-basket")]
         Task RemoveItemFromBasket([Body] RemoveItemFromBasketContract contract);
 
-        [Post("shopping-list/items/remove")]
-        Task RemoveItemFromShoppingList([Body] RemoveItemFromShoppingListContract contract);
+        [Delete("shopping-lists/{shoppingListId}/items")]
+        Task RemoveItemFromShoppingListAsync([Path] Guid shoppingListId,
+            [Body] RemoveItemFromShoppingListContract contract);
 
-        [Get("shopping-list/quantity-types")]
+        [Get("shopping-lists/quantity-types")]
         Task<IEnumerable<QuantityTypeContract>> GetAllQuantityTypes();
 
-        [Get("shopping-list/quantity-types-in-packet")]
+        [Get("shopping-lists/quantity-types-in-packet")]
         Task<IEnumerable<QuantityTypeInPacketContract>> GetAllQuantityTypesInPacket();
 
         #endregion ShoppingListController

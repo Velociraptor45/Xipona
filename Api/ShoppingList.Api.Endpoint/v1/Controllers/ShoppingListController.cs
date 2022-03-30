@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.AddItemToShoppingList;
@@ -11,6 +12,7 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Queries.ActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.AllQuantityTypesInPacket;
+using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
@@ -22,6 +24,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityT
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
@@ -33,7 +36,7 @@ using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
 [ApiController]
-[Route("v1/shopping-list")]
+[Route("v1/shopping-lists")]
 public class ShoppingListController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;
@@ -61,28 +64,26 @@ public class ShoppingListController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(200)]
-    [Route("is-alive")]
-    public IActionResult IsAlive()
-    {
-        return Ok(true);
-    }
-
-    [HttpGet]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("active/{storeId}")]
-    public async Task<IActionResult> GetActiveShoppingListByStoreId([FromRoute(Name = "storeId")] Guid storeId)
+    [ProducesResponseType(typeof(ShoppingListContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("active/{storeId:guid}")]
+    public async Task<IActionResult> GetActiveShoppingListByStoreIdAsync([FromRoute] Guid storeId)
     {
         var query = new ActiveShoppingListByStoreIdQuery(new StoreId(storeId));
+
         ShoppingListReadModel readModel;
         try
         {
             readModel = await _queryDispatcher.DispatchAsync(query, default);
         }
-        catch (ArgumentException e)
+        catch (DomainException e)
         {
-            return BadRequest(e.Message);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ShoppingListNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
         }
 
         var contract = _shoppingListToContractConverter.ToContract(readModel);
@@ -90,17 +91,19 @@ public class ShoppingListController : ControllerBase
         return Ok(contract);
     }
 
-    [HttpPost]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("items/remove")]
-    public async Task<IActionResult> RemoveItemFromShoppingList(
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{shoppingListId:guid}/items")]
+    public async Task<IActionResult> RemoveItemFromShoppingListAsync([FromRoute] Guid shoppingListId,
         [FromBody] RemoveItemFromShoppingListContract contract)
     {
-        OfflineTolerantItemId itemId;
+        OfflineTolerantItemId tolerantItemId;
         try
         {
-            itemId = _offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
+            tolerantItemId = _offlineTolerantItemIdConverter.ToDomain(contract.ItemId);
         }
         catch (ArgumentException)
         {
@@ -111,7 +114,9 @@ public class ShoppingListController : ControllerBase
             ? new ItemTypeId(contract.ItemTypeId.Value)
             : (ItemTypeId?)null;
 
-        var command = new RemoveItemFromShoppingListCommand(new ShoppingListId(contract.ShoppingListId), itemId,
+        var command = new RemoveItemFromShoppingListCommand(
+            new ShoppingListId(shoppingListId),
+            tolerantItemId,
             itemTypeId);
 
         try
@@ -120,7 +125,11 @@ public class ShoppingListController : ControllerBase
         }
         catch (DomainException e)
         {
-            return BadRequest(e.Reason);
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.ShoppingListNotFound or ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
         }
 
         return Ok();
