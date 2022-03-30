@@ -38,28 +38,28 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Get("shopping-lists/active/{storeId}")]
         Task<ShoppingListContract> GetActiveShoppingListByStoreIdAsync([Path] Guid storeId);
 
-        [Put("shopping-lists/{shoppingListId}/items")]
-        Task AddItemToShoppingListAsync([Path] Guid shoppingListId, [Body] AddItemToShoppingListContract contract);
+        [Put("shopping-lists/{id}/items")]
+        Task AddItemToShoppingListAsync([Path] Guid id, [Body] AddItemToShoppingListContract contract);
 
-        [Put("shopping-lists/{shoppingListId}/items/{itemId}/{itemTypeId}")]
-        Task AddItemWithTypeToShoppingListAsync([Path] Guid shoppingListId, [Path] Guid itemId,
+        [Put("shopping-lists/{id}/items/{itemId}/{itemTypeId}")]
+        Task AddItemWithTypeToShoppingListAsync([Path] Guid id, [Path] Guid itemId,
             [Path] Guid itemTypeId, [Body] AddItemWithTypeToShoppingListContract contract);
 
-        [Put("shopping-lists/{shoppingListId}/items/quantity")]
-        Task ChangeItemQuantityOnShoppingListAsync([Path] Guid shoppingListId,
+        [Put("shopping-lists/{id}/items/quantity")]
+        Task ChangeItemQuantityOnShoppingListAsync([Path] Guid id,
             [Body] ChangeItemQuantityOnShoppingListContract contract);
 
-        [Put("shopping-lists/{shoppingListId}/finish")]
-        Task FinishListAsync([Path] Guid shoppingListId);
+        [Put("shopping-lists/{id}/finish")]
+        Task FinishListAsync([Path] Guid id);
 
-        [Put("shopping-lists/{shoppingListId}/items/basket/add")]
-        Task PutItemInBasketAsync([Path] Guid shoppingListId, [Body] PutItemInBasketContract contract);
+        [Put("shopping-lists/{id}/items/basket/add")]
+        Task PutItemInBasketAsync([Path] Guid id, [Body] PutItemInBasketContract contract);
 
-        [Put("shopping-lists/{shoppingListId}/items/basket/remove")]
-        Task RemoveItemFromBasketAsync([Path] Guid shoppingListId, [Body] RemoveItemFromBasketContract contract);
+        [Put("shopping-lists/{id}/items/basket/remove")]
+        Task RemoveItemFromBasketAsync([Path] Guid id, [Body] RemoveItemFromBasketContract contract);
 
-        [Delete("shopping-lists/{shoppingListId}/items")]
-        Task RemoveItemFromShoppingListAsync([Path] Guid shoppingListId,
+        [Delete("shopping-lists/{id}/items")]
+        Task RemoveItemFromShoppingListAsync([Path] Guid id,
             [Body] RemoveItemFromShoppingListContract contract);
 
         [Get("shopping-lists/quantity-types")]

@@ -96,8 +96,8 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{shoppingListId:guid}/items")]
-    public async Task<IActionResult> RemoveItemFromShoppingListAsync([FromRoute] Guid shoppingListId,
+    [Route("{id:guid}/items")]
+    public async Task<IActionResult> RemoveItemFromShoppingListAsync([FromRoute] Guid id,
         [FromBody] RemoveItemFromShoppingListContract contract)
     {
         OfflineTolerantItemId tolerantItemId;
@@ -115,7 +115,7 @@ public class ShoppingListController : ControllerBase
             : (ItemTypeId?)null;
 
         var command = new RemoveItemFromShoppingListCommand(
-            new ShoppingListId(shoppingListId),
+            new ShoppingListId(id),
             tolerantItemId,
             itemTypeId);
 
@@ -140,8 +140,8 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{shoppingListId:guid}/items")]
-    public async Task<IActionResult> AddItemToShoppingListAsync([FromRoute] Guid shoppingListId,
+    [Route("{id:guid}/items")]
+    public async Task<IActionResult> AddItemToShoppingListAsync([FromRoute] Guid id,
         [FromBody] AddItemToShoppingListContract contract)
     {
         OfflineTolerantItemId itemId;
@@ -155,7 +155,7 @@ public class ShoppingListController : ControllerBase
         }
 
         var command = new AddItemToShoppingListCommand(
-            new ShoppingListId(shoppingListId),
+            new ShoppingListId(id),
             itemId,
             contract.SectionId.HasValue ? new SectionId(contract.SectionId.Value) : null,
             new QuantityInBasket(contract.Quantity));
@@ -180,12 +180,12 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{shoppingListId:guid}/items/{itemId:guid}/{itemTypeId:guid}")]
-    public async Task<IActionResult> AddItemWithTypeToShoppingListAsync([FromRoute] Guid shoppingListId,
+    [Route("{id:guid}/items/{itemId:guid}/{itemTypeId:guid}")]
+    public async Task<IActionResult> AddItemWithTypeToShoppingListAsync([FromRoute] Guid id,
         [FromRoute] Guid itemId, [FromRoute] Guid itemTypeId, [FromBody] AddItemWithTypeToShoppingListContract contract)
     {
         var command = new AddItemWithTypeToShoppingListCommand(
-            new ShoppingListId(shoppingListId),
+            new ShoppingListId(id),
             new ItemId(itemId),
             new ItemTypeId(itemTypeId),
             contract.SectionId.HasValue ? new SectionId(contract.SectionId.Value) : null,
@@ -212,8 +212,8 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{shoppingListId:guid}/items/basket/add")]
-    public async Task<IActionResult> PutItemInBasketAsync([FromRoute] Guid shoppingListId,
+    [Route("{id:guid}/items/basket/add")]
+    public async Task<IActionResult> PutItemInBasketAsync([FromRoute] Guid id,
         [FromBody] PutItemInBasketContract contract)
     {
         OfflineTolerantItemId itemId;
@@ -229,7 +229,7 @@ public class ShoppingListController : ControllerBase
         var itemTypeId = contract.ItemTypeId.HasValue
             ? new ItemTypeId(contract.ItemTypeId.Value)
             : (ItemTypeId?)null;
-        var command = new PutItemInBasketCommand(new ShoppingListId(shoppingListId), itemId, itemTypeId);
+        var command = new PutItemInBasketCommand(new ShoppingListId(id), itemId, itemTypeId);
 
         try
         {
@@ -252,8 +252,8 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{shoppingListId:guid}/items/basket/remove")]
-    public async Task<IActionResult> RemoveItemFromBasketAsync([FromRoute] Guid shoppingListId,
+    [Route("{id:guid}/items/basket/remove")]
+    public async Task<IActionResult> RemoveItemFromBasketAsync([FromRoute] Guid id,
         [FromBody] RemoveItemFromBasketContract contract)
     {
         OfflineTolerantItemId itemId;
@@ -269,7 +269,7 @@ public class ShoppingListController : ControllerBase
         var itemTypeId = contract.ItemTypeId.HasValue
             ? new ItemTypeId(contract.ItemTypeId.Value)
             : (ItemTypeId?)null;
-        var command = new RemoveItemFromBasketCommand(new ShoppingListId(shoppingListId), itemId, itemTypeId);
+        var command = new RemoveItemFromBasketCommand(new ShoppingListId(id), itemId, itemTypeId);
 
         try
         {
@@ -292,8 +292,8 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{shoppingListId:guid}/items/quantity")]
-    public async Task<IActionResult> ChangeItemQuantityOnShoppingListAsync([FromRoute] Guid shoppingListId,
+    [Route("{id:guid}/items/quantity")]
+    public async Task<IActionResult> ChangeItemQuantityOnShoppingListAsync([FromRoute] Guid id,
         [FromBody] ChangeItemQuantityOnShoppingListContract contract)
     {
         OfflineTolerantItemId itemId;
@@ -309,7 +309,7 @@ public class ShoppingListController : ControllerBase
         var itemTypeId = contract.ItemTypeId.HasValue
             ? new ItemTypeId(contract.ItemTypeId.Value)
             : (ItemTypeId?)null;
-        var command = new ChangeItemQuantityOnShoppingListCommand(new ShoppingListId(shoppingListId), itemId,
+        var command = new ChangeItemQuantityOnShoppingListCommand(new ShoppingListId(id), itemId,
             itemTypeId, new QuantityInBasket(contract.Quantity));
 
         try
@@ -332,10 +332,10 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{shoppingListId:guid}/finish")]
-    public async Task<IActionResult> FinishListAsync([FromRoute] Guid shoppingListId)
+    [Route("{id:guid}/finish")]
+    public async Task<IActionResult> FinishListAsync([FromRoute] Guid id)
     {
-        var command = new FinishShoppingListCommand(new ShoppingListId(shoppingListId), DateTime.UtcNow);
+        var command = new FinishShoppingListCommand(new ShoppingListId(id), DateTime.UtcNow);
         try
         {
             await _commandDispatcher.DispatchAsync(command, default);

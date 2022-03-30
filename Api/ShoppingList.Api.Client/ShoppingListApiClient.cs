@@ -48,53 +48,53 @@ namespace ProjectHermes.ShoppingList.Api.Client
             }.For<IShoppingListApiClient>();
         }
 
-        #region ShoppingListController
-
         public async Task<bool> IsAlive()
         {
             return await _apiClient.IsAlive();
         }
+
+        #region ShoppingListController
 
         public async Task<ShoppingListContract> GetActiveShoppingListByStoreIdAsync(Guid storeId)
         {
             return await _apiClient.GetActiveShoppingListByStoreIdAsync(storeId);
         }
 
-        public async Task RemoveItemFromShoppingListAsync(Guid shoppingListId,
+        public async Task RemoveItemFromShoppingListAsync(Guid id,
             RemoveItemFromShoppingListContract contract)
         {
-            await _apiClient.RemoveItemFromShoppingListAsync(shoppingListId, contract);
+            await _apiClient.RemoveItemFromShoppingListAsync(id, contract);
         }
 
-        public async Task AddItemToShoppingListAsync(Guid shoppingListId, AddItemToShoppingListContract contract)
+        public async Task AddItemToShoppingListAsync(Guid id, AddItemToShoppingListContract contract)
         {
-            await _apiClient.AddItemToShoppingListAsync(shoppingListId, contract);
+            await _apiClient.AddItemToShoppingListAsync(id, contract);
         }
 
-        public async Task AddItemWithTypeToShoppingListAsync(Guid shoppingListId, Guid itemId, Guid itemTypeId,
+        public async Task AddItemWithTypeToShoppingListAsync(Guid id, Guid itemId, Guid itemTypeId,
             AddItemWithTypeToShoppingListContract contract)
         {
-            await _apiClient.AddItemWithTypeToShoppingListAsync(shoppingListId, itemId, itemTypeId, contract);
+            await _apiClient.AddItemWithTypeToShoppingListAsync(id, itemId, itemTypeId, contract);
         }
 
-        public async Task PutItemInBasketAsync(Guid shoppingListId, PutItemInBasketContract contract)
+        public async Task PutItemInBasketAsync(Guid id, PutItemInBasketContract contract)
         {
-            await _apiClient.PutItemInBasketAsync(shoppingListId, contract);
+            await _apiClient.PutItemInBasketAsync(id, contract);
         }
 
-        public async Task RemoveItemFromBasketAsync(Guid shoppingListId, RemoveItemFromBasketContract contract)
+        public async Task RemoveItemFromBasketAsync(Guid id, RemoveItemFromBasketContract contract)
         {
-            await _apiClient.RemoveItemFromBasketAsync(shoppingListId, contract);
+            await _apiClient.RemoveItemFromBasketAsync(id, contract);
         }
 
-        public async Task ChangeItemQuantityOnShoppingListAsync(Guid shoppingListId, ChangeItemQuantityOnShoppingListContract contract)
+        public async Task ChangeItemQuantityOnShoppingListAsync(Guid id, ChangeItemQuantityOnShoppingListContract contract)
         {
-            await _apiClient.ChangeItemQuantityOnShoppingListAsync(shoppingListId, contract);
+            await _apiClient.ChangeItemQuantityOnShoppingListAsync(id, contract);
         }
 
-        public async Task FinishListAsync(Guid shoppingListId)
+        public async Task FinishListAsync(Guid id)
         {
-            await _apiClient.FinishListAsync(shoppingListId);
+            await _apiClient.FinishListAsync(id);
         }
 
         public async Task<IEnumerable<QuantityTypeContract>> GetAllQuantityTypes()
