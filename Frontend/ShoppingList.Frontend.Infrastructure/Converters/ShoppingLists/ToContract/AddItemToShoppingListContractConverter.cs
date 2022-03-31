@@ -17,13 +17,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
 
         public AddItemToShoppingListContract ToContract(AddItemToShoppingListRequest request)
         {
-            return new AddItemToShoppingListContract
-            {
-                ShoppingListId = request.ShoppingListId,
-                ItemId = _itemIdConverter.ToContract(request.ItemId),
-                SectionId = request.SectionId,
-                Quantity = request.Quantity
-            };
+            return new AddItemToShoppingListContract(
+                _itemIdConverter.ToContract(request.ItemId),
+                request.SectionId,
+                request.Quantity);
         }
     }
 }

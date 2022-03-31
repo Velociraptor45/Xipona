@@ -4,6 +4,12 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore
 {
     public class CreateStoreContract
     {
+        public CreateStoreContract(string name, IEnumerable<CreateSectionContract> sections)
+        {
+            Name = name;
+            Sections = sections;
+        }
+
         public string Name { get; set; }
         public IEnumerable<CreateSectionContract> Sections { get; set; }
     }

@@ -28,7 +28,7 @@ public class StoreCreationService : IStoreCreationService
         _cancellationToken = cancellationToken;
     }
 
-    public async Task CreateAsync(StoreCreation creation)
+    public async Task<IStore> CreateAsync(StoreCreation creation)
     {
         ArgumentNullException.ThrowIfNull(creation);
 
@@ -42,5 +42,7 @@ public class StoreCreationService : IStoreCreationService
 
         var shoppingList = _shoppingListFactory.CreateNew(store);
         await _shoppingListRepository.StoreAsync(shoppingList, _cancellationToken);
+
+        return store;
     }
 }

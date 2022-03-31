@@ -11,7 +11,7 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Updates;
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreItems;
 
 public class UpdateItemWithTypesCommandConverter
-    : IToDomainConverter<UpdateItemWithTypesContract, UpdateItemWithTypesCommand>
+    : IToDomainConverter<(Guid id, UpdateItemWithTypesContract contract), UpdateItemWithTypesCommand>
 {
     private readonly IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> _availabilityConverter;
 
@@ -21,34 +21,34 @@ public class UpdateItemWithTypesCommandConverter
         _availabilityConverter = availabilityConverter;
     }
 
-    public UpdateItemWithTypesCommand ToDomain(UpdateItemWithTypesContract source)
+    public UpdateItemWithTypesCommand ToDomain((Guid id, UpdateItemWithTypesContract contract) source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
+        var (id, contract) = source;
+        ArgumentNullException.ThrowIfNull(contract);
 
-        var itemTypeUpdates = source.ItemTypes.Select(t => new ItemTypeUpdate(
+        var itemTypeUpdates = contract.ItemTypes.Select(t => new ItemTypeUpdate(
             new ItemTypeId(t.OldId),
             new ItemTypeName(t.Name),
             _availabilityConverter.ToDomain(t.Availabilities)));
 
         ItemQuantityInPacket? itemQuantityInPacket = null;
         //todo improve this check
-        if (source.QuantityInPacket is not null && source.QuantityTypeInPacket is not null)
+        if (contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is not null)
         {
             itemQuantityInPacket = new ItemQuantityInPacket(
-                new Quantity(source.QuantityInPacket.Value),
-                source.QuantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
+                new Quantity(contract.QuantityInPacket.Value),
+                contract.QuantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
         }
 
         var itemUpdate = new ItemWithTypesUpdate(
-            new ItemId(source.OldId),
-            new ItemName(source.Name),
-            new Comment(source.Comment),
+            new ItemId(id),
+            new ItemName(contract.Name),
+            new Comment(contract.Comment),
             new ItemQuantity(
-                source.QuantityType.ToEnum<QuantityType>(),
+                contract.QuantityType.ToEnum<QuantityType>(),
                 itemQuantityInPacket),
-            new ItemCategoryId(source.ItemCategoryId),
-            source.ManufacturerId.HasValue ? new ManufacturerId(source.ManufacturerId.Value) : null,
+            new ItemCategoryId(contract.ItemCategoryId),
+            contract.ManufacturerId.HasValue ? new ManufacturerId(contract.ManufacturerId.Value) : null,
             itemTypeUpdates);
 
         return new UpdateItemWithTypesCommand(itemUpdate);

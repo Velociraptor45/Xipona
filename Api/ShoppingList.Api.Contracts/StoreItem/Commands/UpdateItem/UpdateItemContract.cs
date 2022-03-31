@@ -6,7 +6,20 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem
 {
     public class UpdateItemContract
     {
-        public Guid OldId { get; set; }
+        public UpdateItemContract(string name, string comment, int quantityType, float? quantityInPacket,
+            int? quantityTypeInPacket, Guid itemCategoryId, Guid? manufacturerId,
+            IEnumerable<ItemAvailabilityContract> availabilities)
+        {
+            Name = name;
+            Comment = comment;
+            QuantityType = quantityType;
+            QuantityInPacket = quantityInPacket;
+            QuantityTypeInPacket = quantityTypeInPacket;
+            ItemCategoryId = itemCategoryId;
+            ManufacturerId = manufacturerId;
+            Availabilities = availabilities;
+        }
+
         public string Name { get; set; }
         public string Comment { get; set; }
         public int QuantityType { get; set; }

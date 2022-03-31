@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Commands.CreateItemCategory;
 
-public class CreateItemCategoryCommand : ICommand<bool>
+public class CreateItemCategoryCommand : ICommand<IItemCategory>
 {
     public CreateItemCategoryCommand(ItemCategoryName name)
     {

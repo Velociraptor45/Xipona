@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Models;
 
@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
                 source.Id,
                 source.Name,
                 source.DefaultQuantity,
-                source.Pricelabel,
+                source.PriceLabel,
                 source.QuantityLabel,
                 source.QuantityNormalizer);
         }

@@ -9,8 +9,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
         public ItemIdContract ToContract(ItemId model)
         {
             return model.ActualId.HasValue ?
-                new ItemIdContract { Actual = model.ActualId } :
-                new ItemIdContract { Offline = model.OfflineId };
+                ItemIdContract.FromActualId(model.ActualId) :
+                ItemIdContract.FromOfflineId(model.OfflineId);
         }
     }
 }

@@ -1,37 +1,41 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.AllActiveManufacturers;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.ManufacturerSearch;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
+using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
 [ApiController]
-[Route("v1/manufacturer")]
+[Route("v1/manufacturers")]
 public class ManufacturerController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
-    private readonly IToContractConverter<ManufacturerReadModel, ManufacturerContract> _manufacturerContractConverter;
+    private readonly IEndpointConverters _converters;
 
-    public ManufacturerController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
-        IToContractConverter<ManufacturerReadModel, ManufacturerContract> manufacturerContractConverter)
+    public ManufacturerController(
+        IQueryDispatcher queryDispatcher,
+        ICommandDispatcher commandDispatcher,
+        IEndpointConverters converters)
     {
         _queryDispatcher = queryDispatcher;
         _commandDispatcher = commandDispatcher;
-        _manufacturerContractConverter = manufacturerContractConverter;
+        _converters = converters;
     }
 
     [HttpGet]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400)]
-    [Route("search/{searchInput}")]
-    public async Task<IActionResult> GetManufacturerSearchResults([FromRoute(Name = "searchInput")] string searchInput)
+    [ProducesResponseType(typeof(IEnumerable<ManufacturerContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [Route("")]
+    public async Task<IActionResult> GetManufacturerSearchResultsAsync([FromQuery] string searchInput)
     {
         searchInput = searchInput.Trim();
         if (string.IsNullOrEmpty(searchInput))
@@ -40,32 +44,44 @@ public class ManufacturerController : ControllerBase
         }
 
         var query = new ManufacturerSearchQuery(searchInput);
-        var manufacturerReadModels = await _queryDispatcher.DispatchAsync(query, default);
-        var manufacturerContracts = _manufacturerContractConverter.ToContract(manufacturerReadModels);
+        var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
 
-        return Ok(manufacturerContracts);
+        if (!readModels.Any())
+            return NoContent();
+
+        var contracts = _converters.ToContract<ManufacturerReadModel, ManufacturerContract>(readModels);
+
+        return Ok(contracts);
     }
 
     [HttpGet]
-    [ProducesResponseType(200)]
-    [Route("all/active")]
-    public async Task<IActionResult> GetAllActiveManufacturers()
+    [ProducesResponseType(typeof(IEnumerable<ManufacturerContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [Route("active")]
+    public async Task<IActionResult> GetAllActiveManufacturersAsync()
     {
         var query = new AllActiveManufacturersQuery();
-        var readModels = await _queryDispatcher.DispatchAsync(query, default);
-        var contracts = _manufacturerContractConverter.ToContract(readModels);
+        var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+
+        if (!readModels.Any())
+            return NoContent();
+
+        var contracts = _converters.ToContract<ManufacturerReadModel, ManufacturerContract>(readModels);
 
         return Ok(contracts);
     }
 
     [HttpPost]
-    [ProducesResponseType(200)]
-    [Route("create/{name}")]
-    public async Task<IActionResult> CreateManufacturer([FromRoute(Name = "name")] string name)
+    [ProducesResponseType(typeof(ManufacturerContract), StatusCodes.Status201Created)]
+    [Route("")]
+    public async Task<IActionResult> CreateManufacturerAsync([FromBody] string name)
     {
         var command = new CreateManufacturerCommand(new ManufacturerName(name));
-        await _commandDispatcher.DispatchAsync(command, default);
+        var model = await _commandDispatcher.DispatchAsync(command, default);
 
-        return Ok();
+        var contract = _converters.ToContract<IManufacturer, ManufacturerContract>(model);
+
+        //todo: change to CreatedAtAction when #47 is implemented
+        return Created("", contract);
     }
 }

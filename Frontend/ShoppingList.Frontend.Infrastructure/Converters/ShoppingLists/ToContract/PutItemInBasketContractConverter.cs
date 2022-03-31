@@ -19,12 +19,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
 
         public PutItemInBasketContract ToContract(PutItemInBasketRequest source)
         {
-            return new PutItemInBasketContract()
-            {
-                ShoppingListId = source.ShoppingListId,
-                ItemId = itemIdConverter.ToContract(source.ItemId),
-                ItemTypeId = source.ItemTypeId
-            };
+            return new PutItemInBasketContract(
+                itemIdConverter.ToContract(source.ItemId),
+                source.ItemTypeId);
         }
     }
 }

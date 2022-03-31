@@ -20,9 +20,9 @@ public class ItemCategoryCreationService : IItemCategoryCreationService
         _cancellationToken = cancellationToken;
     }
 
-    public async Task CreateAsync(ItemCategoryName name)
+    public async Task<IItemCategory> CreateAsync(ItemCategoryName name)
     {
         var model = _itemCategoryFactory.Create(ItemCategoryId.New, name, false);
-        await _itemCategoryRepository.StoreAsync(model, _cancellationToken);
+        return await _itemCategoryRepository.StoreAsync(model, _cancellationToken);
     }
 }

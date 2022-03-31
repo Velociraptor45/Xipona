@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
@@ -48,22 +48,20 @@ public class StoreItemContractConverter :
         if (source.Manufacturer != null)
             manufacturerContract = _manufacturerContractConverter.ToContract(source.Manufacturer);
 
-        return new StoreItemContract
-        {
-            Id = source.Id.Value,
-            Name = source.Name.Value,
-            IsDeleted = source.IsDeleted,
-            Comment = source.Comment.Value,
-            IsTemporary = source.IsTemporary,
-            QuantityType = _quantityTypeContractConverter.ToContract(source.QuantityType),
-            QuantityInPacket = source.QuantityInPacket?.Value,
-            QuantityTypeInPacket = source.QuantityTypeInPacket is null ?
-                null :
-                _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket),
-            ItemCategory = itemCategoryContract,
-            Manufacturer = manufacturerContract,
-            Availabilities = _storeItemAvailabilityContractConverter.ToContract(source.Availabilities),
-            ItemTypes = _itemTypeContractConverter.ToContract(source.ItemTypes)
-        };
+        return new StoreItemContract(
+            source.Id.Value,
+            source.Name.Value,
+            source.IsDeleted,
+            source.Comment.Value,
+            source.IsTemporary,
+            _quantityTypeContractConverter.ToContract(source.QuantityType),
+            source.QuantityInPacket?.Value,
+            source.QuantityTypeInPacket is null
+                ? null
+                : _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket),
+            itemCategoryContract,
+            manufacturerContract,
+            _storeItemAvailabilityContractConverter.ToContract(source.Availabilities),
+            _itemTypeContractConverter.ToContract(source.ItemTypes));
     }
 }

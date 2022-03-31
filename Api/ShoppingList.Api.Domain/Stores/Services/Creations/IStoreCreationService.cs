@@ -1,6 +1,8 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Creations;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Creations;
 
 public interface IStoreCreationService
 {
-    Task CreateAsync(StoreCreation creation);
+    Task<IStore> CreateAsync(StoreCreation creation);
 }

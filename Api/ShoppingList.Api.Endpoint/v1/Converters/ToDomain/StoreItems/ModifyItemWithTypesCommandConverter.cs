@@ -10,45 +10,46 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Modifications;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreItems;
 
-public class ItemWithTypesModificationConverter : IToDomainConverter<ModifyItemWithTypesContract, ModifyItemWithTypesCommand>
+public class ModifyItemWithTypesCommandConverter :
+    IToDomainConverter<(Guid id, ModifyItemWithTypesContract contract), ModifyItemWithTypesCommand>
 {
     private readonly IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> _availabilityConverter;
 
-    public ItemWithTypesModificationConverter(
+    public ModifyItemWithTypesCommandConverter(
         IToDomainConverter<ItemAvailabilityContract, IStoreItemAvailability> availabilityConverter)
     {
         _availabilityConverter = availabilityConverter;
     }
 
-    public ModifyItemWithTypesCommand ToDomain(ModifyItemWithTypesContract source)
+    public ModifyItemWithTypesCommand ToDomain((Guid id, ModifyItemWithTypesContract contract) source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
+        var (id, contract) = source;
+        ArgumentNullException.ThrowIfNull(contract);
 
-        var types = source.ItemTypes.Select(t => new ItemTypeModification(
+        var types = contract.ItemTypes.Select(t => new ItemTypeModification(
             t.Id.HasValue ? new ItemTypeId(t.Id.Value) : null,
             new ItemTypeName(t.Name),
             _availabilityConverter.ToDomain(t.Availabilities)));
 
         ItemQuantityInPacket? itemQuantityInPacket = null;
         //todo improve this check
-        if (source.QuantityInPacket is not null && source.QuantityTypeInPacket is not null)
+        if (contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is not null)
         {
             itemQuantityInPacket = new ItemQuantityInPacket(
-                new Quantity(source.QuantityInPacket.Value),
-                source.QuantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
+                new Quantity(contract.QuantityInPacket.Value),
+                contract.QuantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
         }
 
         var modification = new ItemWithTypesModification(
-            new ItemId(source.Id),
-            new ItemName(source.Name),
-            new Comment(source.Comment),
+            new ItemId(id),
+            new ItemName(contract.Name),
+            new Comment(contract.Comment),
             new ItemQuantity(
-                source.QuantityType.ToEnum<QuantityType>(),
+                contract.QuantityType.ToEnum<QuantityType>(),
                 itemQuantityInPacket),
-            new ItemCategoryId(source.ItemCategoryId),
-            source.ManufacturerId.HasValue ?
-                new ManufacturerId(source.ManufacturerId.Value) :
+            new ItemCategoryId(contract.ItemCategoryId),
+            contract.ManufacturerId.HasValue ?
+                new ManufacturerId(contract.ManufacturerId.Value) :
                 null,
             types);
 

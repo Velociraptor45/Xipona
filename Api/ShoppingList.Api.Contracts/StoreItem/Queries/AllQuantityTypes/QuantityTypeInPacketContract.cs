@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes
+﻿namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.AllQuantityTypes
 {
     public class QuantityTypeInPacketContract
     {
