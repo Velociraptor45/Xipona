@@ -71,7 +71,7 @@ public class StoreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("update")]
+    [Route("")]
     public async Task<IActionResult> UpdateStoreAsync([FromBody] UpdateStoreContract updateStoreContract)
     {
         var command = _converters.ToDomain<UpdateStoreContract, UpdateStoreCommand>(updateStoreContract);
