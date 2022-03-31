@@ -9,6 +9,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveSho
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
@@ -25,7 +26,6 @@ using RestEase;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.Client
 {
@@ -131,7 +131,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ManufacturerController
 
-        [Get("manufacturers/search")]
+        [Get("manufacturers")]
         Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResultsAsync([Query] string searchInput);
 
         [Get("manufacturers/active")]

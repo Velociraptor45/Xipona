@@ -34,7 +34,7 @@ public class ManufacturerController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<ManufacturerContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [Route("search")]
+    [Route("")]
     public async Task<IActionResult> GetManufacturerSearchResultsAsync([FromQuery] string searchInput)
     {
         searchInput = searchInput.Trim();
