@@ -1,4 +1,4 @@
-﻿@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListCommunicationService communicationService;
+﻿@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListApiService apiService;
 
 @using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Index;
@@ -27,12 +27,11 @@
 
     private async Task LoadAvailableStoresAsync()
     {
-        var stores = await communicationService.LoadAllActiveStoresAsync(
-            async () => await LoadAvailableStoresAsync(), ErrorHandler);
+        var stores = await apiService.LoadAllActiveStoresAsync(ErrorHandler);
         if (stores == null)
             return;
 
-        List<Store> storesList = stores.ToList();
+        var storesList = stores.ToList();
 
 
         availableStores = new AvailableStores(storesList, storesList.FirstOrDefault()?.Id ?? Guid.Empty);

@@ -5,7 +5,7 @@
 @using ProjectHermes.ShoppingList.Frontend.Models
 @inject NavigationManager navigationManager;
 @inject IItemPriceCalculationService itemPriceCalculationService;
-@inject IShoppingListCommunicationService communicationService;
+@inject IShoppingListApiService communicationService;
 
 <li class="list-style-non py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
     @if (State.ItemsInEditMode)

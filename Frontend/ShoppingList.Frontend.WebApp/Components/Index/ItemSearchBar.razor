@@ -1,5 +1,5 @@
 ﻿@inject ProjectHermes.ShoppingList.Frontend.Models.Index.Services.ITemporaryItemCreationService temporaryItemCreationService;
-@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListCommunicationService communicationService;
+@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListApiService apiService;
 
 @using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
 @using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
@@ -16,9 +16,9 @@
             LabelName="@nameof(SearchItemForShoppingListResult.DisplayValue)"
             AutoClearSearchValue="true"
             AllowClear="true"
-            OnSearch="(s) => OnSearch(s)"
+            OnSearch="s => OnSearchAsync(s)"
             EnableSearch
-            OnSelectedItemChanged="(item) => OnSearchItemSelected(item)">
+            OnSelectedItemChanged="item => OnSearchItemSelectedAsync(item)">
     </Select>
 
     @if (searchBar.Active)
@@ -39,7 +39,7 @@
 
     private SearchBar searchBar = new SearchBar();
 
-    private async Task OnSearch(string searchInput)
+    private async Task OnSearchAsync(string searchInput)
     {
         if (State.ShoppingList.Store == null)
             return;
@@ -53,13 +53,12 @@
         searchInput = searchInput.Trim();
         searchBar.Input = searchInput;
 
-        var result = await communicationService.LoadItemSearchResultAsync(searchInput, State.ShoppingList.Store.Id,
-            async () => await OnSearch(searchInput), ErrorHandler);
+        var result = await apiService.LoadItemSearchResultAsync(searchInput, State.ShoppingList.Store.Id,
+            ErrorHandler);
         if (result == null)
             return;
 
         searchBar.Options = result;
-        //Console.WriteLine($"{searchInput}: {result.ToList().Count}");
 
         StateHasChanged();
     }
@@ -71,50 +70,45 @@
         var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId.Value, item.Name, State.ShoppingList.Store.Id,
             item.PricePerQuantity, State.SelectedStore.DefaultSection.Id.BackendId);
         var addRequest = new AddItemToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, item.Id, item.Quantity, null);
-        await communicationService.EnqueueAsync(createRequest);
-        await communicationService.EnqueueAsync(addRequest);
+        await apiService.EnqueueAsync(createRequest);
+        await apiService.EnqueueAsync(addRequest);
 
         State.AddItemToList(item, State.SelectedStore.DefaultSection.Id.BackendId);
     }
 
-    private async Task OnSearchItemSelected(SearchItemForShoppingListResult item)
+    private async Task OnSearchItemSelectedAsync(SearchItemForShoppingListResult item)
     {
         if (item == null)
             return;
 
-        bool success;
+        async Task OnSuccessAction()
+        {
+            searchBar.ResetInput();
+            searchBar.ResetOptions();
+            await State.RequestReloadAsync();
+        }
+
         if(item.ItemTypeId == null)
         {
-            var request = new AddItemToShoppingListRequest(
-                Guid.NewGuid(), 
-                State.ShoppingList.Id, 
-                ItemId.FromActualId(item.ItemId), 
+            await apiService.AddItemToShoppingListAsync(
+                State.ShoppingList.Id,
+                ItemId.FromActualId(item.ItemId),
                 item.DefaultQuantity,
-                item.DefaultSectionId);
-
-            success = await communicationService.AddItemToShoppingListAsync(request, async () => await OnSearchItemSelected(item), ErrorHandler);
+                item.DefaultSectionId,
+                ErrorHandler,
+                OnSuccessAction);
         }
         else
         {
-            var request = new AddItemWithTypeToShoppingListRequest(
-                Guid.NewGuid(),
+            await apiService.AddItemWithTypeToShoppingListAsync(
                 State.ShoppingList.Id,
                 item.ItemId,
                 item.ItemTypeId.Value,
                 item.DefaultQuantity,
-                item.DefaultSectionId);
-
-            success = await communicationService.AddItemWithTypeToShoppingListAsync(request, async () => await OnSearchItemSelected(item), ErrorHandler);
+                item.DefaultSectionId, 
+                ErrorHandler,
+                OnSuccessAction);
         }
-
-        if (!success)
-            return;
-
-
-        searchBar.ResetInput();
-        searchBar.ResetOptions();
-
-        await State.RequestReloadAsync();
     }
 
     private void OnSearchBarCancleButtonClicked()
