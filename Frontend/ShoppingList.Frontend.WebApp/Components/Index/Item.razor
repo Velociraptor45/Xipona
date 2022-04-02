@@ -5,7 +5,7 @@
 @using ProjectHermes.ShoppingList.Frontend.Models
 @inject NavigationManager navigationManager;
 @inject IItemPriceCalculationService itemPriceCalculationService;
-@inject IShoppingListApiService communicationService;
+@inject IShoppingListApiService apiService;
 
 <li class="list-style-non py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
     @if (State.ItemsInEditMode)
@@ -81,14 +81,12 @@
         if (Model.IsInBasket)
         {
             Model.RemoveFromBasket();
-            var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id, Model.TypeId);
-            await communicationService.EnqueueAsync(request);
+            await apiService.RemoveItemFromBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         }
         else
         {
             Model.PutInBasket();
-            var request = new PutItemInBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id, Model.TypeId);
-            await communicationService.EnqueueAsync(request);
+            await apiService.PutItemInBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         }
         State.StateChanged?.Invoke();
     }
@@ -108,9 +106,7 @@
     private async Task OnRemoveItemButtonClickedAsync()
     {
         State.ShoppingList.Remove(Model.Id, Model.TypeId);
-        var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id, 
-        Model.TypeId);
-        await communicationService.EnqueueAsync(request);
+        await apiService.RemoveItemFromShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         State.StateChanged?.Invoke();
     }
 
@@ -130,9 +126,8 @@
 
     private async Task SendQuantityChangedRequestAsync()
     {
-        var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id, 
-            Model.TypeId, Model.Quantity);
-        await communicationService.EnqueueAsync(request);
+        await apiService.ChangeItemQuantityOnShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId, 
+            Model.Quantity);
     }
 
     private void OnMakeItemPermanentButtonClicked()

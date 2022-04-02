@@ -32,9 +32,42 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             commandQueue.Initialize(errorHandler);
         }
 
-        public async Task EnqueueAsync(IApiRequest request)
+        public async Task ChangeItemQuantityOnShoppingListAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId,
+            float quantity)
         {
-            await commandQueue.Enqueue(request);
+            var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), shoppingListId, itemId,
+                itemTypeId, quantity);
+            await EnqueueAsync(request);
+        }
+
+        public async Task RemoveItemFromShoppingListAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId)
+        {
+            var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), shoppingListId, itemId, itemTypeId);
+            await EnqueueAsync(request);
+        }
+
+        public async Task RemoveItemFromBasketAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId)
+        {
+            var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), shoppingListId, itemId, itemTypeId);
+            await EnqueueAsync(request);
+        }
+
+        public async Task PutItemInBasketAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId)
+        {
+            var request = new PutItemInBasketRequest(Guid.NewGuid(), shoppingListId, itemId, itemTypeId);
+            await EnqueueAsync(request);
+        }
+
+        public async Task CreateTemporaryItemOnShoppingListAsync(ShoppingListItem item, Guid shoppingListId,
+            Guid storeId, StoreSectionId sectionId)
+        {
+            var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId.Value, item.Name,
+                storeId, item.PricePerQuantity, sectionId.BackendId);
+            var addRequest =
+                new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingListId, item.Id, item.Quantity, null);
+
+            await EnqueueAsync(createRequest);
+            await EnqueueAsync(addRequest);
         }
 
         public async Task<ShoppingListRoot> LoadActiveShoppingListAsync(Guid storeId,
@@ -205,6 +238,11 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             }
 
             return null;
+        }
+
+        private async Task EnqueueAsync(IApiRequest request)
+        {
+            await commandQueue.Enqueue(request);
         }
     }
 }

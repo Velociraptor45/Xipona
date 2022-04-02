@@ -67,11 +67,8 @@
     {
         var item = temporaryItemCreationService.Create(searchBar.Input);
 
-        var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId.Value, item.Name, State.ShoppingList.Store.Id,
-            item.PricePerQuantity, State.SelectedStore.DefaultSection.Id.BackendId);
-        var addRequest = new AddItemToShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, item.Id, item.Quantity, null);
-        await apiService.EnqueueAsync(createRequest);
-        await apiService.EnqueueAsync(addRequest);
+        await apiService.CreateTemporaryItemOnShoppingListAsync(item, State.ShoppingList.Id,
+            State.ShoppingList.Store.Id, State.SelectedStore.DefaultSection.Id);
 
         State.AddItemToList(item, State.SelectedStore.DefaultSection.Id.BackendId);
     }

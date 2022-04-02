@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
             try
             {
-                timer.Elapsed += async (s, e) =>
+                timer.Elapsed += async (_, _) =>
                 {
                     if (!connectionAlive)
                         await RetryConnectionAsync();
