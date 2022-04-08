@@ -14,7 +14,7 @@ public class ShoppingList
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public Guid Id { get; set; }
 
-    public DateTime? CompletionDate { get; set; }
+    public DateTimeOffset? CompletionDate { get; set; }
     public Guid StoreId { get; set; }
 
     [InverseProperty("ShoppingList")]

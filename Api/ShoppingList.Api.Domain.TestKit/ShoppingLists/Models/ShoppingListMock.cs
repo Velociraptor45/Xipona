@@ -60,7 +60,7 @@ public class ShoppingListMock : Mock<IShoppingList>
 
     #region Setup methods
 
-    public void SetupFinish(DateTime completionDate, IShoppingList returnValue)
+    public void SetupFinish(DateTimeOffset completionDate, IShoppingList returnValue)
     {
         Setup(i => i.Finish(completionDate))
             .Returns(returnValue);
@@ -148,7 +148,7 @@ public class ShoppingListMock : Mock<IShoppingList>
             Times.Never);
     }
 
-    public void VerifyFinish(DateTime completionDate, Func<Times> times)
+    public void VerifyFinish(DateTimeOffset completionDate, Func<Times> times)
     {
         Verify(i => i.Finish(completionDate), times);
     }

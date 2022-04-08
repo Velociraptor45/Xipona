@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
     public class ShoppingListContract
     {
         public ShoppingListContract(Guid id, ShoppingListStoreContract store,
-            IEnumerable<ShoppingListSectionContract> sections, DateTime? completionDate)
+            IEnumerable<ShoppingListSectionContract> sections, DateTimeOffset? completionDate)
         {
             Id = id;
             Store = store;
@@ -18,6 +18,6 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
         public Guid Id { get; }
         public ShoppingListStoreContract Store { get; }
         public IReadOnlyCollection<ShoppingListSectionContract> Sections { get; }
-        public DateTime? CompletionDate { get; }
+        public DateTimeOffset? CompletionDate { get; }
     }
 }

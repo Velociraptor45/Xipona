@@ -6,7 +6,7 @@ public class ShoppingListReadModel
 {
     private readonly IEnumerable<ShoppingListSectionReadModel> _sections;
 
-    public ShoppingListReadModel(ShoppingListId id, DateTime? completionDate, ShoppingListStoreReadModel store,
+    public ShoppingListReadModel(ShoppingListId id, DateTimeOffset? completionDate, ShoppingListStoreReadModel store,
         IEnumerable<ShoppingListSectionReadModel> sections)
     {
         Id = id;
@@ -16,7 +16,7 @@ public class ShoppingListReadModel
     }
 
     public ShoppingListId Id { get; }
-    public DateTime? CompletionDate { get; }
+    public DateTimeOffset? CompletionDate { get; }
     public ShoppingListStoreReadModel Store { get; }
     public IReadOnlyCollection<ShoppingListSectionReadModel> Sections => _sections.ToList().AsReadOnly();
 }
