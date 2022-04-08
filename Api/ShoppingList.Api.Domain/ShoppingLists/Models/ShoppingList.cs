@@ -10,7 +10,7 @@ public class ShoppingList : IShoppingList
 {
     private readonly Dictionary<SectionId, IShoppingListSection> _sections;
 
-    public ShoppingList(ShoppingListId id, StoreId storeId, DateTime? completionDate,
+    public ShoppingList(ShoppingListId id, StoreId storeId, DateTimeOffset? completionDate,
         IEnumerable<IShoppingListSection> sections)
     {
         Id = id;
@@ -21,7 +21,7 @@ public class ShoppingList : IShoppingList
 
     public ShoppingListId Id { get; }
     public StoreId StoreId { get; }
-    public DateTime? CompletionDate { get; private set; }
+    public DateTimeOffset? CompletionDate { get; private set; }
 
     public IReadOnlyCollection<IShoppingListSection> Sections => _sections.Values.ToList().AsReadOnly();
     public IReadOnlyCollection<IShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
@@ -98,7 +98,7 @@ public class ShoppingList : IShoppingList
         _sections.Add(section.Id, section);
     }
 
-    public IShoppingList Finish(DateTime completionDate)
+    public IShoppingList Finish(DateTimeOffset completionDate)
     {
         if (CompletionDate != null)
             throw new DomainException(new ShoppingListAlreadyFinishedReason(Id));

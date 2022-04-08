@@ -107,10 +107,10 @@ public class CommonFixture
         return (float)_random.NextDouble();
     }
 
-    public DateTime NextDate()
+    public DateTimeOffset NextDate()
     {
         var fixture = GetNewFixture();
-        return fixture.Create<DateTime>();
+        return fixture.Create<DateTimeOffset>();
     }
 
     public IEnumerable<T> RemoveRandom<T>(IEnumerable<T> enumerable, int count)

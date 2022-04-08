@@ -1119,7 +1119,7 @@ public class ShoppingListModificationServiceTests
 
             public ShoppingListId ShoppingListId { get; private set; }
 
-            public DateTime CompletionDate { get; private set; }
+            public DateTimeOffset CompletionDate { get; private set; }
 
             public void SetupShoppingListId()
             {
@@ -1128,7 +1128,7 @@ public class ShoppingListModificationServiceTests
 
             public void SetupCompletionDate()
             {
-                CompletionDate = DateTime.UtcNow;
+                CompletionDate = DateTimeOffset.UtcNow;
             }
 
             public void SetupShoppingListMock()

@@ -173,7 +173,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
         await _shoppingListRepository.StoreAsync(shoppingList, _cancellationToken);
     }
 
-    public async Task FinishAsync(ShoppingListId shoppingListId, DateTime completionDate)
+    public async Task FinishAsync(ShoppingListId shoppingListId, DateTimeOffset completionDate)
     {
         var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
         if (shoppingList == null)

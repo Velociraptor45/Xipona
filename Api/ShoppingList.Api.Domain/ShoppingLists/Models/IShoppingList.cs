@@ -7,7 +7,7 @@ public interface IShoppingList
 {
     public ShoppingListId Id { get; }
     public StoreId StoreId { get; }
-    public DateTime? CompletionDate { get; }
+    public DateTimeOffset? CompletionDate { get; }
     IReadOnlyCollection<IShoppingListSection> Sections { get; }
     public IReadOnlyCollection<IShoppingListItem> Items { get; }
 
@@ -25,7 +25,7 @@ public interface IShoppingList
 
     void ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity);
 
-    IShoppingList Finish(DateTime completionDate);
+    IShoppingList Finish(DateTimeOffset completionDate);
 
     void AddSection(IShoppingListSection section);
 }

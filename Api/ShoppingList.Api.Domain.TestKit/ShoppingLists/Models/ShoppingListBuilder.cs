@@ -24,7 +24,7 @@ public class ShoppingListBuilder : DomainTestBuilderBase<DomainModels.ShoppingLi
         return this;
     }
 
-    public ShoppingListBuilder WithCompletionDate(DateTime? completionDate)
+    public ShoppingListBuilder WithCompletionDate(DateTimeOffset? completionDate)
     {
         FillConstructorWith("completionDate", completionDate);
         return this;

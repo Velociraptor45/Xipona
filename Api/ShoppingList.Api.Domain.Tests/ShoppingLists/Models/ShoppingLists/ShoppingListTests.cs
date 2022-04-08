@@ -338,7 +338,7 @@ public class ShoppingListTests
         var fixture = _commonFixture.GetNewFixture();
         var shoppingList = ShoppingListMother.Completed().Create();
 
-        DateTime completionDate = fixture.Create<DateTime>();
+        DateTimeOffset completionDate = fixture.Create<DateTimeOffset>();
 
         // Act
         Action action = () => shoppingList.Finish(completionDate);
@@ -359,7 +359,7 @@ public class ShoppingListTests
         var itemsInBasket = shoppingList.Items.Where(i => i.IsInBasket);
         var itemsNotInBasket = shoppingList.Items.Where(i => !i.IsInBasket);
 
-        DateTime completionDate = _commonFixture.GetNewFixture().Create<DateTime>();
+        DateTimeOffset completionDate = _commonFixture.GetNewFixture().Create<DateTimeOffset>();
 
         // Act
         IShoppingList result = shoppingList.Finish(completionDate);

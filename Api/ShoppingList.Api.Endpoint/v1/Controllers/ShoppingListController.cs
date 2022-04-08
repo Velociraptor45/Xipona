@@ -320,7 +320,7 @@ public class ShoppingListController : ControllerBase
     [Route("{id:guid}/finish")]
     public async Task<IActionResult> FinishListAsync([FromRoute] Guid id)
     {
-        var command = new FinishShoppingListCommand(new ShoppingListId(id), DateTime.UtcNow);
+        var command = new FinishShoppingListCommand(new ShoppingListId(id), DateTimeOffset.UtcNow);
         try
         {
             await _commandDispatcher.DispatchAsync(command, default);

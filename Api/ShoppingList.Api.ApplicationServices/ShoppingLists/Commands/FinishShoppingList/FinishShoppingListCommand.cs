@@ -5,12 +5,12 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Comma
 
 public class FinishShoppingListCommand : ICommand<bool>
 {
-    public FinishShoppingListCommand(ShoppingListId shoppingListId, DateTime completionDate)
+    public FinishShoppingListCommand(ShoppingListId shoppingListId, DateTimeOffset completionDate)
     {
         ShoppingListId = shoppingListId;
         CompletionDate = completionDate;
     }
 
     public ShoppingListId ShoppingListId { get; }
-    public DateTime CompletionDate { get; }
+    public DateTimeOffset CompletionDate { get; }
 }
