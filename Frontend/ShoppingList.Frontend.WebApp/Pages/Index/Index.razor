@@ -2,7 +2,7 @@
 
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification.IShoppingListNotificationService notificationService;
 @inject ProjectHermes.ShoppingList.Frontend.Models.Index.Services.IItemPriceCalculationService itemPriceCalculationService;
-@inject Services.IShoppingListCommunicationService communicationService;
+@inject Services.IShoppingListApiService apiService;
 @inject IWebAssemblyHostEnvironment env;
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -83,7 +83,7 @@
         state.StateChanged += StateHasChanged;
         state.ReloadRequestedAsync += async storeId => await LoadShoppingListAsync(storeId);
 
-        communicationService.InitializeCommandQueue(errorHandler);
+        apiService.InitializeCommandQueue(errorHandler);
 
         StateHasChanged();
     }
@@ -109,13 +109,9 @@
 
     private async Task LoadShoppingListAsync(Guid storeId)
     {
-        var shoppingList = await communicationService.LoadActiveShoppingListAsync(storeId,
-            async () => await LoadShoppingListAsync(storeId), errorHandler);
-        if (shoppingList == null)
-            return;
-
-        state.ChangeList(shoppingList);
+        await apiService.LoadActiveShoppingListAsync(storeId, errorHandler, list => state.ChangeList(list));
     }
+
     #endregion
 
     private IEnumerable<ShoppingListSection> GetSections()
@@ -132,12 +128,8 @@
 
     private async Task OnFinishListButtonClicked()
     {
-        var request = new FinishListRequest(Guid.NewGuid(), state.ShoppingList.Id);
-        bool result = await communicationService.FinishListAsync(request, async () => await OnFinishListButtonClicked(), errorHandler);
-        if (!result)
-            return;
-
-        await ReloadShoppingListAsync();
+        await apiService.FinishListAsync(state.ShoppingList.Id, errorHandler, 
+            async () => await ReloadShoppingListAsync());
     }
     #endregion
 

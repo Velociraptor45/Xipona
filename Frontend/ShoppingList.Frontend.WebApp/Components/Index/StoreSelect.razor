@@ -1,8 +1,9 @@
-﻿@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListCommunicationService communicationService;
-
-@using ProjectHermes.ShoppingList.Frontend.Models;
+﻿@using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Index;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
+
+@inject IShoppingListApiService apiService;
 
 <Select Class="min-w-100 max-w-200 mr-3"
         DataSource="availableStores.Stores"
@@ -27,17 +28,15 @@
 
     private async Task LoadAvailableStoresAsync()
     {
-        var stores = await communicationService.LoadAllActiveStoresAsync(
-            async () => await LoadAvailableStoresAsync(), ErrorHandler);
-        if (stores == null)
-            return;
+        await apiService.LoadAllActiveStoresAsync(ErrorHandler,
+            async stores =>
+            {
+                var storesList = stores.ToList();
 
-        List<Store> storesList = stores.ToList();
-
-
-        availableStores = new AvailableStores(storesList, storesList.FirstOrDefault()?.Id ?? Guid.Empty);
-        Page.RegisterAvailableStores(availableStores);
-        await Page.ReloadRequestedAsync?.Invoke(availableStores.SelectedStoreId);
+                availableStores = new AvailableStores(storesList, storesList.FirstOrDefault()?.Id ?? Guid.Empty);
+                Page.RegisterAvailableStores(availableStores);
+                await Page.ReloadRequestedAsync?.Invoke(availableStores.SelectedStoreId);
+            });
     }
 
     private async void OnSelectionChanged(Store store)

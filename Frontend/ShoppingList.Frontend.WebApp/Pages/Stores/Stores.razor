@@ -1,11 +1,9 @@
 ﻿@page "/Stores"
 
-@using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Stores;
-@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Models;
 
-@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services.IStoresPageCommunicationService communicationService;
+@inject Services.IStoresApiService apiService;
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores
 
@@ -42,7 +40,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        errorHandler = new ErrorHandler((func, label) => GetButtonRenderFragment(func, label));
+        errorHandler = new ErrorHandler(GetButtonRenderFragment);
         await CreatePageState();
 
         await base.OnInitializedAsync();
@@ -50,15 +48,15 @@
 
     private async Task CreatePageState()
     {
-        var stores = await communicationService.LoadStores(async () => await CreatePageState(), errorHandler);
-        if (stores == null)
-            return;
+        await apiService.LoadStores(errorHandler, stores =>
+        {
+            state = new StoresState(stores);
+            state.StoreChanged += async () => await ReloadStores();
+            state.StateChanged += StateHasChanged;
 
-        state = new StoresState(stores);
-        state.StoreChanged += async () => await ReloadStores();
-        state.StateChanged += () => StateHasChanged();
+            StateHasChanged();
+        });
 
-        StateHasChanged();
     }
 
     private void OnCreateStoreButtonClicked()
@@ -66,31 +64,13 @@
         state.EnterEditorForNewStore();
     }
 
-    private async Task OnStoreCreatedAsync(Store store)
-    {
-        var request = new CreateStoreRequest(Guid.NewGuid(), store);
-
-        var creationResult = await communicationService.CreateStoreAsync(
-            request, async () => await OnStoreCreatedAsync(store), errorHandler);
-        if (!creationResult)
-            return;
-
-        await state.LeaveEditorAsync();
-
-        await ReloadStores();
-    }
-
     private async Task ReloadStores()
     {
-        var stores = await communicationService.LoadStores(async () => await ReloadStores(), errorHandler);
-        if (stores == null)
-            return;
-
-        state.UpdateStores(stores);
+        await apiService.LoadStores(errorHandler, stores => state.UpdateStores(stores));
     }
 
     private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")
     {
-        return@<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
-}
+        return @<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
+    }
 }
