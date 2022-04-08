@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using System;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items.ItemEditor
+namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEditor
 {
     public interface IItemEditorApiService
     {

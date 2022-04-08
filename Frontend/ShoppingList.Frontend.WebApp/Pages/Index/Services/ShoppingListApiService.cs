@@ -61,7 +61,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         public async Task CreateTemporaryItemOnShoppingListAsync(ShoppingListItem item, Guid shoppingListId,
             Guid storeId, StoreSectionId sectionId)
         {
-            var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId.Value, item.Name,
+            var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId!.Value, item.Name,
                 storeId, item.PricePerQuantity, sectionId.BackendId);
             var addRequest =
                 new AddItemToShoppingListRequest(Guid.NewGuid(), shoppingListId, item.Id, item.Quantity, null);
@@ -70,29 +70,33 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             await EnqueueAsync(addRequest);
         }
 
-        public async Task<ShoppingListRoot> LoadActiveShoppingListAsync(Guid storeId,
-            IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task LoadActiveShoppingListAsync(Guid storeId,
+            IAsyncRetryFragmentCreator fragmentCreator, Action<ShoppingListRoot> onSuccessAction)
         {
+            ShoppingListRoot shoppingList;
+
             try
             {
-                return await apiClient.GetActiveShoppingListByStoreIdAsync(storeId);
+                shoppingList = await apiClient.GetActiveShoppingListByStoreIdAsync(storeId);
             }
             catch (ApiException e)
             {
                 var contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await LoadActiveShoppingListAsync(storeId, fragmentCreator));
+                    await LoadActiveShoppingListAsync(storeId, fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Loading shopping list failed", contract.Message, fragment);
+                return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await LoadActiveShoppingListAsync(storeId, fragmentCreator));
+                    await LoadActiveShoppingListAsync(storeId, fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Unknown error while loading shopping list", e.Message, fragment);
+                return;
             }
 
-            return null;
+            onSuccessAction(shoppingList);
         }
 
         public async Task FinishListAsync(Guid shoppingListId, IAsyncRetryFragmentCreator fragmentCreator,
@@ -122,29 +126,34 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             await onSuccessAction();
         }
 
-        public async Task<IEnumerable<SearchItemForShoppingListResult>> LoadItemSearchResultAsync(string input,
-            Guid storeId, IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task LoadItemSearchResultAsync(string input, Guid storeId,
+            IAsyncRetryFragmentCreator fragmentCreator,
+            Action<IEnumerable<SearchItemForShoppingListResult>> onSuccessAction)
         {
+            IEnumerable<SearchItemForShoppingListResult> result;
+
             try
             {
-                return await apiClient.SearchItemsForShoppingListAsync(input, storeId);
+                result = await apiClient.SearchItemsForShoppingListAsync(input, storeId);
             }
             catch (ApiException e)
             {
                 var contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await LoadItemSearchResultAsync(input, storeId, fragmentCreator));
+                    await LoadItemSearchResultAsync(input, storeId, fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Searching for items failed", contract.Message, fragment);
+                return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await LoadItemSearchResultAsync(input, storeId, fragmentCreator));
+                    await LoadItemSearchResultAsync(input, storeId, fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Unknown error while searching for items", e.Message, fragment);
+                return;
             }
 
-            return null;
+            onSuccessAction(result);
         }
 
         public async Task AddItemToShoppingListAsync(Guid shoppingListId, ItemId itemId, int quantity,
@@ -216,28 +225,33 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             await onSuccessAction();
         }
 
-        public async Task<IEnumerable<Store>> LoadAllActiveStoresAsync(IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task LoadAllActiveStoresAsync(IAsyncRetryFragmentCreator fragmentCreator,
+            Func<IEnumerable<Store>, Task> onSuccessAction)
         {
+            IEnumerable<Store> result;
+
             try
             {
-                return await apiClient.GetAllActiveStoresAsync();
+                result = await apiClient.GetAllActiveStoresAsync();
             }
             catch (ApiException e)
             {
                 var contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(
-                        async () => await LoadAllActiveStoresAsync(fragmentCreator));
+                        async () => await LoadAllActiveStoresAsync(fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Loading active stores failed", contract.Message, fragment);
+                return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(
-                    async () => await LoadAllActiveStoresAsync(fragmentCreator));
+                    async () => await LoadAllActiveStoresAsync(fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Unknown error while loading active stores", e.Message, fragment);
+                return;
             }
 
-            return null;
+            await onSuccessAction(result);
         }
 
         private async Task EnqueueAsync(IApiRequest request)

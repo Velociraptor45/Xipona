@@ -21,12 +21,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
         void InitializeCommandQueue(ICommandQueueErrorHandler errorHandler);
 
-        Task<ShoppingListRoot> LoadActiveShoppingListAsync(Guid storeId, IAsyncRetryFragmentCreator fragmentCreator);
+        Task LoadActiveShoppingListAsync(Guid storeId, IAsyncRetryFragmentCreator fragmentCreator,
+            Action<ShoppingListRoot> onSuccessAction);
 
-        Task<IEnumerable<Store>> LoadAllActiveStoresAsync(IAsyncRetryFragmentCreator fragmentCreator);
+        Task LoadAllActiveStoresAsync(IAsyncRetryFragmentCreator fragmentCreator,
+            Func<IEnumerable<Store>, Task> onSuccessAction);
 
-        Task<IEnumerable<SearchItemForShoppingListResult>> LoadItemSearchResultAsync(string input, Guid storeId,
-            IAsyncRetryFragmentCreator fragmentCreator);
+        Task LoadItemSearchResultAsync(string input, Guid storeId, IAsyncRetryFragmentCreator fragmentCreator,
+            Action<IEnumerable<SearchItemForShoppingListResult>> onSuccessAction);
 
         Task CreateTemporaryItemOnShoppingListAsync(ShoppingListItem item, Guid shoppingListId,
             Guid storeId, StoreSectionId sectionId);

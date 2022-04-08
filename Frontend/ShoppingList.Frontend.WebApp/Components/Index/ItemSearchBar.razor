@@ -1,10 +1,12 @@
-﻿@inject ProjectHermes.ShoppingList.Frontend.Models.Index.Services.ITemporaryItemCreationService temporaryItemCreationService;
-@inject ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services.IShoppingListApiService apiService;
-
-@using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
+@using ProjectHermes.ShoppingList.Frontend.Models.Index.Services
 @using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
+
+@inject ITemporaryItemCreationService temporaryItemCreationService;
+@inject IShoppingListApiService apiService;
 
 <div class="mb-2 d-flex">
     <Select OnFocus="OnSearchBarFocusIn"
@@ -53,14 +55,12 @@
         searchInput = searchInput.Trim();
         searchBar.Input = searchInput;
 
-        var result = await apiService.LoadItemSearchResultAsync(searchInput, State.ShoppingList.Store.Id,
-            ErrorHandler);
-        if (result == null)
-            return;
-
-        searchBar.Options = result;
-
-        StateHasChanged();
+        await apiService.LoadItemSearchResultAsync(searchInput, State.ShoppingList.Store.Id, ErrorHandler, 
+            searchResult =>
+            {
+                searchBar.Options = searchResult;
+                StateHasChanged();
+            });
     }
 
     private async void OnCreateNewTemporaryItem()

@@ -109,12 +109,9 @@
 
     private async Task LoadShoppingListAsync(Guid storeId)
     {
-        var shoppingList = await apiService.LoadActiveShoppingListAsync(storeId, errorHandler);
-        if (shoppingList == null)
-            return;
-
-        state.ChangeList(shoppingList);
+        await apiService.LoadActiveShoppingListAsync(storeId, errorHandler, list => state.ChangeList(list));
     }
+
     #endregion
 
     private IEnumerable<ShoppingListSection> GetSections()
