@@ -11,18 +11,19 @@ using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 {
-    public class ItemsPageLoadingService : IItemsPageLoadingService
+    public class ItemsApiService : IItemsApiService
     {
         private readonly IApiClient apiClient;
         private readonly IShoppingListNotificationService notificationService;
 
-        public ItemsPageLoadingService(IApiClient apiClient, IShoppingListNotificationService notificationService)
+        public ItemsApiService(IApiClient apiClient, IShoppingListNotificationService notificationService)
         {
             this.apiClient = apiClient;
             this.notificationService = notificationService;
         }
 
-        public async Task<ItemsState> LoadInitialPageState(Func<Task> OnFailureCallback, IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task LoadInitialPageStateAsync(IAsyncRetryFragmentCreator fragmentCreator,
+            Action<ItemsState> onSuccessAction)
         {
             try
             {
@@ -32,141 +33,156 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
                 var quantityTypes = await apiClient.GetAllQuantityTypesAsync();
                 var quantityTypesInPacket = await apiClient.GetAllQuantityTypesInPacketAsync();
 
-                return new ItemsState(
+                var state = new ItemsState(
                     stores,
                     itemCategories,
                     manufacturers,
                     quantityTypes,
                     quantityTypesInPacket);
+
+                onSuccessAction(state);
             }
             catch (ApiException e)
             {
                 var contract = e.DeserializeContent<ErrorContract>();
 
-                var fragment = fragmentCreator.CreateAsyncRetryFragment(OnFailureCallback);
+                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
+                    await LoadInitialPageStateAsync(fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Page loading failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
-                var fragment = fragmentCreator.CreateAsyncRetryFragment(OnFailureCallback);
+                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
+                    await LoadInitialPageStateAsync(fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Unknown error while loading page", e.Message, fragment);
             }
-            return null;
         }
 
-        public async Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput,
-            IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task SearchItemsAsync(string searchInput, IAsyncRetryFragmentCreator fragmentCreator,
+            Action<IEnumerable<SearchItemResult>> onSuccessAction)
         {
             try
             {
-                return await apiClient.SearchItemsAsync(searchInput);
+                var results = await apiClient.SearchItemsAsync(searchInput);
+                onSuccessAction(results);
             }
             catch (ApiException e)
             {
                 var contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await SearchItemsAsync(searchInput, fragmentCreator));
+                    await SearchItemsAsync(searchInput, fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Items loading failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await SearchItemsAsync(searchInput, fragmentCreator));
+                    await SearchItemsAsync(searchInput, fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Unknown error while loading items", e.Message, fragment);
             }
-
-            return null;
         }
 
-        public async Task<IEnumerable<SearchItemResult>> SearchItemsAsync(IEnumerable<Guid> storeIds, IEnumerable<Guid> itemCategoryIds,
-            IEnumerable<Guid> manufacturerIds, IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task SearchItemsAsync(IEnumerable<Guid> storeIds, IEnumerable<Guid> itemCategoryIds,
+            IEnumerable<Guid> manufacturerIds, IAsyncRetryFragmentCreator fragmentCreator,
+            Action<IEnumerable<SearchItemResult>> onSuccessAction)
         {
             try
             {
-                return await apiClient.SearchItemsByFilterAsync(
+                var results = await apiClient.SearchItemsByFilterAsync(
                         storeIds,
                         itemCategoryIds,
                         manufacturerIds);
+
+                onSuccessAction(results);
             }
             catch (ApiException e)
             {
                 var contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await SearchItemsAsync(storeIds, itemCategoryIds, manufacturerIds, fragmentCreator));
+                    await SearchItemsAsync(storeIds, itemCategoryIds, manufacturerIds, fragmentCreator,
+                        onSuccessAction));
                 notificationService.NotifyError("Items loading failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await SearchItemsAsync(storeIds, itemCategoryIds, manufacturerIds, fragmentCreator));
+                    await SearchItemsAsync(storeIds, itemCategoryIds, manufacturerIds, fragmentCreator,
+                        onSuccessAction));
                 notificationService.NotifyError("Unknown error while loading items", e.Message, fragment);
             }
-            return null;
         }
 
-        public async Task<IEnumerable<Manufacturer>> LoadManufacturersAsync(IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task LoadManufacturersAsync(IAsyncRetryFragmentCreator fragmentCreator,
+            Action<IEnumerable<Manufacturer>> onSuccessAction)
         {
             try
             {
-                return await apiClient.GetAllActiveManufacturersAsync();
+                var results = await apiClient.GetAllActiveManufacturersAsync();
+                onSuccessAction(results);
             }
             catch (ApiException e)
             {
                 var contract = e.DeserializeContent<ErrorContract>();
 
-                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () => await LoadManufacturersAsync(fragmentCreator));
+                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
+                    await LoadManufacturersAsync(fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Loading manufacturers failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
-                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () => await LoadManufacturersAsync(fragmentCreator));
+                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
+                    await LoadManufacturersAsync(fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Unknown error while loading manufacturers", e.Message, fragment);
             }
-            return null;
         }
 
-        public async Task<IEnumerable<ItemCategory>> LoadItemCategoriesAsync(IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task LoadItemCategoriesAsync(IAsyncRetryFragmentCreator fragmentCreator,
+            Action<IEnumerable<ItemCategory>> onSuccessAction)
         {
             try
             {
-                return await apiClient.GetAllActiveItemCategoriesAsync();
+                var results = await apiClient.GetAllActiveItemCategoriesAsync();
+                onSuccessAction(results);
             }
             catch (ApiException e)
             {
                 var contract = e.DeserializeContent<ErrorContract>();
 
-                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () => await LoadItemCategoriesAsync(fragmentCreator));
+                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
+                    await LoadItemCategoriesAsync(fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Loading item categories failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
-                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () => await LoadItemCategoriesAsync(fragmentCreator));
+                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
+                    await LoadItemCategoriesAsync(fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Unknown error while loading item categories", e.Message, fragment);
             }
-            return null;
         }
 
-        public async Task<StoreItem> LoadItemAsync(Guid itemId, IAsyncRetryFragmentCreator fragmentCreator)
+        public async Task LoadItemAsync(Guid itemId, IAsyncRetryFragmentCreator fragmentCreator,
+            Action<StoreItem> onSuccessAction)
         {
             try
             {
-                return await apiClient.GetItemByIdAsync(itemId);
+                var result = await apiClient.GetItemByIdAsync(itemId);
+                onSuccessAction(result);
             }
             catch (ApiException e)
             {
                 var contract = e.DeserializeContent<ErrorContract>();
 
-                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () => await LoadItemAsync(itemId, fragmentCreator));
+                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
+                    await LoadItemAsync(itemId, fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Loading item failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
-                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () => await LoadItemAsync(itemId, fragmentCreator));
+                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
+                    await LoadItemAsync(itemId, fragmentCreator, onSuccessAction));
                 notificationService.NotifyError("Unknown error while loading item", e.Message, fragment);
             }
-            return null;
         }
     }
 }

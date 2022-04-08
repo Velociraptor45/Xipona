@@ -49,7 +49,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddScoped<IItemPriceCalculationService, ItemPriceCalculationService>();
 
             builder.Services.AddTransient<IShoppingListApiService, ShoppingListApiService>();
-            builder.Services.AddTransient<IItemsPageLoadingService, ItemsPageLoadingService>();
+            builder.Services.AddTransient<IItemsApiService, ItemsApiService>();
             builder.Services.AddTransient<IStoresApiService, StoresApiService>();
 
             builder.Services.AddTransient<IItemEditorApiService, ItemEditorApiService>();
