@@ -222,9 +222,9 @@ public class ItemCreationServiceTests
             private IStoreItem _storeItem;
             private ManufacturerId? _manufacturerId;
             private List<IStoreItemAvailability> _availabilities;
+            private StoreItemReadModel _storeItemReadModel;
 
             public ItemCreation ItemCreation { get; private set; }
-            public StoreItemReadModel StoreItemReadModel { get; private set; }
 
             public void SetupItemCreation()
             {
@@ -282,8 +282,8 @@ public class ItemCreationServiceTests
 
             public void SetupConvertingItem()
             {
-                StoreItemReadModel = Fixture.Create<StoreItemReadModel>();
-                ConversionServiceMock.SetupConvertAsync(_storeItem, StoreItemReadModel);
+                _storeItemReadModel = Fixture.Create<StoreItemReadModel>();
+                ConversionServiceMock.SetupConvertAsync(_storeItem, _storeItemReadModel);
             }
 
             #region Verify
@@ -440,6 +440,7 @@ public class ItemCreationServiceTests
         {
             private IStoreItem _storeItem;
             private IStoreItemAvailability _availability;
+            private StoreItemReadModel _storeItemReadModel;
             public TemporaryItemCreation TemporaryItemCreation { get; private set; }
 
             public void SetupCommand()
@@ -476,6 +477,12 @@ public class ItemCreationServiceTests
                 ItemRepositoryMock.SetupStoreAsync(_storeItem, _storeItem);
             }
 
+            public void SetupConvertingItem()
+            {
+                _storeItemReadModel = Fixture.Create<StoreItemReadModel>();
+                ConversionServiceMock.SetupConvertAsync(_storeItem, _storeItemReadModel);
+            }
+
             #endregion Mock Setup
 
             #region Verify
@@ -503,6 +510,7 @@ public class ItemCreationServiceTests
                 SetupStoringItem();
 
                 SetupValidatingAvailabilities();
+                SetupConvertingItem();
             }
 
             #endregion Aggregates
