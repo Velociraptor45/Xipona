@@ -1,0 +1,51 @@
+﻿@inject IShoppingListApiService apiService;
+
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
+
+<div class="d-flex justify-content-end mt-2">
+    <Button Type="@ButtonType.Primary"
+            OnClick="@OnSummaryButtonClicked"
+            Class="mr-2"
+            Disabled="@(!State.ShoppingList?.AnyItemInBasket ?? true)">
+        Summary
+    </Button>
+    <Modal Title="@title"
+           Visible="@summaryVisible"
+           OnOk="@OnFinishListButtonClicked"
+           OnCancel="@OnCloseSummaryButtonClicked"
+           ConfirmLoading="@loading">
+    </Modal>
+</div>
+
+@code {
+    [Parameter] public ShoppingListState State { get; set; }
+    [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
+    [Parameter] public Func<Task> OnFinishList { get; set; }
+    
+    private bool summaryVisible = false;
+    private bool loading = false;
+    private string title => $"Finish shopping at {State.SelectedStore?.Name}";
+
+    private void OnSummaryButtonClicked()
+    {
+        summaryVisible = true;
+    }
+
+    private void OnCloseSummaryButtonClicked()
+    {
+        summaryVisible = false;
+    }
+
+    private async Task OnFinishListButtonClicked()
+    {
+        loading = true;
+        await apiService.FinishListAsync(State.ShoppingList.Id, FragmentCreator, async () =>
+        {
+            await OnFinishList();
+            loading = false;
+            summaryVisible = false;
+        });
+    }
+}
