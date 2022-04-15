@@ -26,6 +26,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         public IReadOnlyCollection<ShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
         public bool AnyItemInBasket => Items.Any(item => item.IsInBasket);
 
+        public int ItemInBasketCount => Items.Count(i => i.IsInBasket);
+        public int ItemNotInBasketCount => Items.Count(i => !i.IsInBasket);
+
         public ShoppingListItem GetItemById(Guid id)
         {
             return Items.FirstOrDefault(item => item.Id.ActualId == id);

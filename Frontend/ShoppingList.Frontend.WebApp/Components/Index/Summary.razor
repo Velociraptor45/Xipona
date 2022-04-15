@@ -3,6 +3,7 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
+@using System.Text
 
 <div class="d-flex justify-content-end mt-2">
     <Button Type="@ButtonType.Primary"
@@ -16,6 +17,8 @@
            OnCancel="@OnCloseSummaryButtonClicked"
            ConfirmLoading="@loading"
            Footer="@GetSummaryFooter()">
+        <div class="pb-2">@GetItemInBasketCountText()</div>
+        <div>@GetItemNotInBasketCountText()</div>
     </Modal>
 </div>
 
@@ -61,5 +64,29 @@
                         Finish
                     </Button>
                 </Template>;
+    }
+
+    private string GetItemInBasketCountText()
+    {
+        var builder = new StringBuilder();
+        var count = State.ShoppingList.ItemInBasketCount;
+        builder.Append(count.ToString());
+
+        builder.Append(count == 1 ? " item " : " items ");
+
+        builder.Append("in basket");
+        return builder.ToString();
+    }
+
+    private string GetItemNotInBasketCountText()
+    {
+        var builder = new StringBuilder();
+        var count = State.ShoppingList.ItemNotInBasketCount;
+        builder.Append(count.ToString());
+
+        builder.Append(count == 1 ? " item " : " items ");
+
+        builder.Append("will be moved to the next shopping list");
+        return builder.ToString();
     }
 }
