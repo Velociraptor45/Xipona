@@ -13,9 +13,9 @@
     </Button>
     <Modal Title="@title"
            Visible="@summaryVisible"
-           OnOk="@OnFinishListButtonClicked"
            OnCancel="@OnCloseSummaryButtonClicked"
-           ConfirmLoading="@loading">
+           ConfirmLoading="@loading"
+           Footer="@GetSummaryFooter()">
     </Modal>
 </div>
 
@@ -36,6 +36,7 @@
     private void OnCloseSummaryButtonClicked()
     {
         summaryVisible = false;
+        loading = false;
     }
 
     private async Task OnFinishListButtonClicked()
@@ -47,5 +48,18 @@
             loading = false;
             summaryVisible = false;
         });
+    }
+
+    private RenderFragment GetSummaryFooter()
+    {
+        return @<Template>
+                   <Button
+                       OnClick="OnFinishListButtonClicked"
+                           @key="@( "submit" )"
+                           Type="primary"
+                           Loading="@loading">
+                        Finish
+                    </Button>
+                </Template>;
     }
 }
