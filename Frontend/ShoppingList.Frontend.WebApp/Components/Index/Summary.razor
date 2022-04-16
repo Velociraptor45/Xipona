@@ -17,8 +17,11 @@
            OnCancel="@OnCloseSummaryButtonClicked"
            ConfirmLoading="@loading"
            Footer="@GetFooter()">
-        <div class="pb-2">@GetItemInBasketCountText()</div>
-        <div>@GetItemNotInBasketCountText()</div>
+        <div>@GetItemInBasketCountText()</div>
+        @if (State.ShoppingList.ItemNotInBasketCount > 0)
+        {
+            <div class="pt-2">@GetItemNotInBasketCountText()</div>
+        }
     </Modal>
 </div>
 
