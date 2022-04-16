@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
     {
         private readonly SortedSet<ShoppingListSection> sections;
 
-        public ShoppingListRoot(Guid id, DateTime? completionDate, Store store, IEnumerable<ShoppingListSection> sections)
+        public ShoppingListRoot(Guid id, DateTimeOffset? completionDate, Store store, IEnumerable<ShoppingListSection> sections)
         {
             Id = id;
             CompletionDate = completionDate;
@@ -20,11 +20,14 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         }
 
         public Guid Id { get; }
-        public DateTime? CompletionDate { get; }
+        public DateTimeOffset? CompletionDate { get; }
         public Store Store { get; }
         public IReadOnlyCollection<ShoppingListSection> Sections => sections.ToList().AsReadOnly();
         public IReadOnlyCollection<ShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
         public bool AnyItemInBasket => Items.Any(item => item.IsInBasket);
+
+        public int ItemInBasketCount => Items.Count(i => i.IsInBasket);
+        public int ItemNotInBasketCount => Items.Count(i => !i.IsInBasket);
 
         public ShoppingListItem GetItemById(Guid id)
         {
@@ -53,6 +56,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
         public float GetInBasketPrice(IItemPriceCalculationService priceCalculationService)
         {
             return Sections.Sum(s => s.GetInBasketPrice(priceCalculationService));
+        }
+
+        public string GetFormattedInBasketPrice(IItemPriceCalculationService priceCalculationService)
+        {
+            var price = GetInBasketPrice(priceCalculationService);
+            return $"{price:0.00}";
         }
 
         public IReadOnlyCollection<ShoppingListSection> GetNonEmptySections(bool excludeWithAllItemsInBasket)
