@@ -79,7 +79,7 @@
         return @<Template>
                    <div>
                        <div>@title</div>
-                       <div class="summary-datetime">@(DateTime.UtcNow.ToString("dd.MM.yy hh:mm"))</div>
+                       <div class="summary-datetime">@GetDateTime()</div>
                    </div>
                 </Template>;
     }
@@ -111,5 +111,10 @@
     private string GetInBasketPrice()
     {
         return State.ShoppingList.GetFormattedInBasketPrice(priceCalculationService);
+    }
+
+    private string GetDateTime()
+    {
+        return DateTime.UtcNow.ToString("g", State.Culture);
     }
 }

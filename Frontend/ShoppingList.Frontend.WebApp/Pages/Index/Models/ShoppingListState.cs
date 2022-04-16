@@ -1,12 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Index;
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
 {
     public class ShoppingListState
     {
+        public CultureInfo Culture = CultureInfo.GetCultureInfo("de-DE");
         public Action StateChanged { get; set; }
         public Func<Guid, Task> ReloadRequestedAsync { get; set; }
         public ShoppingListRoot ShoppingList { get; private set; }
