@@ -38,6 +38,9 @@
 
     private void OnSummaryButtonClicked()
     {
+        if (!State.ShoppingList.AnyItemInBasket)
+            return;
+
         summaryVisible = true;
     }
 
