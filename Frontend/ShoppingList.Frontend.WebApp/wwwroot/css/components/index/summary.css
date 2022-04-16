@@ -1,3 +1,17 @@
-﻿.ant-modal-close {
+﻿.ant-modal-content .ant-modal-header {
+    border-bottom: 0;
+}
+
+.ant-modal-content .ant-modal-body {
+    padding-top: 0;
+}
+
+.ant-modal-close {
     margin-top: -8px;
+}
+
+.summary-datetime {
+    color: grey;
+    font-size: 10px;
+    margin-top: -5px;
 }

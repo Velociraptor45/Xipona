@@ -12,11 +12,11 @@
             Disabled="@(!State.ShoppingList?.AnyItemInBasket ?? true)">
         Summary
     </Button>
-    <Modal Title="@title"
+    <Modal TitleTemplate="@GetTitle()"
            Visible="@summaryVisible"
            OnCancel="@OnCloseSummaryButtonClicked"
            ConfirmLoading="@loading"
-           Footer="@GetSummaryFooter()">
+           Footer="@GetFooter()">
         <div class="pb-2">@GetItemInBasketCountText()</div>
         <div>@GetItemNotInBasketCountText()</div>
     </Modal>
@@ -53,7 +53,7 @@
         });
     }
 
-    private RenderFragment GetSummaryFooter()
+    private RenderFragment GetFooter()
     {
         return @<Template>
                    <Button
@@ -63,6 +63,16 @@
                            Loading="@loading">
                         Finish
                     </Button>
+                </Template>;
+    }
+
+    private RenderFragment GetTitle()
+    {
+        return @<Template>
+                   <div>
+                       <div>@title</div>
+                       <div class="summary-datetime">@(DateTime.UtcNow.ToString("dd.MM.yy hh:mm"))</div>
+                   </div>
                 </Template>;
     }
 
