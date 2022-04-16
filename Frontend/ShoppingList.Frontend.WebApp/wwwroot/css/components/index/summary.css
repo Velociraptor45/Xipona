@@ -6,6 +6,11 @@
     padding-top: 0;
 }
 
+.ant-modal-content .ant-modal-footer {
+    margin: 0 16px 0 24px;
+    padding: 10px 0;
+}
+
 .ant-modal-close {
     margin-top: -8px;
 }
@@ -14,4 +19,8 @@
     color: grey;
     font-size: 10px;
     margin-top: -5px;
+}
+
+.summary-price {
+    font-size: 16px;
 }

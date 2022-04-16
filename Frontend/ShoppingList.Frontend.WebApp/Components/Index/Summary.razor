@@ -1,9 +1,11 @@
 ﻿@inject IShoppingListApiService apiService;
+@inject IItemPriceCalculationService priceCalculationService;
 
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
 @using System.Text
+@using ProjectHermes.ShoppingList.Frontend.Models.Index.Services
 
 <div class="d-flex justify-content-end mt-2">
     <Button Type="@ButtonType.Primary"
@@ -59,14 +61,17 @@
     private RenderFragment GetFooter()
     {
         return @<Template>
-                   <Button
-                       OnClick="OnFinishListButtonClicked"
-                           @key="@( "submit" )"
-                           Type="primary"
-                           Loading="@loading">
-                        Finish
-                    </Button>
-                </Template>;
+                   <div class="d-flex">
+                       <div class="summary-price font-weight-bold align-self-center">@GetInBasketPrice()€</div>
+                       <Button Class="ml-auto"
+                               OnClick="OnFinishListButtonClicked"
+                               @key="@("submit")"
+                               Type="primary"
+                               Loading="@loading">
+                           Finish
+                       </Button>
+                   </div>
+               </Template>;
     }
 
     private RenderFragment GetTitle()
@@ -101,5 +106,10 @@
 
         builder.Append("will be moved to the next shopping list");
         return builder.ToString();
+    }
+
+    private string GetInBasketPrice()
+    {
+        return State.ShoppingList.GetFormattedInBasketPrice(priceCalculationService);
     }
 }

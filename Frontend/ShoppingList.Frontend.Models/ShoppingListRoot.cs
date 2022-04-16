@@ -58,6 +58,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             return Sections.Sum(s => s.GetInBasketPrice(priceCalculationService));
         }
 
+        public string GetFormattedInBasketPrice(IItemPriceCalculationService priceCalculationService)
+        {
+            var price = GetInBasketPrice(priceCalculationService);
+            return $"{price:0.00}";
+        }
+
         public IReadOnlyCollection<ShoppingListSection> GetNonEmptySections(bool excludeWithAllItemsInBasket)
         {
             return sections.Where(s => s.Items.Any() && (!s.AllItemsInBasket || !excludeWithAllItemsInBasket)).ToList();

@@ -130,8 +130,7 @@
 
     private string GetInBasketPrice()
     {
-        var price = state.ShoppingList.GetInBasketPrice(itemPriceCalculationService);
-        return $"{price:0.00}";
+        return state.ShoppingList.GetFormattedInBasketPrice(itemPriceCalculationService);
     }
 
     private async Task ReloadAfterProcessingErrorAsync()
