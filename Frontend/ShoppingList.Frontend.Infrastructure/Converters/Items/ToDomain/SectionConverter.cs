@@ -4,11 +4,11 @@ using ProjectHermes.ShoppingList.Frontend.Models.Items;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToDomain
 {
-    public class SectionConverter : IToDomainConverter<StoreItemSectionContract, StoreItemSection>
+    public class SectionConverter : IToDomainConverter<StoreItemSectionContract, ItemSection>
     {
-        public StoreItemSection ToDomain(StoreItemSectionContract source)
+        public ItemSection ToDomain(StoreItemSectionContract source)
         {
-            return new StoreItemSection(
+            return new ItemSection(
                 source.Id,
                 source.Name,
                 source.SortingIndex);

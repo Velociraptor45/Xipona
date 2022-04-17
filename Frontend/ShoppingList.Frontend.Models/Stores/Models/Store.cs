@@ -34,7 +34,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
 
         public void AddSection()
         {
-            var section = new Section(new StoreSectionId(Guid.NewGuid()), "", Sections.Max(s => s.SortingIndex) + 1, false);
+            var section = new Section(new SectionId(Guid.NewGuid()), "", Sections.Max(s => s.SortingIndex) + 1, false);
             Sections.Add(section);
         }
 
@@ -60,7 +60,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             var sections = Sections.ToList();
 
             int sectionIndex = sections.IndexOf(section);
-            if (sectionIndex == -1 || sectionIndex <= 0)
+            if (sectionIndex is -1 or <= 0)
                 return;
 
             var tmp = sections[sectionIndex - 1];
@@ -80,9 +80,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             }
         }
 
-        public StoreItemStore AsStoreItemStore()
+        public ItemStore AsStoreItemStore()
         {
-            return new StoreItemStore(Id, Name, Sections.Select(s => s.AsStoreItemSection()));
+            return new ItemStore(Id, Name, Sections.Select(s => s.AsStoreItemSection()));
         }
     }
 }

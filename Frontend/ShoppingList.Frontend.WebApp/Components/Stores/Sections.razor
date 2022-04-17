@@ -21,7 +21,7 @@
 <div>
     Default Section:
     <SingleSelect TItem="Models.Section"
-                  TValue="StoreSectionId"
+                  TValue="SectionId"
                   ValueName="@nameof(Models.Section.Id)"
                   LabelName="@nameof(Models.Section.Name)"
                   DefaultValue="@State.EditedStore.Sections.First(s => s.IsDefaultSection).Id"

@@ -15,13 +15,13 @@
             LabelName="@nameof(Store.Name)"
             OnSelectedItemChanged="@OnStoreChanged">
     </Select>
-    <SingleSelect TItem="StoreItemSection"
+    <SingleSelect TItem="ItemSection"
                   TValue="Guid"
-                  ValueName="@nameof(StoreItemSection.Id)"
-                  LabelName="@nameof(StoreItemSection.Name)"
+                  ValueName="@nameof(ItemSection.Id)"
+                  LabelName="@nameof(ItemSection.Name)"
                   DataSource="@availability.Store.Sections.ToList()"
                   OnItemChanged="OnDefaultSectionChanged"
-                  DefaultValue="@availability.DefaultSection.Id"></SingleSelect>
+                  DefaultValue="@availability.DefaultSectionId"></SingleSelect>
     <div class="ml-2">
         <Button Class="d-flex align-items-center"
                 OnClick="@OnRemoveStoreButtonClicked"
@@ -35,7 +35,7 @@
     [Parameter] public ItemsState State { get; set; }
     [Parameter] public int ComponentIndex { get; set; }
 
-    private StoreItemAvailability availability;
+    private ItemAvailability availability;
 
     protected override void OnInitialized()
     {
@@ -48,7 +48,7 @@
         availability.Store = store.AsStoreItemStore();
 
         var defaultSection = store.Sections.Single(s => s.IsDefaultSection);
-        availability.ChangeDefaultSection(defaultSection.AsStoreItemSection());
+        availability.ChangeDefaultSectionId(defaultSection.Id.BackendId);
         StateHasChanged();
     }
 
@@ -58,8 +58,8 @@
         State.StateChanged();
     }
 
-    private void OnDefaultSectionChanged(StoreItemSection section)
+    private void OnDefaultSectionChanged(ItemSection section)
     {
-        availability.ChangeDefaultSection(section);
+        availability.ChangeDefaultSectionId(section.Id);
     }
 }

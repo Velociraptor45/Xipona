@@ -5,15 +5,15 @@ using ProjectHermes.ShoppingList.Frontend.Models.Items;
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract
 {
     public class ItemAvailabilityContractConverter :
-        IToContractConverter<StoreItemAvailability, ItemAvailabilityContract>
+        IToContractConverter<ItemAvailability, ItemAvailabilityContract>
     {
-        public ItemAvailabilityContract ToContract(StoreItemAvailability model)
+        public ItemAvailabilityContract ToContract(ItemAvailability model)
         {
             return new ItemAvailabilityContract()
             {
                 StoreId = model.Store.Id,
                 Price = model.PricePerQuantity,
-                DefaultSectionId = model.DefaultSection.Id
+                DefaultSectionId = model.DefaultSectionId
             };
         }
     }

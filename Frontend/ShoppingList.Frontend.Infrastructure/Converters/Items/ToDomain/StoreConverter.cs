@@ -5,19 +5,19 @@ using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToDomain
 {
-    public class StoreConverter : IToDomainConverter<StoreItemStoreContract, StoreItemStore>
+    public class StoreConverter : IToDomainConverter<StoreItemStoreContract, ItemStore>
     {
-        private readonly IToDomainConverter<StoreItemSectionContract, StoreItemSection> sectionConverter;
+        private readonly IToDomainConverter<StoreItemSectionContract, ItemSection> sectionConverter;
 
         public StoreConverter(
-            IToDomainConverter<StoreItemSectionContract, StoreItemSection> sectionConverter)
+            IToDomainConverter<StoreItemSectionContract, ItemSection> sectionConverter)
         {
             this.sectionConverter = sectionConverter;
         }
 
-        public StoreItemStore ToDomain(StoreItemStoreContract source)
+        public ItemStore ToDomain(StoreItemStoreContract source)
         {
-            return new StoreItemStore(
+            return new ItemStore(
                 source.Id,
                 source.Name,
                 source.Sections.Select(s => sectionConverter.ToDomain(s)));

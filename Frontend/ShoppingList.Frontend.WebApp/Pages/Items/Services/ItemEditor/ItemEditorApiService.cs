@@ -21,7 +21,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             this.apiClient = apiClient;
         }
 
-        public async Task UpdateItemWithTypesAsync(StoreItem item, IAsyncRetryFragmentCreator fragmentCreator,
+        public async Task UpdateItemWithTypesAsync(Item item, IAsyncRetryFragmentCreator fragmentCreator,
             Action onSuccessAction)
         {
             var withTypesRequest = new UpdateItemWithTypesRequest(Guid.NewGuid(), item);
@@ -49,7 +49,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             onSuccessAction();
         }
 
-        public async Task UpdateItemAsync(StoreItem item, IAsyncRetryFragmentCreator fragmentCreator,
+        public async Task UpdateItemAsync(Item item, IAsyncRetryFragmentCreator fragmentCreator,
             Action onSuccessAction)
         {
             var request = new UpdateItemRequest(Guid.NewGuid(), item);
@@ -77,7 +77,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             onSuccessAction();
         }
 
-        public async Task CreateItemWithTypesAsync(StoreItem item, IAsyncRetryFragmentCreator fragmentCreator,
+        public async Task CreateItemWithTypesAsync(Item item, IAsyncRetryFragmentCreator fragmentCreator,
             Action onSuccessAction)
         {
             var withTypesRequest = new CreateItemWithTypesRequest(Guid.NewGuid(), item);
@@ -105,7 +105,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             onSuccessAction();
         }
 
-        public async Task CreateItemAsync(StoreItem item, IAsyncRetryFragmentCreator fragmentCreator,
+        public async Task CreateItemAsync(Item item, IAsyncRetryFragmentCreator fragmentCreator,
             Action onSuccessAction)
         {
             var request = new CreateItemRequest(Guid.NewGuid(), item);
@@ -133,7 +133,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             onSuccessAction();
         }
 
-        public async Task ModifyItemWithTypesAsync(StoreItem item, IAsyncRetryFragmentCreator fragmentCreator,
+        public async Task ModifyItemWithTypesAsync(Item item, IAsyncRetryFragmentCreator fragmentCreator,
             Action onSuccessAction)
         {
             var withTypesRequest = new ModifyItemWithTypesRequest(Guid.NewGuid(), item);
@@ -161,7 +161,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             onSuccessAction();
         }
 
-        public async Task ModifyItemAsync(StoreItem item, IAsyncRetryFragmentCreator fragmentCreator,
+        public async Task ModifyItemAsync(Item item, IAsyncRetryFragmentCreator fragmentCreator,
             Action onSuccessAction)
         {
             var request = new ModifyItemRequest(Guid.NewGuid(), item);
@@ -189,7 +189,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             onSuccessAction();
         }
 
-        public async Task MakeTemporaryItemPermanentAsync(StoreItem item, IAsyncRetryFragmentCreator fragmentCreator,
+        public async Task MakeTemporaryItemPermanentAsync(Item item, IAsyncRetryFragmentCreator fragmentCreator,
             Action onSuccessAction)
         {
             var request = new MakeTemporaryItemPermanentRequest(item.Id, item.Name, item.Comment,

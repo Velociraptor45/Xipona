@@ -5,14 +5,14 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
 {
     public class ModifyItemWithTypesRequest
     {
-        public ModifyItemWithTypesRequest(Guid requestId, StoreItem storeItem)
+        public ModifyItemWithTypesRequest(Guid requestId, Item storeItem)
         {
             RequestId = requestId;
             StoreItem = storeItem;
         }
 
         public Guid RequestId { get; }
-        public StoreItem StoreItem { get; }
+        public Item StoreItem { get; }
 
     }
 }

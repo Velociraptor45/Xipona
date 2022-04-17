@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class Section
     {
-        public Section(StoreSectionId id, string name, int sortingIndex, bool isDefaultSection)
+        public Section(SectionId id, string name, int sortingIndex, bool isDefaultSection)
         {
             Id = id;
             Name = name;
@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             IsDefaultSection = isDefaultSection;
         }
 
-        public StoreSectionId Id { get; set; }
+        public SectionId Id { get; set; }
         public string Name { get; set; }
         public int SortingIndex { get; private set; }
         public bool IsDefaultSection { get; private set; }
@@ -27,9 +27,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             SortingIndex = index;
         }
 
-        public StoreItemSection AsStoreItemSection()
+        public ItemSection AsStoreItemSection()
         {
-            return new StoreItemSection(Id.BackendId, Name, SortingIndex);
+            return new ItemSection(Id.BackendId, Name, SortingIndex);
         }
     }
 }

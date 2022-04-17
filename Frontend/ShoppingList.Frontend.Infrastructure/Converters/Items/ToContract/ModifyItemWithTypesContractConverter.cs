@@ -11,10 +11,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
     public class ModifyItemWithTypesContractConverter :
         IToContractConverter<ModifyItemWithTypesRequest, ModifyItemWithTypesContract>
     {
-        private readonly IToContractConverter<StoreItemAvailability, ItemAvailabilityContract> availabilityConverter;
+        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter;
 
         public ModifyItemWithTypesContractConverter(
-            IToContractConverter<StoreItemAvailability, ItemAvailabilityContract> availabilityConverter)
+            IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter)
         {
             this.availabilityConverter = availabilityConverter;
         }

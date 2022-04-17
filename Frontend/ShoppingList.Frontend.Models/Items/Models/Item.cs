@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Items
 {
-    public class StoreItem
+    public class Item
     {
-        public StoreItem(Guid id, string name, bool isDeleted, string comment, bool isTemporary,
+        public Item(Guid id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float? quantityInPacket, QuantityTypeInPacket quantityInPacketType,
-            Guid? itemCategoryId, Guid? manufacturerId, IEnumerable<StoreItemAvailability> availabilities,
+            Guid? itemCategoryId, Guid? manufacturerId, IEnumerable<ItemAvailability> availabilities,
             IEnumerable<ItemType> itemTypes)
         {
             Id = id;
@@ -37,18 +37,18 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
         public Guid? ItemCategoryId { get; set; }
         public Guid? ManufacturerId { get; set; }
         public List<ItemType> ItemTypes { get; set; }
-        public List<StoreItemAvailability> Availabilities { get; set; }
+        public List<ItemAvailability> Availabilities { get; set; }
         public ItemMode ItemMode { get; private set; }
 
         public bool IsItemWithTypes => ItemMode == ItemMode.WithTypes;
 
-        public IEnumerable<StoreItemStore> GetNotRegisteredStores(IEnumerable<Store> stores)
+        public IEnumerable<ItemStore> GetNotRegisteredStores(IEnumerable<Store> stores)
         {
             var registeredStoreIds = Availabilities.Select(av => av.Store.Id).OrderBy(id => id);
             var allStoreIds = stores.Select(s => s.Id).OrderBy(id => id);
 
             if (allStoreIds.SequenceEqual(registeredStoreIds))
-                return Enumerable.Empty<StoreItemStore>();
+                return Enumerable.Empty<ItemStore>();
 
             var availableStoreIds = allStoreIds.Except(registeredStoreIds).ToList();
             return stores.Where(s => availableStoreIds.Contains(s.Id)).Select(s => s.AsStoreItemStore());

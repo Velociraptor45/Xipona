@@ -5,25 +5,21 @@ using ProjectHermes.ShoppingList.Frontend.Models.Items;
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToDomain
 {
     public class ItemAvailabilityConverter :
-        IToDomainConverter<StoreItemAvailabilityContract, StoreItemAvailability>
+        IToDomainConverter<StoreItemAvailabilityContract, ItemAvailability>
     {
-        private readonly IToDomainConverter<StoreItemStoreContract, StoreItemStore> storeConverter;
-        private readonly IToDomainConverter<StoreItemSectionContract, StoreItemSection> sectionConverter;
+        private readonly IToDomainConverter<StoreItemStoreContract, ItemStore> storeConverter;
 
-        public ItemAvailabilityConverter(
-            IToDomainConverter<StoreItemStoreContract, StoreItemStore> storeConverter,
-            IToDomainConverter<StoreItemSectionContract, StoreItemSection> sectionConverter)
+        public ItemAvailabilityConverter(IToDomainConverter<StoreItemStoreContract, ItemStore> storeConverter)
         {
             this.storeConverter = storeConverter;
-            this.sectionConverter = sectionConverter;
         }
 
-        public StoreItemAvailability ToDomain(StoreItemAvailabilityContract source)
+        public ItemAvailability ToDomain(StoreItemAvailabilityContract source)
         {
-            return new StoreItemAvailability(
+            return new ItemAvailability(
                 storeConverter.ToDomain(source.Store),
                 source.Price,
-                sectionConverter.ToDomain(source.DefaultSection));
+                source.DefaultSection.Id);
         }
     }
 }

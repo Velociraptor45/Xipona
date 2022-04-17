@@ -2,9 +2,9 @@
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Items
 {
-    public class StoreItemSection
+    public class ItemSection
     {
-        public StoreItemSection(Guid id, string name, int sortingIndex)
+        public ItemSection(Guid id, string name, int sortingIndex)
         {
             Id = id;
             Name = name;

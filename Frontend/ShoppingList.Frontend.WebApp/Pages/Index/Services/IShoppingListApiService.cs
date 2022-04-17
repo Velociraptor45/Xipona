@@ -31,7 +31,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             Action<IEnumerable<SearchItemForShoppingListResult>> onSuccessAction);
 
         Task CreateTemporaryItemOnShoppingListAsync(ShoppingListItem item, Guid shoppingListId,
-            Guid storeId, StoreSectionId sectionId);
+            Guid storeId, SectionId sectionId);
 
         Task RemoveItemFromBasketAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId);
 

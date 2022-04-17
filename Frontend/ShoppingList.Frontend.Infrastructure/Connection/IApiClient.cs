@@ -40,7 +40,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync();
 
-        Task<StoreItem> GetItemByIdAsync(Guid itemId);
+        Task<Item> GetItemByIdAsync(Guid itemId);
 
         Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput);
 

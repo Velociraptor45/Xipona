@@ -5,13 +5,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
 {
     public class UpdateItemWithTypesRequest : IApiRequest
     {
-        public UpdateItemWithTypesRequest(Guid requestId, StoreItem storeItem)
+        public UpdateItemWithTypesRequest(Guid requestId, Item storeItem)
         {
             RequestId = requestId;
             StoreItem = storeItem;
         }
 
         public Guid RequestId { get; }
-        public StoreItem StoreItem { get; }
+        public Item StoreItem { get; }
     }
 }

@@ -59,7 +59,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         }
 
         public async Task CreateTemporaryItemOnShoppingListAsync(ShoppingListItem item, Guid shoppingListId,
-            Guid storeId, StoreSectionId sectionId)
+            Guid storeId, SectionId sectionId)
         {
             var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId!.Value, item.Name,
                 storeId, item.PricePerQuantity, sectionId.BackendId);

@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Items
 {
-    public class StoreItemStore
+    public class ItemStore
     {
-        public StoreItemStore(Guid id, string name, IEnumerable<StoreItemSection> sections)
+        public ItemStore(Guid id, string name, IEnumerable<ItemSection> sections)
         {
             Id = id;
             Name = name;
@@ -15,6 +15,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
 
         public Guid Id { get; }
         public string Name { get; }
-        public IReadOnlyCollection<StoreItemSection> Sections { get; }
+        public IReadOnlyCollection<ItemSection> Sections { get; }
     }
 }

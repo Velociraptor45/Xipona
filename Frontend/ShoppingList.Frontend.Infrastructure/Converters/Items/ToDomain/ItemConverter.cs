@@ -7,14 +7,14 @@ using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToDomain
 {
-    public class ItemConverter : IToDomainConverter<StoreItemContract, StoreItem>
+    public class ItemConverter : IToDomainConverter<StoreItemContract, Item>
     {
-        private readonly IToDomainConverter<StoreItemAvailabilityContract, StoreItemAvailability> availabilityConverter;
+        private readonly IToDomainConverter<StoreItemAvailabilityContract, ItemAvailability> availabilityConverter;
         private readonly IToDomainConverter<QuantityTypeContract, QuantityType> quantityTypeConverter;
         private readonly IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> quantityTypeInPacketConverter;
 
         public ItemConverter(
-            IToDomainConverter<StoreItemAvailabilityContract, StoreItemAvailability> availabilityConverter,
+            IToDomainConverter<StoreItemAvailabilityContract, ItemAvailability> availabilityConverter,
             IToDomainConverter<QuantityTypeContract, QuantityType> quantityTypeConverter,
             IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> quantityTypeInPacketConverter)
         {
@@ -23,9 +23,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
             this.quantityTypeInPacketConverter = quantityTypeInPacketConverter;
         }
 
-        public StoreItem ToDomain(StoreItemContract source)
+        public Item ToDomain(StoreItemContract source)
         {
-            return new StoreItem(
+            return new Item(
                 source.Id,
                 source.Name,
                 source.IsDeleted,

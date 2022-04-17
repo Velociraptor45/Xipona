@@ -162,7 +162,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
         }
 
         public async Task LoadItemAsync(Guid itemId, IAsyncRetryFragmentCreator fragmentCreator,
-            Action<StoreItem> onSuccessAction)
+            Action<Item> onSuccessAction)
         {
             try
             {

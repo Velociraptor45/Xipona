@@ -100,19 +100,19 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task UpdateItemAsync(UpdateItemRequest request)
         {
-            var contract = _converters.ToContract<StoreItem, UpdateItemContract>(request.StoreItem);
+            var contract = _converters.ToContract<Item, UpdateItemContract>(request.StoreItem);
             await _client.UpdateItemAsync(request.StoreItem.Id, contract);
         }
 
         public async Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request)
         {
-            var contract = _converters.ToContract<StoreItem, UpdateItemWithTypesContract>(request.StoreItem);
+            var contract = _converters.ToContract<Item, UpdateItemWithTypesContract>(request.StoreItem);
             await _client.UpdateItemWithTypesAsync(request.StoreItem.Id, contract);
         }
 
         public async Task ModifyItemAsync(ModifyItemRequest request)
         {
-            var contract = _converters.ToContract<StoreItem, ModifyItemContract>(request.StoreItem);
+            var contract = _converters.ToContract<Item, ModifyItemContract>(request.StoreItem);
             await _client.ModifyItemAsync(request.StoreItem.Id, contract);
         }
 
@@ -124,13 +124,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task CreateItemAsync(CreateItemRequest request)
         {
-            var contract = _converters.ToContract<StoreItem, CreateItemContract>(request.StoreItem);
+            var contract = _converters.ToContract<Item, CreateItemContract>(request.StoreItem);
             await _client.CreateItemAsync(contract);
         }
 
         public async Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request)
         {
-            var contract = _converters.ToContract<StoreItem, CreateItemWithTypesContract>(request.StoreItem);
+            var contract = _converters.ToContract<Item, CreateItemWithTypesContract>(request.StoreItem);
             await _client.CreateItemWithTypesAsync(contract);
         }
 
@@ -216,10 +216,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 result.Select(_converters.ToDomain<SearchItemResultContract, SearchItemResult>);
         }
 
-        public async Task<StoreItem> GetItemByIdAsync(Guid itemId)
+        public async Task<Item> GetItemByIdAsync(Guid itemId)
         {
             var result = await _client.GetAsync(itemId);
-            return _converters.ToDomain<StoreItemContract, StoreItem>(result);
+            return _converters.ToDomain<StoreItemContract, Item>(result);
         }
 
         public async Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync()

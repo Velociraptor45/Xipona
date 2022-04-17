@@ -34,12 +34,12 @@
 
         var chosenStore = availableStores.First();
         State.EditedItem.ItemTypes[ItemTypeIndex].Availabilities.Add(
-            new StoreItemAvailability(chosenStore, 1, GetSectionForStoreId(chosenStore.Id)));
+            new ItemAvailability(chosenStore, 1, GetSectionForStoreId(chosenStore.Id).Id));
 
         StateHasChanged();
     }
 
-    private StoreItemSection GetSectionForStoreId(Guid storeId)
+    private ItemSection GetSectionForStoreId(Guid storeId)
     {
         var section = State.Stores.Single(s => s.Id == storeId).Sections.Single(s => s.IsDefaultSection);
         return section.AsStoreItemSection();

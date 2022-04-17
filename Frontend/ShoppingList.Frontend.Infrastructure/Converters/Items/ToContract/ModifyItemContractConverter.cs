@@ -7,17 +7,17 @@ using System.Linq;
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract
 {
     public class ModifyItemContractConverter :
-        IToContractConverter<StoreItem, ModifyItemContract>
+        IToContractConverter<Item, ModifyItemContract>
     {
-        private readonly IToContractConverter<StoreItemAvailability, ItemAvailabilityContract> availabilityConverter;
+        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter;
 
         public ModifyItemContractConverter(
-            IToContractConverter<StoreItemAvailability, ItemAvailabilityContract> availabilityConverter)
+            IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter)
         {
             this.availabilityConverter = availabilityConverter;
         }
 
-        public ModifyItemContract ToContract(StoreItem source)
+        public ModifyItemContract ToContract(Item source)
         {
             return new ModifyItemContract(
                 source.Name,
