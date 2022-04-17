@@ -1,6 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Error;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 {
     public interface IShoppingListApiService
     {
-        Task AddItemToShoppingListAsync(Guid shoppingListId, ItemId itemId, int quantity, Guid sectionId,
+        Task AddItemToShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, int quantity, Guid sectionId,
             IAsyncRetryFragmentCreator fragmentCreator, Func<Task> onSuccessAction);
 
         Task AddItemWithTypeToShoppingListAsync(Guid shoppingListId, Guid itemId, Guid itemTypeId,
@@ -31,15 +31,15 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             Action<IEnumerable<SearchItemForShoppingListResult>> onSuccessAction);
 
         Task CreateTemporaryItemOnShoppingListAsync(ShoppingListItem item, Guid shoppingListId,
-            Guid storeId, StoreSectionId sectionId);
+            Guid storeId, SectionId sectionId);
 
-        Task RemoveItemFromBasketAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId);
+        Task RemoveItemFromBasketAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId);
 
-        Task PutItemInBasketAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId);
+        Task PutItemInBasketAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId);
 
-        Task ChangeItemQuantityOnShoppingListAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId,
+        Task ChangeItemQuantityOnShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId,
             float quantity);
 
-        Task RemoveItemFromShoppingListAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId);
+        Task RemoveItemFromShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Manufacturers.ToDomain
 {

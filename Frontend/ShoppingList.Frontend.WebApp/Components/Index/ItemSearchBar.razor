@@ -1,9 +1,8 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
-@using ProjectHermes.ShoppingList.Frontend.Models.Index.Services
-@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
-@using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+﻿@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
+@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
+@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
+@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 
 @inject ITemporaryItemCreationService temporaryItemCreationService;
 @inject IShoppingListApiService apiService;
@@ -89,7 +88,7 @@
         {
             await apiService.AddItemToShoppingListAsync(
                 State.ShoppingList.Id,
-                ItemId.FromActualId(item.ItemId),
+                ShoppingListItemId.FromActualId(item.ItemId),
                 item.DefaultQuantity,
                 item.DefaultSectionId,
                 ErrorHandler,

@@ -5,7 +5,7 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
 @using System.Text
-@using ProjectHermes.ShoppingList.Frontend.Models.Index.Services
+@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
 
 <div class="d-flex justify-content-end mt-2">
     <Button Type="@ButtonType.Primary"
@@ -34,7 +34,7 @@
     
     private bool summaryVisible = false;
     private bool loading = false;
-    private string title => $"Finish shopping at {State.SelectedStore?.Name}";
+    private string Title => $"Finish shopping at {State.SelectedStore?.Name}";
 
     private void OnSummaryButtonClicked()
     {
@@ -81,7 +81,7 @@
     {
         return @<Template>
                    <div>
-                       <div>@title</div>
+                       <div>@Title</div>
                        <div class="summary-datetime">@GetDateTime()</div>
                    </div>
                 </Template>;

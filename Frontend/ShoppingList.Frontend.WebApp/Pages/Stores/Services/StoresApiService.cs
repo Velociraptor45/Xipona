@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
-using ProjectHermes.ShoppingList.Frontend.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores;
+using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using RestEase;
@@ -13,13 +13,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
 {
     public class StoresApiService : IStoresApiService
     {
-        private readonly IApiClient apiClient;
-        private readonly IShoppingListNotificationService notificationService;
+        private readonly IApiClient _apiClient;
+        private readonly IShoppingListNotificationService _notificationService;
 
         public StoresApiService(IApiClient apiClient, IShoppingListNotificationService notificationService)
         {
-            this.apiClient = apiClient;
-            this.notificationService = notificationService;
+            _apiClient = apiClient;
+            _notificationService = notificationService;
         }
 
         public async Task SaveStoreAsync(Store store, IAsyncRetryFragmentCreator fragmentCreator,
@@ -29,13 +29,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
 
             try
             {
-                await apiClient.ModifyStoreAsync(request);
+                await _apiClient.ModifyStoreAsync(request);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await SaveStoreAsync(store, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Saving store failed", e.Message, fragment);
+                _notificationService.NotifyError("Saving store failed", e.Message, fragment);
             }
 
             await onSuccessAction();
@@ -48,13 +48,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
 
             try
             {
-                await apiClient.CreateStoreAsync(request);
+                await _apiClient.CreateStoreAsync(request);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await CreateStoreAsync(store, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Creating store failed", e.Message, fragment);
+                _notificationService.NotifyError("Creating store failed", e.Message, fragment);
             }
 
             await onSuccessAction();
@@ -67,7 +67,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
 
             try
             {
-                stores = await apiClient.GetAllActiveStoresAsync();
+                stores = await _apiClient.GetAllActiveStoresAsync();
             }
             catch (ApiException e)
             {
@@ -76,7 +76,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
                 var fragment =
                     fragmentCreator.CreateAsyncRetryFragment(async () =>
                         await LoadStores(fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Loading stores failed", contract.Message, fragment);
+                _notificationService.NotifyError("Loading stores failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
@@ -84,7 +84,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
                 var fragment =
                     fragmentCreator.CreateAsyncRetryFragment(async () =>
                         await LoadStores(fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while loading stores", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while loading stores", e.Message, fragment);
                 return;
             }
 

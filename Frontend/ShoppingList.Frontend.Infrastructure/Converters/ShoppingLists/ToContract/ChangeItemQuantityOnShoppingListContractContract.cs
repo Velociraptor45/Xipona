@@ -1,26 +1,26 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToContract
 {
     public class ChangeItemQuantityOnShoppingListContractContract :
         IToContractConverter<ChangeItemQuantityOnShoppingListRequest, ChangeItemQuantityOnShoppingListContract>
     {
-        private readonly IToContractConverter<ItemId, ItemIdContract> itemIdConverter;
+        private readonly IToContractConverter<ShoppingListItemId, ItemIdContract> _itemIdConverter;
 
         public ChangeItemQuantityOnShoppingListContractContract(
-            IToContractConverter<ItemId, ItemIdContract> itemIdConverter)
+            IToContractConverter<ShoppingListItemId, ItemIdContract> itemIdConverter)
         {
-            this.itemIdConverter = itemIdConverter;
+            _itemIdConverter = itemIdConverter;
         }
 
         public ChangeItemQuantityOnShoppingListContract ToContract(ChangeItemQuantityOnShoppingListRequest source)
         {
             return new ChangeItemQuantityOnShoppingListContract(
-                itemIdConverter.ToContract(source.ItemId),
+                _itemIdConverter.ToContract(source.ItemId),
                 source.ItemTypeId,
                 source.Quantity);
         }

@@ -1,9 +1,11 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
-using ProjectHermes.ShoppingList.Frontend.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Error;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using RestEase;
@@ -15,24 +17,24 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 {
     public class ShoppingListApiService : IShoppingListApiService
     {
-        private readonly IApiClient apiClient;
-        private readonly ICommandQueue commandQueue;
-        private readonly IShoppingListNotificationService notificationService;
+        private readonly IApiClient _apiClient;
+        private readonly ICommandQueue _commandQueue;
+        private readonly IShoppingListNotificationService _notificationService;
 
         public ShoppingListApiService(IApiClient apiClient, ICommandQueue commandQueue,
             IShoppingListNotificationService notificationService)
         {
-            this.apiClient = apiClient;
-            this.commandQueue = commandQueue;
-            this.notificationService = notificationService;
+            _apiClient = apiClient;
+            _commandQueue = commandQueue;
+            _notificationService = notificationService;
         }
 
         public void InitializeCommandQueue(ICommandQueueErrorHandler errorHandler)
         {
-            commandQueue.Initialize(errorHandler);
+            _commandQueue.Initialize(errorHandler);
         }
 
-        public async Task ChangeItemQuantityOnShoppingListAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId,
+        public async Task ChangeItemQuantityOnShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId,
             float quantity)
         {
             var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), shoppingListId, itemId,
@@ -40,26 +42,26 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             await EnqueueAsync(request);
         }
 
-        public async Task RemoveItemFromShoppingListAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId)
+        public async Task RemoveItemFromShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId)
         {
             var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), shoppingListId, itemId, itemTypeId);
             await EnqueueAsync(request);
         }
 
-        public async Task RemoveItemFromBasketAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId)
+        public async Task RemoveItemFromBasketAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId)
         {
             var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), shoppingListId, itemId, itemTypeId);
             await EnqueueAsync(request);
         }
 
-        public async Task PutItemInBasketAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId)
+        public async Task PutItemInBasketAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId)
         {
             var request = new PutItemInBasketRequest(Guid.NewGuid(), shoppingListId, itemId, itemTypeId);
             await EnqueueAsync(request);
         }
 
         public async Task CreateTemporaryItemOnShoppingListAsync(ShoppingListItem item, Guid shoppingListId,
-            Guid storeId, StoreSectionId sectionId)
+            Guid storeId, SectionId sectionId)
         {
             var createRequest = new CreateTemporaryItemRequest(Guid.NewGuid(), item.Id.OfflineId!.Value, item.Name,
                 storeId, item.PricePerQuantity, sectionId.BackendId);
@@ -77,7 +79,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
             try
             {
-                shoppingList = await apiClient.GetActiveShoppingListByStoreIdAsync(storeId);
+                shoppingList = await _apiClient.GetActiveShoppingListByStoreIdAsync(storeId);
             }
             catch (ApiException e)
             {
@@ -85,14 +87,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadActiveShoppingListAsync(storeId, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Loading shopping list failed", contract.Message, fragment);
+                _notificationService.NotifyError("Loading shopping list failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadActiveShoppingListAsync(storeId, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while loading shopping list", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while loading shopping list", e.Message, fragment);
                 return;
             }
 
@@ -106,7 +108,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
             try
             {
-                await apiClient.FinishListAsync(request);
+                await _apiClient.FinishListAsync(request);
             }
             catch (ApiException e)
             {
@@ -114,13 +116,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await FinishListAsync(shoppingListId, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Finishing shopping list failed", contract.Message, fragment);
+                _notificationService.NotifyError("Finishing shopping list failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await FinishListAsync(shoppingListId, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while finishing shopping list", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while finishing shopping list", e.Message, fragment);
             }
 
             await onSuccessAction();
@@ -134,7 +136,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
             try
             {
-                result = await apiClient.SearchItemsForShoppingListAsync(input, storeId);
+                result = await _apiClient.SearchItemsForShoppingListAsync(input, storeId);
             }
             catch (ApiException e)
             {
@@ -142,21 +144,21 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadItemSearchResultAsync(input, storeId, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Searching for items failed", contract.Message, fragment);
+                _notificationService.NotifyError("Searching for items failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadItemSearchResultAsync(input, storeId, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while searching for items", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while searching for items", e.Message, fragment);
                 return;
             }
 
             onSuccessAction(result);
         }
 
-        public async Task AddItemToShoppingListAsync(Guid shoppingListId, ItemId itemId, int quantity,
+        public async Task AddItemToShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, int quantity,
             Guid sectionId, IAsyncRetryFragmentCreator fragmentCreator, Func<Task> onSuccessAction)
         {
             var request = new AddItemToShoppingListRequest(
@@ -168,7 +170,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
             try
             {
-                await apiClient.AddItemToShoppingListAsync(request);
+                await _apiClient.AddItemToShoppingListAsync(request);
             }
             catch (ApiException e)
             {
@@ -177,14 +179,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await AddItemToShoppingListAsync(shoppingListId, itemId, quantity, sectionId, fragmentCreator,
                         onSuccessAction));
-                notificationService.NotifyError("Adding item failed", contract.Message, fragment);
+                _notificationService.NotifyError("Adding item failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await AddItemToShoppingListAsync(shoppingListId, itemId, quantity, sectionId, fragmentCreator,
                         onSuccessAction));
-                notificationService.NotifyError("Unknown error while adding item", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while adding item", e.Message, fragment);
             }
 
             await onSuccessAction();
@@ -203,7 +205,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
             try
             {
-                await apiClient.AddItemWithTypeToShoppingListAsync(request);
+                await _apiClient.AddItemWithTypeToShoppingListAsync(request);
             }
             catch (ApiException e)
             {
@@ -212,14 +214,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await AddItemWithTypeToShoppingListAsync(shoppingListId, itemId, itemTypeId, quantity, sectionId,
                         fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Adding item failed", contract.Message, fragment);
+                _notificationService.NotifyError("Adding item failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await AddItemWithTypeToShoppingListAsync(shoppingListId, itemId, itemTypeId, quantity, sectionId,
                         fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while adding item", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while adding item", e.Message, fragment);
             }
 
             await onSuccessAction();
@@ -232,7 +234,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
             try
             {
-                result = await apiClient.GetAllActiveStoresAsync();
+                result = await _apiClient.GetAllActiveStoresAsync();
             }
             catch (ApiException e)
             {
@@ -240,14 +242,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(
                         async () => await LoadAllActiveStoresAsync(fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Loading active stores failed", contract.Message, fragment);
+                _notificationService.NotifyError("Loading active stores failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(
                     async () => await LoadAllActiveStoresAsync(fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while loading active stores", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while loading active stores", e.Message, fragment);
                 return;
             }
 
@@ -256,7 +258,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
         private async Task EnqueueAsync(IApiRequest request)
         {
-            await commandQueue.Enqueue(request);
+            await _commandQueue.Enqueue(request);
         }
     }
 }
