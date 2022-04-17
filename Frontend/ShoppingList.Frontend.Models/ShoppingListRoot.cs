@@ -41,11 +41,18 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             section?.RemoveItem(itemId, itemTypeId);
         }
 
-        public void AddItem(ShoppingListItem item, Guid sectionId)
+        public void AddItem(ShoppingListItem item, StoreSection storeSection)
         {
-            var section = sections.FirstOrDefault(s => s.Id == sectionId);
+            var section = sections.FirstOrDefault(s => s.Id == storeSection.Id.BackendId);
 
-            section?.AddItem(item);
+            if (section is null)
+            {
+                var newSection = ShoppingListSection.From(storeSection);
+                sections.Add(newSection);
+                section = newSection;
+            }
+
+            section.AddItem(item);
         }
 
         public float GetTotalPrice(IItemPriceCalculationService priceCalculationService)

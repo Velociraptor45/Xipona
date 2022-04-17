@@ -30,7 +30,7 @@
                 Class="d-flex align-items-center">
             <Icon Type="plus"></Icon>
         </Button>
-        <Button Class="mr-1" OnClick="@OnSearchBarCancleButtonClicked">Cancle</Button>
+        <Button Class="mr-1" OnClick="@OnSearchBarCancelButtonClicked">Cancel</Button>
     }
 </div>
 
@@ -70,7 +70,7 @@
         await apiService.CreateTemporaryItemOnShoppingListAsync(item, State.ShoppingList.Id,
             State.ShoppingList.Store.Id, State.SelectedStore.DefaultSection.Id);
 
-        State.AddItemToList(item, State.SelectedStore.DefaultSection.Id.BackendId);
+        State.AddItemToDefaultSection(item);
     }
 
     private async Task OnSearchItemSelectedAsync(SearchItemForShoppingListResult item)
@@ -108,7 +108,7 @@
         }
     }
 
-    private void OnSearchBarCancleButtonClicked()
+    private void OnSearchBarCancelButtonClicked()
     {
         searchBar.Active = false;
         StateHasChanged();
