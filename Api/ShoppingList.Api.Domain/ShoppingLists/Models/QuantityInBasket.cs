@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 public record struct QuantityInBasket
