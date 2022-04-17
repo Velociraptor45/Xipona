@@ -88,7 +88,7 @@
         {
             await apiService.AddItemToShoppingListAsync(
                 State.ShoppingList.Id,
-                ItemId.FromActualId(item.ItemId),
+                ShoppingListItemId.FromActualId(item.ItemId),
                 item.DefaultQuantity,
                 item.DefaultSectionId,
                 ErrorHandler,

@@ -9,7 +9,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 {
     public class ShoppingListSection
     {
-        private readonly Dictionary<(ItemId, Guid?), ShoppingListItem> _items;
+        private readonly Dictionary<(ShoppingListItemId, Guid?), ShoppingListItem> _items;
 
         public ShoppingListSection(Guid id, string name, int sortingIndex, bool isDefaultSection,
             IEnumerable<ShoppingListItem> items)
@@ -31,7 +31,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         public bool SomeItemsInBasket => !AllItemsInBasket && Items.Any(i => i.IsInBasket);
         public IReadOnlyCollection<ShoppingListItem> Items => _items.Values.ToList().AsReadOnly();
 
-        public void RemoveItem(ItemId itemId, Guid? itemTypeId)
+        public void RemoveItem(ShoppingListItemId itemId, Guid? itemTypeId)
         {
             _items.Remove((itemId, itemTypeId));
         }

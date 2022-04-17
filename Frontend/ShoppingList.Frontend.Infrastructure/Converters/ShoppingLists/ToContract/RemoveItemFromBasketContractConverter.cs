@@ -2,17 +2,17 @@
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToContract
 {
     public class RemoveItemFromBasketContractConverter :
         IToContractConverter<RemoveItemFromBasketRequest, RemoveItemFromBasketContract>
     {
-        private readonly IToContractConverter<ItemId, ItemIdContract> _itemIdConverter;
+        private readonly IToContractConverter<ShoppingListItemId, ItemIdContract> _itemIdConverter;
 
         public RemoveItemFromBasketContractConverter(
-            IToContractConverter<ItemId, ItemIdContract> itemIdConverter)
+            IToContractConverter<ShoppingListItemId, ItemIdContract> itemIdConverter)
         {
             _itemIdConverter = itemIdConverter;
         }

@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
             // ugly
             var quantityType = new QuantityType(0, "", 1, "€", "x", 1);
             var quantityTypeInPacket = new QuantityTypeInPacket(0, "", "");
-            return new ShoppingListItem(ItemId.FromOfflineId(Guid.NewGuid()), null, name, true, 1f,
+            return new ShoppingListItem(ShoppingListItemId.FromOfflineId(Guid.NewGuid()), null, name, true, 1f,
                 quantityType, 1, quantityTypeInPacket, "", "", false, 1);
         }
     }

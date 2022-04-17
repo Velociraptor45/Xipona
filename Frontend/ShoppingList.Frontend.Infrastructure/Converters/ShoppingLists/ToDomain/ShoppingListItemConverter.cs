@@ -22,7 +22,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
         public ShoppingListItem ToDomain(ShoppingListItemContract source)
         {
             return new ShoppingListItem(
-                    ItemId.FromActualId(source.Id),
+                    ShoppingListItemId.FromActualId(source.Id),
                     source.TypeId,
                     source.Name,
                     source.IsTemporary,

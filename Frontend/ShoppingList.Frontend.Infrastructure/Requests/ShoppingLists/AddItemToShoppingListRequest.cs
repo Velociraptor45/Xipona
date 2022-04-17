@@ -1,11 +1,11 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using System;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists
 {
     public class AddItemToShoppingListRequest : IApiRequest
     {
-        public AddItemToShoppingListRequest(Guid requestId, Guid shoppingListId, ItemId itemId, float quantity,
+        public AddItemToShoppingListRequest(Guid requestId, Guid shoppingListId, ShoppingListItemId itemId, float quantity,
             Guid? sectionId)
         {
             RequestId = requestId;
@@ -17,7 +17,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLi
 
         public Guid RequestId { get; }
         public Guid ShoppingListId { get; }
-        public ItemId ItemId { get; }
+        public ShoppingListItemId ItemId { get; }
         public float Quantity { get; }
         public Guid? SectionId { get; }
     }

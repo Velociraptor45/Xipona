@@ -36,7 +36,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
             return Items.FirstOrDefault(item => item.Id.ActualId == id);
         }
 
-        public void Remove(ItemId itemId, Guid? itemTypeId)
+        public void Remove(ShoppingListItemId itemId, Guid? itemTypeId)
         {
             var section = _sections.FirstOrDefault(s => s.Items.Any(i => i.Id == itemId));
 

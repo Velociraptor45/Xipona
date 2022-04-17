@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             _commandQueue.Initialize(errorHandler);
         }
 
-        public async Task ChangeItemQuantityOnShoppingListAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId,
+        public async Task ChangeItemQuantityOnShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId,
             float quantity)
         {
             var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), shoppingListId, itemId,
@@ -43,19 +43,19 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             await EnqueueAsync(request);
         }
 
-        public async Task RemoveItemFromShoppingListAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId)
+        public async Task RemoveItemFromShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId)
         {
             var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), shoppingListId, itemId, itemTypeId);
             await EnqueueAsync(request);
         }
 
-        public async Task RemoveItemFromBasketAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId)
+        public async Task RemoveItemFromBasketAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId)
         {
             var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), shoppingListId, itemId, itemTypeId);
             await EnqueueAsync(request);
         }
 
-        public async Task PutItemInBasketAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId)
+        public async Task PutItemInBasketAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId)
         {
             var request = new PutItemInBasketRequest(Guid.NewGuid(), shoppingListId, itemId, itemTypeId);
             await EnqueueAsync(request);
@@ -159,7 +159,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             onSuccessAction(result);
         }
 
-        public async Task AddItemToShoppingListAsync(Guid shoppingListId, ItemId itemId, int quantity,
+        public async Task AddItemToShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, int quantity,
             Guid sectionId, IAsyncRetryFragmentCreator fragmentCreator, Func<Task> onSuccessAction)
         {
             var request = new AddItemToShoppingListRequest(

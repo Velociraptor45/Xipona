@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 {
     public interface IShoppingListApiService
     {
-        Task AddItemToShoppingListAsync(Guid shoppingListId, ItemId itemId, int quantity, Guid sectionId,
+        Task AddItemToShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, int quantity, Guid sectionId,
             IAsyncRetryFragmentCreator fragmentCreator, Func<Task> onSuccessAction);
 
         Task AddItemWithTypeToShoppingListAsync(Guid shoppingListId, Guid itemId, Guid itemTypeId,
@@ -34,13 +34,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         Task CreateTemporaryItemOnShoppingListAsync(ShoppingListItem item, Guid shoppingListId,
             Guid storeId, SectionId sectionId);
 
-        Task RemoveItemFromBasketAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId);
+        Task RemoveItemFromBasketAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId);
 
-        Task PutItemInBasketAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId);
+        Task PutItemInBasketAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId);
 
-        Task ChangeItemQuantityOnShoppingListAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId,
+        Task ChangeItemQuantityOnShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId,
             float quantity);
 
-        Task RemoveItemFromShoppingListAsync(Guid shoppingListId, ItemId itemId, Guid? itemTypeId);
+        Task RemoveItemFromShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId);
     }
 }
