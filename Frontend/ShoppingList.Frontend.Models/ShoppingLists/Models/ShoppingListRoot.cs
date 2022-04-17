@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Comparer;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Comparer;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System;
