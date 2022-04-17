@@ -34,7 +34,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
 
         public void AddSection()
         {
-            var section = new Section(new SectionId(Guid.NewGuid()), "", Sections.Max(s => s.SortingIndex) + 1, false);
+            var section = new Section(
+                new SectionId(Guid.NewGuid()),
+                name: "New Section",
+                Sections.Max(s => s.SortingIndex) + 1,
+                false);
             Sections.Add(section);
         }
 

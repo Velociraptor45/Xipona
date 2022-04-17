@@ -1,7 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain
@@ -9,11 +8,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
     public class ShoppingListRootConverter : IToDomainConverter<ShoppingListContract, ShoppingListRoot>
     {
         private readonly IToDomainConverter<ShoppingListSectionContract, ShoppingListSection> _sectionConverter;
-        private readonly IToDomainConverter<ShoppingListStoreContract, Store> _storeConverter;
+        private readonly IToDomainConverter<ShoppingListStoreContract, ShoppingListStore> _storeConverter;
 
         public ShoppingListRootConverter(
             IToDomainConverter<ShoppingListSectionContract, ShoppingListSection> sectionConverter,
-            IToDomainConverter<ShoppingListStoreContract, Store> storeConverter)
+            IToDomainConverter<ShoppingListStoreContract, ShoppingListStore> storeConverter)
         {
             _sectionConverter = sectionConverter;
             _storeConverter = storeConverter;

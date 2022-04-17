@@ -37,8 +37,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         public bool IsInBasket { get; set; }
         public float Quantity { get; set; }
 
-        public float TotalPrice => PricePerQuantity * Quantity;
-
         public void PutInBasket()
         {
             IsInBasket = true;
@@ -47,11 +45,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         public void RemoveFromBasket()
         {
             IsInBasket = false;
-        }
-
-        public void ChangeQuantity(float quantity)
-        {
-            Quantity = quantity;
         }
 
         public float GetTotalPrice(IItemPriceCalculationService priceCalculationService)

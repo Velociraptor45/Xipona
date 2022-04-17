@@ -12,7 +12,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
     {
         private readonly SortedSet<ShoppingListSection> _sections;
 
-        public ShoppingListRoot(Guid id, DateTimeOffset? completionDate, Store store, IEnumerable<ShoppingListSection> sections)
+        public ShoppingListRoot(Guid id, DateTimeOffset? completionDate, ShoppingListStore store,
+            IEnumerable<ShoppingListSection> sections)
         {
             Id = id;
             CompletionDate = completionDate;
@@ -22,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 
         public Guid Id { get; }
         public DateTimeOffset? CompletionDate { get; }
-        public Store Store { get; }
+        public ShoppingListStore Store { get; }
         public IReadOnlyCollection<ShoppingListSection> Sections => _sections.ToList().AsReadOnly();
         public IReadOnlyCollection<ShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
         public bool AnyItemInBasket => Items.Any(item => item.IsInBasket);
