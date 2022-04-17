@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Error
 {
     public interface ICommandQueueErrorHandler
     {

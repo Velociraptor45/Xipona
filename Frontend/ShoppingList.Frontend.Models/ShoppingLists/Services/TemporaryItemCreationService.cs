@@ -1,7 +1,8 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using System;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Index.Services
+namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
 {
     public class TemporaryItemCreationService : ITemporaryItemCreationService
     {

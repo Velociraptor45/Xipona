@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Shared
+namespace ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 {
     public class ItemId
     {

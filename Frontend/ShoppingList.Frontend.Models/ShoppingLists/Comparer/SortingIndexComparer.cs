@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
+using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Comparer
 {

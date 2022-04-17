@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Items
+namespace ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 {
     public class ItemSection
     {

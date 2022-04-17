@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System;
 using System.Linq;
 

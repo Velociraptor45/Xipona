@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
-using ProjectHermes.ShoppingList.Frontend.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
+using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

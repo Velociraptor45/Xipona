@@ -1,7 +1,11 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
-using ProjectHermes.ShoppingList.Frontend.Models.Items;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores;
+using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

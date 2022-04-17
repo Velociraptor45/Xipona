@@ -1,6 +1,7 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using System;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists
 {
     public class PutItemInBasketRequest : IApiRequest
     {

@@ -1,9 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
-using ProjectHermes.ShoppingList.Frontend.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Error;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
+using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using RestEase;

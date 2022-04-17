@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using System;
 using System.Collections.Generic;

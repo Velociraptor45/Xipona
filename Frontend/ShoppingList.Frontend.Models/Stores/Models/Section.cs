@@ -1,6 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Items;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models
+namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
 {
     public class Section
     {

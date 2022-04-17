@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests
 {
     public interface IApiRequest
     {

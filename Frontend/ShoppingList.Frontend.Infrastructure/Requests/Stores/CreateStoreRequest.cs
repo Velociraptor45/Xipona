@@ -1,6 +1,7 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
+using System;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores
 {
     public class CreateStoreRequest : IApiRequest
     {

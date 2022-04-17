@@ -1,7 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Items;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using System;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items
 {
     public class CreateItemRequest : IApiRequest
     {

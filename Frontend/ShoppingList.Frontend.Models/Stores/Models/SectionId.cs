@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models
+namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
 {
     public class SectionId
     {

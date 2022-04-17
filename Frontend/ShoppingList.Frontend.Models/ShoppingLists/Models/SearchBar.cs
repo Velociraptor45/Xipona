@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Index.Search
+namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 {
     public class SearchBar
     {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Error;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using System;

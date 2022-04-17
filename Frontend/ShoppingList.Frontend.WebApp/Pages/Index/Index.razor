@@ -1,14 +1,15 @@
 ﻿@page "/"
 
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification.IShoppingListNotificationService notificationService;
-@inject ProjectHermes.ShoppingList.Frontend.Models.Index.Services.IItemPriceCalculationService itemPriceCalculationService;
+@inject IItemPriceCalculationService itemPriceCalculationService;
 @inject Services.IShoppingListApiService apiService;
 @inject IWebAssemblyHostEnvironment env;
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common;
-@using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
+@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index

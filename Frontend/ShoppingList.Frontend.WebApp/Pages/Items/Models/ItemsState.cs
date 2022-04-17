@@ -1,4 +1,8 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

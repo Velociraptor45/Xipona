@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Index.Services
+namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
 {
     public interface IItemPriceCalculationService
     {

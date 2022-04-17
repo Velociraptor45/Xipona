@@ -1,8 +1,9 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Items
+namespace ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 {
     public class Item
     {

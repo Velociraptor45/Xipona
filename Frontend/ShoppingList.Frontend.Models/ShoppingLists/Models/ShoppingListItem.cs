@@ -1,8 +1,8 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
 using System;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models
+namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 {
     public class ShoppingListItem
     {

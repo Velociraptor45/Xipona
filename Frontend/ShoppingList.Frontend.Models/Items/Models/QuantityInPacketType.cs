@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.ShoppingList.Frontend.Models
+﻿namespace ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 {
     public class QuantityTypeInPacket
     {

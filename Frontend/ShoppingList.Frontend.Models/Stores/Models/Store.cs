@@ -1,10 +1,10 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Items;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Comparer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models
+namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
 {
     public class Store
     {

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores
 {
     public class ModifyStoreRequest : IApiRequest
     {

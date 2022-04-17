@@ -1,5 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Index;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;

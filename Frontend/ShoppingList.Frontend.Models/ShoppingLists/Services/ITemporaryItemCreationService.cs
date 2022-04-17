@@ -1,4 +1,6 @@
-﻿namespace ProjectHermes.ShoppingList.Frontend.Models.Index.Services
+﻿using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
+
+namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
 {
     public interface ITemporaryItemCreationService
     {
