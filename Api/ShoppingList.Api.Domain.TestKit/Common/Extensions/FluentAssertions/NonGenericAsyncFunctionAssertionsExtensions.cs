@@ -1,6 +1,6 @@
 ﻿using FluentAssertions.Specialized;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 
 namespace ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 

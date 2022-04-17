@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
