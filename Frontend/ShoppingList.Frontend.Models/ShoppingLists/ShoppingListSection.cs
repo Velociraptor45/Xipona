@@ -63,7 +63,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             return Items.Where(i => i.IsInBasket && !i.IsTemporary).Sum(i => i.GetTotalPrice(priceCalculationService));
         }
 
-        public static ShoppingListSection From(StoreSection section)
+        public static ShoppingListSection From(Section section)
         {
             return new ShoppingListSection(section.Id.BackendId, section.Name, section.SortingIndex,
                 section.IsDefaultSection, Enumerable.Empty<ShoppingListItem>());

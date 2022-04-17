@@ -20,10 +20,10 @@
 
 <div>
     Default Section:
-    <SingleSelect TItem="StoreSection"
+    <SingleSelect TItem="Models.Section"
                   TValue="StoreSectionId"
-                  ValueName="@nameof(StoreSection.Id)"
-                  LabelName="@nameof(StoreSection.Name)"
+                  ValueName="@nameof(Models.Section.Id)"
+                  LabelName="@nameof(Models.Section.Name)"
                   DefaultValue="@State.EditedStore.Sections.First(s => s.IsDefaultSection).Id"
                   DataSource="@State.EditedStore.Sections.ToList()"
                   OnItemChanged="OnDefaultSectionChanged"></SingleSelect>
@@ -32,7 +32,7 @@
 @code {
     [Parameter] public StoresState State { get; set; }
 
-    private void OnDefaultSectionChanged(StoreSection section)
+    private void OnDefaultSectionChanged(Models.Section section)
     {
         State.EditedStore.ChangeDefaultSection(section.Id.FrontendId);
     }

@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
             return new Store(
                 source.Id,
                 source.Name,
-                Enumerable.Empty<StoreSection>()); //todo #109
+                Enumerable.Empty<Section>()); //todo #109
         }
     }
 }

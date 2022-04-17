@@ -8,19 +8,19 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
 {
     public class Store
     {
-        public Store(Guid id, string name, IEnumerable<StoreSection> sections)
+        public Store(Guid id, string name, IEnumerable<Section> sections)
         {
             Id = id;
             Name = name;
-            Sections = new SortedSet<StoreSection>(sections, new SortingIndexComparer());
+            Sections = new SortedSet<Section>(sections, new SortingIndexComparer());
         }
 
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public SortedSet<StoreSection> Sections { get; private set; }
+        public SortedSet<Section> Sections { get; private set; }
         public int MaxSortingIndex => Sections.Max(s => s.SortingIndex);
         public int MinSortingIndex => Sections.Min(s => s.SortingIndex);
-        public StoreSection DefaultSection => Sections.Single(s => s.IsDefaultSection);
+        public Section DefaultSection => Sections.Single(s => s.IsDefaultSection);
 
         public void ChangeDefaultSection(Guid sectionId)
         {
@@ -34,11 +34,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
 
         public void AddSection()
         {
-            var section = new StoreSection(new StoreSectionId(Guid.NewGuid()), "", Sections.Max(s => s.SortingIndex) + 1, false);
+            var section = new Section(new StoreSectionId(Guid.NewGuid()), "", Sections.Max(s => s.SortingIndex) + 1, false);
             Sections.Add(section);
         }
 
-        public void IncrementSection(StoreSection section)
+        public void IncrementSection(Section section)
         {
             var sections = Sections.ToList();
 
@@ -52,10 +52,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
 
             UpdateSortingIndexes(sections);
 
-            Sections = new SortedSet<StoreSection>(sections, new SortingIndexComparer());
+            Sections = new SortedSet<Section>(sections, new SortingIndexComparer());
         }
 
-        public void DecrementSection(StoreSection section)
+        public void DecrementSection(Section section)
         {
             var sections = Sections.ToList();
 
@@ -69,10 +69,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
 
             UpdateSortingIndexes(sections);
 
-            Sections = new SortedSet<StoreSection>(sections, new SortingIndexComparer());
+            Sections = new SortedSet<Section>(sections, new SortingIndexComparer());
         }
 
-        private void UpdateSortingIndexes(List<StoreSection> sections)
+        private void UpdateSortingIndexes(List<Section> sections)
         {
             for (int i = 0; i < sections.Count; i++)
             {

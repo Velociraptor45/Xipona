@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
 {
     public class ModifyStoreRequest : IApiRequest
     {
-        public ModifyStoreRequest(Guid requestId, Guid storeId, string name, IEnumerable<StoreSection> sections)
+        public ModifyStoreRequest(Guid requestId, Guid storeId, string name, IEnumerable<Section> sections)
         {
             RequestId = requestId;
             StoreId = storeId;
@@ -17,6 +17,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
         public Guid RequestId { get; }
         public Guid StoreId { get; }
         public string Name { get; }
-        public IReadOnlyCollection<StoreSection> Sections { get; }
+        public IReadOnlyCollection<Section> Sections { get; }
     }
 }

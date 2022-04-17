@@ -41,7 +41,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             section?.RemoveItem(itemId, itemTypeId);
         }
 
-        public void AddItem(ShoppingListItem item, StoreSection storeSection)
+        public void AddItem(ShoppingListItem item, Section storeSection)
         {
             var section = sections.FirstOrDefault(s => s.Id == storeSection.Id.BackendId);
 

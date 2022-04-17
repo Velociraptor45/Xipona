@@ -41,7 +41,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Models
 
         public void EnterEditorForNewStore()
         {
-            var defaultSection = new StoreSection(new StoreSectionId(Guid.NewGuid()), "Default", 0, true);
+            var defaultSection = new Section(new StoreSectionId(Guid.NewGuid()), "Default", 0, true);
             var store = new Store(Guid.Empty, "", new[] { defaultSection });
 
             EnterEditor(store);

@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Stores.T
     {
         public Store ToDomain(ActiveStoreContract contract)
         {
-            var sections = contract.Sections.Select(s => new StoreSection(
+            var sections = contract.Sections.Select(s => new Section(
                     new StoreSectionId(s.Id, Guid.NewGuid()), s.Name, s.SortingIndex, s.IsDefaultSection));
 
             return new Store(contract.Id, contract.Name, sections);
