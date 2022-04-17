@@ -8,15 +8,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
 {
     public class ShoppingListItemConverter : IToDomainConverter<ShoppingListItemContract, ShoppingListItem>
     {
-        private readonly IToDomainConverter<QuantityTypeContract, QuantityType> quantityTypeConverter;
-        private readonly IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> quantityTypeInPacketConverter;
+        private readonly IToDomainConverter<QuantityTypeContract, QuantityType> _quantityTypeConverter;
+        private readonly IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> _quantityTypeInPacketConverter;
 
         public ShoppingListItemConverter(
             IToDomainConverter<QuantityTypeContract, QuantityType> quantityTypeConverter,
             IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> quantityTypeInPacketConverter)
         {
-            this.quantityTypeConverter = quantityTypeConverter;
-            this.quantityTypeInPacketConverter = quantityTypeInPacketConverter;
+            _quantityTypeConverter = quantityTypeConverter;
+            _quantityTypeInPacketConverter = quantityTypeInPacketConverter;
         }
 
         public ShoppingListItem ToDomain(ShoppingListItemContract source)
@@ -27,11 +27,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
                     source.Name,
                     source.IsTemporary,
                     source.PricePerQuantity,
-                    quantityTypeConverter.ToDomain(source.QuantityType),
+                    _quantityTypeConverter.ToDomain(source.QuantityType),
                     source.QuantityInPacket,
                     source.QuantityTypeInPacket is null ?
                         null :
-                        quantityTypeInPacketConverter.ToDomain(source.QuantityTypeInPacket),
+                        _quantityTypeInPacketConverter.ToDomain(source.QuantityTypeInPacket),
                     source.ItemCategory?.Name ?? "",
                     source.Manufacturer?.Name ?? "",
                     source.IsInBasket,

@@ -10,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models
             float? quantityInPacket, QuantityTypeInPacket quantityInPacketType, string itemCategory,
             string manufacturer, bool isInBasket, float quantity)
         {
-            Id = id ?? throw new System.ArgumentNullException(nameof(id));
+            Id = id ?? throw new ArgumentNullException(nameof(id));
             TypeId = typeId;
             Name = name;
             IsTemporary = isTemporary;

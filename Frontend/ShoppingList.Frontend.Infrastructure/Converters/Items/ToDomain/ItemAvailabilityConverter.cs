@@ -7,17 +7,17 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
     public class ItemAvailabilityConverter :
         IToDomainConverter<StoreItemAvailabilityContract, ItemAvailability>
     {
-        private readonly IToDomainConverter<StoreItemStoreContract, ItemStore> storeConverter;
+        private readonly IToDomainConverter<StoreItemStoreContract, ItemStore> _storeConverter;
 
         public ItemAvailabilityConverter(IToDomainConverter<StoreItemStoreContract, ItemStore> storeConverter)
         {
-            this.storeConverter = storeConverter;
+            _storeConverter = storeConverter;
         }
 
         public ItemAvailability ToDomain(StoreItemAvailabilityContract source)
         {
             return new ItemAvailability(
-                storeConverter.ToDomain(source.Store),
+                _storeConverter.ToDomain(source.Store),
                 source.Price,
                 source.DefaultSection.Id);
         }

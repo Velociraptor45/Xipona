@@ -12,13 +12,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
 {
     public class ItemEditorApiService : IItemEditorApiService
     {
-        private readonly IShoppingListNotificationService notificationService;
-        private readonly IApiClient apiClient;
+        private readonly IShoppingListNotificationService _notificationService;
+        private readonly IApiClient _apiClient;
 
         public ItemEditorApiService(IShoppingListNotificationService notificationService, IApiClient apiClient)
         {
-            this.notificationService = notificationService;
-            this.apiClient = apiClient;
+            _notificationService = notificationService;
+            _apiClient = apiClient;
         }
 
         public async Task UpdateItemWithTypesAsync(Item item, IAsyncRetryFragmentCreator fragmentCreator,
@@ -27,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             var withTypesRequest = new UpdateItemWithTypesRequest(Guid.NewGuid(), item);
             try
             {
-                await apiClient.UpdateItemWithTypesAsync(withTypesRequest);
+                await _apiClient.UpdateItemWithTypesAsync(withTypesRequest);
             }
             catch (ApiException e)
             {
@@ -35,14 +35,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await UpdateItemWithTypesAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Updating item failed", contract.Message, fragment);
+                _notificationService.NotifyError("Updating item failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await UpdateItemWithTypesAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while updating item", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while updating item", e.Message, fragment);
                 return;
             }
 
@@ -55,7 +55,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             var request = new UpdateItemRequest(Guid.NewGuid(), item);
             try
             {
-                await apiClient.UpdateItemAsync(request);
+                await _apiClient.UpdateItemAsync(request);
             }
             catch (ApiException e)
             {
@@ -63,14 +63,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await UpdateItemAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Updating item failed", contract.Message, fragment);
+                _notificationService.NotifyError("Updating item failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await UpdateItemAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while updating item", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while updating item", e.Message, fragment);
                 return;
             }
 
@@ -83,7 +83,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             var withTypesRequest = new CreateItemWithTypesRequest(Guid.NewGuid(), item);
             try
             {
-                await apiClient.CreateItemWithTypesAsync(withTypesRequest);
+                await _apiClient.CreateItemWithTypesAsync(withTypesRequest);
             }
             catch (ApiException e)
             {
@@ -91,14 +91,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await CreateItemWithTypesAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Creating item failed", contract.Message, fragment);
+                _notificationService.NotifyError("Creating item failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await CreateItemWithTypesAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while creating item", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while creating item", e.Message, fragment);
                 return;
             }
 
@@ -111,7 +111,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             var request = new CreateItemRequest(Guid.NewGuid(), item);
             try
             {
-                await apiClient.CreateItemAsync(request);
+                await _apiClient.CreateItemAsync(request);
             }
             catch (ApiException e)
             {
@@ -119,14 +119,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await CreateItemAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Creating item failed", contract.Message, fragment);
+                _notificationService.NotifyError("Creating item failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await CreateItemAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while creating item", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while creating item", e.Message, fragment);
                 return;
             }
 
@@ -139,7 +139,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             var withTypesRequest = new ModifyItemWithTypesRequest(Guid.NewGuid(), item);
             try
             {
-                await apiClient.ModifyItemWithTypesAsync(withTypesRequest);
+                await _apiClient.ModifyItemWithTypesAsync(withTypesRequest);
             }
             catch (ApiException e)
             {
@@ -147,14 +147,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await ModifyItemWithTypesAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Modifying item failed", contract.Message, fragment);
+                _notificationService.NotifyError("Modifying item failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await ModifyItemWithTypesAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while modifying item", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while modifying item", e.Message, fragment);
                 return;
             }
 
@@ -167,7 +167,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             var request = new ModifyItemRequest(Guid.NewGuid(), item);
             try
             {
-                await apiClient.ModifyItemAsync(request);
+                await _apiClient.ModifyItemAsync(request);
             }
             catch (ApiException e)
             {
@@ -175,14 +175,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await ModifyItemAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Modifying item failed", contract.Message, fragment);
+                _notificationService.NotifyError("Modifying item failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await ModifyItemAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while modifying item", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while modifying item", e.Message, fragment);
                 return;
             }
 
@@ -197,7 +197,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
                 item.ItemCategoryId!.Value, item.ManufacturerId, item.Availabilities);
             try
             {
-                await apiClient.MakeTemporaryItemPermanent(request);
+                await _apiClient.MakeTemporaryItemPermanent(request);
             }
             catch (ApiException e)
             {
@@ -205,14 +205,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await MakeTemporaryItemPermanentAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Creating item failed", contract.Message, fragment);
+                _notificationService.NotifyError("Creating item failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await MakeTemporaryItemPermanentAsync(item, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while creating item", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while creating item", e.Message, fragment);
                 return;
             }
 
@@ -225,7 +225,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             var request = new DeleteItemRequest(Guid.NewGuid(), itemId);
             try
             {
-                await apiClient.DeleteItemAsync(request);
+                await _apiClient.DeleteItemAsync(request);
             }
             catch (ApiException e)
             {
@@ -233,14 +233,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await DeleteItemAsync(itemId, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Deleting item failed", contract.Message, fragment);
+                _notificationService.NotifyError("Deleting item failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await DeleteItemAsync(itemId, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while deleting item", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while deleting item", e.Message, fragment);
                 return;
             }
 
@@ -252,7 +252,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
         {
             try
             {
-                await apiClient.CreateItemCategoryAsync(name);
+                await _apiClient.CreateItemCategoryAsync(name);
             }
             catch (ApiException e)
             {
@@ -260,14 +260,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await CreateItemCategoryAsync(name, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Creating item category failed", contract.Message, fragment);
+                _notificationService.NotifyError("Creating item category failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await CreateItemCategoryAsync(name, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while creating item category", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while creating item category", e.Message, fragment);
                 return;
             }
 
@@ -279,7 +279,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
         {
             try
             {
-                await apiClient.CreateManufacturerAsync(name);
+                await _apiClient.CreateManufacturerAsync(name);
             }
             catch (ApiException e)
             {
@@ -287,14 +287,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await CreateManufacturerAsync(name, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Creating manufacturer failed", contract.Message, fragment);
+                _notificationService.NotifyError("Creating manufacturer failed", contract.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await CreateManufacturerAsync(name, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while creating manufacturer", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while creating manufacturer", e.Message, fragment);
                 return;
             }
 

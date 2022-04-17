@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
 {
     public class MakeTemporaryItemPermanentRequest
     {
-        private readonly IEnumerable<ItemAvailability> availabilities;
+        private readonly IEnumerable<ItemAvailability> _availabilities;
 
         public MakeTemporaryItemPermanentRequest(Guid itemId, string name, string comment, int quantityType,
             float? quantityInPacket, int? quantityTypeInPacket, Guid itemCategoryId, Guid? manufacturerId,
@@ -21,7 +21,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
             QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
-            this.availabilities = availabilities;
+            _availabilities = availabilities;
         }
 
         public Guid ItemId { get; }
@@ -33,6 +33,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
         public Guid ItemCategoryId { get; }
         public Guid? ManufacturerId { get; }
 
-        public IReadOnlyCollection<ItemAvailability> Availabilities => availabilities.ToList().AsReadOnly();
+        public IReadOnlyCollection<ItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
     }
 }

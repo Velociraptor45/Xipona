@@ -9,12 +9,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
     public class CreateItemWithTypesContractConverter :
         IToContractConverter<Item, CreateItemWithTypesContract>
     {
-        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter;
+        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> _availabilityConverter;
 
         public CreateItemWithTypesContractConverter(
             IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter)
         {
-            this.availabilityConverter = availabilityConverter;
+            _availabilityConverter = availabilityConverter;
         }
 
         public CreateItemWithTypesContract ToContract(Item source)
@@ -37,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
             return new CreateItemTypeContract()
             {
                 Name = itemType.Name,
-                Availabilities = itemType.Availabilities.Select(availabilityConverter.ToContract)
+                Availabilities = itemType.Availabilities.Select(_availabilityConverter.ToContract)
             };
         }
     }

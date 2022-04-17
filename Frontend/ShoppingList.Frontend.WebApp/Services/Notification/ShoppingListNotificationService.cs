@@ -5,16 +5,16 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
 {
     public class ShoppingListNotificationService : IShoppingListNotificationService
     {
-        private readonly NotificationService notificationService;
+        private readonly NotificationService _notificationService;
 
         public ShoppingListNotificationService(NotificationService notificationService)
         {
-            this.notificationService = notificationService;
+            _notificationService = notificationService;
         }
 
         public void Notify(string title, string message)
         {
-            notificationService.Open(new NotificationConfig
+            _notificationService.Open(new NotificationConfig
             {
                 Message = title,
                 Description = message
@@ -23,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
 
         public void NotifySuccess(string title, string message)
         {
-            notificationService.Open(new NotificationConfig
+            _notificationService.Open(new NotificationConfig
             {
                 Message = title,
                 Description = message,
@@ -33,7 +33,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
 
         public void NotifyWarning(string title, string message)
         {
-            notificationService.Open(new NotificationConfig
+            _notificationService.Open(new NotificationConfig
             {
                 Message = title,
                 Description = message,
@@ -43,7 +43,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
 
         public void NotifyError(string title, string message)
         {
-            notificationService.Open(new NotificationConfig
+            _notificationService.Open(new NotificationConfig
             {
                 Message = title,
                 Description = message,
@@ -53,7 +53,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
 
         public void NotifyError(string title, string message, RenderFragment button)
         {
-            notificationService.Open(new NotificationConfig
+            _notificationService.Open(new NotificationConfig
             {
                 Message = title,
                 Description = message,

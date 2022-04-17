@@ -7,29 +7,29 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
 {
     public class ItemsState
     {
-        private readonly List<Store> stores;
-        private List<ItemCategory> itemCategories;
-        private List<Manufacturer> manufacturers;
-        private List<SearchItemResult> items = new();
-        private readonly List<QuantityType> quantityTypes;
-        private readonly List<QuantityTypeInPacket> quantityTypesInPacket;
+        private readonly List<Store> _stores;
+        private List<ItemCategory> _itemCategories;
+        private List<Manufacturer> _manufacturers;
+        private List<SearchItemResult> _items = new();
+        private readonly List<QuantityType> _quantityTypes;
+        private readonly List<QuantityTypeInPacket> _quantityTypesInPacket;
 
         public ItemsState(IEnumerable<Store> stores, IEnumerable<ItemCategory> itemCategories, IEnumerable<Manufacturer> manufacturers,
             IEnumerable<QuantityType> quantityTypes, IEnumerable<QuantityTypeInPacket> quantityTypesInPacket)
         {
-            this.stores = stores.ToList();
-            this.itemCategories = itemCategories.ToList();
-            this.manufacturers = manufacturers.ToList();
-            this.quantityTypes = quantityTypes.ToList();
-            this.quantityTypesInPacket = quantityTypesInPacket.ToList();
+            _stores = stores.ToList();
+            _itemCategories = itemCategories.ToList();
+            _manufacturers = manufacturers.ToList();
+            _quantityTypes = quantityTypes.ToList();
+            _quantityTypesInPacket = quantityTypesInPacket.ToList();
         }
 
-        public IReadOnlyCollection<Store> Stores => stores.AsReadOnly();
-        public IReadOnlyCollection<ItemCategory> ItemCategories => itemCategories.AsReadOnly();
-        public IReadOnlyCollection<Manufacturer> Manufacturers => manufacturers.AsReadOnly();
-        public IReadOnlyCollection<SearchItemResult> Items => items.AsReadOnly();
-        public IReadOnlyCollection<QuantityType> QuantityTypes => quantityTypes.AsReadOnly();
-        public IReadOnlyCollection<QuantityTypeInPacket> QuantityTypesInPacket => quantityTypesInPacket.AsReadOnly();
+        public IReadOnlyCollection<Store> Stores => _stores.AsReadOnly();
+        public IReadOnlyCollection<ItemCategory> ItemCategories => _itemCategories.AsReadOnly();
+        public IReadOnlyCollection<Manufacturer> Manufacturers => _manufacturers.AsReadOnly();
+        public IReadOnlyCollection<SearchItemResult> Items => _items.AsReadOnly();
+        public IReadOnlyCollection<QuantityType> QuantityTypes => _quantityTypes.AsReadOnly();
+        public IReadOnlyCollection<QuantityTypeInPacket> QuantityTypesInPacket => _quantityTypesInPacket.AsReadOnly();
 
         public Func<Task> ManufacturerCreated { get; set; }
         public Func<Task> ItemCategoryCreated { get; set; }
@@ -40,19 +40,19 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items
 
         public void UpdateManufacturers(IEnumerable<Manufacturer> manufacturers)
         {
-            this.manufacturers = manufacturers.ToList();
+            _manufacturers = manufacturers.ToList();
             StateChanged?.Invoke();
         }
 
         public void UpdateItemCategories(IEnumerable<ItemCategory> itemCategories)
         {
-            this.itemCategories = itemCategories.ToList();
+            _itemCategories = itemCategories.ToList();
             StateChanged?.Invoke();
         }
 
         public void UpdateItems(IEnumerable<SearchItemResult> items)
         {
-            this.items = items.ToList();
+            _items = items.ToList();
             StateChanged?.Invoke();
         }
 

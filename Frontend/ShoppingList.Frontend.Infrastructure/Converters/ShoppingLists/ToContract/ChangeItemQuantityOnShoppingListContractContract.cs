@@ -9,18 +9,18 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
     public class ChangeItemQuantityOnShoppingListContractContract :
         IToContractConverter<ChangeItemQuantityOnShoppingListRequest, ChangeItemQuantityOnShoppingListContract>
     {
-        private readonly IToContractConverter<ItemId, ItemIdContract> itemIdConverter;
+        private readonly IToContractConverter<ItemId, ItemIdContract> _itemIdConverter;
 
         public ChangeItemQuantityOnShoppingListContractContract(
             IToContractConverter<ItemId, ItemIdContract> itemIdConverter)
         {
-            this.itemIdConverter = itemIdConverter;
+            _itemIdConverter = itemIdConverter;
         }
 
         public ChangeItemQuantityOnShoppingListContract ToContract(ChangeItemQuantityOnShoppingListRequest source)
         {
             return new ChangeItemQuantityOnShoppingListContract(
-                itemIdConverter.ToContract(source.ItemId),
+                _itemIdConverter.ToContract(source.ItemId),
                 source.ItemTypeId,
                 source.Quantity);
         }

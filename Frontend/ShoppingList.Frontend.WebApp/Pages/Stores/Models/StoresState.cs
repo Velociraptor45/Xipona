@@ -8,14 +8,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Models
 {
     public class StoresState
     {
-        private List<Store> stores;
+        private List<Store> _stores;
 
         public StoresState(IEnumerable<Store> stores)
         {
-            this.stores = stores.ToList();
+            _stores = stores.ToList();
         }
 
-        public IReadOnlyCollection<Store> Stores => stores.AsReadOnly();
+        public IReadOnlyCollection<Store> Stores => _stores.AsReadOnly();
         public Store EditedStore { get; private set; }
         public bool IsInEditMode => EditedStore != null;
         public Func<Task> StoreChanged { get; set; }
@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Models
 
         public void UpdateStores(IEnumerable<Store> stores)
         {
-            this.stores = stores.ToList();
+            _stores = stores.ToList();
             StateChanged?.Invoke();
         }
 

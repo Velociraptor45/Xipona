@@ -13,13 +13,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 {
     public class ItemsApiService : IItemsApiService
     {
-        private readonly IApiClient apiClient;
-        private readonly IShoppingListNotificationService notificationService;
+        private readonly IApiClient _apiClient;
+        private readonly IShoppingListNotificationService _notificationService;
 
         public ItemsApiService(IApiClient apiClient, IShoppingListNotificationService notificationService)
         {
-            this.apiClient = apiClient;
-            this.notificationService = notificationService;
+            _apiClient = apiClient;
+            _notificationService = notificationService;
         }
 
         public async Task LoadInitialPageStateAsync(IAsyncRetryFragmentCreator fragmentCreator,
@@ -27,11 +27,11 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
         {
             try
             {
-                var stores = await apiClient.GetAllActiveStoresAsync();
-                var manufacturers = await apiClient.GetAllActiveManufacturersAsync();
-                var itemCategories = await apiClient.GetAllActiveItemCategoriesAsync();
-                var quantityTypes = await apiClient.GetAllQuantityTypesAsync();
-                var quantityTypesInPacket = await apiClient.GetAllQuantityTypesInPacketAsync();
+                var stores = await _apiClient.GetAllActiveStoresAsync();
+                var manufacturers = await _apiClient.GetAllActiveManufacturersAsync();
+                var itemCategories = await _apiClient.GetAllActiveItemCategoriesAsync();
+                var quantityTypes = await _apiClient.GetAllQuantityTypesAsync();
+                var quantityTypesInPacket = await _apiClient.GetAllQuantityTypesInPacketAsync();
 
                 var state = new ItemsState(
                     stores,
@@ -48,13 +48,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadInitialPageStateAsync(fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Page loading failed", contract.Message, fragment);
+                _notificationService.NotifyError("Page loading failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadInitialPageStateAsync(fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while loading page", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while loading page", e.Message, fragment);
             }
         }
 
@@ -63,7 +63,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
         {
             try
             {
-                var results = await apiClient.SearchItemsAsync(searchInput);
+                var results = await _apiClient.SearchItemsAsync(searchInput);
                 onSuccessAction(results);
             }
             catch (ApiException e)
@@ -72,13 +72,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await SearchItemsAsync(searchInput, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Items loading failed", contract.Message, fragment);
+                _notificationService.NotifyError("Items loading failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await SearchItemsAsync(searchInput, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while loading items", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while loading items", e.Message, fragment);
             }
         }
 
@@ -88,7 +88,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
         {
             try
             {
-                var results = await apiClient.SearchItemsByFilterAsync(
+                var results = await _apiClient.SearchItemsByFilterAsync(
                         storeIds,
                         itemCategoryIds,
                         manufacturerIds);
@@ -102,14 +102,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await SearchItemsAsync(storeIds, itemCategoryIds, manufacturerIds, fragmentCreator,
                         onSuccessAction));
-                notificationService.NotifyError("Items loading failed", contract.Message, fragment);
+                _notificationService.NotifyError("Items loading failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await SearchItemsAsync(storeIds, itemCategoryIds, manufacturerIds, fragmentCreator,
                         onSuccessAction));
-                notificationService.NotifyError("Unknown error while loading items", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while loading items", e.Message, fragment);
             }
         }
 
@@ -118,7 +118,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
         {
             try
             {
-                var results = await apiClient.GetAllActiveManufacturersAsync();
+                var results = await _apiClient.GetAllActiveManufacturersAsync();
                 onSuccessAction(results);
             }
             catch (ApiException e)
@@ -127,13 +127,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadManufacturersAsync(fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Loading manufacturers failed", contract.Message, fragment);
+                _notificationService.NotifyError("Loading manufacturers failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadManufacturersAsync(fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while loading manufacturers", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while loading manufacturers", e.Message, fragment);
             }
         }
 
@@ -142,7 +142,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
         {
             try
             {
-                var results = await apiClient.GetAllActiveItemCategoriesAsync();
+                var results = await _apiClient.GetAllActiveItemCategoriesAsync();
                 onSuccessAction(results);
             }
             catch (ApiException e)
@@ -151,13 +151,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadItemCategoriesAsync(fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Loading item categories failed", contract.Message, fragment);
+                _notificationService.NotifyError("Loading item categories failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadItemCategoriesAsync(fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while loading item categories", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while loading item categories", e.Message, fragment);
             }
         }
 
@@ -166,7 +166,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
         {
             try
             {
-                var result = await apiClient.GetItemByIdAsync(itemId);
+                var result = await _apiClient.GetItemByIdAsync(itemId);
                 onSuccessAction(result);
             }
             catch (ApiException e)
@@ -175,13 +175,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadItemAsync(itemId, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Loading item failed", contract.Message, fragment);
+                _notificationService.NotifyError("Loading item failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadItemAsync(itemId, fragmentCreator, onSuccessAction));
-                notificationService.NotifyError("Unknown error while loading item", e.Message, fragment);
+                _notificationService.NotifyError("Unknown error while loading item", e.Message, fragment);
             }
         }
     }

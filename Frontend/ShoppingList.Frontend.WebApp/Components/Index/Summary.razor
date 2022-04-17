@@ -34,7 +34,7 @@
     
     private bool summaryVisible = false;
     private bool loading = false;
-    private string title => $"Finish shopping at {State.SelectedStore?.Name}";
+    private string Title => $"Finish shopping at {State.SelectedStore?.Name}";
 
     private void OnSummaryButtonClicked()
     {
@@ -81,7 +81,7 @@
     {
         return @<Template>
                    <div>
-                       <div>@title</div>
+                       <div>@Title</div>
                        <div class="summary-datetime">@GetDateTime()</div>
                    </div>
                 </Template>;

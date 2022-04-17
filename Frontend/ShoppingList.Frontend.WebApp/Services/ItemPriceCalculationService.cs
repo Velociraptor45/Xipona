@@ -10,22 +10,22 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services
 {
     public class ItemPriceCalculationService : IItemPriceCalculationService
     {
-        private readonly IApiClient apiClient;
-        private List<QuantityType> quantityTypes;
+        private readonly IApiClient _apiClient;
+        private List<QuantityType> _quantityTypes;
 
         public ItemPriceCalculationService(IApiClient apiClient)
         {
-            this.apiClient = apiClient;
+            _apiClient = apiClient;
         }
 
         public async Task InitializeAsync()
         {
-            quantityTypes = (await apiClient.GetAllQuantityTypesAsync()).ToList();
+            _quantityTypes = (await _apiClient.GetAllQuantityTypesAsync()).ToList();
         }
 
         public float CalculatePrice(int quantityTypeId, float pricePerQuantity, float quantity)
         {
-            var type = quantityTypes.FirstOrDefault(type => type.Id == quantityTypeId);
+            var type = _quantityTypes.FirstOrDefault(type => type.Id == quantityTypeId);
             if (type == null)
                 throw new InvalidOperationException($"Quantity type {quantityTypeId} not recognized.");
 

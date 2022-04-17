@@ -10,12 +10,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
     public class MakeTemporaryItemPermanentContractConverter :
         IToContractConverter<MakeTemporaryItemPermanentRequest, MakeTemporaryItemPermanentContract>
     {
-        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter;
+        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> _availabilityConverter;
 
         public MakeTemporaryItemPermanentContractConverter(
             IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter)
         {
-            this.availabilityConverter = availabilityConverter;
+            _availabilityConverter = availabilityConverter;
         }
 
         public MakeTemporaryItemPermanentContract ToContract(MakeTemporaryItemPermanentRequest source)
@@ -28,7 +28,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
                 source.QuantityTypeInPacket,
                 source.ItemCategoryId,
                 source.ManufacturerId,
-                source.Availabilities.Select(availabilityConverter.ToContract));
+                source.Availabilities.Select(_availabilityConverter.ToContract));
         }
     }
 }

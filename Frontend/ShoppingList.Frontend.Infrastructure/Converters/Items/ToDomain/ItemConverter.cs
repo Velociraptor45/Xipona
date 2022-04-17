@@ -9,18 +9,18 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
 {
     public class ItemConverter : IToDomainConverter<StoreItemContract, Item>
     {
-        private readonly IToDomainConverter<StoreItemAvailabilityContract, ItemAvailability> availabilityConverter;
-        private readonly IToDomainConverter<QuantityTypeContract, QuantityType> quantityTypeConverter;
-        private readonly IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> quantityTypeInPacketConverter;
+        private readonly IToDomainConverter<StoreItemAvailabilityContract, ItemAvailability> _availabilityConverter;
+        private readonly IToDomainConverter<QuantityTypeContract, QuantityType> _quantityTypeConverter;
+        private readonly IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> _quantityTypeInPacketConverter;
 
         public ItemConverter(
             IToDomainConverter<StoreItemAvailabilityContract, ItemAvailability> availabilityConverter,
             IToDomainConverter<QuantityTypeContract, QuantityType> quantityTypeConverter,
             IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> quantityTypeInPacketConverter)
         {
-            this.availabilityConverter = availabilityConverter;
-            this.quantityTypeConverter = quantityTypeConverter;
-            this.quantityTypeInPacketConverter = quantityTypeInPacketConverter;
+            _availabilityConverter = availabilityConverter;
+            _quantityTypeConverter = quantityTypeConverter;
+            _quantityTypeInPacketConverter = quantityTypeInPacketConverter;
         }
 
         public Item ToDomain(StoreItemContract source)
@@ -31,14 +31,14 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
                 source.IsDeleted,
                 source.Comment,
                 source.IsTemporary,
-                quantityTypeConverter.ToDomain(source.QuantityType),
+                _quantityTypeConverter.ToDomain(source.QuantityType),
                 source.QuantityInPacket,
                 source.QuantityTypeInPacket is null ?
                     null :
-                    quantityTypeInPacketConverter.ToDomain(source.QuantityTypeInPacket),
+                    _quantityTypeInPacketConverter.ToDomain(source.QuantityTypeInPacket),
                 source.ItemCategory?.Id,
                 source.Manufacturer?.Id,
-                source.Availabilities.Select(availabilityConverter.ToDomain),
+                source.Availabilities.Select(_availabilityConverter.ToDomain),
                 source.ItemTypes.Select(CreateItemType));
         }
 
@@ -47,7 +47,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
             return new ItemType(
                 contract.Id,
                 contract.Name,
-                contract.Availabilities.Select(availabilityConverter.ToDomain));
+                contract.Availabilities.Select(_availabilityConverter.ToDomain));
         }
     }
 }

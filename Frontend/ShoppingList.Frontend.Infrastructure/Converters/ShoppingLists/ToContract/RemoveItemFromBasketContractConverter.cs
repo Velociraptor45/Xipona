@@ -9,18 +9,18 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
     public class RemoveItemFromBasketContractConverter :
         IToContractConverter<RemoveItemFromBasketRequest, RemoveItemFromBasketContract>
     {
-        private readonly IToContractConverter<ItemId, ItemIdContract> itemIdConverter;
+        private readonly IToContractConverter<ItemId, ItemIdContract> _itemIdConverter;
 
         public RemoveItemFromBasketContractConverter(
             IToContractConverter<ItemId, ItemIdContract> itemIdConverter)
         {
-            this.itemIdConverter = itemIdConverter;
+            _itemIdConverter = itemIdConverter;
         }
 
         public RemoveItemFromBasketContract ToContract(RemoveItemFromBasketRequest source)
         {
             return new RemoveItemFromBasketContract(
-                itemIdConverter.ToContract(source.ItemId),
+                _itemIdConverter.ToContract(source.ItemId),
                 source.ItemTypeId);
         }
     }

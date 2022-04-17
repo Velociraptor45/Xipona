@@ -7,12 +7,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
 {
     public class ShoppingListSectionConverter : IToDomainConverter<ShoppingListSectionContract, ShoppingListSection>
     {
-        private readonly IToDomainConverter<ShoppingListItemContract, ShoppingListItem> itemConverter;
+        private readonly IToDomainConverter<ShoppingListItemContract, ShoppingListItem> _itemConverter;
 
         public ShoppingListSectionConverter(
             IToDomainConverter<ShoppingListItemContract, ShoppingListItem> itemConverter)
         {
-            this.itemConverter = itemConverter;
+            _itemConverter = itemConverter;
         }
 
         public ShoppingListSection ToDomain(ShoppingListSectionContract source)
@@ -22,7 +22,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
                 source.Name,
                 source.SortingIndex,
                 source.IsDefaultSection,
-                source.Items.Select(itemConverter.ToDomain));
+                source.Items.Select(_itemConverter.ToDomain));
         }
     }
 }

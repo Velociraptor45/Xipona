@@ -7,15 +7,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
 {
     public class ShoppingListRootConverter : IToDomainConverter<ShoppingListContract, ShoppingListRoot>
     {
-        private readonly IToDomainConverter<ShoppingListSectionContract, ShoppingListSection> sectionConverter;
-        private readonly IToDomainConverter<ShoppingListStoreContract, Store> storeConverter;
+        private readonly IToDomainConverter<ShoppingListSectionContract, ShoppingListSection> _sectionConverter;
+        private readonly IToDomainConverter<ShoppingListStoreContract, Store> _storeConverter;
 
         public ShoppingListRootConverter(
             IToDomainConverter<ShoppingListSectionContract, ShoppingListSection> sectionConverter,
             IToDomainConverter<ShoppingListStoreContract, Store> storeConverter)
         {
-            this.sectionConverter = sectionConverter;
-            this.storeConverter = storeConverter;
+            _sectionConverter = sectionConverter;
+            _storeConverter = storeConverter;
         }
 
         public ShoppingListRoot ToDomain(ShoppingListContract source)
@@ -23,8 +23,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
             return new ShoppingListRoot(
                 source.Id,
                 source.CompletionDate,
-                storeConverter.ToDomain(source.Store),
-                source.Sections.Select(sectionConverter.ToDomain));
+                _storeConverter.ToDomain(source.Store),
+                source.Sections.Select(_sectionConverter.ToDomain));
         }
     }
 }
