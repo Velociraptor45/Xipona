@@ -246,19 +246,19 @@ public class StoreControllerIntegrationTests
             yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
         }
 
-        public IStoreRepository CreateStoreRepository(IServiceScope scope)
+        protected IStoreRepository CreateStoreRepository(IServiceScope scope)
         {
             return scope.ServiceProvider.GetRequiredService<IStoreRepository>();
         }
 
-        public async Task<IEnumerable<IStore>> LoadPersistedStoresAsync()
+        public async Task<IList<IStore>> LoadPersistedStoresAsync()
         {
             using var scope = CreateNewServiceScope();
             var repo = CreateStoreRepository(scope);
 
             using (await CreateTransactionAsync(scope))
             {
-                return await repo.GetAsync(default);
+                return (await repo.GetAsync(default)).ToList();
             }
         }
 
