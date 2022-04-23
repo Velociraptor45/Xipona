@@ -5,7 +5,7 @@ using System.IO;
 
 namespace ShoppingList.Api.Endpoint.IntegrationsTests;
 
-public class DockerFixture : IDisposable
+public sealed class DockerFixture : IDisposable
 {
     private readonly ICompositeService _container;
 
@@ -29,7 +29,7 @@ public class DockerFixture : IDisposable
     public const string ConnectionString =
         $"server=127.0.0.1;port=15906;database={DatabaseName};user id=root;pwd=123root;AllowUserVariables=true;UseAffectedRows=false";
 
-    public const string DatabaseName = "dev-shoppinglist";
+    public const string DatabaseName = "test-shoppinglist";
 
     public void Dispose()
     {

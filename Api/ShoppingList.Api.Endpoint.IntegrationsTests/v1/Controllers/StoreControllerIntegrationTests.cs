@@ -4,106 +4,234 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
+using ShoppingList.Api.TestTools.Exceptions;
+using System;
 using Xunit;
 
 namespace ShoppingList.Api.Endpoint.IntegrationsTests.v1.Controllers;
 
-public class StoreControllerIntegrationTests : IClassFixture<DockerFixture>
+public class StoreControllerIntegrationTests
 {
-    private readonly LocalFixture _fixture;
-
-    public StoreControllerIntegrationTests(DockerFixture dockerFixture)
+    [Collection("IntegrationTests")]
+    public class CreateStoreAsync
     {
-        _fixture = new LocalFixture(dockerFixture);
-    }
+        private readonly CreateStoreAsyncFixture _fixture;
 
-    [Fact]
-    public async Task CreateStoreAsync()
-    {
-        // Arrange
-        using (var arrangementScope = _fixture.CreateNewServiceScope())
+        public CreateStoreAsync(DockerFixture dockerFixture)
         {
-            await _fixture.SetupDatabaseAsync(arrangementScope);
+            _fixture = new CreateStoreAsyncFixture(dockerFixture);
         }
 
-        var sut = _fixture.CreateSut();
-
-        var contract = new CreateStoreContract("MyCoolStore",
-            new List<CreateSectionContract> { new("MyCoolSection", 0, true) });
-
-        // Act
-        await sut.CreateStoreAsync(contract);
-
-        // Assert
-        using (var assertionScope = _fixture.CreateNewServiceScope())
+        [Fact]
+        public async Task CreateStoreAsync_WithValidData_ShouldReturnCorrectResult()
         {
-            var repo = _fixture.CreateStoreRepository(assertionScope);
+            // Arrange
+            await _fixture.PrepareDatabaseAsync();
+            _fixture.SetupContract();
+            _fixture.SetupExpectedResultValue();
+            var sut = _fixture.CreateSut();
 
-            using (await _fixture.CreateTransactionAsync(assertionScope))
+            // Act
+            var result = await sut.CreateStoreAsync(_fixture.Contract!);
+
+            // Assert
+            result.Should().BeOfType<CreatedResult>();
+            var createdResult = result as CreatedResult;
+            createdResult!.Value.Should().BeOfType<StoreContract>();
+            createdResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResultValue!,
+                opts => opts.Excluding(x => x.SelectedMemberPath.EndsWith("Id")));
+        }
+
+        [Fact]
+        public async Task CreateStoreAsync_WithValidData_ShouldPersistStore()
+        {
+            // Arrange
+            await _fixture.PrepareDatabaseAsync();
+            _fixture.SetupContract();
+            _fixture.SetupExpectedPersistedStore();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.CreateStoreAsync(_fixture.Contract!);
+
+            // Assert
+            var stores = await _fixture.LoadPersistedStoresAsync();
+
+            stores.Should().HaveCount(1);
+            stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
+                opts => opts.Excluding(x => x.SelectedMemberPath.EndsWith("Id")));
+        }
+
+        private class CreateStoreAsyncFixture : LocalFixture
+        {
+            public CreateStoreAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
-                var stores = await repo.GetAsync(default);
+            }
 
-                stores.Should().HaveCount(1);
-                stores.First().Name.Should().Be(new StoreName("MyCoolStore"));
+            public CreateStoreContract? Contract { get; private set; }
+            public StoreContract? ExpectedResultValue { get; private set; }
+            public Store? ExpectedPersistedStore { get; private set; }
+
+            public void SetupContract()
+            {
+                Contract = new CreateStoreContract("MyCoolStore",
+                    new List<CreateSectionContract> { new("MyCoolSection", 0, true) });
+            }
+
+            public void SetupExpectedResultValue()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var sections = Contract.Sections.Select(section =>
+                        new StoreSectionContract(Guid.Empty, section.Name, section.SortingIndex,
+                            section.IsDefaultSection))
+                    .ToList();
+
+                ExpectedResultValue = new StoreContract(Guid.Empty, Contract.Name, sections);
+            }
+
+            public void SetupExpectedPersistedStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var sections = new List<IStoreSection>();
+                foreach (var section in Contract.Sections)
+                {
+                    sections.Add(new StoreSectionBuilder()
+                        .WithName(new SectionName(section.Name))
+                        .WithIsDefaultSection(section.IsDefaultSection)
+                        .WithSortingIndex(section.SortingIndex)
+                        .Create());
+                }
+
+                var factory = ExecutionScope.ServiceProvider.GetRequiredService<IStoreSectionFactory>();
+
+                ExpectedPersistedStore = new StoreBuilder()
+                    .WithName(new StoreName(Contract.Name))
+                    .WithIsDeleted(false)
+                    .WithSections(new StoreSections(sections, factory))
+                    .Create();
+            }
+
+            public override async Task PrepareDatabaseAsync()
+            {
+                await SetupDatabaseAsync(ExecutionScope);
             }
         }
     }
 
-    [Fact]
-    public async Task UpdateStoreAsync()
+    [Collection("IntegrationTests")]
+    public class UpdateStoreAsync
     {
-        // Arrange
+        private readonly UpdateStoreAsyncFixture _fixture;
 
-        Store store;
-        using (var arrangementScope = _fixture.CreateNewServiceScope())
+        public UpdateStoreAsync(DockerFixture dockerFixture)
         {
-            await _fixture.SetupDatabaseAsync(arrangementScope);
-
-            using (var t = await _fixture.CreateTransactionAsync(arrangementScope))
-            {
-                var repo = _fixture.CreateStoreRepository(arrangementScope);
-                store = StoreMother.Initial().Create();
-                await repo.StoreAsync(store, default);
-                await t.CommitAsync(default);
-            }
+            _fixture = new UpdateStoreAsyncFixture(dockerFixture);
         }
 
-        var sut = _fixture.CreateSut();
-
-        var contract = new UpdateStoreContract(store.Id.Value, "MyStore", new List<UpdateSectionContract>()
+        [Fact]
+        public async Task UpdateStoreAsync_WithEquivalentSectionId_ShouldUpdateStore()
         {
-            new(store.Sections.First().Id.Value, "mySection", 0, true)
-        });
+            // Arrange
+            _fixture.SetupExistingStore();
+            await _fixture.PrepareDatabaseAsync();
+            _fixture.SetupContract();
+            _fixture.SetupExpectedPersistedStoreWithSameSectionIds();
+            var sut = _fixture.CreateSut();
 
-        // Act
-        var response = await sut.UpdateStoreAsync(contract);
+            // Act
+            var response = await sut.UpdateStoreAsync(_fixture.Contract!);
 
-        // Assert
-        using (var assertionScope = _fixture.CreateNewServiceScope())
-        {
+            // Assert
             response.Should().BeOfType<OkResult>();
 
-            using (await _fixture.CreateTransactionAsync(assertionScope))
-            {
-                var repo = _fixture.CreateStoreRepository(assertionScope);
-                var stores = await repo.GetAsync(default);
+            var stores = await _fixture.LoadPersistedStoresAsync();
 
-                stores.Should().HaveCount(1);
-                stores.First().Name.Should().Be(new StoreName("MyStore"));
+            stores.Should().HaveCount(1);
+            stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore);
+        }
+
+        private class UpdateStoreAsyncFixture : LocalFixture
+        {
+            public UpdateStoreAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public UpdateStoreContract? Contract { get; private set; }
+            public Store? ExistingStore { get; private set; }
+            public Store? ExpectedPersistedStore { get; private set; }
+
+            public void SetupContract()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingStore);
+
+                Contract = new UpdateStoreContract(ExistingStore.Id.Value, "MyStore", new List<UpdateSectionContract>()
+                {
+                    new(ExistingStore.Sections.First().Id.Value, "mySection", 0, true)
+                });
+            }
+
+            public override async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingStore);
+
+                using var scope = CreateNewServiceScope();
+                await SetupDatabaseAsync(scope);
+
+                using var transaction = await CreateTransactionAsync(scope);
+
+                var repo = CreateStoreRepository(scope);
+                await repo.StoreAsync(ExistingStore, default);
+
+                await transaction.CommitAsync(default);
+            }
+
+            public void SetupExistingStore()
+            {
+                ExistingStore = StoreMother.Initial().Create();
+            }
+
+            public void SetupExpectedPersistedStoreWithSameSectionIds()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var sections = new List<IStoreSection>();
+                foreach (var section in Contract.Sections)
+                {
+                    sections.Add(new StoreSection(
+                        new SectionId(section.Id!.Value),
+                        new SectionName(section.Name),
+                        section.SortingIndex,
+                        section.IsDefaultSection));
+                }
+
+                var factory = ExecutionScope.ServiceProvider.GetRequiredService<IStoreSectionFactory>();
+
+                ExpectedPersistedStore = new Store(
+                    new StoreId(Contract.Id),
+                    new StoreName(Contract.Name),
+                    false,
+                    new StoreSections(sections, factory));
             }
         }
     }
 
-    private class LocalFixture : DatabaseFixture
+    private abstract class LocalFixture : DatabaseFixture, IDisposable
     {
-        public LocalFixture(DockerFixture dockerFixture) : base(dockerFixture)
+        protected readonly IServiceScope ExecutionScope;
+
+        protected LocalFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
+            ExecutionScope = CreateNewServiceScope();
         }
 
         public StoreController CreateSut()
@@ -121,6 +249,33 @@ public class StoreControllerIntegrationTests : IClassFixture<DockerFixture>
         public IStoreRepository CreateStoreRepository(IServiceScope scope)
         {
             return scope.ServiceProvider.GetRequiredService<IStoreRepository>();
+        }
+
+        public async Task<IEnumerable<IStore>> LoadPersistedStoresAsync()
+        {
+            using var scope = CreateNewServiceScope();
+            var repo = CreateStoreRepository(scope);
+
+            using (await CreateTransactionAsync(scope))
+            {
+                return await repo.GetAsync(default);
+            }
+        }
+
+        public abstract Task PrepareDatabaseAsync();
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                ExecutionScope.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
