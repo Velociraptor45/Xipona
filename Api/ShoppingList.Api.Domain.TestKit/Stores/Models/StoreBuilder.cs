@@ -12,6 +12,12 @@ public class StoreBuilder : DomainTestBuilderBase<Store>
         return this;
     }
 
+    public StoreBuilder WithName(StoreName name)
+    {
+        FillConstructorWith(nameof(name), name);
+        return this;
+    }
+
     public StoreBuilder WithIsDeleted(bool isDeleted)
     {
         FillConstructorWith("isDeleted", isDeleted);

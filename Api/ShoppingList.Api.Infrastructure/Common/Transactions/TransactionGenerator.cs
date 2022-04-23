@@ -5,7 +5,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 
 public class TransactionGenerator : ITransactionGenerator
 {
-    private readonly object _lockObject = new object();
+    private readonly object _lockObject = new();
     private readonly IList<DbContext> _dbContexts;
     private readonly DbConnection _connection;
 
@@ -29,7 +29,21 @@ public class TransactionGenerator : ITransactionGenerator
                 database.UseTransactionAsync(dbTransaction, cancellationToken)
                     .GetAwaiter().GetResult();
             }
-            return Task.FromResult(new Transaction(dbTransaction) as ITransaction);
+
+            return Task.FromResult(
+                new Transaction(dbTransaction, async () => await RemoveTransactions(cancellationToken))
+                    as ITransaction);
+        }
+    }
+
+    private async Task RemoveTransactions(CancellationToken cancellationToken)
+    {
+        foreach (var database in _dbContexts.Select(ctx => ctx.Database))
+        {
+            if (database.CurrentTransaction == null)
+                continue;
+
+            await database.UseTransactionAsync(null, cancellationToken);
         }
     }
 }
