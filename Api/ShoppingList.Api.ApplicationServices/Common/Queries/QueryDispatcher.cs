@@ -13,22 +13,26 @@ public class QueryDispatcher : IQueryDispatcher
     {
         var valueType = query.GetType()
             .GetInterfaces()
-            .First(interf => interf.IsGenericType && interf.GetGenericTypeDefinition() == typeof(IQuery<>))
+            .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IQuery<>))
             .GetGenericArguments()
             .First();
 
         var serviceType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), valueType);
         var service = _serviceProvider.GetService(serviceType);
+
+        if (service is null)
+            throw new InvalidOperationException($"No service for type {serviceType.Name} found");
+
         var method = serviceType.GetMethod("HandleAsync");
 
         if (method is null)
-            throw new InvalidOperationException("Method 'HandleAsync' not found.");
+            throw new InvalidOperationException($"Method 'HandleAsync' not found in service {service.GetType().Name}");
 
-        if (!(method.Invoke(service, new object[] { query, cancellationToken }) is Task<T> task))
-        {
-            throw new InvalidOperationException();
-        }
+        var result = method.Invoke(service, new object[] { query, cancellationToken });
 
-        return task;
+        if (result is not Task<T> typedResult)
+            throw new InvalidOperationException($"Return type of service is not as expected ({result?.GetType().Name})");
+
+        return typedResult;
     }
 }
