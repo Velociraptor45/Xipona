@@ -48,9 +48,9 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
             StateChanged?.Invoke();
         }
 
-        public void AddItemToDefaultSection(ShoppingListItem item)
+        public void AddItem(ShoppingListItem item, Section section)
         {
-            ShoppingList.AddItem(item, SelectedStore.DefaultSection);
+            ShoppingList.AddItem(item, section);
             StateChanged?.Invoke();
         }
 

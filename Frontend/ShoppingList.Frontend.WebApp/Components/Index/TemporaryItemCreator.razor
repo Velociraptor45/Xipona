@@ -83,13 +83,13 @@
     private async Task OnAddButtonClicked()
     {
         loading = true;
-
-        var item = temporaryItemCreationService.Create(name);
+        // try?
+        var item = temporaryItemCreationService.Create(name, price);
 
         await apiService.CreateTemporaryItemOnShoppingListAsync(item, State.ShoppingList.Id,
-            State.ShoppingList.Store.Id, State.SelectedStore.DefaultSection.Id);
+            State.ShoppingList.Store.Id, selectedSection.Id);
 
-        State.AddItemToDefaultSection(item);
+        State.AddItem(item, selectedSection);
 
         loading = false;
         visible = false;

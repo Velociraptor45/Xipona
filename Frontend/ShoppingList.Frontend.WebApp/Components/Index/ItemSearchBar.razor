@@ -24,11 +24,6 @@
 
     @if (State.SearchBar.Active)
     {
-        @*<Button Type="@ButtonType.Primary"
-                OnClick="@OnCreateNewTemporaryItem"
-                Class="d-flex align-items-center">
-            <Icon Type="plus"></Icon>
-        </Button>*@
         <TemporaryItemCreator State="@State"></TemporaryItemCreator>
         <Button Class="mr-1" OnClick="@OnSearchBarCancelButtonClicked">Cancel</Button>
     }
@@ -59,16 +54,6 @@
                 State.SearchBar.Options = searchResult;
                 StateHasChanged();
             });
-    }
-
-    private async void OnCreateNewTemporaryItem()
-    {
-        var item = temporaryItemCreationService.Create(State.SearchBar.Input);
-
-        await apiService.CreateTemporaryItemOnShoppingListAsync(item, State.ShoppingList.Id,
-            State.ShoppingList.Store.Id, State.SelectedStore.DefaultSection.Id);
-
-        State.AddItemToDefaultSection(item);
     }
 
     private async Task OnSearchItemSelectedAsync(SearchItemForShoppingListResult item)
