@@ -17,6 +17,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
         public bool ItemsInEditMode { get; private set; }
         public Store SelectedStore => AvailableStores?.SelectedStore;
 
+        public SearchBar SearchBar { get; } = new();
+
         public ShoppingListState(ShoppingListRoot shoppingList, bool itemsInBasketVisible, bool itemsInEditMode)
         {
             ShoppingList = shoppingList;

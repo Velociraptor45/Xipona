@@ -1,0 +1,110 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
+
+@using StoreModels = Models.Stores.Models;
+
+@inject ITemporaryItemCreationService temporaryItemCreationService;
+@inject IShoppingListApiService apiService;
+
+<div>
+    <Button Type="@ButtonType.Primary"
+            OnClick="@OnOpenCreationButtonClicked"
+            Class="d-flex align-items-center">
+        <Icon Type="plus"></Icon>
+    </Button>
+    <Modal Title="Add temporary item"
+           Visible="@visible"
+           OnCancel="@OnCloseButtonClicked"
+           ConfirmLoading="@loading"
+           Footer="@GetFooter()">
+        <div>
+            <Input @bind-Value="@name"></Input>
+            <div>
+                <div>Section</div>
+                <div class="d-flex">
+                    <SingleSelect TItem="StoreModels.Section"
+                                  TValue="Guid"
+                                  ValueName="Id.BackendId"
+                                  LabelName="@nameof(StoreModels.Section.Name)"
+                                  DataSource="@State.SelectedStore.Sections.ToList()"
+                                  OnItemChanged="@OnSelectedSectionChanged"
+                                  DefaultValue="@State.SelectedStore.DefaultSection.Id.BackendId"></SingleSelect>
+                    <div class="d-flex pl-2 align-items-center">
+                        <div class="price-input">
+                            <Input @bind-Value="@price"></Input>
+                        </div>
+                        <div>€</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Modal>
+</div>
+
+@code {
+    [Parameter] public ShoppingListState State { get; set; }
+
+    private bool visible = false;
+    private bool loading = false;
+
+    private string name = string.Empty;
+    private StoreModels.Section selectedSection;
+    private float price = 1f;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        name = State.SearchBar.Input;
+        selectedSection = State.SelectedStore.DefaultSection;
+    }
+
+    private void OnOpenCreationButtonClicked()
+    {
+        visible = true;
+        loading = false;
+
+        selectedSection = State.SelectedStore.DefaultSection;
+        price = 1f;
+        name = State.SearchBar.Input;
+    }
+
+    private void OnCloseButtonClicked()
+    {
+        visible = false;
+        loading = false;
+    }
+
+    private void OnSelectedSectionChanged(StoreModels.Section section)
+    {
+        selectedSection = section;
+    }
+
+    private async Task OnAddButtonClicked()
+    {
+        loading = true;
+
+        var item = temporaryItemCreationService.Create(name);
+
+        await apiService.CreateTemporaryItemOnShoppingListAsync(item, State.ShoppingList.Id,
+            State.ShoppingList.Store.Id, State.SelectedStore.DefaultSection.Id);
+
+        State.AddItemToDefaultSection(item);
+
+        loading = false;
+        visible = false;
+    }
+
+    private RenderFragment GetFooter()
+    {
+        return @<Template>
+                   <Button Class="ml-auto"
+                           OnClick="OnAddButtonClicked"
+                           @key="@("submit")"
+                           Type="primary"
+                           Loading="@loading">
+                       Add
+                   </Button>
+               </Template>;
+    }
+}

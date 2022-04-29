@@ -16,7 +16,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
             FrontendId = frontendId;
         }
 
-        public Guid BackendId { get; }
+        public Guid BackendId { get; set; }
         public Guid FrontendId { get; set; }
     }
 }
