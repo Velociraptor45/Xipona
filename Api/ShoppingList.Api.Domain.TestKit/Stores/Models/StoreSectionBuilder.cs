@@ -11,6 +11,12 @@ public class StoreSectionBuilder : DomainTestBuilderBase<StoreSection>
         return this;
     }
 
+    public StoreSectionBuilder WithName(SectionName name)
+    {
+        FillConstructorWith(nameof(name), name);
+        return this;
+    }
+
     public StoreSectionBuilder WithSortingIndex(int sortingIndex)
     {
         FillConstructorWith("sortingIndex", sortingIndex);
