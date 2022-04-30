@@ -10,7 +10,8 @@
 <div>
     <Button Type="@ButtonType.Primary"
             OnClick="@OnOpenCreationButtonClicked"
-            Class="d-flex align-items-center">
+            Class="d-flex align-items-center"
+            Disabled="@IsOpenModalButtonDisabled()">
         <Icon Type="plus"></Icon>
     </Button>
     <Modal Title="Add temporary item"
@@ -55,6 +56,15 @@
 
     private SingleSelect<Guid, StoreModels.Section> singleSelect;
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        State.SearchBar.OnInputChanged += _ =>
+        {
+            StateHasChanged();
+        };
+    }
+
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
@@ -98,6 +108,11 @@
         State.AddItem(item, selectedSection);
 
         CloseModal();
+    }
+
+    private bool IsOpenModalButtonDisabled()
+    {
+        return string.IsNullOrWhiteSpace(State.SearchBar.Input);
     }
 
     private RenderFragment GetFooter()
