@@ -29,7 +29,8 @@
                                   LabelName="@nameof(StoreModels.Section.Name)"
                                   DataSource="@State.SelectedStore.Sections.ToList()"
                                   OnItemChanged="@OnSelectedSectionChanged"
-                                  DefaultValue="@State.SelectedStore.DefaultSection.Id.BackendId"></SingleSelect>
+                                  DefaultValue="@State.SelectedStore.DefaultSection.Id.BackendId"
+                                  @ref="@singleSelect"></SingleSelect>
                     <div class="d-flex pl-2 align-items-center">
                         <div class="price-input">
                             <Input @bind-Value="@price"></Input>
@@ -52,6 +53,8 @@
     private StoreModels.Section selectedSection;
     private float price = 1f;
 
+    private SingleSelect<Guid, StoreModels.Section> singleSelect;
+
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
@@ -67,6 +70,8 @@
         selectedSection = State.SelectedStore.DefaultSection;
         price = 1f;
         name = State.SearchBar.Input;
+
+        singleSelect?.ResetToDefaultValue();
     }
 
     private void OnCloseButtonClicked()
@@ -83,7 +88,7 @@
     private async Task OnAddButtonClicked()
     {
         loading = true;
-        // try?
+        
         var item = temporaryItemCreationService.Create(name, price);
 
         await apiService.CreateTemporaryItemOnShoppingListAsync(item, State.ShoppingList.Id,
