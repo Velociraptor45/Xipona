@@ -59,13 +59,10 @@
             <div class="m-0 pl-2">
                 @Model.Name
             </div>
-            @if (!Model.IsTemporary)
-            {
-                <div class="px-2 m-0 align-self-center ml-auto">
-                    <span>@($"{CalculatePrice():0.00}")</span>
-                    <span>€</span>
-                </div>
-            }
+            <div class="px-2 m-0 align-self-center ml-auto">
+                <span>@($"{CalculatePrice():0.00}")</span>
+                <span>€</span>
+            </div>
         </div>
     }
 </li>
