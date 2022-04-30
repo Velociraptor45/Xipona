@@ -15,7 +15,7 @@
     </Button>
     <Modal Title="Add temporary item"
            Visible="@visible"
-           OnCancel="@OnCloseButtonClicked"
+           OnCancel="@CloseModal"
            ConfirmLoading="@loading"
            Footer="@GetFooter()">
         <div>
@@ -74,10 +74,11 @@
         singleSelect?.ResetToDefaultValue();
     }
 
-    private void OnCloseButtonClicked()
+    private void CloseModal()
     {
         visible = false;
         loading = false;
+        State.SearchBar.ResetInput();
     }
 
     private void OnSelectedSectionChanged(StoreModels.Section section)
@@ -96,8 +97,7 @@
 
         State.AddItem(item, selectedSection);
 
-        loading = false;
-        visible = false;
+        CloseModal();
     }
 
     private RenderFragment GetFooter()
