@@ -55,12 +55,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 
         public float GetTotalPrice(IItemPriceCalculationService priceCalculationService)
         {
-            return Items.Where(i => !i.IsTemporary).Sum(i => i.GetTotalPrice(priceCalculationService));
+            return Items.Sum(i => i.GetTotalPrice(priceCalculationService));
         }
 
         public float GetInBasketPrice(IItemPriceCalculationService priceCalculationService)
         {
-            return Items.Where(i => i.IsInBasket && !i.IsTemporary).Sum(i => i.GetTotalPrice(priceCalculationService));
+            return Items.Where(i => i.IsInBasket).Sum(i => i.GetTotalPrice(priceCalculationService));
         }
 
         public static ShoppingListSection From(Section section)

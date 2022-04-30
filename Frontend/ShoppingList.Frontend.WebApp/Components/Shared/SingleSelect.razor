@@ -1,5 +1,5 @@
-﻿@typeparam TItem
-@typeparam TValue
+﻿@typeparam TValue
+@typeparam TItem
 
 <Select Class="@Class"
         Placeholder="@Placeholder"
@@ -9,7 +9,7 @@
         OnSelectedItemChanged="OnSelectedItemChanged"
         AllowClear="@AllowClear"
         DropdownRender="@OnRender"
-        Value="@DefaultValue">
+        @bind-Value="@selectedValue">
 </Select>
 
 @code {
@@ -28,6 +28,15 @@
     [Parameter] public EventCallback<string> OnItemAdded { get; set; }
 
     private string newItemName = "";
+    private TValue selectedValue;
+    
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if(selectedValue.Equals(default(TValue)))
+            selectedValue = DefaultValue;
+    }
 
     private async void OnSelectedItemChanged(TItem item)
     {
@@ -42,7 +51,7 @@
 
     private RenderFragment OnRender(RenderFragment originNode)
     {
-        RenderFragment customDropdownRender =
+        return
             @<Template>
                 <div>
                     @originNode
@@ -60,6 +69,10 @@
                     }
                 </div>
             </Template>;
-        return customDropdownRender;
+    }
+
+    public void ResetToDefaultValue()
+    {
+        selectedValue = DefaultValue;
     }
 }

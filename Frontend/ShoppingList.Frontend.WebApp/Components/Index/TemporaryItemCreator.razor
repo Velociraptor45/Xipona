@@ -1,0 +1,130 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
+
+@using StoreModels = Models.Stores.Models;
+
+@inject ITemporaryItemCreationService temporaryItemCreationService;
+@inject IShoppingListApiService apiService;
+
+<div>
+    <Button Type="@ButtonType.Primary"
+            OnClick="@OnOpenCreationButtonClicked"
+            Class="d-flex align-items-center"
+            Disabled="@IsOpenModalButtonDisabled()">
+        <Icon Type="plus"></Icon>
+    </Button>
+    <Modal Title="Add temporary item"
+           Visible="@visible"
+           OnCancel="@CloseModal"
+           ConfirmLoading="@loading"
+           Footer="@GetFooter()">
+        <div>
+            <Input @bind-Value="@name"></Input>
+            <div>
+                <div>Section</div>
+                <div class="d-flex">
+                    <SingleSelect TItem="StoreModels.Section"
+                                  TValue="Guid"
+                                  ValueName="Id.BackendId"
+                                  LabelName="@nameof(StoreModels.Section.Name)"
+                                  DataSource="@State.SelectedStore.Sections.ToList()"
+                                  OnItemChanged="@OnSelectedSectionChanged"
+                                  DefaultValue="@State.SelectedStore.DefaultSection.Id.BackendId"
+                                  @ref="@singleSelect"></SingleSelect>
+                    <div class="d-flex pl-2 align-items-center">
+                        <div class="price-input">
+                            <Input @bind-Value="@price"></Input>
+                        </div>
+                        <div>€</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Modal>
+</div>
+
+@code {
+    [Parameter] public ShoppingListState State { get; set; }
+
+    private bool visible = false;
+    private bool loading = false;
+
+    private string name = string.Empty;
+    private StoreModels.Section selectedSection;
+    private float price = 1f;
+
+    private SingleSelect<Guid, StoreModels.Section> singleSelect;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        State.SearchBar.OnInputChanged += _ =>
+        {
+            StateHasChanged();
+        };
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        name = State.SearchBar.Input;
+        selectedSection = State.SelectedStore.DefaultSection;
+    }
+
+    private void OnOpenCreationButtonClicked()
+    {
+        visible = true;
+        loading = false;
+
+        selectedSection = State.SelectedStore.DefaultSection;
+        price = 1f;
+        name = State.SearchBar.Input;
+
+        singleSelect?.ResetToDefaultValue();
+    }
+
+    private void CloseModal()
+    {
+        visible = false;
+        loading = false;
+        State.SearchBar.ResetInput();
+    }
+
+    private void OnSelectedSectionChanged(StoreModels.Section section)
+    {
+        selectedSection = section;
+    }
+
+    private async Task OnAddButtonClicked()
+    {
+        loading = true;
+        
+        var item = temporaryItemCreationService.Create(name, price);
+
+        await apiService.CreateTemporaryItemOnShoppingListAsync(item, State.ShoppingList.Id,
+            State.ShoppingList.Store.Id, selectedSection.Id);
+
+        State.AddItem(item, selectedSection);
+
+        CloseModal();
+    }
+
+    private bool IsOpenModalButtonDisabled()
+    {
+        return string.IsNullOrWhiteSpace(State.SearchBar.Input);
+    }
+
+    private RenderFragment GetFooter()
+    {
+        return @<Template>
+                   <Button Class="ml-auto"
+                           OnClick="OnAddButtonClicked"
+                           @key="@("submit")"
+                           Type="primary"
+                           Loading="@loading">
+                       Add
+                   </Button>
+               </Template>;
+    }
+}

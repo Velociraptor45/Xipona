@@ -17,6 +17,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
         public bool ItemsInEditMode { get; private set; }
         public Store SelectedStore => AvailableStores?.SelectedStore;
 
+        public SearchBar SearchBar { get; } = new();
+
         public ShoppingListState(ShoppingListRoot shoppingList, bool itemsInBasketVisible, bool itemsInEditMode)
         {
             ShoppingList = shoppingList;
@@ -46,9 +48,9 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
             StateChanged?.Invoke();
         }
 
-        public void AddItemToDefaultSection(ShoppingListItem item)
+        public void AddItem(ShoppingListItem item, Section section)
         {
-            ShoppingList.AddItem(item, SelectedStore.DefaultSection);
+            ShoppingList.AddItem(item, section);
             StateChanged?.Invoke();
         }
 
