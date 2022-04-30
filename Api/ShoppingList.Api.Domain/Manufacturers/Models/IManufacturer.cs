@@ -5,4 +5,6 @@ public interface IManufacturer
     ManufacturerId Id { get; }
     ManufacturerName Name { get; }
     bool IsDeleted { get; }
+
+    void Delete();
 }

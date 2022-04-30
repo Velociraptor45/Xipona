@@ -217,6 +217,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.CreateManufacturerAsync(name);
         }
 
+        public async Task DeleteManufacturerAsync(Guid id)
+        {
+            await _apiClient.DeleteManufacturerAsync(id);
+        }
+
         #endregion ManufacturerController
 
         #region ItemCategoryController

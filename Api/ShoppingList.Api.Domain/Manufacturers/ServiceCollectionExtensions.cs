@@ -2,8 +2,10 @@
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Deletions;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers;
 
@@ -26,6 +28,14 @@ public static class ServiceCollectionExtensions
         {
             var manufacturerRepository = provider.GetRequiredService<IManufacturerRepository>();
             return cancellationToken => new ManufacturerQueryService(manufacturerRepository, cancellationToken);
+        });
+
+        services.AddTransient<Func<CancellationToken, IManufacturerDeletionService>>(provider =>
+        {
+            var manufacturerRepository = provider.GetRequiredService<IManufacturerRepository>();
+            var itemRepository = provider.GetRequiredService<IItemRepository>();
+            return cancellationToken =>
+                new ManufacturerDeletionService(manufacturerRepository, itemRepository, cancellationToken);
         });
     }
 }

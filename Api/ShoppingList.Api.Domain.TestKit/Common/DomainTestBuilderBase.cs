@@ -18,6 +18,7 @@ public class DomainTestBuilderBase<TModel> : TestBuilderBase<TModel>
         Customizations.Add(new TypeRelay(typeof(IStoreItemAvailability), typeof(StoreItemAvailability)));
         Customizations.Add(new TypeRelay(typeof(IShoppingListItem), typeof(ShoppingListItem)));
         Customizations.Add(new TypeRelay(typeof(IShoppingListSection), typeof(ShoppingListSection)));
+        Customizations.Add(new TypeRelay(typeof(IItemType), typeof(ItemType)));
 
         Customize<ItemCategoryId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         Customize<ManufacturerId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));

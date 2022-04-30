@@ -11,5 +11,10 @@ public class Manufacturer : IManufacturer
 
     public ManufacturerId Id { get; }
     public ManufacturerName Name { get; }
-    public bool IsDeleted { get; }
+    public bool IsDeleted { get; private set; }
+
+    public void Delete()
+    {
+        IsDeleted = true;
+    }
 }

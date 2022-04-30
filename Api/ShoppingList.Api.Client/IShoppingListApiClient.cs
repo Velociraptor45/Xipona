@@ -140,6 +140,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Post("manufacturers")]
         Task<ManufacturerContract> CreateManufacturerAsync([Body] string name);
 
+        [Delete("manufacturers/{id}")]
+        Task DeleteManufacturerAsync(Guid id);
+
         #endregion ManufacturerController
 
         #region ItemCategoryController
