@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
@@ -202,7 +203,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ManufacturerController
 
-        public async Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResultsAsync(string searchInput)
+        public async Task<ManufacturerContract> GetManufacturerByIdAsync(Guid id)
+        {
+            return await _apiClient.GetManufacturerByIdAsync(id);
+        }
+
+        public async Task<IEnumerable<ManufacturerSearchContract>> GetManufacturerSearchResultsAsync(string searchInput)
         {
             return await _apiClient.GetManufacturerSearchResultsAsync(searchInput);
         }

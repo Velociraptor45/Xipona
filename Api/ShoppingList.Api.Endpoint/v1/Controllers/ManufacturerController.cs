@@ -5,13 +5,16 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Commands.DeleteManufacturer;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.AllActiveManufacturers;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.ManufacturerById;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.ManufacturerSearch;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 
@@ -37,6 +40,34 @@ public class ManufacturerController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<ManufacturerContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}")]
+    public async Task<IActionResult> GetManufacturerByIdAsync([FromRoute] Guid id)
+    {
+        try
+        {
+            var query = new ManufacturerByIdQuery(new ManufacturerId(id));
+
+            var result = await _queryDispatcher.DispatchAsync(query, default);
+
+            var contract = _converters.ToContract<IManufacturer, ManufacturerContract>(result);
+
+            return Ok(contract);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+
+            if (e.Reason.ErrorCode == ErrorReasonCode.ManufacturerNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<ManufacturerSearchContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [Route("")]
@@ -54,7 +85,7 @@ public class ManufacturerController : ControllerBase
         if (!readModels.Any())
             return NoContent();
 
-        var contracts = _converters.ToContract<ManufacturerReadModel, ManufacturerContract>(readModels);
+        var contracts = _converters.ToContract<ManufacturerSearchReadModel, ManufacturerSearchContract>(readModels);
 
         return Ok(contracts);
     }
@@ -86,14 +117,13 @@ public class ManufacturerController : ControllerBase
 
         var contract = _converters.ToContract<IManufacturer, ManufacturerContract>(model);
 
-        //todo: change to CreatedAtAction when #47 is implemented
-        return Created("", contract);
+        return CreatedAtAction(nameof(GetAllActiveManufacturersAsync), new { id = contract.Id }, contract);
     }
 
     [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id}")]
     public async Task<IActionResult> DeleteManufacturerAsync([FromRoute] Guid id)
     {

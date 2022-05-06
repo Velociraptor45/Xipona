@@ -21,6 +21,6 @@ public class AllActiveManufacturersQueryHandler
         ArgumentNullException.ThrowIfNull(query);
 
         var service = _manufacturerQueryServiceDelegate(cancellationToken);
-        return await service.GetAllActive();
+        return await service.GetAllActiveAsync();
     }
 }
