@@ -24,7 +24,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         Task CreateItemCategoryAsync(string name);
 
-        Task CreateManufacturerAsync(string name);
+        Task<Manufacturer> CreateManufacturerAsync(string name);
 
         Task CreateTemporaryItem(CreateTemporaryItemRequest request);
 
@@ -76,7 +76,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request);
 
         Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request);
+
         Task<IEnumerable<ManufacturerSearchResult>> GetManufacturerSearchResultsAsync(string searchInput);
+
         Task<Manufacturer> GetManufacturerByIdAsync(Guid id);
+
+        Task DeleteManufacturerAsync(Guid id);
     }
 }

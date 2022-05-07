@@ -58,7 +58,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
             var manufacturerState = new ManufacturersState();
             builder.Services.AddSingleton(manufacturerState);
-            builder.Services.AddTransient<IManufacturerLoadingService, ManufacturerLoadingService>();
+            builder.Services.AddTransient<IManufacturerApiService, ManufacturerApiService>();
 
             builder.Services.AddInfrastructure();
         }

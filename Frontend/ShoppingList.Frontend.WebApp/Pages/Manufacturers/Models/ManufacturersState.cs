@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,9 +22,23 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models
             _searchResults = searchResults.ToList();
         }
 
+        public void RemoveFromSearchResultsIfExists(Guid manufacturerId)
+        {
+            var manufacturer = _searchResults.FirstOrDefault(r => r.Id == manufacturerId);
+            if (manufacturer is null)
+                return;
+
+            _searchResults.Remove(manufacturer);
+        }
+
         public void SetEditedManufacturer(Manufacturer manufacturer)
         {
             EditedManufacturer = manufacturer;
+        }
+
+        public void SetNewEditedManufacturer()
+        {
+            SetEditedManufacturer(new Manufacturer(Guid.Empty, "New Manufacturer"));
         }
 
         public void ResetEditedManufacturer()

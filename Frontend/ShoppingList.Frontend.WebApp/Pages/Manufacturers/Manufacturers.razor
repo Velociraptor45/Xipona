@@ -4,13 +4,19 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Manufacturers;
 
+@inject NavigationManager _navigationManager;
 @inject ManufacturersState _state;
-@inject IManufacturerLoadingService _loadingService
+@inject IManufacturerApiService _apiService
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers
 
 <div>
-    <div>Manufacturers</div>
+    <div>
+        <div>Manufacturers</div>
+        <Button @onclick="@OnCreateManufacturerButtonClicked" Class="d-flex align-items-center ml-auto">
+            <Icon Type="plus"></Icon>
+        </Button>
+    </div>
     <div>
         <Input TValue="string" @bind-value="@input"></Input>
         <Button @onclick="@OnLoadButtonClickedAsync" Class="mt-2">Load</Button>
@@ -34,7 +40,12 @@
 
     private async Task OnLoadButtonClickedAsync()
     {
-        var results = await _loadingService.SearchAsync(input);
+        var results = await _apiService.SearchAsync(input);
         _state.RegisterSearchResults(results);
+    }
+
+    private void OnCreateManufacturerButtonClicked()
+    {
+        _navigationManager.NavigateTo($"manufacturers/{Guid.Empty}");
     }
 }

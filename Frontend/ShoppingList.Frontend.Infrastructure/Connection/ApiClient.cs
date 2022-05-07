@@ -144,9 +144,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             await _client.DeleteItemAsync(request.ItemId);
         }
 
-        public async Task CreateManufacturerAsync(string name)
+        public async Task<Manufacturer> CreateManufacturerAsync(string name)
         {
-            await _client.CreateManufacturerAsync(name);
+            var result = await _client.CreateManufacturerAsync(name);
+            return _converters.ToDomain<ManufacturerContract, Manufacturer>(result);
         }
 
         public async Task CreateItemCategoryAsync(string name)
@@ -281,6 +282,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             var result = await _client.GetManufacturerByIdAsync(id);
 
             return _converters.ToDomain<ManufacturerContract, Manufacturer>(result);
+        }
+
+        public async Task DeleteManufacturerAsync(Guid id)
+        {
+            await _client.DeleteManufacturerAsync(id);
         }
     }
 }
