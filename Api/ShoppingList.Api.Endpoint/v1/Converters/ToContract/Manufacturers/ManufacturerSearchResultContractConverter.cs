@@ -4,13 +4,13 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Manufacturers;
 
-public class ManufacturerSearchContractConverter :
-    IToContractConverter<ManufacturerSearchReadModel, ManufacturerSearchContract>
+public class ManufacturerSearchResultContractConverter :
+    IToContractConverter<ManufacturerSearchResultReadModel, ManufacturerSearchResultContract>
 {
-    public ManufacturerSearchContract ToContract(ManufacturerSearchReadModel source)
+    public ManufacturerSearchResultContract ToContract(ManufacturerSearchResultReadModel source)
     {
         ArgumentNullException.ThrowIfNull(source);
 
-        return new ManufacturerSearchContract(source.Id.Value, source.Name.Value);
+        return new ManufacturerSearchResultContract(source.Id.Value, source.Name.Value);
     }
 }

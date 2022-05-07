@@ -208,7 +208,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.GetManufacturerByIdAsync(id);
         }
 
-        public async Task<IEnumerable<ManufacturerSearchContract>> GetManufacturerSearchResultsAsync(string searchInput)
+        public async Task<IEnumerable<ManufacturerSearchResultContract>> GetManufacturerSearchResultsAsync(string searchInput)
         {
             return await _apiClient.GetManufacturerSearchResultsAsync(searchInput);
         }

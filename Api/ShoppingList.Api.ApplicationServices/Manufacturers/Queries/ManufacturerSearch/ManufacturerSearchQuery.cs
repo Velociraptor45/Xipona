@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.ManufacturerSearch;
 
-public class ManufacturerSearchQuery : IQuery<IEnumerable<ManufacturerSearchReadModel>>
+public class ManufacturerSearchQuery : IQuery<IEnumerable<ManufacturerSearchResultReadModel>>
 {
     public ManufacturerSearchQuery(string searchInput)
     {

@@ -67,7 +67,7 @@ public class ManufacturerController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ManufacturerSearchContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<ManufacturerSearchResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [Route("")]
@@ -85,7 +85,7 @@ public class ManufacturerController : ControllerBase
         if (!readModels.Any())
             return NoContent();
 
-        var contracts = _converters.ToContract<ManufacturerSearchReadModel, ManufacturerSearchContract>(readModels);
+        var contracts = _converters.ToContract<ManufacturerSearchResultReadModel, ManufacturerSearchResultContract>(readModels);
 
         return Ok(contracts);
     }
@@ -117,7 +117,7 @@ public class ManufacturerController : ControllerBase
 
         var contract = _converters.ToContract<IManufacturer, ManufacturerContract>(model);
 
-        return CreatedAtAction(nameof(GetAllActiveManufacturersAsync), new { id = contract.Id }, contract);
+        return CreatedAtAction(nameof(GetManufacturerByIdAsync), new { id = contract.Id }, contract);
     }
 
     [HttpDelete]

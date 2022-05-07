@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Queries;
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queries.ManufacturerSearch;
 
 public class ManufacturerSearchQueryHandler
-    : IQueryHandler<ManufacturerSearchQuery, IEnumerable<ManufacturerSearchReadModel>>
+    : IQueryHandler<ManufacturerSearchQuery, IEnumerable<ManufacturerSearchResultReadModel>>
 {
     private readonly Func<CancellationToken, IManufacturerQueryService> _manufacturerQueryServiceDelegate;
 
@@ -14,7 +14,7 @@ public class ManufacturerSearchQueryHandler
         _manufacturerQueryServiceDelegate = manufacturerQueryServiceDelegate;
     }
 
-    public async Task<IEnumerable<ManufacturerSearchReadModel>> HandleAsync(ManufacturerSearchQuery query,
+    public async Task<IEnumerable<ManufacturerSearchResultReadModel>> HandleAsync(ManufacturerSearchQuery query,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);

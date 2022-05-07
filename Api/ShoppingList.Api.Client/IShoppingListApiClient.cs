@@ -133,10 +133,10 @@ namespace ProjectHermes.ShoppingList.Api.Client
         #region ManufacturerController
 
         [Get("manufacturers/{id}")]
-        Task<ManufacturerContract> GetManufacturerByIdAsync(Guid id);
+        Task<ManufacturerContract> GetManufacturerByIdAsync([Path]Guid id);
 
         [Get("manufacturers")]
-        Task<IEnumerable<ManufacturerSearchContract>> GetManufacturerSearchResultsAsync([Query] string searchInput);
+        Task<IEnumerable<ManufacturerSearchResultContract>> GetManufacturerSearchResultsAsync([Query] string searchInput);
 
         [Get("manufacturers/active")]
         Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturersAsync();
@@ -145,7 +145,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task<ManufacturerContract> CreateManufacturerAsync([Body] string name);
 
         [Delete("manufacturers/{id}")]
-        Task DeleteManufacturerAsync(Guid id);
+        Task DeleteManufacturerAsync([Path]Guid id);
 
         #endregion ManufacturerController
 

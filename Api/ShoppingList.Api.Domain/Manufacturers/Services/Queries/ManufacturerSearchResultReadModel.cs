@@ -2,9 +2,9 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Queries;
 
-public class ManufacturerSearchReadModel
+public class ManufacturerSearchResultReadModel
 {
-    public ManufacturerSearchReadModel(ManufacturerId id, ManufacturerName name)
+    public ManufacturerSearchResultReadModel(ManufacturerId id, ManufacturerName name)
     {
         Id = id;
         Name = name;
