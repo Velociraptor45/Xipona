@@ -110,7 +110,7 @@ public class ManufacturerController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ManufacturerContract), StatusCodes.Status201Created)]
     [Route("")]
-    public async Task<IActionResult> CreateManufacturerAsync([FromBody] string name)
+    public async Task<IActionResult> CreateManufacturerAsync([FromQuery] string name)
     {
         var command = new CreateManufacturerCommand(new ManufacturerName(name));
         var model = await _commandDispatcher.DispatchAsync(command, default);
