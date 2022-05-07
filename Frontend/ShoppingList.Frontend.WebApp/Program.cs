@@ -7,6 +7,8 @@ using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEditor;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
@@ -53,6 +55,10 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddTransient<IStoresApiService, StoresApiService>();
 
             builder.Services.AddTransient<IItemEditorApiService, ItemEditorApiService>();
+
+            var manufacturerState = new ManufacturersState();
+            builder.Services.AddSingleton(manufacturerState);
+            builder.Services.AddTransient<IManufacturerLoadingService, ManufacturerLoadingService>();
 
             builder.Services.AddInfrastructure();
         }

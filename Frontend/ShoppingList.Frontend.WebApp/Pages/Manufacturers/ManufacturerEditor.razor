@@ -1,0 +1,42 @@
+﻿@page "/manufacturers/{ManufacturerId:guid}"
+
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services
+
+@inject NavigationManager _navigationManager;
+@inject ManufacturersState _state;
+@inject IManufacturerLoadingService _loadingService
+
+@namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers
+
+<div>
+    <div class="d-flex">
+        <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+            <Icon Type="arrow-left"></Icon>
+        </Button>
+        <div class="mx-3">
+            @*<Input @bind-Value="@state.EditedItem.Name" />*@
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Guid ManufacturerId { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        
+        var result = await _loadingService.GetAsync(ManufacturerId);
+        _state.SetEditedManufacturer(result);
+
+
+    }
+
+    private void OnBackButtonClicked()
+    {
+        _navigationManager.NavigateTo("manufacturers");
+    }
+
+}

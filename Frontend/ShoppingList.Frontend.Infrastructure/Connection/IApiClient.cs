@@ -76,5 +76,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request);
 
         Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request);
+        Task<IEnumerable<ManufacturerSearchResult>> GetManufacturerSearchResultsAsync(string searchInput);
+        Task<Manufacturer> GetManufacturerByIdAsync(Guid id);
     }
 }

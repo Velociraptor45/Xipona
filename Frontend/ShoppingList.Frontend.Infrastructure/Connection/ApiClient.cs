@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
@@ -264,6 +265,22 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task ModifyStoreAsync(ModifyStoreRequest request)
         {
             await _client.UpdateStoreAsync(_converters.ToContract<ModifyStoreRequest, UpdateStoreContract>(request));
+        }
+
+        public async Task<IEnumerable<ManufacturerSearchResult>> GetManufacturerSearchResultsAsync(string searchInput)
+        {
+            var result = await _client.GetManufacturerSearchResultsAsync(searchInput);
+
+            return result is null
+                ? Enumerable.Empty<ManufacturerSearchResult>()
+                : result.Select(_converters.ToDomain<ManufacturerSearchResultContract, ManufacturerSearchResult>);
+        }
+
+        public async Task<Manufacturer> GetManufacturerByIdAsync(Guid id)
+        {
+            var result = await _client.GetManufacturerByIdAsync(id);
+
+            return _converters.ToDomain<ManufacturerContract, Manufacturer>(result);
         }
     }
 }

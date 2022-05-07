@@ -1,0 +1,19 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services
+
+@inject NavigationManager _navigationManager;
+
+<div class="search-result p-2" @onclick="OnItemClicked">
+    <div>@Model.Name</div>
+</div>
+
+@code {
+    [Parameter]
+    public ManufacturerSearchResult Model { get; set; }
+
+    private void OnItemClicked()
+    {
+        _navigationManager.NavigateTo($"manufacturers/{Model.Id}");
+    }
+}

@@ -1,0 +1,40 @@
+﻿@page "/manufacturers"
+
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Manufacturers;
+
+@inject ManufacturersState _state;
+@inject IManufacturerLoadingService _loadingService
+
+@namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers
+
+<div>
+    <div>Manufacturers</div>
+    <div>
+        <Input TValue="string" @bind-value="@input"></Input>
+        <Button @onclick="@OnLoadButtonClickedAsync" Class="mt-2">Load</Button>
+    </div>
+    <div>
+        @foreach (var searchResult in _state.SearchResults)
+        {
+            <SearchResult Model="searchResult"></SearchResult>
+        }
+    </div>
+</div>
+
+@code {
+    private string input = "";
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _state.ResetEditedManufacturer();
+    }
+
+    private async Task OnLoadButtonClickedAsync()
+    {
+        var results = await _loadingService.SearchAsync(input);
+        _state.RegisterSearchResults(results);
+    }
+}
