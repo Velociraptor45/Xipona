@@ -10,9 +10,9 @@ using ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
 
 namespace ShoppingList.Api.Domain.TestKit.Common;
 
-public class DomainTestBuilderBase<TModel> : TestBuilderBase<TModel>
+public abstract class DomainTestBuilderBase<TModel> : TestBuilderBase<TModel>
 {
-    public DomainTestBuilderBase()
+    protected DomainTestBuilderBase()
     {
         Customizations.Add(new EnumSpecimenBuilder<QuantityType>());
         Customizations.Add(new TypeRelay(typeof(IStoreItemAvailability), typeof(StoreItemAvailability)));

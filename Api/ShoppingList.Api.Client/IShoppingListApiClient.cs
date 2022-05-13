@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
@@ -140,6 +141,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Get("manufacturers/active")]
         Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturersAsync();
+
+        [Put("manufacturers")]
+        Task ModifyManufacturerAsync([Body] ModifyManufacturerContract contract);
 
         [Post("manufacturers")]
         Task<ManufacturerContract> CreateManufacturerAsync([Query] string name);

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
@@ -226,6 +227,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
         public async Task DeleteManufacturerAsync(Guid id)
         {
             await _apiClient.DeleteManufacturerAsync(id);
+        }
+
+        public async Task ModifyManufacturerAsync(ModifyManufacturerContract contract)
+        {
+            await _apiClient.ModifyManufacturerAsync(contract);
         }
 
         #endregion ManufacturerController

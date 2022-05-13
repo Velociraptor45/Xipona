@@ -1,4 +1,6 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Modifications;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
 public interface IManufacturer
 {
@@ -7,4 +9,5 @@ public interface IManufacturer
     bool IsDeleted { get; }
 
     void Delete();
+    void Modify(ManufacturerModification modification);
 }
