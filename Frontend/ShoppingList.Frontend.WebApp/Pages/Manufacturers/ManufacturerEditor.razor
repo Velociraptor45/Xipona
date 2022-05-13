@@ -19,7 +19,6 @@
             <div class="mx-3">
                 <Input @bind-Value="@_state.EditedManufacturer.Name" />
             </div>
-            <div class="d-flex justify-content-end mt-2">
             @if (_state.EditedManufacturer.Id != Guid.Empty)
             {
                 <Button Danger="true"
@@ -28,6 +27,12 @@
                     Delete
                 </Button>
             }
+        }
+    </div>
+    @if (_state.EditedManufacturer is not null)
+    {
+        <div class="d-flex justify-content-end mt-2">
+            
             @if (_state.EditedManufacturer.Id == Guid.Empty)
             {
                 <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
@@ -38,7 +43,6 @@
             }*@
         </div>
         }
-    </div>
 </div>
 
 @code {
