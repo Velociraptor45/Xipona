@@ -5,10 +5,12 @@ services:
     image: jsurf/rpi-mariadb
     container_name: dev-ph-sl-db
     environment:
-      MYSQL_ROOT_PASSWORD: 
+      MYSQL_ROOT_PASSWORD: /run/secrets/dev_ph_sl_db_pwd
       MYSQL_DATABASE: dev-shoppinglist
     ports:
       - "15906:3306"
+    secrets:
+      - dev_ph_sl_db_pwd
     networks: 
       - dev-ph-shoppinglist
     volumes:
@@ -48,3 +50,7 @@ volumes:
 networks:
   dev-ph-shoppinglist:
     name: dev-ph-shoppinglist
+
+secrets:
+  dev_ph_sl_db_pwd:
+    external: true
