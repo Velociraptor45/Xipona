@@ -34,7 +34,7 @@
     {
         base.OnParametersSet();
 
-        if(selectedValue.Equals(default(TValue)))
+        if(selectedValue is null || selectedValue.Equals(default(TValue)))
             selectedValue = DefaultValue;
     }
 
