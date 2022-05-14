@@ -26,14 +26,15 @@ public class ManufacturerQueryService : IManufacturerQueryService
         return manufacturers.Select(m => new ManufacturerReadModel(m));
     }
 
-    public async Task<IEnumerable<ManufacturerSearchResultReadModel>> SearchAsync(string searchInput)
+    public async Task<IEnumerable<ManufacturerSearchResultReadModel>> SearchAsync(string searchInput,
+        bool includeDeleted)
     {
         ArgumentNullException.ThrowIfNull(searchInput);
 
         if (string.IsNullOrWhiteSpace(searchInput))
             return Enumerable.Empty<ManufacturerSearchResultReadModel>();
 
-        var manufacturerModels = await _manufacturerRepository.FindByAsync(searchInput,
+        var manufacturerModels = await _manufacturerRepository.FindByAsync(searchInput, includeDeleted,
             _cancellationToken);
 
         _cancellationToken.ThrowIfCancellationRequested();

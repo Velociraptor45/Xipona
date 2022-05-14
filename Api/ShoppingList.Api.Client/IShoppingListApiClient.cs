@@ -137,7 +137,8 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task<ManufacturerContract> GetManufacturerByIdAsync([Path] Guid id);
 
         [Get("manufacturers")]
-        Task<IEnumerable<ManufacturerSearchResultContract>> GetManufacturerSearchResultsAsync([Query] string searchInput);
+        Task<IEnumerable<ManufacturerSearchResultContract>> GetManufacturerSearchResultsAsync(
+            [Query] string searchInput, [Query] bool includeDeleted);
 
         [Get("manufacturers/active")]
         Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturersAsync();

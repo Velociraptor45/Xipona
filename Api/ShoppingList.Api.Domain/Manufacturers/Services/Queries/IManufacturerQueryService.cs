@@ -7,7 +7,7 @@ public interface IManufacturerQueryService
 {
     Task<IEnumerable<ManufacturerReadModel>> GetAllActiveAsync();
 
-    Task<IEnumerable<ManufacturerSearchResultReadModel>> SearchAsync(string searchInput);
+    Task<IEnumerable<ManufacturerSearchResultReadModel>> SearchAsync(string searchInput, bool includeDeleted);
 
     Task<IManufacturer> GetAsync(ManufacturerId manufacturerId);
 }

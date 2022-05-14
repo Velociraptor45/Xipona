@@ -272,7 +272,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task<IEnumerable<ManufacturerSearchResult>> GetManufacturerSearchResultsAsync(string searchInput)
         {
-            var result = await _client.GetManufacturerSearchResultsAsync(searchInput);
+            var result = await _client.GetManufacturerSearchResultsAsync(searchInput, false);
 
             return result is null
                 ? Enumerable.Empty<ManufacturerSearchResult>()

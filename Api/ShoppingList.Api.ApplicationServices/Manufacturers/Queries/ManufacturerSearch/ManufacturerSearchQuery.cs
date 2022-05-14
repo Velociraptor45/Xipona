@@ -5,10 +5,12 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Queri
 
 public class ManufacturerSearchQuery : IQuery<IEnumerable<ManufacturerSearchResultReadModel>>
 {
-    public ManufacturerSearchQuery(string searchInput)
+    public ManufacturerSearchQuery(string searchInput, bool includeDeleted)
     {
         SearchInput = searchInput;
+        IncludeDeleted = includeDeleted;
     }
 
     public string SearchInput { get; }
+    public bool IncludeDeleted { get; }
 }

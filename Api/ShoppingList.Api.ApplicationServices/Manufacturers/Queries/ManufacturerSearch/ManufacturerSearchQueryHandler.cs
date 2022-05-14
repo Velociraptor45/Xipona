@@ -20,6 +20,6 @@ public class ManufacturerSearchQueryHandler
         ArgumentNullException.ThrowIfNull(query);
 
         var service = _manufacturerQueryServiceDelegate(cancellationToken);
-        return await service.SearchAsync(query.SearchInput);
+        return await service.SearchAsync(query.SearchInput, query.IncludeDeleted);
     }
 }

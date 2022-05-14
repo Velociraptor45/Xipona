@@ -73,7 +73,8 @@ public class ManufacturerController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [Route("")]
-    public async Task<IActionResult> GetManufacturerSearchResultsAsync([FromQuery] string searchInput)
+    public async Task<IActionResult> GetManufacturerSearchResultsAsync([FromQuery] string searchInput,
+        [FromQuery] bool includeDeleted = false)
     {
         searchInput = searchInput.Trim();
         if (string.IsNullOrEmpty(searchInput))
@@ -81,7 +82,7 @@ public class ManufacturerController : ControllerBase
             return BadRequest("Search input mustn't be null or empty");
         }
 
-        var query = new ManufacturerSearchQuery(searchInput);
+        var query = new ManufacturerSearchQuery(searchInput, includeDeleted);
         var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
 
         if (!readModels.Any())
