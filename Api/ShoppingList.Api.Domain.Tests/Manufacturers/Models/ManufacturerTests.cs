@@ -57,18 +57,71 @@ public class ManufacturerTests
         }
     }
 
+    public class Delete
+    {
+        private readonly DeleteFixture _fixture;
+
+        public Delete()
+        {
+            _fixture = new DeleteFixture();
+        }
+
+        [Fact]
+        public void Delete_WithNotDeleted_ShouldDeleteManufacturer()
+        {
+            // Arrange
+            _fixture.SetupManufacturerNotDeleted();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            sut.Delete();
+
+            // Assert
+
+            sut.IsDeleted.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Delete_WithDeleted_ShouldNotChangeDeletionOfManufacturer()
+        {
+            // Arrange
+            _fixture.SetupManufacturerDeleted();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            sut.Delete();
+
+            // Assert
+
+            sut.IsDeleted.Should().BeTrue();
+        }
+
+        private sealed class DeleteFixture : LocalFixture
+        {
+            public void SetupManufacturerNotDeleted()
+            {
+                ManufacturerBuilder.WithIsDeleted(false);
+            }
+
+            public void SetupManufacturerDeleted()
+            {
+                ManufacturerBuilder.WithIsDeleted(true);
+            }
+        }
+    }
+
     private abstract class LocalFixture
     {
-        private readonly ManufacturerBuilder _manufacturerBuilder;
+        protected readonly ManufacturerBuilder ManufacturerBuilder;
 
         protected LocalFixture()
         {
-            _manufacturerBuilder = new ManufacturerBuilder();
+            ManufacturerBuilder = new ManufacturerBuilder();
         }
 
         public Manufacturer CreateSut()
         {
-            return _manufacturerBuilder.Create();
+            return ManufacturerBuilder.Create();
         }
     }
 }

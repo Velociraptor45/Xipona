@@ -37,21 +37,36 @@ jobs:
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-      - name: End Sonar scan
+      - name: Restore
+        run: |
+          dotnet restore Api\ShoppingListApi.sln
+          dotnet restore Frontend\ShoppingList.Frontend.sln
+      - name: Install dotnet-coverage
+        run: |
+          dotnet tool install --global dotnet-coverage
+      - name: Begin Sonar scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
-          dotnet tool install --global dotnet-coverage
-          
-          dotnet restore Api\ShoppingListApi.sln
-          #dotnet restore Frontend\ShoppingList.Frontend.sln
-          
+      - name: Build Backend
+        run: |
           dotnet build Api\ShoppingListApi.sln
-          #cp "Api\ShoppingList.Api.Client\bin\Debug\netstandard2.1\*.dll" "Frontend\ShoppingList.Frontend.WebApp\"
-          #dotnet build Frontend\ShoppingList.Frontend.sln
-          
-          dotnet-coverage collect 'dotnet test Api\ShoppingListApi.sln --no-build --filter FullyQualifiedName!~IntegrationsTests' -f xml -o 'coverage.xml'
+      - name: Copy client dlls
+        run: |
+          cp "Api\ShoppingList.Api.Client\bin\Debug\netstandard2.1\*.dll" "Frontend\ShoppingList.Frontend.WebApp\"
+      - name: Build Frontend
+        run: |
+          dotnet build Frontend\ShoppingList.Frontend.sln
+      - name: Test
+        run: |
+          dotnet-coverage collect 'dotnet test Api\ShoppingListApi.sln --no-build --filter FullyQualifiedName!~IntegrationsTests' -f xml  -o 'coverage.xml'
+      - name: End Sonar scan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: |
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
