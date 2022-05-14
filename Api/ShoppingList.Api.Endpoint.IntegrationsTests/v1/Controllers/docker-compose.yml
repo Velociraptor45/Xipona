@@ -2,7 +2,8 @@ version: "3.7"
 
 services:  
   Database:
-    image: mariadb
+    #image: mariadb
+    image: amd64/mariadb
     container_name: test-ph-sl-db
     environment:
       MYSQL_ROOT_PASSWORD: 123root
