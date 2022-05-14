@@ -39,7 +39,7 @@ jobs:
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
       - name: Restore
         run: |
-          dotnet restore Api/ShoppingListApi.sln
+          dotnet restore Api\ShoppingListApi.sln
           dotnet restore Frontend\ShoppingList.Frontend.sln
       - name: Begin Sonar scan
         env:
@@ -48,9 +48,14 @@ jobs:
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-      - name: Build
+      - name: Build Backend
         run: |
-          dotnet build Api/ShoppingListApi.sln
+          dotnet build Api\ShoppingListApi.sln
+      - name: Copy client dlls
+        run: |
+          cp "Api\ShoppingList.Api.Client\bin\Debug\netstandard2.1\*.dll" "Frontend\ShoppingList.Frontend.WebApp\"
+      - name: Build Frontend
+        run: |
           dotnet build Frontend\ShoppingList.Frontend.sln
       - name: Test
         run: |
