@@ -14,5 +14,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Service
         Task<bool> DeleteAsync(Guid manufacturerId);
 
         Task<Manufacturer> CreateAsync(Manufacturer manufacturer);
+
+        Task<bool> ModifyAsync(Manufacturer manufacturer);
     }
 }

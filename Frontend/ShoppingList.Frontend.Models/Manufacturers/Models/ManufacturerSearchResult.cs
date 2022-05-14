@@ -11,6 +11,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models
         }
 
         public Guid Id { get; }
-        public string Name { get; }
+        public string Name { get; private set; }
+
+        public void ChangeName(string name)
+        {
+            Name = name;
+        }
     }
 }

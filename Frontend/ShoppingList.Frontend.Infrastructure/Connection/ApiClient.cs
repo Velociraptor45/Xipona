@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
@@ -25,6 +26,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForS
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Manufacturers;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores;
 using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
@@ -287,6 +289,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task DeleteManufacturerAsync(Guid id)
         {
             await _client.DeleteManufacturerAsync(id);
+        }
+
+        public async Task ModifyManufacturerAsync(ModifyManufacturerRequest request)
+        {
+            var contract = _converters.ToContract<ModifyManufacturerRequest, ModifyManufacturerContract>(request);
+            await _client.ModifyManufacturerAsync(contract);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Manufacturers;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores;
 using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
@@ -82,5 +83,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         Task<Manufacturer> GetManufacturerByIdAsync(Guid id);
 
         Task DeleteManufacturerAsync(Guid id);
+        Task ModifyManufacturerAsync(ModifyManufacturerRequest request);
     }
 }

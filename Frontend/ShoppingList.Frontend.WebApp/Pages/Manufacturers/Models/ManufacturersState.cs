@@ -31,6 +31,15 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models
             _searchResults.Remove(manufacturer);
         }
 
+        public void UpdateManufacturerSearchResultName(Guid manufacturerId, string name)
+        {
+            var manufacturer = _searchResults.FirstOrDefault(r => r.Id == manufacturerId);
+            if (manufacturer is null)
+                return;
+
+            manufacturer.ChangeName(name);
+        }
+
         public void SetEditedManufacturer(Manufacturer manufacturer)
         {
             EditedManufacturer = manufacturer;

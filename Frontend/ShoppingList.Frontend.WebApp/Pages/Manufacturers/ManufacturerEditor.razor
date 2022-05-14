@@ -37,10 +37,10 @@
             {
                 <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
             }
-            @*else
+            else
             {
-                <Button @onclick="@OnSaveButtonClickedAsync">Save</Button>
-            }*@
+                <Button @onclick="@OnModifyButtonClickedAsync">Save</Button>
+            }
         </div>
         }
 </div>
@@ -79,10 +79,15 @@
         _navigationManager.NavigateTo($"manufacturers/{newManufacturer.Id}");
     }
 
-    //private async Task OnSaveButtonClickedAsync()
-    //{
-    //    await _apiService.SaveAsync(_state.EditedManufacturer);
-    //}
+    private async Task OnModifyButtonClickedAsync()
+    {
+        var successful = await _apiService.ModifyAsync(_state.EditedManufacturer);
+        if (successful)
+        {
+            _state.UpdateManufacturerSearchResultName(_state.EditedManufacturer.Id, _state.EditedManufacturer.Name);
+            _navigationManager.NavigateTo("manufacturers");
+        }
+    }
 
     private async Task OnDeleteButtonClickedAsync()
     {
