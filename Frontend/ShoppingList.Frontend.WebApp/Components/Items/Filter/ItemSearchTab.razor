@@ -6,7 +6,7 @@
 @inject IItemsApiService loadingService;
 
 <div>
-    <Input TValue="string" @bind-value="@input"></Input>
+    <Input TValue="string" @bind-value="@input" OnPressEnter="@OnLoadButtonClickedAsync"></Input>
     <Button @onclick="@OnLoadButtonClickedAsync" Class="mt-2">Load</Button>
 </div>
 

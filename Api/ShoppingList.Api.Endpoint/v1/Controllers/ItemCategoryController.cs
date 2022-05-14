@@ -42,7 +42,7 @@ public class ItemCategoryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Route("")]
-    public async Task<IActionResult> SearchItemCategoriesByName([FromQuery] string searchInput)
+    public async Task<IActionResult> SearchItemCategoriesByNameAsync([FromQuery] string searchInput)
     {
         searchInput = searchInput.Trim();
         if (string.IsNullOrEmpty(searchInput))
@@ -65,7 +65,7 @@ public class ItemCategoryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("active")]
-    public async Task<IActionResult> GetAllActiveItemCategories()
+    public async Task<IActionResult> GetAllActiveItemCategoriesAsync()
     {
         var query = new AllActiveItemCategoriesQuery();
         var readModels = await _queryDispatcher.DispatchAsync(query, default);
@@ -81,7 +81,7 @@ public class ItemCategoryController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [Route("")]
-    public async Task<IActionResult> CreateItemCategory([FromQuery] string name)
+    public async Task<IActionResult> CreateItemCategoryAsync([FromQuery] string name)
     {
         var command = new CreateItemCategoryCommand(new ItemCategoryName(name));
         var model = await _commandDispatcher.DispatchAsync(command, default);
@@ -97,7 +97,7 @@ public class ItemCategoryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [Route("{id}")]
-    public async Task<IActionResult> DeleteItemCategory([FromRoute] Guid id)
+    public async Task<IActionResult> DeleteItemCategoryAsync([FromRoute] Guid id)
     {
         try
         {

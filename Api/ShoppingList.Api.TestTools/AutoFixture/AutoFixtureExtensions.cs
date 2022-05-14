@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 
-namespace ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
+namespace ShoppingList.Api.TestTools.AutoFixture;
 
 public static class AutoFixtureExtensions
 {

@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
@@ -202,9 +204,15 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ManufacturerController
 
-        public async Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResultsAsync(string searchInput)
+        public async Task<ManufacturerContract> GetManufacturerByIdAsync(Guid id)
         {
-            return await _apiClient.GetManufacturerSearchResultsAsync(searchInput);
+            return await _apiClient.GetManufacturerByIdAsync(id);
+        }
+
+        public async Task<IEnumerable<ManufacturerSearchResultContract>> GetManufacturerSearchResultsAsync(
+            string searchInput, bool includeDeleted)
+        {
+            return await _apiClient.GetManufacturerSearchResultsAsync(searchInput, includeDeleted);
         }
 
         public async Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturersAsync()
@@ -215,6 +223,16 @@ namespace ProjectHermes.ShoppingList.Api.Client
         public async Task<ManufacturerContract> CreateManufacturerAsync(string name)
         {
             return await _apiClient.CreateManufacturerAsync(name);
+        }
+
+        public async Task DeleteManufacturerAsync(Guid id)
+        {
+            await _apiClient.DeleteManufacturerAsync(id);
+        }
+
+        public async Task ModifyManufacturerAsync(ModifyManufacturerContract contract)
+        {
+            await _apiClient.ModifyManufacturerAsync(contract);
         }
 
         #endregion ManufacturerController

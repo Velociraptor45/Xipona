@@ -1,4 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
@@ -131,14 +133,24 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ManufacturerController
 
+        [Get("manufacturers/{id}")]
+        Task<ManufacturerContract> GetManufacturerByIdAsync([Path] Guid id);
+
         [Get("manufacturers")]
-        Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResultsAsync([Query] string searchInput);
+        Task<IEnumerable<ManufacturerSearchResultContract>> GetManufacturerSearchResultsAsync(
+            [Query] string searchInput, [Query] bool includeDeleted);
 
         [Get("manufacturers/active")]
         Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturersAsync();
 
+        [Put("manufacturers")]
+        Task ModifyManufacturerAsync([Body] ModifyManufacturerContract contract);
+
         [Post("manufacturers")]
-        Task<ManufacturerContract> CreateManufacturerAsync([Body] string name);
+        Task<ManufacturerContract> CreateManufacturerAsync([Query] string name);
+
+        [Delete("manufacturers/{id}")]
+        Task DeleteManufacturerAsync([Path] Guid id);
 
         #endregion ManufacturerController
 
