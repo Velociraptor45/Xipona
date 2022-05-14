@@ -59,7 +59,7 @@ jobs:
           dotnet build Frontend\ShoppingList.Frontend.sln
       - name: Test
         run: |
-          dotnet test ShoppingListApi.sln --no-build --filter FullyQualifiedName!~IntegrationsTests
+          dotnet test Api\ShoppingListApi.sln --no-build --filter FullyQualifiedName!~IntegrationsTests
       - name: End Sonar scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
