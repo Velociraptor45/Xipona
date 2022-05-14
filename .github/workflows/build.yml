@@ -37,15 +37,28 @@ jobs:
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-      - name: Build and analyze
+      - name: Restore
+        run: |
+          dotnet restore Api/ShoppingListApi.sln
+          dotnet restore Frontend\ShoppingList.Frontend.sln
+      - name: Begin Sonar scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet restore Api/ShoppingListApi.sln
+      - name: Build
+        run: |
           dotnet build Api/ShoppingListApi.sln
-          dotnet restore Frontend\ShoppingList.Frontend.sln
           dotnet build Frontend\ShoppingList.Frontend.sln
+      - name: Test
+        run: |
+          dotnet test --no-restore Api/ShoppingListApi.sln
+      - name: End Sonar scan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: |
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
