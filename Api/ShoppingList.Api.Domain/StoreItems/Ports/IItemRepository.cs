@@ -15,11 +15,14 @@ public interface IItemRepository
 
     Task<IEnumerable<IStoreItem>> FindByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken);
 
+    Task<IEnumerable<IStoreItem>> FindByAsync(ManufacturerId manufacturerId, CancellationToken cancellationToken);
+
     Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
         IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
         CancellationToken cancellationToken);
 
     Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, StoreId storeId, CancellationToken cancellationToken);
+
     Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, CancellationToken cancellationToken);
 
     Task<IEnumerable<IStoreItem>> FindActiveByAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);

@@ -1,0 +1,53 @@
+﻿@page "/manufacturers"
+
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Manufacturers;
+
+@inject NavigationManager _navigationManager;
+@inject ManufacturersState _state;
+@inject IManufacturerApiService _apiService
+
+@namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers
+
+<div>
+    <div class="d-flex">
+        <div class="h4">Manufacturers</div>
+        <Button @onclick="@OnCreateManufacturerButtonClicked" Class="d-flex align-items-center ml-auto">
+            <Icon Type="plus"></Icon>
+        </Button>
+    </div>
+    <div>
+        <Input TValue="string" @bind-value="@input" 
+               OnPressEnter="@OnLoadButtonClickedAsync" 
+               Placeholder="Manufacturer name ..."></Input>
+        <Button @onclick="@OnLoadButtonClickedAsync" Class="mt-2">Load</Button>
+    </div>
+    <div>
+        @foreach (var searchResult in _state.SearchResults)
+        {
+            <SearchResult Model="searchResult"></SearchResult>
+        }
+    </div>
+</div>
+
+@code {
+    private string input = "";
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _state.ResetEditedManufacturer();
+    }
+
+    private async Task OnLoadButtonClickedAsync()
+    {
+        var results = await _apiService.SearchAsync(input);
+        _state.RegisterSearchResults(results);
+    }
+
+    private void OnCreateManufacturerButtonClicked()
+    {
+        _navigationManager.NavigateTo($"manufacturers/{Guid.Empty}");
+    }
+}

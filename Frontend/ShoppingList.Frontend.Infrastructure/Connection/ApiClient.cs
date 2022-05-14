@@ -1,5 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
@@ -24,6 +26,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForS
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Manufacturers;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores;
 using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
@@ -143,9 +146,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             await _client.DeleteItemAsync(request.ItemId);
         }
 
-        public async Task CreateManufacturerAsync(string name)
+        public async Task<Manufacturer> CreateManufacturerAsync(string name)
         {
-            await _client.CreateManufacturerAsync(name);
+            var result = await _client.CreateManufacturerAsync(name);
+            return _converters.ToDomain<ManufacturerContract, Manufacturer>(result);
         }
 
         public async Task CreateItemCategoryAsync(string name)
@@ -264,6 +268,33 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task ModifyStoreAsync(ModifyStoreRequest request)
         {
             await _client.UpdateStoreAsync(_converters.ToContract<ModifyStoreRequest, UpdateStoreContract>(request));
+        }
+
+        public async Task<IEnumerable<ManufacturerSearchResult>> GetManufacturerSearchResultsAsync(string searchInput)
+        {
+            var result = await _client.GetManufacturerSearchResultsAsync(searchInput, false);
+
+            return result is null
+                ? Enumerable.Empty<ManufacturerSearchResult>()
+                : result.Select(_converters.ToDomain<ManufacturerSearchResultContract, ManufacturerSearchResult>);
+        }
+
+        public async Task<Manufacturer> GetManufacturerByIdAsync(Guid id)
+        {
+            var result = await _client.GetManufacturerByIdAsync(id);
+
+            return _converters.ToDomain<ManufacturerContract, Manufacturer>(result);
+        }
+
+        public async Task DeleteManufacturerAsync(Guid id)
+        {
+            await _client.DeleteManufacturerAsync(id);
+        }
+
+        public async Task ModifyManufacturerAsync(ModifyManufacturerRequest request)
+        {
+            var contract = _converters.ToContract<ModifyManufacturerRequest, ModifyManufacturerContract>(request);
+            await _client.ModifyManufacturerAsync(contract);
         }
     }
 }

@@ -164,4 +164,9 @@ public class StoreItem : IStoreItem
         predecessor = null;
         return false;
     }
+
+    public void RemoveManufacturer()
+    {
+        ManufacturerId = null;
+    }
 }

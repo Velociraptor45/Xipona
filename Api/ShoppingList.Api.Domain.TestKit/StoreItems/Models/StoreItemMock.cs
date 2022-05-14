@@ -5,7 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.TemporaryItems;
-using ShoppingList.Api.Core.TestKit.Extensions;
+using ShoppingList.Api.TestTools.Extensions;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 

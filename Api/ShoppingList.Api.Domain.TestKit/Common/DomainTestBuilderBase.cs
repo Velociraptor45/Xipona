@@ -10,14 +10,15 @@ using ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
 
 namespace ShoppingList.Api.Domain.TestKit.Common;
 
-public class DomainTestBuilderBase<TModel> : TestBuilderBase<TModel>
+public abstract class DomainTestBuilderBase<TModel> : TestBuilderBase<TModel>
 {
-    public DomainTestBuilderBase()
+    protected DomainTestBuilderBase()
     {
         Customizations.Add(new EnumSpecimenBuilder<QuantityType>());
         Customizations.Add(new TypeRelay(typeof(IStoreItemAvailability), typeof(StoreItemAvailability)));
         Customizations.Add(new TypeRelay(typeof(IShoppingListItem), typeof(ShoppingListItem)));
         Customizations.Add(new TypeRelay(typeof(IShoppingListSection), typeof(ShoppingListSection)));
+        Customizations.Add(new TypeRelay(typeof(IItemType), typeof(ItemType)));
 
         Customize<ItemCategoryId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         Customize<ManufacturerId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));

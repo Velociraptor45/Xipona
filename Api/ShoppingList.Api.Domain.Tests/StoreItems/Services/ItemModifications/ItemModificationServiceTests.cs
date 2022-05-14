@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Modifications;
@@ -12,6 +11,7 @@ using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services.Validation;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
+using ShoppingList.Api.TestTools.AutoFixture;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemModifications;
 

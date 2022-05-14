@@ -21,12 +21,16 @@ public class ManufacturerRepository : IManufacturerRepository
         _toEntityConverter = toEntityConverter;
     }
 
-    public async Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput,
+    public async Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput, bool includeDeleted,
         CancellationToken cancellationToken)
     {
-        var manufacturerEntities = await _dbContext.Manufacturers.AsNoTracking()
-            .Where(category => category.Name.Contains(searchInput))
-            .ToListAsync(cancellationToken);
+        var query = _dbContext.Manufacturers.AsNoTracking()
+            .Where(manufacturer => manufacturer.Name.Contains(searchInput));
+
+        if (!includeDeleted)
+            query = query.Where(manufacturer => !manufacturer.Deleted);
+
+        var manufacturerEntities = await query.ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 

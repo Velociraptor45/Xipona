@@ -98,6 +98,22 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
+    public async Task<IEnumerable<IStoreItem>> FindByAsync(ManufacturerId manufacturerId, CancellationToken cancellationToken)
+    {
+        var entities = await GetItemQuery()
+            .Where(i => i.ManufacturerId == manufacturerId.Value)
+            .ToListAsync(cancellationToken);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        foreach (var item in entities)
+        {
+            item.Predecessor = await LoadPredecessorsAsync(item);
+        }
+
+        return _toModelConverter.ToDomain(entities);
+    }
+
     public async Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
         IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
         CancellationToken cancellationToken)
