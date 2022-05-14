@@ -11,14 +11,16 @@
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers
 
 <div>
-    <div>
-        <div>Manufacturers</div>
+    <div class="d-flex">
+        <div class="h4">Manufacturers</div>
         <Button @onclick="@OnCreateManufacturerButtonClicked" Class="d-flex align-items-center ml-auto">
             <Icon Type="plus"></Icon>
         </Button>
     </div>
     <div>
-        <Input TValue="string" @bind-value="@input"></Input>
+        <Input TValue="string" @bind-value="@input" 
+               OnPressEnter="@OnLoadButtonClickedAsync" 
+               Placeholder="Manufacturer name ..."></Input>
         <Button @onclick="@OnLoadButtonClickedAsync" Class="mt-2">Load</Button>
     </div>
     <div>
