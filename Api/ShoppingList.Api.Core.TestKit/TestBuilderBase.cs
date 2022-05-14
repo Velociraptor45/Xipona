@@ -1,11 +1,11 @@
 ﻿using AutoFixture.AutoMoq;
-using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
+using ShoppingList.Api.TestTools.AutoFixture;
 
 namespace ShoppingList.Api.Core.TestKit;
 
-public class TestBuilderBase<TModel> : Fixture
+public abstract class TestBuilderBase<TModel> : Fixture
 {
-    public TestBuilderBase()
+    protected TestBuilderBase()
     {
         Customize(new AutoMoqCustomization { ConfigureMembers = true });
     }

@@ -1,6 +1,6 @@
-﻿using FluentAssertions.Common;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using ShoppingList.Api.TestTools.Extensions;
 
 namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
 
@@ -21,7 +21,7 @@ public class ManufacturerRepositoryMock : Mock<IManufacturerRepository>
     public void SetupFindByAsync(IEnumerable<ManufacturerId> manufacturerIds, IEnumerable<IManufacturer> returnValue)
     {
         Setup(i => i.FindByAsync(
-                It.Is<IEnumerable<ManufacturerId>>(ids => ids.IsSameOrEqualTo(manufacturerIds)),
+                It.Is<IEnumerable<ManufacturerId>>(ids => ids.IsEquivalentTo(manufacturerIds)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);
     }
