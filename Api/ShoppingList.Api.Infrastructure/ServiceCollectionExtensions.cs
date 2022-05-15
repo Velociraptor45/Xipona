@@ -26,7 +26,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddInfrastructure(this IServiceCollection services, string connectionString)
+    public static void AddInfrastructure(this IServiceCollection services, string? connectionString = null)
     {
         var assembly = Assembly.GetExecutingAssembly()!;
         var version = Assembly.GetEntryAssembly()!.GetName().Version!;
@@ -34,6 +34,11 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<DbConnection>(provider =>
         {
+            if (connectionString is null)
+            {
+                var cs = provider.GetRequiredService<ConnectionStrings>();
+                connectionString = cs.ShoppingDatabase;
+            }
             var connection = new MySqlConnection(connectionString);
             connection.Open();
             return connection;

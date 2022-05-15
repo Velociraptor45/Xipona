@@ -5,16 +5,28 @@ services:
     image: jsurf/rpi-mariadb
     container_name: dev-ph-sl-db
     environment:
-      MYSQL_ROOT_PASSWORD: /run/secrets/dev_ph_sl_db_pwd
+      MYSQL_ROOT_PASSWORD: 
       MYSQL_DATABASE: dev-shoppinglist
     ports:
       - "15906:3306"
-    secrets:
-      - dev_ph_sl_db_pwd
     networks: 
       - dev-ph-shoppinglist
     volumes:
       - dev-ph-shoppinglist-database:/var/lib/mysql
+    restart: unless-stopped
+
+  Vault:
+    image: arm32v6/vault:latest
+    container_name: dev-ph-sl-vault
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: 
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:14776
+    ports:
+      - "14776:14776"
+    volumes:
+      - dev-ph-shoppinglist-vault:/vault/file
+    networks:
+      - dev-ph-shoppinglist
     restart: unless-stopped
 
   Api:
@@ -26,6 +38,7 @@ services:
       - "12486:443"
     depends_on:
       - Database
+      - Vault
     networks:
       - dev-ph-shoppinglist
     restart: unless-stopped
@@ -47,10 +60,8 @@ services:
 volumes:
   dev-ph-shoppinglist-database:
     external: true
+  dev-ph-shoppinglist-vault:
+    external: true
 networks:
   dev-ph-shoppinglist:
     name: dev-ph-shoppinglist
-
-secrets:
-  dev_ph_sl_db_pwd:
-    external: true

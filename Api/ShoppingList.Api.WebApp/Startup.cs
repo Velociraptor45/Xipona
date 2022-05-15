@@ -7,6 +7,7 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices;
 using ProjectHermes.ShoppingList.Api.Domain;
 using ProjectHermes.ShoppingList.Api.Endpoint;
 using ProjectHermes.ShoppingList.Api.Infrastructure;
+using ProjectHermes.ShoppingList.Api.WebApp.Services;
 
 namespace ProjectHermes.ShoppingList.Api.WebApp;
 
@@ -22,6 +23,9 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+        var vaultService = new VaultService(Configuration);
+        vaultService.RegisterAsync(services).GetAwaiter().GetResult();
+
         services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
         services.AddDomain();
         services.AddEndpointControllers();
@@ -35,7 +39,7 @@ public class Startup
                     builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); //todo
                 });
         });
-        services.AddInfrastructure(Configuration.GetConnectionString("Shopping-Database"));
+        services.AddInfrastructure();
         services.AddApplicationServices();
     }
 
