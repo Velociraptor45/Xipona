@@ -29,8 +29,8 @@ jobs:
           dotnet tool install --global dotnet-sonarscanner
       - name: Restore
         run: |
-          dotnet restore Api\ShoppingListApi.sln
-          dotnet restore Frontend\ShoppingList.Frontend.sln
+          dotnet restore Api/ShoppingListApi.sln
+          dotnet restore Frontend/ShoppingList.Frontend.sln
       - name: Install dotnet-coverage
         run: |
           dotnet tool install --global dotnet-coverage
@@ -42,13 +42,13 @@ jobs:
           dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
       - name: Build Backend
         run: |
-          dotnet build Api\ShoppingListApi.sln
+          dotnet build Api/ShoppingListApi.sln
       - name: Copy client dlls
         run: |
           cp "Api\ShoppingList.Api.Client\bin\Debug\netstandard2.1\*.dll" "Frontend\ShoppingList.Frontend.WebApp\"
       - name: Build Frontend
         run: |
-          dotnet build Frontend\ShoppingList.Frontend.sln
+          dotnet build Frontend/ShoppingList.Frontend.sln
       - name: Test
         run: |
           dotnet-coverage collect 'dotnet test Api\ShoppingListApi.sln --no-build --filter FullyQualifiedName!~IntegrationsTests' -f xml  -o 'coverage.xml'
