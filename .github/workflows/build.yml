@@ -45,7 +45,7 @@ jobs:
           dotnet build Api/ShoppingListApi.sln
       - name: Copy client dlls
         run: |
-          cp "Api/ShoppingList.Api.Client/bin/Debug/netstandard2.1/*.dll" "Frontend/ShoppingList.Frontend.WebApp/"
+          cp Api/ShoppingList.Api.Client/bin/Debug/netstandard2.1/*.dll Frontend/ShoppingList.Frontend.WebApp/
       - name: Build Frontend
         run: |
           dotnet build Frontend/ShoppingList.Frontend.sln
