@@ -1,35 +1,31 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.ShoppingList.Api.Infrastructure;
+﻿using ProjectHermes.ShoppingList.Api.Core.Files;
+using ShoppingList.Api.Vault;
+using ShoppingList.Api.Vault.Configs;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.WebApp.Services;
 
 public class ConfigurationLoadingService
 {
-    private readonly IConfiguration _configuration;
     private readonly IFileLoadingService _fileLoadingService;
+    private readonly IVaultService _vaultService;
 
-    public ConfigurationLoadingService(IConfiguration configuration, IFileLoadingService fileLoadingService)
+    public ConfigurationLoadingService(IFileLoadingService fileLoadingService, IVaultService vaultService)
     {
-        _configuration = configuration;
         _fileLoadingService = fileLoadingService;
+        _vaultService = vaultService;
     }
 
-    public async Task RegisterAsync(IServiceCollection services)
+    public async Task<ConnectionStrings> LoadAsync()
     {
         var connectionStringFile = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING_FILE");
 
         if (connectionStringFile is null)
         {
-            var vaultService = new VaultService(_configuration, _fileLoadingService);
-            await vaultService.RegisterAsync(services);
+            return await _vaultService.LoadConnectionStringsAsync();
         }
-        else
-        {
-            var connectionString = _fileLoadingService.ReadFile(connectionStringFile);
-            var connectionStrings = new ConnectionStrings { ShoppingDatabase = connectionString };
-            services.AddSingleton(connectionStrings);
-        }
+
+        var connectionString = _fileLoadingService.ReadFile(connectionStringFile);
+        return new ConnectionStrings { ShoppingDatabase = connectionString };
     }
 }

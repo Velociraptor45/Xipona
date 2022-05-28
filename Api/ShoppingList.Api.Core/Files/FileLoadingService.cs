@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace ProjectHermes.ShoppingList.Api.WebApp.Services;
+namespace ProjectHermes.ShoppingList.Api.Core.Files;
 
 public class FileLoadingService : IFileLoadingService
 {

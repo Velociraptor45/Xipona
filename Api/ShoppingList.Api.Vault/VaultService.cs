@@ -1,18 +1,17 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Polly;
-using ProjectHermes.ShoppingList.Api.Infrastructure;
-using System.Threading.Tasks;
+using ProjectHermes.ShoppingList.Api.Core.Files;
+using ShoppingList.Api.Vault.Configs;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.UserPass;
 
-namespace ProjectHermes.ShoppingList.Api.WebApp.Services;
+namespace ShoppingList.Api.Vault;
 
 public class VaultService : IVaultService
 {
+    private VaultClient? _client;
     private readonly string _uri;
     private readonly string _connectionStringsPath;
-    private VaultClient _client;
     private readonly string _mountPoint;
     private readonly string _password;
     private readonly string _username;
@@ -24,8 +23,10 @@ public class VaultService : IVaultService
         _uri = configuration["KeyVault:Uri"];
         _connectionStringsPath = configuration["KeyVault:Paths:ConnectionStrings"];
         _mountPoint = configuration["KeyVault:MountPoint"];
-        _username = fileLoadingService.ReadFile(Environment.GetEnvironmentVariable("VAULT_USERNAME_FILE"));
-        _password = fileLoadingService.ReadFile(Environment.GetEnvironmentVariable("VAULT_PASSWORD_FILE"));
+        _username = fileLoadingService.ReadFile(Environment.GetEnvironmentVariable("VAULT_USERNAME_FILE") ??
+                                                string.Empty);
+        _password = fileLoadingService.ReadFile(Environment.GetEnvironmentVariable("VAULT_PASSWORD_FILE") ??
+                                                string.Empty);
     }
 
     private VaultClient GetClient()
@@ -42,7 +43,7 @@ public class VaultService : IVaultService
         return _client;
     }
 
-    private async Task RegisterConnectionStringsAsync(IServiceCollection services)
+    public async Task<ConnectionStrings> LoadConnectionStringsAsync()
     {
         var client = _client ?? GetClient();
 
@@ -50,20 +51,13 @@ public class VaultService : IVaultService
             _retryCount,
             i => TimeSpan.FromSeconds(Math.Pow(1.5, i) + 1)); // TODO log exception
 
-        await policy.ExecuteAsync(async () =>
+        return await policy.ExecuteAsync(async () =>
         {
             var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<ConnectionStrings>(
                 _connectionStringsPath,
                 mountPoint: _mountPoint);
 
-            var connectionStrings = result.Data.Data;
-
-            services.AddSingleton(connectionStrings);
+            return result.Data.Data;
         });
-    }
-
-    public async Task RegisterAsync(IServiceCollection services)
-    {
-        await RegisterConnectionStringsAsync(services);
     }
 }

@@ -19,6 +19,7 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
+using ShoppingList.Api.Vault.Configs;
 using System.Data.Common;
 using System.Reflection;
 

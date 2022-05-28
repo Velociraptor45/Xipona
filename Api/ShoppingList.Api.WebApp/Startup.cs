@@ -4,10 +4,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProjectHermes.ShoppingList.Api.ApplicationServices;
+using ProjectHermes.ShoppingList.Api.Core.Files;
 using ProjectHermes.ShoppingList.Api.Domain;
 using ProjectHermes.ShoppingList.Api.Endpoint;
 using ProjectHermes.ShoppingList.Api.Infrastructure;
 using ProjectHermes.ShoppingList.Api.WebApp.Services;
+using ShoppingList.Api.Vault;
 
 namespace ProjectHermes.ShoppingList.Api.WebApp;
 
@@ -23,8 +25,11 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-        var configurationLoadingService = new ConfigurationLoadingService(Configuration, new FileLoadingService());
-        configurationLoadingService.RegisterAsync(services).GetAwaiter().GetResult();
+        var fileLoadingService = new FileLoadingService();
+        var vaultService = new VaultService(Configuration, fileLoadingService);
+        var configurationLoadingService = new ConfigurationLoadingService(fileLoadingService, vaultService);
+        var connectionStrings = configurationLoadingService.LoadAsync().GetAwaiter().GetResult();
+        services.AddSingleton(connectionStrings);
 
         services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
         services.AddDomain();

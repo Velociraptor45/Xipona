@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem
+namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItem
 {
     public class ModifyItemContract
     {
