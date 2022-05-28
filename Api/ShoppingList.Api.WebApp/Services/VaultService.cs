@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
 using ProjectHermes.ShoppingList.Api.Infrastructure;
 using System.IO;
 using System.Threading.Tasks;
@@ -16,6 +17,8 @@ public class VaultService
     private readonly string _mountPoint;
     private readonly string _password;
     private readonly string _username;
+
+    private const int _retryCount = 10;
 
     public VaultService(IConfiguration configuration)
     {
@@ -52,13 +55,20 @@ public class VaultService
     {
         var client = _client ?? GetClient();
 
-        var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<ConnectionStrings>(
-            _connectionStringsPath,
-            mountPoint: _mountPoint);
+        var policy = Policy.Handle<Exception>().WaitAndRetryAsync(
+            _retryCount,
+            i => TimeSpan.FromSeconds(Math.Pow(1.5, i) + 1)); // TODO log exception
 
-        var connectionStrings = result.Data.Data;
+        await policy.ExecuteAsync(async () =>
+        {
+            var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<ConnectionStrings>(
+                _connectionStringsPath,
+                mountPoint: _mountPoint);
 
-        services.AddSingleton(connectionStrings);
+            var connectionStrings = result.Data.Data;
+
+            services.AddSingleton(connectionStrings);
+        });
     }
 
     public async Task RegisterAsync(IServiceCollection services)
