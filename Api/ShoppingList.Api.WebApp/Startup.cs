@@ -23,8 +23,8 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-        var vaultService = new VaultService(Configuration);
-        vaultService.RegisterAsync(services).GetAwaiter().GetResult();
+        var configurationLoadingService = new ConfigurationLoadingService(Configuration, new FileLoadingService());
+        configurationLoadingService.RegisterAsync(services).GetAwaiter().GetResult();
 
         services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
         services.AddDomain();

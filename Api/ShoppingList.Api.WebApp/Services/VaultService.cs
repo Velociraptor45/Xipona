@@ -2,14 +2,13 @@
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using ProjectHermes.ShoppingList.Api.Infrastructure;
-using System.IO;
 using System.Threading.Tasks;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.UserPass;
 
 namespace ProjectHermes.ShoppingList.Api.WebApp.Services;
 
-public class VaultService
+public class VaultService : IVaultService
 {
     private readonly string _uri;
     private readonly string _connectionStringsPath;
@@ -20,21 +19,13 @@ public class VaultService
 
     private const int _retryCount = 10;
 
-    public VaultService(IConfiguration configuration)
+    public VaultService(IConfiguration configuration, IFileLoadingService fileLoadingService)
     {
         _uri = configuration["KeyVault:Uri"];
         _connectionStringsPath = configuration["KeyVault:Paths:ConnectionStrings"];
         _mountPoint = configuration["KeyVault:MountPoint"];
-        _username = ReadFile(Environment.GetEnvironmentVariable("VAULT_USERNAME_FILE"));
-        _password = ReadFile(Environment.GetEnvironmentVariable("VAULT_PASSWORD_FILE"));
-    }
-
-    private string ReadFile(string filePath)
-    {
-        if (!File.Exists(filePath))
-            throw new InvalidOperationException($"File {filePath} does not exist");
-
-        return File.ReadAllText(filePath);
+        _username = fileLoadingService.ReadFile(Environment.GetEnvironmentVariable("VAULT_USERNAME_FILE"));
+        _password = fileLoadingService.ReadFile(Environment.GetEnvironmentVariable("VAULT_PASSWORD_FILE"));
     }
 
     private VaultClient GetClient()
