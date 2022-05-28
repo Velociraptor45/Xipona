@@ -18,7 +18,7 @@ public class ConfigurationLoadingService
 
     public async Task<ConnectionStrings> LoadAsync()
     {
-        var connectionStringFile = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING_FILE");
+        var connectionStringFile = Environment.GetEnvironmentVariable("PH_SL_DB_CONNECTION_STRING_FILE");
 
         if (connectionStringFile is null)
         {

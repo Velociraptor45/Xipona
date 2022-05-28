@@ -23,9 +23,9 @@ public class VaultService : IVaultService
         _uri = configuration["KeyVault:Uri"];
         _connectionStringsPath = configuration["KeyVault:Paths:ConnectionStrings"];
         _mountPoint = configuration["KeyVault:MountPoint"];
-        _username = fileLoadingService.ReadFile(Environment.GetEnvironmentVariable("VAULT_USERNAME_FILE") ??
+        _username = fileLoadingService.ReadFile(Environment.GetEnvironmentVariable("PH_SL_VAULT_USERNAME_FILE") ??
                                                 string.Empty);
-        _password = fileLoadingService.ReadFile(Environment.GetEnvironmentVariable("VAULT_PASSWORD_FILE") ??
+        _password = fileLoadingService.ReadFile(Environment.GetEnvironmentVariable("PH_SL_VAULT_PASSWORD_FILE") ??
                                                 string.Empty);
     }
 

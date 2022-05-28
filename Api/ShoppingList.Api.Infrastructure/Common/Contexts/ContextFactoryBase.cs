@@ -23,7 +23,7 @@ public class ContextFactoryBase
             .AddJsonFile($"appsettings.{env}.json", optional: false, true)
             .Build();
 
-        var connectionStringFile = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING_FILE");
+        var connectionStringFile = Environment.GetEnvironmentVariable("PH_SL_DB_CONNECTION_STRING_FILE");
 
         var fileLoadingService = new FileLoadingService();
         if (connectionStringFile is null)
