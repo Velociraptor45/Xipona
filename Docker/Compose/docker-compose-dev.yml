@@ -3,9 +3,8 @@ version: "3.7"
 services:  
   Database:
     image: jsurf/rpi-mariadb
-    container_name: dev-ph-sl-db
     environment:
-      MYSQL_ROOT_PASSWORD: 
+      MYSQL_ROOT_PASSWORD: <insert-your-root-pwd-here>
       MYSQL_DATABASE: dev-shoppinglist
     ports:
       - "15906:3306"
@@ -13,55 +12,67 @@ services:
       - dev-ph-shoppinglist
     volumes:
       - dev-ph-shoppinglist-database:/var/lib/mysql
-    restart: unless-stopped
 
   Vault:
     image: arm32v6/vault:latest
-    container_name: dev-ph-sl-vault
     environment:
-      VAULT_DEV_ROOT_TOKEN_ID: 
-      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:14776
+      VAULT_LOCAL_CONFIG: '{"backend": {"file": {"path": "/vault/file"}}, "default_lease_ttl": "168h", "max_lease_ttl": "720h"}'
     ports:
-      - "14776:14776"
+      - "14776:8200"
     volumes:
-      - dev-ph-shoppinglist-vault:/vault/file
+      - dev-ph-shoppinglist-vault-file:/vault/file
+      - dev-ph-shoppinglist-vault-config:/vault/config
+      - dev-ph-shoppinglist-vault-tls:/opt/vault/tls
     networks:
       - dev-ph-shoppinglist
-    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
+    command: server
 
   Api:
-    image:
-    container_name: dev-ph-sl-api
+    image: <insert-your-image-here>
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      PH_SL_VAULT_USERNAME_FILE: /run/secrets/dev-ph-shoppinglist-vault-api-username
+      PH_SL_VAULT_PASSWORD_FILE: /run/secrets/dev-ph-shoppinglist-vault-api-password
     ports:
       - "12486:443"
     depends_on:
       - Database
       - Vault
+    volumes:
+      - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
     networks:
       - dev-ph-shoppinglist
-    restart: unless-stopped
+    secrets:
+      - dev-ph-shoppinglist-vault-api-password
+      - dev-ph-shoppinglist-vault-api-username
 
   Frontend:
-    image: 
-    container_name: dev-ph-sl-frontend
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
+    image: <insert-your-image-here>
     ports:
       - "13997:443"
     depends_on:
       - Api
     networks:
       - dev-ph-shoppinglist
-    restart: unless-stopped
-
 
 volumes:
   dev-ph-shoppinglist-database:
     external: true
-  dev-ph-shoppinglist-vault:
+  dev-ph-shoppinglist-vault-file:
     external: true
+  dev-ph-shoppinglist-vault-config:
+    external: true
+  dev-ph-shoppinglist-vault-tls:
+    external: true
+
 networks:
   dev-ph-shoppinglist:
     name: dev-ph-shoppinglist
+
+secrets:
+  dev-ph-shoppinglist-vault-api-password:
+    external: true
+  dev-ph-shoppinglist-vault-api-username:
+    external: true

@@ -3,9 +3,8 @@ version: "3.7"
 services:  
   Database:
     image: jsurf/rpi-mariadb
-    container_name: prd-ph-sl-db
     environment:
-      MYSQL_ROOT_PASSWORD: 
+      MYSQL_ROOT_PASSWORD: <insert-your-root-pwd-here>
       MYSQL_DATABASE: prd-shoppinglist
     ports:
       - "15909:3306"
@@ -13,38 +12,67 @@ services:
       - prd-ph-shoppinglist
     volumes:
       - prd-ph-shoppinglist-database:/var/lib/mysql
-    restart: unless-stopped
+
+  Vault:
+    image: arm32v6/vault:latest
+    environment:
+      VAULT_LOCAL_CONFIG: '{"backend": {"file": {"path": "/vault/file"}}, "default_lease_ttl": "168h", "max_lease_ttl": "720h"}'
+    ports:
+      - "14779:8200"
+    volumes:
+      - prd-ph-shoppinglist-vault-file:/vault/file
+      - prd-ph-shoppinglist-vault-config:/vault/config
+      - prd-ph-shoppinglist-vault-tls:/opt/vault/tls
+    networks:
+      - prd-ph-shoppinglist
+    cap_add:
+      - IPC_LOCK
+    command: server
 
   Api:
-    image:
-    container_name: prd-sl-ph-api
+    image: <insert-your-image-here>
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+      PH_SL_VAULT_USERNAME_FILE: /run/secrets/prd-ph-shoppinglist-vault-api-username
+      PH_SL_VAULT_PASSWORD_FILE: /run/secrets/prd-ph-shoppinglist-vault-api-password
     ports:
       - "12489:443"
     depends_on:
       - Database
+      - Vault
+    volumes:
+      - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
     networks: 
       - prd-ph-shoppinglist
-    restart: unless-stopped
+    secrets:
+      - prd-ph-shoppinglist-vault-api-password
+      - prd-ph-shoppinglist-vault-api-username
 
   Frontend:
-    image: 
-    container_name: prd-ph-sl-frontend
-    environment: 
-      ASPNETCORE_ENVIRONMENT: Production
+    image: <insert-your-image-here>
     ports: 
       - "14000:443"
     depends_on:
       - Api
     networks: 
       - prd-ph-shoppinglist
-    restart: unless-stopped
-
 
 volumes:
   prd-ph-shoppinglist-database:
     external: true
+  prd-ph-shoppinglist-vault-file:
+    external: true
+  prd-ph-shoppinglist-vault-config:
+    external: true
+  prd-ph-shoppinglist-vault-tls:
+    external: true
+
 networks:
   prd-ph-shoppinglist:
     name: prd-ph-shoppinglist
+
+secrets:
+  prd-ph-shoppinglist-vault-api-password:
+    external: true
+  prd-ph-shoppinglist-vault-api-username:
+    external: true
