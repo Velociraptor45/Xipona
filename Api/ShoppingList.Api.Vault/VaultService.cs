@@ -9,7 +9,6 @@ namespace ShoppingList.Api.Vault;
 
 public class VaultService : IVaultService
 {
-    private VaultClient? _client;
     private readonly string _uri;
     private readonly string _connectionStringsPath;
     private readonly string _mountPoint;
@@ -31,33 +30,34 @@ public class VaultService : IVaultService
 
     private VaultClient GetClient()
     {
-        if (_client is not null)
-            return _client;
-
         var authMethod = new UserPassAuthMethodInfo(_username, _password);
 
         var clientSettings = new VaultClientSettings(_uri, authMethod);
 
-        _client = new VaultClient(clientSettings);
-
-        return _client;
+        return new VaultClient(clientSettings);
     }
 
     public async Task<ConnectionStrings> LoadConnectionStringsAsync()
     {
-        var client = _client ?? GetClient();
-
         var policy = Policy.Handle<Exception>().WaitAndRetryAsync(
             _retryCount,
             i => TimeSpan.FromSeconds(Math.Pow(1.5, i) + 1)); // TODO log exception
 
         return await policy.ExecuteAsync(async () =>
         {
-            var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<ConnectionStrings>(
-                _connectionStringsPath,
-                mountPoint: _mountPoint);
+            try
+            {
+                var client = GetClient();
+                var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<ConnectionStrings>(
+                        _connectionStringsPath,
+                        mountPoint: _mountPoint);
 
-            return result.Data.Data;
+                return result.Data.Data;
+            }
+            catch (Exception exception)
+            {
+                throw;
+            }
         });
     }
 }
