@@ -22,6 +22,8 @@ services:
       - "12486:443"
     depends_on:
       - Database
+    volumes:
+      - dev-ph-shoppinglist-api-tls:/app/ssl
     networks:
       - dev-ph-shoppinglist
     secrets:
@@ -33,10 +35,20 @@ services:
       - "13997:443"
     depends_on:
       - Api
+    volumes:
+      - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
+      - dev-ph-shoppinglist-frontend-config:/etc/nginx/conf.d/
+      - dev-ph-shoppinglist-frontend-tls:/etc/nginx/ssl
     networks:
       - dev-ph-shoppinglist
 
 volumes:
+  dev-ph-shoppinglist-frontend-tls:
+    external: true
+  dev-ph-shoppinglist-frontend-config:
+    external: true
+  dev-ph-shoppinglist-api-tls:
+    external: true
   dev-ph-shoppinglist-database:
     external: true
 
