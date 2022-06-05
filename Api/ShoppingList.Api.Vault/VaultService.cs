@@ -41,23 +41,16 @@ public class VaultService : IVaultService
     {
         var policy = Policy.Handle<Exception>().WaitAndRetryAsync(
             _retryCount,
-            i => TimeSpan.FromSeconds(Math.Pow(1.5, i) + 1)); // TODO log exception
+            i => TimeSpan.FromSeconds(Math.Pow(1.5, i) + 1)); // TODO #202 log exception
 
         return await policy.ExecuteAsync(async () =>
         {
-            try
-            {
-                var client = GetClient();
-                var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<ConnectionStrings>(
-                        _connectionStringsPath,
-                        mountPoint: _mountPoint);
+            var client = GetClient();
+            var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<ConnectionStrings>(
+                _connectionStringsPath,
+                mountPoint: _mountPoint);
 
-                return result.Data.Data;
-            }
-            catch (Exception exception)
-            {
-                throw;
-            }
+            return result.Data.Data;
         });
     }
 }
