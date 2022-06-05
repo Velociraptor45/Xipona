@@ -1,6 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.Common.Reason;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 
 public interface IReason
 {

@@ -15,5 +15,4 @@ RUN dotnet publish "ShoppingList.Api.WebApp/ShoppingList.Api.WebApp.csproj" -c R
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-COPY ssl/ ssl/
-ENTRYPOINT ["dotnet", "ShoppingList.Api.WebApp.dll"]
+ENTRYPOINT ["/bin/bash", "-c", "update-ca-certificates && dotnet ShoppingList.Api.WebApp.dll"]

@@ -19,6 +19,7 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
+using ShoppingList.Api.Vault.Configs;
 using System.Data.Common;
 using System.Reflection;
 
@@ -26,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddInfrastructure(this IServiceCollection services, string connectionString)
+    public static void AddInfrastructure(this IServiceCollection services, string? connectionString = null)
     {
         var assembly = Assembly.GetExecutingAssembly()!;
         var version = Assembly.GetEntryAssembly()!.GetName().Version!;
@@ -34,6 +35,11 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<DbConnection>(provider =>
         {
+            if (connectionString is null)
+            {
+                var cs = provider.GetRequiredService<ConnectionStrings>();
+                connectionString = cs.ShoppingDatabase;
+            }
             var connection = new MySqlConnection(connectionString);
             connection.Open();
             return connection;

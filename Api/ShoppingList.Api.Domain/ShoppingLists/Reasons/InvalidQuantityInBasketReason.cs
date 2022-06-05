@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reason;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 

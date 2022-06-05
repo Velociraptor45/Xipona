@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reason;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using System.Runtime.Serialization;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;

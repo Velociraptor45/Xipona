@@ -1817,6 +1817,33 @@
             </Rule>
           </Rule>
         </Rule>
+        <Rule Match="All">
+          <Property Name="Project" Value="ShoppingList.Api.WebApp.Tests" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="ShoppingList.Api.WebApp.Tests" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="ConfigurationLoadingServiceTests" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.WebApp.Tests.ConfigurationLoadingServiceTests.LoadAsync_WithEnvironmentVariableNotSet_ShouldLoadFromFile" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ShoppingList.Api.WebApp.Tests.ConfigurationLoadingServiceTests.LoadAsync_WithEnvironmentVariableNotSet_ShouldLoadFromFile" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.WebApp.Tests.ConfigurationLoadingServiceTests.LoadAsync_WithEnvironmentVariableSet_ShouldLoadFromFile" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ShoppingList.Api.WebApp.Tests.ConfigurationLoadingServiceTests.LoadAsync_WithEnvironmentVariableSet_ShouldLoadFromFile" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
       </Rule>
     </Rule>
   </Rule>

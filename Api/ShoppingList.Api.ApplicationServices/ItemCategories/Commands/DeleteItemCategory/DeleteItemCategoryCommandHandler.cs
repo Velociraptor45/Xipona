@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Deletions;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Commands.DeleteItemCategory;
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Commands.DeleteItemCategory;
 
 public class DeleteItemCategoryCommandHandler : ICommandHandler<DeleteItemCategoryCommand, bool>
 {

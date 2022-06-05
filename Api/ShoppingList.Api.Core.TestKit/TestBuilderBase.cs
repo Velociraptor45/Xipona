@@ -10,7 +10,12 @@ public abstract class TestBuilderBase<TModel> : Fixture
         Customize(new AutoMoqCustomization { ConfigureMembers = true });
     }
 
-    protected void FillConstructorWith<TParameter>(string parameterName, TParameter value)
+    protected TestBuilderBase(ICustomization customization) : this()
+    {
+        customization.Customize(this);
+    }
+
+    public void FillConstructorWith<TParameter>(string parameterName, TParameter value)
     {
         this.ConstructorArgumentFor<TModel, TParameter>(parameterName, value);
     }

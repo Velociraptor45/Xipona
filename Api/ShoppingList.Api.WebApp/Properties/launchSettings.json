@@ -23,7 +23,9 @@
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:5050",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Local"
+        "ASPNETCORE_ENVIRONMENT": "Local",
+        "PH_SL_VAULT_USERNAME_FILE": "E:\\dev-ph-shoppinglist-vault-api-username.txt",
+        "PH_SL_VAULT_PASSWORD_FILE": "E:\\dev-ph-shoppinglist-vault-api-password.txt"
       }
     }
   }

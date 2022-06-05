@@ -14,6 +14,7 @@
     <ProjectReference Include="..\ShoppingList.Api.ApplicationServices\ShoppingList.Api.ApplicationServices.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Endpoint\ShoppingList.Api.Endpoint.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Infrastructure\ShoppingList.Api.Infrastructure.csproj" />
+    <ProjectReference Include="..\ShoppingList.Api.Vault\ShoppingList.Api.Vault.csproj" />
   </ItemGroup>
 
 
