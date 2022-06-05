@@ -64,7 +64,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03_Endpoints", "03_Endpoint
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Api.Endpoint.IntegrationsTests", "ShoppingList.Api.Endpoint.IntegrationsTests\ShoppingList.Api.Endpoint.IntegrationsTests.csproj", "{09C89290-C997-493A-A391-E331E89F834E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Api.Vault", "ShoppingList.Api.Vault\ShoppingList.Api.Vault.csproj", "{E7892CA9-5FEE-4A39-941A-7F844AB0101C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Api.Vault", "ShoppingList.Api.Vault\ShoppingList.Api.Vault.csproj", "{E7892CA9-5FEE-4A39-941A-7F844AB0101C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01_Execution", "01_Execution", "{D41069AC-A9F5-4B9D-942D-42353EDB9D5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Api.WebApp.Tests", "ShoppingList.Api.WebApp.Tests\ShoppingList.Api.WebApp.Tests.csproj", "{F3BB24B8-367E-483F-9D55-6CCF65BCCCBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Api.Vault.TestKit", "ShoppingList.Api.Vault.TestKit\ShoppingList.Api.Vault.TestKit.csproj", "{512CE5B7-C2AA-44F8-ACAF-5C56A5FA5AE3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -136,6 +142,14 @@ Global
 		{E7892CA9-5FEE-4A39-941A-7F844AB0101C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7892CA9-5FEE-4A39-941A-7F844AB0101C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7892CA9-5FEE-4A39-941A-7F844AB0101C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3BB24B8-367E-483F-9D55-6CCF65BCCCBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3BB24B8-367E-483F-9D55-6CCF65BCCCBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3BB24B8-367E-483F-9D55-6CCF65BCCCBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3BB24B8-367E-483F-9D55-6CCF65BCCCBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{512CE5B7-C2AA-44F8-ACAF-5C56A5FA5AE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{512CE5B7-C2AA-44F8-ACAF-5C56A5FA5AE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{512CE5B7-C2AA-44F8-ACAF-5C56A5FA5AE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{512CE5B7-C2AA-44F8-ACAF-5C56A5FA5AE3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -161,6 +175,9 @@ Global
 		{6C4F18D9-BC6B-4F05-9B65-7A5294E5E245} = {76C4349A-E0C0-4209-B812-93E101D703F9}
 		{09C89290-C997-493A-A391-E331E89F834E} = {6C4F18D9-BC6B-4F05-9B65-7A5294E5E245}
 		{E7892CA9-5FEE-4A39-941A-7F844AB0101C} = {8C98078F-50C7-4CBE-8BA2-8A090D34857F}
+		{D41069AC-A9F5-4B9D-942D-42353EDB9D5D} = {76C4349A-E0C0-4209-B812-93E101D703F9}
+		{F3BB24B8-367E-483F-9D55-6CCF65BCCCBF} = {D41069AC-A9F5-4B9D-942D-42353EDB9D5D}
+		{512CE5B7-C2AA-44F8-ACAF-5C56A5FA5AE3} = {33CDCDF6-D82E-446B-8F31-B2B0E48F0314}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {56C5C54B-6642-4A35-9038-FE0D314E6780}

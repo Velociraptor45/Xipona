@@ -1,10 +1,10 @@
-﻿namespace ShoppingList.Api.Domain.TestKit.Common;
+﻿using ShoppingList.Api.Core.TestKit;
 
-public class DomainTestBuilder<TModel> : DomainTestBuilderBase<TModel>
+namespace ShoppingList.Api.Domain.TestKit.Common;
+
+public class DomainTestBuilder<TModel> : TestBuilder<TModel, DomainTestBuilder<TModel>>
 {
-    public new DomainTestBuilder<TModel> FillConstructorWith<TParameter>(string parameterName, TParameter value)
+    public DomainTestBuilder() : base(new DomainCustomization())
     {
-        base.FillConstructorWith(parameterName, value);
-        return this;
     }
 }
