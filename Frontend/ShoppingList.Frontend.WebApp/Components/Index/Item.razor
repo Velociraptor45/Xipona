@@ -96,7 +96,7 @@
 
     private async Task OnQuantityInputValueChangedAsync(float quantity)
     {
-        Model.Quantity = quantity;
+        Model.SetQuantity(quantity);
         await SendQuantityChangedRequestAsync();
         State.StateChanged?.Invoke();
     }
@@ -110,14 +110,15 @@
 
     private async Task OnIncrementQuantityButtonClickedAsync()
     {
-        Model.Quantity += Model.QuantityType.DefaultQuantity;
+        Model.ChangeQuantity(Model.QuantityType.DefaultQuantity);
         await SendQuantityChangedRequestAsync();
         State.StateChanged?.Invoke();
     }
 
     private async Task OnDecrementQuantityButtonClickedAsync()
     {
-        Model.Quantity -= Model.QuantityType.DefaultQuantity;
+        Model.ChangeQuantity(-Model.QuantityType.DefaultQuantity);
+        
         await SendQuantityChangedRequestAsync();
         State.StateChanged?.Invoke();
     }

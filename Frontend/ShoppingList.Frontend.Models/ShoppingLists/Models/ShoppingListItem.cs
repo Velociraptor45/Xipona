@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         public string ItemCategory { get; }
         public string Manufacturer { get; }
         public bool IsInBasket { get; set; }
-        public float Quantity { get; set; }
+        public float Quantity { get; private set; }
 
         public void PutInBasket()
         {
@@ -50,6 +50,24 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         public float GetTotalPrice(IItemPriceCalculationService priceCalculationService)
         {
             return priceCalculationService.CalculatePrice(QuantityType.Id, PricePerQuantity, Quantity);
+        }
+
+        public void ChangeQuantity(float difference)
+        {
+            Quantity += difference;
+            CorrectQuantity();
+        }
+
+        public void SetQuantity(float quantity)
+        {
+            Quantity = quantity;
+            CorrectQuantity();
+        }
+
+        private void CorrectQuantity()
+        {
+            if (Quantity <= 0)
+                Quantity = 1;
         }
     }
 }
