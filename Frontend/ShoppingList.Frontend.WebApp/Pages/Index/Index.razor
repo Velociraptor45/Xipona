@@ -72,7 +72,8 @@
     {
         await base.OnInitializedAsync();
 
-        await itemPriceCalculationService.InitializeAsync();
+        var quantityTypes = await apiService.GetAllQuantityTypesAsync();
+        itemPriceCalculationService.Initialize(quantityTypes);
 
         errorHandler.StateChanged += StateHasChanged;
         errorHandler.QueueProcessed += async () => await ReloadShoppingListAsync();

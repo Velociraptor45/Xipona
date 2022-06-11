@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Frontend.Infrastructure.Error;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
+using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
@@ -46,6 +47,11 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         {
             var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), shoppingListId, itemId, itemTypeId);
             await EnqueueAsync(request);
+        }
+
+        public Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync()
+        {
+            return _apiClient.GetAllQuantityTypesAsync();
         }
 
         public async Task RemoveItemFromBasketAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId)
