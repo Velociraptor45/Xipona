@@ -2,6 +2,11 @@
     width: 100%;
 }
 
-.availability .price-input {
-    width: 55px;
-}
+    .availability .price-input {
+        width: 55px;
+    }
+
+    .availability div.data {
+        width: 100%;
+        max-width: 300px;
+    }

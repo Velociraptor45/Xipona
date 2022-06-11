@@ -3,22 +3,9 @@
 @using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
 
-<div class="availability">
-    <div class="d-flex">
-        <div class="align-items-center d-flex">
-            <div class="price-input">
-                <Input @bind-Value="@Model.PricePerQuantity"/>
-            </div>
-            <div class="mr-2">@(State.EditedItem.QuantityType.PriceLabel)</div>
-        </div>
-        <Button Class="d-flex align-items-center ml-auto"
-                OnClick="@OnRemoveStoreButtonClicked"
-                Danger="true">
-            <Icon Type="minus"></Icon>
-        </Button>
-    </div>
-    <div class="d-flex pt-1">
-        <Select Class="mr-2"
+<div class="availability d-flex">
+    <div class="data">
+        <Select Class="mr-2 store"
                 DataSource="State.Stores.ToList()"
                 TItem="Store"
                 TItemValue="Guid"
@@ -27,15 +14,28 @@
                 LabelName="@nameof(Store.Name)"
                 OnSelectedItemChanged="@OnStoreChanged">
         </Select>
-        <SingleSelect Class=""
-                      TItem="ItemSection"
-                      TValue="Guid"
-                      ValueName="@nameof(ItemSection.Id)"
-                      LabelName="@nameof(ItemSection.Name)"
-                      DataSource="@Model.Store.Sections.ToList()"
-                      OnItemChanged="OnDefaultSectionChanged"
-                      DefaultValue="@Model.DefaultSectionId"></SingleSelect>
+        <div class="d-flex pt-1">
+            <div class="align-items-center d-flex">
+                <div class="price-input">
+                    <Input @bind-Value="@Model.PricePerQuantity"/>
+                </div>
+                <div class="mr-2">@(State.EditedItem.QuantityType.PriceLabel)</div>
+            </div>
+            <SingleSelect Class="section ml-2"
+                          TItem="ItemSection"
+                          TValue="Guid"
+                          ValueName="@nameof(ItemSection.Id)"
+                          LabelName="@nameof(ItemSection.Name)"
+                          DataSource="@Model.Store.Sections.ToList()"
+                          OnItemChanged="OnDefaultSectionChanged"
+                          DefaultValue="@Model.DefaultSectionId"></SingleSelect>
+        </div>
     </div>
+    <Button Class="d-flex align-items-center ml-auto"
+            OnClick="@OnRemoveStoreButtonClicked"
+            Danger="true">
+        <Icon Type="minus"></Icon>
+    </Button>
 </div>
 
 @code {
