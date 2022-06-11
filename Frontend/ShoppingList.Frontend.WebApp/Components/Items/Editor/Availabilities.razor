@@ -28,19 +28,7 @@
 
     private void OnAddStoreButtonClicked()
     {
-        var availableStores = Available.GetNotRegisteredStores(State.Stores);
-        if (!availableStores.Any())
-            return;
-        
-        var chosenStore = availableStores.First();
-        Available.Availabilities.Add(new ItemAvailability(chosenStore, 1, GetSectionForStoreId(chosenStore.Id).Id));
-
+        Available.AddStore(State.Stores);
         State.StateChanged();
-    }
-
-    private ItemSection GetSectionForStoreId(Guid storeId)
-    {
-        var section = State.Stores.Single(s => s.Id == storeId).Sections.Single(s => s.IsDefaultSection);
-        return section.AsStoreItemSection();
     }
 }
