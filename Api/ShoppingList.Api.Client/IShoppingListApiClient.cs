@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
@@ -161,6 +162,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Get("item-categories/active")]
         Task<IEnumerable<ItemCategoryContract>> GetAllActiveItemCategories();
+
+        [Put("item-categories")]
+        Task ModifyItemCategoryAsync([Body] ModifyItemCategoryContract contract);
 
         [Post("item-categories")]
         Task<ItemCategoryContract> CreateItemCategory([Query] string name);
