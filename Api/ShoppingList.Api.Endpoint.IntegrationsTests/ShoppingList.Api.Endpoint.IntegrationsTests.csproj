@@ -39,5 +39,9 @@
     <None Include="v1\Controllers\docker-compose.yml" />
   </ItemGroup>
 
+  <ItemGroup>
+      <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+  </ItemGroup>
+
 
 </Project>

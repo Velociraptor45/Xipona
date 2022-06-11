@@ -14,4 +14,8 @@
     <ProjectReference Include="..\ShoppingList.Api.Vault\ShoppingList.Api.Vault.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+      <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+  </ItemGroup>
+
 </Project>

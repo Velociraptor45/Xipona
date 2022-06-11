@@ -1,26 +1,17 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services
+namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
 {
     public class ItemPriceCalculationService : IItemPriceCalculationService
     {
-        private readonly IApiClient _apiClient;
         private List<QuantityType> _quantityTypes;
 
-        public ItemPriceCalculationService(IApiClient apiClient)
+        public void Initialize(IEnumerable<QuantityType> quantityTypes)
         {
-            _apiClient = apiClient;
-        }
-
-        public async Task InitializeAsync()
-        {
-            _quantityTypes = (await _apiClient.GetAllQuantityTypesAsync()).ToList();
+            _quantityTypes = quantityTypes.ToList();
         }
 
         public float CalculatePrice(int quantityTypeId, float pricePerQuantity, float quantity)
@@ -31,7 +22,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services
 
             float price = (quantity / type.QuantityNormalizer) * pricePerQuantity;
 
-            return (float)Math.Floor(price * 100) / 100;
+            return (float)Math.Round(price * 100, MidpointRounding.AwayFromZero) / 100;
         }
     }
 }

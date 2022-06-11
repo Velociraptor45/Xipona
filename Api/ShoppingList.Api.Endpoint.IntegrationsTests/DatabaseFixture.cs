@@ -32,12 +32,12 @@ public abstract class DatabaseFixture
         return services.BuildServiceProvider();
     }
 
-    public IServiceScope CreateNewServiceScope()
+    public IServiceScope CreateServiceScope()
     {
         return _provider.CreateScope();
     }
 
-    public async Task SetupDatabaseAsync(IServiceScope scope)
+    public async Task ApplyMigrationsAsync(IServiceScope scope)
     {
         var contexts = GetDbContexts(scope);
 
