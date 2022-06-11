@@ -7,7 +7,7 @@
     <div class="d-flex">
         <div class="align-items-center d-flex">
             <div class="price-input">
-                <Input @bind-Value="@availability.PricePerQuantity"/>
+                <Input @bind-Value="@Model.PricePerQuantity"/>
             </div>
             <div class="mr-2">@(State.EditedItem.QuantityType.PriceLabel)</div>
         </div>
@@ -22,7 +22,7 @@
                 DataSource="State.Stores.ToList()"
                 TItem="Store"
                 TItemValue="Guid"
-                DefaultValue="availability.Store.Id"
+                DefaultValue="Model.Store.Id"
                 ValueName="@nameof(Store.Id)"
                 LabelName="@nameof(Store.Name)"
                 OnSelectedItemChanged="@OnStoreChanged">
@@ -32,41 +32,35 @@
                       TValue="Guid"
                       ValueName="@nameof(ItemSection.Id)"
                       LabelName="@nameof(ItemSection.Name)"
-                      DataSource="@availability.Store.Sections.ToList()"
+                      DataSource="@Model.Store.Sections.ToList()"
                       OnItemChanged="OnDefaultSectionChanged"
-                      DefaultValue="@availability.DefaultSectionId"></SingleSelect>
+                      DefaultValue="@Model.DefaultSectionId"></SingleSelect>
     </div>
 </div>
 
 @code {
     [Parameter] public ItemsState State { get; set; }
-    [Parameter] public int ComponentIndex { get; set; }
-
-    private ItemAvailability availability;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        availability = State.EditedItem.Availabilities[ComponentIndex];
-    }
+    [Parameter] public ItemAvailability Model { get; set; }
+    [Parameter] public int Index { get; set; }
+    [Parameter] public Action<int> OnRemove { get; set; }
 
     private void OnStoreChanged(Store store)
     {
-        availability.Store = store.AsStoreItemStore();
+        Model.Store = store.AsItemStore();
 
         var defaultSection = store.Sections.Single(s => s.IsDefaultSection);
-        availability.ChangeDefaultSectionId(defaultSection.Id.BackendId);
+        Model.ChangeDefaultSectionId(defaultSection.Id.BackendId);
         StateHasChanged();
     }
 
     private void OnRemoveStoreButtonClicked()
     {
-        State.EditedItem.Availabilities.RemoveAt(ComponentIndex);
+        OnRemove(Index);
         State.StateChanged();
     }
 
     private void OnDefaultSectionChanged(ItemSection section)
     {
-        availability.ChangeDefaultSectionId(section.Id);
+        Model.ChangeDefaultSectionId(section.Id);
     }
 }
