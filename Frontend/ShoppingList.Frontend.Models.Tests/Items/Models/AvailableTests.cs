@@ -142,7 +142,7 @@ public class AvailableTests
 
         private class AddStoreFixture : AvailableFixture
         {
-            public ItemAvailability ExpectedAvailability { get; private set; }
+            public ItemAvailability? ExpectedAvailability { get; private set; }
 
             public void SetupExpectedAvailability(int index)
             {
@@ -198,7 +198,7 @@ public class AvailableTests
             _fixture.AddAvailability(sut.Availabilities, 0);
 
             // Act
-            var result = sut.GetNotRegisteredStores(_fixture.Stores);
+            var result = sut.GetNotRegisteredStores(_fixture.Stores).ToList();
 
             // Assert
             result.Should().HaveCount(1);
@@ -207,7 +207,7 @@ public class AvailableTests
 
         private class GetNotRegisteredStoresFixture : AvailableFixture
         {
-            public ItemStore ExpectedStore { get; private set; }
+            public ItemStore? ExpectedStore { get; private set; }
 
             public void SetupExpectedStore(int index)
             {
