@@ -112,7 +112,7 @@ public class StoreControllerIntegrationTests
                         .Create());
                 }
 
-                var factory = ExecutionScope.ServiceProvider.GetRequiredService<IStoreSectionFactory>();
+                var factory = SetupScope.ServiceProvider.GetRequiredService<IStoreSectionFactory>();
 
                 ExpectedPersistedStore = new StoreBuilder()
                     .WithName(new StoreName(Contract.Name))
@@ -123,7 +123,7 @@ public class StoreControllerIntegrationTests
 
             public override async Task PrepareDatabaseAsync()
             {
-                await SetupDatabaseAsync(ExecutionScope);
+                await ApplyMigrationsAsync(SetupScope);
             }
         }
     }
@@ -184,8 +184,8 @@ public class StoreControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(ExistingStore);
 
-                using var scope = CreateNewServiceScope();
-                await SetupDatabaseAsync(scope);
+                using var scope = CreateServiceScope();
+                await ApplyMigrationsAsync(scope);
 
                 using var transaction = await CreateTransactionAsync(scope);
 
@@ -214,7 +214,7 @@ public class StoreControllerIntegrationTests
                         section.IsDefaultSection));
                 }
 
-                var factory = ExecutionScope.ServiceProvider.GetRequiredService<IStoreSectionFactory>();
+                var factory = SetupScope.ServiceProvider.GetRequiredService<IStoreSectionFactory>();
 
                 ExpectedPersistedStore = new Store(
                     new StoreId(Contract.Id),
@@ -227,16 +227,16 @@ public class StoreControllerIntegrationTests
 
     private abstract class LocalFixture : DatabaseFixture, IDisposable
     {
-        protected readonly IServiceScope ExecutionScope;
+        protected readonly IServiceScope SetupScope;
 
         protected LocalFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
-            ExecutionScope = CreateNewServiceScope();
+            SetupScope = CreateServiceScope();
         }
 
         public StoreController CreateSut()
         {
-            var scope = CreateNewServiceScope();
+            var scope = CreateServiceScope();
             return scope.ServiceProvider.GetRequiredService<StoreController>();
         }
 
@@ -253,7 +253,7 @@ public class StoreControllerIntegrationTests
 
         public async Task<IList<IStore>> LoadPersistedStoresAsync()
         {
-            using var scope = CreateNewServiceScope();
+            using var scope = CreateServiceScope();
             var repo = CreateStoreRepository(scope);
 
             using (await CreateTransactionAsync(scope))
@@ -268,7 +268,7 @@ public class StoreControllerIntegrationTests
         {
             if (disposing)
             {
-                ExecutionScope.Dispose();
+                SetupScope.Dispose();
             }
         }
 

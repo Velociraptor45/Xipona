@@ -103,7 +103,6 @@ public class ManufacturerControllerIntegrationTests
             var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value.Value);
 
             // Assert
-
             response.Should().BeOfType<NotFoundObjectResult>();
             var notFoundResult = response as NotFoundObjectResult;
             notFoundResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedNotFoundContract);
@@ -116,7 +115,7 @@ public class ManufacturerControllerIntegrationTests
             }
 
             public Models.ManufacturerId? ManufacturerId { get; private set; }
-            public ErrorContract ExpectedNotFoundContract { get; set; }
+            public ErrorContract? ExpectedNotFoundContract { get; private set; }
 
             public void SetupManufacturerId()
             {
@@ -125,21 +124,18 @@ public class ManufacturerControllerIntegrationTests
 
             public async Task PrepareDatabaseForManufacturerNotExistingAsync()
             {
-                using var scope = CreateNewServiceScope();
-                await SetupDatabaseAsync(scope);
+                await ApplyMigrationsAsync(SetupScope);
             }
 
             public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(ManufacturerId);
 
-                using var scope = CreateNewServiceScope();
-
-                using var transaction = await CreateTransactionAsync(scope);
-                await SetupDatabaseAsync(scope);
+                using var transaction = await CreateTransactionAsync(SetupScope);
+                await ApplyMigrationsAsync(SetupScope);
 
                 // manufacturer
-                var manufacturerRepository = CreateManufacturerRepository(scope);
+                var manufacturerRepository = CreateManufacturerRepository(SetupScope);
                 var manufacturer = new ManufacturerBuilder()
                     .WithIsDeleted(false)
                     .WithId(ManufacturerId.Value)
@@ -148,7 +144,7 @@ public class ManufacturerControllerIntegrationTests
                 await manufacturerRepository.StoreAsync(manufacturer, default);
 
                 // items
-                var itemRepository = CreateItemRepository(scope);
+                var itemRepository = CreateItemRepository(SetupScope);
                 var items = new List<IStoreItem>()
                 {
                     new StoreItemBuilder()
@@ -183,16 +179,16 @@ public class ManufacturerControllerIntegrationTests
 
     private abstract class ManufacturerControllerFixture : DatabaseFixture, IDisposable
     {
-        protected readonly IServiceScope ExecutionScope;
+        protected readonly IServiceScope SetupScope;
 
         protected ManufacturerControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
-            ExecutionScope = CreateNewServiceScope();
+            SetupScope = CreateServiceScope();
         }
 
         public ManufacturerController CreateSut()
         {
-            var scope = CreateNewServiceScope();
+            var scope = CreateServiceScope();
             return scope.ServiceProvider.GetRequiredService<ManufacturerController>();
         }
 
@@ -224,13 +220,13 @@ public class ManufacturerControllerIntegrationTests
 
         public async Task<IList<Manufacturer>> LoadPersistedManufacturersAsync()
         {
-            using var scope = CreateNewServiceScope();
+            using var scope = CreateServiceScope();
             var ctx = CreateManufacturerContext(scope);
 
             using (await CreateTransactionAsync(scope))
             {
                 var entities = await ctx.Manufacturers.AsNoTracking()
-                    .ToListAsync(default);
+                    .ToListAsync();
 
                 return entities;
             }
@@ -238,13 +234,13 @@ public class ManufacturerControllerIntegrationTests
 
         public async Task<IList<Item>> LoadPersistedItemsAsync()
         {
-            using var scope = CreateNewServiceScope();
+            using var scope = CreateServiceScope();
             var ctx = CreateItemContext(scope);
 
             using (await CreateTransactionAsync(scope))
             {
                 var entities = await ctx.Items.AsNoTracking()
-                    .ToListAsync(default);
+                    .ToListAsync();
 
                 return entities;
             }
@@ -256,7 +252,7 @@ public class ManufacturerControllerIntegrationTests
         {
             if (disposing)
             {
-                ExecutionScope.Dispose();
+                SetupScope.Dispose();
             }
         }
 
