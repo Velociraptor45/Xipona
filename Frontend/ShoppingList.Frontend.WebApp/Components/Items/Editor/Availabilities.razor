@@ -9,16 +9,14 @@
             <Icon Type="plus"></Icon>
         </Button>
     </div>
-    <div class="d-flex flex-row py-2">
-        <div>
-            @for (int i = 0; i < State.EditedItem.Availabilities.Count; i++)
-            {
-                <div class="pb-1">
-                    <Availability State="@State"
-                                  ComponentIndex="i"></Availability>
-                </div>
-            }
-        </div>
+    <div class="py-2">
+        @for (int i = 0; i < State.EditedItem.Availabilities.Count; i++)
+        {
+            <div class="pb-3">
+                <Availability State="@State"
+                              ComponentIndex="i"></Availability>
+            </div>
+        }
     </div>
 </div>
 
