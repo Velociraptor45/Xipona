@@ -1,11 +1,10 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 {
-    public class Item
+    public class Item : IAvailable
     {
         public Item(Guid id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float? quantityInPacket, QuantityTypeInPacket quantityInPacketType,
@@ -42,18 +41,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items.Models
         public ItemMode ItemMode { get; private set; }
 
         public bool IsItemWithTypes => ItemMode == ItemMode.WithTypes;
-
-        public IEnumerable<ItemStore> GetNotRegisteredStores(IEnumerable<Store> stores)
-        {
-            var registeredStoreIds = Availabilities.Select(av => av.Store.Id).OrderBy(id => id);
-            var allStoreIds = stores.Select(s => s.Id).OrderBy(id => id);
-
-            if (allStoreIds.SequenceEqual(registeredStoreIds))
-                return Enumerable.Empty<ItemStore>();
-
-            var availableStoreIds = allStoreIds.Except(registeredStoreIds).ToList();
-            return stores.Where(s => availableStoreIds.Contains(s.Id)).Select(s => s.AsStoreItemStore());
-        }
 
         private void SetItemMode()
         {

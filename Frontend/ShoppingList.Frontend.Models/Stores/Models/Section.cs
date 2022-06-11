@@ -27,7 +27,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
             SortingIndex = index;
         }
 
-        public ItemSection AsStoreItemSection()
+        public ItemSection AsItemSection()
         {
             return new ItemSection(Id.BackendId, Name, SortingIndex);
         }

@@ -84,9 +84,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
             }
         }
 
-        public ItemStore AsStoreItemStore()
+        public ItemStore AsItemStore()
         {
-            return new ItemStore(Id, Name, Sections.Select(s => s.AsStoreItemSection()));
+            return new ItemStore(Id, Name, Sections.Select(s => s.AsItemSection()));
         }
     }
 }

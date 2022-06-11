@@ -33,7 +33,8 @@
     @if (State.EditedItem.ItemMode == ItemMode.WithoutTypes
         || (!State.EditedItem.ItemTypes.Any() && State.EditedItem.ItemMode == ItemMode.NotDefined))
     {
-        <Availabilities State="@State"></Availabilities>
+        <Availabilities State="@State"
+                        Available="@State.EditedItem"></Availabilities>
     }
     @if (State.EditedItem.ItemMode == ItemMode.WithTypes
         || (!State.EditedItem.Availabilities.Any() && State.EditedItem.ItemMode == ItemMode.NotDefined))

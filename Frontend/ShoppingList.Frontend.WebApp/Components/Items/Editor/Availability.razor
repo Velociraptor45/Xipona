@@ -3,65 +3,64 @@
 @using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
 
-<div class="d-flex flex-row align-items-center">
-    <div class="max-w-80">
-        <Input @bind-Value="@availability.PricePerQuantity" />
+<div class="availability d-flex">
+    <div class="data">
+        <Select Class="mr-2 store"
+                DataSource="State.Stores.ToList()"
+                TItem="Store"
+                TItemValue="Guid"
+                DefaultValue="Model.Store.Id"
+                ValueName="@nameof(Store.Id)"
+                LabelName="@nameof(Store.Name)"
+                OnSelectedItemChanged="@OnStoreChanged">
+        </Select>
+        <div class="d-flex pt-1">
+            <div class="align-items-center d-flex">
+                <div class="price-input">
+                    <Input @bind-Value="@Model.PricePerQuantity"/>
+                </div>
+                <div class="mr-2">@(State.EditedItem.QuantityType.PriceLabel)</div>
+            </div>
+            <SingleSelect Class="section ml-2"
+                          TItem="ItemSection"
+                          TValue="Guid"
+                          ValueName="@nameof(ItemSection.Id)"
+                          LabelName="@nameof(ItemSection.Name)"
+                          DataSource="@Model.Store.Sections.ToList()"
+                          OnItemChanged="OnDefaultSectionChanged"
+                          DefaultValue="@Model.DefaultSectionId"></SingleSelect>
+        </div>
     </div>
-    <div class="mr-2">@(State.EditedItem.QuantityType.PriceLabel)</div>
-    <Select Class="mr-2"
-            DataSource="State.Stores.ToList()"
-            TItem="Store"
-            TItemValue="Guid"
-            DefaultValue="availability.Store.Id"
-            ValueName="@nameof(Store.Id)"
-            LabelName="@nameof(Store.Name)"
-            OnSelectedItemChanged="@OnStoreChanged">
-    </Select>
-    <SingleSelect TItem="ItemSection"
-                  TValue="Guid"
-                  ValueName="@nameof(ItemSection.Id)"
-                  LabelName="@nameof(ItemSection.Name)"
-                  DataSource="@availability.Store.Sections.ToList()"
-                  OnItemChanged="OnDefaultSectionChanged"
-                  DefaultValue="@availability.DefaultSectionId"></SingleSelect>
-    <div class="ml-2">
-        <Button Class="d-flex align-items-center"
-                OnClick="@OnRemoveStoreButtonClicked"
-                Danger="true">
-            <Icon Type="minus"></Icon>
-        </Button>
-    </div>
+    <Button Class="d-flex align-items-center ml-auto"
+            OnClick="@OnRemoveStoreButtonClicked"
+            Danger="true">
+        <Icon Type="minus"></Icon>
+    </Button>
 </div>
 
 @code {
     [Parameter] public ItemsState State { get; set; }
-    [Parameter] public int ComponentIndex { get; set; }
-
-    private ItemAvailability availability;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        availability = State.EditedItem.Availabilities[ComponentIndex];
-    }
+    [Parameter] public ItemAvailability Model { get; set; }
+    [Parameter] public int Index { get; set; }
+    [Parameter] public Action<int> OnRemove { get; set; }
 
     private void OnStoreChanged(Store store)
     {
-        availability.Store = store.AsStoreItemStore();
+        Model.Store = store.AsItemStore();
 
         var defaultSection = store.Sections.Single(s => s.IsDefaultSection);
-        availability.ChangeDefaultSectionId(defaultSection.Id.BackendId);
+        Model.ChangeDefaultSectionId(defaultSection.Id.BackendId);
         StateHasChanged();
     }
 
     private void OnRemoveStoreButtonClicked()
     {
-        State.EditedItem.Availabilities.RemoveAt(ComponentIndex);
+        OnRemove(Index);
         State.StateChanged();
     }
 
     private void OnDefaultSectionChanged(ItemSection section)
     {
-        availability.ChangeDefaultSectionId(section.Id);
+        Model.ChangeDefaultSectionId(section.Id);
     }
 }

@@ -1,10 +1,10 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
-@using Models = ProjectHermes.ShoppingList.Frontend.Models.Items;
+@using Models = ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 
 <div class="itemType p-2 mt-2">
     <div class="d-flex">
         <div class="name max-w-200">
-            <Input @bind-Value="@State.EditedItem.ItemTypes[ComponentIndex].Name"></Input>
+            <Input @bind-Value="@itemType.Name"></Input>
         </div>
         <div class="ml-2 ml-auto">
             <Button Class="d-flex align-items-center"
@@ -15,7 +15,8 @@
         </div>
     </div>
     <div class="availabilities">
-        <ItemTypeAvailabilities State="State" ItemTypeIndex="ComponentIndex"></ItemTypeAvailabilities>
+        <Availabilities State="State"
+                        Available="@itemType"></Availabilities>
     </div>
 </div>
 
@@ -23,7 +24,7 @@
     [Parameter] public ItemsState State { get; set; }
     [Parameter] public int ComponentIndex { get; set; }
 
-    private Frontend.Models.Items.Models.ItemType itemType;
+    private Models.ItemType itemType;
 
     protected override void OnInitialized()
     {
