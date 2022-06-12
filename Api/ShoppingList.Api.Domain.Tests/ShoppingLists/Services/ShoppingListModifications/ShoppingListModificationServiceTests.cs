@@ -25,23 +25,6 @@ public class ShoppingListModificationServiceTests
         }
 
         [Fact]
-        public async Task ChangeItemQuantityAsync_WithOfflineTollerantItemIdNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-
-            // Act
-            Func<Task> function = async () => await sut.ChangeItemQuantityAsync(_fixture.ShoppingListId,
-                null, _fixture.ItemTypeId, _fixture.Quantity);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowAsync<ArgumentNullException>().WithMessage("*offlineTolerantItemId*");
-            }
-        }
-
-        [Fact]
         public async Task ChangeItemQuantityAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
         {
             // Arrange
@@ -258,25 +241,6 @@ public class ShoppingListModificationServiceTests
         public RemoveItemAsyncTests()
         {
             _fixture = new RemoveItemAsyncFixture();
-        }
-
-        [Fact]
-        public async Task RemoveItemAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-            _fixture.SetupShoppingListId();
-            _fixture.SetupItemTypeId();
-
-            // Act
-            Func<Task> function = async () =>
-                await sut.RemoveItemAsync(_fixture.ShoppingListId, null, _fixture.ItemTypeId);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowAsync<ArgumentNullException>();
-            }
         }
 
         [Fact]
@@ -558,23 +522,6 @@ public class ShoppingListModificationServiceTests
         }
 
         [Fact]
-        public async Task RemoveItemFromBasketAsync_WithOfflineTolerantItemIdNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-
-            // Act
-            Func<Task> function = async () => await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId,
-                null, _fixture.ItemTypeId);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowAsync<ArgumentNullException>().WithMessage("*offlineTolerantItemId*");
-            }
-        }
-
-        [Fact]
         public async Task RemoveItemFromBasketAsync_WithInvalidOfflineId_ShouldThrowDomainException()
         {
             // Arrange
@@ -829,23 +776,6 @@ public class ShoppingListModificationServiceTests
         public PutItemInBasketAsyncTests()
         {
             _fixture = new PutItemInBasketAsyncFixture();
-        }
-
-        [Fact]
-        public async Task PutItemInBasketAsync_WithOfflineTolerantItemIdNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var handler = _fixture.CreateSut();
-
-            // Act
-            Func<Task> function = async () => await handler.PutItemInBasketAsync(_fixture.ShoppingListId, null,
-                _fixture.ItemTypeId);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowAsync<ArgumentNullException>();
-            }
         }
 
         [Fact]

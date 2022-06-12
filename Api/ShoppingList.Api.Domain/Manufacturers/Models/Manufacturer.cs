@@ -22,8 +22,6 @@ public class Manufacturer : IManufacturer
 
     public void Modify(ManufacturerModification modification)
     {
-        ArgumentNullException.ThrowIfNull(modification);
-
         Name = modification.Name;
     }
 }

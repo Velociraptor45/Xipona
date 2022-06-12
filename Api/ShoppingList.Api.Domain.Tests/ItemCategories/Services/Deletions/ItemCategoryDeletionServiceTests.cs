@@ -326,7 +326,7 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupItemCategoryMock()
             {
-                _itemCategoryMock = new ItemCategoryMock(ItemCategoryMother.NotDeleted().Create());
+                _itemCategoryMock = new ItemCategoryMock(ItemCategoryMother.NotDeleted().Create(), MockBehavior.Strict);
             }
 
             public void SetupStoreItemMocks()

@@ -23,22 +23,6 @@ public class ItemCreationServiceTests
             _fixture = new CreateAsyncFixture();
         }
 
-        [Fact]
-        public async Task CreateAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-
-            // Act
-            var func = async () => await sut.CreateAsync(null);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*creation*");
-            }
-        }
-
         #region WithManufacturerId
 
         [Fact]
@@ -363,22 +347,6 @@ public class ItemCreationServiceTests
         public CreateTemporaryAsyncTests()
         {
             _fixture = new CreateTemporaryAsyncFixture();
-        }
-
-        [Fact]
-        public async Task CreateTemporaryAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-
-            // Act
-            Func<Task> func = async () => await sut.CreateTemporaryAsync(null);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await func.Should().ThrowAsync<ArgumentNullException>().WithMessage("*creation*");
-            }
         }
 
         #region WithValidData

@@ -18,9 +18,6 @@ public class AvailabilityValidationService : IAvailabilityValidationService
 
     public async Task ValidateAsync(IEnumerable<IStoreItemAvailability> availabilities, CancellationToken cancellationToken)
     {
-        if (availabilities is null)
-            throw new ArgumentNullException(nameof(availabilities));
-
         var availabilitiesList = availabilities.ToList();
 
         var storeIds = availabilitiesList.Select(av => av.StoreId);

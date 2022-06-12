@@ -24,23 +24,6 @@ public class ShoppingListTests
     #region AddItem
 
     [Fact]
-    public void AddItem_WithStoreItemIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var shoppingList = ShoppingListMother.ThreeSections().Create();
-        SectionId sectionId = new SectionId(Guid.NewGuid());
-
-        // Act
-        Action action = () => shoppingList.AddItem(null, sectionId);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            action.Should().Throw<ArgumentNullException>();
-        }
-    }
-
-    [Fact]
     public void AddItem_WithItemIdIsAlreadyOnList_ShouldThrowDomainException()
     {
         // Arrange
@@ -376,22 +359,6 @@ public class ShoppingListTests
     #endregion Finish
 
     #region AddSection
-
-    [Fact]
-    public void AddSection_WithSectionIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var shoppingList = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
-
-        // Act
-        Action action = () => shoppingList.AddSection(null);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            action.Should().Throw<ArgumentNullException>();
-        }
-    }
 
     [Fact]
     public void AddSection_WithSectionAlreadyInShoppingList_ShouldThrowDomainException()

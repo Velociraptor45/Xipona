@@ -31,9 +31,6 @@ public class StoreItemReadModelConversionService : IStoreItemReadModelConversion
 
     public async Task<StoreItemReadModel> ConvertAsync(IStoreItem item, CancellationToken cancellationToken)
     {
-        if (item is null)
-            throw new ArgumentNullException(nameof(item));
-
         IItemCategory? itemCategory = null;
         IManufacturer? manufacturer = null;
 

@@ -21,22 +21,6 @@ public class AvailabilityValidationServiceTests
     }
 
     [Fact]
-    public async Task ValidateAsync_WithAvailabilitiesIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var service = _local.CreateSut();
-
-        // Act
-        Func<Task> function = async () => await service.ValidateAsync(null, default);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            await function.Should().ThrowAsync<ArgumentNullException>();
-        }
-    }
-
-    [Fact]
     public async Task ValidateAsync_WithDuplicatedStoreIds_ShouldThrowDomainException()
     {
         // Arrange

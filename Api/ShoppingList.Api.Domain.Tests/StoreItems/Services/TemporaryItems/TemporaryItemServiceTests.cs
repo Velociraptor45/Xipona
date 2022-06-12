@@ -23,22 +23,6 @@ public class TemporaryItemServiceTests
         }
 
         [Fact]
-        public async Task MakePermanentAsync_WithPermanentItemIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-
-            // Act
-            Func<Task> func = async () => await sut.MakePermanentAsync(null);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await func.Should().ThrowAsync<ArgumentNullException>();
-            }
-        }
-
-        [Fact]
         public async Task MakePermanentAsync_WithInvalidItemId_ShouldThrowDomainException()
         {
             // Arrange

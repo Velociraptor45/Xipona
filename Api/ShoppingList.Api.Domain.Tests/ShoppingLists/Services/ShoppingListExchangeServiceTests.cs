@@ -29,25 +29,6 @@ public class ShoppingListExchangeServiceTests
         #region ExchangeItemAsync
 
         [Fact]
-        public async Task ExchangeItemAsync_WithNewItemIdIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var service = _fixture.CreateSut();
-            _fixture.SetupNewItemNull();
-            _fixture.SetupOldItem();
-
-            // Act
-            Func<Task> function = async () =>
-                await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await function.Should().ThrowAsync<ArgumentNullException>();
-            }
-        }
-
-        [Fact]
         public async Task ExchangeItemAsync_WithOldItemOnNoShoppingLists_ShouldDoNothing()
         {
             // Arrange
@@ -836,11 +817,6 @@ public class ShoppingListExchangeServiceTests
         public IStoreItem NewItem { get; protected set; }
         public IShoppingListItem OldShoppingListItem { get; protected set; }
 
-        public void SetupNewItemNull()
-        {
-            NewItem = null;
-        }
-
         public void SetupNewItemMatchingShoppingList()
         {
             SetupNewItemForStore(ShoppingListMock.Object.StoreId);
@@ -866,11 +842,6 @@ public class ShoppingListExchangeServiceTests
         public void SetupOldItemFromShoppingListInBasket()
         {
             OldShoppingListItem = ShoppingListMock.GetRandomItem(CommonFixture, i => i.IsInBasket);
-        }
-
-        public void SetupOldItemNull()
-        {
-            OldShoppingListItem = null;
         }
 
         #region Mock Setup

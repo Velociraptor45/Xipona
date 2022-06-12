@@ -25,19 +25,6 @@ public class ItemModificationServiceTests
     }
 
     [Fact]
-    public async Task ModifyItemWithTypesAsync_WithModificationNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var sut = _fixture.CreateSut();
-
-        // Act
-        Func<Task> func = async () => await sut.ModifyItemWithTypesAsync(null);
-
-        // Assert
-        await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*modification*");
-    }
-
-    [Fact]
     public async Task ModifyItemWithTypesAsync_WithNotFindingItem_ShouldThrowDomainException()
     {
         // Arrange

@@ -175,8 +175,8 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             .Create();
     }
 
-    private static ShoppingListReadModel ToSimpleReadModel(IShoppingList list, IStore store, IStoreItem item,
-        IItemCategory itemCategory, IManufacturer manufacturer)
+    private static ShoppingListReadModel ToSimpleReadModel(IShoppingList list, IStore store, IStoreItem? item,
+        IItemCategory? itemCategory, IManufacturer? manufacturer)
     {
         var manufacturerReadModel = manufacturer == null
             ? null

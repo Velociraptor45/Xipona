@@ -24,23 +24,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conver
 public class StoreItemReadModelConversionServiceTests
 {
     [Fact]
-    public async Task ConvertAsync_WithItemIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var local = new LocalFixture();
-        var service = local.CreateService();
-
-        // Act
-        Func<Task<StoreItemReadModel>> function = async () => await service.ConvertAsync(null, default);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            await function.Should().ThrowAsync<ArgumentNullException>();
-        }
-    }
-
-    [Fact]
     public async Task ConvertAsync_WithInvalidItemCategoryId_ShouldConvertToReadModel()
     {
         // Arrange

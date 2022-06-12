@@ -1,10 +1,11 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Modifications;
 
 namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 
 public class ItemCategoryMock : Mock<IItemCategory>
 {
-    public ItemCategoryMock(IItemCategory itemCategory)
+    public ItemCategoryMock(IItemCategory itemCategory, MockBehavior behavior) : base(behavior)
     {
         SetupId(itemCategory.Id);
     }
@@ -18,5 +19,15 @@ public class ItemCategoryMock : Mock<IItemCategory>
     public void VerifyDeleteOnce()
     {
         Verify(i => i.Delete(), Times.Once);
+    }
+
+    public void VerifyModify(ItemCategoryModification modification, Func<Times> times)
+    {
+        Verify(m => m.Modify(modification));
+    }
+
+    public void SetupModify(ItemCategoryModification modification)
+    {
+        Setup(m => m.Modify(modification));
     }
 }

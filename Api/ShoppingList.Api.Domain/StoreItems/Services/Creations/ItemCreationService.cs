@@ -32,8 +32,6 @@ public class ItemCreationService : IItemCreationService
 
     public async Task<StoreItemReadModel> CreateAsync(ItemCreation creation)
     {
-        ArgumentNullException.ThrowIfNull(creation);
-
         var itemCategoryId = creation.ItemCategoryId;
         var manufacturerId = creation.ManufacturerId;
 
@@ -68,8 +66,6 @@ public class ItemCreationService : IItemCreationService
 
     public async Task<StoreItemReadModel> CreateTemporaryAsync(TemporaryItemCreation creation)
     {
-        ArgumentNullException.ThrowIfNull(creation);
-
         var availability = creation.Availability;
         await _validator.ValidateAsync(availability.ToMonoList());
 

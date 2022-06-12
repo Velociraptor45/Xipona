@@ -17,20 +17,6 @@ public class ManufacturerTests
         }
 
         [Fact]
-        public void Modify_WithModificationIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-
-            // Act
-            var action = () => sut.Modify(null);
-
-            // Assert
-
-            action.Should().ThrowExactly<ArgumentNullException>().WithMessage("*modification*");
-        }
-
-        [Fact]
         public void Modify_WithValidData_ShouldThrowArgumentNullException()
         {
             // Arrange

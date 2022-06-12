@@ -6,6 +6,7 @@
     <IsPackable>false</IsPackable>
 
     <RootNamespace>ProjectHermes.ShoppingList.Api.Domain.Tests</RootNamespace>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

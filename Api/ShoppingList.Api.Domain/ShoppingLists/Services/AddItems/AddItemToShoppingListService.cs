@@ -75,11 +75,6 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     public async Task AddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
         ItemTypeId itemTypeId, SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
-        if (shoppingList is null)
-            throw new ArgumentNullException(nameof(shoppingList));
-        if (item is null)
-            throw new ArgumentNullException(nameof(item));
-
         await AddItemToShoppingListAsync(shoppingList, item, itemTypeId, sectionId, quantity, cancellationToken);
 
         await _shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
@@ -88,9 +83,6 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     public async Task AddItemToShoppingListAsync(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
         QuantityInBasket quantity, CancellationToken cancellationToken)
     {
-        if (shoppingList is null)
-            throw new ArgumentNullException(nameof(shoppingList));
-
         IStoreItem storeItem = await LoadItemAsync(itemId, cancellationToken);
         await AddItemToShoppingListAsync(shoppingList, storeItem, sectionId, quantity, cancellationToken);
     }
@@ -98,9 +90,6 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     public async Task AddItemToShoppingListAsync(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
         SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
-        if (shoppingList is null)
-            throw new ArgumentNullException(nameof(shoppingList));
-
         IStoreItem storeItem = await LoadItemAsync(temporaryItemId, cancellationToken);
         await AddItemToShoppingListAsync(shoppingList, storeItem, sectionId, quantity, cancellationToken);
     }
