@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Commands
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Commands.DeleteItemCategory;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Commands.ModifyItemCategory;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.AllActiveItemCategories;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.ItemCategoryById;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.ItemCategorySearch;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
@@ -36,6 +37,34 @@ public class ItemCategoryController : ControllerBase
         _commandDispatcher = commandDispatcher;
         _itemCategoryContractConverter = itemCategoryContractConverter;
         _converters = converters;
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<ItemCategoryContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}")]
+    public async Task<IActionResult> GetItemCategoryByIdAsync([FromRoute] Guid id)
+    {
+        try
+        {
+            var query = new ItemCategoryByIdQuery(new ItemCategoryId(id));
+
+            var result = await _queryDispatcher.DispatchAsync(query, default);
+
+            var contract = _converters.ToContract<IItemCategory, ItemCategoryContract>(result);
+
+            return Ok(contract);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemCategoryNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
     }
 
     [HttpGet]
@@ -114,8 +143,7 @@ public class ItemCategoryController : ControllerBase
 
         var contract = _converters.ToContract<IItemCategory, ItemCategoryContract>(model);
 
-        //todo: change to CreatedAtAction when #47 is implemented
-        return Created("", contract);
+        return CreatedAtAction(nameof(GetItemCategoryByIdAsync), new { id = contract.Id }, contract);
     }
 
     [HttpDelete]

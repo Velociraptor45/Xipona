@@ -157,6 +157,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ItemCategoryController
 
+        [Get("item-categories/{id}")]
+        Task<ItemCategoryContract> GetItemCategoryByIdAsync([Path] Guid id);
+
         [Get("item-categories")]
         Task<IEnumerable<ItemCategoryContract>> SearchItemCategoriesByName([Query] string searchInput);
 

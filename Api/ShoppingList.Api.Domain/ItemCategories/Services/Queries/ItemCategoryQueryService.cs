@@ -1,4 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Queries;
@@ -22,6 +25,15 @@ public class ItemCategoryQueryService : IItemCategoryQueryService
         _cancellationToken.ThrowIfCancellationRequested();
 
         return itemCategoryModels.Select(model => new ItemCategoryReadModel(model));
+    }
+
+    public async Task<IItemCategory> GetAsync(ItemCategoryId itemCategoryId)
+    {
+        var itemCategory = await _itemCategoryRepository.FindByAsync(itemCategoryId, _cancellationToken);
+        if (itemCategory is null)
+            throw new DomainException(new ItemCategoryNotFoundReason(itemCategoryId));
+
+        return itemCategory;
     }
 
     public async Task<IEnumerable<ItemCategoryReadModel>> GetAllActive()

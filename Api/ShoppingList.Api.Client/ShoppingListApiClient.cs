@@ -240,6 +240,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ItemCategoryController
 
+        public async Task<ItemCategoryContract> GetItemCategoryByIdAsync(Guid id)
+        {
+            return await _apiClient.GetItemCategoryByIdAsync(id);
+        }
+
         public async Task<IEnumerable<ItemCategoryContract>> SearchItemCategoriesByName(string searchInput)
         {
             return await _apiClient.SearchItemCategoriesByName(searchInput);
