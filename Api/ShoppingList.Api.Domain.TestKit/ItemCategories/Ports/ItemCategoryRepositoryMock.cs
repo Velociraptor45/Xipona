@@ -17,7 +17,7 @@ public class ItemCategoryRepositoryMock : Mock<IItemCategoryRepository>
             .Returns(Task.FromResult(returnValue));
     }
 
-    public void SetupFindByAsync(IEnumerable<ItemCategoryId> itemCategoryIds, IEnumerable<IItemCategory> returnValue)
+    public void SetupFindByAsync(IEnumerable<ItemCategoryId> itemCategoryIds, IEnumerable<IItemCategory>? returnValue)
     {
         Setup(i => i.FindByAsync(
                 It.Is<IEnumerable<ItemCategoryId>>(ids => ids.SequenceEqual(itemCategoryIds)),
@@ -37,5 +37,10 @@ public class ItemCategoryRepositoryMock : Mock<IItemCategoryRepository>
     {
         Setup(m => m.StoreAsync(itemCategory, It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);
+    }
+
+    public void VerifyStoreAsync(IItemCategory itemCategory, Func<Times> times)
+    {
+        Verify(m => m.StoreAsync(itemCategory, It.IsAny<CancellationToken>()), times);
     }
 }

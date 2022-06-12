@@ -1,5 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Modifications;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Modifications;
 using ShoppingList.Api.Domain.TestKit.Common;
+using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
 using ShoppingList.Api.TestTools.Exceptions;
@@ -16,7 +18,7 @@ public class ItemCategoryModificationServiceTests
     }
 
     [Fact]
-    public async Task ModifyAsync_WithValidData_ShouldCallModel()
+    public async Task ModifyAsync_WithValidData_ShouldCallItemCategory()
     {
         // Arrange
         _fixture.SetupModification();
@@ -30,6 +32,38 @@ public class ItemCategoryModificationServiceTests
 
         // Assert
         _fixture.VerifyModifyingItemCategory();
+    }
+
+    [Fact]
+    public async Task ModifyAsync_WithValidData_ShouldStoreItemCategory()
+    {
+        // Arrange
+        _fixture.SetupModification();
+        _fixture.SetupFindingItemCategory();
+        _fixture.SetupModifyingItemCategory();
+        _fixture.SetupStoringItemCategory();
+        var sut = _fixture.CreateSut();
+
+        // Act
+        await sut.ModifyAsync(_fixture.Modification!);
+
+        // Assert
+        _fixture.VerifyStoringItemCategory();
+    }
+
+    [Fact]
+    public async Task ModifyAsync_WithInvalidItemCategoryId_ShouldThrowDomainException()
+    {
+        // Arrange
+        _fixture.SetupModification();
+        _fixture.SetupNotFindingItemCategory();
+        var sut = _fixture.CreateSut();
+
+        // Act
+        var func = async () => await sut.ModifyAsync(_fixture.Modification!);
+
+        // Assert
+        await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemCategoryNotFound);
     }
 
     public class ItemCategoryModificationServiceFixture
@@ -57,6 +91,13 @@ public class ItemCategoryModificationServiceTests
             _itemCategoryRepositoryMock.SetupFindByAsync(Modification.Id, _itemCategoryMock.Object);
         }
 
+        public void SetupNotFindingItemCategory()
+        {
+            TestPropertyNotSetException.ThrowIfNull(Modification);
+
+            _itemCategoryRepositoryMock.SetupFindByAsync(Modification.Id, null);
+        }
+
         public void SetupModifyingItemCategory()
         {
             TestPropertyNotSetException.ThrowIfNull(_itemCategoryMock);
@@ -76,6 +117,12 @@ public class ItemCategoryModificationServiceTests
             TestPropertyNotSetException.ThrowIfNull(_itemCategoryMock);
 
             _itemCategoryMock.VerifyModify(Modification, Times.Once);
+        }
+
+        public void VerifyStoringItemCategory()
+        {
+            TestPropertyNotSetException.ThrowIfNull(_itemCategoryMock);
+            _itemCategoryRepositoryMock.VerifyStoreAsync(_itemCategoryMock.Object, Times.Once);
         }
     }
 }
