@@ -25,6 +25,8 @@ public class ModifyItemCategoryCommandHandler : ICommandHandler<ModifyItemCatego
         var service = _itemCategoryModificationServiceDelegate(cancellationToken);
         await service.ModifyAsync(command.Modification);
 
+        await transaction.CommitAsync(cancellationToken);
+
         return true;
     }
 }
