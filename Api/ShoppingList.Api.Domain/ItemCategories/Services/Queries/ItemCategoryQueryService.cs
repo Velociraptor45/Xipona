@@ -18,13 +18,17 @@ public class ItemCategoryQueryService : IItemCategoryQueryService
         _cancellationToken = cancellationToken;
     }
 
-    public async Task<IEnumerable<ItemCategoryReadModel>> GetAsync(string searchInput)
+    public async Task<IEnumerable<ItemCategorySearchResultReadModel>> GetAsync(string searchInput, bool includeDeleted)
     {
-        var itemCategoryModels = await _itemCategoryRepository.FindByAsync(searchInput, _cancellationToken);
+        if (string.IsNullOrWhiteSpace(searchInput))
+            return Enumerable.Empty<ItemCategorySearchResultReadModel>();
+
+        var itemCategoryModels =
+            await _itemCategoryRepository.FindByAsync(searchInput, includeDeleted, _cancellationToken);
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        return itemCategoryModels.Select(model => new ItemCategoryReadModel(model));
+        return itemCategoryModels.Select(model => new ItemCategorySearchResultReadModel(model.Id, model.Name));
     }
 
     public async Task<IItemCategory> GetAsync(ItemCategoryId itemCategoryId)

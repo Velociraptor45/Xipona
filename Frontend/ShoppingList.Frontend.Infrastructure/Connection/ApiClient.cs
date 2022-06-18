@@ -1,5 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
+using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
@@ -25,6 +27,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ItemCategories;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Manufacturers;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
@@ -152,9 +155,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return _converters.ToDomain<ManufacturerContract, Manufacturer>(result);
         }
 
-        public async Task CreateItemCategoryAsync(string name)
+        public async Task<ItemCategory> CreateItemCategoryAsync(string name)
         {
-            await _client.CreateItemCategory(name);
+            var result = await _client.CreateItemCategoryAsync(name);
+            return _converters.ToDomain<ItemCategoryContract, ItemCategory>(result);
         }
 
         public async Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(Guid storeId)
@@ -183,7 +187,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task<IEnumerable<ItemCategory>> GetAllActiveItemCategoriesAsync()
         {
-            var itemCategories = await _client.GetAllActiveItemCategories();
+            var itemCategories = await _client.GetAllActiveItemCategoriesAsync();
 
             if (itemCategories is null)
                 return Enumerable.Empty<ItemCategory>();
@@ -295,6 +299,32 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         {
             var contract = _converters.ToContract<ModifyManufacturerRequest, ModifyManufacturerContract>(request);
             await _client.ModifyManufacturerAsync(contract);
+        }
+
+        public async Task<ItemCategory> GetItemCategoryByIdAsync(Guid id)
+        {
+            var result = await _client.GetItemCategoryByIdAsync(id);
+            return _converters.ToDomain<ItemCategoryContract, ItemCategory>(result);
+        }
+
+        public async Task<IEnumerable<ItemCategorySearchResult>> GetItemCategoriesSearchResultsAsync(string searchInput)
+        {
+            var results = await _client.SearchItemCategoriesByNameAsync(searchInput, false);
+
+            return results is null
+                ? Enumerable.Empty<ItemCategorySearchResult>()
+                : results.Select(_converters.ToDomain<ItemCategorySearchResultContract, ItemCategorySearchResult>);
+        }
+
+        public async Task DeleteItemCategoryAsync(Guid id)
+        {
+            await _client.DeleteItemCategoryAsync(id);
+        }
+
+        public async Task ModifyItemCategoryAsync(ModifyItemCategoryRequest request)
+        {
+            var contract = _converters.ToContract<ModifyItemCategoryRequest, ModifyItemCategoryContract>(request);
+            await _client.ModifyItemCategoryAsync(contract);
         }
     }
 }

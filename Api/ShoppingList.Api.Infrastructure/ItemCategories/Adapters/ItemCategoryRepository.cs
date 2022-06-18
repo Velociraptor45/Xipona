@@ -21,14 +21,18 @@ public class ItemCategoryRepository : IItemCategoryRepository
         _toEntityConverter = toEntityConverter;
     }
 
-    public async Task<IEnumerable<IItemCategory>> FindByAsync(string searchInput,
+    public async Task<IEnumerable<IItemCategory>> FindByAsync(string searchInput, bool includeDeleted,
         CancellationToken cancellationToken)
     {
-        var itemCategoryEntities = await _dbContext.ItemCategories.AsNoTracking()
-            .Where(category => category.Name.Contains(searchInput))
-            .ToListAsync(cancellationToken);
+        var query = _dbContext.ItemCategories.AsNoTracking()
+            .Where(category => category.Name.Contains(searchInput));
+
+        if (!includeDeleted)
+            query = query.Where(category => !category.Deleted);
 
         cancellationToken.ThrowIfCancellationRequested();
+
+        var itemCategoryEntities = await query.ToListAsync(cancellationToken);
 
         return _toModelConverter.ToDomain(itemCategoryEntities);
     }

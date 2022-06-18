@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
 
-namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToDomain
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ItemCategories.ToDomain
 {
     public class ItemCategoryConverter : IToDomainConverter<ItemCategoryContract, ItemCategory>
     {

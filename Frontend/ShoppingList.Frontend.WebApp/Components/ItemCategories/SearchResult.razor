@@ -1,4 +1,4 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
 
 @inject NavigationManager _navigationManager;
 
@@ -8,10 +8,10 @@
 
 @code {
     [Parameter]
-    public ManufacturerSearchResult Model { get; set; }
+    public ItemCategorySearchResult Model { get; set; }
 
     private void OnItemClicked()
     {
-        _navigationManager.NavigateTo($"manufacturers/{Model.Id}");
+        _navigationManager.NavigateTo($"item-categories/{Model.Id}");
     }
 }

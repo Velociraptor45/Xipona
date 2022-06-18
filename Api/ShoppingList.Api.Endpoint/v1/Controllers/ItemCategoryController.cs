@@ -11,9 +11,11 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
+using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 
@@ -64,11 +66,12 @@ public class ItemCategoryController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<ItemCategorySearchResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [Route("")]
-    public async Task<IActionResult> SearchItemCategoriesByNameAsync([FromQuery] string searchInput)
+    public async Task<IActionResult> SearchItemCategoriesByNameAsync([FromQuery] string searchInput,
+        [FromQuery] bool includeDeleted = false)
     {
         searchInput = searchInput.Trim();
         if (string.IsNullOrEmpty(searchInput))
@@ -76,14 +79,15 @@ public class ItemCategoryController : ControllerBase
             return BadRequest("Search input mustn't be null or empty");
         }
 
-        var query = new ItemCategorySearchQuery(searchInput);
+        var query = new ItemCategorySearchQuery(searchInput, includeDeleted);
         var itemCategoryReadModels = await _queryDispatcher.DispatchAsync(query, default);
 
         if (!itemCategoryReadModels.Any())
             return NoContent();
 
         var itemCategoryContracts =
-            _converters.ToContract<ItemCategoryReadModel, ItemCategoryContract>(itemCategoryReadModels);
+            _converters.ToContract<ItemCategorySearchResultReadModel, ItemCategorySearchResultContract>(
+                itemCategoryReadModels);
 
         return Ok(itemCategoryContracts);
     }
