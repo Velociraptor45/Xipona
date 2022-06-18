@@ -6,7 +6,7 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>ProjectHermes.ShoppingList.Api.ApplicationServices.Tests</RootNamespace>
+    <RootNamespace>ProjectHermes.ShoppingList.Api.Endpoints.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,12 +21,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ShoppingList.Api.ApplicationServices\ShoppingList.Api.ApplicationServices.csproj" />
+    <ProjectReference Include="..\ShoppingList.Api.ApplicationServices.TestKit\ShoppingList.Api.ApplicationServices.TestKit.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Domain.TestKit\ShoppingList.Api.Domain.TestKit.csproj" />
-    <ProjectReference Include="..\ShoppingList.Api.Infrastructure.Tests\ShoppingList.Api.Infrastructure.Tests.csproj" />
+    <ProjectReference Include="..\ShoppingList.Api.Endpoints.TestKit\ShoppingList.Api.Endpoints.TestKit.csproj" />
+    <ProjectReference Include="..\ShoppingList.Api.Endpoint\ShoppingList.Api.Endpoint.csproj" />
+    <ProjectReference Include="..\ShoppingList.Api.TestTools\ShoppingList.Api.TestTools.csproj" />
   </ItemGroup>
 
   <ItemGroup>

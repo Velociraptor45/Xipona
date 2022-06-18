@@ -18,7 +18,12 @@ public class DomainCustomization : ICustomization
         fixture.Customizations.Add(new TypeRelay(typeof(IStoreItemAvailability), typeof(StoreItemAvailability)));
         fixture.Customizations.Add(new TypeRelay(typeof(IShoppingListItem), typeof(ShoppingListItem)));
         fixture.Customizations.Add(new TypeRelay(typeof(IShoppingListSection), typeof(ShoppingListSection)));
+        fixture.Customizations.Add(new TypeRelay(typeof(IStoreItem), typeof(StoreItem)));
         fixture.Customizations.Add(new TypeRelay(typeof(IItemType), typeof(ItemType)));
+        fixture.Customizations.Add(new TypeRelay(typeof(IItemCategory), typeof(ItemCategory)));
+        fixture.Customizations.Add(new TypeRelay(typeof(IManufacturer), typeof(Manufacturer)));
+        fixture.Customizations.Add(new TypeRelay(typeof(IStore), typeof(Store)));
+        fixture.Customizations.Add(new TypeRelay(typeof(IStoreSection), typeof(StoreSection)));
 
         fixture.Customize<ItemCategoryId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<ManufacturerId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
@@ -31,5 +36,6 @@ public class DomainCustomization : ICustomization
 
         fixture.Customize(new PriceCustomization());
         fixture.Customize(new QuantityCustomization());
+        fixture.Customize(new ItemQuantityCustomization());
     }
 }
