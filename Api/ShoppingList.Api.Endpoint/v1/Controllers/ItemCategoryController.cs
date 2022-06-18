@@ -11,7 +11,6 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
-using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
@@ -26,21 +25,18 @@ public class ItemCategoryController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
-    private readonly IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> _itemCategoryContractConverter;
     private readonly IEndpointConverters _converters;
 
     public ItemCategoryController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
-        IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> itemCategoryContractConverter,
         IEndpointConverters converters)
     {
         _queryDispatcher = queryDispatcher;
         _commandDispatcher = commandDispatcher;
-        _itemCategoryContractConverter = itemCategoryContractConverter;
         _converters = converters;
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ItemCategoryContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ItemCategoryContract), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}")]
@@ -86,7 +82,8 @@ public class ItemCategoryController : ControllerBase
         if (!itemCategoryReadModels.Any())
             return NoContent();
 
-        var itemCategoryContracts = _itemCategoryContractConverter.ToContract(itemCategoryReadModels);
+        var itemCategoryContracts =
+            _converters.ToContract<ItemCategoryReadModel, ItemCategoryContract>(itemCategoryReadModels);
 
         return Ok(itemCategoryContracts);
     }
@@ -103,7 +100,7 @@ public class ItemCategoryController : ControllerBase
         if (!readModels.Any())
             return NoContent();
 
-        var contracts = _itemCategoryContractConverter.ToContract(readModels);
+        var contracts = _converters.ToContract<ItemCategoryReadModel, ItemCategoryContract>(readModels);
 
         return Ok(contracts);
     }
