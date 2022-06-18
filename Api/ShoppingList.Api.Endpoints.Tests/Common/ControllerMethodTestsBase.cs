@@ -76,6 +76,28 @@ public abstract class ControllerQueryTestsBase<TController, TQuery, TQueryReturn
         unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
+    [SkippableFact]
+    public async Task EndpointCall_WithDomainException_ShouldReturnBadRequest()
+    {
+        var statusResult =
+            Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.BadRequest);
+
+        Skip.If(statusResult is null, $"Status code 422 not relevant for endpoint {Fixture.Method.Name}");
+
+        // Arrange
+        Fixture.SetupParametersForBadRequest();
+        Fixture.SetupExpectedBadRequestMessage();
+        var sut = Fixture.CreateSut();
+
+        // Act
+        var result = await Fixture.ExecuteTestMethod(sut);
+
+        // Assert
+        result.Should().BeOfType<BadRequestObjectResult>();
+        var unprocessableEntity = result as BadRequestObjectResult;
+        unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedBadRequestMessage);
+    }
+
     #region ResponseTypes
 
     [SkippableFact]
@@ -130,6 +152,25 @@ public abstract class ControllerQueryTestsBase<TController, TQuery, TQueryReturn
         unprocessableEntityAttribute.Type.Should().Be(typeof(ErrorContract));
     }
 
+    [SkippableFact]
+    public void EndpointCall_ShouldHaveBadRequestResponseTypeAttribute()
+    {
+        var statusResult =
+            Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.BadRequest);
+
+        Skip.If(statusResult is null, $"Status code 400 not relevant for endpoint {Fixture.Method.Name}");
+
+        // Act
+        var result = Fixture.GetAllResponseTypeAttributes().ToList();
+
+        // Assert
+        result.Should().ContainSingle(attr => attr.StatusCode == StatusCodes.Status400BadRequest);
+
+        var unprocessableEntityAttribute =
+            result.Single(attr => attr.StatusCode == StatusCodes.Status400BadRequest);
+        unprocessableEntityAttribute.Type.Should().Be(typeof(string));
+    }
+
     #endregion ResponseTypes
 
     public abstract class ControllerQueryFixtureBase
@@ -145,6 +186,7 @@ public abstract class ControllerQueryTestsBase<TController, TQuery, TQueryReturn
         public TReturnType? ExpectedResult { get; protected set; }
         public DomainException? DomainException { get; private set; }
         public ErrorContract? ExpectedErrorContract { get; private set; }
+        public string ExpectedBadRequestMessage { get; protected set; } = string.Empty;
         public IReadOnlyCollection<IStatusResult> PossibleResults => PossibleResultsList;
 
         public abstract TController CreateSut();
@@ -152,6 +194,10 @@ public abstract class ControllerQueryTestsBase<TController, TQuery, TQueryReturn
         public abstract Task<IActionResult> ExecuteTestMethod(TController sut);
 
         public abstract void SetupParameters();
+
+        public virtual void SetupParametersForBadRequest()
+        {
+        }
 
         public void SetupDispatcherSuccess()
         {
@@ -193,6 +239,10 @@ public abstract class ControllerQueryTestsBase<TController, TQuery, TQueryReturn
         public void SetupExpectedErrorContract()
         {
             ExpectedErrorContract = new DomainTestBuilder<ErrorContract>().Create();
+        }
+
+        public virtual void SetupExpectedBadRequestMessage()
+        {
         }
 
         public void SetupDomainException(IEnumerable<ErrorReasonCode> exclude)
