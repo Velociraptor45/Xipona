@@ -93,7 +93,7 @@ public class ItemCategoryController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(IEnumerable<ItemCategoryContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("active")]
     public async Task<IActionResult> GetAllActiveItemCategoriesAsync()
