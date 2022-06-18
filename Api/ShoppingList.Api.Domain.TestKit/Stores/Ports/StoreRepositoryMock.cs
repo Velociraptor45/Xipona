@@ -16,7 +16,7 @@ public class StoreRepositoryMock : Mock<IStoreRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindByAsync(StoreId storeId, IStore returnValue)
+    public void SetupFindByAsync(StoreId storeId, IStore? returnValue)
     {
         Setup(i => i.FindByAsync(
                 storeId,

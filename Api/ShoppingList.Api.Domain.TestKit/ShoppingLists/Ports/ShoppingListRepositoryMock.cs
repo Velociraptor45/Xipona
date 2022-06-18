@@ -11,8 +11,7 @@ public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
     {
     }
 
-    public void SetupFindActiveByAsync(ItemId storeItemId,
-        IEnumerable<IShoppingList> returnValue)
+    public void SetupFindActiveByAsync(ItemId storeItemId, IEnumerable<IShoppingList> returnValue)
     {
         Setup(i => i.FindActiveByAsync(
                 It.Is<ItemId>(id => id == storeItemId),
@@ -20,8 +19,7 @@ public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
             .Returns(Task.FromResult(returnValue));
     }
 
-    public void SetupFindActiveByAsync(
-        IEnumerable<IShoppingList> returnValue)
+    public void SetupFindActiveByAsync(IEnumerable<IShoppingList> returnValue)
     {
         Setup(i => i.FindActiveByAsync(
                 It.IsAny<ItemId>(),
@@ -29,12 +27,12 @@ public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindActiveByAsync(StoreId storeId, IShoppingList returnValue)
+    public void SetupFindActiveByAsync(StoreId storeId, IShoppingList? returnValue)
     {
         Setup(i => i.FindActiveByAsync(
                 It.Is<StoreId>(id => id == storeId),
                 It.IsAny<CancellationToken>()))
-            .Returns(Task.FromResult(returnValue));
+            .ReturnsAsync(returnValue);
     }
 
     public void SetupFindByAsync(ShoppingListId shoppingListId,
@@ -43,7 +41,7 @@ public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
         Setup(instance => instance.FindByAsync(
                 It.Is<ShoppingListId>(id => id == shoppingListId),
                 It.IsAny<CancellationToken>()))
-            .Returns(Task.FromResult(returnValue));
+            .ReturnsAsync(returnValue);
     }
 
     public void SetupFindByAsync(ItemTypeId itemTypeId, IEnumerable<IShoppingList> returnValue)

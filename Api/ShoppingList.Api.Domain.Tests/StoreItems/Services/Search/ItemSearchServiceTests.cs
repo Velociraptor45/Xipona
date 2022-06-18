@@ -13,6 +13,7 @@ using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services.Conversion.ItemSearchReadModels;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Ports;
+using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Search;
 
@@ -403,12 +404,12 @@ public class ItemSearchServiceTests
         private readonly ItemSearchReadModelConversionServiceMock _conversionServiceMock;
         private readonly ItemTypeFactoryMock _itemTypeFactoryMock;
 
-        private List<IStoreItem> _items;
+        private List<IStoreItem>? _items;
         private readonly List<IStoreItem> _itemsFromTypeMapping = new();
-        private Store _store;
+        private Store? _store;
         private readonly List<ItemWithMatchingItemTypeIds> _itemToTypeIdMappings = new();
-        private IShoppingList _shoppingList;
-        private List<(ItemId, ItemTypeId)> _itemTypeMapping;
+        private IShoppingList? _shoppingList;
+        private List<(ItemId, ItemTypeId)>? _itemTypeMapping;
 
         public LocalFixture()
         {
@@ -422,7 +423,7 @@ public class ItemSearchServiceTests
             _itemTypeFactoryMock = new ItemTypeFactoryMock(MockBehavior.Strict);
         }
 
-        public string Name { get; private set; }
+        public string Name { get; private set; } = string.Empty;
         public StoreId StoreId { get; private set; }
 
         public List<SearchItemForShoppingResultReadModel> Result { get; } = new();
@@ -515,6 +516,7 @@ public class ItemSearchServiceTests
 
         public void SetupFindingItems()
         {
+            TestPropertyNotSetException.ThrowIfNull(_items);
             _itemRepositoryMock.SetupFindActiveByAsync(Name, StoreId, _items);
         }
 
@@ -540,6 +542,7 @@ public class ItemSearchServiceTests
 
         public void SetupFindingShoppingListWithItemWithoutTypes(bool containsItem)
         {
+            TestPropertyNotSetException.ThrowIfNull(_items);
             var builder = new ShoppingListItemBuilder().WithoutTypeId();
 
             if (containsItem)
@@ -557,6 +560,7 @@ public class ItemSearchServiceTests
         public void SetupFindingShoppingListWithItemWithAndWithoutTypes(bool containsItemWithTypes,
             bool containsItemWithoutTypes)
         {
+            TestPropertyNotSetException.ThrowIfNull(_items);
             var builderWithTypes = new ShoppingListItemBuilder();
             var builderWithoutTypes = new ShoppingListItemBuilder();
             if (containsItemWithTypes)
@@ -581,6 +585,7 @@ public class ItemSearchServiceTests
         public void SetupFindingShoppingListWithItemWithTypes(bool containsItem,
             bool containsAdditionalItemTypeMappingItem)
         {
+            TestPropertyNotSetException.ThrowIfNull(_items);
             var builder = new ShoppingListItemBuilder();
 
             if (containsItem)
@@ -631,6 +636,7 @@ public class ItemSearchServiceTests
 
         public void SetupFindingItemTypeMapping()
         {
+            TestPropertyNotSetException.ThrowIfNull(_itemTypeMapping);
             _itemTypeReadRepositoryMock.SetupFindActiveByAsync(Name, StoreId, _itemTypeMapping);
         }
 
@@ -643,18 +649,22 @@ public class ItemSearchServiceTests
 
         public void SetupAllItemTypesOnShoppingListOrNotAvailable()
         {
+            TestPropertyNotSetException.ThrowIfNull(_items);
             var item = _items.Single();
             _itemToTypeIdMappings.Add(new ItemWithMatchingItemTypeIds(item, Enumerable.Empty<ItemTypeId>()));
         }
 
         public void SetupAllItemTypesNotOnShoppingList()
         {
+            TestPropertyNotSetException.ThrowIfNull(_items);
             var item = _items.Single();
             _itemToTypeIdMappings.Add(new ItemWithMatchingItemTypeIds(item, item.ItemTypes.Select(t => t.Id)));
         }
 
         public void SetupItemTypesPartiallyNotOnShoppingList()
         {
+            TestPropertyNotSetException.ThrowIfNull(_items);
+            TestPropertyNotSetException.ThrowIfNull(_shoppingList);
             var item = _items.Single(i => i.HasItemTypes);
             var itemTypeIds = item.ItemTypes.Select(t => t.Id);
             var typesNotOnList =
@@ -676,12 +686,16 @@ public class ItemSearchServiceTests
 
         public void SetupConversionServiceReceivingEmptyItemList()
         {
+            TestPropertyNotSetException.ThrowIfNull(_items);
+            TestPropertyNotSetException.ThrowIfNull(_store);
             _conversionServiceMock.SetupConvertAsync(Enumerable.Empty<IStoreItem>(), _store,
                 Enumerable.Empty<SearchItemForShoppingResultReadModel>());
         }
 
         public void SetupConversionServiceReceivingItemList()
         {
+            TestPropertyNotSetException.ThrowIfNull(_items);
+            TestPropertyNotSetException.ThrowIfNull(_store);
             var itemReadModels = _fixture.CreateMany<SearchItemForShoppingResultReadModel>().ToList();
             Result.AddRange(itemReadModels);
             var items = _items.Where(i => !i.HasItemTypes);
@@ -690,6 +704,7 @@ public class ItemSearchServiceTests
 
         public void SetupConversionServiceReceivingItemWithTypeList()
         {
+            TestPropertyNotSetException.ThrowIfNull(_store);
             var itemReadModels = _fixture
                 .CreateMany<SearchItemForShoppingResultReadModel>(_itemToTypeIdMappings.Select(m => m.MatchingItemTypeIds).Count())
                 .ToList();
@@ -699,6 +714,7 @@ public class ItemSearchServiceTests
 
         public void SetupConversionServiceReceivingEmptyItemWithTypesList()
         {
+            TestPropertyNotSetException.ThrowIfNull(_store);
             _conversionServiceMock.SetupConvertAsync(Enumerable.Empty<ItemWithMatchingItemTypeIds>(), _store,
                 Enumerable.Empty<SearchItemForShoppingResultReadModel>());
         }

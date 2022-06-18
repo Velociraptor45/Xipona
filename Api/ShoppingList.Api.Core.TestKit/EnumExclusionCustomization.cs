@@ -37,8 +37,8 @@ public class EnumExclusionCustomization<T> : ICustomization
 
             for (int i = 0; i < 20; i++)
             {
-                var specimen = _enumGenerator.Create(request, context);
-                if (!_exclude.Contains(specimen.ToString()))
+                var specimen = _enumGenerator.Create(request, context) ?? string.Empty;
+                if (!_exclude.Contains(specimen.ToString()!))
                 {
                     return specimen;
                 }
