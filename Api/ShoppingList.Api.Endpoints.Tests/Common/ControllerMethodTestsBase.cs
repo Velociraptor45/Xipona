@@ -256,8 +256,11 @@ public abstract class ControllerQueryTestsBase<TController, TQuery, TQueryReturn
 
         public void SetupDomainException(ErrorReasonCode errorCode)
         {
-            DomainException = new DomainTestBuilder<DomainException>()
+            IReason reason = new TestBuilder<DummyReason>()
                 .FillConstructorWith("errorCode", errorCode)
+                .Create();
+            DomainException = new DomainTestBuilder<DomainException>()
+                .FillConstructorWith("reason", reason)
                 .Create();
         }
 

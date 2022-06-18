@@ -483,6 +483,7 @@ public class ItemCreationServiceTests
 
             public void SetupValidatingAvailabilities()
             {
+                TestPropertyNotSetException.ThrowIfNull(_availability);
                 ValidatorMock.SetupValidateAsync(_availability.ToMonoList());
             }
 

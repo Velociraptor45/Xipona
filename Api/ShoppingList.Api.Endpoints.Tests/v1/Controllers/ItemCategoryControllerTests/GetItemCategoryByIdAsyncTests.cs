@@ -18,6 +18,27 @@ public class GetItemCategoryByIdAsyncTests : ControllerQueryTestsBase<ItemCatego
     {
     }
 
+    [Theory]
+    [InlineData(ErrorReasonCode.ItemCategoryNotFound)]
+    public async Task EndpointCall_WithDomainException_ShouldReturnNotFound(ErrorReasonCode errorCode)
+    {
+        // Arrange
+        Fixture.SetupQuery();
+        Fixture.SetupDomainException(errorCode);
+        Fixture.SetupDomainExceptionInQueryDispatcher();
+        Fixture.SetupExpectedErrorContract();
+        Fixture.SetupErrorConversion();
+        var sut = Fixture.CreateSut();
+
+        // Act
+        var result = await Fixture.ExecuteTestMethod(sut);
+
+        // Assert
+        result.Should().BeOfType<NotFoundObjectResult>();
+        var unprocessableEntity = result as NotFoundObjectResult;
+        unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
+    }
+
     public sealed class GetItemCategoryByIdAsyncFixture : ControllerQueryFixtureBase
     {
         public GetItemCategoryByIdAsyncFixture()
