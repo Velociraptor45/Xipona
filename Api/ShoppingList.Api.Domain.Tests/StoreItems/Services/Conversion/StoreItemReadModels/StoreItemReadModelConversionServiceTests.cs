@@ -18,6 +18,7 @@ using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
 using ShoppingList.Api.Domain.TestKit.Stores.Ports;
+using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.Conversion.StoreItemReadModels;
 
@@ -36,6 +37,8 @@ public class StoreItemReadModelConversionServiceTests
         local.SetupFindingNoItemCategory();
         local.SetupFindingManufacturer();
         local.SetupFindingStore();
+
+        TestPropertyNotSetException.ThrowIfNull(local.StoreItem);
 
         // Act
         Func<Task<StoreItemReadModel>> function = async () => await service.ConvertAsync(local.StoreItem, default);
@@ -61,6 +64,8 @@ public class StoreItemReadModelConversionServiceTests
         local.SetupFindingNoManufacturer();
         local.SetupFindingStore();
 
+        TestPropertyNotSetException.ThrowIfNull(local.StoreItem);
+
         // Act
         Func<Task<StoreItemReadModel>> function = async () => await service.ConvertAsync(local.StoreItem, default);
 
@@ -83,6 +88,8 @@ public class StoreItemReadModelConversionServiceTests
         local.SetupStore();
         local.SetupFindingManufacturer();
         local.SetupFindingStore();
+
+        TestPropertyNotSetException.ThrowIfNull(local.StoreItem);
 
         // Act
         var result = await service.ConvertAsync(local.StoreItem, default);
@@ -109,6 +116,8 @@ public class StoreItemReadModelConversionServiceTests
         local.SetupFindingItemCategory();
         local.SetupFindingStore();
 
+        TestPropertyNotSetException.ThrowIfNull(local.StoreItem);
+
         // Act
         var result = await service.ConvertAsync(local.StoreItem, default);
 
@@ -131,6 +140,8 @@ public class StoreItemReadModelConversionServiceTests
         local.SetupItemWithNeitherItemCategoryNorManufacturer();
         local.SetupStore();
         local.SetupFindingStore();
+
+        TestPropertyNotSetException.ThrowIfNull(local.StoreItem);
 
         // Act
         var result = await service.ConvertAsync(local.StoreItem, default);
@@ -160,6 +171,8 @@ public class StoreItemReadModelConversionServiceTests
         local.SetupFindingManufacturer();
         local.SetupFindingStore();
 
+        TestPropertyNotSetException.ThrowIfNull(local.StoreItem);
+
         // Act
         var result = await service.ConvertAsync(local.StoreItem, default);
 
@@ -178,11 +191,11 @@ public class StoreItemReadModelConversionServiceTests
         private readonly ItemCategoryRepositoryMock _itemCategoryRepositoryMock;
         private readonly ManufacturerRepositoryMock _manufacturerRepositoryMock;
         private readonly StoreRepositoryMock _storeRepositoryMock;
-        private IStore _store;
-        private IItemCategory _itemCategory;
-        private IManufacturer _manufacturer;
-        private ManufacturerId ManufacturerId => StoreItem.ManufacturerId!.Value;
-        private ItemCategoryId ItemCategoryId => StoreItem.ItemCategoryId!.Value;
+        private IStore? _store;
+        private IItemCategory? _itemCategory;
+        private IManufacturer? _manufacturer;
+        private ManufacturerId ManufacturerId => StoreItem!.ManufacturerId!.Value;
+        private ItemCategoryId ItemCategoryId => StoreItem!.ItemCategoryId!.Value;
 
         public LocalFixture()
         {
@@ -192,7 +205,7 @@ public class StoreItemReadModelConversionServiceTests
             _sectionFactoryMock = new StoreSectionFactoryMock(MockBehavior.Strict);
         }
 
-        public IStoreItem StoreItem { get; private set; }
+        public IStoreItem? StoreItem { get; private set; }
 
         public StoreItemReadModelConversionService CreateService()
         {
@@ -232,6 +245,7 @@ public class StoreItemReadModelConversionServiceTests
 
         public void SetupStore()
         {
+            TestPropertyNotSetException.ThrowIfNull(StoreItem);
             var availability = StoreItem.Availabilities.First();
             var section = StoreSectionMother.Default()
                 .WithId(availability.DefaultSectionId)
@@ -260,6 +274,9 @@ public class StoreItemReadModelConversionServiceTests
 
         public StoreItemReadModel CreateSimpleReadModel()
         {
+            TestPropertyNotSetException.ThrowIfNull(_store);
+            TestPropertyNotSetException.ThrowIfNull(StoreItem);
+
             var manufacturerReadModel = _manufacturer == null
                 ? null
                 : new ManufacturerReadModel(
@@ -352,6 +369,7 @@ public class StoreItemReadModelConversionServiceTests
 
         public void SetupFindingStore()
         {
+            TestPropertyNotSetException.ThrowIfNull(_store);
             _storeRepositoryMock.SetupFindByAsync(_store.Id.ToMonoList(), _store.ToMonoList());
         }
 

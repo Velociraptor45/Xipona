@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Modifications;
 using ShoppingList.Api.Domain.TestKit.Common;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
+using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Manufacturers.Models;
 
@@ -22,6 +23,8 @@ public class ManufacturerTests
             // Arrange
             _fixture.SetupManufacturerModification();
             var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
             var expected = new Manufacturer(sut.Id, _fixture.Modification.Name, sut.IsDeleted);
 
             // Act
@@ -34,7 +37,7 @@ public class ManufacturerTests
 
         private sealed class ModifyFixture : LocalFixture
         {
-            public ManufacturerModification Modification { get; private set; }
+            public ManufacturerModification? Modification { get; private set; }
 
             public void SetupManufacturerModification()
             {

@@ -8,6 +8,7 @@ using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
 using ShoppingList.Api.Domain.TestKit.Stores.Ports;
+using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services;
 
@@ -27,6 +28,8 @@ public class AvailabilityValidationServiceTests
         var service = _local.CreateSut();
         _local.SetupAvailabilitiesWithDuplicatedStoreIds();
 
+        TestPropertyNotSetException.ThrowIfNull(_local.Availabilities);
+
         // Act
         Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
 
@@ -44,6 +47,8 @@ public class AvailabilityValidationServiceTests
         var service = _local.CreateSut();
         _local.SetupAvailabilities();
         _local.SetupFindingNoStores();
+
+        TestPropertyNotSetException.ThrowIfNull(_local.Availabilities);
 
         // Act
         Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
@@ -64,6 +69,8 @@ public class AvailabilityValidationServiceTests
         _local.SetupStoresWithInvalidSectionIds();
         _local.SetupFindingStores();
 
+        TestPropertyNotSetException.ThrowIfNull(_local.Availabilities);
+
         // Act
         Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
 
@@ -83,6 +90,8 @@ public class AvailabilityValidationServiceTests
         _local.SetupStores();
         _local.SetupFindingStores();
 
+        TestPropertyNotSetException.ThrowIfNull(_local.Availabilities);
+
         // Act
         Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
 
@@ -98,7 +107,7 @@ public class AvailabilityValidationServiceTests
         private readonly StoreRepositoryMock _storeRepositoryMock;
         private readonly StoreSectionFactoryMock _sectionFactoryMock;
 
-        private List<IStore> _stores;
+        private readonly List<IStore> _stores = new();
 
         public LocalFixture()
         {
@@ -106,7 +115,7 @@ public class AvailabilityValidationServiceTests
             _sectionFactoryMock = new StoreSectionFactoryMock(MockBehavior.Strict);
         }
 
-        public List<IStoreItemAvailability> Availabilities { get; private set; }
+        public List<IStoreItemAvailability>? Availabilities { get; private set; }
 
         public AvailabilityValidationService CreateSut()
         {
@@ -131,7 +140,7 @@ public class AvailabilityValidationServiceTests
 
         public void SetupStores()
         {
-            _stores = new List<IStore>();
+            TestPropertyNotSetException.ThrowIfNull(Availabilities);
 
             foreach (var availability in Availabilities)
             {
@@ -147,7 +156,7 @@ public class AvailabilityValidationServiceTests
 
         public void SetupStoresWithInvalidSectionIds()
         {
-            _stores = new List<IStore>();
+            TestPropertyNotSetException.ThrowIfNull(Availabilities);
 
             foreach (var availability in Availabilities)
             {
@@ -162,12 +171,14 @@ public class AvailabilityValidationServiceTests
 
         public void SetupFindingStores()
         {
+            TestPropertyNotSetException.ThrowIfNull(Availabilities);
             var storeIds = Availabilities.Select(av => av.StoreId);
             _storeRepositoryMock.SetupFindByAsync(storeIds, _stores);
         }
 
         public void SetupFindingNoStores()
         {
+            TestPropertyNotSetException.ThrowIfNull(Availabilities);
             var storeIds = Availabilities.Select(av => av.StoreId);
             _storeRepositoryMock.SetupFindByAsync(storeIds, Enumerable.Empty<IStore>());
         }

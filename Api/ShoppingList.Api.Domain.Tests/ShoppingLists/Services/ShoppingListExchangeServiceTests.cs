@@ -12,6 +12,7 @@ using ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models.Factories;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
+using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services;
 
@@ -38,6 +39,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupNewItem();
             _fixture.SetupFindingNoShoppingList();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
 
@@ -58,6 +62,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupFindingShoppingList();
             var sut = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             Func<Task> func = async () =>
                 await sut.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -75,6 +82,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupWithNewItemNotAvailableForShoppingList();
 
             var service = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -94,6 +104,9 @@ public class ShoppingListExchangeServiceTests
 
             var service = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
 
@@ -111,6 +124,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupWithNewItemNotAvailableForShoppingList();
 
             var service = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -134,6 +150,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
             var service = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
 
@@ -150,6 +169,9 @@ public class ShoppingListExchangeServiceTests
             // Arrange
             _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
             var service = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -169,6 +191,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
             var service = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
 
@@ -185,6 +210,9 @@ public class ShoppingListExchangeServiceTests
             // Arrange
             _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
             var service = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -208,6 +236,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
             var service = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
 
@@ -225,6 +256,9 @@ public class ShoppingListExchangeServiceTests
             // Arrange
             _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
             var service = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -244,6 +278,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
             var service = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
 
@@ -261,6 +298,9 @@ public class ShoppingListExchangeServiceTests
             // Arrange
             _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
             var service = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -318,6 +358,9 @@ public class ShoppingListExchangeServiceTests
 
             public override void SetupAddingItemToShoppingList()
             {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
+                TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
+                TestPropertyNotSetException.ThrowIfNull(NewItem);
                 var sectionId = NewItem.GetDefaultSectionIdForStore(ShoppingListMock.Object.StoreId);
                 AddItemToShoppingListServiceMock.SetupAddItemToShoppingList(ShoppingListMock.Object, NewItem.Id,
                     sectionId, OldShoppingListItem.Quantity);
@@ -327,11 +370,16 @@ public class ShoppingListExchangeServiceTests
 
             public override void VerifyRemoveItemOnce()
             {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
+                TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
                 ShoppingListMock.VerifyRemoveItemOnce(OldShoppingListItem.Id);
             }
 
             public override void VerifyAddItemToShoppingListOnce()
             {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
+                TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
+                TestPropertyNotSetException.ThrowIfNull(NewItem);
                 var defaultSectionId = NewItem.Availabilities
                     .First(av => av.StoreId == ShoppingListMock.Object.StoreId)
                     .DefaultSectionId;
@@ -342,11 +390,14 @@ public class ShoppingListExchangeServiceTests
 
             public override void VerifyPutItemInBasketNever()
             {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
                 ShoppingListMock.VerifyPutItemInBasketNever();
             }
 
             public override void VerifyPutItemInBasketOnce()
             {
+                TestPropertyNotSetException.ThrowIfNull(NewItem);
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
                 ShoppingListMock.VerifyPutItemInBasketOnce(NewItem.Id);
             }
 
@@ -406,6 +457,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupFindingShoppingList();
             var sut = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             Func<Task> func = async () =>
                 await sut.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -423,6 +477,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupWithItemTypeRemoved();
 
             var service = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -442,6 +499,9 @@ public class ShoppingListExchangeServiceTests
 
             var service = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
 
@@ -459,6 +519,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupWithItemTypeRemoved();
 
             var service = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -482,6 +545,9 @@ public class ShoppingListExchangeServiceTests
 
             var service = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
 
@@ -500,6 +566,9 @@ public class ShoppingListExchangeServiceTests
 
             var service = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
 
@@ -517,6 +586,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupWithNewItemNotAvailableForShoppingList();
 
             var service = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -540,6 +612,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
             var service = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
 
@@ -556,6 +631,9 @@ public class ShoppingListExchangeServiceTests
             // Arrange
             _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
             var service = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -575,6 +653,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
             var service = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
 
@@ -591,6 +672,9 @@ public class ShoppingListExchangeServiceTests
             // Arrange
             _fixture.SetupWithNewItemAvailableForShoppingListAndInBasket();
             var service = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -614,6 +698,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
             var service = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
 
@@ -631,6 +718,9 @@ public class ShoppingListExchangeServiceTests
             // Arrange
             _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
             var service = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -650,6 +740,9 @@ public class ShoppingListExchangeServiceTests
             _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
             var service = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
+
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
 
@@ -667,6 +760,9 @@ public class ShoppingListExchangeServiceTests
             // Arrange
             _fixture.SetupWithNewItemAvailableForShoppingListAndNotInBasket();
             var service = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
             await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
@@ -691,6 +787,8 @@ public class ShoppingListExchangeServiceTests
 
             protected override void SetupNewItemForStore(StoreId storeId)
             {
+                TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
+                TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem.TypeId);
                 var availability = StoreItemAvailabilityMother.Initial()
                     .WithStoreId(storeId)
                     .CreateMany(1);
@@ -702,6 +800,7 @@ public class ShoppingListExchangeServiceTests
 
             public void SetupItemMatchingShoppingListWithNewTypes()
             {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
                 var availability = StoreItemAvailabilityMother.Initial()
                     .WithStoreId(ShoppingListMock.Object.StoreId)
                     .CreateMany(1);
@@ -734,6 +833,9 @@ public class ShoppingListExchangeServiceTests
 
             public override void SetupAddingItemToShoppingList()
             {
+                TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
+                TestPropertyNotSetException.ThrowIfNull(NewItem);
                 var type = NewItem.ItemTypes.First();
                 var sectionId = type.GetDefaultSectionIdForStore(ShoppingListMock.Object.StoreId);
                 AddItemToShoppingListServiceMock.SetupAddItemWithTypeToShoppingList(ShoppingListMock.Object, NewItem,
@@ -744,11 +846,16 @@ public class ShoppingListExchangeServiceTests
 
             public override void VerifyRemoveItemOnce()
             {
+                TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
                 ShoppingListMock.VerifyRemoveItem(OldShoppingListItem.Id, OldShoppingListItem.TypeId, Times.Once);
             }
 
             public override void VerifyAddItemToShoppingListOnce()
             {
+                TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
+                TestPropertyNotSetException.ThrowIfNull(NewItem);
                 var type = NewItem.ItemTypes.First();
                 var sectionId = type.GetDefaultSectionIdForStore(ShoppingListMock.Object.StoreId);
                 AddItemToShoppingListServiceMock.VerifyAddItemWithTypeToShoppingList(ShoppingListMock.Object, NewItem,
@@ -757,11 +864,14 @@ public class ShoppingListExchangeServiceTests
 
             public override void VerifyPutItemInBasketNever()
             {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
                 ShoppingListMock.VerifyPutItemInBasketWithTypeIdNever();
             }
 
             public override void VerifyPutItemInBasketOnce()
             {
+                TestPropertyNotSetException.ThrowIfNull(NewItem);
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
                 ShoppingListMock.VerifyPutItemInBasket(NewItem.Id, NewItem.ItemTypes.First().Id, Times.Once);
             }
 
@@ -813,12 +923,13 @@ public class ShoppingListExchangeServiceTests
 
     public abstract class ExchangeItemAsyncFixture : LocalFixture
     {
-        protected ShoppingListMock ShoppingListMock;
-        public IStoreItem NewItem { get; protected set; }
-        public IShoppingListItem OldShoppingListItem { get; protected set; }
+        protected ShoppingListMock? ShoppingListMock;
+        public IStoreItem? NewItem { get; protected set; }
+        public IShoppingListItem? OldShoppingListItem { get; protected set; }
 
         public void SetupNewItemMatchingShoppingList()
         {
+            TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
             SetupNewItemForStore(ShoppingListMock.Object.StoreId);
         }
 
@@ -836,11 +947,13 @@ public class ShoppingListExchangeServiceTests
 
         public void SetupOldItemFromShoppingListNotInBasket()
         {
+            TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
             OldShoppingListItem = ShoppingListMock.GetRandomItem(CommonFixture, i => !i.IsInBasket);
         }
 
         public void SetupOldItemFromShoppingListInBasket()
         {
+            TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
             OldShoppingListItem = ShoppingListMock.GetRandomItem(CommonFixture, i => i.IsInBasket);
         }
 
@@ -848,11 +961,14 @@ public class ShoppingListExchangeServiceTests
 
         public void SetupFindingShoppingList()
         {
+            TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
+            TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
             ShoppingListRepositoryMock.SetupFindActiveByAsync(OldShoppingListItem.Id, ShoppingListMock.Object.ToMonoList());
         }
 
         public void SetupFindingNoShoppingList()
         {
+            TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
             ShoppingListRepositoryMock.SetupFindActiveByAsync(OldShoppingListItem.Id, Enumerable.Empty<IShoppingList>());
         }
 
@@ -860,6 +976,7 @@ public class ShoppingListExchangeServiceTests
 
         public void SetupStoringShoppingList()
         {
+            TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
             ShoppingListRepositoryMock.SetupStoreAsync(ShoppingListMock.Object);
         }
 
@@ -869,6 +986,7 @@ public class ShoppingListExchangeServiceTests
 
         public void VerifyStoreShoppingListOnce()
         {
+            TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
             ShoppingListRepositoryMock.VerifyStoreAsyncOnce(ShoppingListMock.Object);
         }
 
@@ -883,6 +1001,7 @@ public class ShoppingListExchangeServiceTests
 
         public void VerifyAddItemToShoppingListNever()
         {
+            TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
             ShoppingListMock.VerifyAddItemNever();
         }
 
@@ -895,7 +1014,7 @@ public class ShoppingListExchangeServiceTests
 
     public abstract class LocalFixture
     {
-        protected CommonFixture CommonFixture = new CommonFixture();
+        protected CommonFixture CommonFixture = new();
         protected ShoppingListRepositoryMock ShoppingListRepositoryMock;
         protected AddItemToShoppingListServiceMock AddItemToShoppingListServiceMock;
 
