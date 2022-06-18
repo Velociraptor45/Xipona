@@ -1,12 +1,9 @@
-﻿using FluentAssertions;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
+﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ShoppingList.Api.TestTools.Exceptions;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common;
 
-public class QueryHandlerTestsBase<TQueryHandler, TQuery, TReturnType>
+public abstract class QueryHandlerTestsBase<TQueryHandler, TQuery, TReturnType>
     where TQueryHandler : IQueryHandler<TQuery, TReturnType>
     where TQuery : IQuery<TReturnType>
 {

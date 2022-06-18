@@ -360,6 +360,11 @@ public class ItemCategoryDeletionServiceTests
                 }
             }
 
+            public void SetupDeletingItemCategory()
+            {
+                _itemCategoryMock.SetupDelete();
+            }
+
             public void SetupFindingShoppingLists()
             {
                 foreach (var storeItemMock in _shoppingListDict.Keys)
@@ -500,6 +505,7 @@ public class ItemCategoryDeletionServiceTests
                 SetupDeletingItems();
                 SetupStoringShoppingLists();
                 SetupStoringItem();
+                SetupDeletingItemCategory();
                 SetupStoringItemCategory();
             }
 
@@ -513,6 +519,7 @@ public class ItemCategoryDeletionServiceTests
                 SetupFindingItems();
                 SetupFindingNoShoppingLists();
                 SetupStoringItem();
+                SetupDeletingItemCategory();
                 SetupStoringItemCategory();
             }
 
@@ -522,6 +529,7 @@ public class ItemCategoryDeletionServiceTests
                 SetupItemCategoryMock();
                 SetupFindingItemCategory();
                 SetupFindingNoItems();
+                SetupDeletingItemCategory();
                 SetupStoringItemCategory();
             }
 

@@ -30,4 +30,9 @@ public class ItemCategoryMock : Mock<IItemCategory>
     {
         Setup(m => m.Modify(modification));
     }
+
+    public void SetupDelete()
+    {
+        Setup(m => m.Delete());
+    }
 }

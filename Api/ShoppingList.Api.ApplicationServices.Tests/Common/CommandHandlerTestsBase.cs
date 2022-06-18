@@ -4,7 +4,7 @@ using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common;
 
-public class CommandHandlerTestsBase<TCommandHandler, TCommand, TReturnType>
+public abstract class CommandHandlerTestsBase<TCommandHandler, TCommand, TReturnType>
     where TCommandHandler : ICommandHandler<TCommand, TReturnType>
     where TCommand : ICommand<TReturnType>
 {
