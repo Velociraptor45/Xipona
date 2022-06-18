@@ -28,9 +28,6 @@ public class ItemModificationService : IItemModificationService
 
     public async Task ModifyItemWithTypesAsync(ItemWithTypesModification modification)
     {
-        if (modification == null)
-            throw new ArgumentNullException(nameof(modification));
-
         var item = await _itemRepository.FindByAsync(modification.Id, _cancellationToken);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(modification.Id));

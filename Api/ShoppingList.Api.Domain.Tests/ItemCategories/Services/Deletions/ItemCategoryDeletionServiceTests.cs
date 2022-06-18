@@ -11,6 +11,7 @@ using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
+using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services.Deletions;
 
@@ -313,8 +314,8 @@ public class ItemCategoryDeletionServiceTests
 
         private sealed class DeleteAsyncFixture : LocalFixture
         {
-            private ItemCategoryMock _itemCategoryMock;
-            private List<StoreItemMock> _storeItemMocks;
+            private ItemCategoryMock? _itemCategoryMock;
+            private List<StoreItemMock>? _storeItemMocks;
             private readonly Dictionary<StoreItemMock, List<ShoppingListMock>> _shoppingListDict = new();
 
             public ItemCategoryId ItemCategoryId { get; private set; }
@@ -326,7 +327,7 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupItemCategoryMock()
             {
-                _itemCategoryMock = new ItemCategoryMock(ItemCategoryMother.NotDeleted().Create());
+                _itemCategoryMock = new ItemCategoryMock(ItemCategoryMother.NotDeleted().Create(), MockBehavior.Strict);
             }
 
             public void SetupStoreItemMocks()
@@ -339,6 +340,7 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupShoppingListDict()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItemMocks);
                 foreach (var storeItemMock in _storeItemMocks)
                 {
                     int amount = CommonFixture.NextInt(1, 5);
@@ -354,10 +356,17 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupDeletingItems()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItemMocks);
                 foreach (var itemMock in _storeItemMocks)
                 {
                     itemMock.SetupDelete();
                 }
+            }
+
+            public void SetupDeletingItemCategory()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_itemCategoryMock);
+                _itemCategoryMock.SetupDelete();
             }
 
             public void SetupFindingShoppingLists()
@@ -372,6 +381,7 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupFindingNoShoppingLists()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItemMocks);
                 foreach (var storeItemMock in _storeItemMocks)
                 {
                     ShoppingListRepositoryMock.SetupFindActiveByAsync(storeItemMock.Object.Id,
@@ -389,6 +399,7 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupFindingItemCategory()
             {
+                TestPropertyNotSetException.ThrowIfNull(_itemCategoryMock);
                 ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategoryId, _itemCategoryMock.Object);
             }
 
@@ -399,11 +410,13 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupStoringItemCategory()
             {
+                TestPropertyNotSetException.ThrowIfNull(_itemCategoryMock);
                 ItemCategoryRepositoryMock.SetupStoreAsync(_itemCategoryMock.Object, _itemCategoryMock.Object);
             }
 
             public void SetupFindingItems()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItemMocks);
                 ItemRepositoryMock.SetupFindActiveByAsync(ItemCategoryId, _storeItemMocks.Select(m => m.Object));
             }
 
@@ -414,6 +427,7 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupStoringItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItemMocks);
                 foreach (var item in _storeItemMocks)
                 {
                     ItemRepositoryMock.SetupStoreAsync(item.Object, item.Object);
@@ -426,6 +440,7 @@ public class ItemCategoryDeletionServiceTests
 
             public void VerifyDeleteItemCategoryOnce()
             {
+                TestPropertyNotSetException.ThrowIfNull(_itemCategoryMock);
                 _itemCategoryMock.VerifyDeleteOnce();
             }
 
@@ -481,6 +496,7 @@ public class ItemCategoryDeletionServiceTests
 
             public void VerifyStoringItemCategoryOnce()
             {
+                TestPropertyNotSetException.ThrowIfNull(_itemCategoryMock);
                 ItemCategoryRepositoryMock.VerifyStoreAsyncOnce(_itemCategoryMock.Object);
             }
 
@@ -500,6 +516,7 @@ public class ItemCategoryDeletionServiceTests
                 SetupDeletingItems();
                 SetupStoringShoppingLists();
                 SetupStoringItem();
+                SetupDeletingItemCategory();
                 SetupStoringItemCategory();
             }
 
@@ -513,6 +530,7 @@ public class ItemCategoryDeletionServiceTests
                 SetupFindingItems();
                 SetupFindingNoShoppingLists();
                 SetupStoringItem();
+                SetupDeletingItemCategory();
                 SetupStoringItemCategory();
             }
 
@@ -522,6 +540,7 @@ public class ItemCategoryDeletionServiceTests
                 SetupItemCategoryMock();
                 SetupFindingItemCategory();
                 SetupFindingNoItems();
+                SetupDeletingItemCategory();
                 SetupStoringItemCategory();
             }
 
@@ -531,10 +550,10 @@ public class ItemCategoryDeletionServiceTests
 
     private abstract class LocalFixture
     {
-        protected ItemCategoryRepositoryMock ItemCategoryRepositoryMock;
-        protected ItemRepositoryMock ItemRepositoryMock;
-        protected ShoppingListRepositoryMock ShoppingListRepositoryMock;
-        protected CommonFixture CommonFixture;
+        protected readonly ItemCategoryRepositoryMock ItemCategoryRepositoryMock;
+        protected readonly ItemRepositoryMock ItemRepositoryMock;
+        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
+        protected readonly CommonFixture CommonFixture;
 
         protected LocalFixture()
         {

@@ -9,6 +9,7 @@ using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services.Conversion.StoreItemReadModels;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services.Validation;
 using ShoppingList.Api.TestTools.AutoFixture;
+using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemCreations;
 
@@ -23,22 +24,6 @@ public class ItemCreationServiceTests
             _fixture = new CreateAsyncFixture();
         }
 
-        [Fact]
-        public async Task CreateAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-
-            // Act
-            var func = async () => await sut.CreateAsync(null);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*creation*");
-            }
-        }
-
         #region WithManufacturerId
 
         [Fact]
@@ -47,6 +32,8 @@ public class ItemCreationServiceTests
             // Arrange
             _fixture.SetupWithManufacturerId();
             var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCreation);
 
             // Act
             var func = async () => await sut.CreateAsync(_fixture.ItemCreation);
@@ -65,6 +52,8 @@ public class ItemCreationServiceTests
             _fixture.SetupWithManufacturerId();
             var sut = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCreation);
+
             // Act
             await sut.CreateAsync(_fixture.ItemCreation);
 
@@ -81,6 +70,8 @@ public class ItemCreationServiceTests
             // Arrange
             _fixture.SetupWithManufacturerId();
             var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCreation);
 
             // Act
             await sut.CreateAsync(_fixture.ItemCreation);
@@ -99,6 +90,8 @@ public class ItemCreationServiceTests
             _fixture.SetupWithManufacturerId();
             var sut = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCreation);
+
             // Act
             await sut.CreateAsync(_fixture.ItemCreation);
 
@@ -115,6 +108,8 @@ public class ItemCreationServiceTests
             // Arrange
             _fixture.SetupWithManufacturerId();
             var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCreation);
 
             // Act
             await sut.CreateAsync(_fixture.ItemCreation);
@@ -137,6 +132,8 @@ public class ItemCreationServiceTests
             _fixture.SetupWithManufacturerIdNull();
             var sut = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCreation);
+
             // Act
             var func = async () => await sut.CreateAsync(_fixture.ItemCreation);
 
@@ -153,6 +150,8 @@ public class ItemCreationServiceTests
             // Arrange
             _fixture.SetupWithManufacturerIdNull();
             var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCreation);
 
             // Act
             await sut.CreateAsync(_fixture.ItemCreation);
@@ -171,6 +170,8 @@ public class ItemCreationServiceTests
             _fixture.SetupWithManufacturerIdNull();
             var sut = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCreation);
+
             // Act
             await sut.CreateAsync(_fixture.ItemCreation);
 
@@ -187,6 +188,8 @@ public class ItemCreationServiceTests
             // Arrange
             _fixture.SetupWithManufacturerIdNull();
             var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCreation);
 
             // Act
             await sut.CreateAsync(_fixture.ItemCreation);
@@ -205,6 +208,8 @@ public class ItemCreationServiceTests
             _fixture.SetupWithManufacturerIdNull();
             var sut = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCreation);
+
             // Act
             await sut.CreateAsync(_fixture.ItemCreation);
 
@@ -219,15 +224,16 @@ public class ItemCreationServiceTests
 
         private sealed class CreateAsyncFixture : LocalFixture
         {
-            private IStoreItem _storeItem;
+            private IStoreItem? _storeItem;
             private ManufacturerId? _manufacturerId;
-            private List<IStoreItemAvailability> _availabilities;
-            private StoreItemReadModel _storeItemReadModel;
+            private List<IStoreItemAvailability>? _availabilities;
+            private StoreItemReadModel? _storeItemReadModel;
 
-            public ItemCreation ItemCreation { get; private set; }
+            public ItemCreation? ItemCreation { get; private set; }
 
             public void SetupItemCreation()
             {
+                TestPropertyNotSetException.ThrowIfNull(_availabilities);
                 Fixture.ConstructorArgumentFor<ItemCreation, ManufacturerId?>("manufacturerId", _manufacturerId);
                 Fixture.ConstructorArgumentFor<ItemCreation, IEnumerable<IStoreItemAvailability>>(
                     "availabilities", _availabilities);
@@ -247,6 +253,7 @@ public class ItemCreationServiceTests
 
             public void SetupAvailabilities()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 _availabilities = _storeItem.Availabilities.ToList();
             }
 
@@ -257,31 +264,39 @@ public class ItemCreationServiceTests
 
             public void SetupStoreItemFactoryCreate()
             {
+                TestPropertyNotSetException.ThrowIfNull(ItemCreation);
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 StoreItemFactoryMock.SetupCreate(ItemCreation, _storeItem);
             }
 
             public void SetupValidatingItemCategory()
             {
+                TestPropertyNotSetException.ThrowIfNull(ItemCreation);
                 ValidatorMock.SetupValidateAsync(ItemCreation.ItemCategoryId);
             }
 
             public void SetupValidatingManufacturer()
             {
+                TestPropertyNotSetException.ThrowIfNull(ItemCreation);
+                TestPropertyNotSetException.ThrowIfNull(ItemCreation.ManufacturerId);
                 ValidatorMock.SetupValidateAsync(ItemCreation.ManufacturerId.Value);
             }
 
             public void SetupValidatingAvailabilities()
             {
+                TestPropertyNotSetException.ThrowIfNull(ItemCreation);
                 ValidatorMock.SetupValidateAsync(ItemCreation.Availabilities);
             }
 
             public void SetupStoringItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 ItemRepositoryMock.SetupStoreAsync(_storeItem, _storeItem);
             }
 
             public void SetupConvertingItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 _storeItemReadModel = Fixture.Create<StoreItemReadModel>();
                 ConversionServiceMock.SetupConvertAsync(_storeItem, _storeItemReadModel);
             }
@@ -290,11 +305,14 @@ public class ItemCreationServiceTests
 
             public void VerifyValidateAvailabilitiesOnce()
             {
+                TestPropertyNotSetException.ThrowIfNull(_availabilities);
                 ValidatorMock.VerifyValidateAsync(_availabilities, Times.Once);
             }
 
             public void VerifyValidateManufacturerOnce()
             {
+                TestPropertyNotSetException.ThrowIfNull(ItemCreation);
+                TestPropertyNotSetException.ThrowIfNull(ItemCreation.ManufacturerId);
                 ValidatorMock.VerifyValidateAsync(ItemCreation.ManufacturerId.Value, Times.Once);
             }
 
@@ -305,11 +323,13 @@ public class ItemCreationServiceTests
 
             public void VerifyValidateItemCategoryOnce()
             {
+                TestPropertyNotSetException.ThrowIfNull(ItemCreation);
                 ValidatorMock.VerifyValidateAsync(ItemCreation.ItemCategoryId, Times.Once);
             }
 
             public void VerifyStoreingItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 ItemRepositoryMock.VerifyStoreAsyncOnce(_storeItem);
             }
 
@@ -365,22 +385,6 @@ public class ItemCreationServiceTests
             _fixture = new CreateTemporaryAsyncFixture();
         }
 
-        [Fact]
-        public async Task CreateTemporaryAsync_WithCommandIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-
-            // Act
-            Func<Task> func = async () => await sut.CreateTemporaryAsync(null);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await func.Should().ThrowAsync<ArgumentNullException>().WithMessage("*creation*");
-            }
-        }
-
         #region WithValidData
 
         [Fact]
@@ -389,6 +393,8 @@ public class ItemCreationServiceTests
             // Arrange
             var sut = _fixture.CreateSut();
             _fixture.SetupWithValidData();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.TemporaryItemCreation);
 
             // Act
             var func = async () => await sut.CreateTemporaryAsync(_fixture.TemporaryItemCreation);
@@ -407,6 +413,8 @@ public class ItemCreationServiceTests
             var sut = _fixture.CreateSut();
             _fixture.SetupWithValidData();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.TemporaryItemCreation);
+
             // Act
             await sut.CreateTemporaryAsync(_fixture.TemporaryItemCreation);
 
@@ -424,6 +432,8 @@ public class ItemCreationServiceTests
             var sut = _fixture.CreateSut();
             _fixture.SetupWithValidData();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.TemporaryItemCreation);
+
             // Act
             await sut.CreateTemporaryAsync(_fixture.TemporaryItemCreation);
 
@@ -438,13 +448,14 @@ public class ItemCreationServiceTests
 
         private sealed class CreateTemporaryAsyncFixture : LocalFixture
         {
-            private IStoreItem _storeItem;
-            private IStoreItemAvailability _availability;
-            private StoreItemReadModel _storeItemReadModel;
-            public TemporaryItemCreation TemporaryItemCreation { get; private set; }
+            private IStoreItem? _storeItem;
+            private IStoreItemAvailability? _availability;
+            private StoreItemReadModel? _storeItemReadModel;
+            public TemporaryItemCreation? TemporaryItemCreation { get; private set; }
 
             public void SetupCommand()
             {
+                TestPropertyNotSetException.ThrowIfNull(_availability);
                 Fixture.ConstructorArgumentFor<TemporaryItemCreation, IStoreItemAvailability>("availability",
                     _availability);
                 TemporaryItemCreation = Fixture.Create<TemporaryItemCreation>();
@@ -457,6 +468,7 @@ public class ItemCreationServiceTests
 
             public void SetupRandomAvailability()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 _availability = CommonFixture.ChooseRandom(_storeItem.Availabilities);
             }
 
@@ -464,21 +476,26 @@ public class ItemCreationServiceTests
 
             public void SetupCreatingStoreItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
+                TestPropertyNotSetException.ThrowIfNull(TemporaryItemCreation);
                 StoreItemFactoryMock.SetupCreate(TemporaryItemCreation, _storeItem);
             }
 
             public void SetupValidatingAvailabilities()
             {
+                TestPropertyNotSetException.ThrowIfNull(_availability);
                 ValidatorMock.SetupValidateAsync(_availability.ToMonoList());
             }
 
             public void SetupStoringItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 ItemRepositoryMock.SetupStoreAsync(_storeItem, _storeItem);
             }
 
             public void SetupConvertingItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 _storeItemReadModel = Fixture.Create<StoreItemReadModel>();
                 ConversionServiceMock.SetupConvertAsync(_storeItem, _storeItemReadModel);
             }
@@ -489,11 +506,13 @@ public class ItemCreationServiceTests
 
             public void VerifyValidatingAvailabilities()
             {
+                TestPropertyNotSetException.ThrowIfNull(TemporaryItemCreation);
                 ValidatorMock.VerifyValidateAsync(TemporaryItemCreation.Availability.ToMonoList(), Times.Once);
             }
 
             public void VerifyStoringItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 ItemRepositoryMock.VerifyStoreAsyncOnce(_storeItem);
             }
 

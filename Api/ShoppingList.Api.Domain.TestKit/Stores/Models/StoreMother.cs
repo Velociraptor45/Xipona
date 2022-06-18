@@ -6,7 +6,7 @@ namespace ShoppingList.Api.Domain.TestKit.Stores.Models;
 
 public static class StoreMother
 {
-    public static StoreBuilder Initial(StoreBuilder builder = null)
+    public static StoreBuilder Initial(StoreBuilder? builder = null)
     {
         if (builder == null)
             builder = new StoreBuilder();
@@ -19,7 +19,7 @@ public static class StoreMother
             .WithSections(sections);
     }
 
-    public static StoreBuilder Empty(StoreBuilder builder = null)
+    public static StoreBuilder Empty(StoreBuilder? builder = null)
     {
         if (builder == null)
             builder = new StoreBuilder();
@@ -29,7 +29,7 @@ public static class StoreMother
             .WithoutSections();
     }
 
-    public static StoreBuilder Sections(int count, StoreBuilder builder = null)
+    public static StoreBuilder Sections(int count, StoreBuilder? builder = null)
     {
         if (builder == null)
             builder = new StoreBuilder();
@@ -49,7 +49,7 @@ public static class StoreMother
             .WithSections(sections);
     }
 
-    public static StoreBuilder Deleted(StoreBuilder builder = null)
+    public static StoreBuilder Deleted(StoreBuilder? builder = null)
     {
         if (builder == null)
             builder = new StoreBuilder();

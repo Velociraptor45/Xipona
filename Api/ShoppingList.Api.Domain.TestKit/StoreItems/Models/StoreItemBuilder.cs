@@ -96,9 +96,4 @@ public class StoreItemBuilder : DomainTestBuilderBase<StoreItem>
         FillConstructorWith("itemTypes", itemTypes);
         return this;
     }
-
-    public StoreItemBuilder WithoutTypes()
-    {
-        return WithTypes(null);
-    }
 }

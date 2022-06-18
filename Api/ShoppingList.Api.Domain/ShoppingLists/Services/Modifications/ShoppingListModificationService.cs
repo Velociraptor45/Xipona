@@ -28,8 +28,6 @@ public class ShoppingListModificationService : IShoppingListModificationService
     public async Task ChangeItemQuantityAsync(ShoppingListId shoppingListId,
         OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId, QuantityInBasket quantity)
     {
-        ArgumentNullException.ThrowIfNull(offlineTolerantItemId);
-
         var list = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
@@ -63,8 +61,6 @@ public class ShoppingListModificationService : IShoppingListModificationService
     public async Task RemoveItemAsync(ShoppingListId shoppingListId, OfflineTolerantItemId offlineTolerantItemId,
         ItemTypeId? itemTypeId)
     {
-        ArgumentNullException.ThrowIfNull(offlineTolerantItemId);
-
         var list = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
@@ -109,8 +105,6 @@ public class ShoppingListModificationService : IShoppingListModificationService
     public async Task RemoveItemFromBasketAsync(ShoppingListId shoppingListId,
         OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId)
     {
-        ArgumentNullException.ThrowIfNull(offlineTolerantItemId);
-
         var list = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
@@ -142,8 +136,6 @@ public class ShoppingListModificationService : IShoppingListModificationService
     public async Task PutItemInBasketAsync(ShoppingListId shoppingListId,
         OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId)
     {
-        ArgumentNullException.ThrowIfNull(offlineTolerantItemId);
-
         var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
         if (shoppingList == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));

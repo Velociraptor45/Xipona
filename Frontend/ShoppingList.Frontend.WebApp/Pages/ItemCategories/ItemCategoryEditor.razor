@@ -1,0 +1,101 @@
+﻿@page "/item-categories/{ItemCategoryId:guid}"
+
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Models
+
+@inject NavigationManager _navigationManager;
+@inject ItemCategoriesState _state;
+@inject IItemCategoryApiService _apiService
+
+@namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories
+
+<div>
+    <div class="d-flex">
+        <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+            <Icon Type="arrow-left"></Icon>
+        </Button>
+        @if (_state.EditedItemCategory is not null)
+        {
+            <div class="mx-3">
+                <Input @bind-Value="@_state.EditedItemCategory.Name" />
+            </div>
+            @if (_state.EditedItemCategory.Id != Guid.Empty)
+            {
+                <Button Danger="true"
+                        Class="ml-auto"
+                        OnClick="@OnDeleteButtonClickedAsync">
+                    Delete
+                </Button>
+            }
+        }
+    </div>
+    @if (_state.EditedItemCategory is not null)
+    {
+        <div class="d-flex justify-content-end mt-2">
+            
+            @if (_state.EditedItemCategory.Id == Guid.Empty)
+            {
+                <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
+            }
+            else
+            {
+                <Button @onclick="@OnModifyButtonClickedAsync">Save</Button>
+            }
+        </div>
+        }
+</div>
+
+@code {
+    [Parameter] public Guid ItemCategoryId { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (ItemCategoryId == Guid.Empty)
+        {
+            _state.SetNewEditedItemCategory();
+            return;
+        }
+
+        var result = await _apiService.GetAsync(ItemCategoryId);
+        if (result is null)
+            return;
+
+        _state.SetEditedItemCategory(result);
+    }
+
+    private void OnBackButtonClicked()
+    {
+        _navigationManager.NavigateTo("item-categories");
+    }
+
+    private async Task OnCreateButtonClickedAsync()
+    {
+        var newItemCategory = await _apiService.CreateAsync(_state.EditedItemCategory);
+        if (newItemCategory is null)
+            return;
+        _navigationManager.NavigateTo($"item-categories/{newItemCategory.Id}");
+    }
+
+    private async Task OnModifyButtonClickedAsync()
+    {
+        var successful = await _apiService.ModifyAsync(_state.EditedItemCategory);
+        if (successful)
+        {
+            _state.UpdateItemCategorySearchResultName(_state.EditedItemCategory.Id, _state.EditedItemCategory.Name);
+            _navigationManager.NavigateTo("item-categories");
+        }
+    }
+
+    private async Task OnDeleteButtonClickedAsync()
+    {
+        var successful = await _apiService.DeleteAsync(_state.EditedItemCategory.Id);
+        if (successful)
+        {
+            _state.RemoveFromSearchResultsIfExists(_state.EditedItemCategory.Id);
+            _navigationManager.NavigateTo("item-categories");
+        }
+    }
+}

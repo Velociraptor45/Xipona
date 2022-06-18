@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
+using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
@@ -239,24 +241,35 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region ItemCategoryController
 
-        public async Task<IEnumerable<ItemCategoryContract>> SearchItemCategoriesByName(string searchInput)
+        public async Task<ItemCategoryContract> GetItemCategoryByIdAsync(Guid id)
         {
-            return await _apiClient.SearchItemCategoriesByName(searchInput);
+            return await _apiClient.GetItemCategoryByIdAsync(id);
         }
 
-        public async Task<IEnumerable<ItemCategoryContract>> GetAllActiveItemCategories()
+        public async Task<IEnumerable<ItemCategorySearchResultContract>> SearchItemCategoriesByNameAsync(string searchInput,
+            bool includeDeleted)
         {
-            return await _apiClient.GetAllActiveItemCategories();
+            return await _apiClient.SearchItemCategoriesByNameAsync(searchInput, includeDeleted);
         }
 
-        public async Task<ItemCategoryContract> CreateItemCategory(string name)
+        public async Task<IEnumerable<ItemCategoryContract>> GetAllActiveItemCategoriesAsync()
         {
-            return await _apiClient.CreateItemCategory(name);
+            return await _apiClient.GetAllActiveItemCategoriesAsync();
         }
 
-        public async Task DeleteItemCategory(Guid id)
+        public async Task<ItemCategoryContract> CreateItemCategoryAsync(string name)
         {
-            await _apiClient.DeleteItemCategory(id);
+            return await _apiClient.CreateItemCategoryAsync(name);
+        }
+
+        public async Task DeleteItemCategoryAsync(Guid id)
+        {
+            await _apiClient.DeleteItemCategoryAsync(id);
+        }
+
+        public async Task ModifyItemCategoryAsync(ModifyItemCategoryContract contract)
+        {
+            await _apiClient.ModifyItemCategoryAsync(contract);
         }
 
         #endregion ItemCategoryController

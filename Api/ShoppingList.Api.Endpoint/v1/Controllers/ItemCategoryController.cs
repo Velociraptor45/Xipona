@@ -4,14 +4,18 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Commands.CreateItemCategory;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Commands.DeleteItemCategory;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Commands.ModifyItemCategory;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.AllActiveItemCategories;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.ItemCategoryById;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.ItemCategorySearch;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
+using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 
@@ -23,25 +27,51 @@ public class ItemCategoryController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
-    private readonly IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> _itemCategoryContractConverter;
     private readonly IEndpointConverters _converters;
 
     public ItemCategoryController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
-        IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> itemCategoryContractConverter,
         IEndpointConverters converters)
     {
         _queryDispatcher = queryDispatcher;
         _commandDispatcher = commandDispatcher;
-        _itemCategoryContractConverter = itemCategoryContractConverter;
         _converters = converters;
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ItemCategoryContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}")]
+    public async Task<IActionResult> GetItemCategoryByIdAsync([FromRoute] Guid id)
+    {
+        try
+        {
+            var query = new ItemCategoryByIdQuery(new ItemCategoryId(id));
+
+            var result = await _queryDispatcher.DispatchAsync(query, default);
+
+            var contract = _converters.ToContract<IItemCategory, ItemCategoryContract>(result);
+
+            return Ok(contract);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemCategoryNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<ItemCategorySearchResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [Route("")]
-    public async Task<IActionResult> SearchItemCategoriesByNameAsync([FromQuery] string searchInput)
+    public async Task<IActionResult> SearchItemCategoriesByNameAsync([FromQuery] string searchInput,
+        [FromQuery] bool includeDeleted = false)
     {
         searchInput = searchInput.Trim();
         if (string.IsNullOrEmpty(searchInput))
@@ -49,19 +79,21 @@ public class ItemCategoryController : ControllerBase
             return BadRequest("Search input mustn't be null or empty");
         }
 
-        var query = new ItemCategorySearchQuery(searchInput);
+        var query = new ItemCategorySearchQuery(searchInput, includeDeleted);
         var itemCategoryReadModels = await _queryDispatcher.DispatchAsync(query, default);
 
         if (!itemCategoryReadModels.Any())
             return NoContent();
 
-        var itemCategoryContracts = _itemCategoryContractConverter.ToContract(itemCategoryReadModels);
+        var itemCategoryContracts =
+            _converters.ToContract<ItemCategorySearchResultReadModel, ItemCategorySearchResultContract>(
+                itemCategoryReadModels);
 
         return Ok(itemCategoryContracts);
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(IEnumerable<ItemCategoryContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("active")]
     public async Task<IActionResult> GetAllActiveItemCategoriesAsync()
@@ -72,9 +104,34 @@ public class ItemCategoryController : ControllerBase
         if (!readModels.Any())
             return NoContent();
 
-        var contracts = _itemCategoryContractConverter.ToContract(readModels);
+        var contracts = _converters.ToContract<ItemCategoryReadModel, ItemCategoryContract>(readModels);
 
         return Ok(contracts);
+    }
+
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("")]
+    public async Task<IActionResult> ModifyItemCategoryAsync([FromBody] ModifyItemCategoryContract contract)
+    {
+        try
+        {
+            var command = _converters.ToDomain<ModifyItemCategoryContract, ModifyItemCategoryCommand>(contract);
+            await _commandDispatcher.DispatchAsync(command, default);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemCategoryNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+
+        return Ok();
     }
 
     [HttpPost]
@@ -87,8 +144,7 @@ public class ItemCategoryController : ControllerBase
 
         var contract = _converters.ToContract<IItemCategory, ItemCategoryContract>(model);
 
-        //todo: change to CreatedAtAction when #47 is implemented
-        return Created("", contract);
+        return CreatedAtAction(nameof(GetItemCategoryByIdAsync), new { id = contract.Id }, contract);
     }
 
     [HttpDelete]

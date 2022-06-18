@@ -30,22 +30,6 @@ public abstract class ToEntityConverterTestBase<TSource, TDestination>
     }
 
     [Fact]
-    public void ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var converter = CreateConverter();
-
-        // Act
-        Action act = () => converter.ToEntity((TSource)null);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            act.Should().Throw<ArgumentNullException>();
-        }
-    }
-
-    [Fact]
     public void ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject()
     {
         // Arrange

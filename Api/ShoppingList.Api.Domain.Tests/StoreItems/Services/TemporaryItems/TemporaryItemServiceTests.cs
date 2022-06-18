@@ -8,6 +8,7 @@ using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services.Validation;
 using ShoppingList.Api.TestTools.AutoFixture;
+using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.TemporaryItems;
 
@@ -23,28 +24,14 @@ public class TemporaryItemServiceTests
         }
 
         [Fact]
-        public async Task MakePermanentAsync_WithPermanentItemIsNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-
-            // Act
-            Func<Task> func = async () => await sut.MakePermanentAsync(null);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await func.Should().ThrowAsync<ArgumentNullException>();
-            }
-        }
-
-        [Fact]
         public async Task MakePermanentAsync_WithInvalidItemId_ShouldThrowDomainException()
         {
             // Arrange
             var sut = _fixture.CreateSut();
             _fixture.SetupPermanentItem();
             _fixture.SetupNotFindingItem();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.PermanentItem);
 
             // Act
             Func<Task> func = async () => await sut.MakePermanentAsync(_fixture.PermanentItem);
@@ -66,6 +53,8 @@ public class TemporaryItemServiceTests
             _fixture.SetupStoreItemMock();
             _fixture.SetupFindingItem();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.PermanentItem);
+
             // Act
             Func<Task> func = async () => await sut.MakePermanentAsync(_fixture.PermanentItem);
 
@@ -83,6 +72,7 @@ public class TemporaryItemServiceTests
             // Arrange
             var sut = _fixture.CreateSut();
             _fixture.SetupTemporaryStoreItemMock();
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItemMock);
 
             List<IStoreItemAvailability> availabilities = _fixture.StoreItemMock.Object.Availabilities.ToList();
             _fixture.SetupPermanentItem(availabilities);
@@ -92,6 +82,8 @@ public class TemporaryItemServiceTests
             _fixture.SetupMakingPermanent();
             _fixture.SetupStoringItem();
             _fixture.SetupFindingItem();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.PermanentItem);
 
             // Act
             await sut.MakePermanentAsync(_fixture.PermanentItem);
@@ -113,6 +105,7 @@ public class TemporaryItemServiceTests
             // Arrange
             var sut = _fixture.CreateSut();
             _fixture.SetupTemporaryStoreItemMock();
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItemMock);
 
             List<IStoreItemAvailability> availabilities = _fixture.StoreItemMock.Object.Availabilities.ToList();
             _fixture.SetupCommandWithoutManufacturerId(availabilities);
@@ -121,6 +114,8 @@ public class TemporaryItemServiceTests
             _fixture.SetupMakingPermanent();
             _fixture.SetupStoringItem();
             _fixture.SetupFindingItem();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.PermanentItem);
 
             // Act
             await sut.MakePermanentAsync(_fixture.PermanentItem);
@@ -138,8 +133,8 @@ public class TemporaryItemServiceTests
 
         private sealed class MakePermanentAsyncFixture : LocalFixture
         {
-            public PermanentItem PermanentItem { get; private set; }
-            public StoreItemMock StoreItemMock { get; private set; }
+            public PermanentItem? PermanentItem { get; private set; }
+            public StoreItemMock? StoreItemMock { get; private set; }
 
             public void SetupPermanentItem()
             {
@@ -176,36 +171,46 @@ public class TemporaryItemServiceTests
 
             public void SetupValidatingItemCategory()
             {
+                TestPropertyNotSetException.ThrowIfNull(PermanentItem);
                 ValidatorMock.SetupValidateAsync(PermanentItem.ItemCategoryId);
             }
 
             public void SetupValidatingManufacturer()
             {
+                TestPropertyNotSetException.ThrowIfNull(PermanentItem);
+                TestPropertyNotSetException.ThrowIfNull(PermanentItem.ManufacturerId);
                 ValidatorMock.SetupValidateAsync(PermanentItem.ManufacturerId.Value);
             }
 
             public void SetupValidatingAvailabilities()
             {
+                TestPropertyNotSetException.ThrowIfNull(StoreItemMock);
                 ValidatorMock.SetupValidateAsync(StoreItemMock.Object.Availabilities);
             }
 
             public void SetupMakingPermanent()
             {
+                TestPropertyNotSetException.ThrowIfNull(PermanentItem);
+                TestPropertyNotSetException.ThrowIfNull(StoreItemMock);
                 StoreItemMock.SetupMakePermanent(PermanentItem, PermanentItem.Availabilities);
             }
 
             public void SetupStoringItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(StoreItemMock);
                 ItemRepositoryMock.SetupStoreAsync(StoreItemMock.Object, StoreItemMock.Object);
             }
 
             public void SetupFindingItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(PermanentItem);
+                TestPropertyNotSetException.ThrowIfNull(StoreItemMock);
                 ItemRepositoryMock.SetupFindByAsync(PermanentItem.Id, StoreItemMock.Object);
             }
 
             public void SetupNotFindingItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(PermanentItem);
                 ItemRepositoryMock.SetupFindByAsync(PermanentItem.Id, null);
             }
 
@@ -213,11 +218,14 @@ public class TemporaryItemServiceTests
 
             public void VerifyValidatingItemCategory()
             {
+                TestPropertyNotSetException.ThrowIfNull(PermanentItem);
                 ValidatorMock.VerifyValidateAsync(PermanentItem.ItemCategoryId, Times.Once);
             }
 
             public void VerifyValidatingManufacturer()
             {
+                TestPropertyNotSetException.ThrowIfNull(PermanentItem);
+                TestPropertyNotSetException.ThrowIfNull(PermanentItem.ManufacturerId);
                 ValidatorMock.VerifyValidateAsync(PermanentItem.ManufacturerId.Value, Times.Once);
             }
 
@@ -228,11 +236,13 @@ public class TemporaryItemServiceTests
 
             public void VerifyValidatingAvailabilities()
             {
+                TestPropertyNotSetException.ThrowIfNull(StoreItemMock);
                 ValidatorMock.VerifyValidateAsync(StoreItemMock.Object.Availabilities, Times.Once);
             }
 
             public void VerifyStoringItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(StoreItemMock);
                 ItemRepositoryMock.VerifyStoreAsync(StoreItemMock.Object, Times.Once);
             }
 
@@ -243,8 +253,8 @@ public class TemporaryItemServiceTests
     private abstract class LocalFixture
     {
         protected Fixture Fixture { get; }
-        protected ItemRepositoryMock ItemRepositoryMock;
-        protected ValidatorMock ValidatorMock;
+        protected readonly ItemRepositoryMock ItemRepositoryMock;
+        protected readonly ValidatorMock ValidatorMock;
 
         protected LocalFixture()
         {

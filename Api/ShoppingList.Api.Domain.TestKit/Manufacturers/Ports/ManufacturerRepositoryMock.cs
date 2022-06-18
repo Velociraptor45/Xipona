@@ -10,7 +10,7 @@ public class ManufacturerRepositoryMock : Mock<IManufacturerRepository>
     {
     }
 
-    public void SetupFindByAsync(ManufacturerId manufacturerId, IManufacturer returnValue)
+    public void SetupFindByAsync(ManufacturerId manufacturerId, IManufacturer? returnValue)
     {
         Setup(i => i.FindByAsync(
                 It.Is<ManufacturerId>(id => id == manufacturerId),

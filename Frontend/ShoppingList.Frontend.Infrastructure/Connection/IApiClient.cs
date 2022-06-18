@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
+﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ItemCategories;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Manufacturers;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores;
@@ -23,7 +24,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         Task CreateItemAsync(CreateItemRequest request);
 
-        Task CreateItemCategoryAsync(string name);
+        Task<ItemCategory> CreateItemCategoryAsync(string name);
 
         Task<Manufacturer> CreateManufacturerAsync(string name);
 
@@ -83,6 +84,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         Task<Manufacturer> GetManufacturerByIdAsync(Guid id);
 
         Task DeleteManufacturerAsync(Guid id);
+
         Task ModifyManufacturerAsync(ModifyManufacturerRequest request);
+
+        Task<ItemCategory> GetItemCategoryByIdAsync(Guid id);
+
+        Task<IEnumerable<ItemCategorySearchResult>> GetItemCategoriesSearchResultsAsync(string searchInput);
+
+        Task DeleteItemCategoryAsync(Guid id);
+
+        Task ModifyItemCategoryAsync(ModifyItemCategoryRequest request);
     }
 }

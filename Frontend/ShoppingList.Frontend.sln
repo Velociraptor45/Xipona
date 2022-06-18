@@ -24,11 +24,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B0F9BA1C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03_Domain", "03_Domain", "{58D41EF0-51C7-41DA-96DF-AA514C9D9E72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Frontend.Models.Tests", "ShoppingList.Frontend.Models.Tests\ShoppingList.Frontend.Models.Tests.csproj", "{317ABDC5-C01F-4063-8CD0-A1CEF1186464}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.Models.Tests", "ShoppingList.Frontend.Models.Tests\ShoppingList.Frontend.Models.Tests.csproj", "{317ABDC5-C01F-4063-8CD0-A1CEF1186464}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Frontend.Models.TestKit", "ShoppingList.Frontend.Models.TestKit\ShoppingList.Frontend.Models.TestKit.csproj", "{5FCDF87A-9082-43B2-9B7B-5CF353DFB0C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.Models.TestKit", "ShoppingList.Frontend.Models.TestKit\ShoppingList.Frontend.Models.TestKit.csproj", "{5FCDF87A-9082-43B2-9B7B-5CF353DFB0C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Frontend.TestTools", "ShoppingList.Frontend.TestTools\ShoppingList.Frontend.TestTools.csproj", "{D016F53C-7E30-4314-BA3C-096AC789CBA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.TestTools", "ShoppingList.Frontend.TestTools\ShoppingList.Frontend.TestTools.csproj", "{D016F53C-7E30-4314-BA3C-096AC789CBA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

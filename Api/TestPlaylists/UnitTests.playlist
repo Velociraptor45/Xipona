@@ -1844,6 +1844,232 @@
             </Rule>
           </Rule>
         </Rule>
+        <Rule Match="All">
+          <Property Name="Project" Value="ShoppingList.Api.Endpoints.Tests" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="GetItemCategoryByIdAsyncTests" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests.GetItemCategoryByIdAsyncTests.EndpointCall_ShouldHaveNotFoundResponseTypeAttribute" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests.GetItemCategoryByIdAsyncTests.EndpointCall_ShouldHaveNotFoundResponseTypeAttribute" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests.GetItemCategoryByIdAsyncTests.EndpointCall_ShouldHaveOkResponseTypeAttribute" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests.GetItemCategoryByIdAsyncTests.EndpointCall_ShouldHaveOkResponseTypeAttribute" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests.GetItemCategoryByIdAsyncTests.EndpointCall_ShouldHaveUnprocessableEntityResponseTypeAttribute" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests.GetItemCategoryByIdAsyncTests.EndpointCall_ShouldHaveUnprocessableEntityResponseTypeAttribute" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests.GetItemCategoryByIdAsyncTests.EndpointCall_WithDomainException_ShouldReturnUnprocessableEntity" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests.GetItemCategoryByIdAsyncTests.EndpointCall_WithDomainException_ShouldReturnUnprocessableEntity" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests.GetItemCategoryByIdAsyncTests.EndpointCall_WithValidData_ShouldReturnOk" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests.GetItemCategoryByIdAsyncTests.EndpointCall_WithValidData_ShouldReturnOk" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+            <Rule Match="All">
+              <Property Name="Namespace" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="GetAsyncTests" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetAsyncTests.EndpointCall_ShouldHaveNotFoundResponseTypeAttribute" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetAsyncTests.EndpointCall_ShouldHaveNotFoundResponseTypeAttribute" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetAsyncTests.EndpointCall_ShouldHaveOkResponseTypeAttribute" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetAsyncTests.EndpointCall_ShouldHaveOkResponseTypeAttribute" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetAsyncTests.EndpointCall_ShouldHaveUnprocessableEntityResponseTypeAttribute" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetAsyncTests.EndpointCall_ShouldHaveUnprocessableEntityResponseTypeAttribute" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetAsyncTests.EndpointCall_WithDomainException_ShouldReturnNotFound" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetAsyncTests.EndpointCall_WithDomainException_ShouldReturnNotFound(errorCode: ItemNotFound)" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetAsyncTests.EndpointCall_WithDomainException_ShouldReturnUnprocessableEntity" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetAsyncTests.EndpointCall_WithDomainException_ShouldReturnUnprocessableEntity" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetAsyncTests.EndpointCall_WithValidData_ShouldReturnOk" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetAsyncTests.EndpointCall_WithValidData_ShouldReturnOk" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="SearchItemsAsyncTests" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_ShouldHaveNoContentResponseTypeAttribute" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_ShouldHaveNoContentResponseTypeAttribute" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_ShouldHaveNotFoundResponseTypeAttribute" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_ShouldHaveNotFoundResponseTypeAttribute" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_ShouldHaveOkResponseTypeAttribute" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_ShouldHaveOkResponseTypeAttribute" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_ShouldHaveUnprocessableEntityResponseTypeAttribute" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_ShouldHaveUnprocessableEntityResponseTypeAttribute" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_WithDomainException_ShouldReturnUnprocessableEntity" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_WithDomainException_ShouldReturnUnprocessableEntity" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_WithValidData_ShouldReturnNoContent" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_WithValidData_ShouldReturnNoContent" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_WithValidData_ShouldReturnOk" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.SearchItemsAsyncTests.EndpointCall_WithValidData_ShouldReturnOk" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+        <Rule Match="All">
+          <Property Name="Project" Value="ShoppingList.Api.ApplicationServices.Tests" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="CommandHandlerTestsBase`3" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common.CommandHandlerTestsBase`3.HandleAsync_WithValidCommand_ShouldCallService" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common.CommandHandlerTestsBase`3.HandleAsync_WithValidCommand_ShouldCallService" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common.CommandHandlerTestsBase`3.HandleAsync_WithValidCommand_ShouldCommitTransaction" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common.CommandHandlerTestsBase`3.HandleAsync_WithValidCommand_ShouldCommitTransaction" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common.CommandHandlerTestsBase`3.HandleAsync_WithValidCommand_ShouldReturnExpectedResult" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common.CommandHandlerTestsBase`3.HandleAsync_WithValidCommand_ShouldReturnExpectedResult" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="QueryHandlerTestsBase`3" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common.QueryHandlerTestsBase`3.HandleAsync_WithValidDelegate_ShouldReturnExpectedResult" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common.QueryHandlerTestsBase`3.HandleAsync_WithValidDelegate_ShouldReturnExpectedResult" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+            <Rule Match="All">
+              <Property Name="Namespace" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.ItemCategories.Commands.ModifyItemCategory" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="ModifyItemCategoryCommandHandlerTests" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.ItemCategories.Commands.ModifyItemCategory.ModifyItemCategoryCommandHandlerTests.HandleAsync_WithValidCommand_ShouldCallService" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.ItemCategories.Commands.ModifyItemCategory.ModifyItemCategoryCommandHandlerTests.HandleAsync_WithValidCommand_ShouldCallService" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.ItemCategories.Commands.ModifyItemCategory.ModifyItemCategoryCommandHandlerTests.HandleAsync_WithValidCommand_ShouldCommitTransaction" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.ItemCategories.Commands.ModifyItemCategory.ModifyItemCategoryCommandHandlerTests.HandleAsync_WithValidCommand_ShouldCommitTransaction" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.ItemCategories.Commands.ModifyItemCategory.ModifyItemCategoryCommandHandlerTests.HandleAsync_WithValidCommand_ShouldReturnExpectedResult" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.ItemCategories.Commands.ModifyItemCategory.ModifyItemCategoryCommandHandlerTests.HandleAsync_WithValidCommand_ShouldReturnExpectedResult" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+            <Rule Match="All">
+              <Property Name="Namespace" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.ItemCategories.Queries.ItemCategoryById" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="ItemCategoryByIdQueryHandlerTests" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.ItemCategories.Queries.ItemCategoryById.ItemCategoryByIdQueryHandlerTests.HandleAsync_WithValidDelegate_ShouldReturnExpectedResult" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.ItemCategories.Queries.ItemCategoryById.ItemCategoryByIdQueryHandlerTests.HandleAsync_WithValidDelegate_ShouldReturnExpectedResult" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
       </Rule>
     </Rule>
   </Rule>

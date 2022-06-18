@@ -7,7 +7,6 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
-using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.Stores.Ports;
 
@@ -15,30 +14,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Con
 
 public class ShoppingListReadModelConversionServiceTests
 {
-    private readonly CommonFixture _commonFixture;
-
-    public ShoppingListReadModelConversionServiceTests()
-    {
-        _commonFixture = new CommonFixture();
-    }
-
-    [Fact]
-    public async Task ConvertAsync_WithShoppingListIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var fixture = _commonFixture.GetNewFixture();
-        var service = fixture.Create<ShoppingListReadModelConversionService>();
-
-        // Act
-        Func<Task<ShoppingListReadModel>> func = async () => await service.ConvertAsync(null, default);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            await func.Should().ThrowAsync<ArgumentNullException>();
-        }
-    }
-
     [Theory]
     [ClassData(typeof(ConvertAsyncTestData))]
     public async Task ConvertAsync_WithValidData_ShouldConvertToReadModel(IShoppingList list, IStore store,

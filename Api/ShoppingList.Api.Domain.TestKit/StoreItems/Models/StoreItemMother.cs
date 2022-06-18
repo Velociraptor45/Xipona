@@ -10,7 +10,6 @@ public static class StoreItemMother
             .WithIsDeleted(false)
             .WithIsTemporary(false)
             .WithoutTemporaryId()
-            .WithoutTypes()
             .AsItem();
     }
 
@@ -29,7 +28,6 @@ public static class StoreItemMother
             .WithIsTemporary(true)
             .WithoutItemCategoryId()
             .WithoutManufacturerId()
-            .WithoutTypes()
             .WithAvailabilities(StoreItemAvailabilityMother.Initial().Create().ToMonoList())
             .AsItem();
     }

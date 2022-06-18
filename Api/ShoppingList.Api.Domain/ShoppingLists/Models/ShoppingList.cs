@@ -28,9 +28,6 @@ public class ShoppingList : IShoppingList
 
     public void AddItem(IShoppingListItem item, SectionId sectionId)
     {
-        if (item == null)
-            throw new ArgumentNullException(nameof(item));
-
         if (Items.Any(it => it.Id == item.Id && it.TypeId == item.TypeId))
             throw new DomainException(new ItemAlreadyOnShoppingListReason(item.Id, Id));
 
@@ -89,9 +86,6 @@ public class ShoppingList : IShoppingList
 
     public void AddSection(IShoppingListSection section)
     {
-        if (section is null)
-            throw new ArgumentNullException(nameof(section));
-
         if (_sections.ContainsKey(section.Id))
             throw new DomainException(new SectionAlreadyInShoppingListReason(Id, section.Id));
 
