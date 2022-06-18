@@ -101,6 +101,7 @@ public class ItemCategoryModificationServiceTests
         public void SetupModifyingItemCategory()
         {
             TestPropertyNotSetException.ThrowIfNull(_itemCategoryMock);
+            TestPropertyNotSetException.ThrowIfNull(Modification);
 
             _itemCategoryMock.SetupModify(Modification);
         }
@@ -115,6 +116,7 @@ public class ItemCategoryModificationServiceTests
         public void VerifyModifyingItemCategory()
         {
             TestPropertyNotSetException.ThrowIfNull(_itemCategoryMock);
+            TestPropertyNotSetException.ThrowIfNull(Modification);
 
             _itemCategoryMock.VerifyModify(Modification, Times.Once);
         }

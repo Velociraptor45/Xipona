@@ -392,6 +392,7 @@ public class AddItemToShoppingListServiceTests
             public void SetupCreatingShoppingListItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(StoreItem);
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListItem);
                 ShoppingListItemFactoryMock.SetupCreate(StoreItem.Id, null, false, Quantity, ShoppingListItem);
             }
 
@@ -885,6 +886,7 @@ public class AddItemToShoppingListServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(StoreItem);
                 TestPropertyNotSetException.ThrowIfNull(ItemType);
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListItem);
                 ShoppingListItemFactoryMock.SetupCreate(StoreItem.Id, ItemType.Id, false, Quantity, ShoppingListItem);
             }
 
@@ -1072,6 +1074,7 @@ public class AddItemToShoppingListServiceTests
 
         public void SetupCreatingEmptyShoppingListSection()
         {
+            TestPropertyNotSetException.ThrowIfNull(_shoppingListSection);
             var sectionId = SectionId
                             ?? Availability?.DefaultSectionId
                             ?? throw new TestPropertyNotSetException(nameof(Availability));
@@ -1080,6 +1083,7 @@ public class AddItemToShoppingListServiceTests
 
         public void SetupAddingSectionToShoppingList()
         {
+            TestPropertyNotSetException.ThrowIfNull(_shoppingListSection);
             TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
             ShoppingListMock.SetupAddSection(_shoppingListSection);
         }
@@ -1087,6 +1091,7 @@ public class AddItemToShoppingListServiceTests
         public void SetupAddingItemToShoppingList()
         {
             TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
+            TestPropertyNotSetException.ThrowIfNull(ShoppingListItem);
             var sectionId = SectionId
                             ?? Availability?.DefaultSectionId
                             ?? throw new TestPropertyNotSetException(nameof(Availability));
@@ -1118,12 +1123,14 @@ public class AddItemToShoppingListServiceTests
         public void VerifyAddSectionOnce()
         {
             TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
+            TestPropertyNotSetException.ThrowIfNull(_shoppingListSection);
             ShoppingListMock.VerifyAddSectionOnce(_shoppingListSection);
         }
 
         public void VerifyAddItemOnce()
         {
             TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
+            TestPropertyNotSetException.ThrowIfNull(ShoppingListItem);
             var sectionId = SectionId
                             ?? Availability?.DefaultSectionId
                             ?? throw new TestPropertyNotSetException(nameof(Availability));

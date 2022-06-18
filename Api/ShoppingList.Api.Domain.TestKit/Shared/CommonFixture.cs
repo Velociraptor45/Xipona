@@ -32,7 +32,7 @@ public class CommonFixture
         return list[index];
     }
 
-    public IEnumerable<int> NextUniqueInts(int amount, IEnumerable<int> exclude = null)
+    public IEnumerable<int> NextUniqueInts(int amount, IEnumerable<int>? exclude = null)
     {
         if (amount < 0)
             throw new ArgumentException($"{nameof(amount)} mustn't be negative.");

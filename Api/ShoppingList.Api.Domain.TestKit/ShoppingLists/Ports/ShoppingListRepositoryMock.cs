@@ -35,8 +35,7 @@ public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindByAsync(ShoppingListId shoppingListId,
-        IShoppingList returnValue)
+    public void SetupFindByAsync(ShoppingListId shoppingListId, IShoppingList? returnValue)
     {
         Setup(instance => instance.FindByAsync(
                 It.Is<ShoppingListId>(id => id == shoppingListId),

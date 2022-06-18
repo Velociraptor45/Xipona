@@ -585,11 +585,11 @@ public class ItemSearchServiceTests
         public void SetupFindingShoppingListWithItemWithTypes(bool containsItem,
             bool containsAdditionalItemTypeMappingItem)
         {
-            TestPropertyNotSetException.ThrowIfNull(_items);
             var builder = new ShoppingListItemBuilder();
 
             if (containsItem)
             {
+                TestPropertyNotSetException.ThrowIfNull(_items);
                 var item = _items.Single(i => i.HasItemTypes);
                 builder.WithId(item.Id);
                 builder.WithTypeId(_commonFixture.ChooseRandom(item.ItemTypes).Id);
@@ -686,7 +686,6 @@ public class ItemSearchServiceTests
 
         public void SetupConversionServiceReceivingEmptyItemList()
         {
-            TestPropertyNotSetException.ThrowIfNull(_items);
             TestPropertyNotSetException.ThrowIfNull(_store);
             _conversionServiceMock.SetupConvertAsync(Enumerable.Empty<IStoreItem>(), _store,
                 Enumerable.Empty<SearchItemForShoppingResultReadModel>());

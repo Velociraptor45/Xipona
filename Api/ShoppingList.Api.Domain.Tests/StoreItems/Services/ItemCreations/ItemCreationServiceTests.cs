@@ -264,6 +264,8 @@ public class ItemCreationServiceTests
 
             public void SetupStoreItemFactoryCreate()
             {
+                TestPropertyNotSetException.ThrowIfNull(ItemCreation);
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 StoreItemFactoryMock.SetupCreate(ItemCreation, _storeItem);
             }
 
@@ -288,11 +290,13 @@ public class ItemCreationServiceTests
 
             public void SetupStoringItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 ItemRepositoryMock.SetupStoreAsync(_storeItem, _storeItem);
             }
 
             public void SetupConvertingItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 _storeItemReadModel = Fixture.Create<StoreItemReadModel>();
                 ConversionServiceMock.SetupConvertAsync(_storeItem, _storeItemReadModel);
             }
@@ -301,6 +305,7 @@ public class ItemCreationServiceTests
 
             public void VerifyValidateAvailabilitiesOnce()
             {
+                TestPropertyNotSetException.ThrowIfNull(_availabilities);
                 ValidatorMock.VerifyValidateAsync(_availabilities, Times.Once);
             }
 
@@ -324,6 +329,7 @@ public class ItemCreationServiceTests
 
             public void VerifyStoreingItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 ItemRepositoryMock.VerifyStoreAsyncOnce(_storeItem);
             }
 
@@ -470,6 +476,8 @@ public class ItemCreationServiceTests
 
             public void SetupCreatingStoreItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
+                TestPropertyNotSetException.ThrowIfNull(TemporaryItemCreation);
                 StoreItemFactoryMock.SetupCreate(TemporaryItemCreation, _storeItem);
             }
 
@@ -480,11 +488,13 @@ public class ItemCreationServiceTests
 
             public void SetupStoringItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 ItemRepositoryMock.SetupStoreAsync(_storeItem, _storeItem);
             }
 
             public void SetupConvertingItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 _storeItemReadModel = Fixture.Create<StoreItemReadModel>();
                 ConversionServiceMock.SetupConvertAsync(_storeItem, _storeItemReadModel);
             }
@@ -501,6 +511,7 @@ public class ItemCreationServiceTests
 
             public void VerifyStoringItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 ItemRepositoryMock.VerifyStoreAsyncOnce(_storeItem);
             }
 

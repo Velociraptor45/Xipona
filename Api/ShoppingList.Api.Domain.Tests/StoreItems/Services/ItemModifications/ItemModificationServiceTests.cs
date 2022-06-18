@@ -418,6 +418,7 @@ public class ItemModificationServiceTests
 
         private void SetupModifyingItem()
         {
+            TestPropertyNotSetException.ThrowIfNull(Modification);
             TestPropertyNotSetException.ThrowIfNull(_itemMock);
             _itemMock.SetupModifyAsync(Modification, _validatorMock.Object);
         }
@@ -527,7 +528,7 @@ public class ItemModificationServiceTests
         private void SetupStoringItem()
         {
             TestPropertyNotSetException.ThrowIfNull(_itemMock);
-            _itemRepositoryMock.SetupStoreAsync(_itemMock.Object, null);
+            _itemRepositoryMock.SetupStoreAsync(_itemMock.Object, _itemMock.Object);
         }
 
         private void SetupStoringShoppingListsOfNotExistingItemTypes()
@@ -657,6 +658,7 @@ public class ItemModificationServiceTests
         public void VerifyModifyingItem()
         {
             TestPropertyNotSetException.ThrowIfNull(_itemMock);
+            TestPropertyNotSetException.ThrowIfNull(Modification);
             _itemMock.VerifyModifyAsync(Modification, _validatorMock.Object, Times.Once);
         }
 
