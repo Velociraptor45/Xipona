@@ -7,7 +7,8 @@ public static class AutoFixtureExtensions
     public static IFixture ConstructorArgumentFor<TTargetType, TValueType>(this IFixture fixture,
         string paramName, TValueType value)
     {
-        var item = fixture.Customizations.FirstOrDefault(c => c is ConstructorArgumentRelay<TTargetType, TValueType>);
+        var item = fixture.Customizations.FirstOrDefault(c => c is ConstructorArgumentRelay<TTargetType, TValueType> arg
+                                                              && arg.ParamName == paramName);
         if (item != null)
             fixture.Customizations.Remove(item);
 

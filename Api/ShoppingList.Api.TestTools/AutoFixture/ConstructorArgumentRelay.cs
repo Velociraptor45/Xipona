@@ -5,14 +5,15 @@ namespace ShoppingList.Api.TestTools.AutoFixture;
 
 public class ConstructorArgumentRelay<TTarget, TValueType> : ISpecimenBuilder
 {
-    private readonly string _paramName;
     private readonly TValueType _value;
 
     public ConstructorArgumentRelay(string paramName, TValueType value)
     {
-        _paramName = paramName;
+        ParamName = paramName;
         _value = value;
     }
+
+    public string ParamName { get; }
 
     public object Create(object request, ISpecimenContext context)
     {
@@ -24,7 +25,7 @@ public class ConstructorArgumentRelay<TTarget, TValueType> : ISpecimenBuilder
         if (parameter.Member.DeclaringType != typeof(TTarget) ||
             parameter.Member.MemberType != MemberTypes.Constructor ||
             parameter.ParameterType != typeof(TValueType) ||
-            parameter.Name != _paramName)
+            parameter.Name != ParamName)
             return new NoSpecimen();
         return _value!;
     }
