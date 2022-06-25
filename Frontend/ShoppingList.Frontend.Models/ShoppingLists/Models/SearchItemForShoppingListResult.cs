@@ -29,6 +29,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         public string ManufacturerName { get; }
         public Guid DefaultSectionId { get; }
 
-        public string DisplayValue => $"{Name} | {ManufacturerName} | {Price}{PriceLabel}";
+        public string DisplayValue => string.IsNullOrWhiteSpace(ManufacturerName)
+            ? $"{Name} | {Price}{PriceLabel}"
+            : $"{Name} | {ManufacturerName} | {Price}{PriceLabel}";
     }
 }
