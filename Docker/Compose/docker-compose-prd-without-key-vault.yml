@@ -17,7 +17,7 @@ services:
     image: <insert-your-image-here>
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      PH_SL_DB_CONNECTION_STRING_FILE: /run/secrets/dev-ph-shoppinglist-db-connection-string
+      PH_SL_DB_CONNECTION_STRING_FILE: /run/secrets/prd-ph-shoppinglist-db-connection-string
     ports:
       - "12489:443"
     depends_on:
