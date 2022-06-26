@@ -70,7 +70,7 @@ Configure the webserver address in shoppinglist.conf under *Frontend/Docker* and
 There are currently no Docker images for api and frontend provided (but are planned for the future), so you have to build them yourself. Before you do that, you have to configure some things.
 
 #### URIs
-Configure the correct api's UIR in in the frontend's appsettings (under *Frontend/ShoppingList.Frontend.WebApp/wwwroot/*) and, if you're using the key vault, the correct key vault URI in the api's appsettings (under *Api/ShoppingList.Api.WebApp/*).
+Configure the correct api's URI in in the frontend's appsettings (under *Frontend/ShoppingList.Frontend.WebApp/wwwroot/*) and, if you're using the key vault, the correct key vault URI in the api's appsettings (under *Api/ShoppingList.Api.WebApp/*).
 
 #### Blazor WASM setup
 Blazor WASM is not able to load appsettings based on the environment it runs in (like the api). Thus, you have to specify the environment before building the application. The place to do this is in the index.html under *Frontend/ShoppingList.Frontend.WebApp/wwwroot/*. Change the environment in `'blazor-environment': 'Local'` to `'Development'` or `'Production'`, depending on your needs.
