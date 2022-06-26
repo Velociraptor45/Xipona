@@ -122,6 +122,6 @@ After that, click on "Policies" in the toolbar, open the default policy, click "
 This will allow authenticated users to access the engine you just created. Now the Api will be able to connect the key vault.
 
 ### Database migration
-The API follows the **code first** approach, which means that you have to deploy the provided migrations to your database. Under *Api/Scripts/* are two shell scripts that deploy the migrations to the respective database. Before you execute them, open the files and check if the PH_SL_VAULT_USERNAME_FILE and PH_SL_VAULT_PASSWORD_FILE paths are set correctly.
+The API follows the **code first** approach, which means that you have to deploy the provided migrations to your database. Under *Api/Scripts/* are two shell scripts that deploy the migrations to the respective database. Before you execute them, open the files and check if the PH_SL_VAULT_USERNAME_FILE and PH_SL_VAULT_PASSWORD_FILE paths are set correctly (if you're using the key vault) or the PH_SL_DB_CONNECTION_STRING_FILE is set correctly (if you're not using the key vault).
 
 And now you're done. Happy shopping!
