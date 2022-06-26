@@ -55,7 +55,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.ShoppingLists
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
 
-                    b.Property<DateTime?>("CompletionDate")
+                    b.Property<DateTimeOffset?>("CompletionDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("StoreId")

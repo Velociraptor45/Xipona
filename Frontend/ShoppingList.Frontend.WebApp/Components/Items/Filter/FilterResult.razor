@@ -1,7 +1,9 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
+@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 
-@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items.IItemsPageLoadingService loadingService;
+@inject IItemsApiService loadingService;
 
 <div class="filter-result-outer-frame p-2" @onclick="@OnItemClicked">
     <div>@Item.Name</div>
@@ -14,10 +16,6 @@
 
     private async Task OnItemClicked()
     {
-        var item = await loadingService.LoadItemAsync(Item.ItemId, FragmentCreator);
-        if (item == null)
-            return;
-
-        State.EnterEditor(item);
+        await loadingService.LoadItemAsync(Item.ItemId, FragmentCreator, item => State.EnterEditor(item));
     }
 }

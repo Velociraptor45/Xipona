@@ -1,29 +1,25 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Items;
+using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToDomain
 {
     public class ItemAvailabilityConverter :
-        IToDomainConverter<StoreItemAvailabilityContract, StoreItemAvailability>
+        IToDomainConverter<StoreItemAvailabilityContract, ItemAvailability>
     {
-        private readonly IToDomainConverter<StoreItemStoreContract, StoreItemStore> storeConverter;
-        private readonly IToDomainConverter<StoreItemSectionContract, StoreItemSection> sectionConverter;
+        private readonly IToDomainConverter<StoreItemStoreContract, ItemStore> _storeConverter;
 
-        public ItemAvailabilityConverter(
-            IToDomainConverter<StoreItemStoreContract, StoreItemStore> storeConverter,
-            IToDomainConverter<StoreItemSectionContract, StoreItemSection> sectionConverter)
+        public ItemAvailabilityConverter(IToDomainConverter<StoreItemStoreContract, ItemStore> storeConverter)
         {
-            this.storeConverter = storeConverter;
-            this.sectionConverter = sectionConverter;
+            _storeConverter = storeConverter;
         }
 
-        public StoreItemAvailability ToDomain(StoreItemAvailabilityContract source)
+        public ItemAvailability ToDomain(StoreItemAvailabilityContract source)
         {
-            return new StoreItemAvailability(
-                storeConverter.ToDomain(source.Store),
+            return new ItemAvailability(
+                _storeConverter.ToDomain(source.Store),
                 source.Price,
-                sectionConverter.ToDomain(source.DefaultSection));
+                source.DefaultSection.Id);
         }
     }
 }

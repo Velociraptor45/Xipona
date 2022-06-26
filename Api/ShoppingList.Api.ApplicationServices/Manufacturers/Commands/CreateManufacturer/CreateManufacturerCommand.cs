@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
 
-public class CreateManufacturerCommand : ICommand<bool>
+public class CreateManufacturerCommand : ICommand<IManufacturer>
 {
     public CreateManufacturerCommand(ManufacturerName name)
     {

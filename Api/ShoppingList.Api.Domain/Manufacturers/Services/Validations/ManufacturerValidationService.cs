@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Validations;
 

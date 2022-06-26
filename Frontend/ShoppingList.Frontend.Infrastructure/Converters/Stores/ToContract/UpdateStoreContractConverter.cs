@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores;
 using System;
 using System.Linq;
 
@@ -10,20 +10,16 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Stores.T
     {
         public UpdateStoreContract ToContract(ModifyStoreRequest request)
         {
-            var sections = request.Sections.Select(s => new UpdateSectionContract
-            {
-                Id = s.Id.BackendId == Guid.Empty ? null : s.Id.BackendId,
-                Name = s.Name,
-                IsDefaultSection = s.IsDefaultSection,
-                SortingIndex = s.SortingIndex
-            });
+            var sections = request.Sections.Select(s => new UpdateSectionContract(
+                s.Id.BackendId == Guid.Empty ? null : s.Id.BackendId,
+                s.Name,
+                s.SortingIndex,
+                s.IsDefaultSection));
 
-            return new UpdateStoreContract()
-            {
-                Id = request.StoreId,
-                Name = request.Name,
-                Sections = sections
-            };
+            return new UpdateStoreContract(
+                request.StoreId,
+                request.Name,
+                sections);
         }
     }
 }

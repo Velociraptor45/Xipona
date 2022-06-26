@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +23,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ShoppingList.Api.Core\ShoppingList.Api.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
   </ItemGroup>
 
 </Project>

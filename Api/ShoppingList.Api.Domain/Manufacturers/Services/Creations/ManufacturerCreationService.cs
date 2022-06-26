@@ -20,9 +20,9 @@ public class ManufacturerCreationService : IManufacturerCreationService
         _cancellationToken = cancellationToken;
     }
 
-    public async Task CreateAsync(ManufacturerName name)
+    public async Task<IManufacturer> CreateAsync(ManufacturerName name)
     {
         var model = _manufacturerFactory.Create(ManufacturerId.New, name, false);
-        await _manufacturerRepository.StoreAsync(model, _cancellationToken);
+        return await _manufacturerRepository.StoreAsync(model, _cancellationToken);
     }
 }

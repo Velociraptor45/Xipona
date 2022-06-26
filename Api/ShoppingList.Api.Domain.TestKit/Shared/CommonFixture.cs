@@ -1,13 +1,5 @@
 ﻿using AutoFixture.AutoMoq;
-using AutoFixture.Kernel;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using ShoppingList.Api.Domain.TestKit.Common;
 
 namespace ShoppingList.Api.Domain.TestKit.Shared;
 
@@ -18,19 +10,8 @@ public class CommonFixture
     public Fixture GetNewFixture()
     {
         var fixture = new Fixture();
-        fixture.Customizations.Add(new EnumSpecimenBuilder<QuantityType>());
-        fixture.Customizations.Add(new TypeRelay(typeof(IStoreItemAvailability), typeof(StoreItemAvailability)));
         fixture.Customize(new AutoMoqCustomization { ConfigureMembers = true });
-        fixture.Customize<ItemCategoryId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
-        fixture.Customize<ManufacturerId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
-        fixture.Customize<ShoppingListId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
-        fixture.Customize<ItemId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
-        fixture.Customize<ItemTypeId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
-        fixture.Customize<TemporaryItemId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
-        fixture.Customize<StoreId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
-        fixture.Customize<SectionId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
-        fixture.Customize(new PriceCustomization());
-        fixture.Customize(new QuantityCustomization());
+        new DomainCustomization().Customize(fixture);
         return fixture;
     }
 
@@ -51,7 +32,7 @@ public class CommonFixture
         return list[index];
     }
 
-    public IEnumerable<int> NextUniqueInts(int amount, IEnumerable<int> exclude = null)
+    public IEnumerable<int> NextUniqueInts(int amount, IEnumerable<int>? exclude = null)
     {
         if (amount < 0)
             throw new ArgumentException($"{nameof(amount)} mustn't be negative.");
@@ -107,10 +88,10 @@ public class CommonFixture
         return (float)_random.NextDouble();
     }
 
-    public DateTime NextDate()
+    public DateTimeOffset NextDate()
     {
         var fixture = GetNewFixture();
-        return fixture.Create<DateTime>();
+        return fixture.Create<DateTimeOffset>();
     }
 
     public IEnumerable<T> RemoveRandom<T>(IEnumerable<T> enumerable, int count)

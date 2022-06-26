@@ -1,11 +1,12 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models.Index.Services
-@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
+﻿@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 @using ProjectHermes.ShoppingList.Frontend.Models
+@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
+@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
+
 @inject NavigationManager navigationManager;
 @inject IItemPriceCalculationService itemPriceCalculationService;
-@inject IShoppingListCommunicationService communicationService;
+@inject IShoppingListApiService apiService;
 
 <li class="list-style-non py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
     @if (State.ItemsInEditMode)
@@ -58,13 +59,10 @@
             <div class="m-0 pl-2">
                 @Model.Name
             </div>
-            @if (!Model.IsTemporary)
-            {
-                <div class="px-2 m-0 align-self-center ml-auto">
-                    <span>@($"{CalculatePrice():0.00}")</span>
-                    <span>€</span>
-                </div>
-            }
+            <div class="px-2 m-0 align-self-center ml-auto">
+                <span>@($"{CalculatePrice():0.00}")</span>
+                <span>€</span>
+            </div>
         </div>
     }
 </li>
@@ -81,14 +79,12 @@
         if (Model.IsInBasket)
         {
             Model.RemoveFromBasket();
-            var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id, Model.TypeId);
-            await communicationService.EnqueueAsync(request);
+            await apiService.RemoveItemFromBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         }
         else
         {
             Model.PutInBasket();
-            var request = new PutItemInBasketRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id, Model.TypeId);
-            await communicationService.EnqueueAsync(request);
+            await apiService.PutItemInBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         }
         State.StateChanged?.Invoke();
     }
@@ -100,7 +96,7 @@
 
     private async Task OnQuantityInputValueChangedAsync(float quantity)
     {
-        Model.Quantity = quantity;
+        Model.SetQuantity(quantity);
         await SendQuantityChangedRequestAsync();
         State.StateChanged?.Invoke();
     }
@@ -108,31 +104,29 @@
     private async Task OnRemoveItemButtonClickedAsync()
     {
         State.ShoppingList.Remove(Model.Id, Model.TypeId);
-        var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id, 
-        Model.TypeId);
-        await communicationService.EnqueueAsync(request);
+        await apiService.RemoveItemFromShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         State.StateChanged?.Invoke();
     }
 
     private async Task OnIncrementQuantityButtonClickedAsync()
     {
-        Model.Quantity += Model.QuantityType.DefaultQuantity;
+        Model.ChangeQuantity(Model.QuantityType.DefaultQuantity);
         await SendQuantityChangedRequestAsync();
         State.StateChanged?.Invoke();
     }
 
     private async Task OnDecrementQuantityButtonClickedAsync()
     {
-        Model.Quantity -= Model.QuantityType.DefaultQuantity;
+        Model.ChangeQuantity(-Model.QuantityType.DefaultQuantity);
+        
         await SendQuantityChangedRequestAsync();
         State.StateChanged?.Invoke();
     }
 
     private async Task SendQuantityChangedRequestAsync()
     {
-        var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), State.ShoppingList.Id, Model.Id, 
-            Model.TypeId, Model.Quantity);
-        await communicationService.EnqueueAsync(request);
+        await apiService.ChangeItemQuantityOnShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId, 
+            Model.Quantity);
     }
 
     private void OnMakeItemPermanentButtonClicked()

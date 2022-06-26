@@ -1,8 +1,9 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validations;
 
@@ -17,9 +18,6 @@ public class AvailabilityValidationService : IAvailabilityValidationService
 
     public async Task ValidateAsync(IEnumerable<IStoreItemAvailability> availabilities, CancellationToken cancellationToken)
     {
-        if (availabilities is null)
-            throw new ArgumentNullException(nameof(availabilities));
-
         var availabilitiesList = availabilities.ToList();
 
         var storeIds = availabilitiesList.Select(av => av.StoreId);

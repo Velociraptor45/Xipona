@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.ItemSearchReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ShoppingList.Api.Core.TestKit.Extensions;
+using ShoppingList.Api.TestTools.Extensions;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Services.Conversion.ItemSearchReadModels;
 

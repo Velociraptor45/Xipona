@@ -5,8 +5,9 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Editor;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Items;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 
-@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items.IItemsPageLoadingService loadingService;
+@inject IItemsApiService loadingService;
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items
 
@@ -50,8 +51,11 @@
 
     private async Task InitialLoadAsync()
     {
-        state = await loadingService.LoadInitialPageState(async () => await InitialLoadAsync(), errorHandler);
-        SetupState();
+        await loadingService.LoadInitialPageStateAsync(errorHandler, itemsState =>
+        {
+            state = itemsState;
+            SetupState();
+        });
     }
 
     private void SetupState()
@@ -64,29 +68,19 @@
 
     private async Task LoadManufacturerListAsync()
     {
-        var manufacturers = await loadingService.LoadManufacturersAsync(errorHandler);
-        if (manufacturers == null)
-            return;
-
-        state.UpdateManufacturers(manufacturers);
+        await loadingService.LoadManufacturersAsync(errorHandler, 
+            manufacturers => state.UpdateManufacturers(manufacturers));
     }
 
     private async Task LoadItemCategoryListAsync()
     {
-        var itemCategories = await loadingService.LoadItemCategoriesAsync(errorHandler);
-        if (itemCategories == null)
-            return;
-
-        state.UpdateItemCategories(itemCategories);
+        await loadingService.LoadItemCategoriesAsync(errorHandler, 
+            itemCategories => state.UpdateItemCategories(itemCategories));
     }
 
     private async Task OnItemClickedAsync(Guid itemId)
     {
-        var item = await loadingService.LoadItemAsync(itemId, errorHandler);
-        if (item == null)
-            return;
-
-        state.EnterEditor(item);
+        await loadingService.LoadItemAsync(itemId, errorHandler, item => state.EnterEditor(item));
     }
 
     private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")

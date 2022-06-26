@@ -1,6 +1,6 @@
 ﻿using FluentAssertions.Common;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -22,23 +22,6 @@ public class ShoppingListTests
     }
 
     #region AddItem
-
-    [Fact]
-    public void AddItem_WithStoreItemIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var shoppingList = ShoppingListMother.ThreeSections().Create();
-        SectionId sectionId = new SectionId(Guid.NewGuid());
-
-        // Act
-        Action action = () => shoppingList.AddItem(null, sectionId);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            action.Should().Throw<ArgumentNullException>();
-        }
-    }
 
     [Fact]
     public void AddItem_WithItemIdIsAlreadyOnList_ShouldThrowDomainException()
@@ -338,7 +321,7 @@ public class ShoppingListTests
         var fixture = _commonFixture.GetNewFixture();
         var shoppingList = ShoppingListMother.Completed().Create();
 
-        DateTime completionDate = fixture.Create<DateTime>();
+        DateTimeOffset completionDate = fixture.Create<DateTimeOffset>();
 
         // Act
         Action action = () => shoppingList.Finish(completionDate);
@@ -359,7 +342,7 @@ public class ShoppingListTests
         var itemsInBasket = shoppingList.Items.Where(i => i.IsInBasket);
         var itemsNotInBasket = shoppingList.Items.Where(i => !i.IsInBasket);
 
-        DateTime completionDate = _commonFixture.GetNewFixture().Create<DateTime>();
+        DateTimeOffset completionDate = _commonFixture.GetNewFixture().Create<DateTimeOffset>();
 
         // Act
         IShoppingList result = shoppingList.Finish(completionDate);
@@ -376,22 +359,6 @@ public class ShoppingListTests
     #endregion Finish
 
     #region AddSection
-
-    [Fact]
-    public void AddSection_WithSectionIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var shoppingList = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
-
-        // Act
-        Action action = () => shoppingList.AddSection(null);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            action.Should().Throw<ArgumentNullException>();
-        }
-    }
 
     [Fact]
     public void AddSection_WithSectionAlreadyInShoppingList_ShouldThrowDomainException()

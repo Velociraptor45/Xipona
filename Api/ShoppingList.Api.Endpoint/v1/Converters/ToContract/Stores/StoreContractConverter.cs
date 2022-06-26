@@ -1,28 +1,24 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Stores;
 
-public class ActiveStoreContractConverter : IToContractConverter<StoreReadModel, ActiveStoreContract>
+public class StoreContractConverter : IToContractConverter<IStore, StoreContract>
 {
-    private readonly IToContractConverter<StoreSectionReadModel, StoreSectionContract> _storeSectionContractConverter;
+    private readonly IToContractConverter<IStoreSection, StoreSectionContract> _sectionConverter;
 
-    public ActiveStoreContractConverter(
-        IToContractConverter<StoreSectionReadModel, StoreSectionContract> storeSectionContractConverter)
+    public StoreContractConverter(
+        IToContractConverter<IStoreSection, StoreSectionContract> sectionConverter)
     {
-        _storeSectionContractConverter = storeSectionContractConverter;
+        _sectionConverter = sectionConverter;
     }
 
-    public ActiveStoreContract ToContract(StoreReadModel source)
+    public StoreContract ToContract(IStore source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
+        ArgumentNullException.ThrowIfNull(source);
 
-        return new ActiveStoreContract(
-            source.Id.Value,
-            source.Name.Value,
-            source.ItemCount,
-            _storeSectionContractConverter.ToContract(source.Sections));
+        var sections = _sectionConverter.ToContract(source.Sections);
+        return new StoreContract(source.Id.Value, source.Name.Value, sections);
     }
 }

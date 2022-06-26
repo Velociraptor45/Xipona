@@ -1,0 +1,123 @@
+﻿@inject IShoppingListApiService apiService;
+@inject IItemPriceCalculationService priceCalculationService;
+
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
+@using System.Text
+@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
+
+<div class="d-flex justify-content-end mt-2">
+    <Button Type="@ButtonType.Primary"
+            OnClick="@OnSummaryButtonClicked"
+            Class="mr-2"
+            Disabled="@(!State.ShoppingList?.AnyItemInBasket ?? true)">
+        Summary
+    </Button>
+    <Modal TitleTemplate="@GetTitle()"
+           Visible="@summaryVisible"
+           OnCancel="@OnCloseSummaryButtonClicked"
+           ConfirmLoading="@loading"
+           Footer="@GetFooter()">
+        <div>@GetItemInBasketCountText()</div>
+        @if (State.ShoppingList.ItemNotInBasketCount > 0)
+        {
+            <div class="pt-2">@GetItemNotInBasketCountText()</div>
+        }
+    </Modal>
+</div>
+
+@code {
+    [Parameter] public ShoppingListState State { get; set; }
+    [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
+    [Parameter] public Func<Task> OnFinishList { get; set; }
+    
+    private bool summaryVisible = false;
+    private bool loading = false;
+    private string Title => $"Finish shopping at {State.SelectedStore?.Name}";
+
+    private void OnSummaryButtonClicked()
+    {
+        if (!State.ShoppingList.AnyItemInBasket)
+            return;
+
+        summaryVisible = true;
+    }
+
+    private void OnCloseSummaryButtonClicked()
+    {
+        summaryVisible = false;
+        loading = false;
+    }
+
+    private async Task OnFinishListButtonClicked()
+    {
+        loading = true;
+        await apiService.FinishListAsync(State.ShoppingList.Id, FragmentCreator, async () =>
+        {
+            await OnFinishList();
+            loading = false;
+            summaryVisible = false;
+        });
+    }
+
+    private RenderFragment GetFooter()
+    {
+        return @<Template>
+                   <div class="d-flex">
+                       <div class="summary-price font-weight-bold align-self-center">@GetInBasketPrice()€</div>
+                       <Button Class="ml-auto"
+                               OnClick="OnFinishListButtonClicked"
+                               @key="@("submit")"
+                               Type="primary"
+                               Loading="@loading">
+                           Finish
+                       </Button>
+                   </div>
+               </Template>;
+    }
+
+    private RenderFragment GetTitle()
+    {
+        return @<Template>
+                   <div>
+                       <div>@Title</div>
+                       <div class="summary-datetime">@GetDateTime()</div>
+                   </div>
+                </Template>;
+    }
+
+    private string GetItemInBasketCountText()
+    {
+        var builder = new StringBuilder();
+        var count = State.ShoppingList.ItemInBasketCount;
+        builder.Append(count.ToString());
+
+        builder.Append(count == 1 ? " item " : " items ");
+
+        builder.Append("in basket");
+        return builder.ToString();
+    }
+
+    private string GetItemNotInBasketCountText()
+    {
+        var builder = new StringBuilder();
+        var count = State.ShoppingList.ItemNotInBasketCount;
+        builder.Append(count.ToString());
+
+        builder.Append(count == 1 ? " item " : " items ");
+
+        builder.Append("will be moved to the next shopping list");
+        return builder.ToString();
+    }
+
+    private string GetInBasketPrice()
+    {
+        return State.ShoppingList.GetFormattedInBasketPrice(priceCalculationService);
+    }
+
+    private string GetDateTime()
+    {
+        return DateTime.UtcNow.ToString("g", State.Culture);
+    }
+}

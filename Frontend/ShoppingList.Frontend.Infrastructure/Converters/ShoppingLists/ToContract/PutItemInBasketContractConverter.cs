@@ -1,30 +1,27 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToContract
 {
     public class PutItemInBasketContractConverter :
         IToContractConverter<PutItemInBasketRequest, PutItemInBasketContract>
     {
-        private readonly IToContractConverter<ItemId, ItemIdContract> itemIdConverter;
+        private readonly IToContractConverter<ShoppingListItemId, ItemIdContract> _itemIdConverter;
 
         public PutItemInBasketContractConverter(
-            IToContractConverter<ItemId, ItemIdContract> itemIdConverter)
+            IToContractConverter<ShoppingListItemId, ItemIdContract> itemIdConverter)
         {
-            this.itemIdConverter = itemIdConverter;
+            _itemIdConverter = itemIdConverter;
         }
 
         public PutItemInBasketContract ToContract(PutItemInBasketRequest source)
         {
-            return new PutItemInBasketContract()
-            {
-                ShoppingListId = source.ShoppingListId,
-                ItemId = itemIdConverter.ToContract(source.ItemId),
-                ItemTypeId = source.ItemTypeId
-            };
+            return new PutItemInBasketContract(
+                _itemIdConverter.ToContract(source.ItemId),
+                source.ItemTypeId);
         }
     }
 }

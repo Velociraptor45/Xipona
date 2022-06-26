@@ -1,36 +1,33 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Items;
+using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract
 {
     public class UpdateItemContractConverter :
-        IToContractConverter<StoreItem, UpdateItemContract>
+        IToContractConverter<Item, UpdateItemContract>
     {
-        private readonly IToContractConverter<StoreItemAvailability, ItemAvailabilityContract> availabilityConverter;
+        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> _availabilityConverter;
 
         public UpdateItemContractConverter(
-            IToContractConverter<StoreItemAvailability, ItemAvailabilityContract> availabilityConverter)
+            IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter)
         {
-            this.availabilityConverter = availabilityConverter;
+            _availabilityConverter = availabilityConverter;
         }
 
-        public UpdateItemContract ToContract(StoreItem source)
+        public UpdateItemContract ToContract(Item source)
         {
-            return new UpdateItemContract
-            {
-                OldId = source.Id,
-                Name = source.Name,
-                Comment = source.Comment,
-                QuantityType = source.QuantityType.Id,
-                QuantityInPacket = source.QuantityInPacket,
-                QuantityTypeInPacket = source.QuantityInPacketType?.Id,
-                ItemCategoryId = source.ItemCategoryId.Value,
-                ManufacturerId = source.ManufacturerId,
-                Availabilities = source.Availabilities.Select(availabilityConverter.ToContract)
-            };
+            return new UpdateItemContract(
+                source.Name,
+                source.Comment,
+                source.QuantityType.Id,
+                source.QuantityInPacket,
+                source.QuantityInPacketType?.Id,
+                source.ItemCategoryId.Value,
+                source.ManufacturerId,
+                source.Availabilities.Select(_availabilityConverter.ToContract));
         }
     }
 }

@@ -3,11 +3,15 @@ using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
-using ProjectHermes.ShoppingList.Frontend.Models.Index.Services;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEditor;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Items;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using System;
 using System.Net.Http;
@@ -15,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp
 {
-    public class Program
+    public static class Program
     {
         public static async Task Main(string[] args)
         {
@@ -47,9 +51,19 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
             builder.Services.AddScoped<IItemPriceCalculationService, ItemPriceCalculationService>();
 
-            builder.Services.AddTransient<IShoppingListCommunicationService, ShoppingListCommunicationService>();
-            builder.Services.AddTransient<IItemsPageLoadingService, ItemsPageLoadingService>();
-            builder.Services.AddTransient<IStoresPageCommunicationService, StoresPageCommunicationService>();
+            builder.Services.AddTransient<IShoppingListApiService, ShoppingListApiService>();
+            builder.Services.AddTransient<IItemsApiService, ItemsApiService>();
+            builder.Services.AddTransient<IStoresApiService, StoresApiService>();
+
+            builder.Services.AddTransient<IItemEditorApiService, ItemEditorApiService>();
+
+            var manufacturerState = new ManufacturersState();
+            builder.Services.AddSingleton(manufacturerState);
+            builder.Services.AddTransient<IManufacturerApiService, ManufacturerApiService>();
+
+            var itemCategoryState = new ItemCategoriesState();
+            builder.Services.AddSingleton(itemCategoryState);
+            builder.Services.AddTransient<IItemCategoryApiService, ItemCategoryApiService>();
 
             builder.Services.AddInfrastructure();
         }

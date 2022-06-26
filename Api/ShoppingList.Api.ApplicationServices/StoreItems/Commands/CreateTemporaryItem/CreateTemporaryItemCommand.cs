@@ -1,9 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateTemporaryItem;
 
-public class CreateTemporaryItemCommand : ICommand<bool>
+public class CreateTemporaryItemCommand : ICommand<StoreItemReadModel>
 {
     public CreateTemporaryItemCommand(TemporaryItemCreation temporaryItemCreation)
     {

@@ -11,7 +11,7 @@ public class ItemRepositoryMock : Mock<IItemRepository>
     {
     }
 
-    public void SetupFindByAsync(ItemId itemId, IStoreItem returnValue)
+    public void SetupFindByAsync(ItemId itemId, IStoreItem? returnValue)
     {
         Setup(i => i.FindByAsync(
                 It.Is<ItemId>(id => id == itemId),
@@ -27,7 +27,7 @@ public class ItemRepositoryMock : Mock<IItemRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindByAsync(TemporaryItemId temporaryItemId, IStoreItem returnValue)
+    public void SetupFindByAsync(TemporaryItemId temporaryItemId, IStoreItem? returnValue)
     {
         Setup(i => i.FindByAsync(
                 It.Is<TemporaryItemId>(id => id == temporaryItemId),

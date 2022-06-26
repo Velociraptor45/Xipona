@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.TemporaryItems;
 
@@ -23,8 +23,6 @@ public class TemporaryItemService : ITemporaryItemService
 
     public async Task MakePermanentAsync(PermanentItem permanentItem)
     {
-        ArgumentNullException.ThrowIfNull(permanentItem);
-
         IStoreItem? storeItem = await _itemRepository.FindByAsync(permanentItem.Id, _cancellationToken);
         if (storeItem == null)
             throw new DomainException(new ItemNotFoundReason(permanentItem.Id));

@@ -21,14 +21,18 @@ public class ItemCategoryRepository : IItemCategoryRepository
         _toEntityConverter = toEntityConverter;
     }
 
-    public async Task<IEnumerable<IItemCategory>> FindByAsync(string searchInput,
+    public async Task<IEnumerable<IItemCategory>> FindByAsync(string searchInput, bool includeDeleted,
         CancellationToken cancellationToken)
     {
-        var itemCategoryEntities = await _dbContext.ItemCategories.AsNoTracking()
-            .Where(category => category.Name.Contains(searchInput))
-            .ToListAsync(cancellationToken);
+        var query = _dbContext.ItemCategories.AsNoTracking()
+            .Where(category => category.Name.Contains(searchInput));
+
+        if (!includeDeleted)
+            query = query.Where(category => !category.Deleted);
 
         cancellationToken.ThrowIfCancellationRequested();
+
+        var itemCategoryEntities = await query.ToListAsync(cancellationToken);
 
         return _toModelConverter.ToDomain(itemCategoryEntities);
     }
@@ -76,18 +80,25 @@ public class ItemCategoryRepository : IItemCategoryRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IItemCategory> StoreAsync(IItemCategory model,
-        CancellationToken cancellationToken)
+    public async Task<IItemCategory> StoreAsync(IItemCategory model, CancellationToken cancellationToken)
     {
-        var entity = _toEntityConverter.ToEntity(model);
-        var existingItemCategory = await FindTrackedEntityById(model.Id, cancellationToken);
+        var convertedEntity = _toEntityConverter.ToEntity(model);
+        var existingEntity = await FindTrackedEntityById(model.Id, cancellationToken);
 
-        _dbContext.Entry(entity).State = existingItemCategory is null ? EntityState.Added : EntityState.Modified;
+        if (existingEntity is null)
+        {
+            _dbContext.Entry(convertedEntity).State = EntityState.Added;
+        }
+        else
+        {
+            _dbContext.Entry(existingEntity).CurrentValues.SetValues(convertedEntity);
+            _dbContext.Entry(existingEntity).State = EntityState.Modified;
+        }
 
         cancellationToken.ThrowIfCancellationRequested();
 
         await _dbContext.SaveChangesAsync(cancellationToken);
-        return _toModelConverter.ToDomain(entity);
+        return _toModelConverter.ToDomain(convertedEntity);
     }
 
     private async Task<Entities.ItemCategory?> FindTrackedEntityById(ItemCategoryId id, CancellationToken cancellationToken)

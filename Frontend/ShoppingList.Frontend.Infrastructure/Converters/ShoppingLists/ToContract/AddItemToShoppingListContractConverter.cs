@@ -1,7 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToContract
 {
@@ -17,13 +16,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
 
         public AddItemToShoppingListContract ToContract(AddItemToShoppingListRequest request)
         {
-            return new AddItemToShoppingListContract
-            {
-                ShoppingListId = request.ShoppingListId,
-                ItemId = _itemIdConverter.ToContract(request.ItemId),
-                SectionId = request.SectionId,
-                Quantity = request.Quantity
-            };
+            return new AddItemToShoppingListContract(
+                _itemIdConverter.ToContract(request.ItemId),
+                request.SectionId,
+                request.Quantity);
         }
     }
 }

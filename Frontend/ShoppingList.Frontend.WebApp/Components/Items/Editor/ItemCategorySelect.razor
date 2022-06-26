@@ -1,9 +1,10 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.Items;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEditor
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 
-@inject Infrastructure.Connection.IApiClient apiClient;
-@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification.IShoppingListNotificationService notificationService;
+@inject IItemEditorApiService apiService;
 
 <div>
     <div class="font-weight-bold">Category</div>
@@ -33,17 +34,10 @@
 
     private async Task OnNewItemCategoryCreatedAsync(string name)
     {
-        try
+        await apiService.CreateItemCategoryAsync(name, FragmentCreator, async () =>
         {
-            await apiClient.CreateItemCategoryAsync(name);
-        }
-        catch (Exception e)
-        {
-            var fragment = FragmentCreator.CreateAsyncRetryFragment(async () => await OnNewItemCategoryCreatedAsync(name));
-            notificationService.NotifyError("Creating item category failed", e.Message, fragment);
-            return;
-        }
-        await State.ItemCategoryCreated();
-        StateHasChanged();
+            await State.ItemCategoryCreated();
+            StateHasChanged();
+        });
     }
 }

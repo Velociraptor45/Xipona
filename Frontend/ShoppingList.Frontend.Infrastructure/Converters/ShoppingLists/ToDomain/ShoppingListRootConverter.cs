@@ -1,21 +1,21 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain
 {
     public class ShoppingListRootConverter : IToDomainConverter<ShoppingListContract, ShoppingListRoot>
     {
-        private readonly IToDomainConverter<ShoppingListSectionContract, ShoppingListSection> sectionConverter;
-        private readonly IToDomainConverter<ShoppingListStoreContract, Store> storeConverter;
+        private readonly IToDomainConverter<ShoppingListSectionContract, ShoppingListSection> _sectionConverter;
+        private readonly IToDomainConverter<ShoppingListStoreContract, ShoppingListStore> _storeConverter;
 
         public ShoppingListRootConverter(
             IToDomainConverter<ShoppingListSectionContract, ShoppingListSection> sectionConverter,
-            IToDomainConverter<ShoppingListStoreContract, Store> storeConverter)
+            IToDomainConverter<ShoppingListStoreContract, ShoppingListStore> storeConverter)
         {
-            this.sectionConverter = sectionConverter;
-            this.storeConverter = storeConverter;
+            _sectionConverter = sectionConverter;
+            _storeConverter = storeConverter;
         }
 
         public ShoppingListRoot ToDomain(ShoppingListContract source)
@@ -23,8 +23,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
             return new ShoppingListRoot(
                 source.Id,
                 source.CompletionDate,
-                storeConverter.ToDomain(source.Store),
-                source.Sections.Select(sectionConverter.ToDomain));
+                _storeConverter.ToDomain(source.Store),
+                source.Sections.Select(_sectionConverter.ToDomain));
         }
     }
 }

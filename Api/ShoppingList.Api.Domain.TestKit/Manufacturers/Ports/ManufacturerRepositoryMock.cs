@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using ShoppingList.Api.TestTools.Extensions;
 
 namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
 
@@ -9,19 +10,30 @@ public class ManufacturerRepositoryMock : Mock<IManufacturerRepository>
     {
     }
 
-    public void SetupFindByAsync(ManufacturerId manufacturerId, IManufacturer returnValue)
+    public void SetupFindByAsync(ManufacturerId manufacturerId, IManufacturer? returnValue)
     {
         Setup(i => i.FindByAsync(
                 It.Is<ManufacturerId>(id => id == manufacturerId),
                 It.IsAny<CancellationToken>()))
-            .Returns(Task.FromResult(returnValue));
+            .ReturnsAsync(returnValue);
     }
 
     public void SetupFindByAsync(IEnumerable<ManufacturerId> manufacturerIds, IEnumerable<IManufacturer> returnValue)
     {
         Setup(i => i.FindByAsync(
-                It.Is<IEnumerable<ManufacturerId>>(ids => ids.SequenceEqual(manufacturerIds)),
+                It.Is<IEnumerable<ManufacturerId>>(ids => ids.IsEquivalentTo(manufacturerIds)),
                 It.IsAny<CancellationToken>()))
-            .Returns(Task.FromResult(returnValue));
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupStoreAsync(IManufacturer manufacturer, IManufacturer returnValue)
+    {
+        Setup(m => m.StoreAsync(manufacturer, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void VerifyStoreAsync(IManufacturer manufacturer, Func<Times> times)
+    {
+        Verify(m => m.StoreAsync(manufacturer, It.IsAny<CancellationToken>()), times);
     }
 }

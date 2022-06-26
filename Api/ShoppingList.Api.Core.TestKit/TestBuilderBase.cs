@@ -1,16 +1,21 @@
 ﻿using AutoFixture.AutoMoq;
-using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
+using ShoppingList.Api.TestTools.AutoFixture;
 
 namespace ShoppingList.Api.Core.TestKit;
 
-public class TestBuilderBase<TModel> : Fixture
+public abstract class TestBuilderBase<TModel> : Fixture
 {
-    public TestBuilderBase()
+    protected TestBuilderBase()
     {
         Customize(new AutoMoqCustomization { ConfigureMembers = true });
     }
 
-    protected void FillConstructorWith<TParameter>(string parameterName, TParameter value)
+    protected TestBuilderBase(ICustomization customization) : this()
+    {
+        customization.Customize(this);
+    }
+
+    public void FillConstructorWith<TParameter>(string parameterName, TParameter value)
     {
         this.ConstructorArgumentFor<TModel, TParameter>(parameterName, value);
     }

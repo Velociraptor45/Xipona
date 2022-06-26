@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Items;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract
@@ -10,28 +10,25 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
     public class MakeTemporaryItemPermanentContractConverter :
         IToContractConverter<MakeTemporaryItemPermanentRequest, MakeTemporaryItemPermanentContract>
     {
-        private readonly IToContractConverter<StoreItemAvailability, ItemAvailabilityContract> availabilityConverter;
+        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> _availabilityConverter;
 
         public MakeTemporaryItemPermanentContractConverter(
-            IToContractConverter<StoreItemAvailability, ItemAvailabilityContract> availabilityConverter)
+            IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter)
         {
-            this.availabilityConverter = availabilityConverter;
+            _availabilityConverter = availabilityConverter;
         }
 
         public MakeTemporaryItemPermanentContract ToContract(MakeTemporaryItemPermanentRequest source)
         {
-            return new MakeTemporaryItemPermanentContract
-            {
-                Id = source.Id,
-                Name = source.Name,
-                Comment = source.Comment,
-                QuantityType = source.QuantityType,
-                QuantityInPacket = source.QuantityInPacket,
-                QuantityTypeInPacket = source.QuantityTypeInPacket,
-                ItemCategoryId = source.ItemCategoryId,
-                ManufacturerId = source.ManufacturerId,
-                Availabilities = source.Availabilities.Select(availabilityConverter.ToContract)
-            };
+            return new MakeTemporaryItemPermanentContract(
+                source.Name,
+                source.Comment,
+                source.QuantityType,
+                source.QuantityInPacket,
+                source.QuantityTypeInPacket,
+                source.ItemCategoryId,
+                source.ManufacturerId,
+                source.Availabilities.Select(_availabilityConverter.ToContract));
         }
     }
 }

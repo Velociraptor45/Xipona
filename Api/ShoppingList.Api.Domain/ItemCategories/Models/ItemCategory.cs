@@ -1,4 +1,6 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Modifications;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 
 public class ItemCategory : IItemCategory
 {
@@ -10,11 +12,16 @@ public class ItemCategory : IItemCategory
     }
 
     public ItemCategoryId Id { get; }
-    public ItemCategoryName Name { get; }
+    public ItemCategoryName Name { get; private set; }
     public bool IsDeleted { get; set; }
 
     public void Delete()
     {
         IsDeleted = true;
+    }
+
+    public void Modify(ItemCategoryModification modification)
+    {
+        Name = modification.Name;
     }
 }

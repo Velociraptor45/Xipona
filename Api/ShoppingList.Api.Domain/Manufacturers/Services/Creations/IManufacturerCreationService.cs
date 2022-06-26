@@ -4,5 +4,5 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Creations
 
 public interface IManufacturerCreationService
 {
-    Task CreateAsync(ManufacturerName name);
+    Task<IManufacturer> CreateAsync(ManufacturerName name);
 }

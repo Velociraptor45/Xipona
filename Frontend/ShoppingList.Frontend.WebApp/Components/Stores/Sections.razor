@@ -1,4 +1,5 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Models;
 
 <div class="my-3">
@@ -20,10 +21,10 @@
 
 <div>
     Default Section:
-    <SingleSelect TItem="StoreSection"
-                  TValue="StoreSectionId"
-                  ValueName="@nameof(StoreSection.Id)"
-                  LabelName="@nameof(StoreSection.Name)"
+    <SingleSelect TItem="Models.Stores.Models.Section"
+                  TValue="SectionId"
+                  ValueName="@nameof(Models.Stores.Models.Section.Id)"
+                  LabelName="@nameof(Models.Stores.Models.Section.Name)"
                   DefaultValue="@State.EditedStore.Sections.First(s => s.IsDefaultSection).Id"
                   DataSource="@State.EditedStore.Sections.ToList()"
                   OnItemChanged="OnDefaultSectionChanged"></SingleSelect>
@@ -32,7 +33,7 @@
 @code {
     [Parameter] public StoresState State { get; set; }
 
-    private void OnDefaultSectionChanged(StoreSection section)
+    private void OnDefaultSectionChanged(Models.Stores.Models.Section section)
     {
         State.EditedStore.ChangeDefaultSection(section.Id.FrontendId);
     }

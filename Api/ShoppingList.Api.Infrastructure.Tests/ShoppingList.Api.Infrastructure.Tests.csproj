@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="5.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -23,6 +24,10 @@
     <ProjectReference Include="..\ShoppingList.Api.Core.TestKit\ShoppingList.Api.Core.TestKit.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Domain.TestKit\ShoppingList.Api.Domain.TestKit.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Infrastructure\ShoppingList.Api.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,7 @@
     <IsPackable>false</IsPackable>
 
     <RootNamespace>ProjectHermes.ShoppingList.Api.Domain.Tests</RootNamespace>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +29,11 @@
   <ItemGroup>
     <ProjectReference Include="..\ShoppingList.Api.Domain.TestKit\ShoppingList.Api.Domain.TestKit.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Domain\ShoppingList.Api.Domain.csproj" />
+    <ProjectReference Include="..\ShoppingList.Api.TestTools\ShoppingList.Api.TestTools.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
   </ItemGroup>
 
 </Project>

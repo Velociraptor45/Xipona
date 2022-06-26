@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToContract
 {
@@ -9,14 +9,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
     {
         public AddItemWithTypeToShoppingListContract ToContract(AddItemWithTypeToShoppingListRequest source)
         {
-            return new AddItemWithTypeToShoppingListContract
-            {
-                ShoppingListId = source.ShoppingListId,
-                ItemId = source.ItemId,
-                ItemTypeId = source.ItemTypeId,
-                SectionId = source.SectionId,
-                Quantity = source.Quantity
-            };
+            return new AddItemWithTypeToShoppingListContract(
+                source.SectionId,
+                source.Quantity);
         }
     }
 }

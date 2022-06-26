@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
@@ -7,12 +6,15 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 
@@ -34,9 +36,6 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
 
     public async Task<ShoppingListReadModel> ConvertAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
     {
-        if (shoppingList is null)
-            throw new ArgumentNullException(nameof(shoppingList));
-
         var itemIds = shoppingList.Items.Select(i => i.Id);
         var itemsDict = (await _itemRepository.FindByAsync(itemIds, cancellationToken))
             .ToDictionary(i => i.Id);

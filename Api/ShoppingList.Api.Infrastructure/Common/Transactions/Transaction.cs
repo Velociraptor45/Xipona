@@ -5,10 +5,12 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 public class Transaction : ITransaction
 {
     private DbTransaction? _transaction;
+    private readonly Func<Task> _onCloseTransactionAsync;
 
-    public Transaction(DbTransaction transaction)
+    public Transaction(DbTransaction transaction, Func<Task> onCloseTransactionAsync)
     {
         _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
+        _onCloseTransactionAsync = onCloseTransactionAsync;
     }
 
     public async Task CommitAsync(CancellationToken cancellationToken)
@@ -23,7 +25,7 @@ public class Transaction : ITransaction
         {
             try
             {
-                _transaction!.Dispose();
+                await _transaction!.DisposeAsync();
             }
             catch (Exception)
             {
@@ -31,6 +33,7 @@ public class Transaction : ITransaction
             }
 
             _transaction = null;
+            await _onCloseTransactionAsync.Invoke();
         }
     }
 
@@ -46,7 +49,7 @@ public class Transaction : ITransaction
         {
             try
             {
-                _transaction!.Dispose();
+                await _transaction!.DisposeAsync();
             }
             catch (Exception)
             {
@@ -54,6 +57,7 @@ public class Transaction : ITransaction
             }
 
             _transaction = null;
+            await _onCloseTransactionAsync.Invoke();
         }
     }
 

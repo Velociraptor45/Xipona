@@ -1,10 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Modifications;
 
@@ -28,9 +28,6 @@ public class ItemModificationService : IItemModificationService
 
     public async Task ModifyItemWithTypesAsync(ItemWithTypesModification modification)
     {
-        if (modification == null)
-            throw new ArgumentNullException(nameof(modification));
-
         var item = await _itemRepository.FindByAsync(modification.Id, _cancellationToken);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(modification.Id));

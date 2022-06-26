@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,7 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.15.0" />
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.15.0" />
+    <PackageReference Include="Castle.Core" Version="5.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -29,8 +31,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ShoppingList.Api.Core.TestKit\ShoppingList.Api.Core.TestKit.csproj" />
-    <ProjectReference Include="..\ShoppingList.Api.Core\ShoppingList.Api.Core.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Domain\ShoppingList.Api.Domain.csproj" />
+    <ProjectReference Include="..\ShoppingList.Api.TestTools\ShoppingList.Api.TestTools.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
   </ItemGroup>
 
 </Project>

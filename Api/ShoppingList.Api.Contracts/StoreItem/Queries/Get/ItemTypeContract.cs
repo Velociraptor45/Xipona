@@ -5,8 +5,15 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get
 {
     public class ItemTypeContract
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public IEnumerable<StoreItemAvailabilityContract> Availabilities { get; set; }
+        public ItemTypeContract(Guid id, string name, IEnumerable<StoreItemAvailabilityContract> availabilities)
+        {
+            Id = id;
+            Name = name;
+            Availabilities = availabilities;
+        }
+
+        public Guid Id { get; }
+        public string Name { get; }
+        public IEnumerable<StoreItemAvailabilityContract> Availabilities { get; }
     }
 }

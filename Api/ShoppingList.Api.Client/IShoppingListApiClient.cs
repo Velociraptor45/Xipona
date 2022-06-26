@@ -1,24 +1,28 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Contracts.ItemCategory.Commands;
+using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
+using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
+using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
@@ -31,127 +35,147 @@ namespace ProjectHermes.ShoppingList.Api.Client
 {
     public interface IShoppingListApiClient
     {
-        #region ShoppingListController
-
-        [Get("shopping-list/is-alive")]
+        [Get("monitoring/alive")]
         Task<bool> IsAlive();
 
-        [Post("shopping-list/items/add")]
-        Task AddItemToShoppingList([Body] AddItemToShoppingListContract contract);
+        #region ShoppingListController
 
-        [Post("shopping-list/items/add-with-type")]
-        Task AddItemWithTypeToShoppingList([Body] AddItemWithTypeToShoppingListContract contract);
+        [Get("shopping-lists/active/{storeId}")]
+        Task<ShoppingListContract> GetActiveShoppingListByStoreIdAsync([Path] Guid storeId);
 
-        [Post("shopping-list/items/change-quantity")]
-        Task ChangeItemQuantityOnShoppingList([Body] ChangeItemQuantityOnShoppingListContract contract);
+        [Put("shopping-lists/{id}/items")]
+        Task AddItemToShoppingListAsync([Path] Guid id, [Body] AddItemToShoppingListContract contract);
 
-        [Post("shopping-list/{shoppingListId}/finish")]
-        Task FinishList([Path] Guid shoppingListId);
+        [Put("shopping-lists/{id}/items/{itemId}/{itemTypeId}")]
+        Task AddItemWithTypeToShoppingListAsync([Path] Guid id, [Path] Guid itemId,
+            [Path] Guid itemTypeId, [Body] AddItemWithTypeToShoppingListContract contract);
 
-        [Get("shopping-list/active/{storeId}")]
-        Task<ShoppingListContract> GetActiveShoppingListByStoreId([Path] Guid storeId);
+        [Put("shopping-lists/{id}/items/quantity")]
+        Task ChangeItemQuantityOnShoppingListAsync([Path] Guid id,
+            [Body] ChangeItemQuantityOnShoppingListContract contract);
 
-        [Post("shopping-list/items/put-in-basket")]
-        Task PutItemInBasket([Body] PutItemInBasketContract contract);
+        [Put("shopping-lists/{id}/finish")]
+        Task FinishListAsync([Path] Guid id);
 
-        [Post("shopping-list/items/remove-from-basket")]
-        Task RemoveItemFromBasket([Body] RemoveItemFromBasketContract contract);
+        [Put("shopping-lists/{id}/items/basket/add")]
+        Task PutItemInBasketAsync([Path] Guid id, [Body] PutItemInBasketContract contract);
 
-        [Post("shopping-list/items/remove")]
-        Task RemoveItemFromShoppingList([Body] RemoveItemFromShoppingListContract contract);
+        [Put("shopping-lists/{id}/items/basket/remove")]
+        Task RemoveItemFromBasketAsync([Path] Guid id, [Body] RemoveItemFromBasketContract contract);
 
-        [Get("shopping-list/quantity-types")]
-        Task<IEnumerable<QuantityTypeContract>> GetAllQuantityTypes();
-
-        [Get("shopping-list/quantity-types-in-packet")]
-        Task<IEnumerable<QuantityTypeInPacketContract>> GetAllQuantityTypesInPacket();
+        [Delete("shopping-lists/{id}/items")]
+        Task RemoveItemFromShoppingListAsync([Path] Guid id,
+            [Body] RemoveItemFromShoppingListContract contract);
 
         #endregion ShoppingListController
 
         #region ItemController
 
-        [Post("item/create")]
-        Task CreateItem([Body] CreateItemContract createItemContract);
+        [Post("items/without-types")]
+        Task CreateItemAsync([Body] CreateItemContract contract);
 
-        [Post("item/create-with-types")]
-        Task CreateItemWithTypes([Body] CreateItemWithTypesContract createItemWithTypesContract);
+        [Post("items/with-types")]
+        Task CreateItemWithTypesAsync([Body] CreateItemWithTypesContract contract);
 
-        [Get("item/search-for-shopping-list/{searchInput}/{storeId}")]
-        Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync([Path] string searchInput,
-            [Path] Guid storeId);
+        [Post("items/temporary")]
+        Task CreateTemporaryItemAsync([Body] CreateTemporaryItemContract contract);
 
-        [Get("item/search/{searchInput}")]
-        Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync([Path] string searchInput);
+        [Get("items/{id}")]
+        Task<StoreItemContract> GetAsync([Path] Guid id);
 
-        [Get("item/search-by-filter")]
+        [Get("items/search/{storeId}")]
+        Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync(
+            [Path] Guid storeId, [Query] string searchInput);
+
+        [Get("items/search")]
+        Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync([Query] string searchInput);
+
+        [Get("items/filter")]
         Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] IEnumerable<Guid> storeIds,
             [Query] IEnumerable<Guid> itemCategoryIds, [Query] IEnumerable<Guid> manufacturerIds);
 
-        [Post("item/modify")]
-        Task ModifyItem([Body] ModifyItemContract modifyItemContract);
+        [Get("items/quantity-types")]
+        Task<IEnumerable<QuantityTypeContract>> GetAllQuantityTypesAsync();
 
-        [Post("item/modify-with-types")]
-        Task ModifyItemWithTypesAsync([Body] ModifyItemWithTypesContract contract);
+        [Get("items/quantity-types-in-packet")]
+        Task<IEnumerable<QuantityTypeInPacketContract>> GetAllQuantityTypesInPacketAsync();
 
-        [Post("item/update")]
-        Task UpdateItemAsync([Body] UpdateItemContract updateItemContract);
+        [Put("items/without-types/{id}/modify")]
+        Task ModifyItemAsync([Path] Guid id, [Body] ModifyItemContract contract);
 
-        [Post("item/update-with-types")]
-        Task UpdateItemWithTypesAsync([Body] UpdateItemWithTypesContract contract);
+        [Put("items/with-types/{id}/modify")]
+        Task ModifyItemWithTypesAsync([Path] Guid id, [Body] ModifyItemWithTypesContract contract);
 
-        [Post("item/delete/{itemId}")]
-        Task DeleteItemAsync([Path] Guid itemId);
+        [Put("items/without-types/{id}/update")]
+        Task UpdateItemAsync([Path] Guid id, [Body] UpdateItemContract contract);
 
-        [Get("item/{itemId}")]
-        Task<StoreItemContract> Get([Path] Guid itemId);
+        [Put("items/with-types/{id}/update")]
+        Task UpdateItemWithTypesAsync([Path] Guid id, [Body] UpdateItemWithTypesContract contract);
 
-        [Post("item/create/temporary")]
-        Task CreateTemporaryItem([Body] CreateTemporaryItemContract contract);
+        [Put("items/temporary/{id}")]
+        Task MakeTemporaryItemPermanentAsync([Path] Guid id, [Body] MakeTemporaryItemPermanentContract contract);
 
-        [Post("item/make-temporary-item-permanent")]
-        Task MakeTemporaryItemPermanent([Body] MakeTemporaryItemPermanentContract contract);
+        [Delete("items/{id}")]
+        Task DeleteItemAsync([Path] Guid id);
 
         #endregion ItemController
 
         #region StoreController
 
-        [Get("store/active")]
-        Task<IEnumerable<ActiveStoreContract>> GetAllActiveStores();
+        [Get("stores/active")]
+        Task<IEnumerable<ActiveStoreContract>> GetAllActiveStoresAsync();
 
-        [Post("store/create")]
-        Task CreateStore([Body] CreateStoreContract createStoreContract);
+        [Post("stores")]
+        Task<StoreContract> CreateStoreAsync([Body] CreateStoreContract createStoreContract);
 
-        [Post("store/update")]
-        Task UpdateStore([Body] UpdateStoreContract updateStoreContract);
+        [Put("stores")]
+        Task UpdateStoreAsync([Body] UpdateStoreContract updateStoreContract);
 
         #endregion StoreController
 
         #region ManufacturerController
 
-        [Get("manufacturer/search/{searchInput}")]
-        Task<IEnumerable<ManufacturerContract>> GetManufacturerSearchResults([Path] string searchInput);
+        [Get("manufacturers/{id}")]
+        Task<ManufacturerContract> GetManufacturerByIdAsync([Path] Guid id);
 
-        [Get("manufacturer/all/active")]
-        Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturers();
+        [Get("manufacturers")]
+        Task<IEnumerable<ManufacturerSearchResultContract>> GetManufacturerSearchResultsAsync(
+            [Query] string searchInput, [Query] bool includeDeleted);
 
-        [Post("manufacturer/create/{name}")]
-        Task CreateManufacturer([Path] string name);
+        [Get("manufacturers/active")]
+        Task<IEnumerable<ManufacturerContract>> GetAllActiveManufacturersAsync();
+
+        [Put("manufacturers")]
+        Task ModifyManufacturerAsync([Body] ModifyManufacturerContract contract);
+
+        [Post("manufacturers")]
+        Task<ManufacturerContract> CreateManufacturerAsync([Query] string name);
+
+        [Delete("manufacturers/{id}")]
+        Task DeleteManufacturerAsync([Path] Guid id);
 
         #endregion ManufacturerController
 
         #region ItemCategoryController
 
-        [Get("item-category/search/{searchInput}")]
-        Task<IEnumerable<ItemCategoryContract>> GetItemCategorySearchResults([Path] string searchInput);
+        [Get("item-categories/{id}")]
+        Task<ItemCategoryContract> GetItemCategoryByIdAsync([Path] Guid id);
 
-        [Get("item-category/all/active")]
-        Task<IEnumerable<ItemCategoryContract>> GetAllActiveItemCategories();
+        [Get("item-categories")]
+        Task<IEnumerable<ItemCategorySearchResultContract>> SearchItemCategoriesByNameAsync([Query] string searchInput,
+            [Query] bool includeDeleted);
 
-        [Post("item-category/create/{name}")]
-        Task CreateItemCategory([Path] string name);
+        [Get("item-categories/active")]
+        Task<IEnumerable<ItemCategoryContract>> GetAllActiveItemCategoriesAsync();
 
-        [Post("item-category/delete")]
-        Task DeleteItemCategory([Body] DeleteItemCategoryContract contract);
+        [Put("item-categories")]
+        Task ModifyItemCategoryAsync([Body] ModifyItemCategoryContract contract);
+
+        [Post("item-categories")]
+        Task<ItemCategoryContract> CreateItemCategoryAsync([Query] string name);
+
+        [Delete("item-categories/{id}")]
+        Task DeleteItemCategoryAsync([Path] Guid id);
 
         #endregion ItemCategoryController
     }

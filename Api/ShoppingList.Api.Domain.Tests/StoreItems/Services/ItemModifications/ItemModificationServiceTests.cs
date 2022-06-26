@@ -1,6 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Core.Tests.AutoFixture;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -12,6 +11,8 @@ using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Services.Validation;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
+using ShoppingList.Api.TestTools.AutoFixture;
+using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.StoreItems.Services.ItemModifications;
 
@@ -25,25 +26,14 @@ public class ItemModificationServiceTests
     }
 
     [Fact]
-    public async Task ModifyItemWithTypesAsync_WithModificationNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var sut = _fixture.CreateSut();
-
-        // Act
-        Func<Task> func = async () => await sut.ModifyItemWithTypesAsync(null);
-
-        // Assert
-        await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*modification*");
-    }
-
-    [Fact]
     public async Task ModifyItemWithTypesAsync_WithNotFindingItem_ShouldThrowDomainException()
     {
         // Arrange
         _fixture.SetupNotFindingItem();
         _fixture.SetupModification();
         var sut = _fixture.CreateSut();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
 
         // Act
         Func<Task> func = async () => await sut.ModifyItemWithTypesAsync(_fixture.Modification);
@@ -61,6 +51,8 @@ public class ItemModificationServiceTests
         _fixture.SetupForWithModifiedItemTypesEqualToExisting();
         var sut = _fixture.CreateSut();
 
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
 
@@ -74,6 +66,8 @@ public class ItemModificationServiceTests
         // Arrange
         _fixture.SetupForWithModifiedItemTypesEqualToExisting();
         var sut = _fixture.CreateSut();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
 
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
@@ -89,6 +83,8 @@ public class ItemModificationServiceTests
         _fixture.SetupForWithModifiedItemTypesEqualToExisting();
         var sut = _fixture.CreateSut();
 
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
 
@@ -102,6 +98,8 @@ public class ItemModificationServiceTests
         // Arrange
         _fixture.SetupForWithModifiedItemTypesEqualToExisting();
         var sut = _fixture.CreateSut();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
 
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
@@ -121,6 +119,8 @@ public class ItemModificationServiceTests
         _fixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
         var sut = _fixture.CreateSut();
 
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
 
@@ -134,6 +134,8 @@ public class ItemModificationServiceTests
         // Arrange
         _fixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
         var sut = _fixture.CreateSut();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
 
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
@@ -149,6 +151,8 @@ public class ItemModificationServiceTests
         _fixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
         var sut = _fixture.CreateSut();
 
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
 
@@ -163,6 +167,8 @@ public class ItemModificationServiceTests
         _fixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
         var sut = _fixture.CreateSut();
 
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
 
@@ -176,6 +182,8 @@ public class ItemModificationServiceTests
         // Arrange
         _fixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
         var sut = _fixture.CreateSut();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
 
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
@@ -195,6 +203,8 @@ public class ItemModificationServiceTests
         _fixture.SetupForWithModifiedItemTypesContainingNew();
         var sut = _fixture.CreateSut();
 
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
 
@@ -208,6 +218,8 @@ public class ItemModificationServiceTests
         // Arrange
         _fixture.SetupForWithModifiedItemTypesContainingNew();
         var sut = _fixture.CreateSut();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
 
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
@@ -223,6 +235,8 @@ public class ItemModificationServiceTests
         _fixture.SetupForWithModifiedItemTypesContainingNew();
         var sut = _fixture.CreateSut();
 
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
 
@@ -236,6 +250,8 @@ public class ItemModificationServiceTests
         // Arrange
         _fixture.SetupForWithModifiedItemTypesContainingNew();
         var sut = _fixture.CreateSut();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
 
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
@@ -255,6 +271,8 @@ public class ItemModificationServiceTests
         _fixture.SetupForWithSameItemsButStoresChanged();
         var sut = _fixture.CreateSut();
 
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
 
@@ -268,6 +286,8 @@ public class ItemModificationServiceTests
         // Arrange
         _fixture.SetupForWithSameItemsButStoresChanged();
         var sut = _fixture.CreateSut();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
 
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
@@ -283,6 +303,8 @@ public class ItemModificationServiceTests
         _fixture.SetupForWithSameItemsButStoresChanged();
         var sut = _fixture.CreateSut();
 
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
 
@@ -296,6 +318,8 @@ public class ItemModificationServiceTests
         // Arrange
         _fixture.SetupForWithSameItemsButStoresChanged();
         var sut = _fixture.CreateSut();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
 
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
@@ -311,6 +335,8 @@ public class ItemModificationServiceTests
         _fixture.SetupForWithSameItemsButStoresChanged();
         var sut = _fixture.CreateSut();
 
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
         // Act
         await sut.ModifyItemWithTypesAsync(_fixture.Modification);
 
@@ -325,14 +351,14 @@ public class ItemModificationServiceTests
         private readonly Fixture _fixture;
         private readonly ItemRepositoryMock _itemRepositoryMock;
         private readonly ValidatorMock _validatorMock;
-        private readonly CommonFixture _commonFixture = new CommonFixture();
+        private readonly CommonFixture _commonFixture = new();
         private readonly ShoppingListRepositoryMock _shoppingListRepositoryMock;
 
-        private Dictionary<ItemTypeId, List<ShoppingListMock>> _shoppingListDict;
-        private List<IItemType> _notExistingItemTypes;
-        private Tuple<ItemTypeId, StoreId> _removedStoreByTypeId;
-        private StoreItemMock _itemMock;
-        private List<ItemTypeModification> _modifiedItemTypes;
+        private Dictionary<ItemTypeId, List<ShoppingListMock>>? _shoppingListDict;
+        private List<IItemType>? _notExistingItemTypes;
+        private Tuple<ItemTypeId, StoreId>? _removedStoreByTypeId;
+        private StoreItemMock? _itemMock;
+        private List<ItemTypeModification>? _modifiedItemTypes;
 
         public LocalFixture()
         {
@@ -342,7 +368,7 @@ public class ItemModificationServiceTests
             _shoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
         }
 
-        public ItemWithTypesModification Modification { get; private set; }
+        public ItemWithTypesModification? Modification { get; private set; }
 
         public ItemModificationService CreateSut()
         {
@@ -355,6 +381,7 @@ public class ItemModificationServiceTests
 
         public void SetupModification()
         {
+            TestPropertyNotSetException.ThrowIfNull(_itemMock);
             if (_modifiedItemTypes != null)
             {
                 _fixture.ConstructorArgumentFor<ItemWithTypesModification, IEnumerable<ItemTypeModification>>("itemTypes",
@@ -378,22 +405,27 @@ public class ItemModificationServiceTests
 
         private void SetupItemReturningTypes()
         {
+            TestPropertyNotSetException.ThrowIfNull(_itemMock);
+            TestPropertyNotSetException.ThrowIfNull(Modification);
             var originalItemTypes = _itemMock.Object.ItemTypes;
             _itemMock.SetupItemTypes()
                 .Returns(() =>
                     _itemMock.ModifyWithTypeCalled ?
                         new List<IItemType>(Modification.ItemTypes
-                            .Select(t => new ItemType(t.Id.Value, t.Name, t.Availabilities))).AsReadOnly() :
+                            .Select(t => new ItemType(t.Id!.Value, t.Name, t.Availabilities))).AsReadOnly() :
                         originalItemTypes);
         }
 
         private void SetupModifyingItem()
         {
+            TestPropertyNotSetException.ThrowIfNull(Modification);
+            TestPropertyNotSetException.ThrowIfNull(_itemMock);
             _itemMock.SetupModifyAsync(Modification, _validatorMock.Object);
         }
 
         private void SetupModifiedItemTypesEqualToExisting()
         {
+            TestPropertyNotSetException.ThrowIfNull(_itemMock);
             _modifiedItemTypes = _itemMock.Object.ItemTypes
                 .Select(t => new ItemTypeModification(t.Id, t.Name, t.Availabilities))
                 .ToList();
@@ -401,6 +433,7 @@ public class ItemModificationServiceTests
 
         private void SetupModifiedItemTypesContainingNew()
         {
+            TestPropertyNotSetException.ThrowIfNull(_itemMock);
             _modifiedItemTypes = _itemMock.Object.ItemTypes
                 .Select(t => new ItemTypeModification(t.Id, t.Name, t.Availabilities))
                 .Union(_fixture.CreateMany<ItemTypeModification>(1))
@@ -409,6 +442,7 @@ public class ItemModificationServiceTests
 
         private void SetupModifiedItemTypesNotContainingAllExisting()
         {
+            TestPropertyNotSetException.ThrowIfNull(_itemMock);
             var choseItem = _commonFixture.ChooseRandom(_itemMock.Object.ItemTypes);
             _modifiedItemTypes = new ItemTypeModification(choseItem.Id, choseItem.Name, choseItem.Availabilities)
                 .ToMonoList();
@@ -417,6 +451,7 @@ public class ItemModificationServiceTests
 
         private void SetupModifiedItemTypesEqualToExistingButOneWithDifferentStores()
         {
+            TestPropertyNotSetException.ThrowIfNull(_itemMock);
             var removedOne = false;
             _modifiedItemTypes = _itemMock.Object.ItemTypes
                 .Select(t =>
@@ -424,7 +459,7 @@ public class ItemModificationServiceTests
                     if (removedOne)
                         return new ItemTypeModification(t.Id, t.Name, t.Availabilities);
 
-                    var av = _commonFixture.RemoveRandom(t.Availabilities, 1);
+                    var av = _commonFixture.RemoveRandom(t.Availabilities, 1).ToList();
                     var removedAvailability = t.Availabilities.Except(av).Single();
                     _removedStoreByTypeId = new Tuple<ItemTypeId, StoreId>(t.Id, removedAvailability.StoreId);
                     removedOne = true;
@@ -435,6 +470,7 @@ public class ItemModificationServiceTests
 
         private void SetupFindingShoppingListsWithoutStoreChanges()
         {
+            TestPropertyNotSetException.ThrowIfNull(_itemMock);
             var dict = new Dictionary<ItemTypeId, List<ShoppingListMock>>();
             foreach (var type in _itemMock.Object.ItemTypes)
             {
@@ -453,6 +489,8 @@ public class ItemModificationServiceTests
 
         private void SetupFindingShoppingListsWithStoreChanges()
         {
+            TestPropertyNotSetException.ThrowIfNull(_itemMock);
+            TestPropertyNotSetException.ThrowIfNull(_removedStoreByTypeId);
             var dict = new Dictionary<ItemTypeId, List<ShoppingListMock>>();
             foreach (var type in _itemMock.Object.ItemTypes)
             {
@@ -475,6 +513,8 @@ public class ItemModificationServiceTests
 
         private void SetupStoringShoppingListsOfItemTypeWithChangedStore()
         {
+            TestPropertyNotSetException.ThrowIfNull(_shoppingListDict);
+            TestPropertyNotSetException.ThrowIfNull(_removedStoreByTypeId);
             var lists = _shoppingListDict.Where(kv => kv.Key == _removedStoreByTypeId.Item1);
             foreach (var (_, shoppingListMocks) in lists)
             {
@@ -487,11 +527,14 @@ public class ItemModificationServiceTests
 
         private void SetupStoringItem()
         {
-            _itemRepositoryMock.SetupStoreAsync(_itemMock.Object, null);
+            TestPropertyNotSetException.ThrowIfNull(_itemMock);
+            _itemRepositoryMock.SetupStoreAsync(_itemMock.Object, _itemMock.Object);
         }
 
         private void SetupStoringShoppingListsOfNotExistingItemTypes()
         {
+            TestPropertyNotSetException.ThrowIfNull(_shoppingListDict);
+            TestPropertyNotSetException.ThrowIfNull(_notExistingItemTypes);
             var lists = _shoppingListDict.Where(kv => _notExistingItemTypes.Any(t => t.Id == kv.Key));
             foreach (var (_, shoppingListMocks) in lists)
             {
@@ -504,6 +547,7 @@ public class ItemModificationServiceTests
 
         public void SetupStoringShoppingList()
         {
+            TestPropertyNotSetException.ThrowIfNull(_shoppingListDict);
             foreach (var listMock in _shoppingListDict.Values.SelectMany(l => l))
             {
                 _shoppingListRepositoryMock.SetupStoreAsync(listMock.Object);
@@ -514,6 +558,8 @@ public class ItemModificationServiceTests
 
         public void VerifyRemovingNoItemTypesFromAnyShoppingList()
         {
+            TestPropertyNotSetException.ThrowIfNull(_shoppingListDict);
+            TestPropertyNotSetException.ThrowIfNull(Modification);
             foreach (var (itemTypeId, shoppingListMocks) in _shoppingListDict)
             {
                 foreach (var mock in shoppingListMocks)
@@ -525,6 +571,9 @@ public class ItemModificationServiceTests
 
         public void VerifyRemovingNoStillExistingItemTypesFromAnyShoppingList()
         {
+            TestPropertyNotSetException.ThrowIfNull(_shoppingListDict);
+            TestPropertyNotSetException.ThrowIfNull(_modifiedItemTypes);
+            TestPropertyNotSetException.ThrowIfNull(Modification);
             var lists = _shoppingListDict.Where(kv => _modifiedItemTypes.Any(t => t.Id == kv.Key)
                                                       && (_removedStoreByTypeId == null || kv.Key != _removedStoreByTypeId.Item1));
             foreach (var (itemTypeId, shoppingListMocks) in lists)
@@ -538,6 +587,9 @@ public class ItemModificationServiceTests
 
         public void VerifyRemovingNotExistingItemTypesFromAllShoppingLists()
         {
+            TestPropertyNotSetException.ThrowIfNull(_shoppingListDict);
+            TestPropertyNotSetException.ThrowIfNull(_notExistingItemTypes);
+            TestPropertyNotSetException.ThrowIfNull(Modification);
             var lists = _shoppingListDict.Where(kv => _notExistingItemTypes.Any(t => t.Id == kv.Key));
             foreach (var (itemTypeId, shoppingListMocks) in lists)
             {
@@ -550,6 +602,9 @@ public class ItemModificationServiceTests
 
         public void VerifyRemovingItemTypeWithChangedStoreFromAllShoppingLists()
         {
+            TestPropertyNotSetException.ThrowIfNull(_shoppingListDict);
+            TestPropertyNotSetException.ThrowIfNull(_removedStoreByTypeId);
+            TestPropertyNotSetException.ThrowIfNull(Modification);
             var lists = _shoppingListDict.Where(kv => kv.Key == _removedStoreByTypeId.Item1);
             foreach (var (itemTypeId, shoppingListMocks) in lists)
             {
@@ -562,6 +617,8 @@ public class ItemModificationServiceTests
 
         public void VerifyStoringShoppingListsOfNotExistingItemTypes()
         {
+            TestPropertyNotSetException.ThrowIfNull(_shoppingListDict);
+            TestPropertyNotSetException.ThrowIfNull(_notExistingItemTypes);
             var lists = _shoppingListDict.Where(kv => _notExistingItemTypes.Any(t => t.Id == kv.Key));
             foreach (var (_, shoppingListMocks) in lists)
             {
@@ -574,6 +631,8 @@ public class ItemModificationServiceTests
 
         public void VerifyStoringShoppingListsOfItemTypeWithChangedStore()
         {
+            TestPropertyNotSetException.ThrowIfNull(_shoppingListDict);
+            TestPropertyNotSetException.ThrowIfNull(_removedStoreByTypeId);
             var lists = _shoppingListDict.Where(kv => kv.Key == _removedStoreByTypeId.Item1);
             foreach (var (_, shoppingListMocks) in lists)
             {
@@ -586,6 +645,7 @@ public class ItemModificationServiceTests
 
         public void VerifyStoringNoShoppingList()
         {
+            TestPropertyNotSetException.ThrowIfNull(_shoppingListDict);
             foreach (var (_, shoppingListMocks) in _shoppingListDict)
             {
                 foreach (var mock in shoppingListMocks)
@@ -597,11 +657,14 @@ public class ItemModificationServiceTests
 
         public void VerifyModifyingItem()
         {
+            TestPropertyNotSetException.ThrowIfNull(_itemMock);
+            TestPropertyNotSetException.ThrowIfNull(Modification);
             _itemMock.VerifyModifyAsync(Modification, _validatorMock.Object, Times.Once);
         }
 
         public void VerifyStoringItem()
         {
+            TestPropertyNotSetException.ThrowIfNull(_itemMock);
             _itemRepositoryMock.VerifyStoreAsync(_itemMock.Object, Times.Once);
         }
 

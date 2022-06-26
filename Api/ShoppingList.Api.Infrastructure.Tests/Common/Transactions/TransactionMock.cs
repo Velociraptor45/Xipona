@@ -1,18 +1,23 @@
 ﻿using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
+using System;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Common.Transactions;
 
 public class TransactionMock : Mock<ITransaction>
 {
-    public TransactionMock()
+    public TransactionMock(MockBehavior behavior) : base(behavior)
     {
+        Setup(m => m.Dispose());
     }
 
-    public void VerifyCommitAsyncOnce()
+    public void SetupCommitAsync()
     {
-        Verify(
-            i => i.CommitAsync(
-                It.IsAny<CancellationToken>()),
-            Times.Once);
+        Setup(m => m.CommitAsync(It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void VerifyCommitAsync(Func<Times> times)
+    {
+        Verify(m => m.CommitAsync(It.IsAny<CancellationToken>()), times);
     }
 }

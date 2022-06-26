@@ -5,7 +5,13 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItem
 {
     public class AddItemToShoppingListContract
     {
-        public Guid ShoppingListId { get; set; }
+        public AddItemToShoppingListContract(ItemIdContract itemId, Guid? sectionId, float quantity)
+        {
+            ItemId = itemId;
+            SectionId = sectionId;
+            Quantity = quantity;
+        }
+
         public ItemIdContract ItemId { get; set; }
         public Guid? SectionId { get; set; }
         public float Quantity { get; set; }

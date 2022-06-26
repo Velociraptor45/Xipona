@@ -2,11 +2,24 @@
 using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ChangeItem
+namespace ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItem
 {
     public class ModifyItemContract
     {
-        public Guid Id { get; set; }
+        public ModifyItemContract(string name, string comment, int quantityType, float? quantityInPacket,
+            int? quantityTypeInPacket, Guid itemCategoryId, Guid? manufacturerId,
+            IEnumerable<ItemAvailabilityContract> availabilities)
+        {
+            Name = name;
+            Comment = comment;
+            QuantityType = quantityType;
+            QuantityInPacket = quantityInPacket;
+            QuantityTypeInPacket = quantityTypeInPacket;
+            ItemCategoryId = itemCategoryId;
+            ManufacturerId = manufacturerId;
+            Availabilities = availabilities;
+        }
+
         public string Name { get; set; }
         public string Comment { get; set; }
         public int QuantityType { get; set; }

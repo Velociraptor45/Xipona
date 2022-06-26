@@ -18,5 +18,5 @@ public interface IShoppingListModificationService
     Task PutItemInBasketAsync(ShoppingListId shoppingListId,
         OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId);
 
-    Task FinishAsync(ShoppingListId shoppingListId, DateTime completionDate);
+    Task FinishAsync(ShoppingListId shoppingListId, DateTimeOffset completionDate);
 }

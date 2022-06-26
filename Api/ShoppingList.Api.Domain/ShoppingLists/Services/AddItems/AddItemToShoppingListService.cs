@@ -1,13 +1,15 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
 
@@ -73,11 +75,6 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     public async Task AddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
         ItemTypeId itemTypeId, SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
-        if (shoppingList is null)
-            throw new ArgumentNullException(nameof(shoppingList));
-        if (item is null)
-            throw new ArgumentNullException(nameof(item));
-
         await AddItemToShoppingListAsync(shoppingList, item, itemTypeId, sectionId, quantity, cancellationToken);
 
         await _shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
@@ -86,9 +83,6 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     public async Task AddItemToShoppingListAsync(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
         QuantityInBasket quantity, CancellationToken cancellationToken)
     {
-        if (shoppingList is null)
-            throw new ArgumentNullException(nameof(shoppingList));
-
         IStoreItem storeItem = await LoadItemAsync(itemId, cancellationToken);
         await AddItemToShoppingListAsync(shoppingList, storeItem, sectionId, quantity, cancellationToken);
     }
@@ -96,9 +90,6 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     public async Task AddItemToShoppingListAsync(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
         SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
-        if (shoppingList is null)
-            throw new ArgumentNullException(nameof(shoppingList));
-
         IStoreItem storeItem = await LoadItemAsync(temporaryItemId, cancellationToken);
         await AddItemToShoppingListAsync(shoppingList, storeItem, sectionId, quantity, cancellationToken);
     }

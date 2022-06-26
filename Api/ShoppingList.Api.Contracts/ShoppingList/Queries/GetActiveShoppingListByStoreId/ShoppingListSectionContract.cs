@@ -6,8 +6,6 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
 {
     public class ShoppingListSectionContract
     {
-        private readonly IEnumerable<ShoppingListItemContract> _items;
-
         public ShoppingListSectionContract(Guid id, string name, int sortingIndex, bool isDefaultSection,
             IEnumerable<ShoppingListItemContract> items)
         {
@@ -15,13 +13,13 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiv
             Name = name;
             SortingIndex = sortingIndex;
             IsDefaultSection = isDefaultSection;
-            _items = items;
+            Items = items.ToList();
         }
 
         public Guid Id { get; set; }
         public string Name { get; set; }
         public int SortingIndex { get; set; }
         public bool IsDefaultSection { get; set; }
-        public IReadOnlyCollection<ShoppingListItemContract> Items => _items.ToList().AsReadOnly();
+        public IReadOnlyCollection<ShoppingListItemContract> Items { get; }
     }
 }

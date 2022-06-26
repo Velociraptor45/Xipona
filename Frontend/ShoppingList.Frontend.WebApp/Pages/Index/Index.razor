@@ -1,16 +1,16 @@
 ﻿@page "/"
 
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification.IShoppingListNotificationService notificationService;
-@inject ProjectHermes.ShoppingList.Frontend.Models.Index.Services.IItemPriceCalculationService itemPriceCalculationService;
-@inject Services.IShoppingListCommunicationService communicationService;
+@inject IItemPriceCalculationService itemPriceCalculationService;
+@inject Services.IShoppingListApiService apiService;
 @inject IWebAssemblyHostEnvironment env;
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common;
-@using ProjectHermes.ShoppingList.Frontend.Models;
+@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
+@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
-@using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index
 
@@ -56,14 +56,10 @@
                 </div>
             </div>
         }
-        <div class="d-flex justify-content-end mt-2">
-            <Button Type="@ButtonType.Primary"
-                    OnClick="@OnFinishListButtonClicked"
-                    Class="mr-2"
-                    Disabled="@(!state.ShoppingList?.AnyItemInBasket ?? true)">
-                Finish List
-            </Button>
-        </div>
+        <Summary 
+            State="@state"
+            FragmentCreator="@errorHandler"
+            OnFinishList="async () => await ReloadShoppingListAsync()"></Summary>
         <ErrorStack ErrorHandler="@errorHandler"></ErrorStack>
     </div>
 }
@@ -76,14 +72,15 @@
     {
         await base.OnInitializedAsync();
 
-        await itemPriceCalculationService.InitializeAsync();
+        var quantityTypes = await apiService.GetAllQuantityTypesAsync();
+        itemPriceCalculationService.Initialize(quantityTypes);
 
         errorHandler.StateChanged += StateHasChanged;
         errorHandler.QueueProcessed += async () => await ReloadShoppingListAsync();
         state.StateChanged += StateHasChanged;
-        state.ReloadRequestedAsync += async (storeId) => await LoadShoppingListAsync(storeId);
+        state.ReloadRequestedAsync += async storeId => await LoadShoppingListAsync(storeId);
 
-        communicationService.InitializeCommandQueue(errorHandler);
+        apiService.InitializeCommandQueue(errorHandler);
 
         StateHasChanged();
     }
@@ -109,13 +106,9 @@
 
     private async Task LoadShoppingListAsync(Guid storeId)
     {
-        var shoppingList = await communicationService.LoadActiveShoppingListAsync(storeId,
-            async () => await LoadShoppingListAsync(storeId), errorHandler);
-        if (shoppingList == null)
-            return;
-
-        state.ChangeList(shoppingList);
+        await apiService.LoadActiveShoppingListAsync(storeId, errorHandler, list => state.ChangeList(list));
     }
+
     #endregion
 
     private IEnumerable<ShoppingListSection> GetSections()
@@ -129,16 +122,6 @@
     {
         state.ToggleItemEditMode();
     }
-
-    private async Task OnFinishListButtonClicked()
-    {
-        var request = new FinishListRequest(Guid.NewGuid(), state.ShoppingList.Id);
-        bool result = await communicationService.FinishListAsync(request, async () => await OnFinishListButtonClicked(), errorHandler);
-        if (!result)
-            return;
-
-        await ReloadShoppingListAsync();
-    }
     #endregion
 
     private string GetTotalListPrice()
@@ -149,8 +132,7 @@
 
     private string GetInBasketPrice()
     {
-        var price = state.ShoppingList.GetInBasketPrice(itemPriceCalculationService);
-        return $"{price:0.00}";
+        return state.ShoppingList.GetFormattedInBasketPrice(itemPriceCalculationService);
     }
 
     private async Task ReloadAfterProcessingErrorAsync()

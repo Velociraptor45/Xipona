@@ -1,6 +1,6 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
@@ -10,7 +10,7 @@ public class ShoppingList : IShoppingList
 {
     private readonly Dictionary<SectionId, IShoppingListSection> _sections;
 
-    public ShoppingList(ShoppingListId id, StoreId storeId, DateTime? completionDate,
+    public ShoppingList(ShoppingListId id, StoreId storeId, DateTimeOffset? completionDate,
         IEnumerable<IShoppingListSection> sections)
     {
         Id = id;
@@ -21,16 +21,13 @@ public class ShoppingList : IShoppingList
 
     public ShoppingListId Id { get; }
     public StoreId StoreId { get; }
-    public DateTime? CompletionDate { get; private set; }
+    public DateTimeOffset? CompletionDate { get; private set; }
 
     public IReadOnlyCollection<IShoppingListSection> Sections => _sections.Values.ToList().AsReadOnly();
     public IReadOnlyCollection<IShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
 
     public void AddItem(IShoppingListItem item, SectionId sectionId)
     {
-        if (item == null)
-            throw new ArgumentNullException(nameof(item));
-
         if (Items.Any(it => it.Id == item.Id && it.TypeId == item.TypeId))
             throw new DomainException(new ItemAlreadyOnShoppingListReason(item.Id, Id));
 
@@ -89,16 +86,13 @@ public class ShoppingList : IShoppingList
 
     public void AddSection(IShoppingListSection section)
     {
-        if (section is null)
-            throw new ArgumentNullException(nameof(section));
-
         if (_sections.ContainsKey(section.Id))
             throw new DomainException(new SectionAlreadyInShoppingListReason(Id, section.Id));
 
         _sections.Add(section.Id, section);
     }
 
-    public IShoppingList Finish(DateTime completionDate)
+    public IShoppingList Finish(DateTimeOffset completionDate)
     {
         if (CompletionDate != null)
             throw new DomainException(new ShoppingListAlreadyFinishedReason(Id));

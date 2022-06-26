@@ -1,10 +1,11 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
@@ -30,9 +31,6 @@ public class StoreItemReadModelConversionService : IStoreItemReadModelConversion
 
     public async Task<StoreItemReadModel> ConvertAsync(IStoreItem item, CancellationToken cancellationToken)
     {
-        if (item is null)
-            throw new ArgumentNullException(nameof(item));
-
         IItemCategory? itemCategory = null;
         IManufacturer? manufacturer = null;
 

@@ -1,7 +1,13 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Index.Search;
-using ProjectHermes.ShoppingList.Frontend.Models.Items;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
+﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ItemCategories;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Manufacturers;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores;
+using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,9 +24,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         Task CreateItemAsync(CreateItemRequest request);
 
-        Task CreateItemCategoryAsync(string name);
+        Task<ItemCategory> CreateItemCategoryAsync(string name);
 
-        Task CreateManufacturerAsync(string name);
+        Task<Manufacturer> CreateManufacturerAsync(string name);
 
         Task CreateTemporaryItem(CreateTemporaryItemRequest request);
 
@@ -40,7 +46,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync();
 
-        Task<StoreItem> GetItemByIdAsync(Guid itemId);
+        Task<Item> GetItemByIdAsync(Guid itemId);
 
         Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput);
 
@@ -72,5 +78,21 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request);
 
         Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request);
+
+        Task<IEnumerable<ManufacturerSearchResult>> GetManufacturerSearchResultsAsync(string searchInput);
+
+        Task<Manufacturer> GetManufacturerByIdAsync(Guid id);
+
+        Task DeleteManufacturerAsync(Guid id);
+
+        Task ModifyManufacturerAsync(ModifyManufacturerRequest request);
+
+        Task<ItemCategory> GetItemCategoryByIdAsync(Guid id);
+
+        Task<IEnumerable<ItemCategorySearchResult>> GetItemCategoriesSearchResultsAsync(string searchInput);
+
+        Task DeleteItemCategoryAsync(Guid id);
+
+        Task ModifyItemCategoryAsync(ModifyItemCategoryRequest request);
     }
 }

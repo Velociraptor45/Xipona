@@ -1,0 +1,101 @@
+﻿@page "/manufacturers/{ManufacturerId:guid}"
+
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services
+
+@inject NavigationManager _navigationManager;
+@inject ManufacturersState _state;
+@inject IManufacturerApiService _apiService
+
+@namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers
+
+<div>
+    <div class="d-flex">
+        <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+            <Icon Type="arrow-left"></Icon>
+        </Button>
+        @if (_state.EditedManufacturer is not null)
+        {
+            <div class="mx-3">
+                <Input @bind-Value="@_state.EditedManufacturer.Name" />
+            </div>
+            @if (_state.EditedManufacturer.Id != Guid.Empty)
+            {
+                <Button Danger="true"
+                        Class="ml-auto"
+                        OnClick="@OnDeleteButtonClickedAsync">
+                    Delete
+                </Button>
+            }
+        }
+    </div>
+    @if (_state.EditedManufacturer is not null)
+    {
+        <div class="d-flex justify-content-end mt-2">
+            
+            @if (_state.EditedManufacturer.Id == Guid.Empty)
+            {
+                <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
+            }
+            else
+            {
+                <Button @onclick="@OnModifyButtonClickedAsync">Save</Button>
+            }
+        </div>
+        }
+</div>
+
+@code {
+    [Parameter] public Guid ManufacturerId { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (ManufacturerId == Guid.Empty)
+        {
+            _state.SetNewEditedManufacturer();
+            return;
+        }
+
+        var result = await _apiService.GetAsync(ManufacturerId);
+        if (result is null)
+            return;
+
+        _state.SetEditedManufacturer(result);
+    }
+
+    private void OnBackButtonClicked()
+    {
+        _navigationManager.NavigateTo("manufacturers");
+    }
+
+    private async Task OnCreateButtonClickedAsync()
+    {
+        var newManufacturer = await _apiService.CreateAsync(_state.EditedManufacturer);
+        if (newManufacturer is null)
+            return;
+        _navigationManager.NavigateTo($"manufacturers/{newManufacturer.Id}");
+    }
+
+    private async Task OnModifyButtonClickedAsync()
+    {
+        var successful = await _apiService.ModifyAsync(_state.EditedManufacturer);
+        if (successful)
+        {
+            _state.UpdateManufacturerSearchResultName(_state.EditedManufacturer.Id, _state.EditedManufacturer.Name);
+            _navigationManager.NavigateTo("manufacturers");
+        }
+    }
+
+    private async Task OnDeleteButtonClickedAsync()
+    {
+        var successful = await _apiService.DeleteAsync(_state.EditedManufacturer.Id);
+        if (successful)
+        {
+            _state.RemoveFromSearchResultsIfExists(_state.EditedManufacturer.Id);
+            _navigationManager.NavigateTo("manufacturers");
+        }
+    }
+}

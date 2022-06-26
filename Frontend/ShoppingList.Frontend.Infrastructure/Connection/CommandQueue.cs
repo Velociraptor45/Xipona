@@ -1,6 +1,8 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
+﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Error;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
 using RestEase;
 using System;
 using System.Collections.Generic;
@@ -13,34 +15,34 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 {
     public class CommandQueue : ICommandQueue
     {
-        private const int ConnectionRetryIntervalInMilliseconds = 4000;
+        private const int _connectionRetryIntervalInMilliseconds = 4000;
 
-        private readonly Timer timer;
-        private readonly IApiClient commandClient;
+        private readonly Timer _timer;
+        private readonly IApiClient _commandClient;
 
-        private bool connectionAlive = true;
-        private readonly List<IApiRequest> queue = new();
+        private bool _connectionAlive = true;
+        private readonly List<IApiRequest> _queue = new();
 
-        private ICommandQueueErrorHandler errorHandler;
+        private ICommandQueueErrorHandler _errorHandler;
 
         public CommandQueue(IApiClient commandClient)
         {
-            timer = new Timer(ConnectionRetryIntervalInMilliseconds);
-            this.commandClient = commandClient;
+            _timer = new Timer(_connectionRetryIntervalInMilliseconds);
+            _commandClient = commandClient;
         }
 
         public void Initialize(ICommandQueueErrorHandler errorHandler)
         {
-            this.errorHandler = errorHandler;
+            _errorHandler = errorHandler;
 
             try
             {
-                timer.Elapsed += async (s, e) =>
+                _timer.Elapsed += async (_, _) =>
                 {
-                    if (!connectionAlive)
+                    if (!_connectionAlive)
                         await RetryConnectionAsync();
                 };
-                timer.Start();
+                _timer.Start();
             }
             catch (Exception e)
             {
@@ -50,12 +52,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task Enqueue(IApiRequest request)
         {
-            lock (queue)
+            lock (_queue)
             {
-                queue.Add(request);
+                _queue.Add(request);
             }
 
-            if (connectionAlive && queue.Count == 1)
+            if (_connectionAlive && _queue.Count == 1)
             {
                 try
                 {
@@ -68,7 +70,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 catch (ApiProcessingException e)
                 {
                     OnApiProcessingError();
-                    errorHandler.Log(e.InnerException.ToString());
+                    _errorHandler.Log(e.InnerException.ToString());
                 }
             }
         }
@@ -78,7 +80,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             Console.WriteLine("Attempt connection retry.");
             try
             {
-                await commandClient.IsAliveAsync();
+                await _commandClient.IsAliveAsync();
             }
             catch (Exception)
             {
@@ -100,12 +102,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             catch (ApiProcessingException e)
             {
                 OnApiProcessingError();
-                errorHandler.Log(e.InnerException.ToString());
+                _errorHandler.Log(e.InnerException.ToString());
                 return;
             }
-            connectionAlive = true;
+            _connectionAlive = true;
 
-            await errorHandler.OnQueueProcessedAsync();
+            await _errorHandler.OnQueueProcessedAsync();
         }
 
         private async Task ProcessQueue()
@@ -113,13 +115,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             while (true)
             {
                 IApiRequest request;
-                lock (queue)
+                lock (_queue)
                 {
-                    if (!queue.Any())
+                    if (!_queue.Any())
                     {
                         break;
                     }
-                    request = queue.First();
+                    request = _queue.First();
                 }
 
                 try
@@ -130,23 +132,24 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 {
                     Console.WriteLine($"Encountered {e.GetType()} during request.");
 
-                    if (e.StatusCode == HttpStatusCode.BadRequest
-                        || e.StatusCode == HttpStatusCode.InternalServerError)
+                    if (e.StatusCode is HttpStatusCode.BadRequest
+                        or HttpStatusCode.InternalServerError
+                        or HttpStatusCode.UnprocessableEntity)
                     {
-                        throw new ApiProcessingException("An error occured while processing the request. See inner exception for more details.", e);
+                        throw new ApiProcessingException("An error occurred while processing the request. See inner exception for more details.", e);
                     }
 
-                    throw new ApiConnectionException("An api error occured while processing the request. See inner exception for more details.", e);
+                    throw new ApiConnectionException("An api error occurred while processing the request. See inner exception for more details.", e);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine($"Encountered {e.GetType()} during request.");
-                    throw new ApiConnectionException("An unknown error occured. See inner exception for more details.", e);
+                    throw new ApiConnectionException("An unknown error occurred. See inner exception for more details.", e);
                 }
 
-                lock (queue)
+                lock (_queue)
                 {
-                    queue.RemoveAt(0);
+                    _queue.RemoveAt(0);
                 }
             }
         }
@@ -156,27 +159,27 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             switch (request.GetType().Name)
             {
                 case nameof(PutItemInBasketRequest):
-                    await commandClient.PutItemInBasketAsync((PutItemInBasketRequest)request);
+                    await _commandClient.PutItemInBasketAsync((PutItemInBasketRequest)request);
                     break;
                 case nameof(RemoveItemFromBasketRequest):
-                    await commandClient.RemoveItemFromBasketAsync((RemoveItemFromBasketRequest)request);
+                    await _commandClient.RemoveItemFromBasketAsync((RemoveItemFromBasketRequest)request);
                     break;
                 case nameof(RemoveItemFromShoppingListRequest):
-                    await commandClient.RemoveItemFromShoppingListAsync((RemoveItemFromShoppingListRequest)request);
+                    await _commandClient.RemoveItemFromShoppingListAsync((RemoveItemFromShoppingListRequest)request);
                     break;
                 case nameof(FinishListRequest):
-                    await commandClient.FinishListAsync((FinishListRequest)request);
+                    await _commandClient.FinishListAsync((FinishListRequest)request);
                     break;
                 case nameof(ChangeItemQuantityOnShoppingListRequest):
-                    await commandClient.ChangeItemQuantityOnShoppingListAsync(
+                    await _commandClient.ChangeItemQuantityOnShoppingListAsync(
                         (ChangeItemQuantityOnShoppingListRequest)request);
                     break;
                 case nameof(CreateTemporaryItemRequest):
-                    await commandClient.CreateTemporaryItem(
+                    await _commandClient.CreateTemporaryItem(
                         (CreateTemporaryItemRequest)request);
                     break;
                 case nameof(AddItemToShoppingListRequest):
-                    await commandClient.AddItemToShoppingListAsync(
+                    await _commandClient.AddItemToShoppingListAsync(
                         (AddItemToShoppingListRequest)request);
                     break;
             }
@@ -184,17 +187,17 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         private void OnApiProcessingError()
         {
-            lock (queue)
+            lock (_queue)
             {
-                queue.Clear();
+                _queue.Clear();
             }
-            errorHandler.OnApiProcessingError();
+            _errorHandler.OnApiProcessingError();
         }
 
         private void OnApiConnectionDied()
         {
-            connectionAlive = false;
-            errorHandler.OnConnectionFailed();
+            _connectionAlive = false;
+            _errorHandler.OnConnectionFailed();
         }
     }
 }

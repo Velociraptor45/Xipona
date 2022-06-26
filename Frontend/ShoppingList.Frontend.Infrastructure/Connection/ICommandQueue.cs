@@ -1,5 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared.Requests;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
+﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Error;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection

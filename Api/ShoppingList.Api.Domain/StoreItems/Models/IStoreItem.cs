@@ -42,4 +42,6 @@ public interface IStoreItem
     IReadOnlyCollection<IItemType> GetTypesFor(StoreId storeId);
 
     bool TryGetTypeWithPredecessor(ItemTypeId predecessorTypeId, out IItemType? predecessor);
+
+    void RemoveManufacturer();
 }

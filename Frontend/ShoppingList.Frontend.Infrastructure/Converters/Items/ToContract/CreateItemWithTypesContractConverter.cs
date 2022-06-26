@@ -1,23 +1,23 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Items;
+using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract
 {
     public class CreateItemWithTypesContractConverter :
-        IToContractConverter<StoreItem, CreateItemWithTypesContract>
+        IToContractConverter<Item, CreateItemWithTypesContract>
     {
-        private readonly IToContractConverter<StoreItemAvailability, ItemAvailabilityContract> availabilityConverter;
+        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> _availabilityConverter;
 
         public CreateItemWithTypesContractConverter(
-            IToContractConverter<StoreItemAvailability, ItemAvailabilityContract> availabilityConverter)
+            IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter)
         {
-            this.availabilityConverter = availabilityConverter;
+            _availabilityConverter = availabilityConverter;
         }
 
-        public CreateItemWithTypesContract ToContract(StoreItem source)
+        public CreateItemWithTypesContract ToContract(Item source)
         {
             return new CreateItemWithTypesContract()
             {
@@ -37,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
             return new CreateItemTypeContract()
             {
                 Name = itemType.Name,
-                Availabilities = itemType.Availabilities.Select(availabilityConverter.ToContract)
+                Availabilities = itemType.Availabilities.Select(_availabilityConverter.ToContract)
             };
         }
     }

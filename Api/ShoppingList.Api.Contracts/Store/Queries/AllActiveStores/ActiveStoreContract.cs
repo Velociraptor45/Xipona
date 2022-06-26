@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 

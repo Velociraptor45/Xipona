@@ -1,10 +1,11 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions.Reason;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
 
@@ -27,8 +28,6 @@ public class ShoppingListModificationService : IShoppingListModificationService
     public async Task ChangeItemQuantityAsync(ShoppingListId shoppingListId,
         OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId, QuantityInBasket quantity)
     {
-        ArgumentNullException.ThrowIfNull(offlineTolerantItemId);
-
         var list = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
@@ -62,8 +61,6 @@ public class ShoppingListModificationService : IShoppingListModificationService
     public async Task RemoveItemAsync(ShoppingListId shoppingListId, OfflineTolerantItemId offlineTolerantItemId,
         ItemTypeId? itemTypeId)
     {
-        ArgumentNullException.ThrowIfNull(offlineTolerantItemId);
-
         var list = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
@@ -108,8 +105,6 @@ public class ShoppingListModificationService : IShoppingListModificationService
     public async Task RemoveItemFromBasketAsync(ShoppingListId shoppingListId,
         OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId)
     {
-        ArgumentNullException.ThrowIfNull(offlineTolerantItemId);
-
         var list = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
@@ -141,8 +136,6 @@ public class ShoppingListModificationService : IShoppingListModificationService
     public async Task PutItemInBasketAsync(ShoppingListId shoppingListId,
         OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId)
     {
-        ArgumentNullException.ThrowIfNull(offlineTolerantItemId);
-
         var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
         if (shoppingList == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
@@ -173,7 +166,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
         await _shoppingListRepository.StoreAsync(shoppingList, _cancellationToken);
     }
 
-    public async Task FinishAsync(ShoppingListId shoppingListId, DateTime completionDate)
+    public async Task FinishAsync(ShoppingListId shoppingListId, DateTimeOffset completionDate)
     {
         var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
         if (shoppingList == null)
