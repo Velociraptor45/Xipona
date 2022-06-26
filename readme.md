@@ -70,7 +70,7 @@ Configure the webserver address in shoppinglist.conf under *Frontend/Docker* and
 There are currently no Docker images for api and frontend provided (but are planned for the future), so you have to build them yourself. Before you do that, you have to configure some things.
 
 #### URIs
-Configure the correct api's UIR in in the frontend's appsettings (under *Frontend/ShoppingList.Frontend.WebApp/wwwroot/*) and, if you're using the key vault, the correct key vault URI in the api's appsettings (under *Api/ShoppingList.Api.WebApp/*).
+Configure the correct api's URI in in the frontend's appsettings (under *Frontend/ShoppingList.Frontend.WebApp/wwwroot/*) and, if you're using the key vault, the correct key vault URI in the api's appsettings (under *Api/ShoppingList.Api.WebApp/*).
 
 #### Blazor WASM setup
 Blazor WASM is not able to load appsettings based on the environment it runs in (like the api). Thus, you have to specify the environment before building the application. The place to do this is in the index.html under *Frontend/ShoppingList.Frontend.WebApp/wwwroot/*. Change the environment in `'blazor-environment': 'Local'` to `'Development'` or `'Production'`, depending on your needs.
@@ -122,6 +122,6 @@ After that, click on "Policies" in the toolbar, open the default policy, click "
 This will allow authenticated users to access the engine you just created. Now the Api will be able to connect the key vault.
 
 ### Database migration
-The API follows the **code first** approach, which means that you have to deploy the provided migrations to your database. Under *Api/Scripts/* are two shell scripts that deploy the migrations to the respective database. Before you execute them, open the files and check if the PH_SL_VAULT_USERNAME_FILE and PH_SL_VAULT_PASSWORD_FILE paths are set correctly.
+The API follows the **code first** approach, which means that you have to deploy the provided migrations to your database. Under *Api/Scripts/* are two shell scripts that deploy the migrations to the respective database. Before you execute them, open the files and check if the PH_SL_VAULT_USERNAME_FILE and PH_SL_VAULT_PASSWORD_FILE paths are set correctly (if you're using the key vault) or the PH_SL_DB_CONNECTION_STRING_FILE is set correctly (if you're not using the key vault).
 
 And now you're done. Happy shopping!
