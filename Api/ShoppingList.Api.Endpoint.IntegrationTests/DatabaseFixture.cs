@@ -7,7 +7,7 @@ using ProjectHermes.ShoppingList.Api.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 using System;
 
-namespace ShoppingList.Api.Endpoint.IntegrationsTests;
+namespace ShoppingList.Api.Endpoint.IntegrationTests;
 
 public abstract class DatabaseFixture
 {
