@@ -16,7 +16,7 @@ using ShoppingList.Api.TestTools.Exceptions;
 using System;
 using Xunit;
 
-namespace ShoppingList.Api.Endpoint.IntegrationsTests.v1.Controllers;
+namespace ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
 
 public class StoreControllerIntegrationTests
 {

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Items
+namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
 {
     public class ItemsState
     {

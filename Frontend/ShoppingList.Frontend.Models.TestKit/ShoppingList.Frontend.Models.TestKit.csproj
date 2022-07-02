@@ -15,4 +15,8 @@
       <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="5.0.0" />
+  </ItemGroup>
+
 </Project>
