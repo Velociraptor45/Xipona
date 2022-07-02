@@ -266,16 +266,17 @@ public class ItemControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(CurrentItem);
 
-                Contract = new TestBuilder<UpdateItemWithTypesContract>()
-                    .FillPropertyWith(nameof(UpdateItemWithTypesContract.QuantityType), CurrentItem.ItemQuantity.Type.ToInt())
-                    .Create();
-
-                Contract.QuantityTypeInPacket = CurrentItem.ItemQuantity.InPacket?.Type.ToInt();
-                Contract.ItemTypes = CurrentItem.ItemTypes
+                var itemTypes = CurrentItem.ItemTypes
                     .Select(t => new TestBuilder<UpdateItemTypeContract>()
-                        .FillPropertyWith(nameof(UpdateItemTypeContract.OldId), t.Id.Value)
+                        .AfterCreation(c => c.OldId = t.Id.Value)
                         .Create())
                     .ToList();
+
+                Contract = new TestBuilder<UpdateItemWithTypesContract>()
+                    .AfterCreation(c => c.QuantityType = CurrentItem.ItemQuantity.Type.ToInt())
+                    .AfterCreation(c => c.QuantityTypeInPacket = CurrentItem.ItemQuantity.InPacket?.Type.ToInt())
+                    .AfterCreation(c => c.ItemTypes = itemTypes)
+                    .Create();
 
                 _newItemCategory = ItemCategoryMother.NotDeleted()
                     .WithId(new ItemCategoryId(Contract.ItemCategoryId))
