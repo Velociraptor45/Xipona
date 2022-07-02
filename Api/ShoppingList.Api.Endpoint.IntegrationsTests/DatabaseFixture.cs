@@ -39,7 +39,7 @@ public abstract class DatabaseFixture
 
     public async Task ApplyMigrationsAsync(IServiceScope scope)
     {
-        var contexts = GetDbContexts(scope);
+        var contexts = GetDbContexts(scope).ToList();
 
         await contexts.First().Database.ExecuteSqlRawAsync(
             "DROP TABLE IF EXISTS ItemCategories;" +
