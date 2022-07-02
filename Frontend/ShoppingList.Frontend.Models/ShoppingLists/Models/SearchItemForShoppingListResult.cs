@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Globalization;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 {
     public class SearchItemForShoppingListResult
     {
+        private static readonly CultureInfo _culture = new("de-de");
+
         public SearchItemForShoppingListResult(Guid itemId, Guid? itemTypeId, string name, float price,
             int defaultQuantity, string priceLabel, string itemCategoryName, string manufacturerName,
             Guid defaultSectionId)
@@ -30,7 +33,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         public Guid DefaultSectionId { get; }
 
         public string DisplayValue => string.IsNullOrWhiteSpace(ManufacturerName)
-            ? $"{Name} | {Price}{PriceLabel}"
-            : $"{Name} | {ManufacturerName} | {Price}{PriceLabel}";
+            ? $"{Name} | {Price.ToString(_culture)}{PriceLabel}"
+            : $"{Name} | {ManufacturerName} | {Price.ToString(_culture)}{PriceLabel}";
     }
 }
