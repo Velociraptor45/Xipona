@@ -8,90 +8,90 @@ using ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 
 namespace ShoppingList.Api.Domain.TestKit.Items.Models;
 
-public class StoreItemBuilder : DomainTestBuilderBase<Item>
+public class ItemBuilder : DomainTestBuilderBase<Item>
 {
-    public StoreItemBuilder()
+    public ItemBuilder()
     {
         Customize(new ItemQuantityCustomization());
         Customize(new PriceCustomization());
         Customize(new QuantityCustomization());
     }
 
-    public StoreItemBuilder AsItem()
+    public ItemBuilder AsItem()
     {
         Customize<Item>(c => c.FromFactory(new MethodInvoker(new ItemConstructorQuery())));
         return this;
     }
 
-    public StoreItemBuilder WithId(ItemId id)
+    public ItemBuilder WithId(ItemId id)
     {
         FillConstructorWith("id", id);
         return this;
     }
 
-    public StoreItemBuilder WithIsDeleted(bool isDeleted)
+    public ItemBuilder WithIsDeleted(bool isDeleted)
     {
         FillConstructorWith("isDeleted", isDeleted);
         return this;
     }
 
-    public StoreItemBuilder WithIsTemporary(bool isTemporary)
+    public ItemBuilder WithIsTemporary(bool isTemporary)
     {
         FillConstructorWith("isTemporary", isTemporary);
         return this;
     }
 
-    public StoreItemBuilder WithItemQuantity(ItemQuantity itemQuantity)
+    public ItemBuilder WithItemQuantity(ItemQuantity itemQuantity)
     {
         FillConstructorWith(nameof(itemQuantity), itemQuantity);
         return this;
     }
 
-    public StoreItemBuilder WithItemCategoryId(ItemCategoryId? itemCategoryId)
+    public ItemBuilder WithItemCategoryId(ItemCategoryId? itemCategoryId)
     {
         FillConstructorWith("itemCategoryId", itemCategoryId);
         return this;
     }
 
-    public StoreItemBuilder WithoutItemCategoryId()
+    public ItemBuilder WithoutItemCategoryId()
     {
         return WithItemCategoryId(null);
     }
 
-    public StoreItemBuilder WithManufacturerId(ManufacturerId? manufacturerId)
+    public ItemBuilder WithManufacturerId(ManufacturerId? manufacturerId)
     {
         FillConstructorWith("manufacturerId", manufacturerId);
         return this;
     }
 
-    public StoreItemBuilder WithoutManufacturerId()
+    public ItemBuilder WithoutManufacturerId()
     {
         return WithManufacturerId(null);
     }
 
-    public StoreItemBuilder WithAvailabilities(IEnumerable<IItemAvailability> availabilities)
+    public ItemBuilder WithAvailabilities(IEnumerable<IItemAvailability> availabilities)
     {
         FillConstructorWith("availabilities", availabilities);
         return this;
     }
 
-    public StoreItemBuilder WithAvailability(IItemAvailability availability)
+    public ItemBuilder WithAvailability(IItemAvailability availability)
     {
         return WithAvailabilities(availability.ToMonoList());
     }
 
-    public StoreItemBuilder WithTemporaryId(TemporaryItemId? temporaryId)
+    public ItemBuilder WithTemporaryId(TemporaryItemId? temporaryId)
     {
         FillConstructorWith("temporaryId", temporaryId);
         return this;
     }
 
-    public StoreItemBuilder WithoutTemporaryId()
+    public ItemBuilder WithoutTemporaryId()
     {
         return WithTemporaryId(null);
     }
 
-    public StoreItemBuilder WithTypes(ItemTypes itemTypes)
+    public ItemBuilder WithTypes(ItemTypes itemTypes)
     {
         FillConstructorWith("itemTypes", itemTypes);
         return this;

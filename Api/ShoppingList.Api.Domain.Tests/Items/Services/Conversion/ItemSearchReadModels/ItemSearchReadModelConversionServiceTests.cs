@@ -167,7 +167,7 @@ public class ItemSearchReadModelConversionServiceTests
         {
             var availability = CreateAvailability();
 
-            StoreItems = ((IEnumerable<IItem>)StoreItemMother.Initial()
+            StoreItems = ((IEnumerable<IItem>)ItemMother.Initial()
                     .WithAvailability(availability)
                     .CreateMany(2))
                 .ToList();
@@ -177,7 +177,7 @@ public class ItemSearchReadModelConversionServiceTests
         {
             var availability = CreateAvailability();
 
-            StoreItems = ((IEnumerable<IItem>)StoreItemMother.Initial()
+            StoreItems = ((IEnumerable<IItem>)ItemMother.Initial()
                     .WithoutItemCategoryId()
                     .WithAvailability(availability)
                     .CreateMany(2))
@@ -188,7 +188,7 @@ public class ItemSearchReadModelConversionServiceTests
         {
             var availability = CreateAvailability();
 
-            StoreItems = ((IEnumerable<IItem>)StoreItemMother.InitialWithoutManufacturer()
+            StoreItems = ((IEnumerable<IItem>)ItemMother.InitialWithoutManufacturer()
                     .WithAvailability(availability)
                     .CreateMany(2))
                 .ToList();
@@ -198,7 +198,7 @@ public class ItemSearchReadModelConversionServiceTests
         {
             var availability = CreateAvailability();
 
-            StoreItems = ((IEnumerable<IItem>)StoreItemMother.InitialTemporary()
+            StoreItems = ((IEnumerable<IItem>)ItemMother.InitialTemporary()
                     .WithAvailability(availability)
                     .CreateMany(2))
                 .ToList();

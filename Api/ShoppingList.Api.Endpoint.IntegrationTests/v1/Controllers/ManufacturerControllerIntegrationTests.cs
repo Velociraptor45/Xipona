@@ -146,12 +146,12 @@ public class ManufacturerControllerIntegrationTests
                 var itemRepository = CreateItemRepository(SetupScope);
                 var items = new List<IItem>()
                 {
-                    new StoreItemBuilder()
+                    new ItemBuilder()
                         .WithManufacturerId(ManufacturerId)
                         .WithIsDeleted(false)
                         .AsItem()
                         .Create(),
-                    new StoreItemBuilder()
+                    new ItemBuilder()
                         .WithManufacturerId(ManufacturerId)
                         .WithIsDeleted(false)
                         .Create()

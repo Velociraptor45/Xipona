@@ -14,7 +14,7 @@ public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
 {
     protected override (IItem, Item) CreateTestObjects()
     {
-        var source = StoreItemMother.Initial().Create();
+        var source = ItemMother.Initial().Create();
         var destination = GetDestination(source);
 
         return (source, destination);

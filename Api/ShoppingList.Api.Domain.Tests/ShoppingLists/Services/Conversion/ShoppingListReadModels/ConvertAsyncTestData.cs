@@ -40,7 +40,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
 
         var availability = GetAvailabilityFrom(store);
 
-        IItem item = new StoreItemBuilder()
+        IItem item = new ItemBuilder()
             .WithoutItemCategoryId()
             .WithManufacturerId(manufacturer.Id)
             .WithId(list.Sections.First().Items.First().Id)
@@ -67,7 +67,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         IItemCategory itemCategory = ItemCategoryMother.NotDeleted().Create();
 
         var availability = GetAvailabilityFrom(store);
-        IItem item = new StoreItemBuilder()
+        IItem item = new ItemBuilder()
             .WithItemCategoryId(itemCategory.Id)
             .WithoutManufacturerId()
             .WithAvailabilities(availability.ToMonoList())
@@ -94,7 +94,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
 
         var availability = GetAvailabilityFrom(store);
-        IItem item = StoreItemMother.InitialTemporary()
+        IItem item = ItemMother.InitialTemporary()
             .WithAvailabilities(availability.ToMonoList())
             .WithId(list.Sections.First().Items.First().Id)
             .Create();
@@ -119,7 +119,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         IItemCategory itemCategory = ItemCategoryMother.NotDeleted().Create();
 
         var availability = GetAvailabilityFrom(store);
-        IItem item = new StoreItemBuilder()
+        IItem item = new ItemBuilder()
             .WithItemCategoryId(itemCategory.Id)
             .WithManufacturerId(manufacturer.Id)
             .WithAvailabilities(availability.ToMonoList())

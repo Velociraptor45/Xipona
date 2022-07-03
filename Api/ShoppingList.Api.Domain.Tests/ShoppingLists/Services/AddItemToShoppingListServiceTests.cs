@@ -379,12 +379,12 @@ public class AddItemToShoppingListServiceTests
 
             public void SetupStoreItem()
             {
-                StoreItem = StoreItemMother.Initial().Create();
+                StoreItem = ItemMother.Initial().Create();
             }
 
             public void SetupTemporaryStoreItem()
             {
-                StoreItem = StoreItemMother.InitialTemporary().Create();
+                StoreItem = ItemMother.InitialTemporary().Create();
             }
 
             #region Mock Setup
@@ -866,7 +866,7 @@ public class AddItemToShoppingListServiceTests
 
             public void SetupStoreItem()
             {
-                StoreItem = StoreItemMother.InitialWithTypes().Create();
+                StoreItem = ItemMother.InitialWithTypes().Create();
             }
 
             public void SetupItemType()

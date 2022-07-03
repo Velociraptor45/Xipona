@@ -185,7 +185,7 @@ public class ShoppingListModificationServiceTests
 
             public void SetupStoreItem()
             {
-                _storeItem = StoreItemMother.Initial().Create();
+                _storeItem = ItemMother.Initial().Create();
             }
 
             #region Fixture Setup
@@ -438,13 +438,13 @@ public class ShoppingListModificationServiceTests
 
             public void SetupTemporaryItemMock()
             {
-                var item = StoreItemMother.InitialTemporary().Create();
+                var item = ItemMother.InitialTemporary().Create();
                 _itemMock = new StoreItemMock(item, MockBehavior.Strict);
             }
 
             public void SetupItemMock()
             {
-                var item = StoreItemMother.Initial().Create();
+                var item = ItemMother.Initial().Create();
                 _itemMock = new StoreItemMock(item, MockBehavior.Strict);
             }
 
@@ -742,7 +742,7 @@ public class ShoppingListModificationServiceTests
 
             public void SetupItem()
             {
-                _storeItem = StoreItemMother.Initial().Create();
+                _storeItem = ItemMother.Initial().Create();
             }
 
             public void SetupShoppingListMock()
@@ -1002,7 +1002,7 @@ public class ShoppingListModificationServiceTests
 
             public void SetupStoreItem()
             {
-                _storeItem = StoreItemMother.Initial().Create();
+                _storeItem = ItemMother.Initial().Create();
             }
 
             #region Fixture Setup

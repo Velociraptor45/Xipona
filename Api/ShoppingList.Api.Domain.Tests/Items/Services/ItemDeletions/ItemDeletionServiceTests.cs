@@ -87,7 +87,7 @@ public class ItemDeletionServiceTests
 
             public void SetupStoreItemMock()
             {
-                _storeItemMock = new StoreItemMock(StoreItemMother.Initial().Create(), MockBehavior.Strict);
+                _storeItemMock = new StoreItemMock(ItemMother.Initial().Create(), MockBehavior.Strict);
             }
 
             #region Mock Setup

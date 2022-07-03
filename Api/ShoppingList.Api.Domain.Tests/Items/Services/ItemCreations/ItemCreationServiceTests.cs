@@ -259,7 +259,7 @@ public class ItemCreationServiceTests
 
             public void SetupStoreItem()
             {
-                _storeItem = StoreItemMother.Initial().Create();
+                _storeItem = ItemMother.Initial().Create();
             }
 
             public void SetupStoreItemFactoryCreate()
@@ -463,7 +463,7 @@ public class ItemCreationServiceTests
 
             public void SetupStoreItem()
             {
-                _storeItem = StoreItemMother.Initial().Create();
+                _storeItem = ItemMother.Initial().Create();
             }
 
             public void SetupRandomAvailability()

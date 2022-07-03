@@ -393,13 +393,13 @@ public class ItemModificationServiceTests
 
         private void SetupFindingItem()
         {
-            _itemMock = new StoreItemMock(StoreItemMother.InitialWithTypes().Create(), MockBehavior.Strict);
+            _itemMock = new StoreItemMock(ItemMother.InitialWithTypes().Create(), MockBehavior.Strict);
             _itemRepositoryMock.SetupFindByAsync(_itemMock.Object.Id, _itemMock.Object);
         }
 
         public void SetupNotFindingItem()
         {
-            _itemMock = new StoreItemMock(StoreItemMother.InitialWithTypes().Create(), MockBehavior.Strict);
+            _itemMock = new StoreItemMock(ItemMother.InitialWithTypes().Create(), MockBehavior.Strict);
             _itemRepositoryMock.SetupFindByAsync(_itemMock.Object.Id, null);
         }
 

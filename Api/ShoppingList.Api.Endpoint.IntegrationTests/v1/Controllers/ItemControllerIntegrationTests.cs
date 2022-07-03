@@ -190,7 +190,7 @@ public class ItemControllerIntegrationTests
 
             public async Task SetupCurrentItemAsync()
             {
-                var builder = StoreItemMother.InitialWithTypes();
+                var builder = ItemMother.InitialWithTypes();
 
                 if (FirstLevelPredecessor is not null)
                 {
@@ -232,7 +232,7 @@ public class ItemControllerIntegrationTests
                         return type;
                     });
 
-                FirstLevelPredecessor = StoreItemMother.InitialWithTypes()
+                FirstLevelPredecessor = ItemMother.InitialWithTypes()
                     .WithIsDeleted(true)
                     .WithTypes(new ItemTypes(types, factory))
                     .Create();
@@ -249,7 +249,7 @@ public class ItemControllerIntegrationTests
 
             public async Task SetupSecondLevelPredecessorAsync()
             {
-                SecondLevelPredecessor = StoreItemMother.InitialWithTypes()
+                SecondLevelPredecessor = ItemMother.InitialWithTypes()
                     .WithIsDeleted(true)
                     .Create();
                 _secondLevelItemCategory = ItemCategoryMother.NotDeleted()

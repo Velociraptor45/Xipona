@@ -459,15 +459,15 @@ public class ItemSearchServiceTests
         {
             var types = GetItemTypes(true, 1);
 
-            _items = StoreItemMother.Initial().CreateMany(1).ToList<IItem>();
-            _items.Add(StoreItemMother.InitialWithTypes().WithTypes(types).Create());
+            _items = ItemMother.Initial().CreateMany(1).ToList<IItem>();
+            _items.Add(ItemMother.InitialWithTypes().WithTypes(types).Create());
         }
 
         public void SetupItemsWithTypes(bool availableAtStore, int typeCount = 1)
         {
             var types = GetItemTypes(availableAtStore, typeCount);
 
-            _items = StoreItemMother.InitialWithTypes().WithTypes(types).CreateMany(1).ToList<IItem>();
+            _items = ItemMother.InitialWithTypes().WithTypes(types).CreateMany(1).ToList<IItem>();
         }
 
         public void SetupItemsWithTypesFromTypeMapping(bool availableAtStore)
@@ -485,7 +485,7 @@ public class ItemSearchServiceTests
 
             var types = new ItemTypes(typesBuilder.CreateMany(1), _itemTypeFactoryMock.Object);
 
-            _items = StoreItemMother.InitialWithTypes().WithId(item.Id).WithTypes(types).CreateMany(1)
+            _items = ItemMother.InitialWithTypes().WithId(item.Id).WithTypes(types).CreateMany(1)
                 .ToList<IItem>();
         }
 
@@ -493,7 +493,7 @@ public class ItemSearchServiceTests
         {
             var types = GetItemTypes(availableAtStore, typeCount);
 
-            _itemsFromTypeMapping.Add(StoreItemMother.InitialWithTypes().WithTypes(types).Create());
+            _itemsFromTypeMapping.Add(ItemMother.InitialWithTypes().WithTypes(types).Create());
         }
 
         private ItemTypes GetItemTypes(bool availableAtStore, int count)
@@ -511,7 +511,7 @@ public class ItemSearchServiceTests
 
         public void SetupItemsWithoutTypes()
         {
-            _items = StoreItemMother.Initial().CreateMany(1).ToList<IItem>();
+            _items = ItemMother.Initial().CreateMany(1).ToList<IItem>();
         }
 
         public void SetupFindingItems()

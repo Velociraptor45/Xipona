@@ -14,7 +14,7 @@ public class StoreItemConverterTests : ToDomainConverterTestBase<Item, IItem>
 {
     protected override (Item, IItem) CreateTestObjects()
     {
-        var destination = StoreItemMother.Initial().Create();
+        var destination = ItemMother.Initial().Create();
         var source = GetSource(destination);
 
         return (source, destination);

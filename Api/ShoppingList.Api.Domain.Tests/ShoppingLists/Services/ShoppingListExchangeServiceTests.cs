@@ -320,7 +320,7 @@ public class ShoppingListExchangeServiceTests
         {
             public void SetupNewItem()
             {
-                NewItem = StoreItemMother.Initial().Create();
+                NewItem = ItemMother.Initial().Create();
             }
 
             protected override void SetupNewItemForStore(StoreId storeId)
@@ -328,7 +328,7 @@ public class ShoppingListExchangeServiceTests
                 var availability = StoreItemAvailabilityMother.Initial()
                     .WithStoreId(storeId)
                     .Create();
-                NewItem = StoreItemMother.Initial().WithAvailability(availability).Create();
+                NewItem = ItemMother.Initial().WithAvailability(availability).Create();
             }
 
             public override void SetupShoppingListMockWithItemInBasket()
@@ -795,7 +795,7 @@ public class ShoppingListExchangeServiceTests
                 var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1).ToList();
                 type.First().SetPredecessor(new ItemTypeBuilder().WithId(OldShoppingListItem.TypeId.Value).Create());
                 var itemTypes = new ItemTypes(type, _itemTypeFactoryMock.Object);
-                NewItem = new StoreItemBuilder().WithTypes(itemTypes).Create();
+                NewItem = new ItemBuilder().WithTypes(itemTypes).Create();
             }
 
             public void SetupItemMatchingShoppingListWithNewTypes()
@@ -806,7 +806,7 @@ public class ShoppingListExchangeServiceTests
                     .CreateMany(1);
                 var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1);
                 var itemTypes = new ItemTypes(type, _itemTypeFactoryMock.Object);
-                NewItem = new StoreItemBuilder().WithTypes(itemTypes).Create();
+                NewItem = new ItemBuilder().WithTypes(itemTypes).Create();
             }
 
             public void SetupShoppingListWithItemWithoutType()

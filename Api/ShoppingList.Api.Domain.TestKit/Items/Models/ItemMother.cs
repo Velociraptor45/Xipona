@@ -2,28 +2,28 @@
 
 namespace ShoppingList.Api.Domain.TestKit.Items.Models;
 
-public static class StoreItemMother
+public static class ItemMother
 {
-    public static StoreItemBuilder Initial()
+    public static ItemBuilder Initial()
     {
-        return new StoreItemBuilder()
+        return new ItemBuilder()
             .WithIsDeleted(false)
             .WithIsTemporary(false)
             .WithoutTemporaryId()
             .AsItem();
     }
 
-    public static StoreItemBuilder InitialWithTypes()
+    public static ItemBuilder InitialWithTypes()
     {
-        return new StoreItemBuilder()
+        return new ItemBuilder()
             .WithIsDeleted(false)
             .WithIsTemporary(false)
             .WithoutTemporaryId();
     }
 
-    public static StoreItemBuilder InitialTemporary()
+    public static ItemBuilder InitialTemporary()
     {
-        return new StoreItemBuilder()
+        return new ItemBuilder()
             .WithIsDeleted(false)
             .WithIsTemporary(true)
             .WithoutItemCategoryId()
@@ -32,9 +32,9 @@ public static class StoreItemMother
             .AsItem();
     }
 
-    public static StoreItemBuilder InitialWithoutManufacturer()
+    public static ItemBuilder InitialWithoutManufacturer()
     {
-        return new StoreItemBuilder()
+        return new ItemBuilder()
             .WithIsDeleted(false)
             .WithIsTemporary(false)
             .WithoutTemporaryId()
@@ -42,9 +42,9 @@ public static class StoreItemMother
             .AsItem();
     }
 
-    public static StoreItemBuilder Deleted()
+    public static ItemBuilder Deleted()
     {
-        return new StoreItemBuilder()
+        return new ItemBuilder()
             .WithIsDeleted(true)
             .AsItem();
     }

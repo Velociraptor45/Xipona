@@ -161,12 +161,12 @@ public class TemporaryItemServiceTests
 
             public void SetupStoreItemMock()
             {
-                StoreItemMock = new StoreItemMock(StoreItemMother.Initial().Create(), MockBehavior.Strict);
+                StoreItemMock = new StoreItemMock(ItemMother.Initial().Create(), MockBehavior.Strict);
             }
 
             public void SetupTemporaryStoreItemMock()
             {
-                StoreItemMock = new StoreItemMock(StoreItemMother.InitialTemporary().Create(), MockBehavior.Strict);
+                StoreItemMock = new StoreItemMock(ItemMother.InitialTemporary().Create(), MockBehavior.Strict);
             }
 
             public void SetupValidatingItemCategory()

@@ -332,7 +332,7 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupStoreItemMocks()
             {
-                _storeItemMocks = StoreItemMother.Initial()
+                _storeItemMocks = ItemMother.Initial()
                     .CreateMany(2)
                     .Select(i => new StoreItemMock(i, MockBehavior.Strict))
                     .ToList();

@@ -217,28 +217,28 @@ public class StoreItemReadModelConversionServiceTests
 
         public void SetupItem()
         {
-            StoreItem = StoreItemMother.Initial()
+            StoreItem = ItemMother.Initial()
                 .WithAvailability(StoreItemAvailabilityMother.Initial().Create())
                 .Create();
         }
 
         public void SetupItemWithoutItemCategory()
         {
-            StoreItem = StoreItemMother.Initial()
+            StoreItem = ItemMother.Initial()
                 .WithAvailability(StoreItemAvailabilityMother.Initial().Create())
                 .WithoutItemCategoryId().Create();
         }
 
         public void SetupItemWithoutManufacturer()
         {
-            StoreItem = StoreItemMother.InitialWithoutManufacturer()
+            StoreItem = ItemMother.InitialWithoutManufacturer()
                 .WithAvailability(StoreItemAvailabilityMother.Initial().Create())
                 .Create();
         }
 
         public void SetupItemWithNeitherItemCategoryNorManufacturer()
         {
-            StoreItem = StoreItemMother.InitialTemporary()
+            StoreItem = ItemMother.InitialTemporary()
                 .WithAvailability(StoreItemAvailabilityMother.Initial().Create())
                 .Create();
         }
