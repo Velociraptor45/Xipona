@@ -81,7 +81,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task CreateTemporaryItemAsync([Body] CreateTemporaryItemContract contract);
 
         [Get("items/{id}")]
-        Task<StoreItemContract> GetAsync([Path] Guid id);
+        Task<ItemContract> GetAsync([Path] Guid id);
 
         [Get("items/search/{storeId}")]
         Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync(

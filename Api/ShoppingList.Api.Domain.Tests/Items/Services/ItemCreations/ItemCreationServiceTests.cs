@@ -5,7 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ShoppingList.Api.Domain.TestKit.Items.Models;
 using ShoppingList.Api.Domain.TestKit.Items.Ports;
-using ShoppingList.Api.Domain.TestKit.Items.Services.Conversion.StoreItemReadModels;
+using ShoppingList.Api.Domain.TestKit.Items.Services.Conversion.ItemReadModels;
 using ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.TestTools.AutoFixture;
@@ -46,7 +46,7 @@ public class ItemCreationServiceTests
         }
 
         [Fact]
-        public async Task CreateAsync_WithManufacturerId_ShouldStoreItem()
+        public async Task CreateAsync_WithManufacturerId_ShouldItem()
         {
             // Arrange
             _fixture.SetupWithManufacturerId();
@@ -60,7 +60,7 @@ public class ItemCreationServiceTests
             // Assert
             using (new AssertionScope())
             {
-                _fixture.VerifyStoreingItem();
+                _fixture.VerifyStoringItem();
             }
         }
 
@@ -159,7 +159,7 @@ public class ItemCreationServiceTests
             // Assert
             using (new AssertionScope())
             {
-                _fixture.VerifyStoreingItem();
+                _fixture.VerifyStoringItem();
             }
         }
 
@@ -227,7 +227,7 @@ public class ItemCreationServiceTests
             private IItem? _storeItem;
             private ManufacturerId? _manufacturerId;
             private List<IItemAvailability>? _availabilities;
-            private StoreItemReadModel? _storeItemReadModel;
+            private ItemReadModel? _storeItemReadModel;
 
             public ItemCreation? ItemCreation { get; private set; }
 
@@ -266,7 +266,7 @@ public class ItemCreationServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(ItemCreation);
                 TestPropertyNotSetException.ThrowIfNull(_storeItem);
-                StoreItemFactoryMock.SetupCreate(ItemCreation, _storeItem);
+                ItemFactoryMock.SetupCreate(ItemCreation, _storeItem);
             }
 
             public void SetupValidatingItemCategory()
@@ -297,7 +297,7 @@ public class ItemCreationServiceTests
             public void SetupConvertingItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(_storeItem);
-                _storeItemReadModel = Fixture.Create<StoreItemReadModel>();
+                _storeItemReadModel = Fixture.Create<ItemReadModel>();
                 ConversionServiceMock.SetupConvertAsync(_storeItem, _storeItemReadModel);
             }
 
@@ -327,7 +327,7 @@ public class ItemCreationServiceTests
                 ValidatorMock.VerifyValidateAsync(ItemCreation.ItemCategoryId, Times.Once);
             }
 
-            public void VerifyStoreingItem()
+            public void VerifyStoringItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 ItemRepositoryMock.VerifyStoreAsyncOnce(_storeItem);
@@ -450,7 +450,7 @@ public class ItemCreationServiceTests
         {
             private IItem? _storeItem;
             private IItemAvailability? _availability;
-            private StoreItemReadModel? _storeItemReadModel;
+            private ItemReadModel? _storeItemReadModel;
             public TemporaryItemCreation? TemporaryItemCreation { get; private set; }
 
             public void SetupCommand()
@@ -478,7 +478,7 @@ public class ItemCreationServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_storeItem);
                 TestPropertyNotSetException.ThrowIfNull(TemporaryItemCreation);
-                StoreItemFactoryMock.SetupCreate(TemporaryItemCreation, _storeItem);
+                ItemFactoryMock.SetupCreate(TemporaryItemCreation, _storeItem);
             }
 
             public void SetupValidatingAvailabilities()
@@ -496,7 +496,7 @@ public class ItemCreationServiceTests
             public void SetupConvertingItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(_storeItem);
-                _storeItemReadModel = Fixture.Create<StoreItemReadModel>();
+                _storeItemReadModel = Fixture.Create<ItemReadModel>();
                 ConversionServiceMock.SetupConvertAsync(_storeItem, _storeItemReadModel);
             }
 
@@ -541,18 +541,18 @@ public class ItemCreationServiceTests
         protected Fixture Fixture;
         protected CommonFixture CommonFixture = new();
         protected ItemRepositoryMock ItemRepositoryMock;
-        protected StoreItemFactoryMock StoreItemFactoryMock;
+        protected ItemFactoryMock ItemFactoryMock;
         protected ValidatorMock ValidatorMock;
-        protected StoreItemReadModelConversionServiceMock ConversionServiceMock;
+        protected ItemReadModelConversionServiceMock ConversionServiceMock;
 
         protected LocalFixture()
         {
             Fixture = CommonFixture.GetNewFixture();
 
             ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
-            StoreItemFactoryMock = new StoreItemFactoryMock(MockBehavior.Strict);
+            ItemFactoryMock = new ItemFactoryMock(MockBehavior.Strict);
             ValidatorMock = new ValidatorMock(MockBehavior.Strict);
-            ConversionServiceMock = new StoreItemReadModelConversionServiceMock(MockBehavior.Strict);
+            ConversionServiceMock = new ItemReadModelConversionServiceMock(MockBehavior.Strict);
         }
 
         public ItemCreationService CreateSut()
@@ -560,7 +560,7 @@ public class ItemCreationServiceTests
             return new ItemCreationService(
                 ItemRepositoryMock.Object,
                 _ => ValidatorMock.Object,
-                StoreItemFactoryMock.Object,
+                ItemFactoryMock.Object,
                 ConversionServiceMock.Object,
                 default);
         }

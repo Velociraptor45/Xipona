@@ -5,7 +5,7 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.CreateItem;
 
-public class CreateItemCommandHandler : ICommandHandler<CreateItemCommand, StoreItemReadModel>
+public class CreateItemCommandHandler : ICommandHandler<CreateItemCommand, ItemReadModel>
 {
     private readonly Func<CancellationToken, IItemCreationService> _itemCreationServiceDelegate;
     private readonly ITransactionGenerator _transactionGenerator;
@@ -17,7 +17,7 @@ public class CreateItemCommandHandler : ICommandHandler<CreateItemCommand, Store
         _transactionGenerator = transactionGenerator;
     }
 
-    public async Task<StoreItemReadModel> HandleAsync(CreateItemCommand command, CancellationToken cancellationToken)
+    public async Task<ItemReadModel> HandleAsync(CreateItemCommand command, CancellationToken cancellationToken)
     {
         if (command == null)
             throw new ArgumentNullException(nameof(command));

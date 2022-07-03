@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.ItemById;
 
-public class ItemByIdQueryHandler : IQueryHandler<ItemByIdQuery, StoreItemReadModel>
+public class ItemByIdQueryHandler : IQueryHandler<ItemByIdQuery, ItemReadModel>
 {
     private readonly Func<CancellationToken, IItemQueryService> _itemQueryServiceDelegate;
 
@@ -12,7 +12,7 @@ public class ItemByIdQueryHandler : IQueryHandler<ItemByIdQuery, StoreItemReadMo
         _itemQueryServiceDelegate = itemQueryServiceDelegate;
     }
 
-    public async Task<StoreItemReadModel> HandleAsync(ItemByIdQuery query, CancellationToken cancellationToken)
+    public async Task<ItemReadModel> HandleAsync(ItemByIdQuery query, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);
 

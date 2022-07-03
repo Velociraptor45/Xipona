@@ -61,14 +61,14 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}")]
     public async Task<IActionResult> GetAsync([FromRoute] Guid id)
     {
         var query = new ItemByIdQuery(new ItemId(id));
-        StoreItemReadModel result;
+        ItemReadModel result;
         try
         {
             result = await _queryDispatcher.DispatchAsync(query, default);
@@ -82,7 +82,7 @@ public class ItemController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        var contract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(result);
+        var contract = _converters.ToContract<ItemReadModel, ItemContract>(result);
 
         return Ok(contract);
     }
@@ -198,7 +198,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("without-types")]
     public async Task<IActionResult> CreateItemAsync([FromBody] CreateItemContract createItemContract)
@@ -210,7 +210,7 @@ public class ItemController : ControllerBase
 
             var readModel = await _commandDispatcher.DispatchAsync(command, default);
 
-            var contract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
+            var contract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
 
             return CreatedAtAction(nameof(GetAsync), new { id = contract.Id }, contract);
         }
@@ -222,7 +222,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("with-types")]
     public async Task<IActionResult> CreateItemWithTypesAsync([FromBody] CreateItemWithTypesContract contract)
@@ -233,7 +233,7 @@ public class ItemController : ControllerBase
             var command = new CreateItemWithTypesCommand(model);
             var readModel = await _commandDispatcher.DispatchAsync(command, default);
 
-            var returnContract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
+            var returnContract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
 
             return CreatedAtAction(nameof(GetAsync), new { id = returnContract.Id }, returnContract);
         }
@@ -245,7 +245,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("temporary")]
     public async Task<IActionResult> CreateTemporaryItemAsync([FromBody] CreateTemporaryItemContract contract)
@@ -256,7 +256,7 @@ public class ItemController : ControllerBase
         {
             var readModel = await _commandDispatcher.DispatchAsync(command, default);
 
-            var returnContract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
+            var returnContract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
             return Ok(returnContract);
         }
         catch (DomainException e)

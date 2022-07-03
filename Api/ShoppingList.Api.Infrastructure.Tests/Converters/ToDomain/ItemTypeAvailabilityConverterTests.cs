@@ -12,7 +12,7 @@ internal class ItemTypeAvailabilityConverterTests : ToDomainConverterTestBase<It
 {
     protected override (ItemTypeAvailableAt, IItemAvailability) CreateTestObjects()
     {
-        var destination = StoreItemAvailabilityMother.Initial().Create();
+        var destination = ItemAvailabilityMother.Initial().Create();
         var source = GetSource(destination);
 
         return (source, destination);

@@ -72,9 +72,9 @@ public class TemporaryItemServiceTests
             // Arrange
             var sut = _fixture.CreateSut();
             _fixture.SetupTemporaryStoreItemMock();
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItemMock);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemMock);
 
-            List<IItemAvailability> availabilities = _fixture.StoreItemMock.Object.Availabilities.ToList();
+            List<IItemAvailability> availabilities = _fixture.ItemMock.Object.Availabilities.ToList();
             _fixture.SetupPermanentItem(availabilities);
             _fixture.SetupValidatingAvailabilities();
             _fixture.SetupValidatingItemCategory();
@@ -94,7 +94,7 @@ public class TemporaryItemServiceTests
                 _fixture.VerifyValidatingItemCategory();
                 _fixture.VerifyValidatingManufacturer();
                 _fixture.VerifyValidatingAvailabilities();
-                _fixture.StoreItemMock.VerifyMakePermanentOnce(_fixture.PermanentItem, availabilities);
+                _fixture.ItemMock.VerifyMakePermanentOnce(_fixture.PermanentItem, availabilities);
                 _fixture.VerifyStoringItem();
             }
         }
@@ -105,9 +105,9 @@ public class TemporaryItemServiceTests
             // Arrange
             var sut = _fixture.CreateSut();
             _fixture.SetupTemporaryStoreItemMock();
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItemMock);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemMock);
 
-            List<IItemAvailability> availabilities = _fixture.StoreItemMock.Object.Availabilities.ToList();
+            List<IItemAvailability> availabilities = _fixture.ItemMock.Object.Availabilities.ToList();
             _fixture.SetupCommandWithoutManufacturerId(availabilities);
             _fixture.SetupValidatingAvailabilities();
             _fixture.SetupValidatingItemCategory();
@@ -126,7 +126,7 @@ public class TemporaryItemServiceTests
                 _fixture.VerifyValidatingItemCategory();
                 _fixture.VerifyNotValidatingManufacturer();
                 _fixture.VerifyValidatingAvailabilities();
-                _fixture.StoreItemMock.VerifyMakePermanentOnce(_fixture.PermanentItem, availabilities);
+                _fixture.ItemMock.VerifyMakePermanentOnce(_fixture.PermanentItem, availabilities);
                 _fixture.VerifyStoringItem();
             }
         }
@@ -134,7 +134,7 @@ public class TemporaryItemServiceTests
         private sealed class MakePermanentAsyncFixture : LocalFixture
         {
             public PermanentItem? PermanentItem { get; private set; }
-            public StoreItemMock? StoreItemMock { get; private set; }
+            public ItemMock? ItemMock { get; private set; }
 
             public void SetupPermanentItem()
             {
@@ -161,12 +161,12 @@ public class TemporaryItemServiceTests
 
             public void SetupStoreItemMock()
             {
-                StoreItemMock = new StoreItemMock(ItemMother.Initial().Create(), MockBehavior.Strict);
+                ItemMock = new ItemMock(ItemMother.Initial().Create(), MockBehavior.Strict);
             }
 
             public void SetupTemporaryStoreItemMock()
             {
-                StoreItemMock = new StoreItemMock(ItemMother.InitialTemporary().Create(), MockBehavior.Strict);
+                ItemMock = new ItemMock(ItemMother.InitialTemporary().Create(), MockBehavior.Strict);
             }
 
             public void SetupValidatingItemCategory()
@@ -184,28 +184,28 @@ public class TemporaryItemServiceTests
 
             public void SetupValidatingAvailabilities()
             {
-                TestPropertyNotSetException.ThrowIfNull(StoreItemMock);
-                ValidatorMock.SetupValidateAsync(StoreItemMock.Object.Availabilities);
+                TestPropertyNotSetException.ThrowIfNull(ItemMock);
+                ValidatorMock.SetupValidateAsync(ItemMock.Object.Availabilities);
             }
 
             public void SetupMakingPermanent()
             {
                 TestPropertyNotSetException.ThrowIfNull(PermanentItem);
-                TestPropertyNotSetException.ThrowIfNull(StoreItemMock);
-                StoreItemMock.SetupMakePermanent(PermanentItem, PermanentItem.Availabilities);
+                TestPropertyNotSetException.ThrowIfNull(ItemMock);
+                ItemMock.SetupMakePermanent(PermanentItem, PermanentItem.Availabilities);
             }
 
             public void SetupStoringItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(StoreItemMock);
-                ItemRepositoryMock.SetupStoreAsync(StoreItemMock.Object, StoreItemMock.Object);
+                TestPropertyNotSetException.ThrowIfNull(ItemMock);
+                ItemRepositoryMock.SetupStoreAsync(ItemMock.Object, ItemMock.Object);
             }
 
             public void SetupFindingItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(PermanentItem);
-                TestPropertyNotSetException.ThrowIfNull(StoreItemMock);
-                ItemRepositoryMock.SetupFindByAsync(PermanentItem.Id, StoreItemMock.Object);
+                TestPropertyNotSetException.ThrowIfNull(ItemMock);
+                ItemRepositoryMock.SetupFindByAsync(PermanentItem.Id, ItemMock.Object);
             }
 
             public void SetupNotFindingItem()
@@ -236,14 +236,14 @@ public class TemporaryItemServiceTests
 
             public void VerifyValidatingAvailabilities()
             {
-                TestPropertyNotSetException.ThrowIfNull(StoreItemMock);
-                ValidatorMock.VerifyValidateAsync(StoreItemMock.Object.Availabilities, Times.Once);
+                TestPropertyNotSetException.ThrowIfNull(ItemMock);
+                ValidatorMock.VerifyValidateAsync(ItemMock.Object.Availabilities, Times.Once);
             }
 
             public void VerifyStoringItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(StoreItemMock);
-                ItemRepositoryMock.VerifyStoreAsync(StoreItemMock.Object, Times.Once);
+                TestPropertyNotSetException.ThrowIfNull(ItemMock);
+                ItemRepositoryMock.VerifyStoreAsync(ItemMock.Object, Times.Once);
             }
 
             #endregion Verify

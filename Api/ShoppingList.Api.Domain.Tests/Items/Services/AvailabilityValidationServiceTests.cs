@@ -125,8 +125,8 @@ public class AvailabilityValidationServiceTests
         public void SetupAvailabilitiesWithDuplicatedStoreIds()
         {
             Availabilities = new List<IItemAvailability>();
-            var availability = StoreItemAvailabilityMother.Initial().Create();
-            var availability2 = StoreItemAvailabilityMother.Initial().WithStoreId(availability.StoreId).Create();
+            var availability = ItemAvailabilityMother.Initial().Create();
+            var availability2 = ItemAvailabilityMother.Initial().WithStoreId(availability.StoreId).Create();
             Availabilities.Add(availability);
             Availabilities.Add(availability2);
         }
@@ -134,7 +134,7 @@ public class AvailabilityValidationServiceTests
         public void SetupAvailabilities()
         {
             Availabilities =
-                ((IEnumerable<IItemAvailability>)StoreItemAvailabilityMother.Initial().CreateMany(3))
+                ((IEnumerable<IItemAvailability>)ItemAvailabilityMother.Initial().CreateMany(3))
                 .ToList();
         }
 

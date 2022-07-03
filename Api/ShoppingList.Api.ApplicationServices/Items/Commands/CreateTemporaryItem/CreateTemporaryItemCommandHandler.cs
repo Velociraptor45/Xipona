@@ -5,7 +5,7 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.CreateTemporaryItem;
 
-public class CreateTemporaryItemCommandHandler : ICommandHandler<CreateTemporaryItemCommand, StoreItemReadModel>
+public class CreateTemporaryItemCommandHandler : ICommandHandler<CreateTemporaryItemCommand, ItemReadModel>
 {
     private readonly Func<CancellationToken, IItemCreationService> _itemCreationServiceDelegate;
     private readonly ITransactionGenerator _transactionGenerator;
@@ -18,7 +18,7 @@ public class CreateTemporaryItemCommandHandler : ICommandHandler<CreateTemporary
         _transactionGenerator = transactionGenerator;
     }
 
-    public async Task<StoreItemReadModel> HandleAsync(CreateTemporaryItemCommand command, CancellationToken cancellationToken)
+    public async Task<ItemReadModel> HandleAsync(CreateTemporaryItemCommand command, CancellationToken cancellationToken)
     {
         if (command is null)
         {

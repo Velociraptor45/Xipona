@@ -2,19 +2,19 @@
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion.StoreItemReadModels;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion.ItemReadModels;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 
 public class ItemQueryService : IItemQueryService
 {
     private readonly IItemRepository _itemRepository;
-    private readonly IStoreItemReadModelConversionService _storeItemReadModelConversionService;
+    private readonly IItemReadModelConversionService _storeItemReadModelConversionService;
     private readonly CancellationToken _cancellationToken;
 
     public ItemQueryService(
         IItemRepository itemRepository,
-        IStoreItemReadModelConversionService storeItemReadModelConversionService,
+        IItemReadModelConversionService storeItemReadModelConversionService,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
@@ -22,7 +22,7 @@ public class ItemQueryService : IItemQueryService
         _cancellationToken = cancellationToken;
     }
 
-    public async Task<StoreItemReadModel> GetAsync(ItemId itemId)
+    public async Task<ItemReadModel> GetAsync(ItemId itemId)
     {
         _cancellationToken.ThrowIfCancellationRequested();
 

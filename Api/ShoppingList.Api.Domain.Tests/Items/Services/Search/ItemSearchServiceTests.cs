@@ -479,7 +479,7 @@ public class ItemSearchServiceTests
 
             if (availableAtStore)
             {
-                var availability = StoreItemAvailabilityMother.ForStore(StoreId).CreateMany(1);
+                var availability = ItemAvailabilityMother.ForStore(StoreId).CreateMany(1);
                 typesBuilder.WithAvailabilities(availability);
             }
 
@@ -502,7 +502,7 @@ public class ItemSearchServiceTests
 
             if (availableAtStore)
             {
-                var availability = StoreItemAvailabilityMother.ForStore(StoreId).CreateMany(1);
+                var availability = ItemAvailabilityMother.ForStore(StoreId).CreateMany(1);
                 typesBuilder.WithAvailabilities(availability);
             }
 

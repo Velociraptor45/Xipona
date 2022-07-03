@@ -325,7 +325,7 @@ public class ShoppingListExchangeServiceTests
 
             protected override void SetupNewItemForStore(StoreId storeId)
             {
-                var availability = StoreItemAvailabilityMother.Initial()
+                var availability = ItemAvailabilityMother.Initial()
                     .WithStoreId(storeId)
                     .Create();
                 NewItem = ItemMother.Initial().WithAvailability(availability).Create();
@@ -789,7 +789,7 @@ public class ShoppingListExchangeServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
                 TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem.TypeId);
-                var availability = StoreItemAvailabilityMother.Initial()
+                var availability = ItemAvailabilityMother.Initial()
                     .WithStoreId(storeId)
                     .CreateMany(1);
                 var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1).ToList();
@@ -801,7 +801,7 @@ public class ShoppingListExchangeServiceTests
             public void SetupItemMatchingShoppingListWithNewTypes()
             {
                 TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
-                var availability = StoreItemAvailabilityMother.Initial()
+                var availability = ItemAvailabilityMother.Initial()
                     .WithStoreId(ShoppingListMock.Object.StoreId)
                     .CreateMany(1);
                 var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1);

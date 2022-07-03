@@ -43,7 +43,7 @@ public class ItemSearchReadModelConversionServiceTests
         _local.SetupFindingManufacturers();
 
         // Act
-        var result = await service.ConvertAsync(_local.StoreItems, _local.Store, default);
+        var result = await service.ConvertAsync(_local.Items, _local.Store, default);
 
         // Assert
         var expected = _local.CreateSimpleReadModels();
@@ -69,7 +69,7 @@ public class ItemSearchReadModelConversionServiceTests
         _local.SetupFindingManufacturers();
 
         // Act
-        var result = await service.ConvertAsync(_local.StoreItems, _local.Store, default);
+        var result = await service.ConvertAsync(_local.Items, _local.Store, default);
 
         // Assert
         var expected = _local.CreateSimpleReadModels();
@@ -95,7 +95,7 @@ public class ItemSearchReadModelConversionServiceTests
         _local.SetupFindingManufacturers();
 
         // Act
-        var result = await service.ConvertAsync(_local.StoreItems, _local.Store, default);
+        var result = await service.ConvertAsync(_local.Items, _local.Store, default);
 
         // Assert
         var expected = _local.CreateSimpleReadModels();
@@ -121,7 +121,7 @@ public class ItemSearchReadModelConversionServiceTests
         _local.SetupFindingManufacturers();
 
         // Act
-        var result = await service.ConvertAsync(_local.StoreItems, _local.Store, default);
+        var result = await service.ConvertAsync(_local.Items, _local.Store, default);
 
         // Assert
         var expected = _local.CreateSimpleReadModels();
@@ -139,7 +139,7 @@ public class ItemSearchReadModelConversionServiceTests
         public ItemCategoryRepositoryMock ItemCategoryRepositoryMock { get; }
 
         public ManufacturerRepositoryMock ManufacturerRepositoryMock { get; }
-        public List<IItem> StoreItems { get; private set; }
+        public List<IItem> Items { get; private set; }
         public IStore Store { get; private set; }
         public Dictionary<ItemCategoryId, IItemCategory> ItemCategories { get; } = new();
         public Dictionary<ManufacturerId, IManufacturer> Manufacturers { get; } = new();
@@ -167,7 +167,7 @@ public class ItemSearchReadModelConversionServiceTests
         {
             var availability = CreateAvailability();
 
-            StoreItems = ((IEnumerable<IItem>)ItemMother.Initial()
+            Items = ((IEnumerable<IItem>)ItemMother.Initial()
                     .WithAvailability(availability)
                     .CreateMany(2))
                 .ToList();
@@ -177,7 +177,7 @@ public class ItemSearchReadModelConversionServiceTests
         {
             var availability = CreateAvailability();
 
-            StoreItems = ((IEnumerable<IItem>)ItemMother.Initial()
+            Items = ((IEnumerable<IItem>)ItemMother.Initial()
                     .WithoutItemCategoryId()
                     .WithAvailability(availability)
                     .CreateMany(2))
@@ -188,7 +188,7 @@ public class ItemSearchReadModelConversionServiceTests
         {
             var availability = CreateAvailability();
 
-            StoreItems = ((IEnumerable<IItem>)ItemMother.InitialWithoutManufacturer()
+            Items = ((IEnumerable<IItem>)ItemMother.InitialWithoutManufacturer()
                     .WithAvailability(availability)
                     .CreateMany(2))
                 .ToList();
@@ -198,7 +198,7 @@ public class ItemSearchReadModelConversionServiceTests
         {
             var availability = CreateAvailability();
 
-            StoreItems = ((IEnumerable<IItem>)ItemMother.InitialTemporary()
+            Items = ((IEnumerable<IItem>)ItemMother.InitialTemporary()
                     .WithAvailability(availability)
                     .CreateMany(2))
                 .ToList();
@@ -206,7 +206,7 @@ public class ItemSearchReadModelConversionServiceTests
 
         private ItemAvailability CreateAvailability()
         {
-            return StoreItemAvailabilityMother.Initial()
+            return ItemAvailabilityMother.Initial()
                 .WithStoreId(Store.Id)
                 .WithDefaultSectionId(CommonFixture.ChooseRandom(Store.Sections).Id)
                 .Create();
@@ -214,7 +214,7 @@ public class ItemSearchReadModelConversionServiceTests
 
         public void SetupItemCategories()
         {
-            var itemCategoryIds = StoreItems
+            var itemCategoryIds = Items
                 .Where(i => i.ItemCategoryId != null)
                 .Select(i => i.ItemCategoryId!.Value);
 
@@ -227,7 +227,7 @@ public class ItemSearchReadModelConversionServiceTests
 
         public void SetupManufacturers()
         {
-            var manufacturerIds = StoreItems
+            var manufacturerIds = Items
                 .Where(i => i.ManufacturerId != null)
                 .Select(i => i.ManufacturerId!.Value);
 
@@ -240,7 +240,7 @@ public class ItemSearchReadModelConversionServiceTests
 
         public IEnumerable<SearchItemForShoppingResultReadModel> CreateSimpleReadModels()
         {
-            foreach (IItem item in StoreItems)
+            foreach (IItem item in Items)
             {
                 ManufacturerReadModel manufacturerReadModel = null;
                 ItemCategoryReadModel itemCategoryReadModel = null;

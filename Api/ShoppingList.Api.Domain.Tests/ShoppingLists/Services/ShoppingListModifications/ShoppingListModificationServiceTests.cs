@@ -408,7 +408,7 @@ public class ShoppingListModificationServiceTests
             public ShoppingListId ShoppingListId { get; private set; }
             public ItemTypeId? ItemTypeId { get; private set; }
             public OfflineTolerantItemId? OfflineTolerantItemId { get; private set; }
-            private StoreItemMock? _itemMock;
+            private ItemMock? _itemMock;
             private ShoppingListMock? _shoppingListMock;
 
             public void SetupActualItemId()
@@ -439,13 +439,13 @@ public class ShoppingListModificationServiceTests
             public void SetupTemporaryItemMock()
             {
                 var item = ItemMother.InitialTemporary().Create();
-                _itemMock = new StoreItemMock(item, MockBehavior.Strict);
+                _itemMock = new ItemMock(item, MockBehavior.Strict);
             }
 
             public void SetupItemMock()
             {
                 var item = ItemMother.Initial().Create();
-                _itemMock = new StoreItemMock(item, MockBehavior.Strict);
+                _itemMock = new ItemMock(item, MockBehavior.Strict);
             }
 
             public void SetupShoppingListMock()

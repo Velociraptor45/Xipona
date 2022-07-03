@@ -44,12 +44,12 @@ public class AddItemToShoppingListServiceTests
 
             _fixture.SetupNotFindingItem();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListMock);
 
             // Act
             Func<Task> function = async () => await service.AddItemToShoppingListAsync(
-                _fixture.ShoppingListMock.Object, _fixture.StoreItem.Id, _fixture.SectionId, _fixture.Quantity, default);
+                _fixture.ShoppingListMock.Object, _fixture.Item.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
             using (new AssertionScope())
@@ -79,12 +79,12 @@ public class AddItemToShoppingListServiceTests
 
             _fixture.SetupAddingItemToShoppingList();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListMock);
 
             // Act
             await service.AddItemToShoppingListAsync(
-                _fixture.ShoppingListMock.Object, _fixture.StoreItem.Id, _fixture.SectionId, _fixture.Quantity, default);
+                _fixture.ShoppingListMock.Object, _fixture.Item.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
             using (new AssertionScope())
@@ -111,13 +111,13 @@ public class AddItemToShoppingListServiceTests
 
             _fixture.SetupFindingNoItemWithTemporaryId();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItem);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItem.TemporaryId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item.TemporaryId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListMock);
 
             // Act
             Func<Task> function = async () => await service.AddItemToShoppingListAsync(_fixture.ShoppingListMock.Object,
-                _fixture.StoreItem.TemporaryId.Value, _fixture.SectionId, _fixture.Quantity, default);
+                _fixture.Item.TemporaryId.Value, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
             using (new AssertionScope())
@@ -146,13 +146,13 @@ public class AddItemToShoppingListServiceTests
             _fixture.SetupFindingStore();
             _fixture.SetupAddingItemToShoppingList();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItem);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItem.TemporaryId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item.TemporaryId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListMock);
 
             // Act
             await service.AddItemToShoppingListAsync(_fixture.ShoppingListMock.Object,
-                _fixture.StoreItem.TemporaryId.Value, _fixture.SectionId, _fixture.Quantity, default);
+                _fixture.Item.TemporaryId.Value, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
             using (new AssertionScope())
@@ -182,7 +182,7 @@ public class AddItemToShoppingListServiceTests
 
             // Act
             Func<Task> function = async () => await service.AddItemToShoppingListAsync(_fixture.ShoppingListMock.Object,
-                _fixture.StoreItem!, _fixture.SectionId, _fixture.Quantity, default);
+                _fixture.Item!, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
             using (new AssertionScope())
@@ -217,7 +217,7 @@ public class AddItemToShoppingListServiceTests
 
             // Act
             await service.AddItemToShoppingListAsync(
-                _fixture.ShoppingListMock.Object, _fixture.StoreItem!, _fixture.SectionId, _fixture.Quantity, default);
+                _fixture.ShoppingListMock.Object, _fixture.Item!, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
             using (new AssertionScope())
@@ -357,8 +357,8 @@ public class AddItemToShoppingListServiceTests
         {
             public void SetupShoppingListMockMatchingStoreItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(StoreItem);
-                Availability = CommonFixture.ChooseRandom(StoreItem.Availabilities);
+                TestPropertyNotSetException.ThrowIfNull(Item);
+                Availability = CommonFixture.ChooseRandom(Item.Availabilities);
 
                 var list = ShoppingListMother.Sections(3).WithStoreId(Availability.StoreId).Create();
                 ShoppingListMock = new ShoppingListMock(list, MockBehavior.Strict);
@@ -379,35 +379,35 @@ public class AddItemToShoppingListServiceTests
 
             public void SetupStoreItem()
             {
-                StoreItem = ItemMother.Initial().Create();
+                Item = ItemMother.Initial().Create();
             }
 
             public void SetupTemporaryStoreItem()
             {
-                StoreItem = ItemMother.InitialTemporary().Create();
+                Item = ItemMother.InitialTemporary().Create();
             }
 
             #region Mock Setup
 
             public void SetupCreatingShoppingListItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(StoreItem);
+                TestPropertyNotSetException.ThrowIfNull(Item);
                 TestPropertyNotSetException.ThrowIfNull(ShoppingListItem);
-                ShoppingListItemFactoryMock.SetupCreate(StoreItem.Id, null, false, Quantity, ShoppingListItem);
+                ShoppingListItemFactoryMock.SetupCreate(Item.Id, null, false, Quantity, ShoppingListItem);
             }
 
             public void SetupFindingNoItemWithTemporaryId()
             {
-                TestPropertyNotSetException.ThrowIfNull(StoreItem);
-                TestPropertyNotSetException.ThrowIfNull(StoreItem.TemporaryId);
-                ItemRepositoryMock.SetupFindByAsync(StoreItem.TemporaryId.Value, null);
+                TestPropertyNotSetException.ThrowIfNull(Item);
+                TestPropertyNotSetException.ThrowIfNull(Item.TemporaryId);
+                ItemRepositoryMock.SetupFindByAsync(Item.TemporaryId.Value, null);
             }
 
             public void SetupFindingItemWithTemporaryId()
             {
-                TestPropertyNotSetException.ThrowIfNull(StoreItem);
-                TestPropertyNotSetException.ThrowIfNull(StoreItem.TemporaryId);
-                ItemRepositoryMock.SetupFindByAsync(StoreItem.TemporaryId.Value, StoreItem);
+                TestPropertyNotSetException.ThrowIfNull(Item);
+                TestPropertyNotSetException.ThrowIfNull(Item.TemporaryId);
+                ItemRepositoryMock.SetupFindByAsync(Item.TemporaryId.Value, Item);
             }
 
             #endregion Mock Setup
@@ -438,7 +438,7 @@ public class AddItemToShoppingListServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
-            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem!,
+            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.Item!,
                 _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
@@ -456,7 +456,7 @@ public class AddItemToShoppingListServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
-            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem!,
+            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.Item!,
                 _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
@@ -474,7 +474,7 @@ public class AddItemToShoppingListServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
-            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem!,
+            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.Item!,
                 _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
@@ -496,7 +496,7 @@ public class AddItemToShoppingListServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
-            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem!,
+            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.Item!,
                 _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
@@ -514,7 +514,7 @@ public class AddItemToShoppingListServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
-            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem!,
+            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.Item!,
                 _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
@@ -532,7 +532,7 @@ public class AddItemToShoppingListServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
-            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem!,
+            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.Item!,
                 _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
@@ -554,7 +554,7 @@ public class AddItemToShoppingListServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
-            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem!,
+            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.Item!,
                 _fixture.ItemType.Id, null, _fixture.Quantity, default);
 
             // Assert
@@ -572,7 +572,7 @@ public class AddItemToShoppingListServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
-            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem!,
+            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.Item!,
                 _fixture.ItemType.Id, null, _fixture.Quantity, default);
 
             // Assert
@@ -590,7 +590,7 @@ public class AddItemToShoppingListServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
-            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.StoreItem!,
+            await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object, _fixture.Item!,
                 _fixture.ItemType.Id, null, _fixture.Quantity, default);
 
             // Assert
@@ -621,7 +621,7 @@ public class AddItemToShoppingListServiceTests
 
             // Act
             Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object,
-                _fixture.StoreItem!, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+                _fixture.Item!, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
             await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.SectionInStoreNotFound);
@@ -650,7 +650,7 @@ public class AddItemToShoppingListServiceTests
 
             // Act
             Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object,
-                _fixture.StoreItem!, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+                _fixture.Item!, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
             await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.StoreNotFound);
@@ -676,7 +676,7 @@ public class AddItemToShoppingListServiceTests
 
             // Act
             Func<Task> func = async () => await sut.AddItemWithTypeToShoppingList(_fixture.ShoppingListMock.Object,
-                _fixture.StoreItem!, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+                _fixture.Item!, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
             await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemTypeNotPartOfItem);
@@ -712,12 +712,12 @@ public class AddItemToShoppingListServiceTests
             _fixture.SetupStoringShoppingList();
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListMock);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
-            await sut.AddItemWithTypeToShoppingListAsync(_fixture.ShoppingListMock.Object.Id, _fixture.StoreItem.Id,
+            await sut.AddItemWithTypeToShoppingListAsync(_fixture.ShoppingListMock.Object.Id, _fixture.Item.Id,
                 _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
@@ -746,12 +746,12 @@ public class AddItemToShoppingListServiceTests
             _fixture.SetupStoringShoppingList();
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListMock);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
-            await sut.AddItemWithTypeToShoppingListAsync(_fixture.ShoppingListMock.Object.Id, _fixture.StoreItem.Id,
+            await sut.AddItemWithTypeToShoppingListAsync(_fixture.ShoppingListMock.Object.Id, _fixture.Item.Id,
                 _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
@@ -780,12 +780,12 @@ public class AddItemToShoppingListServiceTests
             _fixture.SetupStoringShoppingList();
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListMock);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
-            await sut.AddItemWithTypeToShoppingListAsync(_fixture.ShoppingListMock.Object.Id, _fixture.StoreItem.Id,
+            await sut.AddItemWithTypeToShoppingListAsync(_fixture.ShoppingListMock.Object.Id, _fixture.Item.Id,
                 _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
@@ -807,13 +807,13 @@ public class AddItemToShoppingListServiceTests
             _fixture.SetupFindingShoppingList();
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListMock);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
             Func<Task> func = async () => await sut.AddItemWithTypeToShoppingListAsync(_fixture.ShoppingListMock.Object.Id,
-                _fixture.StoreItem.Id, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+                _fixture.Item.Id, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
             await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemNotFound);
@@ -832,13 +832,13 @@ public class AddItemToShoppingListServiceTests
             _fixture.SetupNotFindingShoppingList();
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListMock);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemType);
 
             // Act
             Func<Task> func = async () => await sut.AddItemWithTypeToShoppingListAsync(_fixture.ShoppingListMock.Object.Id,
-                _fixture.StoreItem.Id, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
+                _fixture.Item.Id, _fixture.ItemType.Id, _fixture.SectionId, _fixture.Quantity, default);
 
             // Assert
             await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListNotFound);
@@ -866,13 +866,13 @@ public class AddItemToShoppingListServiceTests
 
             public void SetupStoreItem()
             {
-                StoreItem = ItemMother.InitialWithTypes().Create();
+                Item = ItemMother.InitialWithTypes().Create();
             }
 
             public void SetupItemType()
             {
-                TestPropertyNotSetException.ThrowIfNull(StoreItem);
-                ItemType = CommonFixture.ChooseRandom(StoreItem.ItemTypes);
+                TestPropertyNotSetException.ThrowIfNull(Item);
+                ItemType = CommonFixture.ChooseRandom(Item.ItemTypes);
             }
 
             public void SetupItemTypeNotPartOfItem()
@@ -884,10 +884,10 @@ public class AddItemToShoppingListServiceTests
 
             public void SetupCreatingShoppingListItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(StoreItem);
+                TestPropertyNotSetException.ThrowIfNull(Item);
                 TestPropertyNotSetException.ThrowIfNull(ItemType);
                 TestPropertyNotSetException.ThrowIfNull(ShoppingListItem);
-                ShoppingListItemFactoryMock.SetupCreate(StoreItem.Id, ItemType.Id, false, Quantity, ShoppingListItem);
+                ShoppingListItemFactoryMock.SetupCreate(Item.Id, ItemType.Id, false, Quantity, ShoppingListItem);
             }
 
             public void SetupFindingShoppingList()
@@ -987,7 +987,7 @@ public class AddItemToShoppingListServiceTests
         public ShoppingListMock? ShoppingListMock { get; protected set; }
         public SectionId? SectionId { get; private set; }
         public QuantityInBasket Quantity { get; private set; }
-        public IItem? StoreItem { get; protected set; }
+        public IItem? Item { get; protected set; }
         public IShoppingListItem? ShoppingListItem { get; protected set; }
 
         public AddItemToShoppingListService CreateSut()
@@ -1100,14 +1100,14 @@ public class AddItemToShoppingListServiceTests
 
         public void SetupFindingItem()
         {
-            TestPropertyNotSetException.ThrowIfNull(StoreItem);
-            ItemRepositoryMock.SetupFindByAsync(StoreItem.Id, StoreItem);
+            TestPropertyNotSetException.ThrowIfNull(Item);
+            ItemRepositoryMock.SetupFindByAsync(Item.Id, Item);
         }
 
         public void SetupNotFindingItem()
         {
-            TestPropertyNotSetException.ThrowIfNull(StoreItem);
-            ItemRepositoryMock.SetupFindByAsync(StoreItem.Id, null);
+            TestPropertyNotSetException.ThrowIfNull(Item);
+            ItemRepositoryMock.SetupFindByAsync(Item.Id, null);
         }
 
         #endregion Mock Setup

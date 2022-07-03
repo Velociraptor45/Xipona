@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion.StoreItemReadModels;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion.ItemReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
@@ -13,14 +13,14 @@ public class ItemCreationService : IItemCreationService
     private readonly IItemRepository _itemRepository;
     private readonly IValidator _validator;
     private readonly IItemFactory _storeItemFactory;
-    private readonly IStoreItemReadModelConversionService _conversionService;
+    private readonly IItemReadModelConversionService _conversionService;
     private readonly CancellationToken _cancellationToken;
 
     public ItemCreationService(
         IItemRepository itemRepository,
         Func<CancellationToken, IValidator> validatorDelegate,
         IItemFactory storeItemFactory,
-        IStoreItemReadModelConversionService conversionService,
+        IItemReadModelConversionService conversionService,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
@@ -30,7 +30,7 @@ public class ItemCreationService : IItemCreationService
         _cancellationToken = cancellationToken;
     }
 
-    public async Task<StoreItemReadModel> CreateAsync(ItemCreation creation)
+    public async Task<ItemReadModel> CreateAsync(ItemCreation creation)
     {
         var itemCategoryId = creation.ItemCategoryId;
         var manufacturerId = creation.ManufacturerId;
@@ -54,7 +54,7 @@ public class ItemCreationService : IItemCreationService
         return await _conversionService.ConvertAsync(storedItem, _cancellationToken);
     }
 
-    public async Task<StoreItemReadModel> CreateItemWithTypesAsync(IItem item)
+    public async Task<ItemReadModel> CreateItemWithTypesAsync(IItem item)
     {
         if (item is null)
             throw new ArgumentNullException(nameof(item));
@@ -64,7 +64,7 @@ public class ItemCreationService : IItemCreationService
         return await _conversionService.ConvertAsync(storedItem, _cancellationToken);
     }
 
-    public async Task<StoreItemReadModel> CreateTemporaryAsync(TemporaryItemCreation creation)
+    public async Task<ItemReadModel> CreateTemporaryAsync(TemporaryItemCreation creation)
     {
         var availability = creation.Availability;
         await _validator.ValidateAsync(availability.ToMonoList());

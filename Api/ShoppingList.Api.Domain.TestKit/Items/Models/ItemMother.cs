@@ -28,7 +28,7 @@ public static class ItemMother
             .WithIsTemporary(true)
             .WithoutItemCategoryId()
             .WithoutManufacturerId()
-            .WithAvailabilities(StoreItemAvailabilityMother.Initial().Create().ToMonoList())
+            .WithAvailabilities(ItemAvailabilityMother.Initial().Create().ToMonoList())
             .AsItem();
     }
 

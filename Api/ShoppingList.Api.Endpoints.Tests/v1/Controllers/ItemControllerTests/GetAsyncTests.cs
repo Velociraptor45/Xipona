@@ -12,7 +12,7 @@ using System.Reflection;
 namespace ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests;
 
 public class GetAsyncTests :
-    ControllerQueryTestsBase<ItemController, ItemByIdQuery, StoreItemReadModel, StoreItemContract,
+    ControllerQueryTestsBase<ItemController, ItemByIdQuery, ItemReadModel, ItemContract,
     GetAsyncTests.GetAsyncFixture>
 {
     public GetAsyncTests() : base(new GetAsyncFixture())

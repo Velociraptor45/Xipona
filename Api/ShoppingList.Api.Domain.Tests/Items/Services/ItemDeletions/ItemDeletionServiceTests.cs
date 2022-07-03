@@ -78,7 +78,7 @@ public class ItemDeletionServiceTests
         private sealed class DeleteAsyncFixture : LocalFixture
         {
             public ItemId ItemId { get; private set; }
-            private StoreItemMock _storeItemMock;
+            private ItemMock _storeItemMock;
 
             public void SetupItemId()
             {
@@ -87,7 +87,7 @@ public class ItemDeletionServiceTests
 
             public void SetupStoreItemMock()
             {
-                _storeItemMock = new StoreItemMock(ItemMother.Initial().Create(), MockBehavior.Strict);
+                _storeItemMock = new ItemMock(ItemMother.Initial().Create(), MockBehavior.Strict);
             }
 
             #region Mock Setup

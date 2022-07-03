@@ -169,7 +169,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
 
     private IItemAvailability GetAvailabilityFrom(IStore store)
     {
-        return new StoreItemAvailabilityBuilder()
+        return new ItemAvailabilityBuilder()
             .WithStoreId(store.Id)
             .WithDefaultSectionId(store.Sections.First().Id)
             .Create();

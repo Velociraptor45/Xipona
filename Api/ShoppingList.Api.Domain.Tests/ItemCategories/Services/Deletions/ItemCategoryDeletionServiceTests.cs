@@ -315,8 +315,8 @@ public class ItemCategoryDeletionServiceTests
         private sealed class DeleteAsyncFixture : LocalFixture
         {
             private ItemCategoryMock? _itemCategoryMock;
-            private List<StoreItemMock>? _storeItemMocks;
-            private readonly Dictionary<StoreItemMock, List<ShoppingListMock>> _shoppingListDict = new();
+            private List<ItemMock>? _storeItemMocks;
+            private readonly Dictionary<ItemMock, List<ShoppingListMock>> _shoppingListDict = new();
 
             public ItemCategoryId ItemCategoryId { get; private set; }
 
@@ -334,7 +334,7 @@ public class ItemCategoryDeletionServiceTests
             {
                 _storeItemMocks = ItemMother.Initial()
                     .CreateMany(2)
-                    .Select(i => new StoreItemMock(i, MockBehavior.Strict))
+                    .Select(i => new ItemMock(i, MockBehavior.Strict))
                     .ToList();
             }
 

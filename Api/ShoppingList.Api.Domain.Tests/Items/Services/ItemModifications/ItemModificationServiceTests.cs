@@ -357,7 +357,7 @@ public class ItemModificationServiceTests
         private Dictionary<ItemTypeId, List<ShoppingListMock>>? _shoppingListDict;
         private List<IItemType>? _notExistingItemTypes;
         private Tuple<ItemTypeId, StoreId>? _removedStoreByTypeId;
-        private StoreItemMock? _itemMock;
+        private ItemMock? _itemMock;
         private List<ItemTypeModification>? _modifiedItemTypes;
 
         public LocalFixture()
@@ -393,13 +393,13 @@ public class ItemModificationServiceTests
 
         private void SetupFindingItem()
         {
-            _itemMock = new StoreItemMock(ItemMother.InitialWithTypes().Create(), MockBehavior.Strict);
+            _itemMock = new ItemMock(ItemMother.InitialWithTypes().Create(), MockBehavior.Strict);
             _itemRepositoryMock.SetupFindByAsync(_itemMock.Object.Id, _itemMock.Object);
         }
 
         public void SetupNotFindingItem()
         {
-            _itemMock = new StoreItemMock(ItemMother.InitialWithTypes().Create(), MockBehavior.Strict);
+            _itemMock = new ItemMock(ItemMother.InitialWithTypes().Create(), MockBehavior.Strict);
             _itemRepositoryMock.SetupFindByAsync(_itemMock.Object.Id, null);
         }
 

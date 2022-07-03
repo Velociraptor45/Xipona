@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.CreateItem;
 
-public class CreateItemCommand : ICommand<StoreItemReadModel>
+public class CreateItemCommand : ICommand<ItemReadModel>
 {
     public CreateItemCommand(ItemCreation itemCreation)
     {
