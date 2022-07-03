@@ -40,7 +40,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
 
         var availability = GetAvailabilityFrom(store);
 
-        IStoreItem item = new StoreItemBuilder()
+        IItem item = new StoreItemBuilder()
             .WithoutItemCategoryId()
             .WithManufacturerId(manufacturer.Id)
             .WithId(list.Sections.First().Items.First().Id)
@@ -67,7 +67,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         IItemCategory itemCategory = ItemCategoryMother.NotDeleted().Create();
 
         var availability = GetAvailabilityFrom(store);
-        IStoreItem item = new StoreItemBuilder()
+        IItem item = new StoreItemBuilder()
             .WithItemCategoryId(itemCategory.Id)
             .WithoutManufacturerId()
             .WithAvailabilities(availability.ToMonoList())
@@ -94,7 +94,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
 
         var availability = GetAvailabilityFrom(store);
-        IStoreItem item = StoreItemMother.InitialTemporary()
+        IItem item = StoreItemMother.InitialTemporary()
             .WithAvailabilities(availability.ToMonoList())
             .WithId(list.Sections.First().Items.First().Id)
             .Create();
@@ -119,7 +119,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         IItemCategory itemCategory = ItemCategoryMother.NotDeleted().Create();
 
         var availability = GetAvailabilityFrom(store);
-        IStoreItem item = new StoreItemBuilder()
+        IItem item = new StoreItemBuilder()
             .WithItemCategoryId(itemCategory.Id)
             .WithManufacturerId(manufacturer.Id)
             .WithAvailabilities(availability.ToMonoList())
@@ -149,7 +149,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         {
             list,
             store,
-            Enumerable.Empty<IStoreItem>(),
+            Enumerable.Empty<IItem>(),
             Enumerable.Empty<IItemCategory>(),
             Enumerable.Empty<IManufacturer>(),
             listReadModel
@@ -167,7 +167,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             .Create();
     }
 
-    private IStoreItemAvailability GetAvailabilityFrom(IStore store)
+    private IItemAvailability GetAvailabilityFrom(IStore store)
     {
         return new StoreItemAvailabilityBuilder()
             .WithStoreId(store.Id)
@@ -175,7 +175,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             .Create();
     }
 
-    private static ShoppingListReadModel ToSimpleReadModel(IShoppingList list, IStore store, IStoreItem? item,
+    private static ShoppingListReadModel ToSimpleReadModel(IShoppingList list, IStore store, IItem? item,
         IItemCategory? itemCategory, IManufacturer? manufacturer)
     {
         var manufacturerReadModel = manufacturer == null

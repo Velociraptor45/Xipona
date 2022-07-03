@@ -8,19 +8,19 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.StoreItems;
 
-public class CreateItemWithTypesConverter : IToDomainConverter<CreateItemWithTypesContract, IStoreItem>
+public class CreateItemWithTypesConverter : IToDomainConverter<CreateItemWithTypesContract, IItem>
 {
-    private readonly IStoreItemFactory _itemFactory;
+    private readonly IItemFactory _itemFactory;
     private readonly IToDomainConverter<CreateItemTypeContract, IItemType> _itemTypeConverter;
 
-    public CreateItemWithTypesConverter(IStoreItemFactory itemFactory,
+    public CreateItemWithTypesConverter(IItemFactory itemFactory,
         IToDomainConverter<CreateItemTypeContract, IItemType> itemTypeConverter)
     {
         _itemFactory = itemFactory;
         _itemTypeConverter = itemTypeConverter;
     }
 
-    public IStoreItem ToDomain(CreateItemWithTypesContract source)
+    public IItem ToDomain(CreateItemWithTypesContract source)
     {
         if (source is null)
             throw new ArgumentNullException(nameof(source));

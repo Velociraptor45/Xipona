@@ -72,7 +72,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         await _shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
     }
 
-    public async Task AddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
+    public async Task AddItemWithTypeToShoppingList(IShoppingList shoppingList, IItem item,
         ItemTypeId itemTypeId, SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
         await AddItemToShoppingListAsync(shoppingList, item, itemTypeId, sectionId, quantity, cancellationToken);
@@ -83,14 +83,14 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     public async Task AddItemToShoppingListAsync(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
         QuantityInBasket quantity, CancellationToken cancellationToken)
     {
-        IStoreItem storeItem = await LoadItemAsync(itemId, cancellationToken);
+        IItem storeItem = await LoadItemAsync(itemId, cancellationToken);
         await AddItemToShoppingListAsync(shoppingList, storeItem, sectionId, quantity, cancellationToken);
     }
 
     public async Task AddItemToShoppingListAsync(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
         SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
-        IStoreItem storeItem = await LoadItemAsync(temporaryItemId, cancellationToken);
+        IItem storeItem = await LoadItemAsync(temporaryItemId, cancellationToken);
         await AddItemToShoppingListAsync(shoppingList, storeItem, sectionId, quantity, cancellationToken);
     }
 
@@ -104,18 +104,18 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         return shoppingList;
     }
 
-    private async Task<IStoreItem> LoadItemAsync(ItemId itemId, CancellationToken cancellationToken)
+    private async Task<IItem> LoadItemAsync(ItemId itemId, CancellationToken cancellationToken)
     {
-        IStoreItem? item = await _itemRepository.FindByAsync(itemId, cancellationToken);
+        IItem? item = await _itemRepository.FindByAsync(itemId, cancellationToken);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(itemId));
 
         return item;
     }
 
-    private async Task<IStoreItem> LoadItemAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
+    private async Task<IItem> LoadItemAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
     {
-        IStoreItem? item = await _itemRepository.FindByAsync(temporaryItemId, cancellationToken);
+        IItem? item = await _itemRepository.FindByAsync(temporaryItemId, cancellationToken);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(temporaryItemId));
 
@@ -127,8 +127,8 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         return _shoppingListItemFactory.Create(itemId, itemTypeId, false, quantity);
     }
 
-    private void ValidateItemIsAvailableAtStore(IStoreItem storeItem, StoreId storeId,
-        out IStoreItemAvailability availability)
+    private void ValidateItemIsAvailableAtStore(IItem storeItem, StoreId storeId,
+        out IItemAvailability availability)
     {
         var av = storeItem.Availabilities.FirstOrDefault(av => av.StoreId == storeId);
 
@@ -136,14 +136,14 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     }
 
     private void ValidateItemTypeIsAvailableAtStore(IItemType itemType, StoreId storeId,
-        out IStoreItemAvailability availability)
+        out IItemAvailability availability)
     {
         var av = itemType.Availabilities.FirstOrDefault(av => av.StoreId == storeId);
 
         availability = av ?? throw new DomainException(new ItemTypeAtStoreNotAvailableReason(itemType.Id, storeId));
     }
 
-    internal async Task AddItemToShoppingListAsync(IShoppingList shoppingList, IStoreItem item,
+    internal async Task AddItemToShoppingListAsync(IShoppingList shoppingList, IItem item,
         ItemTypeId itemTypeId, SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
         if (!item.TryGetType(itemTypeId, out var itemType))
@@ -159,7 +159,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         await AddItemToShoppingListAsync(shoppingList, shoppingListItem, sectionId.Value, cancellationToken);
     }
 
-    internal async Task AddItemToShoppingListAsync(IShoppingList shoppingList, IStoreItem item,
+    internal async Task AddItemToShoppingListAsync(IShoppingList shoppingList, IItem item,
         SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
         if (item.HasItemTypes)

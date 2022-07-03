@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
 
 public class TemporaryItemCreation
 {
-    public TemporaryItemCreation(Guid clientSideId, ItemName name, IStoreItemAvailability availability)
+    public TemporaryItemCreation(Guid clientSideId, ItemName name, IItemAvailability availability)
     {
         ClientSideId = clientSideId;
         Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -13,5 +13,5 @@ public class TemporaryItemCreation
 
     public Guid ClientSideId { get; }
     public ItemName Name { get; }
-    public IStoreItemAvailability Availability { get; }
+    public IItemAvailability Availability { get; }
 }

@@ -224,9 +224,9 @@ public class ItemCreationServiceTests
 
         private sealed class CreateAsyncFixture : LocalFixture
         {
-            private IStoreItem? _storeItem;
+            private IItem? _storeItem;
             private ManufacturerId? _manufacturerId;
-            private List<IStoreItemAvailability>? _availabilities;
+            private List<IItemAvailability>? _availabilities;
             private StoreItemReadModel? _storeItemReadModel;
 
             public ItemCreation? ItemCreation { get; private set; }
@@ -235,7 +235,7 @@ public class ItemCreationServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_availabilities);
                 Fixture.ConstructorArgumentFor<ItemCreation, ManufacturerId?>("manufacturerId", _manufacturerId);
-                Fixture.ConstructorArgumentFor<ItemCreation, IEnumerable<IStoreItemAvailability>>(
+                Fixture.ConstructorArgumentFor<ItemCreation, IEnumerable<IItemAvailability>>(
                     "availabilities", _availabilities);
 
                 ItemCreation = Fixture.Create<ItemCreation>();
@@ -448,15 +448,15 @@ public class ItemCreationServiceTests
 
         private sealed class CreateTemporaryAsyncFixture : LocalFixture
         {
-            private IStoreItem? _storeItem;
-            private IStoreItemAvailability? _availability;
+            private IItem? _storeItem;
+            private IItemAvailability? _availability;
             private StoreItemReadModel? _storeItemReadModel;
             public TemporaryItemCreation? TemporaryItemCreation { get; private set; }
 
             public void SetupCommand()
             {
                 TestPropertyNotSetException.ThrowIfNull(_availability);
-                Fixture.ConstructorArgumentFor<TemporaryItemCreation, IStoreItemAvailability>("availability",
+                Fixture.ConstructorArgumentFor<TemporaryItemCreation, IItemAvailability>("availability",
                     _availability);
                 TemporaryItemCreation = Fixture.Create<TemporaryItemCreation>();
             }

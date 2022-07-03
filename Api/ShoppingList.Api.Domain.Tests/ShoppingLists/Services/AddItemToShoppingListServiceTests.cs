@@ -972,7 +972,7 @@ public class AddItemToShoppingListServiceTests
 
         private IStore? _store;
         private IShoppingListSection? _shoppingListSection;
-        protected IStoreItemAvailability? Availability;
+        protected IItemAvailability? Availability;
 
         protected LocalFixture()
         {
@@ -987,7 +987,7 @@ public class AddItemToShoppingListServiceTests
         public ShoppingListMock? ShoppingListMock { get; protected set; }
         public SectionId? SectionId { get; private set; }
         public QuantityInBasket Quantity { get; private set; }
-        public IStoreItem? StoreItem { get; protected set; }
+        public IItem? StoreItem { get; protected set; }
         public IShoppingListItem? ShoppingListItem { get; protected set; }
 
         public AddItemToShoppingListService CreateSut()

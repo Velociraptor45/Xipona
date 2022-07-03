@@ -25,7 +25,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
         _manufacturerRepository = manufacturerRepository;
     }
 
-    public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(IEnumerable<IStoreItem> items,
+    public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(IEnumerable<IItem> items,
         IStore store, CancellationToken cancellationToken)
     {
         var itemsList = items.ToList();
@@ -41,7 +41,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                 IItemCategory? itemCategory =
                     item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId.Value];
 
-                IStoreItemAvailability storeAvailability = item.Availabilities
+                IItemAvailability storeAvailability = item.Availabilities
                     .Single(av => av.StoreId == store.Id);
 
                 var section = store.Sections.Single(s => s.Id == storeAvailability.DefaultSectionId);
@@ -85,7 +85,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
             var requiredItemTypes = item.ItemTypes.Where(t => itemTypeIdsSet.Contains(t.Id));
             return requiredItemTypes.Select(type =>
             {
-                IStoreItemAvailability storeAvailability = type.Availabilities
+                IItemAvailability storeAvailability = type.Availabilities
                     .Single(av => av.StoreId == store.Id);
 
                 var section = store.Sections.Single(s => s.Id == storeAvailability.DefaultSectionId);
@@ -107,7 +107,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
         });
     }
 
-    private async Task<Dictionary<ManufacturerId, IManufacturer>> GetManufacturers(IEnumerable<IStoreItem> items,
+    private async Task<Dictionary<ManufacturerId, IManufacturer>> GetManufacturers(IEnumerable<IItem> items,
         CancellationToken cancellationToken)
     {
         var manufacturerIds = items
@@ -118,7 +118,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
             .ToDictionary(m => m.Id);
     }
 
-    private async Task<Dictionary<ItemCategoryId, IItemCategory>> GetItemCategories(IEnumerable<IStoreItem> items,
+    private async Task<Dictionary<ItemCategoryId, IItemCategory>> GetItemCategories(IEnumerable<IItem> items,
         CancellationToken cancellationToken)
     {
         var itemCategoryIds = items

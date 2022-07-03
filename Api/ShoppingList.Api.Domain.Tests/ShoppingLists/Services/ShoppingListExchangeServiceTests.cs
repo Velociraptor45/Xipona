@@ -924,7 +924,7 @@ public class ShoppingListExchangeServiceTests
     public abstract class ExchangeItemAsyncFixture : LocalFixture
     {
         protected ShoppingListMock? ShoppingListMock;
-        public IStoreItem? NewItem { get; protected set; }
+        public IItem? NewItem { get; protected set; }
         public IShoppingListItem? OldShoppingListItem { get; protected set; }
 
         public void SetupNewItemMatchingShoppingList()

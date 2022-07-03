@@ -108,7 +108,7 @@ public class ItemSearchService : IItemSearchService
     }
 
     private IEnumerable<ItemWithMatchingItemTypeIds> GetMatchingItemsWithTypeIds(StoreId storeId,
-        IEnumerable<IStoreItem> searchResultItemsWithTypes, IEnumerable<(ItemId, ItemTypeId)> itemIdsOnShoppingList)
+        IEnumerable<IItem> searchResultItemsWithTypes, IEnumerable<(ItemId, ItemTypeId)> itemIdsOnShoppingList)
     {
         var itemsWithTypesOnShoppingList = itemIdsOnShoppingList.ToLookup(g => g.Item1, g => g.Item2);
         foreach (var item in searchResultItemsWithTypes)
@@ -138,7 +138,7 @@ public class ItemSearchService : IItemSearchService
     }
 
     private async Task<IEnumerable<ItemWithMatchingItemTypeIds>> GetItemsWithMatchingItemTypeIdsAsync(
-        string name, StoreId storeId, Dictionary<ItemId, IStoreItem> searchResultItemsWithTypesDict,
+        string name, StoreId storeId, Dictionary<ItemId, IItem> searchResultItemsWithTypesDict,
         IEnumerable<ItemTypeId> itemTypeIdsOnShoppingList)
     {
         var itemTypeIdsOnShoppingListDict = itemTypeIdsOnShoppingList.ToHashSet();

@@ -12,14 +12,14 @@ public class ItemCreationService : IItemCreationService
 {
     private readonly IItemRepository _itemRepository;
     private readonly IValidator _validator;
-    private readonly IStoreItemFactory _storeItemFactory;
+    private readonly IItemFactory _storeItemFactory;
     private readonly IStoreItemReadModelConversionService _conversionService;
     private readonly CancellationToken _cancellationToken;
 
     public ItemCreationService(
         IItemRepository itemRepository,
         Func<CancellationToken, IValidator> validatorDelegate,
-        IStoreItemFactory storeItemFactory,
+        IItemFactory storeItemFactory,
         IStoreItemReadModelConversionService conversionService,
         CancellationToken cancellationToken)
     {
@@ -54,7 +54,7 @@ public class ItemCreationService : IItemCreationService
         return await _conversionService.ConvertAsync(storedItem, _cancellationToken);
     }
 
-    public async Task<StoreItemReadModel> CreateItemWithTypesAsync(IStoreItem item)
+    public async Task<StoreItemReadModel> CreateItemWithTypesAsync(IItem item)
     {
         if (item is null)
             throw new ArgumentNullException(nameof(item));

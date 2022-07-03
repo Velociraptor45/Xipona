@@ -10,14 +10,14 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-public class StoreItem : IStoreItem
+public class Item : IItem
 {
-    private List<IStoreItemAvailability> _availabilities;
+    private List<IItemAvailability> _availabilities;
     private readonly ItemTypes? _itemTypes;
 
-    public StoreItem(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
+    public Item(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
-        IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId? temporaryId)
+        IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId)
     {
         Id = id;
         Name = name;
@@ -36,7 +36,7 @@ public class StoreItem : IStoreItem
         Predecessor = null;
     }
 
-    public StoreItem(ItemId id, ItemName name, bool isDeleted, Comment comment,
+    public Item(ItemId id, ItemName name, bool isDeleted, Comment comment,
         ItemQuantity itemQuantity, ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
         ItemTypes itemTypes)
     {
@@ -50,7 +50,7 @@ public class StoreItem : IStoreItem
         ManufacturerId = manufacturerId;
         TemporaryId = null;
         _itemTypes = itemTypes ?? throw new ArgumentNullException(nameof(itemTypes));
-        _availabilities = new List<IStoreItemAvailability>();
+        _availabilities = new List<IItemAvailability>();
 
         if (!_itemTypes.Any())
             throw new DomainException(new CannotCreateItemWithTypesWithoutTypesReason(Id));
@@ -69,12 +69,12 @@ public class StoreItem : IStoreItem
     public ItemCategoryId? ItemCategoryId { get; private set; }
     public ManufacturerId? ManufacturerId { get; private set; }
     public TemporaryItemId? TemporaryId { get; }
-    public IStoreItem? Predecessor { get; private set; } // todo: change this to an IItemPredecessor model to satisfy DDD
+    public IItem? Predecessor { get; private set; } // todo: change this to an IItemPredecessor model to satisfy DDD
 
     public IReadOnlyCollection<IItemType> ItemTypes =>
         _itemTypes?.ToList().AsReadOnly() ?? new List<IItemType>().AsReadOnly();
 
-    public IReadOnlyCollection<IStoreItemAvailability> Availabilities => _availabilities.AsReadOnly();
+    public IReadOnlyCollection<IItemAvailability> Availabilities => _availabilities.AsReadOnly();
     public bool HasItemTypes => _itemTypes?.Any() ?? false;
 
     public void Delete()
@@ -87,7 +87,7 @@ public class StoreItem : IStoreItem
         return Availabilities.Any(av => av.StoreId == storeId);
     }
 
-    public void MakePermanent(PermanentItem permanentItem, IEnumerable<IStoreItemAvailability> availabilities)
+    public void MakePermanent(PermanentItem permanentItem, IEnumerable<IItemAvailability> availabilities)
     {
         Name = permanentItem.Name;
         Comment = permanentItem.Comment;
@@ -98,7 +98,7 @@ public class StoreItem : IStoreItem
         IsTemporary = false;
     }
 
-    public void Modify(ItemModification itemChange, IEnumerable<IStoreItemAvailability> availabilities)
+    public void Modify(ItemModification itemChange, IEnumerable<IItemAvailability> availabilities)
     {
         Name = itemChange.Name;
         Comment = itemChange.Comment;
@@ -137,7 +137,7 @@ public class StoreItem : IStoreItem
         return availability.DefaultSectionId;
     }
 
-    public void SetPredecessor(IStoreItem predecessor)
+    public void SetPredecessor(IItem predecessor)
     {
         Predecessor = predecessor;
     }

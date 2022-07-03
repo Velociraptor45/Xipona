@@ -2,10 +2,10 @@
 
 public interface IItemTypeFactory
 {
-    IItemType Create(ItemTypeId id, ItemTypeName name, IEnumerable<IStoreItemAvailability> availabilities,
+    IItemType Create(ItemTypeId id, ItemTypeName name, IEnumerable<IItemAvailability> availabilities,
         IItemType? predecessor);
 
-    IItemType CreateNew(ItemTypeName name, IEnumerable<IStoreItemAvailability> availabilities, IItemType? predecessor);
+    IItemType CreateNew(ItemTypeName name, IEnumerable<IItemAvailability> availabilities, IItemType? predecessor);
 
-    IItemType CreateNew(ItemTypeName name, IEnumerable<IStoreItemAvailability> availabilities);
+    IItemType CreateNew(ItemTypeName name, IEnumerable<IItemAvailability> availabilities);
 }

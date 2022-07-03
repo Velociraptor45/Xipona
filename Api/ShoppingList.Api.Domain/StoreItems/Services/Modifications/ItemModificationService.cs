@@ -109,7 +109,7 @@ public class ItemModificationService : IItemModificationService
         }
     }
 
-    private async Task RemoveItemTypeFromShoppingList(IEnumerable<IShoppingList> lists, IStoreItem item,
+    private async Task RemoveItemTypeFromShoppingList(IEnumerable<IShoppingList> lists, IItem item,
         IItemType itemType)
     {
         foreach (var list in lists)

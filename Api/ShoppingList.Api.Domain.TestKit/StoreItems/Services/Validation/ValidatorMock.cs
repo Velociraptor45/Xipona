@@ -11,7 +11,7 @@ public class ValidatorMock : Mock<IValidator>
     {
     }
 
-    public void SetupValidateAsync(IEnumerable<IStoreItemAvailability> availabilities)
+    public void SetupValidateAsync(IEnumerable<IItemAvailability> availabilities)
     {
         Setup(m => m.ValidateAsync(availabilities))
             .Returns(Task.CompletedTask);
@@ -29,7 +29,7 @@ public class ValidatorMock : Mock<IValidator>
             .Returns(Task.CompletedTask);
     }
 
-    public void VerifyValidateAsync(IEnumerable<IStoreItemAvailability> availabilities, Func<Times> times)
+    public void VerifyValidateAsync(IEnumerable<IItemAvailability> availabilities, Func<Times> times)
     {
         Verify(m => m.ValidateAsync(availabilities), times);
     }

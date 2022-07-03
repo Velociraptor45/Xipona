@@ -58,7 +58,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
     }
 
     private static ShoppingListReadModel ToReadModel(IShoppingList shoppingList, IStore store,
-        IReadOnlyDictionary<ItemId, IStoreItem> storeItems, IReadOnlyDictionary<ItemCategoryId,
+        IReadOnlyDictionary<ItemId, IItem> storeItems, IReadOnlyDictionary<ItemCategoryId,
             IItemCategory> itemCategories, IReadOnlyDictionary<ManufacturerId, IManufacturer> manufacturers)
     {
         List<ShoppingListSectionReadModel> sectionReadModels = new();

@@ -8,7 +8,7 @@ using ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 
-public class StoreItemBuilder : DomainTestBuilderBase<StoreItem>
+public class StoreItemBuilder : DomainTestBuilderBase<Item>
 {
     public StoreItemBuilder()
     {
@@ -19,7 +19,7 @@ public class StoreItemBuilder : DomainTestBuilderBase<StoreItem>
 
     public StoreItemBuilder AsItem()
     {
-        Customize<StoreItem>(c => c.FromFactory(new MethodInvoker(new ItemConstructorQuery())));
+        Customize<Item>(c => c.FromFactory(new MethodInvoker(new ItemConstructorQuery())));
         return this;
     }
 
@@ -69,13 +69,13 @@ public class StoreItemBuilder : DomainTestBuilderBase<StoreItem>
         return WithManufacturerId(null);
     }
 
-    public StoreItemBuilder WithAvailabilities(IEnumerable<IStoreItemAvailability> availabilities)
+    public StoreItemBuilder WithAvailabilities(IEnumerable<IItemAvailability> availabilities)
     {
         FillConstructorWith("availabilities", availabilities);
         return this;
     }
 
-    public StoreItemBuilder WithAvailability(IStoreItemAvailability availability)
+    public StoreItemBuilder WithAvailability(IItemAvailability availability)
     {
         return WithAvailabilities(availability.ToMonoList());
     }

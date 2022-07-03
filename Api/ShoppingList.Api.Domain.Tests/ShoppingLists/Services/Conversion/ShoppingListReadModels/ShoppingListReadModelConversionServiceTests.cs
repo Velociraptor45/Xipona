@@ -17,7 +17,7 @@ public class ShoppingListReadModelConversionServiceTests
     [Theory]
     [ClassData(typeof(ConvertAsyncTestData))]
     public async Task ConvertAsync_WithValidData_ShouldConvertToReadModel(IShoppingList list, IStore store,
-        IEnumerable<IStoreItem> items, IEnumerable<IItemCategory> itemCategories,
+        IEnumerable<IItem> items, IEnumerable<IItemCategory> itemCategories,
         IEnumerable<IManufacturer> manufacturers, ShoppingListReadModel expected)
     {
         // Arrange

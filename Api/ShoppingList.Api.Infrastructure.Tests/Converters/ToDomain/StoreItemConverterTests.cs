@@ -4,15 +4,15 @@ using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToDomain;
-using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using Item = ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain;
 
-public class StoreItemConverterTests : ToDomainConverterTestBase<Item, IStoreItem>
+public class StoreItemConverterTests : ToDomainConverterTestBase<Item, IItem>
 {
-    protected override (Item, IStoreItem) CreateTestObjects()
+    protected override (Item, IItem) CreateTestObjects()
     {
         var destination = StoreItemMother.Initial().Create();
         var source = GetSource(destination);
@@ -25,7 +25,7 @@ public class StoreItemConverterTests : ToDomainConverterTestBase<Item, IStoreIte
         AddDependencies(ServiceCollection);
     }
 
-    public static Item GetSource(IStoreItem destination)
+    public static Item GetSource(IItem destination)
     {
         Item predecessor = null;
         if (destination.Predecessor != null)
@@ -62,7 +62,7 @@ public class StoreItemConverterTests : ToDomainConverterTestBase<Item, IStoreIte
     public static void AddDependencies(IServiceCollection serviceCollection)
     {
         serviceCollection.AddImplementationOfGenericType(typeof(StoreItemConverter).Assembly, typeof(IToDomainConverter<,>));
-        serviceCollection.AddImplementationOfNonGenericType(typeof(IStoreItemFactory).Assembly, typeof(IStoreItemFactory));
+        serviceCollection.AddImplementationOfNonGenericType(typeof(IItemFactory).Assembly, typeof(IItemFactory));
 
         StoreItemAvailabilityConverterTests.AddDependencies(serviceCollection);
         ManufacturerConverterTests.AddDependencies(serviceCollection);

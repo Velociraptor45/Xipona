@@ -5,12 +5,13 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToEnti
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using Item = ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity;
 
-public class ItemConverterTests : ToEntityConverterTestBase<IStoreItem, Item>
+public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
 {
-    protected override (IStoreItem, Item) CreateTestObjects()
+    protected override (IItem, Item) CreateTestObjects()
     {
         var source = StoreItemMother.Initial().Create();
         var destination = GetDestination(source);
@@ -18,7 +19,7 @@ public class ItemConverterTests : ToEntityConverterTestBase<IStoreItem, Item>
         return (source, destination);
     }
 
-    public static Item GetDestination(IStoreItem source)
+    public static Item GetDestination(IItem source)
     {
         return new Item
         {

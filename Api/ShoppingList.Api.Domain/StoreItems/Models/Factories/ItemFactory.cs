@@ -6,20 +6,20 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Updates;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 
-public class StoreItemFactory : IStoreItemFactory
+public class ItemFactory : IItemFactory
 {
     private readonly IItemTypeFactory _itemTypeFactory;
 
-    public StoreItemFactory(IItemTypeFactory itemTypeFactory)
+    public ItemFactory(IItemTypeFactory itemTypeFactory)
     {
         _itemTypeFactory = itemTypeFactory;
     }
 
-    public IStoreItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
+    public IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
-        IStoreItem? predecessor, IEnumerable<IStoreItemAvailability> availabilities, TemporaryItemId? temporaryId)
+        IItem? predecessor, IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId)
     {
-        var item = new StoreItem(
+        var item = new Item(
             id,
             name,
             isDeleted,
@@ -37,11 +37,11 @@ public class StoreItemFactory : IStoreItemFactory
         return item;
     }
 
-    public IStoreItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, ItemQuantity itemQuantity,
-        ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
+    public IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, ItemQuantity itemQuantity,
+        ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IItem? predecessor,
         IEnumerable<IItemType> itemTypes)
     {
-        var item = new StoreItem(
+        var item = new Item(
             id,
             name,
             isDeleted,
@@ -57,9 +57,9 @@ public class StoreItemFactory : IStoreItemFactory
         return item;
     }
 
-    public IStoreItem Create(ItemCreation itemCreation)
+    public IItem Create(ItemCreation itemCreation)
     {
-        return new StoreItem(
+        return new Item(
             ItemId.New,
             itemCreation.Name,
             false,
@@ -72,9 +72,9 @@ public class StoreItemFactory : IStoreItemFactory
             null);
     }
 
-    public IStoreItem Create(TemporaryItemCreation model)
+    public IItem Create(TemporaryItemCreation model)
     {
-        return new StoreItem(
+        return new Item(
             ItemId.New,
             model.Name,
             false,
@@ -87,9 +87,9 @@ public class StoreItemFactory : IStoreItemFactory
             new TemporaryItemId(model.ClientSideId));
     }
 
-    public IStoreItem Create(ItemUpdate itemUpdate, IStoreItem predecessor)
+    public IItem Create(ItemUpdate itemUpdate, IItem predecessor)
     {
-        var model = new StoreItem(
+        var model = new Item(
             ItemId.New,
             itemUpdate.Name,
             isDeleted: false,
@@ -105,11 +105,11 @@ public class StoreItemFactory : IStoreItemFactory
         return model;
     }
 
-    public IStoreItem CreateNew(ItemName name, Comment comment, ItemQuantity itemQuantity,
-        ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IStoreItem? predecessor,
+    public IItem CreateNew(ItemName name, Comment comment, ItemQuantity itemQuantity,
+        ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IItem? predecessor,
         IEnumerable<IItemType> itemTypes)
     {
-        var item = new StoreItem(
+        var item = new Item(
             ItemId.New,
             name,
             isDeleted: false,

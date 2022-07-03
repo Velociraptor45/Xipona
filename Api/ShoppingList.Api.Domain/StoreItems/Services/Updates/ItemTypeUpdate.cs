@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Updates;
 
 public class ItemTypeUpdate
 {
-    public ItemTypeUpdate(ItemTypeId oldId, ItemTypeName name, IEnumerable<IStoreItemAvailability> availabilities)
+    public ItemTypeUpdate(ItemTypeId oldId, ItemTypeName name, IEnumerable<IItemAvailability> availabilities)
     {
         OldId = oldId;
         Name = name;
@@ -13,5 +13,5 @@ public class ItemTypeUpdate
 
     public ItemTypeId OldId { get; }
     public ItemTypeName Name { get; }
-    public IReadOnlyCollection<IStoreItemAvailability> Availabilities { get; }
+    public IReadOnlyCollection<IItemAvailability> Availabilities { get; }
 }

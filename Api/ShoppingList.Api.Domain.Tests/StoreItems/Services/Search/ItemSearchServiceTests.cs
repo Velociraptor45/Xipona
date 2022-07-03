@@ -404,8 +404,8 @@ public class ItemSearchServiceTests
         private readonly ItemSearchReadModelConversionServiceMock _conversionServiceMock;
         private readonly ItemTypeFactoryMock _itemTypeFactoryMock;
 
-        private List<IStoreItem>? _items;
-        private readonly List<IStoreItem> _itemsFromTypeMapping = new();
+        private List<IItem>? _items;
+        private readonly List<IItem> _itemsFromTypeMapping = new();
         private Store? _store;
         private readonly List<ItemWithMatchingItemTypeIds> _itemToTypeIdMappings = new();
         private IShoppingList? _shoppingList;
@@ -459,7 +459,7 @@ public class ItemSearchServiceTests
         {
             var types = GetItemTypes(true, 1);
 
-            _items = StoreItemMother.Initial().CreateMany(1).ToList<IStoreItem>();
+            _items = StoreItemMother.Initial().CreateMany(1).ToList<IItem>();
             _items.Add(StoreItemMother.InitialWithTypes().WithTypes(types).Create());
         }
 
@@ -467,7 +467,7 @@ public class ItemSearchServiceTests
         {
             var types = GetItemTypes(availableAtStore, typeCount);
 
-            _items = StoreItemMother.InitialWithTypes().WithTypes(types).CreateMany(1).ToList<IStoreItem>();
+            _items = StoreItemMother.InitialWithTypes().WithTypes(types).CreateMany(1).ToList<IItem>();
         }
 
         public void SetupItemsWithTypesFromTypeMapping(bool availableAtStore)
@@ -486,7 +486,7 @@ public class ItemSearchServiceTests
             var types = new ItemTypes(typesBuilder.CreateMany(1), _itemTypeFactoryMock.Object);
 
             _items = StoreItemMother.InitialWithTypes().WithId(item.Id).WithTypes(types).CreateMany(1)
-                .ToList<IStoreItem>();
+                .ToList<IItem>();
         }
 
         public void SetupItemsFromTypeMapping(bool availableAtStore, int typeCount = 1)
@@ -511,7 +511,7 @@ public class ItemSearchServiceTests
 
         public void SetupItemsWithoutTypes()
         {
-            _items = StoreItemMother.Initial().CreateMany(1).ToList<IStoreItem>();
+            _items = StoreItemMother.Initial().CreateMany(1).ToList<IItem>();
         }
 
         public void SetupFindingItems()
@@ -522,7 +522,7 @@ public class ItemSearchServiceTests
 
         public void SetupFindingNoItems()
         {
-            _itemRepositoryMock.SetupFindActiveByAsync(Name, StoreId, Enumerable.Empty<IStoreItem>());
+            _itemRepositoryMock.SetupFindActiveByAsync(Name, StoreId, Enumerable.Empty<IItem>());
         }
 
         public void SetupFindingItemsFromTypeMapping()
@@ -532,12 +532,12 @@ public class ItemSearchServiceTests
 
         public void SetupFindingNoItemsFromTypeMapping()
         {
-            _itemRepositoryMock.SetupFindByAsync(_itemsFromTypeMapping.Select(i => i.Id), Enumerable.Empty<IStoreItem>());
+            _itemRepositoryMock.SetupFindByAsync(_itemsFromTypeMapping.Select(i => i.Id), Enumerable.Empty<IItem>());
         }
 
         public void SetupFindingNoItemsFromTypeMappingWithEmptyInput()
         {
-            _itemRepositoryMock.SetupFindByAsync(Enumerable.Empty<ItemId>(), Enumerable.Empty<IStoreItem>());
+            _itemRepositoryMock.SetupFindByAsync(Enumerable.Empty<ItemId>(), Enumerable.Empty<IItem>());
         }
 
         public void SetupFindingShoppingListWithItemWithoutTypes(bool containsItem)
@@ -687,7 +687,7 @@ public class ItemSearchServiceTests
         public void SetupConversionServiceReceivingEmptyItemList()
         {
             TestPropertyNotSetException.ThrowIfNull(_store);
-            _conversionServiceMock.SetupConvertAsync(Enumerable.Empty<IStoreItem>(), _store,
+            _conversionServiceMock.SetupConvertAsync(Enumerable.Empty<IItem>(), _store,
                 Enumerable.Empty<SearchItemForShoppingResultReadModel>());
         }
 

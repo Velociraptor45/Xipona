@@ -10,7 +10,7 @@ public class SearchItemResultReadModel
         ItemName = itemName;
     }
 
-    public SearchItemResultReadModel(IStoreItem item) :
+    public SearchItemResultReadModel(IItem item) :
         this(item.Id, item.Name)
     {
     }

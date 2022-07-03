@@ -7,25 +7,25 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 
 public interface IItemRepository
 {
-    Task<IEnumerable<IStoreItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken);
+    Task<IEnumerable<IItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken);
 
-    Task<IStoreItem?> FindByAsync(ItemId storeItemId, CancellationToken cancellationToken);
+    Task<IItem?> FindByAsync(ItemId storeItemId, CancellationToken cancellationToken);
 
-    Task<IStoreItem?> FindByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken);
+    Task<IItem?> FindByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken);
 
-    Task<IEnumerable<IStoreItem>> FindByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken);
+    Task<IEnumerable<IItem>> FindByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken);
 
-    Task<IEnumerable<IStoreItem>> FindByAsync(ManufacturerId manufacturerId, CancellationToken cancellationToken);
+    Task<IEnumerable<IItem>> FindByAsync(ManufacturerId manufacturerId, CancellationToken cancellationToken);
 
-    Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
+    Task<IEnumerable<IItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
         IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
         CancellationToken cancellationToken);
 
-    Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, StoreId storeId, CancellationToken cancellationToken);
+    Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId, CancellationToken cancellationToken);
 
-    Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, CancellationToken cancellationToken);
+    Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, CancellationToken cancellationToken);
 
-    Task<IEnumerable<IStoreItem>> FindActiveByAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);
+    Task<IEnumerable<IItem>> FindActiveByAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);
 
-    Task<IStoreItem> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken);
+    Task<IItem> StoreAsync(IItem storeItem, CancellationToken cancellationToken);
 }

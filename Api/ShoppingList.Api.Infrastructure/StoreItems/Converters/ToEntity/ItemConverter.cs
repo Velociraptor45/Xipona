@@ -2,12 +2,13 @@
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
+using Item = ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToEntity;
 
-public class ItemConverter : IToEntityConverter<IStoreItem, Item>
+public class ItemConverter : IToEntityConverter<IItem, Item>
 {
-    public Item ToEntity(IStoreItem source)
+    public Item ToEntity(IItem source)
     {
         if (source is null)
             throw new ArgumentNullException(nameof(source));
@@ -31,7 +32,7 @@ public class ItemConverter : IToEntityConverter<IStoreItem, Item>
         };
     }
 
-    private static AvailableAt ToAvailableAt(IStoreItemAvailability availability, IStoreItem source)
+    private static AvailableAt ToAvailableAt(IItemAvailability availability, IItem source)
     {
         return new AvailableAt
         {
@@ -42,7 +43,7 @@ public class ItemConverter : IToEntityConverter<IStoreItem, Item>
         };
     }
 
-    private static Entities.ItemType ToItemType(IItemType itemType, IStoreItem source)
+    private static Entities.ItemType ToItemType(IItemType itemType, IItem source)
     {
         return new Entities.ItemType
         {
@@ -54,7 +55,7 @@ public class ItemConverter : IToEntityConverter<IStoreItem, Item>
         };
     }
 
-    private static ItemTypeAvailableAt ToItemTypeAvailableAt(IStoreItemAvailability availability, IItemType itemType)
+    private static ItemTypeAvailableAt ToItemTypeAvailableAt(IItemAvailability availability, IItemType itemType)
     {
         return new ItemTypeAvailableAt
         {

@@ -2,7 +2,7 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-public interface IStoreItemAvailability
+public interface IItemAvailability
 {
     StoreId StoreId { get; }
     Price Price { get; }

@@ -8,10 +8,10 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.To
 public class ItemTypeConverter : IToDomainConverter<Entities.ItemType, IItemType>
 {
     private readonly IItemTypeFactory _itemTypeFactory;
-    private readonly IToDomainConverter<ItemTypeAvailableAt, IStoreItemAvailability> _itemTypeAvailabilityConverter;
+    private readonly IToDomainConverter<ItemTypeAvailableAt, IItemAvailability> _itemTypeAvailabilityConverter;
 
     public ItemTypeConverter(IItemTypeFactory itemTypeFactory,
-        IToDomainConverter<ItemTypeAvailableAt, IStoreItemAvailability> itemTypeAvailabilityConverter)
+        IToDomainConverter<ItemTypeAvailableAt, IItemAvailability> itemTypeAvailabilityConverter)
     {
         _itemTypeFactory = itemTypeFactory;
         _itemTypeAvailabilityConverter = itemTypeAvailabilityConverter;

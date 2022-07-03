@@ -422,7 +422,7 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupFindingNoItems()
             {
-                ItemRepositoryMock.SetupFindActiveByAsync(ItemCategoryId, Enumerable.Empty<IStoreItem>());
+                ItemRepositoryMock.SetupFindActiveByAsync(ItemCategoryId, Enumerable.Empty<IItem>());
             }
 
             public void SetupStoringItem()

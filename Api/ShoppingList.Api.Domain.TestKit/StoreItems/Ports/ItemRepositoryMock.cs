@@ -11,7 +11,7 @@ public class ItemRepositoryMock : Mock<IItemRepository>
     {
     }
 
-    public void SetupFindByAsync(ItemId itemId, IStoreItem? returnValue)
+    public void SetupFindByAsync(ItemId itemId, IItem? returnValue)
     {
         Setup(i => i.FindByAsync(
                 It.Is<ItemId>(id => id == itemId),
@@ -19,7 +19,7 @@ public class ItemRepositoryMock : Mock<IItemRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindByAsync(IEnumerable<ItemId> itemIds, IEnumerable<IStoreItem> returnValue)
+    public void SetupFindByAsync(IEnumerable<ItemId> itemIds, IEnumerable<IItem> returnValue)
     {
         Setup(i => i.FindByAsync(
                 It.Is<IEnumerable<ItemId>>(ids => ids.SequenceEqual(itemIds)),
@@ -27,7 +27,7 @@ public class ItemRepositoryMock : Mock<IItemRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindByAsync(TemporaryItemId temporaryItemId, IStoreItem? returnValue)
+    public void SetupFindByAsync(TemporaryItemId temporaryItemId, IItem? returnValue)
     {
         Setup(i => i.FindByAsync(
                 It.Is<TemporaryItemId>(id => id == temporaryItemId),
@@ -35,7 +35,7 @@ public class ItemRepositoryMock : Mock<IItemRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindActiveByAsync(ItemCategoryId itemCategoryId, IEnumerable<IStoreItem> returnValue)
+    public void SetupFindActiveByAsync(ItemCategoryId itemCategoryId, IEnumerable<IItem> returnValue)
     {
         Setup(i => i.FindActiveByAsync(
                 It.Is<ItemCategoryId>(id => id == itemCategoryId),
@@ -43,7 +43,7 @@ public class ItemRepositoryMock : Mock<IItemRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindActiveByAsync(string name, StoreId storeId, IEnumerable<IStoreItem> returnValue)
+    public void SetupFindActiveByAsync(string name, StoreId storeId, IEnumerable<IItem> returnValue)
     {
         Setup(m => m.FindActiveByAsync(name, storeId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);
@@ -58,11 +58,11 @@ public class ItemRepositoryMock : Mock<IItemRepository>
             Times.Once);
     }
 
-    public void VerifyStoreAsyncOnce(IStoreItem storeItem)
+    public void VerifyStoreAsyncOnce(IItem storeItem)
     {
         Verify(
             i => i.StoreAsync(
-                It.Is<IStoreItem>(item => item == storeItem),
+                It.Is<IItem>(item => item == storeItem),
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -71,18 +71,18 @@ public class ItemRepositoryMock : Mock<IItemRepository>
     {
         Verify(
             i => i.StoreAsync(
-                It.IsAny<IStoreItem>(),
+                It.IsAny<IItem>(),
                 It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
-    public void SetupStoreAsync(IStoreItem item, IStoreItem returnValue)
+    public void SetupStoreAsync(IItem item, IItem returnValue)
     {
         Setup(m => m.StoreAsync(item, It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);
     }
 
-    public void VerifyStoreAsync(IStoreItem item, Func<Times> times)
+    public void VerifyStoreAsync(IItem item, Func<Times> times)
     {
         Verify(m => m.StoreAsync(item, It.IsAny<CancellationToken>()), times);
     }

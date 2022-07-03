@@ -8,7 +8,7 @@ public interface IItemType
 {
     ItemTypeId Id { get; }
     ItemTypeName Name { get; }
-    IReadOnlyCollection<IStoreItemAvailability> Availabilities { get; }
+    IReadOnlyCollection<IItemAvailability> Availabilities { get; }
     IItemType? Predecessor { get; }
 
     void SetPredecessor(IItemType predecessor);

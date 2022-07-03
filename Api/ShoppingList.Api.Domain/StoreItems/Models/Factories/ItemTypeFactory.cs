@@ -2,7 +2,7 @@
 
 public class ItemTypeFactory : IItemTypeFactory
 {
-    public IItemType Create(ItemTypeId id, ItemTypeName name, IEnumerable<IStoreItemAvailability> availabilities,
+    public IItemType Create(ItemTypeId id, ItemTypeName name, IEnumerable<IItemAvailability> availabilities,
         IItemType? predecessor)
     {
         var type = new ItemType(id, name, availabilities);
@@ -12,12 +12,12 @@ public class ItemTypeFactory : IItemTypeFactory
         return type;
     }
 
-    public IItemType CreateNew(ItemTypeName name, IEnumerable<IStoreItemAvailability> availabilities)
+    public IItemType CreateNew(ItemTypeName name, IEnumerable<IItemAvailability> availabilities)
     {
         return Create(ItemTypeId.New, name, availabilities, null);
     }
 
-    public IItemType CreateNew(ItemTypeName name, IEnumerable<IStoreItemAvailability> availabilities,
+    public IItemType CreateNew(ItemTypeName name, IEnumerable<IItemAvailability> availabilities,
         IItemType? predecessor)
     {
         return Create(ItemTypeId.New, name, availabilities, predecessor);

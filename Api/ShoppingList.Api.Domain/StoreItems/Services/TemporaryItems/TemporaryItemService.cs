@@ -23,7 +23,7 @@ public class TemporaryItemService : ITemporaryItemService
 
     public async Task MakePermanentAsync(PermanentItem permanentItem)
     {
-        IStoreItem? storeItem = await _itemRepository.FindByAsync(permanentItem.Id, _cancellationToken);
+        IItem? storeItem = await _itemRepository.FindByAsync(permanentItem.Id, _cancellationToken);
         if (storeItem == null)
             throw new DomainException(new ItemNotFoundReason(permanentItem.Id));
         if (!storeItem.IsTemporary)

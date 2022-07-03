@@ -12,7 +12,7 @@ public class ItemUpdateService : IItemUpdateService
 {
     private readonly IItemRepository _itemRepository;
     private readonly IItemTypeFactory _itemTypeFactory;
-    private readonly IStoreItemFactory _storeItemFactory;
+    private readonly IItemFactory _storeItemFactory;
     private readonly IShoppingListExchangeService _shoppingListUpdateService;
     private readonly IValidator _validator;
     private readonly CancellationToken _cancellationToken;
@@ -21,7 +21,7 @@ public class ItemUpdateService : IItemUpdateService
         IItemRepository itemRepository,
         Func<CancellationToken, IValidator> validatorDelegate,
         IItemTypeFactory itemTypeFactory,
-        IStoreItemFactory storeItemFactory,
+        IItemFactory storeItemFactory,
         IShoppingListExchangeService shoppingListUpdateService,
         CancellationToken cancellationToken)
     {
@@ -91,7 +91,7 @@ public class ItemUpdateService : IItemUpdateService
     {
         ArgumentNullException.ThrowIfNull(update);
 
-        IStoreItem? oldItem = await _itemRepository.FindByAsync(update.OldId, _cancellationToken);
+        IItem? oldItem = await _itemRepository.FindByAsync(update.OldId, _cancellationToken);
         if (oldItem == null)
             throw new DomainException(new ItemNotFoundReason(update.OldId));
         if (oldItem.IsTemporary)
@@ -117,7 +117,7 @@ public class ItemUpdateService : IItemUpdateService
         await _itemRepository.StoreAsync(oldItem, _cancellationToken);
 
         // create new Item
-        IStoreItem updatedItem = _storeItemFactory.Create(update, oldItem);
+        IItem updatedItem = _storeItemFactory.Create(update, oldItem);
         updatedItem = await _itemRepository.StoreAsync(updatedItem, _cancellationToken);
 
         // change existing item references on shopping lists

@@ -7,7 +7,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
-public interface IStoreItem
+public interface IItem
 {
     ItemId Id { get; }
     ItemName Name { get; }
@@ -17,9 +17,9 @@ public interface IStoreItem
     public ItemQuantity ItemQuantity { get; }
     ItemCategoryId? ItemCategoryId { get; }
     ManufacturerId? ManufacturerId { get; }
-    IStoreItem? Predecessor { get; }
+    IItem? Predecessor { get; }
     TemporaryItemId? TemporaryId { get; }
-    IReadOnlyCollection<IStoreItemAvailability> Availabilities { get; }
+    IReadOnlyCollection<IItemAvailability> Availabilities { get; }
     IReadOnlyCollection<IItemType> ItemTypes { get; }
     bool HasItemTypes { get; }
 
@@ -29,13 +29,13 @@ public interface IStoreItem
 
     bool IsAvailableInStore(StoreId storeId);
 
-    void MakePermanent(PermanentItem permanentItem, IEnumerable<IStoreItemAvailability> availabilities);
+    void MakePermanent(PermanentItem permanentItem, IEnumerable<IItemAvailability> availabilities);
 
-    void Modify(ItemModification itemChange, IEnumerable<IStoreItemAvailability> availabilities);
+    void Modify(ItemModification itemChange, IEnumerable<IItemAvailability> availabilities);
 
     Task ModifyAsync(ItemWithTypesModification modification, IValidator validator);
 
-    void SetPredecessor(IStoreItem predecessor);
+    void SetPredecessor(IItem predecessor);
 
     bool TryGetType(ItemTypeId itemTypeId, out IItemType? itemType);
 

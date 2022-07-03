@@ -9,9 +9,9 @@ using ShoppingList.Api.TestTools.Extensions;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 
-public class StoreItemMock : Mock<IStoreItem>
+public class StoreItemMock : Mock<IItem>
 {
-    public StoreItemMock(IStoreItem storeItem, MockBehavior behavior) : base(behavior)
+    public StoreItemMock(IItem storeItem, MockBehavior behavior) : base(behavior)
     {
         SetupId(storeItem.Id);
         SetupIsTemporary(storeItem.IsTemporary);
@@ -37,7 +37,7 @@ public class StoreItemMock : Mock<IStoreItem>
             .Returns(hasItemTypes);
     }
 
-    public ISetup<IStoreItem, IReadOnlyCollection<IItemType>> SetupItemTypes()
+    public ISetup<IItem, IReadOnlyCollection<IItemType>> SetupItemTypes()
     {
         return Setup(i => i.ItemTypes);
     }
@@ -72,7 +72,7 @@ public class StoreItemMock : Mock<IStoreItem>
             .Returns(manufacturerId);
     }
 
-    public void SetupAvailabilities(IEnumerable<IStoreItemAvailability> returnValue)
+    public void SetupAvailabilities(IEnumerable<IItemAvailability> returnValue)
     {
         Setup(i => i.Availabilities)
             .Returns(returnValue.ToList().AsReadOnly());
@@ -103,12 +103,12 @@ public class StoreItemMock : Mock<IStoreItem>
     }
 
     public void VerifyMakePermanentOnce(PermanentItem permanentItem,
-        IEnumerable<IStoreItemAvailability> availabilities)
+        IEnumerable<IItemAvailability> availabilities)
     {
         Verify(
             i => i.MakePermanent(
                 It.Is<PermanentItem>(pi => pi == permanentItem),
-                It.Is<IEnumerable<IStoreItemAvailability>>(list => list.SequenceEqual(availabilities))),
+                It.Is<IEnumerable<IItemAvailability>>(list => list.SequenceEqual(availabilities))),
             Times.Once);
     }
 
@@ -119,9 +119,9 @@ public class StoreItemMock : Mock<IStoreItem>
 
     #endregion Verify
 
-    public void SetupMakePermanent(PermanentItem permanentItem, IEnumerable<IStoreItemAvailability> availabilities)
+    public void SetupMakePermanent(PermanentItem permanentItem, IEnumerable<IItemAvailability> availabilities)
     {
         Setup(i => i.MakePermanent(permanentItem,
-            It.Is<IEnumerable<IStoreItemAvailability>>(avs => avs.IsEquivalentTo(availabilities))));
+            It.Is<IEnumerable<IItemAvailability>>(avs => avs.IsEquivalentTo(availabilities))));
     }
 }

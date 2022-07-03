@@ -67,7 +67,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        IStoreItem? item;
+        IItem? item;
         if (offlineTolerantItemId.IsActualId)
         {
             ItemId itemId = new ItemId(offlineTolerantItemId.ActualId!.Value);
@@ -120,7 +120,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
                 throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
 
             var temporaryId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
-            IStoreItem? item = await _itemRepository.FindByAsync(temporaryId, _cancellationToken);
+            IItem? item = await _itemRepository.FindByAsync(temporaryId, _cancellationToken);
 
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryId));
@@ -151,7 +151,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
                 throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
 
             var temporaryId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
-            IStoreItem? item = await _itemRepository.FindByAsync(temporaryId, _cancellationToken);
+            IItem? item = await _itemRepository.FindByAsync(temporaryId, _cancellationToken);
 
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryId));

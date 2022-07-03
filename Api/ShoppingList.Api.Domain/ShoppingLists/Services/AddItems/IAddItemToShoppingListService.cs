@@ -16,7 +16,7 @@ public interface IAddItemToShoppingListService
     Task AddItemWithTypeToShoppingListAsync(ShoppingListId shoppingListId, ItemId itemId, ItemTypeId itemTypeId,
         SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken);
 
-    Task AddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item, ItemTypeId itemTypeId,
+    Task AddItemWithTypeToShoppingList(IShoppingList shoppingList, IItem item, ItemTypeId itemTypeId,
         SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken);
 
     Task AddAsync(ShoppingListId shoppingListId, OfflineTolerantItemId itemId, SectionId? sectionId,

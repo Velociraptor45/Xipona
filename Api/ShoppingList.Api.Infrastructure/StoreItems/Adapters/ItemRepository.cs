@@ -7,17 +7,18 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
+using Item = ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Adapters;
 
 public class ItemRepository : IItemRepository
 {
     private readonly ItemContext _dbContext;
-    private readonly IToDomainConverter<Item, IStoreItem> _toModelConverter;
-    private readonly IToEntityConverter<IStoreItem, Item> _toEntityConverter;
+    private readonly IToDomainConverter<Item, IItem> _toModelConverter;
+    private readonly IToEntityConverter<IItem, Item> _toEntityConverter;
 
-    public ItemRepository(ItemContext dbContext, IToDomainConverter<Item, IStoreItem> toModelConverter,
-        IToEntityConverter<IStoreItem, Item> toEntityConverter)
+    public ItemRepository(ItemContext dbContext, IToDomainConverter<Item, IItem> toModelConverter,
+        IToEntityConverter<IItem, Item> toEntityConverter)
     {
         _dbContext = dbContext;
         _toModelConverter = toModelConverter;
@@ -26,7 +27,7 @@ public class ItemRepository : IItemRepository
 
     #region public methods
 
-    public async Task<IStoreItem?> FindByAsync(ItemId storeItemId, CancellationToken cancellationToken)
+    public async Task<IItem?> FindByAsync(ItemId storeItemId, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -43,7 +44,7 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(itemEntity);
     }
 
-    public async Task<IStoreItem?> FindByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
+    public async Task<IItem?> FindByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -61,7 +62,7 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(itemEntity);
     }
 
-    public async Task<IEnumerable<IStoreItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<IItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
     {
         var entities = await GetItemQuery()
             .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId.Value) != null)
@@ -77,7 +78,7 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IStoreItem>> FindByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken)
+    public async Task<IEnumerable<IItem>> FindByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken)
     {
         if (itemIds == null)
             throw new ArgumentNullException(nameof(itemIds));
@@ -98,7 +99,7 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IStoreItem>> FindByAsync(ManufacturerId manufacturerId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<IItem>> FindByAsync(ManufacturerId manufacturerId, CancellationToken cancellationToken)
     {
         var entities = await GetItemQuery()
             .Where(i => i.ManufacturerId == manufacturerId.Value)
@@ -114,7 +115,7 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IStoreItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
+    public async Task<IEnumerable<IItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
         IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
         CancellationToken cancellationToken)
     {
@@ -155,7 +156,7 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(filteredResultByStore);
     }
 
-    public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput, StoreId storeId,
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId,
         CancellationToken cancellationToken)
     {
         var entities = await GetItemQuery()
@@ -177,7 +178,7 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(string searchInput,
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput,
         CancellationToken cancellationToken)
     {
         var entities = await GetItemQuery()
@@ -197,7 +198,7 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IStoreItem>> FindActiveByAsync(ItemCategoryId itemCategoryId,
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(ItemCategoryId itemCategoryId,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -218,7 +219,7 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IStoreItem> StoreAsync(IStoreItem storeItem, CancellationToken cancellationToken)
+    public async Task<IItem> StoreAsync(IItem storeItem, CancellationToken cancellationToken)
     {
         if (storeItem is null)
             throw new ArgumentNullException(nameof(storeItem));

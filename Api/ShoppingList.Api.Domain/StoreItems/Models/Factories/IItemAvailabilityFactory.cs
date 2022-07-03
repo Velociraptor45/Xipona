@@ -2,7 +2,7 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 
-public interface IStoreItemAvailabilityFactory
+public interface IItemAvailabilityFactory
 {
-    IStoreItemAvailability Create(StoreId storeId, Price price, SectionId defaultSectionId);
+    IItemAvailability Create(StoreId storeId, Price price, SectionId defaultSectionId);
 }

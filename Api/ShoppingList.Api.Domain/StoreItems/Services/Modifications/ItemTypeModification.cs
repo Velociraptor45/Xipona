@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Modification
 
 public class ItemTypeModification
 {
-    public ItemTypeModification(ItemTypeId? id, ItemTypeName name, IEnumerable<IStoreItemAvailability> availabilities)
+    public ItemTypeModification(ItemTypeId? id, ItemTypeName name, IEnumerable<IItemAvailability> availabilities)
     {
         Id = id;
         Name = name;
@@ -13,5 +13,5 @@ public class ItemTypeModification
 
     public ItemTypeId? Id { get; }
     public ItemTypeName Name { get; }
-    public IReadOnlyCollection<IStoreItemAvailability> Availabilities { get; }
+    public IReadOnlyCollection<IItemAvailability> Availabilities { get; }
 }

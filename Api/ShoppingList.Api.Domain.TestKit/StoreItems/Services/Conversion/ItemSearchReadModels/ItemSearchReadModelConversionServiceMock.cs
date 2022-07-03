@@ -12,11 +12,11 @@ public class ItemSearchReadModelConversionServiceMock : Mock<IItemSearchReadMode
     {
     }
 
-    public void SetupConvertAsync(IEnumerable<IStoreItem> items, IStore store,
+    public void SetupConvertAsync(IEnumerable<IItem> items, IStore store,
         IEnumerable<SearchItemForShoppingResultReadModel> returnValue)
     {
         Setup(m => m.ConvertAsync(
-                It.Is<IEnumerable<IStoreItem>>(i => i.IsEquivalentTo(items)),
+                It.Is<IEnumerable<IItem>>(i => i.IsEquivalentTo(items)),
                 store,
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);

@@ -6,16 +6,16 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToDomain;
 
-public class StoreItemAvailabilityConverter : IToDomainConverter<AvailableAt, IStoreItemAvailability>
+public class StoreItemAvailabilityConverter : IToDomainConverter<AvailableAt, IItemAvailability>
 {
-    private readonly IStoreItemAvailabilityFactory _storeItemAvailabilityFactory;
+    private readonly IItemAvailabilityFactory _storeItemAvailabilityFactory;
 
-    public StoreItemAvailabilityConverter(IStoreItemAvailabilityFactory storeItemAvailabilityFactory)
+    public StoreItemAvailabilityConverter(IItemAvailabilityFactory storeItemAvailabilityFactory)
     {
         _storeItemAvailabilityFactory = storeItemAvailabilityFactory;
     }
 
-    public IStoreItemAvailability ToDomain(AvailableAt source)
+    public IItemAvailability ToDomain(AvailableAt source)
     {
         if (source is null)
             throw new ArgumentNullException(nameof(source));

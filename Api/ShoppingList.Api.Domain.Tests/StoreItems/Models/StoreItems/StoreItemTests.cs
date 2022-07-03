@@ -45,7 +45,7 @@ public class StoreItemTests
     public void IsAvailableInStore_WithNotAvailableInStore_ShouldReturnFalse()
     {
         // Arrange
-        IStoreItem testObject = StoreItemMother.Initial().Create();
+        IItem testObject = StoreItemMother.Initial().Create();
 
         // Act
         StoreId storeId = new StoreIdBuilder().Create();
@@ -62,7 +62,7 @@ public class StoreItemTests
     public void IsAvailableInStore_WithAvailableInStore_ShouldReturnTrue()
     {
         // Arrange
-        IStoreItem testObject = StoreItemMother.Initial().Create();
+        IItem testObject = StoreItemMother.Initial().Create();
         var availabilityStoreIds = testObject.Availabilities.Select(av => av.StoreId).ToList();
 
         // Act
@@ -86,9 +86,9 @@ public class StoreItemTests
         // Arrange
         Fixture fixture = _commonFixture.GetNewFixture();
 
-        IStoreItem testObject = StoreItemMother.Initial().Create();
+        IItem testObject = StoreItemMother.Initial().Create();
         PermanentItem permanentItem = fixture.Create<PermanentItem>();
-        IEnumerable<IStoreItemAvailability> availabilities =
+        IEnumerable<IItemAvailability> availabilities =
             StoreItemAvailabilityMother.Initial().CreateMany(3).ToList();
 
         // Act
@@ -119,9 +119,9 @@ public class StoreItemTests
         // Arrange
         Fixture fixture = _commonFixture.GetNewFixture();
 
-        IStoreItem testObject = StoreItemMother.Initial().WithIsTemporary(isTemporary).Create();
+        IItem testObject = StoreItemMother.Initial().WithIsTemporary(isTemporary).Create();
         ItemModification itemModify = fixture.Create<ItemModification>();
-        IEnumerable<IStoreItemAvailability> availabilities =
+        IEnumerable<IItemAvailability> availabilities =
             StoreItemAvailabilityMother.Initial().CreateMany(3).ToList();
 
         // Act
@@ -148,7 +148,7 @@ public class StoreItemTests
     public void GetDefaultSectionIdForStore_WithInvalidStoreId_ShouldThrowDomainException()
     {
         // Arrange
-        IStoreItem testObject = StoreItemMother.Initial().Create();
+        IItem testObject = StoreItemMother.Initial().Create();
         var requestStoreId = new StoreIdBuilder().Create();
 
         // Act
@@ -166,7 +166,7 @@ public class StoreItemTests
     public void GetDefaultSectionIdForStore_WithValidStoreId_ShouldReturnSectionId()
     {
         // Arrange
-        IStoreItem testObject = StoreItemMother.Initial().Create();
+        IItem testObject = StoreItemMother.Initial().Create();
         var chosenAvailability = _commonFixture.ChooseRandom(testObject.Availabilities);
 
         // Act
@@ -187,8 +187,8 @@ public class StoreItemTests
     public void SetPredecessor_WithValidPredecessor_ShouldSetPredecessor()
     {
         // Arrange
-        IStoreItem testObject = StoreItemMother.Initial().Create();
-        IStoreItem predecessor = StoreItemMother.Initial().Create();
+        IItem testObject = StoreItemMother.Initial().Create();
+        IItem predecessor = StoreItemMother.Initial().Create();
 
         // Act
         testObject.SetPredecessor(predecessor);

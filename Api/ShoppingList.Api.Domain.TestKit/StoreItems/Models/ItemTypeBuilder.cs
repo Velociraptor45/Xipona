@@ -29,7 +29,7 @@ public class ItemTypeBuilder : DomainTestBuilderBase<ItemType>
         return this;
     }
 
-    public ItemTypeBuilder WithAvailabilities(IEnumerable<IStoreItemAvailability> availabilities)
+    public ItemTypeBuilder WithAvailabilities(IEnumerable<IItemAvailability> availabilities)
     {
         FillConstructorWith("availabilities", availabilities);
         return this;

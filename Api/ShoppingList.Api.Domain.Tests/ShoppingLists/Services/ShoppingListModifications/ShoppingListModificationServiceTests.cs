@@ -139,7 +139,7 @@ public class ShoppingListModificationServiceTests
         private sealed class ChangeItemQuantityAsyncFixture : LocalFixture
         {
             private ShoppingListMock? _shoppingListMock;
-            private IStoreItem? _storeItem;
+            private IItem? _storeItem;
 
             public ShoppingListId ShoppingListId { get; private set; }
             public ItemTypeId? ItemTypeId { get; private set; }
@@ -706,7 +706,7 @@ public class ShoppingListModificationServiceTests
 
         private sealed class RemoveItemFromBasketAsyncFixture : LocalFixture
         {
-            private IStoreItem? _storeItem;
+            private IItem? _storeItem;
             private ShoppingListMock? _shoppingListMock;
 
             public ShoppingListId ShoppingListId { get; private set; }
@@ -962,7 +962,7 @@ public class ShoppingListModificationServiceTests
         private sealed class PutItemInBasketAsyncFixture : LocalFixture
         {
             private ShoppingListMock? _shoppingListMock;
-            private IStoreItem? _storeItem;
+            private IItem? _storeItem;
 
             public ShoppingListId ShoppingListId { get; private set; }
             public ItemTypeId? ItemTypeId { get; private set; }

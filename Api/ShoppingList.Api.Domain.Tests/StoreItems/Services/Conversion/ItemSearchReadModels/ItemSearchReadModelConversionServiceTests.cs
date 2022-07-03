@@ -139,7 +139,7 @@ public class ItemSearchReadModelConversionServiceTests
         public ItemCategoryRepositoryMock ItemCategoryRepositoryMock { get; }
 
         public ManufacturerRepositoryMock ManufacturerRepositoryMock { get; }
-        public List<IStoreItem> StoreItems { get; private set; }
+        public List<IItem> StoreItems { get; private set; }
         public IStore Store { get; private set; }
         public Dictionary<ItemCategoryId, IItemCategory> ItemCategories { get; } = new();
         public Dictionary<ManufacturerId, IManufacturer> Manufacturers { get; } = new();
@@ -167,7 +167,7 @@ public class ItemSearchReadModelConversionServiceTests
         {
             var availability = CreateAvailability();
 
-            StoreItems = ((IEnumerable<IStoreItem>)StoreItemMother.Initial()
+            StoreItems = ((IEnumerable<IItem>)StoreItemMother.Initial()
                     .WithAvailability(availability)
                     .CreateMany(2))
                 .ToList();
@@ -177,7 +177,7 @@ public class ItemSearchReadModelConversionServiceTests
         {
             var availability = CreateAvailability();
 
-            StoreItems = ((IEnumerable<IStoreItem>)StoreItemMother.Initial()
+            StoreItems = ((IEnumerable<IItem>)StoreItemMother.Initial()
                     .WithoutItemCategoryId()
                     .WithAvailability(availability)
                     .CreateMany(2))
@@ -188,7 +188,7 @@ public class ItemSearchReadModelConversionServiceTests
         {
             var availability = CreateAvailability();
 
-            StoreItems = ((IEnumerable<IStoreItem>)StoreItemMother.InitialWithoutManufacturer()
+            StoreItems = ((IEnumerable<IItem>)StoreItemMother.InitialWithoutManufacturer()
                     .WithAvailability(availability)
                     .CreateMany(2))
                 .ToList();
@@ -198,13 +198,13 @@ public class ItemSearchReadModelConversionServiceTests
         {
             var availability = CreateAvailability();
 
-            StoreItems = ((IEnumerable<IStoreItem>)StoreItemMother.InitialTemporary()
+            StoreItems = ((IEnumerable<IItem>)StoreItemMother.InitialTemporary()
                     .WithAvailability(availability)
                     .CreateMany(2))
                 .ToList();
         }
 
-        private StoreItemAvailability CreateAvailability()
+        private ItemAvailability CreateAvailability()
         {
             return StoreItemAvailabilityMother.Initial()
                 .WithStoreId(Store.Id)
@@ -240,7 +240,7 @@ public class ItemSearchReadModelConversionServiceTests
 
         public IEnumerable<SearchItemForShoppingResultReadModel> CreateSimpleReadModels()
         {
-            foreach (IStoreItem item in StoreItems)
+            foreach (IItem item in StoreItems)
             {
                 ManufacturerReadModel manufacturerReadModel = null;
                 ItemCategoryReadModel itemCategoryReadModel = null;

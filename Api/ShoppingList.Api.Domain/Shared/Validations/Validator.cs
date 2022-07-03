@@ -3,7 +3,6 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validations;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
@@ -26,7 +25,7 @@ public class Validator : IValidator
         _cancellationToken = cancellationToken;
     }
 
-    public async Task ValidateAsync(IEnumerable<IStoreItemAvailability> availabilities)
+    public async Task ValidateAsync(IEnumerable<IItemAvailability> availabilities)
     {
         if (availabilities is null)
             throw new ArgumentNullException(nameof(availabilities));

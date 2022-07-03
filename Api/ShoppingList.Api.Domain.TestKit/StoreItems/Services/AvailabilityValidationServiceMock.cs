@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validations;
 using ShoppingList.Api.TestTools.Extensions;
 
@@ -11,7 +10,7 @@ public class AvailabilityValidationServiceMock : Mock<IAvailabilityValidationSer
     {
     }
 
-    public void VerifyValidateOnce(IEnumerable<IStoreItemAvailability> availabilities)
+    public void VerifyValidateOnce(IEnumerable<IItemAvailability> availabilities)
     {
         Verify(i => i.ValidateAsync(
                 availabilities,
@@ -19,10 +18,10 @@ public class AvailabilityValidationServiceMock : Mock<IAvailabilityValidationSer
             Times.Once);
     }
 
-    public void SetupValidateAsync(IEnumerable<IStoreItemAvailability> availabilities)
+    public void SetupValidateAsync(IEnumerable<IItemAvailability> availabilities)
     {
         Setup(m => m.ValidateAsync(
-                It.Is<IEnumerable<IStoreItemAvailability>>(avs => avs.IsEquivalentTo(availabilities)),
+                It.Is<IEnumerable<IItemAvailability>>(avs => avs.IsEquivalentTo(availabilities)),
                 It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
     }

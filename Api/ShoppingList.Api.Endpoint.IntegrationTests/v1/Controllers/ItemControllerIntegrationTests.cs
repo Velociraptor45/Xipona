@@ -30,6 +30,7 @@ using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ShoppingList.Api.TestTools.Exceptions;
 using System;
 using Xunit;
+using Item = ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item;
 
 namespace ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
 
@@ -183,9 +184,9 @@ public class ItemControllerIntegrationTests
             {
             }
 
-            public IStoreItem? CurrentItem { get; private set; }
-            public IStoreItem? SecondLevelPredecessor { get; private set; }
-            public IStoreItem? FirstLevelPredecessor { get; private set; }
+            public IItem? CurrentItem { get; private set; }
+            public IItem? SecondLevelPredecessor { get; private set; }
+            public IItem? FirstLevelPredecessor { get; private set; }
             public UpdateItemWithTypesContract? Contract { get; private set; }
 
             public async Task SetupCurrentItemAsync()
@@ -358,7 +359,7 @@ public class ItemControllerIntegrationTests
             return scope.ServiceProvider.GetRequiredService<IStoreRepository>();
         }
 
-        protected async Task StoreAsync(IStoreItem? item = null, IManufacturer? manufacturer = null,
+        protected async Task StoreAsync(IItem? item = null, IManufacturer? manufacturer = null,
             IItemCategory? itemCategory = null, IEnumerable<IStore>? stores = null)
         {
             using var scope = CreateServiceScope();

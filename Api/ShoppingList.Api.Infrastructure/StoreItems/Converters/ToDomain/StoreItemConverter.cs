@@ -5,30 +5,31 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
+using Item = ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToDomain;
 
-public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
+public class StoreItemConverter : IToDomainConverter<Item, IItem>
 {
-    private readonly IStoreItemFactory _storeItemFactory;
+    private readonly IItemFactory _storeItemFactory;
     private readonly IToDomainConverter<Entities.ItemType, IItemType> _itemTypeConverter;
-    private readonly IToDomainConverter<AvailableAt, IStoreItemAvailability> _storeItemAvailabilityConverter;
+    private readonly IToDomainConverter<AvailableAt, IItemAvailability> _storeItemAvailabilityConverter;
 
-    public StoreItemConverter(IStoreItemFactory storeItemFactory,
+    public StoreItemConverter(IItemFactory storeItemFactory,
         IToDomainConverter<Entities.ItemType, IItemType> itemTypeConverter,
-        IToDomainConverter<AvailableAt, IStoreItemAvailability> storeItemAvailabilityConverter)
+        IToDomainConverter<AvailableAt, IItemAvailability> storeItemAvailabilityConverter)
     {
         _storeItemFactory = storeItemFactory;
         _itemTypeConverter = itemTypeConverter;
         _storeItemAvailabilityConverter = storeItemAvailabilityConverter;
     }
 
-    public IStoreItem ToDomain(Item source)
+    public IItem ToDomain(Item source)
     {
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        IStoreItem? predecessor = source.PredecessorId is null ? null : ToDomain(source.Predecessor!);
+        IItem? predecessor = source.PredecessorId is null ? null : ToDomain(source.Predecessor!);
 
         var itemCategoryId = source.ItemCategoryId.HasValue
             ? new ItemCategoryId(source.ItemCategoryId.Value)
@@ -79,7 +80,7 @@ public class StoreItemConverter : IToDomainConverter<Item, IStoreItem>
                 itemTypes);
         }
 
-        List<IStoreItemAvailability> availabilities = _storeItemAvailabilityConverter.ToDomain(source.AvailableAt)
+        List<IItemAvailability> availabilities = _storeItemAvailabilityConverter.ToDomain(source.AvailableAt)
             .ToList();
 
         return _storeItemFactory.Create(

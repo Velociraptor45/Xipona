@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.I
 
 public interface IItemSearchReadModelConversionService
 {
-    Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(IEnumerable<IStoreItem> items, IStore store,
+    Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(IEnumerable<IItem> items, IStore store,
         CancellationToken cancellationToken);
 
     Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(IEnumerable<ItemWithMatchingItemTypeIds> itemTypes,

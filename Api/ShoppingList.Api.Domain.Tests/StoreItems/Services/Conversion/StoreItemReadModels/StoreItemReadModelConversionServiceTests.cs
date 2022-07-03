@@ -205,7 +205,7 @@ public class StoreItemReadModelConversionServiceTests
             _sectionFactoryMock = new StoreSectionFactoryMock(MockBehavior.Strict);
         }
 
-        public IStoreItem? StoreItem { get; private set; }
+        public IItem? StoreItem { get; private set; }
 
         public StoreItemReadModelConversionService CreateService()
         {
@@ -326,7 +326,7 @@ public class StoreItemReadModelConversionServiceTests
         }
 
         private static StoreItemAvailabilityReadModel CreateAvailabilityReadModel(IStore store,
-            IStoreItemAvailability availability)
+            IItemAvailability availability)
         {
             var section = store.Sections.First();
             var storeSectionReadModel = new StoreItemSectionReadModel(

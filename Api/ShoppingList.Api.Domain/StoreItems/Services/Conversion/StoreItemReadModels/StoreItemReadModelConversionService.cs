@@ -29,7 +29,7 @@ public class StoreItemReadModelConversionService : IStoreItemReadModelConversion
         _storeRepository = storeRepository;
     }
 
-    public async Task<StoreItemReadModel> ConvertAsync(IStoreItem item, CancellationToken cancellationToken)
+    public async Task<StoreItemReadModel> ConvertAsync(IItem item, CancellationToken cancellationToken)
     {
         IItemCategory? itemCategory = null;
         IManufacturer? manufacturer = null;
@@ -55,7 +55,7 @@ public class StoreItemReadModelConversionService : IStoreItemReadModelConversion
         return ToReadModel(item, itemCategory, manufacturer, storeDict);
     }
 
-    private static StoreItemReadModel ToReadModel(IStoreItem model, IItemCategory? itemCategory,
+    private static StoreItemReadModel ToReadModel(IItem model, IItemCategory? itemCategory,
         IManufacturer? manufacturer, IReadOnlyDictionary<StoreId, IStore> stores)
     {
         var availabilityReadModels = ToAvailabilityReadModel(model.Availabilities, stores).ToList();
@@ -93,7 +93,7 @@ public class StoreItemReadModelConversionService : IStoreItemReadModelConversion
     }
 
     private static IEnumerable<StoreItemAvailabilityReadModel> ToAvailabilityReadModel(
-        IEnumerable<IStoreItemAvailability> availabilities, IReadOnlyDictionary<StoreId, IStore> stores)
+        IEnumerable<IItemAvailability> availabilities, IReadOnlyDictionary<StoreId, IStore> stores)
     {
         foreach (var av in availabilities)
         {

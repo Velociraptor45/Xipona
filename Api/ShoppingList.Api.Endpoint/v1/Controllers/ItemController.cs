@@ -229,7 +229,7 @@ public class ItemController : ControllerBase
     {
         try
         {
-            var model = _converters.ToDomain<CreateItemWithTypesContract, IStoreItem>(contract);
+            var model = _converters.ToDomain<CreateItemWithTypesContract, IItem>(contract);
             var command = new CreateItemWithTypesCommand(model);
             var readModel = await _commandDispatcher.DispatchAsync(command, default);
 

@@ -23,8 +23,8 @@ public static class ServiceCollectionExtensions
 {
     internal static void AddItems(this IServiceCollection services)
     {
-        services.AddTransient<IStoreItemFactory, StoreItemFactory>();
-        services.AddTransient<IStoreItemAvailabilityFactory, StoreItemAvailabilityFactory>();
+        services.AddTransient<IItemFactory, ItemFactory>();
+        services.AddTransient<IItemAvailabilityFactory, ItemAvailabilityFactory>();
 
         services.AddTransient<IAvailabilityValidationService, AvailabilityValidationService>();
         services.AddTransient<IItemSearchReadModelConversionService, ItemSearchReadModelConversionService>();
@@ -44,7 +44,7 @@ public static class ServiceCollectionExtensions
         {
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             var itemTypeFactory = provider.GetRequiredService<IItemTypeFactory>();
-            var storeItemFactory = provider.GetRequiredService<IStoreItemFactory>();
+            var storeItemFactory = provider.GetRequiredService<IItemFactory>();
             var shoppingListUpdateService = provider.GetRequiredService<IShoppingListExchangeService>();
             var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
 
@@ -67,7 +67,7 @@ public static class ServiceCollectionExtensions
         {
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
-            var itemFactory = provider.GetRequiredService<IStoreItemFactory>();
+            var itemFactory = provider.GetRequiredService<IItemFactory>();
             var conversionService = provider.GetRequiredService<IStoreItemReadModelConversionService>();
             return cancellationToken =>
                 new ItemCreationService(itemRepository, validatorDelegate, itemFactory, conversionService,

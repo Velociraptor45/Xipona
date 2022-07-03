@@ -8,9 +8,9 @@ using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain;
 
-internal class ItemTypeAvailabilityConverterTests : ToDomainConverterTestBase<ItemTypeAvailableAt, IStoreItemAvailability>
+internal class ItemTypeAvailabilityConverterTests : ToDomainConverterTestBase<ItemTypeAvailableAt, IItemAvailability>
 {
-    protected override (ItemTypeAvailableAt, IStoreItemAvailability) CreateTestObjects()
+    protected override (ItemTypeAvailableAt, IItemAvailability) CreateTestObjects()
     {
         var destination = StoreItemAvailabilityMother.Initial().Create();
         var source = GetSource(destination);
@@ -18,7 +18,7 @@ internal class ItemTypeAvailabilityConverterTests : ToDomainConverterTestBase<It
         return (source, destination);
     }
 
-    public static ItemTypeAvailableAt GetSource(IStoreItemAvailability destination)
+    public static ItemTypeAvailableAt GetSource(IItemAvailability destination)
     {
         return new ItemTypeAvailableAt
         {
@@ -35,7 +35,7 @@ internal class ItemTypeAvailabilityConverterTests : ToDomainConverterTestBase<It
 
     public static void AddDependencies(IServiceCollection serviceCollection)
     {
-        serviceCollection.AddImplementationOfNonGenericType(typeof(IStoreItemAvailabilityFactory).Assembly,
-            typeof(IStoreItemAvailabilityFactory));
+        serviceCollection.AddImplementationOfNonGenericType(typeof(IItemAvailabilityFactory).Assembly,
+            typeof(IItemAvailabilityFactory));
     }
 }

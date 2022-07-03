@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 
-public class StoreItemAvailabilityFactoryMock : Mock<IStoreItemAvailabilityFactory>
+public class StoreItemAvailabilityFactoryMock : Mock<IItemAvailabilityFactory>
 {
     public StoreItemAvailabilityFactoryMock(MockBehavior behavior) : base(behavior)
 
@@ -12,7 +12,7 @@ public class StoreItemAvailabilityFactoryMock : Mock<IStoreItemAvailabilityFacto
     }
 
     public void SetupCreate(StoreId storeId, Price price, SectionId sectionId,
-        IStoreItemAvailability returnValue)
+        IItemAvailability returnValue)
     {
         Setup(i => i.Create(
                 It.Is<StoreId>(id => id == storeId),

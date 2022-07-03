@@ -5,7 +5,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
 
 public interface IItemCreationService
 {
-    Task<StoreItemReadModel> CreateItemWithTypesAsync(IStoreItem item);
+    Task<StoreItemReadModel> CreateItemWithTypesAsync(IItem item);
 
     Task<StoreItemReadModel> CreateAsync(ItemCreation creation);
 

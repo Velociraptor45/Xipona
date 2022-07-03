@@ -11,12 +11,12 @@ using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.TestTools.Exceptions;
 using System;
 using Xunit;
+using Item = ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item;
 using Manufacturer = ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities.Manufacturer;
 using Models = ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
@@ -144,7 +144,7 @@ public class ManufacturerControllerIntegrationTests
 
                 // items
                 var itemRepository = CreateItemRepository(SetupScope);
-                var items = new List<IStoreItem>()
+                var items = new List<IItem>()
                 {
                     new StoreItemBuilder()
                         .WithManufacturerId(ManufacturerId)

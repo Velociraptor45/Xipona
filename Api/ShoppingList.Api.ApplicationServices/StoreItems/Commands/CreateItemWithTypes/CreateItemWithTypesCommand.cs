@@ -6,10 +6,10 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands
 
 public class CreateItemWithTypesCommand : ICommand<StoreItemReadModel>
 {
-    public CreateItemWithTypesCommand(IStoreItem item)
+    public CreateItemWithTypesCommand(IItem item)
     {
         Item = item;
     }
 
-    public IStoreItem Item { get; }
+    public IItem Item { get; }
 }

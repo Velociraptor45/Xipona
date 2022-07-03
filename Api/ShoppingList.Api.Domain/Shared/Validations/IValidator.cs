@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
 public interface IValidator
 {
-    Task ValidateAsync(IEnumerable<IStoreItemAvailability> availabilities);
+    Task ValidateAsync(IEnumerable<IItemAvailability> availabilities);
 
     Task ValidateAsync(ItemCategoryId itemCategoryId);
 
