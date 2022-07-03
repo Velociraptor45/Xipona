@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItems;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchItems;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;

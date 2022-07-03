@@ -1,11 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
-using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToEntity;
-using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Converters.ToEntity;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
 using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
-using Item = ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item;
+using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
+using ItemType = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.ItemType;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity;
 
@@ -44,7 +45,7 @@ public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
                         DefaultSectionId = av.DefaultSectionId.Value
                     }).ToList(),
             PredecessorId = source.Predecessor?.Id.Value,
-            ItemTypes = new List<ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType>()
+            ItemTypes = new List<ItemType>()
         };
     }
 

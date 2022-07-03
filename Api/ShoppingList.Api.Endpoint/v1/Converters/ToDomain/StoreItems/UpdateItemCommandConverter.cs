@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.UpdateItem;
+﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Core.Converter;

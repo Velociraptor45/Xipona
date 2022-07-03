@@ -17,9 +17,9 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
 using ShoppingList.Api.Core.TestKit;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
@@ -29,7 +29,7 @@ using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ShoppingList.Api.TestTools.Exceptions;
 using System;
 using Xunit;
-using Item = ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item;
+using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
 
 namespace ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
 

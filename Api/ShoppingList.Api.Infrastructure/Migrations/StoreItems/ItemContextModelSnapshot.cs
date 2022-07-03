@@ -3,7 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
 
 #nullable disable
 
