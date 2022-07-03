@@ -6,7 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Converters.ToDomain;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using ShoppingList.Api.Domain.TestKit.Items.Models;
 
 namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain;
 

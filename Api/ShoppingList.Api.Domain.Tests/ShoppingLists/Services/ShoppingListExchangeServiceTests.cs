@@ -5,12 +5,12 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Exchanges;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using ShoppingList.Api.Domain.TestKit.Items.Models;
+using ShoppingList.Api.Domain.TestKit.Items.Models.Factories;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models.Factories;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ShoppingList.Api.TestTools.Exceptions;
 

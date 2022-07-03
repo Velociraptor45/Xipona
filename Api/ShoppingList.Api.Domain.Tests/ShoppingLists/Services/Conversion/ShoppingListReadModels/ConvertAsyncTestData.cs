@@ -9,9 +9,9 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
+using ShoppingList.Api.Domain.TestKit.Items.Models;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Conversion.ShoppingListReadModels;

@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Converters.ToEntity;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
 using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using ShoppingList.Api.Domain.TestKit.Items.Models;
 using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
 using ItemType = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.ItemType;
 

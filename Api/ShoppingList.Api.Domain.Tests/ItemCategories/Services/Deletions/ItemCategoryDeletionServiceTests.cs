@@ -6,11 +6,11 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
+using ShoppingList.Api.Domain.TestKit.Items.Models;
+using ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
 using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services.Deletions;

@@ -5,8 +5,8 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
+using ShoppingList.Api.Domain.TestKit.Items.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 
 namespace ShoppingList.Api.Domain.TestKit.Common;
 
