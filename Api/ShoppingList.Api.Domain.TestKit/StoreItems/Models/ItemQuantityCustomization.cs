@@ -1,6 +1,6 @@
 ﻿using AutoFixture.Kernel;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 

@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateItem;

@@ -3,9 +3,9 @@ using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.AllQuantityType
 using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.StoreItems;
 

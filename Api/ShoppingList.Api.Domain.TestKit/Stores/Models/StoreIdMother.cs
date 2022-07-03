@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ShoppingList.Api.Domain.TestKit.Shared;
 
 namespace ShoppingList.Api.Domain.TestKit.Stores.Models;

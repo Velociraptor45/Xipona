@@ -1,6 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models;
 

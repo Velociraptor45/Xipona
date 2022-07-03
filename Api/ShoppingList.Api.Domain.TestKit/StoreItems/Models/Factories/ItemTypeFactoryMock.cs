@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Models.Factories;
 

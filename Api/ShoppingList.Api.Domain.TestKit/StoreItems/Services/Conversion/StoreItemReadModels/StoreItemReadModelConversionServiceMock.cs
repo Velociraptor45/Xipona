@@ -1,6 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Conversion.StoreItemReadModels;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion.StoreItemReadModels;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Services.Conversion.StoreItemReadModels;
 

@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 

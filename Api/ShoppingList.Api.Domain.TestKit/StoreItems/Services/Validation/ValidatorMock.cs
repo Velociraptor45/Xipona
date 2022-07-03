@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
 namespace ShoppingList.Api.Domain.TestKit.StoreItems.Services.Validation;
 
