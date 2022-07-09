@@ -34,12 +34,12 @@ jobs:
       # - name: Install dotnet-coverage
       #   run: |
       #     dotnet tool install --global dotnet-coverage
-      # - name: Begin Sonar scan
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #   run: |
-      #     dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions=**/*TestTools*/** /d:sonar.cs.vscoveragexml.reportsPaths=api/coverage.xml,frontend/coverage.xml
+      - name: Begin Sonar scan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions=**/*TestTools*/** /d:sonar.cs.vscoveragexml.reportsPaths=api/TestResults/coverage.cobertura.xml,frontend/TestResults/coverage.cobertura.xml
       - name: Build Backend
         run: |
           dotnet build Api/ShoppingListApi.sln
@@ -49,18 +49,17 @@ jobs:
       - name: Build Frontend
         run: |
           dotnet build Frontend/ShoppingList.Frontend.sln
-      - name: Test Api
+      - name: Test
         run: |
           dotnet test ./Api/ShoppingListApi.sln --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverlet.json" "/p:CoverletOutputFormat=\"json,cobertura\""
           dotnet test ./Frontend/ShoppingList.Frontend.sln --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverlet.json" "/p:CoverletOutputFormat=\"json,cobertura\""
-      
       # - name: Test
       #   run: |
       #     dotnet-coverage collect 'dotnet test Api/ShoppingListApi.sln --no-build' -f xml  -o 'api/coverage.xml'
       #     dotnet-coverage collect 'dotnet test Frontend/ShoppingList.Frontend.sln --no-build' -f xml  -o 'frontend/coverage.xml'
-      # - name: End Sonar scan
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #   run: |
-      #     dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      - name: End Sonar scan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
