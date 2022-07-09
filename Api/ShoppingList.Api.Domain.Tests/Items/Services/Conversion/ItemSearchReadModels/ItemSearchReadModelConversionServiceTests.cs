@@ -215,7 +215,6 @@ public class ItemSearchReadModelConversionServiceTests
 
         private ItemAvailability CreateAvailability()
         {
-            TestPropertyNotSetException.ThrowIfNull(Items);
             TestPropertyNotSetException.ThrowIfNull(Store);
 
             return ItemAvailabilityMother.Initial()

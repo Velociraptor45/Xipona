@@ -18,22 +18,7 @@ public class ManufacturerModificationServiceTests
         {
             _fixture = new ModifyAsyncFixture();
         }
-
-        [Fact]
-        public async Task ModifyAsync_WithManufacturerModificationNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
-
-            // Act
-            var func = async () => await sut.ModifyAsync(_fixture.Modification);
-
-            // Assert
-            await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*modification*");
-        }
-
+        
         [Fact]
         public async Task ModifyAsync_WithNotFindingManufacturer_ShouldThrowDomainException()
         {
@@ -57,8 +42,8 @@ public class ManufacturerModificationServiceTests
         {
             // Arrange
             _fixture.SetupManufacturerMock();
-            _fixture.SetupModifyingManufacturer();
             _fixture.SetupManufacturerModification();
+            _fixture.SetupModifyingManufacturer();
             _fixture.SetupFindingManufacturer();
             _fixture.SetupStoringManufacturer();
             var sut = _fixture.CreateSut();
@@ -77,8 +62,8 @@ public class ManufacturerModificationServiceTests
         {
             // Arrange
             _fixture.SetupManufacturerMock();
-            _fixture.SetupModifyingManufacturer();
             _fixture.SetupManufacturerModification();
+            _fixture.SetupModifyingManufacturer();
             _fixture.SetupFindingManufacturer();
             _fixture.SetupStoringManufacturer();
             var sut = _fixture.CreateSut();
