@@ -9,16 +9,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 public class ItemQueryService : IItemQueryService
 {
     private readonly IItemRepository _itemRepository;
-    private readonly IItemReadModelConversionService _storeItemReadModelConversionService;
+    private readonly IItemReadModelConversionService _itemReadModelConversionService;
     private readonly CancellationToken _cancellationToken;
 
     public ItemQueryService(
         IItemRepository itemRepository,
-        IItemReadModelConversionService storeItemReadModelConversionService,
+        IItemReadModelConversionService itemReadModelConversionService,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
-        _storeItemReadModelConversionService = storeItemReadModelConversionService;
+        _itemReadModelConversionService = itemReadModelConversionService;
         _cancellationToken = cancellationToken;
     }
 
@@ -32,6 +32,6 @@ public class ItemQueryService : IItemQueryService
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        return await _storeItemReadModelConversionService.ConvertAsync(item, _cancellationToken);
+        return await _itemReadModelConversionService.ConvertAsync(item, _cancellationToken);
     }
 }

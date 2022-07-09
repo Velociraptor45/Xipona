@@ -46,7 +46,7 @@ public class ItemCreationServiceTests
         }
 
         [Fact]
-        public async Task CreateAsync_WithManufacturerId_ShouldItem()
+        public async Task CreateAsync_WithManufacturerId_ShouldStoreItem()
         {
             // Arrange
             _fixture.SetupWithManufacturerId();
@@ -224,10 +224,10 @@ public class ItemCreationServiceTests
 
         private sealed class CreateAsyncFixture : LocalFixture
         {
-            private IItem? _storeItem;
+            private IItem? _item;
             private ManufacturerId? _manufacturerId;
             private List<IItemAvailability>? _availabilities;
-            private ItemReadModel? _storeItemReadModel;
+            private ItemReadModel? _itemReadModel;
 
             public ItemCreation? ItemCreation { get; private set; }
 
@@ -253,20 +253,20 @@ public class ItemCreationServiceTests
 
             public void SetupAvailabilities()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItem);
-                _availabilities = _storeItem.Availabilities.ToList();
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _availabilities = _item.Availabilities.ToList();
             }
 
-            public void SetupStoreItem()
+            public void SetupItem()
             {
-                _storeItem = ItemMother.Initial().Create();
+                _item = ItemMother.Initial().Create();
             }
 
-            public void SetupStoreItemFactoryCreate()
+            public void SetupItemFactoryCreate()
             {
                 TestPropertyNotSetException.ThrowIfNull(ItemCreation);
-                TestPropertyNotSetException.ThrowIfNull(_storeItem);
-                ItemFactoryMock.SetupCreate(ItemCreation, _storeItem);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                ItemFactoryMock.SetupCreate(ItemCreation, _item);
             }
 
             public void SetupValidatingItemCategory()
@@ -290,15 +290,15 @@ public class ItemCreationServiceTests
 
             public void SetupStoringItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItem);
-                ItemRepositoryMock.SetupStoreAsync(_storeItem, _storeItem);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                ItemRepositoryMock.SetupStoreAsync(_item, _item);
             }
 
             public void SetupConvertingItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItem);
-                _storeItemReadModel = Fixture.Create<ItemReadModel>();
-                ConversionServiceMock.SetupConvertAsync(_storeItem, _storeItemReadModel);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _itemReadModel = Fixture.Create<ItemReadModel>();
+                ConversionServiceMock.SetupConvertAsync(_item, _itemReadModel);
             }
 
             #region Verify
@@ -329,8 +329,8 @@ public class ItemCreationServiceTests
 
             public void VerifyStoringItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItem);
-                ItemRepositoryMock.VerifyStoreAsyncOnce(_storeItem);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                ItemRepositoryMock.VerifyStoreAsyncOnce(_item);
             }
 
             #endregion Verify
@@ -339,13 +339,13 @@ public class ItemCreationServiceTests
 
             public void SetupWithManufacturerIdNull()
             {
-                SetupStoreItem();
+                SetupItem();
                 SetupAvailabilities();
 
                 SetupManufacturerIdNull();
                 SetupItemCreation();
 
-                SetupStoreItemFactoryCreate();
+                SetupItemFactoryCreate();
                 SetupStoringItem();
 
                 SetupValidatingAvailabilities();
@@ -356,13 +356,13 @@ public class ItemCreationServiceTests
 
             public void SetupWithManufacturerId()
             {
-                SetupStoreItem();
+                SetupItem();
                 SetupAvailabilities();
 
                 SetupManufacturerId();
                 SetupItemCreation();
 
-                SetupStoreItemFactoryCreate();
+                SetupItemFactoryCreate();
                 SetupStoringItem();
 
                 SetupValidatingAvailabilities();
@@ -448,9 +448,9 @@ public class ItemCreationServiceTests
 
         private sealed class CreateTemporaryAsyncFixture : LocalFixture
         {
-            private IItem? _storeItem;
+            private IItem? _item;
             private IItemAvailability? _availability;
-            private ItemReadModel? _storeItemReadModel;
+            private ItemReadModel? _itemReadModel;
             public TemporaryItemCreation? TemporaryItemCreation { get; private set; }
 
             public void SetupCommand()
@@ -461,24 +461,24 @@ public class ItemCreationServiceTests
                 TemporaryItemCreation = Fixture.Create<TemporaryItemCreation>();
             }
 
-            public void SetupStoreItem()
+            public void SetupItem()
             {
-                _storeItem = ItemMother.Initial().Create();
+                _item = ItemMother.Initial().Create();
             }
 
             public void SetupRandomAvailability()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItem);
-                _availability = CommonFixture.ChooseRandom(_storeItem.Availabilities);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _availability = CommonFixture.ChooseRandom(_item.Availabilities);
             }
 
             #region Mock Setup
 
-            public void SetupCreatingStoreItem()
+            public void SetupCreatingItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItem);
+                TestPropertyNotSetException.ThrowIfNull(_item);
                 TestPropertyNotSetException.ThrowIfNull(TemporaryItemCreation);
-                ItemFactoryMock.SetupCreate(TemporaryItemCreation, _storeItem);
+                ItemFactoryMock.SetupCreate(TemporaryItemCreation, _item);
             }
 
             public void SetupValidatingAvailabilities()
@@ -489,15 +489,15 @@ public class ItemCreationServiceTests
 
             public void SetupStoringItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItem);
-                ItemRepositoryMock.SetupStoreAsync(_storeItem, _storeItem);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                ItemRepositoryMock.SetupStoreAsync(_item, _item);
             }
 
             public void SetupConvertingItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItem);
-                _storeItemReadModel = Fixture.Create<ItemReadModel>();
-                ConversionServiceMock.SetupConvertAsync(_storeItem, _storeItemReadModel);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _itemReadModel = Fixture.Create<ItemReadModel>();
+                ConversionServiceMock.SetupConvertAsync(_item, _itemReadModel);
             }
 
             #endregion Mock Setup
@@ -512,8 +512,8 @@ public class ItemCreationServiceTests
 
             public void VerifyStoringItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItem);
-                ItemRepositoryMock.VerifyStoreAsyncOnce(_storeItem);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                ItemRepositoryMock.VerifyStoreAsyncOnce(_item);
             }
 
             #endregion Verify
@@ -522,10 +522,10 @@ public class ItemCreationServiceTests
 
             public void SetupWithValidData()
             {
-                SetupStoreItem();
+                SetupItem();
                 SetupRandomAvailability();
                 SetupCommand();
-                SetupCreatingStoreItem();
+                SetupCreatingItem();
                 SetupStoringItem();
 
                 SetupValidatingAvailabilities();

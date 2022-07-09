@@ -11,10 +11,10 @@ public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
     {
     }
 
-    public void SetupFindActiveByAsync(ItemId storeItemId, IEnumerable<IShoppingList> returnValue)
+    public void SetupFindActiveByAsync(ItemId itemId, IEnumerable<IShoppingList> returnValue)
     {
         Setup(i => i.FindActiveByAsync(
-                It.Is<ItemId>(id => id == storeItemId),
+                It.Is<ItemId>(id => id == itemId),
                 It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult(returnValue));
     }

@@ -35,7 +35,7 @@ public class ItemCategoryModificationServiceTests
     }
 
     [Fact]
-    public async Task ModifyAsync_WithValidData_ShouldStoreItemCategory()
+    public async Task ModifyAsync_WithValidData_ShouldItemCategory()
     {
         // Arrange
         _fixture.SetupModification();

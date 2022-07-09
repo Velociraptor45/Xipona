@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Items
 public class ItemContractConverter :
     IToContractConverter<ItemReadModel, ItemContract>
 {
-    private readonly IToContractConverter<ItemAvailabilityReadModel, ItemAvailabilityContract> _storeItemAvailabilityContractConverter;
+    private readonly IToContractConverter<ItemAvailabilityReadModel, ItemAvailabilityContract> _itemAvailabilityContractConverter;
     private readonly IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> _itemCategoryContractConverter;
     private readonly IToContractConverter<ManufacturerReadModel, ManufacturerContract> _manufacturerContractConverter;
     private readonly IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> _quantityTypeContractConverter;
@@ -20,14 +20,14 @@ public class ItemContractConverter :
     private readonly IToContractConverter<ItemTypeReadModel, ItemTypeContract> _itemTypeContractConverter;
 
     public ItemContractConverter(
-        IToContractConverter<ItemAvailabilityReadModel, ItemAvailabilityContract> storeItemAvailabilityContractConverter,
+        IToContractConverter<ItemAvailabilityReadModel, ItemAvailabilityContract> itemAvailabilityContractConverter,
         IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> itemCategoryContractConverter,
         IToContractConverter<ManufacturerReadModel, ManufacturerContract> manufacturerContractConverter,
         IToContractConverter<QuantityTypeReadModel, QuantityTypeContract> quantityTypeContractConverter,
         IToContractConverter<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract> quantityTypeInPacketContractConverter,
         IToContractConverter<ItemTypeReadModel, ItemTypeContract> itemTypeContractConverter)
     {
-        _storeItemAvailabilityContractConverter = storeItemAvailabilityContractConverter;
+        _itemAvailabilityContractConverter = itemAvailabilityContractConverter;
         _itemCategoryContractConverter = itemCategoryContractConverter;
         _manufacturerContractConverter = manufacturerContractConverter;
         _quantityTypeContractConverter = quantityTypeContractConverter;
@@ -61,7 +61,7 @@ public class ItemContractConverter :
                 : _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket),
             itemCategoryContract,
             manufacturerContract,
-            _storeItemAvailabilityContractConverter.ToContract(source.Availabilities),
+            _itemAvailabilityContractConverter.ToContract(source.Availabilities),
             _itemTypeContractConverter.ToContract(source.ItemTypes));
     }
 }

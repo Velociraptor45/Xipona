@@ -5,23 +5,32 @@ using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
 using ShoppingList.Api.Domain.TestKit.Shared;
+using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Manufacturers.Services;
 
 public class ManufacturerValidationServiceTests
 {
+    private readonly LocalFixture _fixture;
+
+    public ManufacturerValidationServiceTests()
+    {
+        _fixture = new LocalFixture();
+    }
+
     [Fact]
     public async Task ValidateAsync_WithInvalidManufacturerId_ShouldThrowDomainException()
     {
         // Arrange
-        var local = new LocalFixture();
-        var service = local.CreateSut();
+        var service = _fixture.CreateSut();
 
-        local.SetupManufacturer();
-        local.SetupFindingNoManufacturer();
+        _fixture.SetupManufacturer();
+        _fixture.SetupFindingNoManufacturer();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Manufacturer);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(local.Manufacturer.Id, default);
+        Func<Task> function = async () => await service.ValidateAsync(_fixture.Manufacturer.Id, default);
 
         // Assert
         using (new AssertionScope())
@@ -34,14 +43,15 @@ public class ManufacturerValidationServiceTests
     public async Task ValidateAsync_WithValidManufacturerId_ShouldNotThrow()
     {
         // Arrange
-        var local = new LocalFixture();
-        var service = local.CreateSut();
+        var service = _fixture.CreateSut();
 
-        local.SetupManufacturer();
-        local.SetupFindingManufacturer();
+        _fixture.SetupManufacturer();
+        _fixture.SetupFindingManufacturer();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Manufacturer);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(local.Manufacturer.Id, default);
+        Func<Task> function = async () => await service.ValidateAsync(_fixture.Manufacturer.Id, default);
 
         // Assert
         using (new AssertionScope())
@@ -52,16 +62,12 @@ public class ManufacturerValidationServiceTests
 
     private class LocalFixture
     {
-        public Fixture Fixture { get; }
-        public CommonFixture CommonFixture { get; } = new CommonFixture();
         public ManufacturerRepositoryMock ManufacturerRepositoryMock { get; }
 
-        public Manufacturer Manufacturer { get; private set; }
+        public Manufacturer? Manufacturer { get; private set; }
 
         public LocalFixture()
         {
-            Fixture = CommonFixture.GetNewFixture();
-
             ManufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
         }
 
@@ -79,11 +85,13 @@ public class ManufacturerValidationServiceTests
 
         public void SetupFindingManufacturer()
         {
+            TestPropertyNotSetException.ThrowIfNull(Manufacturer);
             ManufacturerRepositoryMock.SetupFindByAsync(Manufacturer.Id, Manufacturer);
         }
 
         public void SetupFindingNoManufacturer()
         {
+            TestPropertyNotSetException.ThrowIfNull(Manufacturer);
             ManufacturerRepositoryMock.SetupFindByAsync(Manufacturer.Id, null);
         }
 

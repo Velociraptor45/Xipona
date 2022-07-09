@@ -27,12 +27,12 @@ public class ItemRepository : IItemRepository
 
     #region public methods
 
-    public async Task<IItem?> FindByAsync(ItemId storeItemId, CancellationToken cancellationToken)
+    public async Task<IItem?> FindByAsync(ItemId itemId, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         var itemEntity = await GetItemQuery()
-            .FirstOrDefaultAsync(item => item.Id == storeItemId.Value, cancellationToken);
+            .FirstOrDefaultAsync(item => item.Id == itemId.Value, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -219,18 +219,18 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IItem> StoreAsync(IItem storeItem, CancellationToken cancellationToken)
+    public async Task<IItem> StoreAsync(IItem item, CancellationToken cancellationToken)
     {
-        if (storeItem is null)
-            throw new ArgumentNullException(nameof(storeItem));
+        if (item is null)
+            throw new ArgumentNullException(nameof(item));
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var existingEntity = await FindTrackedEntityBy(storeItem.Id);
+        var existingEntity = await FindTrackedEntityBy(item.Id);
 
         if (existingEntity == null)
         {
-            var newEntity = _toEntityConverter.ToEntity(storeItem);
+            var newEntity = _toEntityConverter.ToEntity(item);
             _dbContext.Add(newEntity);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -241,7 +241,7 @@ public class ItemRepository : IItemRepository
         }
         else
         {
-            var updatedEntity = _toEntityConverter.ToEntity(storeItem);
+            var updatedEntity = _toEntityConverter.ToEntity(item);
             updatedEntity.Id = existingEntity.Id;
             _dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
             _dbContext.Entry(existingEntity).State = EntityState.Modified;

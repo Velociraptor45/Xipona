@@ -1,3 +1,3 @@
-﻿dotnet ef migrations add <> --context ItemContext --output-dir ./Migrations/StoreItems
+﻿dotnet ef migrations add <> --context ItemContext --output-dir ./Migrations/Items
 
 dotnet ef database update

@@ -23,10 +23,10 @@ public class TemporaryItemService : ITemporaryItemService
 
     public async Task MakePermanentAsync(PermanentItem permanentItem)
     {
-        IItem? storeItem = await _itemRepository.FindByAsync(permanentItem.Id, _cancellationToken);
-        if (storeItem == null)
+        IItem? item = await _itemRepository.FindByAsync(permanentItem.Id, _cancellationToken);
+        if (item == null)
             throw new DomainException(new ItemNotFoundReason(permanentItem.Id));
-        if (!storeItem.IsTemporary)
+        if (!item.IsTemporary)
             throw new DomainException(new ItemNotTemporaryReason(permanentItem.Id));
 
         var itemCategoryId = permanentItem.ItemCategoryId;
@@ -46,7 +46,7 @@ public class TemporaryItemService : ITemporaryItemService
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        storeItem.MakePermanent(permanentItem, availabilities);
-        await _itemRepository.StoreAsync(storeItem, _cancellationToken);
+        item.MakePermanent(permanentItem, availabilities);
+        await _itemRepository.StoreAsync(item, _cancellationToken);
     }
 }

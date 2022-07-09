@@ -9,19 +9,19 @@ using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Items.Converters.ToDomain;
 
-public class ItemConverter : IToDomainConverter<Entities.Item, IItem>
+public class ItemConverter : IToDomainConverter<Item, IItem>
 {
-    private readonly IItemFactory _storeItemFactory;
+    private readonly IItemFactory _itemFactory;
     private readonly IToDomainConverter<Entities.ItemType, IItemType> _itemTypeConverter;
-    private readonly IToDomainConverter<AvailableAt, IItemAvailability> _storeItemAvailabilityConverter;
+    private readonly IToDomainConverter<AvailableAt, IItemAvailability> _itemAvailabilityConverter;
 
-    public ItemConverter(IItemFactory storeItemFactory,
+    public ItemConverter(IItemFactory itemFactory,
         IToDomainConverter<Entities.ItemType, IItemType> itemTypeConverter,
-        IToDomainConverter<AvailableAt, IItemAvailability> storeItemAvailabilityConverter)
+        IToDomainConverter<AvailableAt, IItemAvailability> itemAvailabilityConverter)
     {
-        _storeItemFactory = storeItemFactory;
+        _itemFactory = itemFactory;
         _itemTypeConverter = itemTypeConverter;
-        _storeItemAvailabilityConverter = storeItemAvailabilityConverter;
+        _itemAvailabilityConverter = itemAvailabilityConverter;
     }
 
     public IItem ToDomain(Item source)
@@ -66,7 +66,7 @@ public class ItemConverter : IToDomainConverter<Entities.Item, IItem>
             if (itemCategoryId is null)
                 throw new InvalidOperationException("ItemCategoryId mustn't be null for an item with types.");
 
-            return _storeItemFactory.Create(
+            return _itemFactory.Create(
                 new ItemId(source.Id),
                 new ItemName(source.Name),
                 source.Deleted,
@@ -80,10 +80,10 @@ public class ItemConverter : IToDomainConverter<Entities.Item, IItem>
                 itemTypes);
         }
 
-        List<IItemAvailability> availabilities = _storeItemAvailabilityConverter.ToDomain(source.AvailableAt)
+        List<IItemAvailability> availabilities = _itemAvailabilityConverter.ToDomain(source.AvailableAt)
             .ToList();
 
-        return _storeItemFactory.Create(
+        return _itemFactory.Create(
             new ItemId(source.Id),
             new ItemName(source.Name),
             source.Deleted,

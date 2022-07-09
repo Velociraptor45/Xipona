@@ -16,37 +16,41 @@ using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
 using ShoppingList.Api.Domain.TestKit.Shared;
 using ShoppingList.Api.Domain.TestKit.Stores.Models;
+using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Items.Services.Conversion.ItemSearchReadModels;
 
 public class ItemSearchReadModelConversionServiceTests
 {
-    private readonly LocalFixture _local;
+    private readonly LocalFixture _fixture;
 
     public ItemSearchReadModelConversionServiceTests()
     {
-        _local = new LocalFixture();
+        _fixture = new LocalFixture();
     }
 
     [Fact]
     public async Task ConvertAsync_WithNeitherItemCategoryNorManufacturer_ShouldConvertToReadModel()
     {
         // Arrange
-        var service = _local.CreateSut();
+        var service = _fixture.CreateSut();
 
-        _local.SetupStore();
-        _local.SetupItemsWithNeitherItemCategoryNorManufacturer();
+        _fixture.SetupStore();
+        _fixture.SetupItemsWithNeitherItemCategoryNorManufacturer();
 
-        _local.SetupItemCategories();
-        _local.SetupManufacturers();
-        _local.SetupFindingItemCategories();
-        _local.SetupFindingManufacturers();
+        _fixture.SetupItemCategories();
+        _fixture.SetupManufacturers();
+        _fixture.SetupFindingItemCategories();
+        _fixture.SetupFindingManufacturers();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Items);
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Store);
 
         // Act
-        var result = await service.ConvertAsync(_local.Items, _local.Store, default);
+        var result = await service.ConvertAsync(_fixture.Items, _fixture.Store, default);
 
         // Assert
-        var expected = _local.CreateSimpleReadModels();
+        var expected = _fixture.CreateSimpleReadModels();
 
         using (new AssertionScope())
         {
@@ -58,21 +62,24 @@ public class ItemSearchReadModelConversionServiceTests
     public async Task ConvertAsync_WithItemCategoryAndNoManufacturer_ShouldConvertToReadModel()
     {
         // Arrange
-        var service = _local.CreateSut();
+        var service = _fixture.CreateSut();
 
-        _local.SetupStore();
-        _local.SetupItemsWithoutManufacturer();
+        _fixture.SetupStore();
+        _fixture.SetupItemsWithoutManufacturer();
 
-        _local.SetupItemCategories();
-        _local.SetupManufacturers();
-        _local.SetupFindingItemCategories();
-        _local.SetupFindingManufacturers();
+        _fixture.SetupItemCategories();
+        _fixture.SetupManufacturers();
+        _fixture.SetupFindingItemCategories();
+        _fixture.SetupFindingManufacturers();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Items);
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Store);
 
         // Act
-        var result = await service.ConvertAsync(_local.Items, _local.Store, default);
+        var result = await service.ConvertAsync(_fixture.Items, _fixture.Store, default);
 
         // Assert
-        var expected = _local.CreateSimpleReadModels();
+        var expected = _fixture.CreateSimpleReadModels();
 
         using (new AssertionScope())
         {
@@ -84,21 +91,24 @@ public class ItemSearchReadModelConversionServiceTests
     public async Task ConvertAsync_WithManufacturerAndNoItemCategory_ShouldConvertToReadModel()
     {
         // Arrange
-        var service = _local.CreateSut();
+        var service = _fixture.CreateSut();
 
-        _local.SetupStore();
-        _local.SetupItemsWithoutItemCategory();
+        _fixture.SetupStore();
+        _fixture.SetupItemsWithoutItemCategory();
 
-        _local.SetupItemCategories();
-        _local.SetupManufacturers();
-        _local.SetupFindingItemCategories();
-        _local.SetupFindingManufacturers();
+        _fixture.SetupItemCategories();
+        _fixture.SetupManufacturers();
+        _fixture.SetupFindingItemCategories();
+        _fixture.SetupFindingManufacturers();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Items);
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Store);
 
         // Act
-        var result = await service.ConvertAsync(_local.Items, _local.Store, default);
+        var result = await service.ConvertAsync(_fixture.Items, _fixture.Store, default);
 
         // Assert
-        var expected = _local.CreateSimpleReadModels();
+        var expected = _fixture.CreateSimpleReadModels();
 
         using (new AssertionScope())
         {
@@ -110,21 +120,24 @@ public class ItemSearchReadModelConversionServiceTests
     public async Task ConvertAsync_WithItemCategoryAndManufacturer_ShouldConvertToReadModel()
     {
         // Arrange
-        var service = _local.CreateSut();
+        var service = _fixture.CreateSut();
 
-        _local.SetupStore();
-        _local.SetupItems();
+        _fixture.SetupStore();
+        _fixture.SetupItems();
 
-        _local.SetupItemCategories();
-        _local.SetupManufacturers();
-        _local.SetupFindingItemCategories();
-        _local.SetupFindingManufacturers();
+        _fixture.SetupItemCategories();
+        _fixture.SetupManufacturers();
+        _fixture.SetupFindingItemCategories();
+        _fixture.SetupFindingManufacturers();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Items);
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Store);
 
         // Act
-        var result = await service.ConvertAsync(_local.Items, _local.Store, default);
+        var result = await service.ConvertAsync(_fixture.Items, _fixture.Store, default);
 
         // Assert
-        var expected = _local.CreateSimpleReadModels();
+        var expected = _fixture.CreateSimpleReadModels();
 
         using (new AssertionScope())
         {
@@ -134,28 +147,24 @@ public class ItemSearchReadModelConversionServiceTests
 
     private class LocalFixture
     {
-        public Fixture Fixture { get; }
-        public CommonFixture CommonFixture { get; } = new CommonFixture();
-        public ItemCategoryRepositoryMock ItemCategoryRepositoryMock { get; }
-
-        public ManufacturerRepositoryMock ManufacturerRepositoryMock { get; }
-        public List<IItem> Items { get; private set; }
-        public IStore Store { get; private set; }
-        public Dictionary<ItemCategoryId, IItemCategory> ItemCategories { get; } = new();
-        public Dictionary<ManufacturerId, IManufacturer> Manufacturers { get; } = new();
+        private readonly CommonFixture _commonFixture = new CommonFixture();
+        private readonly ItemCategoryRepositoryMock _itemCategoryRepositoryMock;
+        private readonly ManufacturerRepositoryMock _manufacturerRepositoryMock;
+        private readonly Dictionary<ItemCategoryId, IItemCategory> _itemCategories = new();
+        private readonly Dictionary<ManufacturerId, IManufacturer> _manufacturers = new();
 
         public LocalFixture()
         {
-            Fixture = CommonFixture.GetNewFixture();
-
-            ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
-            ManufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
-        }
+        _itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
+        _manufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
+    }
+        public List<IItem>? Items { get; private set; }
+        public IStore? Store { get; private set; }
 
         public ItemSearchReadModelConversionService CreateSut()
         {
-            return new ItemSearchReadModelConversionService(ItemCategoryRepositoryMock.Object,
-                ManufacturerRepositoryMock.Object);
+            return new ItemSearchReadModelConversionService(_itemCategoryRepositoryMock.Object,
+                _manufacturerRepositoryMock.Object);
         }
 
         public void SetupStore()
@@ -206,14 +215,19 @@ public class ItemSearchReadModelConversionServiceTests
 
         private ItemAvailability CreateAvailability()
         {
+            TestPropertyNotSetException.ThrowIfNull(Items);
+            TestPropertyNotSetException.ThrowIfNull(Store);
+
             return ItemAvailabilityMother.Initial()
                 .WithStoreId(Store.Id)
-                .WithDefaultSectionId(CommonFixture.ChooseRandom(Store.Sections).Id)
+                .WithDefaultSectionId(_commonFixture.ChooseRandom(Store.Sections).Id)
                 .Create();
         }
 
         public void SetupItemCategories()
         {
+            TestPropertyNotSetException.ThrowIfNull(Items);
+
             var itemCategoryIds = Items
                 .Where(i => i.ItemCategoryId != null)
                 .Select(i => i.ItemCategoryId!.Value);
@@ -221,12 +235,14 @@ public class ItemSearchReadModelConversionServiceTests
             foreach (var itemCategoryId in itemCategoryIds)
             {
                 var itemCategory = ItemCategoryMother.NotDeleted().WithId(itemCategoryId).Create();
-                ItemCategories.Add(itemCategoryId, itemCategory);
+                _itemCategories.Add(itemCategoryId, itemCategory);
             }
         }
 
         public void SetupManufacturers()
         {
+            TestPropertyNotSetException.ThrowIfNull(Items);
+
             var manufacturerIds = Items
                 .Where(i => i.ManufacturerId != null)
                 .Select(i => i.ManufacturerId!.Value);
@@ -234,20 +250,23 @@ public class ItemSearchReadModelConversionServiceTests
             foreach (var manufacturerId in manufacturerIds)
             {
                 var manufacturer = ManufacturerMother.NotDeleted().WithId(manufacturerId).Create();
-                Manufacturers.Add(manufacturerId, manufacturer);
+                _manufacturers.Add(manufacturerId, manufacturer);
             }
         }
 
         public IEnumerable<SearchItemForShoppingResultReadModel> CreateSimpleReadModels()
         {
+            TestPropertyNotSetException.ThrowIfNull(Items);
+            TestPropertyNotSetException.ThrowIfNull(Store);
+
             foreach (IItem item in Items)
             {
-                ManufacturerReadModel manufacturerReadModel = null;
-                ItemCategoryReadModel itemCategoryReadModel = null;
+                ManufacturerReadModel? manufacturerReadModel = null;
+                ItemCategoryReadModel? itemCategoryReadModel = null;
 
                 if (item.ManufacturerId != null)
                 {
-                    var manufacturer = Manufacturers[item.ManufacturerId.Value];
+                    var manufacturer = _manufacturers[item.ManufacturerId.Value];
 
                     manufacturerReadModel = new ManufacturerReadModel(
                         manufacturer.Id,
@@ -257,7 +276,7 @@ public class ItemSearchReadModelConversionServiceTests
 
                 if (item.ItemCategoryId != null)
                 {
-                    var itemCategory = ItemCategories[item.ItemCategoryId.Value];
+                    var itemCategory = _itemCategories[item.ItemCategoryId.Value];
 
                     itemCategoryReadModel = new ItemCategoryReadModel(
                         itemCategory.Id,
@@ -286,12 +305,12 @@ public class ItemSearchReadModelConversionServiceTests
 
         public void SetupFindingItemCategories()
         {
-            ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategories.Keys, ItemCategories.Values);
+            _itemCategoryRepositoryMock.SetupFindByAsync(_itemCategories.Keys, _itemCategories.Values);
         }
 
         public void SetupFindingManufacturers()
         {
-            ManufacturerRepositoryMock.SetupFindByAsync(Manufacturers.Keys, Manufacturers.Values);
+            _manufacturerRepositoryMock.SetupFindByAsync(_manufacturers.Keys, _manufacturers.Values);
         }
 
         #endregion Mock Setup

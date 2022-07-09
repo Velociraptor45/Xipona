@@ -7,13 +7,12 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Items
 public class ItemTypeContractConverter : IToContractConverter<ItemTypeReadModel, ItemTypeContract>
 {
     private readonly IToContractConverter<ItemAvailabilityReadModel, ItemAvailabilityContract>
-        _storeItemAvailabilityContractConverter;
+        _itemAvailabilityContractConverter;
 
     public ItemTypeContractConverter(
-        IToContractConverter<ItemAvailabilityReadModel, ItemAvailabilityContract>
-            storeItemAvailabilityContractConverter)
+        IToContractConverter<ItemAvailabilityReadModel, ItemAvailabilityContract> itemAvailabilityContractConverter)
     {
-        _storeItemAvailabilityContractConverter = storeItemAvailabilityContractConverter;
+        _itemAvailabilityContractConverter = itemAvailabilityContractConverter;
     }
 
     public ItemTypeContract ToContract(ItemTypeReadModel source)
@@ -24,6 +23,6 @@ public class ItemTypeContractConverter : IToContractConverter<ItemTypeReadModel,
         return new ItemTypeContract(
             source.Id.Value,
             source.Name.Value,
-            _storeItemAvailabilityContractConverter.ToContract(source.Availabilities));
+            _itemAvailabilityContractConverter.ToContract(source.Availabilities));
     }
 }

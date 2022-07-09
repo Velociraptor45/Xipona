@@ -43,10 +43,10 @@ public class ItemSearchService : IItemSearchService
         ArgumentNullException.ThrowIfNull(itemCategoriesIds);
         ArgumentNullException.ThrowIfNull(manufacturerIds);
 
-        var storeItems = await _itemRepository.FindPermanentByAsync(storeIds, itemCategoriesIds,
+        var items = await _itemRepository.FindPermanentByAsync(storeIds, itemCategoriesIds,
             manufacturerIds, _cancellationToken);
 
-        return storeItems
+        return items
             .Where(model => !model.IsDeleted)
             .Select(model => new SearchItemResultReadModel(model));
     }

@@ -12,12 +12,12 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Items;
 
 public class ModifyItemCommandConverter : IToDomainConverter<(Guid id, ModifyItemContract contract), ModifyItemCommand>
 {
-    private readonly IToDomainConverter<ItemAvailabilityContract, IItemAvailability> _storeItemAvailabilityConverter;
+    private readonly IToDomainConverter<ItemAvailabilityContract, IItemAvailability> _itemAvailabilityConverter;
 
     public ModifyItemCommandConverter(
-        IToDomainConverter<ItemAvailabilityContract, IItemAvailability> storeItemAvailabilityConverter)
+        IToDomainConverter<ItemAvailabilityContract, IItemAvailability> itemAvailabilityConverter)
     {
-        _storeItemAvailabilityConverter = storeItemAvailabilityConverter;
+        _itemAvailabilityConverter = itemAvailabilityConverter;
     }
 
     public ModifyItemCommand ToDomain((Guid id, ModifyItemContract contract) source)
@@ -45,7 +45,7 @@ public class ModifyItemCommandConverter : IToDomainConverter<(Guid id, ModifyIte
             contract.ManufacturerId.HasValue ?
                 new ManufacturerId(contract.ManufacturerId.Value) :
                 null,
-            _storeItemAvailabilityConverter.ToDomain(contract.Availabilities));
+            _itemAvailabilityConverter.ToDomain(contract.Availabilities));
 
         return new ModifyItemCommand(modification);
     }

@@ -6,6 +6,7 @@ using ShoppingList.Api.Domain.TestKit.Items.Models;
 using ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
+using ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Items.Services.ItemDeletions;
 
@@ -46,7 +47,7 @@ public class ItemDeletionServiceTests
         {
             // Arrange
             _fixture.SetupItemId();
-            _fixture.SetupStoreItemMock();
+            _fixture.SetupItemMock();
             _fixture.SetupFindingItem();
             _fixture.SetupFindingShoppingList(shoppingListMocks);
             _fixture.SetupDeletingItem();
@@ -61,7 +62,7 @@ public class ItemDeletionServiceTests
             // Assert
             using (new AssertionScope())
             {
-                _fixture.VerifyDeleteStoreItemOnce();
+                _fixture.VerifyDeleteItemOnce();
                 _fixture.VerifyStoringItemOnce();
                 if (!shoppingListMocks.Any())
                 {
@@ -78,28 +79,30 @@ public class ItemDeletionServiceTests
         private sealed class DeleteAsyncFixture : LocalFixture
         {
             public ItemId ItemId { get; private set; }
-            private ItemMock _storeItemMock;
+            private ItemMock? _itemMock;
 
             public void SetupItemId()
             {
                 ItemId = ItemId.New;
             }
 
-            public void SetupStoreItemMock()
+            public void SetupItemMock()
             {
-                _storeItemMock = new ItemMock(ItemMother.Initial().Create(), MockBehavior.Strict);
+                _itemMock = new ItemMock(ItemMother.Initial().Create(), MockBehavior.Strict);
             }
 
             #region Mock Setup
 
             public void SetupDeletingItem()
             {
-                _storeItemMock.SetupDelete();
+                TestPropertyNotSetException.ThrowIfNull(_itemMock);
+                _itemMock.SetupDelete();
             }
 
             public void SetupFindingItem()
             {
-                ItemRepositoryMock.SetupFindByAsync(ItemId, _storeItemMock.Object);
+                TestPropertyNotSetException.ThrowIfNull(_itemMock);
+                ItemRepositoryMock.SetupFindByAsync(ItemId, _itemMock.Object);
             }
 
             public void SetupFindingNoItem()
@@ -109,12 +112,14 @@ public class ItemDeletionServiceTests
 
             public void SetupStoringItem()
             {
-                ItemRepositoryMock.SetupStoreAsync(_storeItemMock.Object, _storeItemMock.Object);
+                TestPropertyNotSetException.ThrowIfNull(_itemMock);
+                ItemRepositoryMock.SetupStoreAsync(_itemMock.Object, _itemMock.Object);
             }
 
             public void SetupFindingShoppingList(List<ShoppingListMock> shoppingListMocks)
             {
-                ShoppingListRepositoryMock.SetupFindActiveByAsync(_storeItemMock.Object.Id,
+                TestPropertyNotSetException.ThrowIfNull(_itemMock);
+                ShoppingListRepositoryMock.SetupFindActiveByAsync(_itemMock.Object.Id,
                     shoppingListMocks.Select(m => m.Object));
             }
 
@@ -130,14 +135,16 @@ public class ItemDeletionServiceTests
 
             #region Verify
 
-            public void VerifyDeleteStoreItemOnce()
+            public void VerifyDeleteItemOnce()
             {
-                _storeItemMock.VerifyDeleteOnce();
+                TestPropertyNotSetException.ThrowIfNull(_itemMock);
+                _itemMock.VerifyDeleteOnce();
             }
 
             public void VerifyStoringItemOnce()
             {
-                ItemRepositoryMock.VerifyStoreAsyncOnce(_storeItemMock.Object);
+                TestPropertyNotSetException.ThrowIfNull(_itemMock);
+                ItemRepositoryMock.VerifyStoreAsyncOnce(_itemMock.Object);
             }
 
             public void VerifyStoreNoShoppingList()
@@ -155,9 +162,11 @@ public class ItemDeletionServiceTests
 
             public void VerifyRemoveItemFromShoppingList(List<ShoppingListMock> shoppingListMocks)
             {
+                TestPropertyNotSetException.ThrowIfNull(_itemMock);
+
                 foreach (var shoppingListMock in shoppingListMocks)
                 {
-                    shoppingListMock.VerifyRemoveItemOnce(_storeItemMock.Object.Id);
+                    shoppingListMock.VerifyRemoveItemOnce(_itemMock.Object.Id);
                 }
             }
 
@@ -167,8 +176,8 @@ public class ItemDeletionServiceTests
 
     private abstract class LocalFixture
     {
-        protected ShoppingListRepositoryMock ShoppingListRepositoryMock;
-        protected ItemRepositoryMock ItemRepositoryMock;
+        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
+        protected readonly ItemRepositoryMock ItemRepositoryMock;
 
         protected LocalFixture()
         {

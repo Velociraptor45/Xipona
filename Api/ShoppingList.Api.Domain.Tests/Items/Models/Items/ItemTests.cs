@@ -22,18 +22,18 @@ public class ItemTests
     #region Delete
 
     [Fact]
-    public void Delete_WithNotDeltedStoreItem_ShouldMarkStoreItemAsDeleted()
+    public void Delete_WithNotDeletedItem_ShouldMarkItemAsDeleted()
     {
         // Arrange
-        var storeItem = ItemMother.Initial().Create();
+        var item = ItemMother.Initial().Create();
 
         // Act
-        storeItem.Delete();
+        item.Delete();
 
         // Assert
         using (new AssertionScope())
         {
-            storeItem.IsDeleted.Should().BeTrue();
+            item.IsDeleted.Should().BeTrue();
         }
     }
 

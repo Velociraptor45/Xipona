@@ -34,10 +34,10 @@ public class ItemCategoryDeletionService : IItemCategoryDeletionService
 
         category.Delete();
 
-        var storeItems = (await _itemRepository.FindActiveByAsync(itemCategoryId, _cancellationToken))
+        var items = (await _itemRepository.FindActiveByAsync(itemCategoryId, _cancellationToken))
             .ToList();
 
-        foreach (var item in storeItems)
+        foreach (var item in items)
         {
             var lists = await _shoppingListRepository.FindActiveByAsync(item.Id, _cancellationToken);
             foreach (var list in lists)

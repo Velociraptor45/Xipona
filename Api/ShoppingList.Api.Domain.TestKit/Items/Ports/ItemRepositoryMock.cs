@@ -58,11 +58,11 @@ public class ItemRepositoryMock : Mock<IItemRepository>
             Times.Once);
     }
 
-    public void VerifyStoreAsyncOnce(IItem storeItem)
+    public void VerifyStoreAsyncOnce(IItem item)
     {
         Verify(
             i => i.StoreAsync(
-                It.Is<IItem>(item => item == storeItem),
+                It.Is<IItem>(it => it == item),
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }

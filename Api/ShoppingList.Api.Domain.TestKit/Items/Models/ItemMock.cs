@@ -11,16 +11,16 @@ namespace ShoppingList.Api.Domain.TestKit.Items.Models;
 
 public class ItemMock : Mock<IItem>
 {
-    public ItemMock(IItem storeItem, MockBehavior behavior) : base(behavior)
+    public ItemMock(IItem item, MockBehavior behavior) : base(behavior)
     {
-        SetupId(storeItem.Id);
-        SetupIsTemporary(storeItem.IsTemporary);
-        SetupIsDeleted(storeItem.IsDeleted);
-        SetupAvailabilities(storeItem.Availabilities);
-        SetupItemTypes(storeItem.ItemTypes);
-        SetupHasItemTypes(storeItem.HasItemTypes);
-        SetupItemCategoryId(storeItem.ItemCategoryId);
-        SetupManufacturerId(storeItem.ManufacturerId);
+        SetupId(item.Id);
+        SetupIsTemporary(item.IsTemporary);
+        SetupIsDeleted(item.IsDeleted);
+        SetupAvailabilities(item.Availabilities);
+        SetupItemTypes(item.ItemTypes);
+        SetupHasItemTypes(item.HasItemTypes);
+        SetupItemCategoryId(item.ItemCategoryId);
+        SetupManufacturerId(item.ManufacturerId);
     }
 
     public bool ModifyWithTypeCalled { get; set; }

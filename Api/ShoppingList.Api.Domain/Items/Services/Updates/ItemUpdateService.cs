@@ -12,7 +12,7 @@ public class ItemUpdateService : IItemUpdateService
 {
     private readonly IItemRepository _itemRepository;
     private readonly IItemTypeFactory _itemTypeFactory;
-    private readonly IItemFactory _storeItemFactory;
+    private readonly IItemFactory _itemFactory;
     private readonly IShoppingListExchangeService _shoppingListUpdateService;
     private readonly IValidator _validator;
     private readonly CancellationToken _cancellationToken;
@@ -21,13 +21,13 @@ public class ItemUpdateService : IItemUpdateService
         IItemRepository itemRepository,
         Func<CancellationToken, IValidator> validatorDelegate,
         IItemTypeFactory itemTypeFactory,
-        IItemFactory storeItemFactory,
+        IItemFactory itemFactory,
         IShoppingListExchangeService shoppingListUpdateService,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
         _itemTypeFactory = itemTypeFactory;
-        _storeItemFactory = storeItemFactory;
+        _itemFactory = itemFactory;
         _shoppingListUpdateService = shoppingListUpdateService;
         _validator = validatorDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
@@ -69,7 +69,7 @@ public class ItemUpdateService : IItemUpdateService
         _cancellationToken.ThrowIfCancellationRequested();
 
         // create new Item
-        var updatedItem = _storeItemFactory.CreateNew(
+        var updatedItem = _itemFactory.CreateNew(
             update.Name,
             update.Comment,
             update.ItemQuantity,
@@ -117,7 +117,7 @@ public class ItemUpdateService : IItemUpdateService
         await _itemRepository.StoreAsync(oldItem, _cancellationToken);
 
         // create new Item
-        IItem updatedItem = _storeItemFactory.Create(update, oldItem);
+        IItem updatedItem = _itemFactory.Create(update, oldItem);
         updatedItem = await _itemRepository.StoreAsync(updatedItem, _cancellationToken);
 
         // change existing item references on shopping lists

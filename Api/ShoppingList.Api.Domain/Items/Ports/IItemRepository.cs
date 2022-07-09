@@ -9,7 +9,7 @@ public interface IItemRepository
 {
     Task<IEnumerable<IItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken);
 
-    Task<IItem?> FindByAsync(ItemId storeItemId, CancellationToken cancellationToken);
+    Task<IItem?> FindByAsync(ItemId itemId, CancellationToken cancellationToken);
 
     Task<IItem?> FindByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken);
 
@@ -27,5 +27,5 @@ public interface IItemRepository
 
     Task<IEnumerable<IItem>> FindActiveByAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);
 
-    Task<IItem> StoreAsync(IItem storeItem, CancellationToken cancellationToken);
+    Task<IItem> StoreAsync(IItem item, CancellationToken cancellationToken);
 }

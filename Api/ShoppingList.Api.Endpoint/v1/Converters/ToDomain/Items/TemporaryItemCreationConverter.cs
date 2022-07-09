@@ -8,12 +8,12 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Items;
 
 public class TemporaryItemCreationConverter : IToDomainConverter<CreateTemporaryItemContract, TemporaryItemCreation>
 {
-    private readonly IToDomainConverter<ItemAvailabilityContract, IItemAvailability> _storeItemAvailabilityConverter;
+    private readonly IToDomainConverter<ItemAvailabilityContract, IItemAvailability> _itemAvailabilityConverter;
 
     public TemporaryItemCreationConverter(
-        IToDomainConverter<ItemAvailabilityContract, IItemAvailability> storeItemAvailabilityConverter)
+        IToDomainConverter<ItemAvailabilityContract, IItemAvailability> itemAvailabilityConverter)
     {
-        _storeItemAvailabilityConverter = storeItemAvailabilityConverter;
+        _itemAvailabilityConverter = itemAvailabilityConverter;
     }
 
     public TemporaryItemCreation ToDomain(CreateTemporaryItemContract source)
@@ -24,6 +24,6 @@ public class TemporaryItemCreationConverter : IToDomainConverter<CreateTemporary
         return new TemporaryItemCreation(
             source.ClientSideId,
             new ItemName(source.Name),
-            _storeItemAvailabilityConverter.ToDomain(source.Availability));
+            _itemAvailabilityConverter.ToDomain(source.Availability));
     }
 }

@@ -50,7 +50,7 @@ public class TemporaryItemServiceTests
             // Arrange
             var sut = _fixture.CreateSut();
             _fixture.SetupPermanentItem();
-            _fixture.SetupStoreItemMock();
+            _fixture.SetupItemMock();
             _fixture.SetupFindingItem();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.PermanentItem);
@@ -71,7 +71,7 @@ public class TemporaryItemServiceTests
         {
             // Arrange
             var sut = _fixture.CreateSut();
-            _fixture.SetupTemporaryStoreItemMock();
+            _fixture.SetupTemporaryItemMock();
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemMock);
 
             List<IItemAvailability> availabilities = _fixture.ItemMock.Object.Availabilities.ToList();
@@ -104,7 +104,7 @@ public class TemporaryItemServiceTests
         {
             // Arrange
             var sut = _fixture.CreateSut();
-            _fixture.SetupTemporaryStoreItemMock();
+            _fixture.SetupTemporaryItemMock();
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemMock);
 
             List<IItemAvailability> availabilities = _fixture.ItemMock.Object.Availabilities.ToList();
@@ -159,12 +159,12 @@ public class TemporaryItemServiceTests
                 PermanentItem = Fixture.Create<PermanentItem>();
             }
 
-            public void SetupStoreItemMock()
+            public void SetupItemMock()
             {
                 ItemMock = new ItemMock(ItemMother.Initial().Create(), MockBehavior.Strict);
             }
 
-            public void SetupTemporaryStoreItemMock()
+            public void SetupTemporaryItemMock()
             {
                 ItemMock = new ItemMock(ItemMother.InitialTemporary().Create(), MockBehavior.Strict);
             }

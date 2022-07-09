@@ -66,11 +66,11 @@ public class ItemModificationService : IItemModificationService
     {
         ArgumentNullException.ThrowIfNull(modification);
 
-        var storeItem = await _itemRepository.FindByAsync(modification.Id, _cancellationToken);
+        var item = await _itemRepository.FindByAsync(modification.Id, _cancellationToken);
 
-        if (storeItem == null)
+        if (item == null)
             throw new DomainException(new ItemNotFoundReason(modification.Id));
-        if (storeItem.IsTemporary)
+        if (item.IsTemporary)
             throw new DomainException(new TemporaryItemNotModifyableReason(modification.Id));
 
         var itemCategoryId = modification.ItemCategoryId;
@@ -92,19 +92,19 @@ public class ItemModificationService : IItemModificationService
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        storeItem.Modify(modification, availabilities);
+        item.Modify(modification, availabilities);
 
-        var availableAtStoreIds = storeItem.Availabilities.Select(av => av.StoreId);
-        var shoppingListsWithItem = (await _shoppingListRepository.FindByAsync(storeItem.Id, _cancellationToken))
+        var availableAtStoreIds = item.Availabilities.Select(av => av.StoreId);
+        var shoppingListsWithItem = (await _shoppingListRepository.FindByAsync(item.Id, _cancellationToken))
             .Where(list => availableAtStoreIds.All(storeId => storeId != list.StoreId))
             .ToList();
 
-        await _itemRepository.StoreAsync(storeItem, _cancellationToken);
+        await _itemRepository.StoreAsync(item, _cancellationToken);
         foreach (var list in shoppingListsWithItem)
         {
             _cancellationToken.ThrowIfCancellationRequested();
             // remove items from all shopping lists where item is not available anymore
-            list.RemoveItem(storeItem.Id);
+            list.RemoveItem(item.Id);
             await _shoppingListRepository.StoreAsync(list, _cancellationToken);
         }
     }

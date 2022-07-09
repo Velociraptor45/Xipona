@@ -38,7 +38,7 @@ public class AddItemToShoppingListServiceTests
             var service = _fixture.CreateSut();
 
             _fixture.SetupShoppingListMock();
-            _fixture.SetupStoreItem();
+            _fixture.SetupItem();
             _fixture.SetupSectionId();
             _fixture.SetupQuantity();
 
@@ -65,8 +65,8 @@ public class AddItemToShoppingListServiceTests
             // Arrange
             var service = _fixture.CreateSut();
 
-            _fixture.SetupStoreItem();
-            _fixture.SetupShoppingListMockMatchingStoreItem();
+            _fixture.SetupItem();
+            _fixture.SetupShoppingListMockMatchingItem();
             _fixture.SetupShoppingListItem();
 
             _fixture.SetupSectionIdMatchingShoppingList();
@@ -105,7 +105,7 @@ public class AddItemToShoppingListServiceTests
             var service = _fixture.CreateSut();
 
             _fixture.SetupShoppingListMock();
-            _fixture.SetupTemporaryStoreItem();
+            _fixture.SetupTemporaryItem();
             _fixture.SetupSectionId();
             _fixture.SetupQuantity();
 
@@ -133,8 +133,8 @@ public class AddItemToShoppingListServiceTests
             // Arrange
             var service = _fixture.CreateSut();
 
-            _fixture.SetupTemporaryStoreItem();
-            _fixture.SetupShoppingListMockMatchingStoreItem();
+            _fixture.SetupTemporaryItem();
+            _fixture.SetupShoppingListMockMatchingItem();
             _fixture.SetupShoppingListItem();
 
             _fixture.SetupSectionIdMatchingShoppingList();
@@ -172,8 +172,8 @@ public class AddItemToShoppingListServiceTests
             // Arrange
             var service = _fixture.CreateSut();
 
-            _fixture.SetupStoreItem();
-            _fixture.SetupShoppingListMockNotMatchingStoreItem();
+            _fixture.SetupItem();
+            _fixture.SetupShoppingListMockNotMatchingItem();
 
             _fixture.SetupSectionId();
             _fixture.SetupQuantity();
@@ -198,8 +198,8 @@ public class AddItemToShoppingListServiceTests
             // Arrange
             var service = _fixture.CreateSut();
 
-            _fixture.SetupStoreItem();
-            _fixture.SetupShoppingListMockMatchingStoreItem();
+            _fixture.SetupItem();
+            _fixture.SetupShoppingListMockMatchingItem();
             _fixture.SetupShoppingListItem();
 
             _fixture.SetupStore();
@@ -355,7 +355,7 @@ public class AddItemToShoppingListServiceTests
 
         private sealed class AddItemToShoppingListFixture : LocalFixture
         {
-            public void SetupShoppingListMockMatchingStoreItem()
+            public void SetupShoppingListMockMatchingItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(Item);
                 Availability = CommonFixture.ChooseRandom(Item.Availabilities);
@@ -364,7 +364,7 @@ public class AddItemToShoppingListServiceTests
                 ShoppingListMock = new ShoppingListMock(list, MockBehavior.Strict);
             }
 
-            public void SetupShoppingListMockNotMatchingStoreItem()
+            public void SetupShoppingListMockNotMatchingItem()
             {
                 var storeId = new StoreIdBuilder().Create();
 
@@ -377,12 +377,12 @@ public class AddItemToShoppingListServiceTests
                 ShoppingListItem = ShoppingListItemMother.InBasket().WithoutTypeId().Create();
             }
 
-            public void SetupStoreItem()
+            public void SetupItem()
             {
                 Item = ItemMother.Initial().Create();
             }
 
-            public void SetupTemporaryStoreItem()
+            public void SetupTemporaryItem()
             {
                 Item = ItemMother.InitialTemporary().Create();
             }
@@ -606,7 +606,7 @@ public class AddItemToShoppingListServiceTests
         {
             // Arrange
             _fixture.SetupQuantity();
-            _fixture.SetupStoreItem();
+            _fixture.SetupItem();
             _fixture.SetupItemType();
             _fixture.SetupShoppingListMockMatchingItemType();
             _fixture.SetupSectionIdMatchingShoppingList();
@@ -636,7 +636,7 @@ public class AddItemToShoppingListServiceTests
         {
             // Arrange
             _fixture.SetupQuantity();
-            _fixture.SetupStoreItem();
+            _fixture.SetupItem();
             _fixture.SetupItemType();
             _fixture.SetupShoppingListMockMatchingItemType();
             _fixture.SetupSectionIdMatchingShoppingList();
@@ -665,7 +665,7 @@ public class AddItemToShoppingListServiceTests
         {
             // Arrange
             _fixture.SetupQuantity();
-            _fixture.SetupStoreItem();
+            _fixture.SetupItem();
             _fixture.SetupSectionId();
             _fixture.SetupItemTypeNotPartOfItem();
             _fixture.SetupShoppingListMockMatchingItemType();
@@ -696,7 +696,7 @@ public class AddItemToShoppingListServiceTests
             // Arrange
             _fixture.SetupQuantity();
             _fixture.SetupSectionId();
-            _fixture.SetupStoreItem();
+            _fixture.SetupItem();
             _fixture.SetupFindingItem();
             _fixture.SetupItemType();
             _fixture.SetupShoppingListMockMatchingItemType();
@@ -730,7 +730,7 @@ public class AddItemToShoppingListServiceTests
             // Arrange
             _fixture.SetupQuantity();
             _fixture.SetupSectionId();
-            _fixture.SetupStoreItem();
+            _fixture.SetupItem();
             _fixture.SetupFindingItem();
             _fixture.SetupItemType();
             _fixture.SetupShoppingListMockMatchingItemType();
@@ -764,7 +764,7 @@ public class AddItemToShoppingListServiceTests
             // Arrange
             _fixture.SetupQuantity();
             _fixture.SetupSectionId();
-            _fixture.SetupStoreItem();
+            _fixture.SetupItem();
             _fixture.SetupFindingItem();
             _fixture.SetupItemType();
             _fixture.SetupShoppingListMockMatchingItemType();
@@ -800,7 +800,7 @@ public class AddItemToShoppingListServiceTests
             // Arrange
             _fixture.SetupQuantity();
             _fixture.SetupSectionId();
-            _fixture.SetupStoreItem();
+            _fixture.SetupItem();
             _fixture.SetupNotFindingItem();
             _fixture.SetupItemType();
             _fixture.SetupShoppingListMockMatchingItemType();
@@ -825,7 +825,7 @@ public class AddItemToShoppingListServiceTests
             // Arrange
             _fixture.SetupQuantity();
             _fixture.SetupSectionId();
-            _fixture.SetupStoreItem();
+            _fixture.SetupItem();
             _fixture.SetupFindingItem();
             _fixture.SetupItemType();
             _fixture.SetupShoppingListMockMatchingItemType();
@@ -864,7 +864,7 @@ public class AddItemToShoppingListServiceTests
                 ShoppingListItem = ShoppingListItemMother.InBasket().Create();
             }
 
-            public void SetupStoreItem()
+            public void SetupItem()
             {
                 Item = ItemMother.InitialWithTypes().Create();
             }
@@ -910,7 +910,7 @@ public class AddItemToShoppingListServiceTests
             {
                 SetupQuantity();
                 SetupSectionId();
-                SetupStoreItem();
+                SetupItem();
                 SetupItemType();
                 SetupShoppingListMockMatchingItemType();
                 SetupShoppingListItem();
@@ -927,7 +927,7 @@ public class AddItemToShoppingListServiceTests
             public void SetupWithExistingSection()
             {
                 SetupQuantity();
-                SetupStoreItem();
+                SetupItem();
                 SetupItemType();
                 SetupShoppingListMockMatchingItemType();
                 SetupSectionIdMatchingShoppingList();
@@ -942,7 +942,7 @@ public class AddItemToShoppingListServiceTests
             public void SetupWithSectionIdNull()
             {
                 SetupQuantity();
-                SetupStoreItem();
+                SetupItem();
                 SetupItemType();
                 SetupShoppingListMockMatchingItemType();
                 SetupShoppingListItem();

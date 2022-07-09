@@ -12,19 +12,19 @@ public class ItemCreationService : IItemCreationService
 {
     private readonly IItemRepository _itemRepository;
     private readonly IValidator _validator;
-    private readonly IItemFactory _storeItemFactory;
+    private readonly IItemFactory _itemFactory;
     private readonly IItemReadModelConversionService _conversionService;
     private readonly CancellationToken _cancellationToken;
 
     public ItemCreationService(
         IItemRepository itemRepository,
         Func<CancellationToken, IValidator> validatorDelegate,
-        IItemFactory storeItemFactory,
+        IItemFactory itemFactory,
         IItemReadModelConversionService conversionService,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
-        _storeItemFactory = storeItemFactory;
+        _itemFactory = itemFactory;
         _conversionService = conversionService;
         _validator = validatorDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
@@ -47,7 +47,7 @@ public class ItemCreationService : IItemCreationService
         var availabilities = creation.Availabilities;
         await _validator.ValidateAsync(availabilities);
 
-        var item = _storeItemFactory.Create(creation);
+        var item = _itemFactory.Create(creation);
 
         var storedItem = await _itemRepository.StoreAsync(item, _cancellationToken);
 
@@ -69,7 +69,7 @@ public class ItemCreationService : IItemCreationService
         var availability = creation.Availability;
         await _validator.ValidateAsync(availability.ToMonoList());
 
-        var item = _storeItemFactory.Create(creation);
+        var item = _itemFactory.Create(creation);
 
         var storedItem = await _itemRepository.StoreAsync(item, _cancellationToken);
 

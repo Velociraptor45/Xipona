@@ -83,15 +83,15 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     public async Task AddItemToShoppingListAsync(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
         QuantityInBasket quantity, CancellationToken cancellationToken)
     {
-        IItem storeItem = await LoadItemAsync(itemId, cancellationToken);
-        await AddItemToShoppingListAsync(shoppingList, storeItem, sectionId, quantity, cancellationToken);
+        IItem item = await LoadItemAsync(itemId, cancellationToken);
+        await AddItemToShoppingListAsync(shoppingList, item, sectionId, quantity, cancellationToken);
     }
 
     public async Task AddItemToShoppingListAsync(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
         SectionId? sectionId, QuantityInBasket quantity, CancellationToken cancellationToken)
     {
-        IItem storeItem = await LoadItemAsync(temporaryItemId, cancellationToken);
-        await AddItemToShoppingListAsync(shoppingList, storeItem, sectionId, quantity, cancellationToken);
+        IItem item = await LoadItemAsync(temporaryItemId, cancellationToken);
+        await AddItemToShoppingListAsync(shoppingList, item, sectionId, quantity, cancellationToken);
     }
 
     private async Task<IShoppingList> LoadShoppingListAsync(ShoppingListId shoppingListId,
@@ -127,12 +127,12 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         return _shoppingListItemFactory.Create(itemId, itemTypeId, false, quantity);
     }
 
-    private void ValidateItemIsAvailableAtStore(IItem storeItem, StoreId storeId,
+    private void ValidateItemIsAvailableAtStore(IItem item, StoreId storeId,
         out IItemAvailability availability)
     {
-        var av = storeItem.Availabilities.FirstOrDefault(av => av.StoreId == storeId);
+        var av = item.Availabilities.FirstOrDefault(av => av.StoreId == storeId);
 
-        availability = av ?? throw new DomainException(new ItemAtStoreNotAvailableReason(storeItem.Id, storeId));
+        availability = av ?? throw new DomainException(new ItemAtStoreNotAvailableReason(item.Id, storeId));
     }
 
     private void ValidateItemTypeIsAvailableAtStore(IItemType itemType, StoreId storeId,

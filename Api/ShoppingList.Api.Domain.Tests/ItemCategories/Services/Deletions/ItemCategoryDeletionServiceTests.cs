@@ -99,7 +99,7 @@ public class ItemCategoryDeletionServiceTests
         }
 
         [Fact]
-        public async Task DeleteAsync_WithNoItemsOfItemCategory_ShouldStoreItemCategory()
+        public async Task DeleteAsync_WithNoItemsOfItemCategory_ShouldItemCategory()
         {
             // Arrange
             _fixture.SetupWithNoItemsOfItemCategory();
@@ -188,7 +188,7 @@ public class ItemCategoryDeletionServiceTests
         }
 
         [Fact]
-        public async Task DeleteAsync_WithSomeItemsOfItemCategoryOnNoActiveShoppingLists_ShouldStoreItemCategory()
+        public async Task DeleteAsync_WithSomeItemsOfItemCategoryOnNoActiveShoppingLists_ShouldItemCategory()
         {
             // Arrange
             _fixture.SetupWithSomeItemsOfItemCategoryOnNoActiveShoppingLists();
@@ -294,7 +294,7 @@ public class ItemCategoryDeletionServiceTests
         }
 
         [Fact]
-        public async Task DeleteAsync_WithSomeItemsOfItemCategoryOnActiveShoppingLists_ShouldStoreItemCategory()
+        public async Task DeleteAsync_WithSomeItemsOfItemCategoryOnActiveShoppingLists_ShouldItemCategory()
         {
             // Arrange
             _fixture.SetupWithSomeItemsOfItemCategoryOnActiveShoppingLists();
@@ -315,7 +315,7 @@ public class ItemCategoryDeletionServiceTests
         private sealed class DeleteAsyncFixture : LocalFixture
         {
             private ItemCategoryMock? _itemCategoryMock;
-            private List<ItemMock>? _storeItemMocks;
+            private List<ItemMock>? _itemMocks;
             private readonly Dictionary<ItemMock, List<ShoppingListMock>> _shoppingListDict = new();
 
             public ItemCategoryId ItemCategoryId { get; private set; }
@@ -330,9 +330,9 @@ public class ItemCategoryDeletionServiceTests
                 _itemCategoryMock = new ItemCategoryMock(ItemCategoryMother.NotDeleted().Create(), MockBehavior.Strict);
             }
 
-            public void SetupStoreItemMocks()
+            public void SetupItemMocks()
             {
-                _storeItemMocks = ItemMother.Initial()
+                _itemMocks = ItemMother.Initial()
                     .CreateMany(2)
                     .Select(i => new ItemMock(i, MockBehavior.Strict))
                     .ToList();
@@ -340,15 +340,15 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupShoppingListDict()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItemMocks);
-                foreach (var storeItemMock in _storeItemMocks)
+                TestPropertyNotSetException.ThrowIfNull(_itemMocks);
+                foreach (var itemMock in _itemMocks)
                 {
                     int amount = CommonFixture.NextInt(1, 5);
                     var listMocks = ShoppingListMother.Sections(3)
                         .CreateMany(amount)
                         .Select(list => new ShoppingListMock(list))
                         .ToList();
-                    _shoppingListDict.Add(storeItemMock, listMocks);
+                    _shoppingListDict.Add(itemMock, listMocks);
                 }
             }
 
@@ -356,8 +356,8 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupDeletingItems()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItemMocks);
-                foreach (var itemMock in _storeItemMocks)
+                TestPropertyNotSetException.ThrowIfNull(_itemMocks);
+                foreach (var itemMock in _itemMocks)
                 {
                     itemMock.SetupDelete();
                 }
@@ -371,20 +371,20 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupFindingShoppingLists()
             {
-                foreach (var storeItemMock in _shoppingListDict.Keys)
+                foreach (var itemMock in _shoppingListDict.Keys)
                 {
-                    var lists = _shoppingListDict[storeItemMock].Select(m => m.Object);
+                    var lists = _shoppingListDict[itemMock].Select(m => m.Object);
 
-                    ShoppingListRepositoryMock.SetupFindActiveByAsync(storeItemMock.Object.Id, lists);
+                    ShoppingListRepositoryMock.SetupFindActiveByAsync(itemMock.Object.Id, lists);
                 }
             }
 
             public void SetupFindingNoShoppingLists()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItemMocks);
-                foreach (var storeItemMock in _storeItemMocks)
+                TestPropertyNotSetException.ThrowIfNull(_itemMocks);
+                foreach (var itemMock in _itemMocks)
                 {
-                    ShoppingListRepositoryMock.SetupFindActiveByAsync(storeItemMock.Object.Id,
+                    ShoppingListRepositoryMock.SetupFindActiveByAsync(itemMock.Object.Id,
                         Enumerable.Empty<IShoppingList>());
                 }
             }
@@ -416,8 +416,8 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupFindingItems()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItemMocks);
-                ItemRepositoryMock.SetupFindActiveByAsync(ItemCategoryId, _storeItemMocks.Select(m => m.Object));
+                TestPropertyNotSetException.ThrowIfNull(_itemMocks);
+                ItemRepositoryMock.SetupFindActiveByAsync(ItemCategoryId, _itemMocks.Select(m => m.Object));
             }
 
             public void SetupFindingNoItems()
@@ -427,8 +427,8 @@ public class ItemCategoryDeletionServiceTests
 
             public void SetupStoringItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItemMocks);
-                foreach (var item in _storeItemMocks)
+                TestPropertyNotSetException.ThrowIfNull(_itemMocks);
+                foreach (var item in _itemMocks)
                 {
                     ItemRepositoryMock.SetupStoreAsync(item.Object, item.Object);
                 }
@@ -446,17 +446,17 @@ public class ItemCategoryDeletionServiceTests
 
             public void VerifyDeletingAllItemsOnce()
             {
-                foreach (var storeItemMock in _shoppingListDict.Keys)
+                foreach (var itemMock in _shoppingListDict.Keys)
                 {
-                    storeItemMock.VerifyDeleteOnce();
+                    itemMock.VerifyDeleteOnce();
                 }
             }
 
             public void VerifyStoringAllItemsOnce()
             {
-                foreach (var storeItemMock in _shoppingListDict.Keys)
+                foreach (var itemMock in _shoppingListDict.Keys)
                 {
-                    ItemRepositoryMock.VerifyStoreAsyncOnce(storeItemMock.Object);
+                    ItemRepositoryMock.VerifyStoreAsyncOnce(itemMock.Object);
                 }
             }
 
@@ -467,9 +467,9 @@ public class ItemCategoryDeletionServiceTests
 
             public void VerifyStoringAllShoppingListsOnce()
             {
-                foreach (var storeItemMock in _shoppingListDict.Keys)
+                foreach (var itemMock in _shoppingListDict.Keys)
                 {
-                    IEnumerable<ShoppingListMock> affiliatedShoppingListMocks = _shoppingListDict[storeItemMock];
+                    IEnumerable<ShoppingListMock> affiliatedShoppingListMocks = _shoppingListDict[itemMock];
                     foreach (var listMock in affiliatedShoppingListMocks)
                     {
                         ShoppingListRepositoryMock.VerifyStoreAsyncOnce(listMock.Object);
@@ -484,12 +484,12 @@ public class ItemCategoryDeletionServiceTests
 
             public void VerifyRemovingItemFromAllShoppingListsOnce()
             {
-                foreach (var storeItemMock in _shoppingListDict.Keys)
+                foreach (var itemMock in _shoppingListDict.Keys)
                 {
-                    IEnumerable<ShoppingListMock> affiliatedShoppingListMocks = _shoppingListDict[storeItemMock];
+                    IEnumerable<ShoppingListMock> affiliatedShoppingListMocks = _shoppingListDict[itemMock];
                     foreach (var listMock in affiliatedShoppingListMocks)
                     {
-                        listMock.VerifyRemoveItemOnce(storeItemMock.Object.Id);
+                        listMock.VerifyRemoveItemOnce(itemMock.Object.Id);
                     }
                 }
             }
@@ -508,7 +508,7 @@ public class ItemCategoryDeletionServiceTests
             {
                 SetupItemCategoryId();
                 SetupItemCategoryMock();
-                SetupStoreItemMocks();
+                SetupItemMocks();
                 SetupShoppingListDict();
                 SetupFindingShoppingLists();
                 SetupFindingItemCategory();
@@ -524,7 +524,7 @@ public class ItemCategoryDeletionServiceTests
             {
                 SetupItemCategoryId();
                 SetupItemCategoryMock();
-                SetupStoreItemMocks();
+                SetupItemMocks();
                 SetupDeletingItems();
                 SetupFindingItemCategory();
                 SetupFindingItems();

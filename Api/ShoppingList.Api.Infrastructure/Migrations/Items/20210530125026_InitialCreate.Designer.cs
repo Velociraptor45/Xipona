@@ -18,7 +18,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.Items
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.3");
 
-            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.AvailableAt", b =>
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.AvailableAt", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -43,7 +43,7 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.Items
                     b.ToTable("AvailableAts");
                 });
 
-            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item", b =>
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -90,9 +90,9 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.Items
                     b.ToTable("Items");
                 });
 
-            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.AvailableAt", b =>
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.AvailableAt", b =>
                 {
-                    b.HasOne("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item", "Item")
+                    b.HasOne("ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item", "Item")
                         .WithMany("AvailableAt")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -101,16 +101,16 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.Items
                     b.Navigation("Item");
                 });
 
-            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item", b =>
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item", b =>
                 {
-                    b.HasOne("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item", "Predecessor")
+                    b.HasOne("ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item", "Predecessor")
                         .WithMany()
                         .HasForeignKey("PredecessorId");
 
                     b.Navigation("Predecessor");
                 });
 
-            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.Item", b =>
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item", b =>
                 {
                     b.Navigation("AvailableAt");
                 });
