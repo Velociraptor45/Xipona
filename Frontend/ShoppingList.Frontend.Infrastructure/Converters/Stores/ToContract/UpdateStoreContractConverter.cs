@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores;
 using System;

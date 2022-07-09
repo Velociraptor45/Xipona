@@ -2,30 +2,30 @@
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateTemporaryItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.AllQuantityTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ItemCategories;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
@@ -231,7 +231,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task<Item> GetItemByIdAsync(Guid itemId)
         {
             var result = await _client.GetAsync(itemId);
-            return _converters.ToDomain<StoreItemContract, Item>(result);
+            return _converters.ToDomain<ItemContract, Item>(result);
         }
 
         public async Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync()

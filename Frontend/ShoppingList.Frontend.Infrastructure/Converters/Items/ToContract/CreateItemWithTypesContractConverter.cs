@@ -1,5 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using System.Linq;
