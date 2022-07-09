@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
+
+    <RootNamespace>ProjectHermes.ShoppingList.Frontend.Models.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

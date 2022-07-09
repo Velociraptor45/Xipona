@@ -1,7 +1,7 @@
-﻿using ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
-using ShoppingList.Frontend.TestTools;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Frontend.TestTools;
 
-namespace ShoppingList.Frontend.Models.TestKit.Common;
+namespace ProjectHermes.ShoppingList.Frontend.Models.TestKit.Common;
 
 public class DomainTestBuilderBase<TModel> : TestBuilderBase<TModel>
 {

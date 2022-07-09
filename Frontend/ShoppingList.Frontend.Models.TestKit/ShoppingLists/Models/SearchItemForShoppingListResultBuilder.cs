@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
-using ShoppingList.Frontend.Models.TestKit.Common;
+using ProjectHermes.ShoppingList.Frontend.Models.TestKit.Common;
 
-namespace ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
+namespace ProjectHermes.ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
 
 public class SearchItemForShoppingListResultBuilder : DomainTestBuilderBase<SearchItemForShoppingListResult>
 {
