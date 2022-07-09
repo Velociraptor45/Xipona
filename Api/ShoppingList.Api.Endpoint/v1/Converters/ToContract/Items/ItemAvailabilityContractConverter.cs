@@ -8,14 +8,14 @@ public class ItemAvailabilityContractConverter :
     IToContractConverter<ItemAvailabilityReadModel, ItemAvailabilityContract>
 {
     private readonly IToContractConverter<ItemStoreReadModel, ItemStoreContract> _itemStoreContractConverter;
-    private readonly IToContractConverter<ItemSectionReadModel, ItemSectionContract> _storeSectionContractConverter;
+    private readonly IToContractConverter<ItemSectionReadModel, ItemSectionContract> _sectionContractConverter;
 
     public ItemAvailabilityContractConverter(
         IToContractConverter<ItemStoreReadModel, ItemStoreContract> itemStoreContractConverter,
-        IToContractConverter<ItemSectionReadModel, ItemSectionContract> storeSectionContractConverter)
+        IToContractConverter<ItemSectionReadModel, ItemSectionContract> sectionContractConverter)
     {
         _itemStoreContractConverter = itemStoreContractConverter;
-        _storeSectionContractConverter = storeSectionContractConverter;
+        _sectionContractConverter = sectionContractConverter;
     }
 
     public ItemAvailabilityContract ToContract(ItemAvailabilityReadModel source)
@@ -26,6 +26,6 @@ public class ItemAvailabilityContractConverter :
         return new ItemAvailabilityContract(
             _itemStoreContractConverter.ToContract(source.Store),
             source.Price.Value,
-            _storeSectionContractConverter.ToContract(source.DefaultSection));
+            _sectionContractConverter.ToContract(source.DefaultSection));
     }
 }

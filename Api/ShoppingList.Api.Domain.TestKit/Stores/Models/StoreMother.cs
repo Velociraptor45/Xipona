@@ -10,9 +10,9 @@ public static class StoreMother
     {
         if (builder == null)
             builder = new StoreBuilder();
-        var sections = new StoreSections(
-            StoreSectionMother.Default().Create().ToMonoList(),
-            new StoreSectionFactoryMock(MockBehavior.Strict).Object);
+        var sections = new Sections(
+            SectionMother.Default().Create().ToMonoList(),
+            new SectionFactoryMock(MockBehavior.Strict).Object);
 
         return builder
             .WithIsDeleted(false)
@@ -39,11 +39,11 @@ public static class StoreMother
         if (count == 1)
             return Initial(builder);
 
-        var defaultSection = StoreSectionMother.Default().Create();
-        var allSections = StoreSectionMother.NotDefault().CreateMany(count - 1).ToList();
+        var defaultSection = SectionMother.Default().Create();
+        var allSections = SectionMother.NotDefault().CreateMany(count - 1).ToList();
 
         allSections.Add(defaultSection);
-        var sections = new StoreSections(allSections, new StoreSectionFactoryMock(MockBehavior.Strict).Object);
+        var sections = new Sections(allSections, new SectionFactoryMock(MockBehavior.Strict).Object);
         return builder
             .WithIsDeleted(false)
             .WithSections(sections);

@@ -105,14 +105,14 @@ public class AvailabilityValidationServiceTests
     private class LocalFixture
     {
         private readonly StoreRepositoryMock _storeRepositoryMock;
-        private readonly StoreSectionFactoryMock _sectionFactoryMock;
+        private readonly SectionFactoryMock _sectionFactoryMock;
 
         private readonly List<IStore> _stores = new();
 
         public LocalFixture()
         {
             _storeRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
-            _sectionFactoryMock = new StoreSectionFactoryMock(MockBehavior.Strict);
+            _sectionFactoryMock = new SectionFactoryMock(MockBehavior.Strict);
         }
 
         public List<IItemAvailability>? Availabilities { get; private set; }
@@ -144,8 +144,8 @@ public class AvailabilityValidationServiceTests
 
             foreach (var availability in Availabilities)
             {
-                var section = new StoreSectionBuilder().WithId(availability.DefaultSectionId).Create();
-                var sections = new StoreSections(section.ToMonoList(), _sectionFactoryMock.Object);
+                var section = new SectionBuilder().WithId(availability.DefaultSectionId).Create();
+                var sections = new Sections(section.ToMonoList(), _sectionFactoryMock.Object);
                 var store = StoreMother.Initial()
                     .WithSections(sections)
                     .WithId(availability.StoreId)

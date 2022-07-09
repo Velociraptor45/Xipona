@@ -5,12 +5,12 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-public class StoreSections : IEnumerable<IStoreSection>
+public class Sections : IEnumerable<ISection>
 {
-    private readonly IStoreSectionFactory _sectionFactory;
-    private readonly IDictionary<SectionId, IStoreSection> _sections;
+    private readonly ISectionFactory _sectionFactory;
+    private readonly IDictionary<SectionId, ISection> _sections;
 
-    public StoreSections(IEnumerable<IStoreSection> sections, IStoreSectionFactory sectionFactory)
+    public Sections(IEnumerable<ISection> sections, ISectionFactory sectionFactory)
     {
         //todo add sorting & default section validation
 
@@ -42,12 +42,12 @@ public class StoreSections : IEnumerable<IStoreSection>
         AddMany(newSections);
     }
 
-    public IStoreSection GetDefaultSection()
+    public ISection GetDefaultSection()
     {
         return _sections.Values.First(s => s.IsDefaultSection);
     }
 
-    public IReadOnlyCollection<IStoreSection> AsReadOnly()
+    public IReadOnlyCollection<ISection> AsReadOnly()
     {
         return _sections.Values.ToList().AsReadOnly();
     }
@@ -57,7 +57,7 @@ public class StoreSections : IEnumerable<IStoreSection>
         return _sections.ContainsKey(sectionId);
     }
 
-    public IEnumerator<IStoreSection> GetEnumerator()
+    public IEnumerator<ISection> GetEnumerator()
     {
         return _sections.Values.GetEnumerator();
     }
@@ -86,7 +86,7 @@ public class StoreSections : IEnumerable<IStoreSection>
         _sections[updatedSection.Id] = updatedSection;
     }
 
-    private void AddMany(IEnumerable<IStoreSection> sections)
+    private void AddMany(IEnumerable<ISection> sections)
     {
         foreach (var section in sections)
         {
@@ -94,7 +94,7 @@ public class StoreSections : IEnumerable<IStoreSection>
         }
     }
 
-    private void Add(IStoreSection section)
+    private void Add(ISection section)
     {
         _sections.Add(section.Id, section);
     }

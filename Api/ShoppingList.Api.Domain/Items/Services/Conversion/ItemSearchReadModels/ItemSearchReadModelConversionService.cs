@@ -58,7 +58,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                     itemCategory is null ?
                         null :
                         new ItemCategoryReadModel(itemCategory),
-                    new StoreSectionReadModel(section));
+                    new SectionReadModel(section));
             });
     }
 
@@ -102,7 +102,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                     itemCategory is null ?
                         null :
                         new ItemCategoryReadModel(itemCategory),
-                    new StoreSectionReadModel(section));
+                    new SectionReadModel(section));
             });
         });
     }

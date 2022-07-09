@@ -1,14 +1,15 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities;
+using Section = ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Section;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Converters.ToEntity;
 
 public class StoreConverter : IToEntityConverter<IStore, Entities.Store>
 {
-    private readonly IToEntityConverter<IStoreSection, Section> _sectionConverter;
+    private readonly IToEntityConverter<ISection, Section> _sectionConverter;
 
-    public StoreConverter(IToEntityConverter<IStoreSection, Section> sectionConverter)
+    public StoreConverter(IToEntityConverter<ISection, Section> sectionConverter)
     {
         _sectionConverter = sectionConverter;
     }

@@ -2,9 +2,9 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-public class StoreSection : IStoreSection
+public class Section : ISection
 {
-    public StoreSection(SectionId id, SectionName name, int sortingIndex, bool isDefaultSection)
+    public Section(SectionId id, SectionName name, int sortingIndex, bool isDefaultSection)
     {
         Id = id;
         Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -17,9 +17,9 @@ public class StoreSection : IStoreSection
     public int SortingIndex { get; }
     public bool IsDefaultSection { get; }
 
-    public IStoreSection Update(SectionUpdate update)
+    public ISection Update(SectionUpdate update)
     {
-        return new StoreSection(
+        return new Section(
             Id,
             update.Name,
             update.SortingIndex,

@@ -1,12 +1,13 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities;
+using Section = ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Section;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Converters.ToEntity;
 
-public class SectionConverter : IToEntityConverter<IStoreSection, Section>
+public class SectionConverter : IToEntityConverter<ISection, Section>
 {
-    public Section ToEntity(IStoreSection source)
+    public Section ToEntity(ISection source)
     {
         if (source is null)
             throw new ArgumentNullException(nameof(source));

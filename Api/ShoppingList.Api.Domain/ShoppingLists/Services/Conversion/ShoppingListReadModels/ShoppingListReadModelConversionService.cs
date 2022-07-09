@@ -62,10 +62,10 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
             IItemCategory> itemCategories, IReadOnlyDictionary<ManufacturerId, IManufacturer> manufacturers)
     {
         List<ShoppingListSectionReadModel> sectionReadModels = new();
-        foreach (var section in shoppingList.Sections)
+        foreach (var shoppingListSection in shoppingList.Sections)
         {
             List<ShoppingListItemReadModel> itemReadModels = new();
-            foreach (var sectionItem in section.Items)
+            foreach (var sectionItem in shoppingListSection.Items)
             {
                 var item = items[sectionItem.Id];
 
@@ -115,13 +115,13 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
                 itemReadModels.Add(itemReadModel);
             }
 
-            var storeSection = store.Sections.First(s => s.Id == section.Id);
+            var section = store.Sections.First(s => s.Id == shoppingListSection.Id);
 
             var sectionReadModel = new ShoppingListSectionReadModel(
-                section.Id,
-                storeSection.Name,
-                storeSection.SortingIndex,
-                storeSection.IsDefaultSection,
+                shoppingListSection.Id,
+                section.Name,
+                section.SortingIndex,
+                section.IsDefaultSection,
                 itemReadModels);
 
             sectionReadModels.Add(sectionReadModel);

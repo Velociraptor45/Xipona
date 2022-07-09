@@ -91,7 +91,7 @@ public class StoreControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(Contract);
 
                 var sections = Contract.Sections.Select(section =>
-                        new StoreSectionContract(Guid.Empty, section.Name, section.SortingIndex,
+                        new SectionContract(Guid.Empty, section.Name, section.SortingIndex,
                             section.IsDefaultSection))
                     .ToList();
 
@@ -102,22 +102,22 @@ public class StoreControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(Contract);
 
-                var sections = new List<IStoreSection>();
+                var sections = new List<ISection>();
                 foreach (var section in Contract.Sections)
                 {
-                    sections.Add(new StoreSectionBuilder()
+                    sections.Add(new SectionBuilder()
                         .WithName(new SectionName(section.Name))
                         .WithIsDefaultSection(section.IsDefaultSection)
                         .WithSortingIndex(section.SortingIndex)
                         .Create());
                 }
 
-                var factory = SetupScope.ServiceProvider.GetRequiredService<IStoreSectionFactory>();
+                var factory = SetupScope.ServiceProvider.GetRequiredService<ISectionFactory>();
 
                 ExpectedPersistedStore = new StoreBuilder()
                     .WithName(new StoreName(Contract.Name))
                     .WithIsDeleted(false)
-                    .WithSections(new StoreSections(sections, factory))
+                    .WithSections(new Sections(sections, factory))
                     .Create();
             }
 
@@ -204,23 +204,23 @@ public class StoreControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(Contract);
 
-                var sections = new List<IStoreSection>();
+                var sections = new List<ISection>();
                 foreach (var section in Contract.Sections)
                 {
-                    sections.Add(new StoreSection(
+                    sections.Add(new Section(
                         new SectionId(section.Id!.Value),
                         new SectionName(section.Name),
                         section.SortingIndex,
                         section.IsDefaultSection));
                 }
 
-                var factory = SetupScope.ServiceProvider.GetRequiredService<IStoreSectionFactory>();
+                var factory = SetupScope.ServiceProvider.GetRequiredService<ISectionFactory>();
 
                 ExpectedPersistedStore = new Store(
                     new StoreId(Contract.Id),
                     new StoreName(Contract.Name),
                     false,
-                    new StoreSections(sections, factory));
+                    new Sections(sections, factory));
             }
         }
     }

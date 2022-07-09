@@ -9,9 +9,9 @@ public class ShoppingListSectionFactory : IShoppingListSectionFactory
         return new ShoppingListSection(sectionId, shoppingListItems);
     }
 
-    public IShoppingListSection CreateEmpty(IStoreSection storeSection)
+    public IShoppingListSection CreateEmpty(ISection section)
     {
-        return new ShoppingListSection(storeSection.Id, Enumerable.Empty<IShoppingListItem>());
+        return new ShoppingListSection(section.Id, Enumerable.Empty<IShoppingListItem>());
     }
 
     public IShoppingListSection CreateEmpty(SectionId sectionId)

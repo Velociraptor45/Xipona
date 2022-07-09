@@ -2,9 +2,9 @@
 
 namespace ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
 
-public class StoreSectionFactoryMock : Mock<IStoreSectionFactory>
+public class SectionFactoryMock : Mock<ISectionFactory>
 {
-    public StoreSectionFactoryMock(MockBehavior behavior) : base(behavior)
+    public SectionFactoryMock(MockBehavior behavior) : base(behavior)
     {
     }
 }

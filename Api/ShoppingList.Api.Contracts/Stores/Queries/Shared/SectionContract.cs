@@ -2,9 +2,9 @@
 
 namespace ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared
 {
-    public class StoreSectionContract
+    public class SectionContract
     {
-        public StoreSectionContract(Guid id, string name, int sortingIndex, bool isDefaultSection)
+        public SectionContract(Guid id, string name, int sortingIndex, bool isDefaultSection)
         {
             Id = id;
             Name = name;

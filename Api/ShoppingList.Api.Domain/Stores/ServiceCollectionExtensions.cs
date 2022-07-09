@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<IStoreFactory, StoreFactory>();
 
-        services.AddTransient<IStoreSectionFactory, StoreSectionFactory>();
+        services.AddTransient<ISectionFactory, SectionFactory>();
 
         // services
         services.AddTransient<Func<CancellationToken, IStoreCreationService>>(provider =>

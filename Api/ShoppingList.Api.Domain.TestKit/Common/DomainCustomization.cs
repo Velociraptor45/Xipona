@@ -23,7 +23,7 @@ public class DomainCustomization : ICustomization
         fixture.Customizations.Add(new TypeRelay(typeof(IItemCategory), typeof(ItemCategory)));
         fixture.Customizations.Add(new TypeRelay(typeof(IManufacturer), typeof(Manufacturer)));
         fixture.Customizations.Add(new TypeRelay(typeof(IStore), typeof(Store)));
-        fixture.Customizations.Add(new TypeRelay(typeof(IStoreSection), typeof(StoreSection)));
+        fixture.Customizations.Add(new TypeRelay(typeof(ISection), typeof(Section)));
 
         fixture.Customize<ItemCategoryId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<ManufacturerId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));

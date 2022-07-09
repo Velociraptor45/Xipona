@@ -965,7 +965,7 @@ public class AddItemToShoppingListServiceTests
         protected readonly CommonFixture CommonFixture = new();
         private readonly ShoppingListSectionFactoryMock _shoppingListSectionFactoryMock;
         private readonly StoreRepositoryMock _storeRepositoryMock;
-        private readonly StoreSectionFactoryMock _sectionFactoryMock;
+        private readonly SectionFactoryMock _sectionFactoryMock;
         protected readonly ItemRepositoryMock ItemRepositoryMock;
         protected readonly ShoppingListItemFactoryMock ShoppingListItemFactoryMock;
         protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
@@ -981,7 +981,7 @@ public class AddItemToShoppingListServiceTests
             ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
             ShoppingListItemFactoryMock = new ShoppingListItemFactoryMock(MockBehavior.Strict);
             ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
-            _sectionFactoryMock = new StoreSectionFactoryMock(MockBehavior.Strict);
+            _sectionFactoryMock = new SectionFactoryMock(MockBehavior.Strict);
         }
 
         public ShoppingListMock? ShoppingListMock { get; protected set; }
@@ -1025,8 +1025,8 @@ public class AddItemToShoppingListServiceTests
         {
             TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
             var sectionId = new SectionId(Guid.NewGuid());
-            var section = StoreSectionMother.Default().WithId(sectionId).Create();
-            var sections = new StoreSections(section.ToMonoList(), _sectionFactoryMock.Object);
+            var section = SectionMother.Default().WithId(sectionId).Create();
+            var sections = new Sections(section.ToMonoList(), _sectionFactoryMock.Object);
 
             _store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSections(sections).Create();
         }
@@ -1037,8 +1037,8 @@ public class AddItemToShoppingListServiceTests
             var sectionId = SectionId
                             ?? Availability?.DefaultSectionId
                             ?? throw new TestPropertyNotSetException(nameof(Availability));
-            var section = StoreSectionMother.Default().WithId(sectionId).Create();
-            var sections = new StoreSections(section.ToMonoList(), _sectionFactoryMock.Object);
+            var section = SectionMother.Default().WithId(sectionId).Create();
+            var sections = new Sections(section.ToMonoList(), _sectionFactoryMock.Object);
 
             _store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSections(sections).Create();
         }

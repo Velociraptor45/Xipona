@@ -285,7 +285,7 @@ public class ItemSearchReadModelConversionServiceTests
 
                 var availability = item.Availabilities.Single(av => av.StoreId == Store.Id);
                 var section = Store.Sections.Single(s => s.Id == availability.DefaultSectionId);
-                var sectionReadModel = new StoreSectionReadModel(section.Id, section.Name,
+                var sectionReadModel = new SectionReadModel(section.Id, section.Name,
                     section.SortingIndex, section.IsDefaultSection);
 
                 yield return new SearchItemForShoppingResultReadModel(

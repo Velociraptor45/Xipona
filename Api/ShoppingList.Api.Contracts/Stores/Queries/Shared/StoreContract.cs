@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared
 {
     public class StoreContract
     {
-        public StoreContract(Guid id, string name, IEnumerable<StoreSectionContract> sections)
+        public StoreContract(Guid id, string name, IEnumerable<SectionContract> sections)
         {
             Id = id;
             Name = name;
@@ -15,6 +15,6 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared
 
         public Guid Id { get; }
         public string Name { get; }
-        public IReadOnlyCollection<StoreSectionContract> Sections { get; }
+        public IReadOnlyCollection<SectionContract> Sections { get; }
     }
 }

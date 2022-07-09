@@ -9,7 +9,7 @@ public class SearchItemForShoppingResultReadModel
 {
     public SearchItemForShoppingResultReadModel(ItemId id, ItemTypeId? typeId, string name, int defaultQuantity,
         Price price, ManufacturerReadModel? manufacturer, ItemCategoryReadModel? itemCategory,
-        StoreSectionReadModel defaultSection)
+        SectionReadModel defaultSection)
     {
         Id = id;
         TypeId = typeId;
@@ -28,5 +28,5 @@ public class SearchItemForShoppingResultReadModel
     public Price Price { get; }
     public ManufacturerReadModel? Manufacturer { get; }
     public ItemCategoryReadModel? ItemCategory { get; }
-    public StoreSectionReadModel DefaultSection { get; }
+    public SectionReadModel DefaultSection { get; }
 }

@@ -2,12 +2,12 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-public interface IStoreSection
+public interface ISection
 {
     SectionId Id { get; }
     SectionName Name { get; }
     int SortingIndex { get; }
     bool IsDefaultSection { get; }
 
-    IStoreSection Update(SectionUpdate update);
+    ISection Update(SectionUpdate update);
 }

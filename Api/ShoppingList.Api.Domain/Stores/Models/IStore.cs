@@ -7,13 +7,13 @@ public interface IStore
     StoreId Id { get; }
     StoreName Name { get; }
     bool IsDeleted { get; }
-    IReadOnlyCollection<IStoreSection> Sections { get; }
+    IReadOnlyCollection<ISection> Sections { get; }
 
     void ChangeName(StoreName name);
 
     bool ContainsSection(SectionId sectionId);
 
-    IStoreSection GetDefaultSection();
+    ISection GetDefaultSection();
 
     void UpdateSections(IEnumerable<SectionUpdate> sectionUpdates);
 }

@@ -6,7 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForS
     public class SearchItemForShoppingListResultContract
     {
         public SearchItemForShoppingListResultContract(Guid id, Guid? typeId, string name, int defaultQuantity, float price,
-            string itemCategoryName, string manufacturerName, StoreSectionContract defaultSection)
+            string itemCategoryName, string manufacturerName, SectionContract defaultSection)
         {
             Id = id;
             TypeId = typeId;
@@ -25,6 +25,6 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForS
         public float Price { get; }
         public string ItemCategoryName { get; }
         public string ManufacturerName { get; }
-        public StoreSectionContract DefaultSection { get; }
+        public SectionContract DefaultSection { get; }
     }
 }

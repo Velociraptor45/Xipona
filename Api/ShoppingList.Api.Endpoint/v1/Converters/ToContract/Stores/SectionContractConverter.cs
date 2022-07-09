@@ -5,26 +5,26 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Stores;
 
-public class StoreSectionContractConverter :
-    IToContractConverter<StoreSectionReadModel, StoreSectionContract>,
-    IToContractConverter<IStoreSection, StoreSectionContract>
+public class SectionContractConverter :
+    IToContractConverter<SectionReadModel, SectionContract>,
+    IToContractConverter<ISection, SectionContract>
 {
-    public StoreSectionContract ToContract(StoreSectionReadModel source)
+    public SectionContract ToContract(SectionReadModel source)
     {
         ArgumentNullException.ThrowIfNull(source);
 
-        return new StoreSectionContract(
+        return new SectionContract(
             source.Id.Value,
             source.Name.Value,
             source.SortingIndex,
             source.IsDefaultSection);
     }
 
-    public StoreSectionContract ToContract(IStoreSection source)
+    public SectionContract ToContract(ISection source)
     {
         ArgumentNullException.ThrowIfNull(source);
 
-        return new StoreSectionContract(
+        return new SectionContract(
             source.Id.Value,
             source.Name.Value,
             source.SortingIndex,

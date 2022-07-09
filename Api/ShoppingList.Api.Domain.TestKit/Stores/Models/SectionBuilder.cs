@@ -3,27 +3,27 @@ using ShoppingList.Api.Domain.TestKit.Common;
 
 namespace ShoppingList.Api.Domain.TestKit.Stores.Models;
 
-public class StoreSectionBuilder : DomainTestBuilderBase<StoreSection>
+public class SectionBuilder : DomainTestBuilderBase<Section>
 {
-    public StoreSectionBuilder WithId(SectionId id)
+    public SectionBuilder WithId(SectionId id)
     {
         FillConstructorWith("id", id);
         return this;
     }
 
-    public StoreSectionBuilder WithName(SectionName name)
+    public SectionBuilder WithName(SectionName name)
     {
         FillConstructorWith(nameof(name), name);
         return this;
     }
 
-    public StoreSectionBuilder WithSortingIndex(int sortingIndex)
+    public SectionBuilder WithSortingIndex(int sortingIndex)
     {
         FillConstructorWith("sortingIndex", sortingIndex);
         return this;
     }
 
-    public StoreSectionBuilder WithIsDefaultSection(bool isDefaultSection)
+    public SectionBuilder WithIsDefaultSection(bool isDefaultSection)
     {
         FillConstructorWith("isDefaultSection", isDefaultSection);
         return this;

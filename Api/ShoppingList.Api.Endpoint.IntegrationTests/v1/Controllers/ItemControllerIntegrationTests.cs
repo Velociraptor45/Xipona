@@ -288,17 +288,17 @@ public class ItemControllerIntegrationTests
                     .Create();
 
                 _newStores = new List<IStore>();
-                var factory = ArrangeScope.ServiceProvider.GetRequiredService<IStoreSectionFactory>();
+                var factory = ArrangeScope.ServiceProvider.GetRequiredService<ISectionFactory>();
 
                 foreach (var av in Contract.ItemTypes.SelectMany(t => t.Availabilities))
                 {
-                    var section = new StoreSectionBuilder()
+                    var section = new SectionBuilder()
                         .WithId(new SectionId(av.DefaultSectionId))
                         .CreateMany(1);
 
                     var store = new StoreBuilder()
                         .WithId(new StoreId(av.StoreId))
-                        .WithSections(new StoreSections(section, factory))
+                        .WithSections(new Sections(section, factory))
                         .Create();
 
                     _newStores.Add(store);

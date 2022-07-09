@@ -7,7 +7,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStore
 {
     public class ActiveStoreContract
     {
-        public ActiveStoreContract(Guid id, string name, int itemCount, IEnumerable<StoreSectionContract> sections)
+        public ActiveStoreContract(Guid id, string name, int itemCount, IEnumerable<SectionContract> sections)
         {
             Id = id;
             Name = name;
@@ -18,6 +18,6 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStore
         public Guid Id { get; }
         public string Name { get; }
         public int ItemCount { get; }
-        public IReadOnlyCollection<StoreSectionContract> Sections { get; }
+        public IReadOnlyCollection<SectionContract> Sections { get; }
     }
 }

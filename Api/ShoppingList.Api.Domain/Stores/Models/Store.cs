@@ -4,9 +4,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 public class Store : IStore
 {
-    private readonly StoreSections _sections;
+    private readonly Sections _sections;
 
-    public Store(StoreId id, StoreName name, bool isDeleted, StoreSections sections)
+    public Store(StoreId id, StoreName name, bool isDeleted, Sections sections)
     {
         Id = id;
         Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -17,9 +17,9 @@ public class Store : IStore
     public StoreId Id { get; }
     public StoreName Name { get; private set; }
     public bool IsDeleted { get; }
-    public IReadOnlyCollection<IStoreSection> Sections => _sections.AsReadOnly();
+    public IReadOnlyCollection<ISection> Sections => _sections.AsReadOnly();
 
-    public IStoreSection GetDefaultSection()
+    public ISection GetDefaultSection()
     {
         return _sections.GetDefaultSection();
     }

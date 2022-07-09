@@ -187,7 +187,7 @@ public class ItemReadModelConversionServiceTests
 
     private class LocalFixture
     {
-        private readonly StoreSectionFactoryMock _sectionFactoryMock;
+        private readonly SectionFactoryMock _sectionFactoryMock;
         private readonly ItemCategoryRepositoryMock _itemCategoryRepositoryMock;
         private readonly ManufacturerRepositoryMock _manufacturerRepositoryMock;
         private readonly StoreRepositoryMock _storeRepositoryMock;
@@ -202,7 +202,7 @@ public class ItemReadModelConversionServiceTests
             _itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
             _manufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
             _storeRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
-            _sectionFactoryMock = new StoreSectionFactoryMock(MockBehavior.Strict);
+            _sectionFactoryMock = new SectionFactoryMock(MockBehavior.Strict);
         }
 
         public IItem? Item { get; private set; }
@@ -247,10 +247,10 @@ public class ItemReadModelConversionServiceTests
         {
             TestPropertyNotSetException.ThrowIfNull(Item);
             var availability = Item.Availabilities.First();
-            var section = StoreSectionMother.Default()
+            var section = SectionMother.Default()
                 .WithId(availability.DefaultSectionId)
                 .Create();
-            var sections = new StoreSections(section.ToMonoList(), _sectionFactoryMock.Object);
+            var sections = new Sections(section.ToMonoList(), _sectionFactoryMock.Object);
 
             _store = StoreMother.Initial()
                 .WithId(availability.StoreId)
@@ -329,7 +329,7 @@ public class ItemReadModelConversionServiceTests
             IItemAvailability availability)
         {
             var section = store.Sections.First();
-            var storeSectionReadModel = new ItemSectionReadModel(
+            var sectionReadModel = new ItemSectionReadModel(
                 section.Id,
                 section.Name,
                 section.SortingIndex);
@@ -337,12 +337,12 @@ public class ItemReadModelConversionServiceTests
             var storeReadModel = new ItemStoreReadModel(
                 store.Id,
                 store.Name,
-                storeSectionReadModel.ToMonoList());
+                sectionReadModel.ToMonoList());
 
             return new ItemAvailabilityReadModel(
                 storeReadModel,
                 availability.Price,
-                storeSectionReadModel);
+                sectionReadModel);
         }
 
         #region Mock Setup

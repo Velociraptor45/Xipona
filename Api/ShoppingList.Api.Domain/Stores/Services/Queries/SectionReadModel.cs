@@ -2,9 +2,9 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
 
-public class StoreSectionReadModel
+public class SectionReadModel
 {
-    public StoreSectionReadModel(SectionId id, SectionName name, int sortingIndex, bool isDefaultSection)
+    public SectionReadModel(SectionId id, SectionName name, int sortingIndex, bool isDefaultSection)
     {
         Id = id;
         Name = name;
@@ -12,7 +12,7 @@ public class StoreSectionReadModel
         IsDefaultSection = isDefaultSection;
     }
 
-    public StoreSectionReadModel(IStoreSection section) :
+    public SectionReadModel(ISection section) :
         this(section.Id, section.Name, section.SortingIndex, section.IsDefaultSection)
     {
     }

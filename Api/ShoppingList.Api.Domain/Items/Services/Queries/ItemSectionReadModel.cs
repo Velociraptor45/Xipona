@@ -11,7 +11,7 @@ public class ItemSectionReadModel
         SortingIndex = sortingIndex;
     }
 
-    public ItemSectionReadModel(IStoreSection section) :
+    public ItemSectionReadModel(ISection section) :
         this(section.Id, section.Name, section.SortingIndex)
     {
     }

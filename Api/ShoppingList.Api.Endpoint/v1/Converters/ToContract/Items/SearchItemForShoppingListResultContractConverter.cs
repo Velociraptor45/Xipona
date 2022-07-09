@@ -9,10 +9,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Items
 public class SearchItemForShoppingListResultContractConverter :
     IToContractConverter<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>
 {
-    private readonly IToContractConverter<StoreSectionReadModel, StoreSectionContract> _itemSectionContractConverter;
+    private readonly IToContractConverter<SectionReadModel, SectionContract> _itemSectionContractConverter;
 
     public SearchItemForShoppingListResultContractConverter(
-        IToContractConverter<StoreSectionReadModel, StoreSectionContract> itemSectionContractConverter)
+        IToContractConverter<SectionReadModel, SectionContract> itemSectionContractConverter)
     {
         _itemSectionContractConverter = itemSectionContractConverter;
     }

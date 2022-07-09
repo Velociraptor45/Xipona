@@ -4,16 +4,16 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 
 public class StoreFactory : IStoreFactory
 {
-    private readonly IStoreSectionFactory _sectionFactory;
+    private readonly ISectionFactory _sectionFactory;
 
-    public StoreFactory(IStoreSectionFactory sectionFactory)
+    public StoreFactory(ISectionFactory sectionFactory)
     {
         _sectionFactory = sectionFactory;
     }
 
-    public IStore Create(StoreId id, StoreName name, bool isDeleted, IEnumerable<IStoreSection> sections)
+    public IStore Create(StoreId id, StoreName name, bool isDeleted, IEnumerable<ISection> sections)
     {
-        return new Store(id, name, isDeleted, new StoreSections(sections, _sectionFactory));
+        return new Store(id, name, isDeleted, new Sections(sections, _sectionFactory));
     }
 
     public IStore CreateNew(StoreCreation creationInfo)

@@ -27,7 +27,7 @@ public class StoreConverterTests : ToDomainConverterTestBase<ProjectHermes.Shopp
     public static ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Store GetSource(IStore destination)
     {
         var sections = destination.Sections
-            .Select(s => StoreSectionConverterTests.GetSource(s))
+            .Select(s => SectionConverterTests.GetSource(s))
             .ToList();
 
         return new ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Store
@@ -44,6 +44,6 @@ public class StoreConverterTests : ToDomainConverterTestBase<ProjectHermes.Shopp
         serviceCollection.AddImplementationOfGenericType(typeof(StoreConverter).Assembly, typeof(IToDomainConverter<,>));
         serviceCollection.AddImplementationOfNonGenericType(typeof(IStoreFactory).Assembly, typeof(IStoreFactory));
 
-        StoreSectionConverterTests.AddDependencies(serviceCollection);
+        SectionConverterTests.AddDependencies(serviceCollection);
     }
 }
