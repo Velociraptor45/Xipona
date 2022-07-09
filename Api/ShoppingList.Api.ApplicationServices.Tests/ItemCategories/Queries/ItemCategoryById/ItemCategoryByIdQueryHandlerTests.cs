@@ -1,10 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.ItemCategoryById;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ShoppingList.Api.Domain.TestKit.Common;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Services.Queries;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Services.Queries;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.ItemCategories.Queries.ItemCategoryById;
 

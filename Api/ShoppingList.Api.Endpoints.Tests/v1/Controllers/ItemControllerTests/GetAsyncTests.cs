@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.ItemById;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.ItemById;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Endpoints.Tests.Common;
 using ProjectHermes.ShoppingList.Api.Endpoints.Tests.Common.StatusResults;
@@ -12,7 +12,7 @@ using System.Reflection;
 namespace ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests;
 
 public class GetAsyncTests :
-    ControllerQueryTestsBase<ItemController, ItemByIdQuery, StoreItemReadModel, StoreItemContract,
+    ControllerQueryTestsBase<ItemController, ItemByIdQuery, ItemReadModel, ItemContract,
     GetAsyncTests.GetAsyncFixture>
 {
     public GetAsyncTests() : base(new GetAsyncFixture())

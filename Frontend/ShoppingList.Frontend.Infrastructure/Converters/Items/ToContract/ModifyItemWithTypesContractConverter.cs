@@ -1,5 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;

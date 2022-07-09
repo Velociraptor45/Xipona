@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 using System;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Common.Transactions;
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Tests.Common.Transactions;
 
 public class TransactionMock : Mock<ITransaction>
 {

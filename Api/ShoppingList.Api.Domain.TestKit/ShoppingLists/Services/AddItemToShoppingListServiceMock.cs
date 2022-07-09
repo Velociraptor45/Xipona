@@ -1,9 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
 
 public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListService>
 {
@@ -35,7 +35,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
             .Returns(Task.CompletedTask);
     }
 
-    public void SetupAddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
+    public void SetupAddItemWithTypeToShoppingList(IShoppingList shoppingList, IItem item,
         ItemTypeId typeId, SectionId? sectionId, QuantityInBasket quantity)
     {
         Setup(m => m.AddItemWithTypeToShoppingList(
@@ -48,7 +48,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
             .Returns(Task.CompletedTask);
     }
 
-    public void VerifyAddItemWithTypeToShoppingList(IShoppingList shoppingList, IStoreItem item,
+    public void VerifyAddItemWithTypeToShoppingList(IShoppingList shoppingList, IItem item,
         ItemTypeId typeId, SectionId? sectionId, QuantityInBasket quantity, Func<Times> times)
     {
         Verify(m => m.AddItemWithTypeToShoppingList(

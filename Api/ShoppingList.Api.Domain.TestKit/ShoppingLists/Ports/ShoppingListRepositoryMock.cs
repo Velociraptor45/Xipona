@@ -1,9 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 
 public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
 {
@@ -11,10 +11,10 @@ public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
     {
     }
 
-    public void SetupFindActiveByAsync(ItemId storeItemId, IEnumerable<IShoppingList> returnValue)
+    public void SetupFindActiveByAsync(ItemId itemId, IEnumerable<IShoppingList> returnValue)
     {
         Setup(i => i.FindActiveByAsync(
-                It.Is<ItemId>(id => id == storeItemId),
+                It.Is<ItemId>(id => id == itemId),
                 It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult(returnValue));
     }

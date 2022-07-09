@@ -1,7 +1,7 @@
 ﻿using AutoFixture.Kernel;
-using ShoppingList.Api.Domain.TestKit.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
 
 public class EnumSpecimenBuilder<TEnum> : ISpecimenBuilder
     where TEnum : Enum

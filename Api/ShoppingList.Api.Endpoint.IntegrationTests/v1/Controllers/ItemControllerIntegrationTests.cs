@@ -2,36 +2,36 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.Shared;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models.Factories;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
-using ShoppingList.Api.Core.TestKit;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
-using ShoppingList.Api.Domain.TestKit.Stores.Models;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
 using Xunit;
+using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
 
-namespace ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
+namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
 
 public class ItemControllerIntegrationTests
 {
@@ -183,14 +183,14 @@ public class ItemControllerIntegrationTests
             {
             }
 
-            public IStoreItem? CurrentItem { get; private set; }
-            public IStoreItem? SecondLevelPredecessor { get; private set; }
-            public IStoreItem? FirstLevelPredecessor { get; private set; }
+            public IItem? CurrentItem { get; private set; }
+            public IItem? SecondLevelPredecessor { get; private set; }
+            public IItem? FirstLevelPredecessor { get; private set; }
             public UpdateItemWithTypesContract? Contract { get; private set; }
 
             public async Task SetupCurrentItemAsync()
             {
-                var builder = StoreItemMother.InitialWithTypes();
+                var builder = ItemMother.InitialWithTypes();
 
                 if (FirstLevelPredecessor is not null)
                 {
@@ -232,7 +232,7 @@ public class ItemControllerIntegrationTests
                         return type;
                     });
 
-                FirstLevelPredecessor = StoreItemMother.InitialWithTypes()
+                FirstLevelPredecessor = ItemMother.InitialWithTypes()
                     .WithIsDeleted(true)
                     .WithTypes(new ItemTypes(types, factory))
                     .Create();
@@ -249,7 +249,7 @@ public class ItemControllerIntegrationTests
 
             public async Task SetupSecondLevelPredecessorAsync()
             {
-                SecondLevelPredecessor = StoreItemMother.InitialWithTypes()
+                SecondLevelPredecessor = ItemMother.InitialWithTypes()
                     .WithIsDeleted(true)
                     .Create();
                 _secondLevelItemCategory = ItemCategoryMother.NotDeleted()
@@ -288,17 +288,17 @@ public class ItemControllerIntegrationTests
                     .Create();
 
                 _newStores = new List<IStore>();
-                var factory = ArrangeScope.ServiceProvider.GetRequiredService<IStoreSectionFactory>();
+                var factory = ArrangeScope.ServiceProvider.GetRequiredService<ISectionFactory>();
 
                 foreach (var av in Contract.ItemTypes.SelectMany(t => t.Availabilities))
                 {
-                    var section = new StoreSectionBuilder()
+                    var section = new SectionBuilder()
                         .WithId(new SectionId(av.DefaultSectionId))
                         .CreateMany(1);
 
                     var store = new StoreBuilder()
                         .WithId(new StoreId(av.StoreId))
-                        .WithSections(new StoreSections(section, factory))
+                        .WithSections(new Sections(section, factory))
                         .Create();
 
                     _newStores.Add(store);
@@ -358,7 +358,7 @@ public class ItemControllerIntegrationTests
             return scope.ServiceProvider.GetRequiredService<IStoreRepository>();
         }
 
-        protected async Task StoreAsync(IStoreItem? item = null, IManufacturer? manufacturer = null,
+        protected async Task StoreAsync(IItem? item = null, IManufacturer? manufacturer = null,
             IItemCategory? itemCategory = null, IEnumerable<IStore>? stores = null)
         {
             using var scope = CreateServiceScope();

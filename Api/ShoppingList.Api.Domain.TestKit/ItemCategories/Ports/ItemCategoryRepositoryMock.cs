@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 
-namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
 
 public class ItemCategoryRepositoryMock : Mock<IItemCategoryRepository>
 {

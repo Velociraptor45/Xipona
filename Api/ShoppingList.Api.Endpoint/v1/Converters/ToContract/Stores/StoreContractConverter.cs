@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
@@ -6,10 +6,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Store
 
 public class StoreContractConverter : IToContractConverter<IStore, StoreContract>
 {
-    private readonly IToContractConverter<IStoreSection, StoreSectionContract> _sectionConverter;
+    private readonly IToContractConverter<ISection, SectionContract> _sectionConverter;
 
     public StoreContractConverter(
-        IToContractConverter<IStoreSection, StoreSectionContract> sectionConverter)
+        IToContractConverter<ISection, SectionContract> sectionConverter)
     {
         _sectionConverter = sectionConverter;
     }

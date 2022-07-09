@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validations;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Shared;
 

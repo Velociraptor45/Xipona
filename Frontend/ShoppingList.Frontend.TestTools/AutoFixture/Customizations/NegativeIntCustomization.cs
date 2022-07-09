@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
 
-namespace ShoppingList.Frontend.TestTools.AutoFixture.Customizations;
+namespace ProjectHermes.ShoppingList.Frontend.TestTools.AutoFixture.Customizations;
 
 public class NegativeIntCustomization : ICustomization
 {

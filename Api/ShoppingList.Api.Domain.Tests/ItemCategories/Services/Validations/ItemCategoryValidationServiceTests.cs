@@ -1,26 +1,34 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Validations;
-using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
-using ShoppingList.Api.Domain.TestKit.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services.Validations;
 
 public class ItemCategoryValidationServiceTests
 {
+    private readonly LocalFixture _fixture;
+
+    public ItemCategoryValidationServiceTests()
+    {
+        _fixture = new LocalFixture();
+    }
+
     [Fact]
     public async Task ValidateAsync_WithInvalidItemCategoryId_ShouldThrowDomainException()
     {
         // Arrange
-        var local = new LocalFixture();
-        var service = local.CreateService();
-        local.SetupItemCategory();
-        local.SetupFindingNoItemCategory();
+        var service = _fixture.CreateService();
+        _fixture.SetupItemCategory();
+        _fixture.SetupFindingNoItemCategory();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCategory);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(local.ItemCategory.Id, default);
+        Func<Task> function = async () => await service.ValidateAsync(_fixture.ItemCategory.Id, default);
 
         // Assert
         using (new AssertionScope())
@@ -33,14 +41,15 @@ public class ItemCategoryValidationServiceTests
     public async Task ValidateAsync_WithValidItemCategoryId_ShouldNotThrow()
     {
         // Arrange
-        var local = new LocalFixture();
-        var service = local.CreateService();
+        var service = _fixture.CreateService();
 
-        local.SetupItemCategory();
-        local.SetupFindingItemCategory();
+        _fixture.SetupItemCategory();
+        _fixture.SetupFindingItemCategory();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCategory);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(local.ItemCategory.Id, default);
+        Func<Task> function = async () => await service.ValidateAsync(_fixture.ItemCategory.Id, default);
 
         // Assert
         using (new AssertionScope())
@@ -51,15 +60,11 @@ public class ItemCategoryValidationServiceTests
 
     private class LocalFixture
     {
-        public Fixture Fixture { get; }
-        public CommonFixture CommonFixture { get; } = new CommonFixture();
         public ItemCategoryRepositoryMock ItemCategoryRepositoryMock { get; }
-        public ItemCategory ItemCategory { get; private set; }
+        public ItemCategory? ItemCategory { get; private set; }
 
         public LocalFixture()
         {
-            Fixture = CommonFixture.GetNewFixture();
-
             ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
         }
 
@@ -75,11 +80,13 @@ public class ItemCategoryValidationServiceTests
 
         public void SetupFindingItemCategory()
         {
+            TestPropertyNotSetException.ThrowIfNull(ItemCategory);
             ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategory.Id, ItemCategory);
         }
 
         public void SetupFindingNoItemCategory()
         {
+            TestPropertyNotSetException.ThrowIfNull(ItemCategory);
             ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategory.Id, null);
         }
     }

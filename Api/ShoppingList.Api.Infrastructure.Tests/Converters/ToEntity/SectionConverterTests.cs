@@ -1,24 +1,24 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.TestKit.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Converters.ToEntity;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities;
-using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.Stores.Models;
+using Section = ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Section;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity;
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity;
 
-public class SectionConverterTests : ToEntityConverterTestBase<IStoreSection, Section>
+public class SectionConverterTests : ToEntityConverterTestBase<ISection, Section>
 {
-    protected override (IStoreSection, Section) CreateTestObjects()
+    protected override (ISection, Section) CreateTestObjects()
     {
-        var source = StoreSectionMother.Default().Create();
+        var source = SectionMother.Default().Create();
         var destination = GetDestination(source);
 
         return (source, destination);
     }
 
-    public static Section GetDestination(IStoreSection source)
+    public static Section GetDestination(ISection source)
     {
         return new Section
         {

@@ -1,9 +1,9 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
-using ShoppingList.Api.Domain.TestKit.Common;
-using ShoppingList.Api.Domain.TestKit.Stores.Services.Queries;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Services.Queries;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Stores.Queries;
 public class AllActiveStoresQueryHandlerTests : QueryHandlerTestsBase<AllActiveStoresQueryHandler,

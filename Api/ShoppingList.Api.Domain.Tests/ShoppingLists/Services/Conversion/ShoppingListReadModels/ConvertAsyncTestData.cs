@@ -1,18 +1,18 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
-using ShoppingList.Api.Domain.TestKit.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 
@@ -40,7 +40,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
 
         var availability = GetAvailabilityFrom(store);
 
-        IStoreItem item = new StoreItemBuilder()
+        IItem item = new ItemBuilder()
             .WithoutItemCategoryId()
             .WithManufacturerId(manufacturer.Id)
             .WithId(list.Sections.First().Items.First().Id)
@@ -67,7 +67,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         IItemCategory itemCategory = ItemCategoryMother.NotDeleted().Create();
 
         var availability = GetAvailabilityFrom(store);
-        IStoreItem item = new StoreItemBuilder()
+        IItem item = new ItemBuilder()
             .WithItemCategoryId(itemCategory.Id)
             .WithoutManufacturerId()
             .WithAvailabilities(availability.ToMonoList())
@@ -94,7 +94,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
 
         var availability = GetAvailabilityFrom(store);
-        IStoreItem item = StoreItemMother.InitialTemporary()
+        IItem item = ItemMother.InitialTemporary()
             .WithAvailabilities(availability.ToMonoList())
             .WithId(list.Sections.First().Items.First().Id)
             .Create();
@@ -119,7 +119,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         IItemCategory itemCategory = ItemCategoryMother.NotDeleted().Create();
 
         var availability = GetAvailabilityFrom(store);
-        IStoreItem item = new StoreItemBuilder()
+        IItem item = new ItemBuilder()
             .WithItemCategoryId(itemCategory.Id)
             .WithManufacturerId(manufacturer.Id)
             .WithAvailabilities(availability.ToMonoList())
@@ -149,7 +149,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         {
             list,
             store,
-            Enumerable.Empty<IStoreItem>(),
+            Enumerable.Empty<IItem>(),
             Enumerable.Empty<IItemCategory>(),
             Enumerable.Empty<IManufacturer>(),
             listReadModel
@@ -167,15 +167,15 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             .Create();
     }
 
-    private IStoreItemAvailability GetAvailabilityFrom(IStore store)
+    private IItemAvailability GetAvailabilityFrom(IStore store)
     {
-        return new StoreItemAvailabilityBuilder()
+        return new ItemAvailabilityBuilder()
             .WithStoreId(store.Id)
             .WithDefaultSectionId(store.Sections.First().Id)
             .Create();
     }
 
-    private static ShoppingListReadModel ToSimpleReadModel(IShoppingList list, IStore store, IStoreItem? item,
+    private static ShoppingListReadModel ToSimpleReadModel(IShoppingList list, IStore store, IItem? item,
         IItemCategory? itemCategory, IManufacturer? manufacturer)
     {
         var manufacturerReadModel = manufacturer == null

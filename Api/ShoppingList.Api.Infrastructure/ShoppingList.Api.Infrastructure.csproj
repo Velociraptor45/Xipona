@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="ServiceCollectionExtensions.cs~RF1e20d605.TMP" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.1">
@@ -32,7 +28,6 @@
   <ItemGroup>
     <Folder Include="Migrations\ItemCategories\" />
     <Folder Include="Migrations\Manufacturers\" />
-    <Folder Include="Migrations\StoreItems\" />
     <Folder Include="Migrations\Stores\" />
     <Folder Include="Migrations\ShoppingLists\" />
   </ItemGroup>

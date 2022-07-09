@@ -1,8 +1,8 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Exchanges;
 
 public interface IShoppingListExchangeService
 {
-    Task ExchangeItemAsync(ItemId oldItemId, IStoreItem newItem, CancellationToken cancellationToken);
+    Task ExchangeItemAsync(ItemId oldItemId, IItem newItem, CancellationToken cancellationToken);
 }

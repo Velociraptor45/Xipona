@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories;
+using ProjectHermes.ShoppingList.Api.Domain.Items;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers;
 using ProjectHermes.ShoppingList.Api.Domain.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems;
 using ProjectHermes.ShoppingList.Api.Domain.Stores;
 
 namespace ProjectHermes.ShoppingList.Api.Domain;

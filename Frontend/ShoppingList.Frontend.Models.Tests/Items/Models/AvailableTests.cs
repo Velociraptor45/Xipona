@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
-using ShoppingList.Frontend.Models.TestKit.Stores.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.TestKit.Stores.Models;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace ShoppingList.Frontend.Models.Tests.Items.Models;
+namespace ProjectHermes.ShoppingList.Frontend.Models.Tests.Items.Models;
 
 public class AvailableTests
 {

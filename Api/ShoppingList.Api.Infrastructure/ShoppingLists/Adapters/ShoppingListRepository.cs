@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
 
@@ -60,11 +60,11 @@ public class ShoppingListRepository : IShoppingListRepository
         return _toDomainConverter.ToDomain(entity);
     }
 
-    public async Task<IEnumerable<IShoppingList>> FindByAsync(ItemId storeItemId,
+    public async Task<IEnumerable<IShoppingList>> FindByAsync(ItemId itemId,
         CancellationToken cancellationToken)
     {
         List<Entities.ShoppingList> entities = await GetShoppingListQuery()
-            .Where(l => l.ItemsOnList.Any(i => i.ItemId == storeItemId.Value))
+            .Where(l => l.ItemsOnList.Any(i => i.ItemId == itemId.Value))
             .ToListAsync(cancellationToken: cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -82,11 +82,11 @@ public class ShoppingListRepository : IShoppingListRepository
         return _toDomainConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(ItemId storeItemId,
+    public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(ItemId itemId,
         CancellationToken cancellationToken)
     {
         List<Entities.ShoppingList> entities = await GetShoppingListQuery()
-            .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == storeItemId.Value) != null
+            .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == itemId.Value) != null
                         && l.CompletionDate == null)
             .ToListAsync(cancellationToken: cancellationToken);
 

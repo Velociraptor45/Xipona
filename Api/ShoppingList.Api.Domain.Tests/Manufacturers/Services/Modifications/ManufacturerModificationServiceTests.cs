@@ -1,10 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Modifications;
-using ShoppingList.Api.Domain.TestKit.Common;
-using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Manufacturers.Services.Modifications;
 
@@ -18,20 +18,7 @@ public class ManufacturerModificationServiceTests
         {
             _fixture = new ModifyAsyncFixture();
         }
-
-        [Fact]
-        public async Task ModifyAsync_WithManufacturerModificationNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-
-            // Act
-            var func = async () => await sut.ModifyAsync(_fixture.Modification);
-
-            // Assert
-            await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*modification*");
-        }
-
+        
         [Fact]
         public async Task ModifyAsync_WithNotFindingManufacturer_ShouldThrowDomainException()
         {
@@ -40,6 +27,8 @@ public class ManufacturerModificationServiceTests
             _fixture.SetupManufacturerModification();
             _fixture.SetupNotFindingManufacturer();
             var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
 
             // Act
             var func = async () => await sut.ModifyAsync(_fixture.Modification);
@@ -53,11 +42,13 @@ public class ManufacturerModificationServiceTests
         {
             // Arrange
             _fixture.SetupManufacturerMock();
-            _fixture.SetupModifyingManufacturer();
             _fixture.SetupManufacturerModification();
+            _fixture.SetupModifyingManufacturer();
             _fixture.SetupFindingManufacturer();
             _fixture.SetupStoringManufacturer();
             var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
 
             // Act
             await sut.ModifyAsync(_fixture.Modification);
@@ -71,11 +62,13 @@ public class ManufacturerModificationServiceTests
         {
             // Arrange
             _fixture.SetupManufacturerMock();
-            _fixture.SetupModifyingManufacturer();
             _fixture.SetupManufacturerModification();
+            _fixture.SetupModifyingManufacturer();
             _fixture.SetupFindingManufacturer();
             _fixture.SetupStoringManufacturer();
             var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
 
             // Act
             await sut.ModifyAsync(_fixture.Modification);
@@ -86,7 +79,7 @@ public class ManufacturerModificationServiceTests
 
         private sealed class ModifyAsyncFixture : LocalFixture
         {
-            public ManufacturerModification Modification { get; private set; }
+            public ManufacturerModification? Modification { get; private set; }
 
             public void SetupManufacturerModification()
             {
@@ -99,11 +92,15 @@ public class ManufacturerModificationServiceTests
 
             public void SetupModifyingManufacturer()
             {
+                TestPropertyNotSetException.ThrowIfNull(Modification);
+                TestPropertyNotSetException.ThrowIfNull(ManufacturerMock);
                 ManufacturerMock.SetupModify(Modification);
             }
 
             public void VerifyModifyingManufacturer(Func<Times> times)
             {
+                TestPropertyNotSetException.ThrowIfNull(Modification);
+                TestPropertyNotSetException.ThrowIfNull(ManufacturerMock);
                 ManufacturerMock.VerifyModify(Modification, times);
             }
         }
@@ -113,7 +110,7 @@ public class ManufacturerModificationServiceTests
     {
         private readonly ManufacturerRepositoryMock _manufacturerRepositoryMock = new(MockBehavior.Strict);
 
-        protected ManufacturerMock ManufacturerMock { get; private set; }
+        protected ManufacturerMock? ManufacturerMock { get; private set; }
 
         public ManufacturerModificationService CreateSut()
         {
@@ -128,21 +125,25 @@ public class ManufacturerModificationServiceTests
 
         public void SetupNotFindingManufacturer()
         {
+            TestPropertyNotSetException.ThrowIfNull(ManufacturerMock);
             _manufacturerRepositoryMock.SetupFindByAsync(ManufacturerMock.Object.Id, null);
         }
 
         public void SetupFindingManufacturer()
         {
+            TestPropertyNotSetException.ThrowIfNull(ManufacturerMock);
             _manufacturerRepositoryMock.SetupFindByAsync(ManufacturerMock.Object.Id, ManufacturerMock.Object);
         }
 
         public void SetupStoringManufacturer()
         {
+            TestPropertyNotSetException.ThrowIfNull(ManufacturerMock);
             _manufacturerRepositoryMock.SetupStoreAsync(ManufacturerMock.Object, ManufacturerMock.Object);
         }
 
         public void VerifyStoringManufacturer(Func<Times> times)
         {
+            TestPropertyNotSetException.ThrowIfNull(ManufacturerMock);
             _manufacturerRepositoryMock.VerifyStoreAsync(ManufacturerMock.Object, times);
         }
     }

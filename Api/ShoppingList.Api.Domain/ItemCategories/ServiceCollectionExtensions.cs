@@ -6,8 +6,8 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Deletions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories;
 

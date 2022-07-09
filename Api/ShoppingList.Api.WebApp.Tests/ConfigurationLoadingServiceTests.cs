@@ -1,16 +1,16 @@
 using FluentAssertions;
 using Moq;
+using ProjectHermes.ShoppingList.Api.Core.TestKit;
+using ProjectHermes.ShoppingList.Api.Core.TestKit.Files;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.Vault.Configs;
+using ProjectHermes.ShoppingList.Api.Vault.TestKit;
 using ProjectHermes.ShoppingList.Api.WebApp.Services;
-using ShoppingList.Api.Core.TestKit;
-using ShoppingList.Api.Core.TestKit.Files;
-using ShoppingList.Api.TestTools.Exceptions;
-using ShoppingList.Api.Vault.Configs;
-using ShoppingList.Api.Vault.TestKit;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ShoppingList.Api.WebApp.Tests;
+namespace ProjectHermes.ShoppingList.Api.WebApp.Tests;
 
 public class ConfigurationLoadingServiceTests
 {

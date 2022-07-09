@@ -5,22 +5,22 @@ using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
 using Xunit;
+using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
 using Manufacturer = ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities.Manufacturer;
 using Models = ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
-namespace ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
+namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
 
 public class ManufacturerControllerIntegrationTests
 {
@@ -144,14 +144,14 @@ public class ManufacturerControllerIntegrationTests
 
                 // items
                 var itemRepository = CreateItemRepository(SetupScope);
-                var items = new List<IStoreItem>()
+                var items = new List<IItem>()
                 {
-                    new StoreItemBuilder()
+                    new ItemBuilder()
                         .WithManufacturerId(ManufacturerId)
                         .WithIsDeleted(false)
                         .AsItem()
                         .Create(),
-                    new StoreItemBuilder()
+                    new ItemBuilder()
                         .WithManufacturerId(ManufacturerId)
                         .WithIsDeleted(false)
                         .Create()

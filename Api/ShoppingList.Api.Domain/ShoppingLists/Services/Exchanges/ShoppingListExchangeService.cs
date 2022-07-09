@@ -1,9 +1,9 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Exchanges;
 
@@ -19,7 +19,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
         _addItemToShoppingListService = addItemToShoppingListService;
     }
 
-    public async Task ExchangeItemAsync(ItemId oldItemId, IStoreItem newItem, CancellationToken cancellationToken)
+    public async Task ExchangeItemAsync(ItemId oldItemId, IItem newItem, CancellationToken cancellationToken)
     {
         if (newItem is null)
             throw new ArgumentNullException(nameof(newItem));
@@ -35,7 +35,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
     }
 
     private async Task ExchangeItemWithoutTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
-        IStoreItem newItem, CancellationToken cancellationToken)
+        IItem newItem, CancellationToken cancellationToken)
     {
         foreach (var list in shoppingLists)
         {
@@ -60,7 +60,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
     }
 
     private async Task ExchangeItemWithTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
-        IStoreItem newItem, CancellationToken cancellationToken)
+        IItem newItem, CancellationToken cancellationToken)
     {
         foreach (var list in shoppingLists)
         {

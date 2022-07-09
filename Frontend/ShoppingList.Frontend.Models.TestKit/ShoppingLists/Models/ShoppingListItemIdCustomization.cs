@@ -2,7 +2,7 @@
 using AutoFixture.Kernel;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 
-namespace ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
+namespace ProjectHermes.ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
 
 public class ShoppingListItemIdCustomization : ICustomization
 {

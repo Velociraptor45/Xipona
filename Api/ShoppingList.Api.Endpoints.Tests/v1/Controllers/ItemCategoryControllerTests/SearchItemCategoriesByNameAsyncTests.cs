@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Queries.ItemCategorySearch;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Queries;
+using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Endpoints.Tests.Common;
 using ProjectHermes.ShoppingList.Api.Endpoints.Tests.Common.StatusResults;
-using ShoppingList.Api.Core.TestKit;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System.Reflection;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests;

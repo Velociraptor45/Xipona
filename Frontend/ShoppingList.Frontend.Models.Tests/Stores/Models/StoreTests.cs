@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
-using ShoppingList.Frontend.Models.TestKit.Stores.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.TestKit.Stores.Models;
 using System.Linq;
 using Xunit;
 
-namespace ShoppingList.Frontend.Models.Tests.Stores.Models;
+namespace ProjectHermes.ShoppingList.Frontend.Models.Tests.Stores.Models;
 
 public class StoreTests
 {

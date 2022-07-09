@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Queries;
 
-namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Services.Queries;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Services.Queries;
 
 public class ItemCategoryQueryServiceMock : Mock<IItemCategoryQueryService>
 {

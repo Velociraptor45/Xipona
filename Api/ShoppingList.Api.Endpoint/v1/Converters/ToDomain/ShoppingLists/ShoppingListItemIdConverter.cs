@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.Shared;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 

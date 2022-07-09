@@ -1,14 +1,14 @@
 ﻿using FluentAssertions;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
-using ShoppingList.Frontend.Models.TestKit.Items.Models;
-using ShoppingList.Frontend.TestTools.AutoFixture.Builder;
+using ProjectHermes.ShoppingList.Frontend.Models.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.TestTools.AutoFixture.Builder;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace ShoppingList.Frontend.Models.Tests.ShoppingLists.Services;
+namespace ProjectHermes.ShoppingList.Frontend.Models.Tests.ShoppingLists.Services;
 
 public class ItemPriceCalculationServiceTests
 {

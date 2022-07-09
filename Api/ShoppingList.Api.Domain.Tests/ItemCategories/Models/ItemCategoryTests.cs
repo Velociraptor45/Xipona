@@ -1,9 +1,9 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Modifications;
-using ShoppingList.Api.Domain.TestKit.Common;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Models;
 

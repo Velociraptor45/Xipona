@@ -2,43 +2,43 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateItem;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateTemporaryItem;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.DeleteItem;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ItemUpdateWithTypes;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.MakeTemporaryItemPermanent;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ModifyItem;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ModifyItemWithTypes;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.UpdateItem;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.AllQuantityTypes;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.AllQuantityTypesInPacket;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.ItemById;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItems;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItemsByFilters;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.CreateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.CreateTemporaryItem;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.DeleteItem;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.ItemUpdateWithTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.ModifyItem;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.ModifyItemWithTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.AllQuantityTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.AllQuantityTypesInPacket;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.ItemById;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchItems;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchItemsByFilters;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.AllQuantityTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateTemporaryItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries.Quantities;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 
@@ -61,14 +61,14 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}")]
     public async Task<IActionResult> GetAsync([FromRoute] Guid id)
     {
         var query = new ItemByIdQuery(new ItemId(id));
-        StoreItemReadModel result;
+        ItemReadModel result;
         try
         {
             result = await _queryDispatcher.DispatchAsync(query, default);
@@ -82,7 +82,7 @@ public class ItemController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        var contract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(result);
+        var contract = _converters.ToContract<ItemReadModel, ItemContract>(result);
 
         return Ok(contract);
     }
@@ -198,7 +198,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("without-types")]
     public async Task<IActionResult> CreateItemAsync([FromBody] CreateItemContract createItemContract)
@@ -210,7 +210,7 @@ public class ItemController : ControllerBase
 
             var readModel = await _commandDispatcher.DispatchAsync(command, default);
 
-            var contract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
+            var contract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
 
             return CreatedAtAction(nameof(GetAsync), new { id = contract.Id }, contract);
         }
@@ -222,18 +222,18 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("with-types")]
     public async Task<IActionResult> CreateItemWithTypesAsync([FromBody] CreateItemWithTypesContract contract)
     {
         try
         {
-            var model = _converters.ToDomain<CreateItemWithTypesContract, IStoreItem>(contract);
+            var model = _converters.ToDomain<CreateItemWithTypesContract, IItem>(contract);
             var command = new CreateItemWithTypesCommand(model);
             var readModel = await _commandDispatcher.DispatchAsync(command, default);
 
-            var returnContract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
+            var returnContract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
 
             return CreatedAtAction(nameof(GetAsync), new { id = returnContract.Id }, returnContract);
         }
@@ -245,7 +245,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("temporary")]
     public async Task<IActionResult> CreateTemporaryItemAsync([FromBody] CreateTemporaryItemContract contract)
@@ -256,7 +256,7 @@ public class ItemController : ControllerBase
         {
             var readModel = await _commandDispatcher.DispatchAsync(command, default);
 
-            var returnContract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
+            var returnContract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
             return Ok(returnContract);
         }
         catch (DomainException e)

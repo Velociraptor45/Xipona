@@ -1,6 +1,6 @@
-﻿using ShoppingList.Frontend.TestTools.AutoFixture.Customizations;
+﻿using ProjectHermes.ShoppingList.Frontend.TestTools.AutoFixture.Customizations;
 
-namespace ShoppingList.Frontend.TestTools.AutoFixture.Builder;
+namespace ProjectHermes.ShoppingList.Frontend.TestTools.AutoFixture.Builder;
 
 public class IntBuilder : TestBuilderBase<int>
 {

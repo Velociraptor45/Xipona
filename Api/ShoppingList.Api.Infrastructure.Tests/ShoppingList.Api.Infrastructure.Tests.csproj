@@ -4,6 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <RootNamespace>ProjectHermes.ShoppingList.Api.Infrastructure.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

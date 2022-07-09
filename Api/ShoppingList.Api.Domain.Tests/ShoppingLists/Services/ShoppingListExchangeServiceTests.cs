@@ -1,18 +1,18 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Exchanges;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models.Factories;
-using ShoppingList.Api.Domain.TestKit.Stores.Models;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services;
 
@@ -320,15 +320,15 @@ public class ShoppingListExchangeServiceTests
         {
             public void SetupNewItem()
             {
-                NewItem = StoreItemMother.Initial().Create();
+                NewItem = ItemMother.Initial().Create();
             }
 
             protected override void SetupNewItemForStore(StoreId storeId)
             {
-                var availability = StoreItemAvailabilityMother.Initial()
+                var availability = ItemAvailabilityMother.Initial()
                     .WithStoreId(storeId)
                     .Create();
-                NewItem = StoreItemMother.Initial().WithAvailability(availability).Create();
+                NewItem = ItemMother.Initial().WithAvailability(availability).Create();
             }
 
             public override void SetupShoppingListMockWithItemInBasket()
@@ -789,24 +789,24 @@ public class ShoppingListExchangeServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
                 TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem.TypeId);
-                var availability = StoreItemAvailabilityMother.Initial()
+                var availability = ItemAvailabilityMother.Initial()
                     .WithStoreId(storeId)
                     .CreateMany(1);
                 var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1).ToList();
                 type.First().SetPredecessor(new ItemTypeBuilder().WithId(OldShoppingListItem.TypeId.Value).Create());
                 var itemTypes = new ItemTypes(type, _itemTypeFactoryMock.Object);
-                NewItem = new StoreItemBuilder().WithTypes(itemTypes).Create();
+                NewItem = new ItemBuilder().WithTypes(itemTypes).Create();
             }
 
             public void SetupItemMatchingShoppingListWithNewTypes()
             {
                 TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
-                var availability = StoreItemAvailabilityMother.Initial()
+                var availability = ItemAvailabilityMother.Initial()
                     .WithStoreId(ShoppingListMock.Object.StoreId)
                     .CreateMany(1);
                 var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1);
                 var itemTypes = new ItemTypes(type, _itemTypeFactoryMock.Object);
-                NewItem = new StoreItemBuilder().WithTypes(itemTypes).Create();
+                NewItem = new ItemBuilder().WithTypes(itemTypes).Create();
             }
 
             public void SetupShoppingListWithItemWithoutType()
@@ -924,7 +924,7 @@ public class ShoppingListExchangeServiceTests
     public abstract class ExchangeItemAsyncFixture : LocalFixture
     {
         protected ShoppingListMock? ShoppingListMock;
-        public IStoreItem? NewItem { get; protected set; }
+        public IItem? NewItem { get; protected set; }
         public IShoppingListItem? OldShoppingListItem { get; protected set; }
 
         public void SetupNewItemMatchingShoppingList()

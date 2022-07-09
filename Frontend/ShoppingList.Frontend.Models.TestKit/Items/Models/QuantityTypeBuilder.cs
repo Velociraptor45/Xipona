@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ShoppingList.Frontend.Models.TestKit.Common;
+using ProjectHermes.ShoppingList.Frontend.Models.TestKit.Common;
 
-namespace ShoppingList.Frontend.Models.TestKit.Items.Models;
+namespace ProjectHermes.ShoppingList.Frontend.Models.TestKit.Items.Models;
 
 public class QuantityTypeBuilder : DomainTestBuilderBase<QuantityType>
 {

@@ -1,12 +1,12 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToDomain
 {
-    public class SectionConverter : IToDomainConverter<StoreItemSectionContract, ItemSection>
+    public class SectionConverter : IToDomainConverter<ItemSectionContract, ItemSection>
     {
-        public ItemSection ToDomain(StoreItemSectionContract source)
+        public ItemSection ToDomain(ItemSectionContract source)
         {
             return new ItemSection(
                 source.Id,

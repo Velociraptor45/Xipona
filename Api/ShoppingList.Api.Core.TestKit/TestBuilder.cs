@@ -1,6 +1,6 @@
-﻿using ShoppingList.Api.TestTools.AutoFixture;
+﻿using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 
-namespace ShoppingList.Api.Core.TestKit;
+namespace ProjectHermes.ShoppingList.Api.Core.TestKit;
 
 public class TestBuilder<TModel, TBuilder> : TestBuilderBase<TModel>
     where TBuilder : TestBuilder<TModel, TBuilder>

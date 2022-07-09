@@ -2,21 +2,21 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
-using ShoppingList.Api.Domain.TestKit.Stores.Models;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
 using Xunit;
 
-namespace ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
+namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
 
 public class StoreControllerIntegrationTests
 {
@@ -91,7 +91,7 @@ public class StoreControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(Contract);
 
                 var sections = Contract.Sections.Select(section =>
-                        new StoreSectionContract(Guid.Empty, section.Name, section.SortingIndex,
+                        new SectionContract(Guid.Empty, section.Name, section.SortingIndex,
                             section.IsDefaultSection))
                     .ToList();
 
@@ -102,22 +102,22 @@ public class StoreControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(Contract);
 
-                var sections = new List<IStoreSection>();
+                var sections = new List<ISection>();
                 foreach (var section in Contract.Sections)
                 {
-                    sections.Add(new StoreSectionBuilder()
+                    sections.Add(new SectionBuilder()
                         .WithName(new SectionName(section.Name))
                         .WithIsDefaultSection(section.IsDefaultSection)
                         .WithSortingIndex(section.SortingIndex)
                         .Create());
                 }
 
-                var factory = SetupScope.ServiceProvider.GetRequiredService<IStoreSectionFactory>();
+                var factory = SetupScope.ServiceProvider.GetRequiredService<ISectionFactory>();
 
                 ExpectedPersistedStore = new StoreBuilder()
                     .WithName(new StoreName(Contract.Name))
                     .WithIsDeleted(false)
-                    .WithSections(new StoreSections(sections, factory))
+                    .WithSections(new Sections(sections, factory))
                     .Create();
             }
 
@@ -204,23 +204,23 @@ public class StoreControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(Contract);
 
-                var sections = new List<IStoreSection>();
+                var sections = new List<ISection>();
                 foreach (var section in Contract.Sections)
                 {
-                    sections.Add(new StoreSection(
+                    sections.Add(new Section(
                         new SectionId(section.Id!.Value),
                         new SectionName(section.Name),
                         section.SortingIndex,
                         section.IsDefaultSection));
                 }
 
-                var factory = SetupScope.ServiceProvider.GetRequiredService<IStoreSectionFactory>();
+                var factory = SetupScope.ServiceProvider.GetRequiredService<ISectionFactory>();
 
                 ExpectedPersistedStore = new Store(
                     new StoreId(Contract.Id),
                     new StoreName(Contract.Name),
                     false,
-                    new StoreSections(sections, factory));
+                    new Sections(sections, factory));
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿using Moq;
 using ProjectHermes.ShoppingList.Api.Core.Files;
 
-namespace ShoppingList.Api.Core.TestKit.Files;
+namespace ProjectHermes.ShoppingList.Api.Core.TestKit.Files;
 
 public class FileLoadingServiceMock : Mock<IFileLoadingService>
 {

@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
-namespace ShoppingList.Api.Domain.TestKit.Stores.Ports;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Ports;
 
 public class StoreRepositoryMock : Mock<IStoreRepository>
 {

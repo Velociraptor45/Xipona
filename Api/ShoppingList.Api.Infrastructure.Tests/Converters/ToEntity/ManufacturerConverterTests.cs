@@ -1,11 +1,11 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.TestKit.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Converters.ToEntity;
-using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity;
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity;
 
 public class ManufacturerConverterTests : ToEntityConverterTestBase<IManufacturer, ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities.Manufacturer>
 {
