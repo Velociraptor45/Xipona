@@ -39,7 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions=**/*TestTools*/** /d:sonar.cs.vscoveragexml.reportsPaths=api/TestResults/coverage.cobertura.xml,frontend/TestResults/coverage.cobertura.xml
+          dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions=**/*TestTools*/** /d:sonar.cs.vscoveragexml.reportsPaths=Api/TestResults/coverage.cobertura.xml,Frontend/TestResults/coverage.cobertura.xml
       - name: Build Backend
         run: |
           dotnet build Api/ShoppingListApi.sln
@@ -53,6 +53,14 @@ jobs:
         run: |
           dotnet test ./Api/ShoppingListApi.sln --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverlet.json" "/p:CoverletOutputFormat=\"json,cobertura\""
           dotnet test ./Frontend/ShoppingList.Frontend.sln --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverlet.json" "/p:CoverletOutputFormat=\"json,cobertura\""
+      - name: Dirs
+        run: |
+          ls -l .
+          ls -l Api/
+          ls -l Frontend/
+          ls -l TestResults/
+          ls -l Api/TestResults/
+          ls -l Frontend/TestResults/
       # - name: Test
       #   run: |
       #     dotnet-coverage collect 'dotnet test Api/ShoppingListApi.sln --no-build' -f xml  -o 'api/coverage.xml'
