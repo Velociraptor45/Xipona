@@ -31,9 +31,6 @@ jobs:
         run: |
           dotnet restore Api/ShoppingListApi.sln
           dotnet restore Frontend/ShoppingList.Frontend.sln
-      # - name: Install dotnet-coverage
-      #   run: |
-      #     dotnet tool install --global dotnet-coverage
       - name: Begin Sonar scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
@@ -53,20 +50,6 @@ jobs:
         run: |
           dotnet test ./Api/ShoppingListApi.sln --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverage.json" "/p:CoverletOutputFormat=\"json,opencover\""
           dotnet test ./Frontend/ShoppingList.Frontend.sln --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverage.json" "/p:CoverletOutputFormat=\"json,opencover\""
-      - name: Dirs
-        run: |
-          pwd
-          ls -l ${GITHUB_WORKSPACE}
-          ls -l .
-          ls -l Api/
-          ls -l Frontend/
-          ls -l TestResults/
-          ls -l Api/TestResults/
-          ls -l Frontend/TestResults/
-      # - name: Test
-      #   run: |
-      #     dotnet-coverage collect 'dotnet test Api/ShoppingListApi.sln --no-build' -f xml  -o 'api/coverage.xml'
-      #     dotnet-coverage collect 'dotnet test Frontend/ShoppingList.Frontend.sln --no-build' -f xml  -o 'frontend/coverage.xml'
       - name: End Sonar scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
