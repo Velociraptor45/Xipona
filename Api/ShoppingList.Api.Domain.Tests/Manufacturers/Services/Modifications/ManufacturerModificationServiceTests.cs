@@ -81,7 +81,7 @@ public class ManufacturerModificationServiceTests
             await sut.ModifyAsync(_fixture.Modification);
 
             // Assert
-            _fixture.VerifyStoringManufacturer(Times.Never);
+            _fixture.VerifyStoringManufacturer(Times.Once);
         }
 
         private sealed class ModifyAsyncFixture : LocalFixture
