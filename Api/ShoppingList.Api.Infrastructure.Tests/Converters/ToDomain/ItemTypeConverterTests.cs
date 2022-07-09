@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.TestKit.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Converters.ToDomain;
-using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.Items.Models;
 using ItemType = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.ItemType;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain;
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain;
 
 public class ItemTypeConverterTests : ToDomainConverterTestBase<ItemType, IItemType>
 {

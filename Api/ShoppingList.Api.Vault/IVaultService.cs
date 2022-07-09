@@ -1,6 +1,6 @@
-﻿using ShoppingList.Api.Vault.Configs;
+﻿using ProjectHermes.ShoppingList.Api.Vault.Configs;
 
-namespace ShoppingList.Api.Vault;
+namespace ProjectHermes.ShoppingList.Api.Vault;
 
 public interface IVaultService
 {

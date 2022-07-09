@@ -4,13 +4,12 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
-using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ShoppingList.Api.Domain.TestKit.Items.Models;
-using ShoppingList.Api.Domain.TestKit.Items.Ports;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
-using ShoppingList.Api.TestTools.Exceptions;
-
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using DomainModels = ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.ShoppingListModifications;

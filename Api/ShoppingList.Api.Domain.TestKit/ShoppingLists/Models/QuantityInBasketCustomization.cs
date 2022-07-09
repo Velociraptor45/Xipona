@@ -1,7 +1,7 @@
 ﻿using AutoFixture.Kernel;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
 public class QuantityInBasketCustomization : ICustomization
 {

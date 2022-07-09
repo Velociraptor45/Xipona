@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Items.Services.ItemDeletions;
 

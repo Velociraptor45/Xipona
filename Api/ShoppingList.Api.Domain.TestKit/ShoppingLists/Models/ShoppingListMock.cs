@@ -1,9 +1,9 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ShoppingList.Api.Domain.TestKit.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
 public class ShoppingListMock : Mock<IShoppingList>
 {

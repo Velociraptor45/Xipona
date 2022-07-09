@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
-using ShoppingList.Api.Infrastructure.Tests.Common.Transactions;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Tests.Common.Transactions;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common;
 

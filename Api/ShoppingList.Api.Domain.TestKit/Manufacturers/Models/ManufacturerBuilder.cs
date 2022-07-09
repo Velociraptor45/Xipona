@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
-namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 
 public class ManufacturerBuilder : DomainTestBuilderBase<Manufacturer>
 {

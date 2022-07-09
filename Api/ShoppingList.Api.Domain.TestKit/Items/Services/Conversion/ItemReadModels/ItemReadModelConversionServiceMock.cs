@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion.ItemReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 
-namespace ShoppingList.Api.Domain.TestKit.Items.Services.Conversion.ItemReadModels;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Conversion.ItemReadModels;
 
 public class ItemReadModelConversionServiceMock : Mock<IItemReadModelConversionService>
 {

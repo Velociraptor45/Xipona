@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
 public class ShoppingListSectionMock : Mock<IShoppingListSection>
 {

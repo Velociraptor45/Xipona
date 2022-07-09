@@ -5,10 +5,10 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
-using ShoppingList.Api.Domain.TestKit.Items.Ports;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
-using ShoppingList.Api.Domain.TestKit.Stores.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Ports;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 

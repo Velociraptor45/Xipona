@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
 
-namespace ShoppingList.Api.Domain.TestKit.Stores.Services.Queries;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Services.Queries;
 
 public class StoreQueryServiceMock : Mock<IStoreQueryService>
 {

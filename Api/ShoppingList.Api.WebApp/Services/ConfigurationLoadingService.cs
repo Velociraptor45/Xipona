@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Files;
-using ShoppingList.Api.Vault;
-using ShoppingList.Api.Vault.Configs;
+using ProjectHermes.ShoppingList.Api.Vault;
+using ProjectHermes.ShoppingList.Api.Vault.Configs;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Api.WebApp.Services;

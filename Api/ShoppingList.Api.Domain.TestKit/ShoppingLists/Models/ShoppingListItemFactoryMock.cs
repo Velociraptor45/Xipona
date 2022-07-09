@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
 public class ShoppingListItemFactoryMock : Mock<IShoppingListItemFactory>
 {

@@ -1,7 +1,7 @@
 ﻿using AutoFixture.AutoMoq;
-using ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
-namespace ShoppingList.Api.Domain.TestKit.Shared;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 
 public class CommonFixture
 {

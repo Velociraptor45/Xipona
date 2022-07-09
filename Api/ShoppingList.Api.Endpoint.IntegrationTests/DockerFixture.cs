@@ -3,7 +3,7 @@ using Ductus.FluentDocker.Services;
 using System;
 using System.IO;
 
-namespace ShoppingList.Api.Endpoint.IntegrationTests;
+namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests;
 
 public sealed class DockerFixture : IDisposable
 {

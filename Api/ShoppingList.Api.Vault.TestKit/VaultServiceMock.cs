@@ -1,7 +1,7 @@
 ﻿using Moq;
-using ShoppingList.Api.Vault.Configs;
+using ProjectHermes.ShoppingList.Api.Vault.Configs;
 
-namespace ShoppingList.Api.Vault.TestKit;
+namespace ProjectHermes.ShoppingList.Api.Vault.TestKit;
 
 public class VaultServiceMock : Mock<IVaultService>
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 
-namespace ShoppingList.Api.Core.TestKit.Converter;
+namespace ProjectHermes.ShoppingList.Api.Core.TestKit.Converter;
 
 public abstract class ToDomainConverterTestBase<TSource, TDestination>
     where TSource : class

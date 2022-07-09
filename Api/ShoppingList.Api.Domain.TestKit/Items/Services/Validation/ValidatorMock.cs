@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
-namespace ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
 
 public class ValidatorMock : Mock<IValidator>
 {

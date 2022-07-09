@@ -1,11 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Queries;
-using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
-using ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
-using ShoppingList.Api.TestTools.Exceptions;
-
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using DomainModels = ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services.Queries;

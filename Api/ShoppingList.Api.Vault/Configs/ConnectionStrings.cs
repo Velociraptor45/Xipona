@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Api.Vault.Configs;
+﻿namespace ProjectHermes.ShoppingList.Api.Vault.Configs;
 
 public class ConnectionStrings
 {

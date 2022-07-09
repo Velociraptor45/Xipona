@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Polly;
 using ProjectHermes.ShoppingList.Api.Core.Files;
-using ShoppingList.Api.Vault.Configs;
+using ProjectHermes.ShoppingList.Api.Vault.Configs;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.UserPass;
 
-namespace ShoppingList.Api.Vault;
+namespace ProjectHermes.ShoppingList.Api.Vault;
 
 public class VaultService : IVaultService
 {

@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Api.Domain.TestKit.Stores.Models;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 
 public static class SectionMother
 {

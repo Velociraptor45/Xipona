@@ -3,10 +3,10 @@ using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ShoppingList.Api.Domain.TestKit.Common;
-using ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 
-namespace ShoppingList.Api.Domain.TestKit.Items.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 
 public class ItemBuilder : DomainTestBuilderBase<Item>
 {

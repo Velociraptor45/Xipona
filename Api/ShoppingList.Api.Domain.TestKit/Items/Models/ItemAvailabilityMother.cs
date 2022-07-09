@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-namespace ShoppingList.Api.Domain.TestKit.Items.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 
 public static class ItemAvailabilityMother
 {

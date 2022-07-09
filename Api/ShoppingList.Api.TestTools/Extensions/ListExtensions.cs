@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Api.TestTools.Extensions;
+﻿namespace ProjectHermes.ShoppingList.Api.TestTools.Extensions;
 
 public static class ListExtensions
 {

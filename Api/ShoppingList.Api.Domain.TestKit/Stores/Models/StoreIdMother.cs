@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
-using ShoppingList.Api.Domain.TestKit.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 
-namespace ShoppingList.Api.Domain.TestKit.Stores.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 
 public static class StoreIdMother
 {

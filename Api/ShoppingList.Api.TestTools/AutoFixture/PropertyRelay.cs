@@ -1,7 +1,7 @@
 ﻿using AutoFixture.Kernel;
 using System.Reflection;
 
-namespace ShoppingList.Api.TestTools.AutoFixture;
+namespace ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 
 public class PropertyRelay<TTarget, TValueType> : ISpecimenBuilder
 {

@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
-namespace ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 
 public class ItemConstructorQuery : IMethodQuery
 {

@@ -4,11 +4,11 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
-using ShoppingList.Api.Domain.TestKit.Items.Models;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
 
-namespace ShoppingList.Api.Domain.TestKit.Common;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
 public class DomainCustomization : ICustomization
 {

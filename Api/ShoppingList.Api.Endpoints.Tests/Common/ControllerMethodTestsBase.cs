@@ -5,12 +5,12 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.TestKit.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.TestKit.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
+using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Endpoints.TestKit.v1.Converters;
-using ShoppingList.Api.Core.TestKit;
-using ShoppingList.Api.Domain.TestKit.Common;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System.Net;
 using System.Reflection;
 

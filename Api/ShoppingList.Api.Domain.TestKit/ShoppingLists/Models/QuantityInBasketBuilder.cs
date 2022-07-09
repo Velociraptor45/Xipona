@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
 public class QuantityInBasketBuilder : DomainTestBuilderBase<QuantityInBasket>
 {

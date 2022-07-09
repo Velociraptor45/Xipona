@@ -3,12 +3,12 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.TemporaryItems;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ShoppingList.Api.Domain.TestKit.Items.Models;
-using ShoppingList.Api.Domain.TestKit.Items.Ports;
-using ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.TestTools.AutoFixture;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
+using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Items.Services.TemporaryItems;
 

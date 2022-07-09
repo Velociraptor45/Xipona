@@ -5,9 +5,9 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.TemporaryItems;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
-using ShoppingList.Api.TestTools.Extensions;
+using ProjectHermes.ShoppingList.Api.TestTools.Extensions;
 
-namespace ShoppingList.Api.Domain.TestKit.Items.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 
 public class ItemMock : Mock<IItem>
 {

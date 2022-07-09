@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
 
 public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListService>
 {

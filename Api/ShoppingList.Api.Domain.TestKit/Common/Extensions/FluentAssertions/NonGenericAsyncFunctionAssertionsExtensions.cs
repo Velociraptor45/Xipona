@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 
-namespace ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 
 public static class NonGenericAsyncFunctionAssertionsExtensions
 {

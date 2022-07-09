@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-namespace ShoppingList.Api.Domain.TestKit.Items.Ports;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 
 public class ItemRepositoryMock : Mock<IItemRepository>
 {

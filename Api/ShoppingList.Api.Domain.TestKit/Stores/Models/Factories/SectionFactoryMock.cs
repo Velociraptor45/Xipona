@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 
-namespace ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
 
 public class SectionFactoryMock : Mock<ISectionFactory>
 {

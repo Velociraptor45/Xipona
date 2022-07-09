@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ShoppingList.Api.Domain.TestKit.Common;
-using ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
 
-namespace ShoppingList.Api.Domain.TestKit.Stores.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 
 public class StoreBuilder : DomainTestBuilderBase<Store>
 {

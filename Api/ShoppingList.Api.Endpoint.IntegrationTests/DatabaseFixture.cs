@@ -2,12 +2,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.ApplicationServices;
 using ProjectHermes.ShoppingList.Api.Domain;
-using ProjectHermes.ShoppingList.Api.Endpoint;
 using ProjectHermes.ShoppingList.Api.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 using System;
 
-namespace ShoppingList.Api.Endpoint.IntegrationTests;
+namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests;
 
 public abstract class DatabaseFixture
 {

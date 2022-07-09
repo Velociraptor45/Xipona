@@ -1,6 +1,6 @@
-﻿using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
-namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 
 public class ShoppingListSectionMockFixture
 {
