@@ -14,7 +14,6 @@ using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
-using System;
 using Xunit;
 using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
 using Manufacturer = ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities.Manufacturer;
@@ -24,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class ManufacturerControllerIntegrationTests
 {
-    [Collection("IntegrationTests")]
+    [Collection(DockerCollection.Name)]
     public class DeleteManufacturerAsync
     {
         private readonly DeleteManufacturerAsyncFixture _fixture;
@@ -176,7 +175,7 @@ public class ManufacturerControllerIntegrationTests
         }
     }
 
-    private abstract class ManufacturerControllerFixture : DatabaseFixture, IDisposable
+    private abstract class ManufacturerControllerFixture : DatabaseFixture
     {
         protected readonly IServiceScope SetupScope;
 
@@ -247,18 +246,13 @@ public class ManufacturerControllerIntegrationTests
 
         public abstract Task PrepareDatabaseAsync();
 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 SetupScope.Dispose();
             }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            base.Dispose(disposing);
         }
     }
 }

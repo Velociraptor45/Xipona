@@ -8,7 +8,7 @@ using System;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests;
 
-public abstract class DatabaseFixture
+public abstract class DatabaseFixture : IDisposable
 {
     protected readonly DockerFixture DockerFixture;
     private readonly IServiceProvider _provider;
@@ -65,5 +65,19 @@ public abstract class DatabaseFixture
     {
         var generator = scope.ServiceProvider.GetRequiredService<ITransactionGenerator>();
         return await generator.GenerateAsync(default);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            DockerFixture.Dispose();
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }

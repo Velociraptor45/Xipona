@@ -35,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class ItemControllerIntegrationTests
 {
-    [Collection("IntegrationTests")]
+    [Collection(DockerCollection.Name)]
     public sealed class UpdateItemWithTypesAsync
     {
         private readonly UpdateItemWithTypesAsyncFixture _fixture;
@@ -314,7 +314,7 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    private class ItemControllerFixture : DatabaseFixture, IDisposable
+    private class ItemControllerFixture : DatabaseFixture
     {
         protected ItemControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
@@ -400,18 +400,13 @@ public class ItemControllerIntegrationTests
                 .ToListAsync();
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 ArrangeScope.Dispose();
             }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            base.Dispose(disposing);
         }
     }
 }
