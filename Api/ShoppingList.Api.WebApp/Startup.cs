@@ -34,7 +34,10 @@ public class Startup
         services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
         services.AddDomain();
         services.AddEndpointControllers();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(options =>
+        {
+            options.CustomSchemaIds(type => type.ToString());
+        });
 
         services.AddCors(options =>
         {
