@@ -51,6 +51,9 @@ public abstract class DatabaseFixture : IDisposable
             "DROP TABLE IF EXISTS ItemsOnLists;" +
             "DROP TABLE IF EXISTS Items;" +
             "DROP TABLE IF EXISTS ShoppingLists;" +
+            "DROP TABLE IF EXISTS Ingredients;" +
+            "DROP TABLE IF EXISTS PreparationSteps;" +
+            "DROP TABLE IF EXISTS Recipes;" +
             "DROP TABLE IF EXISTS `__EFMigrationsHistory`;");
 
         foreach (DbContext context in contexts)
@@ -60,6 +63,11 @@ public abstract class DatabaseFixture : IDisposable
     }
 
     public abstract IEnumerable<DbContext> GetDbContexts(IServiceScope scope);
+
+    protected TContext GetContextInstance<TContext>(IServiceScope scope) where TContext : DbContext
+    {
+        return scope.ServiceProvider.GetRequiredService<TContext>();
+    }
 
     public async Task<ITransaction> CreateTransactionAsync(IServiceScope scope)
     {
