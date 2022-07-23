@@ -6,6 +6,8 @@ using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
@@ -15,6 +17,8 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Recipes.Adapters;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Recipes.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Adapters;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Adapters;
@@ -22,6 +26,7 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
 using ProjectHermes.ShoppingList.Api.Vault.Configs;
 using System.Data.Common;
 using System.Reflection;
+using Recipe = ProjectHermes.ShoppingList.Api.Infrastructure.Recipes.Entities.Recipe;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure;
 
@@ -77,6 +82,12 @@ public static class ServiceCollectionExtensions
                 var connection = serviceProvider.GetService<DbConnection>();
                 options.UseMySql(connection, serverVersion);
             });
+        services.AddDbContext<RecipeContext>(
+            (serviceProvider, options) =>
+            {
+                var connection = serviceProvider.GetService<DbConnection>();
+                options.UseMySql(connection, serverVersion);
+            });
 
         services.AddTransient<IShoppingListRepository, ShoppingListRepository>();
         services.AddTransient<IItemRepository, ItemRepository>();
@@ -84,9 +95,18 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IItemCategoryRepository, ItemCategoryRepository>();
         services.AddTransient<IManufacturerRepository, ManufacturerRepository>();
         services.AddTransient<IStoreRepository, StoreRepository>();
+        services.AddTransient<Func<CancellationToken, IRecipeRepository>>(provider =>
+        {
+            var context = provider.GetRequiredService<RecipeContext>();
+            var toDomainConverter = provider.GetRequiredService<IToDomainConverter<Recipe, IRecipe>>();
+            var toContractConverter = provider.GetRequiredService<IToContractConverter<IRecipe, Recipe>>();
+            return cancellationToken =>
+                new RecipeRepository(context, toDomainConverter, toContractConverter, cancellationToken);
+        });
         services.AddScoped<ITransactionGenerator, TransactionGenerator>();
 
         services.AddImplementationOfGenericType(assembly, typeof(IToEntityConverter<,>));
+        services.AddImplementationOfGenericType(assembly, typeof(IToContractConverter<,>));
         services.AddImplementationOfGenericType(assembly, typeof(IToDomainConverter<,>));
     }
 
@@ -112,5 +132,6 @@ public static class ServiceCollectionExtensions
         yield return typeof(ManufacturerContext);
         yield return typeof(ItemContext);
         yield return typeof(StoreContext);
+        yield return typeof(RecipeContext);
     }
 }
