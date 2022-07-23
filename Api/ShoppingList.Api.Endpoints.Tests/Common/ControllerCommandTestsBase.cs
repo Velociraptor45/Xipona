@@ -16,7 +16,7 @@ using System.Reflection;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoints.Tests.Common;
 
-public class ControllerCommandTestsBase<TController, TCommand, TCommandReturnType, TReturnType, TFixture>
+public abstract class ControllerCommandTestsBase<TController, TCommand, TCommandReturnType, TReturnType, TFixture>
     where TController : ControllerBase
     where TCommand : ICommand<TCommandReturnType>
     where TFixture : ControllerCommandTestsBase<TController, TCommand, TCommandReturnType, TReturnType, TFixture>
