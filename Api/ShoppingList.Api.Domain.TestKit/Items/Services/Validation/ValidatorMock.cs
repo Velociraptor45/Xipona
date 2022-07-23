@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using Moq.Language.Flow;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
@@ -27,6 +28,11 @@ public class ValidatorMock : Mock<IValidator>
     {
         Setup(m => m.ValidateAsync(manufacturerId))
             .Returns(Task.CompletedTask);
+    }
+
+    public ISetup<IValidator, Task> SetupValidateAsyncAnd(ItemCategoryId itemCategoryId)
+    {
+        return Setup(m => m.ValidateAsync(itemCategoryId));
     }
 
     public void VerifyValidateAsync(IEnumerable<IItemAvailability> availabilities, Func<Times> times)

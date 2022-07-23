@@ -8,4 +8,9 @@ public class PreparationStepFactory : IPreparationStepFactory
     {
         return new PreparationStep(PreparationStepId.New, creation.Instruction, creation.SortingIndex);
     }
+
+    public IPreparationStep Create(PreparationStepId id, PreparationStepInstruction instruction, int sortingIndex)
+    {
+        return new PreparationStep(id, instruction, sortingIndex);
+    }
 }

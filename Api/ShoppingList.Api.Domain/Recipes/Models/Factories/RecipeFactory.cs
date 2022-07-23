@@ -31,4 +31,14 @@ public class RecipeFactory : IRecipeFactory
         return new Recipe(RecipeId.New, creation.Name, new Ingredients(ingredients),
             new PreparationSteps(preparationSteps));
     }
+
+    public IRecipe Create(RecipeId id, RecipeName name, IEnumerable<IIngredient> ingredients,
+        IEnumerable<IPreparationStep> steps)
+    {
+        return new Recipe(
+            id,
+            name,
+            new Ingredients(ingredients),
+            new PreparationSteps(steps));
+    }
 }
