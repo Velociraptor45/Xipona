@@ -36,7 +36,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions=**/*TestTools*/** /d:sonar.cs.opencover.reportsPaths=Api/TestResults/coverage.opencover.xml,Frontend/TestResults/coverage.opencover.xml
+          dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions=**/*TestTools*/**,**/Migrations/** /d:sonar.cs.opencover.reportsPaths=Api/TestResults/coverage.opencover.xml,Frontend/TestResults/coverage.opencover.xml
       - name: Build Backend
         run: |
           dotnet build Api/ShoppingListApi.sln
