@@ -31,7 +31,11 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         Log.Logger = new LoggerConfiguration()
-            .WriteTo.File(GetFileLoggingPath(), rollOnFileSizeLimit: true, fileSizeLimitBytes: _mebibyte)
+            .WriteTo.File(
+                GetFileLoggingPath(),
+                rollOnFileSizeLimit: true,
+                fileSizeLimitBytes: _mebibyte,
+                retainedFileCountLimit: 20)
             .CreateLogger();
 
         var fileLoadingService = new FileLoadingService();
