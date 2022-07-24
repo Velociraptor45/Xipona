@@ -20,7 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class StoreControllerIntegrationTests
 {
-    [Collection("IntegrationTests")]
+    [Collection(DockerCollection.Name)]
     public class CreateStoreAsync
     {
         private readonly CreateStoreAsyncFixture _fixture;
@@ -128,7 +128,7 @@ public class StoreControllerIntegrationTests
         }
     }
 
-    [Collection("IntegrationTests")]
+    [Collection(DockerCollection.Name)]
     public class UpdateStoreAsync
     {
         private readonly UpdateStoreAsyncFixture _fixture;
@@ -225,7 +225,7 @@ public class StoreControllerIntegrationTests
         }
     }
 
-    private abstract class LocalFixture : DatabaseFixture, IDisposable
+    private abstract class LocalFixture : DatabaseFixture
     {
         protected readonly IServiceScope SetupScope;
 
@@ -264,18 +264,14 @@ public class StoreControllerIntegrationTests
 
         public abstract Task PrepareDatabaseAsync();
 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 SetupScope.Dispose();
             }
-        }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            base.Dispose(disposing);
         }
     }
 }

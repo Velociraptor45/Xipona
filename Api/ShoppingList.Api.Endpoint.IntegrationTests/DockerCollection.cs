@@ -2,7 +2,8 @@
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests;
 
-[CollectionDefinition("IntegrationTests")]
+[CollectionDefinition(Name)]
 public class DockerCollection : ICollectionFixture<DockerFixture>
 {
+    public const string Name = "IntegrationTests";
 }

@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
@@ -24,6 +25,9 @@ public class DomainCustomization : ICustomization
         fixture.Customizations.Add(new TypeRelay(typeof(IManufacturer), typeof(Manufacturer)));
         fixture.Customizations.Add(new TypeRelay(typeof(IStore), typeof(Store)));
         fixture.Customizations.Add(new TypeRelay(typeof(ISection), typeof(Section)));
+        fixture.Customizations.Add(new TypeRelay(typeof(IRecipe), typeof(Recipe)));
+        fixture.Customizations.Add(new TypeRelay(typeof(IIngredient), typeof(Ingredient)));
+        fixture.Customizations.Add(new TypeRelay(typeof(IPreparationStep), typeof(PreparationStep)));
 
         fixture.Customize<ItemCategoryId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<ManufacturerId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
@@ -33,6 +37,9 @@ public class DomainCustomization : ICustomization
         fixture.Customize<TemporaryItemId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<StoreId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<SectionId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+        fixture.Customize<RecipeId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+        fixture.Customize<IngredientId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+        fixture.Customize<PreparationStepId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
 
         fixture.Customize(new PriceCustomization());
         fixture.Customize(new QuantityCustomization());

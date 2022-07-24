@@ -8,7 +8,7 @@ using System;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests;
 
-public abstract class DatabaseFixture
+public abstract class DatabaseFixture : IDisposable
 {
     protected readonly DockerFixture DockerFixture;
     private readonly IServiceProvider _provider;
@@ -40,18 +40,7 @@ public abstract class DatabaseFixture
     {
         var contexts = GetDbContexts(scope).ToList();
 
-        await contexts.First().Database.ExecuteSqlRawAsync(
-            "DROP TABLE IF EXISTS ItemCategories;" +
-            "DROP TABLE IF EXISTS Manufacturers;" +
-            "DROP TABLE IF EXISTS AvailableAts;" +
-            "DROP TABLE IF EXISTS ItemTypeAvailableAts;" +
-            "DROP TABLE IF EXISTS ItemTypes;" +
-            "DROP TABLE IF EXISTS Sections;" +
-            "DROP TABLE IF EXISTS Stores;" +
-            "DROP TABLE IF EXISTS ItemsOnLists;" +
-            "DROP TABLE IF EXISTS Items;" +
-            "DROP TABLE IF EXISTS ShoppingLists;" +
-            "DROP TABLE IF EXISTS `__EFMigrationsHistory`;");
+        await contexts.First().Database.EnsureDeletedAsync();
 
         foreach (DbContext context in contexts)
         {
@@ -61,9 +50,28 @@ public abstract class DatabaseFixture
 
     public abstract IEnumerable<DbContext> GetDbContexts(IServiceScope scope);
 
+    protected TContext GetContextInstance<TContext>(IServiceScope scope) where TContext : DbContext
+    {
+        return scope.ServiceProvider.GetRequiredService<TContext>();
+    }
+
     public async Task<ITransaction> CreateTransactionAsync(IServiceScope scope)
     {
         var generator = scope.ServiceProvider.GetRequiredService<ITransactionGenerator>();
         return await generator.GenerateAsync(default);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            DockerFixture.Dispose();
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }
