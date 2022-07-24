@@ -40,21 +40,7 @@ public abstract class DatabaseFixture : IDisposable
     {
         var contexts = GetDbContexts(scope).ToList();
 
-        await contexts.First().Database.ExecuteSqlRawAsync(
-            "DROP TABLE IF EXISTS ItemCategories;" +
-            "DROP TABLE IF EXISTS Manufacturers;" +
-            "DROP TABLE IF EXISTS AvailableAts;" +
-            "DROP TABLE IF EXISTS ItemTypeAvailableAts;" +
-            "DROP TABLE IF EXISTS ItemTypes;" +
-            "DROP TABLE IF EXISTS Sections;" +
-            "DROP TABLE IF EXISTS Stores;" +
-            "DROP TABLE IF EXISTS ItemsOnLists;" +
-            "DROP TABLE IF EXISTS Items;" +
-            "DROP TABLE IF EXISTS ShoppingLists;" +
-            "DROP TABLE IF EXISTS Ingredients;" +
-            "DROP TABLE IF EXISTS PreparationSteps;" +
-            "DROP TABLE IF EXISTS Recipes;" +
-            "DROP TABLE IF EXISTS `__EFMigrationsHistory`;");
+        await contexts.First().Database.EnsureDeletedAsync();
 
         foreach (DbContext context in contexts)
         {
