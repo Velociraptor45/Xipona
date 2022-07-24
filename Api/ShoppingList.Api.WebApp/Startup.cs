@@ -10,13 +10,18 @@ using ProjectHermes.ShoppingList.Api.Endpoint;
 using ProjectHermes.ShoppingList.Api.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Vault;
 using ProjectHermes.ShoppingList.Api.WebApp.Services;
+using Serilog;
 
 namespace ProjectHermes.ShoppingList.Api.WebApp;
 
 public class Startup
 {
-    public Startup(IConfiguration configuration)
+    private readonly IWebHostEnvironment _environment;
+    private const int _mebibyte = 1024 * 1024;
+
+    public Startup(IConfiguration configuration, IWebHostEnvironment env)
     {
+        _environment = env;
         Configuration = configuration;
     }
 
@@ -25,6 +30,10 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.File(GetFileLoggingPath(), rollOnFileSizeLimit: true, fileSizeLimitBytes: _mebibyte)
+            .CreateLogger();
+
         var fileLoadingService = new FileLoadingService();
         var vaultService = new VaultService(Configuration, fileLoadingService);
         var configurationLoadingService = new ConfigurationLoadingService(fileLoadingService, vaultService);
@@ -75,5 +84,13 @@ public class Startup
         {
             endpoints.MapControllers();
         });
+    }
+
+    private string GetFileLoggingPath()
+    {
+        if (_environment.IsEnvironment("Local"))
+            return "./logs/logs.txt";
+
+        return $"/app/logs/{_environment.EnvironmentName}-ph-sl-api-logs.txt";
     }
 }
