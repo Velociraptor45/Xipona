@@ -38,5 +38,6 @@ public enum ErrorReasonCode
     QuantityTypeHasInPacketValues = 36,
     PriceNotValid = 37,
     InvalidQuantity = 38,
-    IngredientQuantityNotValid = 39
+    IngredientQuantityNotValid = 39,
+    DuplicatedSortingIndex = 40,
 }

@@ -1,4 +1,7 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Reasons;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 
 public class PreparationSteps : IEnumerable<IPreparationStep>
 {
@@ -6,9 +9,17 @@ public class PreparationSteps : IEnumerable<IPreparationStep>
 
     public PreparationSteps(IEnumerable<IPreparationStep> steps)
     {
-        // todo sorting order validation
+        var stepsList = steps.ToList();
 
-        _steps = steps.ToDictionary(s => s.Id);
+        var set = new HashSet<int>();
+        foreach (var idx in stepsList.Select(s => s.SortingIndex))
+        {
+            if (set.Contains(idx))
+                throw new DomainException(new DuplicatedSortingIndexReason(idx));
+            set.Add(idx);
+        }
+
+        _steps = stepsList.ToDictionary(s => s.Id);
     }
 
     public IReadOnlyCollection<IPreparationStep> AsReadOnly()

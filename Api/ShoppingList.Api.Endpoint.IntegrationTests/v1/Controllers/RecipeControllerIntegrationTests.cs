@@ -53,12 +53,12 @@ public class RecipeControllerIntegrationTests
             result.Should().BeOfType<CreatedAtActionResult>();
             var createdResult = result as CreatedAtActionResult;
             createdResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt.Excluding(info =>
-                info.SelectedMemberPath.EndsWith("Id")));
+                info.SelectedMemberPath.EndsWith(".Id")));
 
             var recipeEntities = (await _fixture.LoadAllRecipesAsync()).ToList();
             recipeEntities.Should().HaveCount(1);
             recipeEntities.First().Should().BeEquivalentTo(_fixture.ExpectedEntity, opt => opt.Excluding(info =>
-                info.SelectedMemberPath.EndsWith("Id")
+                info.SelectedMemberPath.EndsWith(".Id")
                 || Regex.IsMatch(info.SelectedMemberPath, @"Ingredients\[\d+\]\.Recipe")
                 || Regex.IsMatch(info.SelectedMemberPath, @"PreparationSteps\[\d+\]\.Recipe")
             ));
