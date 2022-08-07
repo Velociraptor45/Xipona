@@ -43,4 +43,12 @@ public static class LoggerExtensions
 
         logger.LogWarning(ex, logFunction());
     }
+
+    public static void LogError<T>(this ILogger<T> logger, Exception ex, Func<string> logFunction)
+    {
+        if (!logger.IsEnabled(LogLevel.Error))
+            return;
+
+        logger.LogError(ex, logFunction());
+    }
 }
