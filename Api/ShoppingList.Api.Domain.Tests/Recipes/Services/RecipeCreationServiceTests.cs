@@ -1,10 +1,12 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+﻿using Microsoft.Extensions.Logging;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+using Xunit.Abstractions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Recipes.Services;
 
@@ -12,9 +14,9 @@ public class RecipeCreationServiceTests
 {
     private readonly RecipeCreationServiceFixture _fixture;
 
-    public RecipeCreationServiceTests()
+    public RecipeCreationServiceTests(ITestOutputHelper output)
     {
-        _fixture = new RecipeCreationServiceFixture();
+        _fixture = new RecipeCreationServiceFixture(output);
     }
 
     [Fact]
@@ -60,6 +62,12 @@ public class RecipeCreationServiceTests
         private readonly RecipeRepositoryMock _recipeRepository = new(MockBehavior.Strict);
         private readonly RecipeFactoryMock _recipeFactoryMock = new(MockBehavior.Strict);
         private Recipe? _createdRecipe;
+        private readonly ILogger<IRecipeCreationService> _logger;
+
+        public RecipeCreationServiceFixture(ITestOutputHelper output)
+        {
+            _logger = output.BuildLoggerFor<IRecipeCreationService>();
+        }
 
         public RecipeCreation? Creation { get; private set; }
         public Recipe? StoredRecipe { get; private set; }
@@ -69,6 +77,7 @@ public class RecipeCreationServiceTests
             return new RecipeCreationService(
                 _ => _recipeRepository.Object,
                 _ => _recipeFactoryMock.Object,
+                _logger,
                 default);
         }
 
