@@ -50,6 +50,8 @@ volumes:
     external: true
   dev-ph-shoppinglist-api-tls:
     external: true
+  dev-ph-shoppinglist-api-logs:
+    external: true
   dev-ph-shoppinglist-database:
     external: true
 

@@ -50,6 +50,8 @@ volumes:
     external: true
   prd-ph-shoppinglist-api-tls:
     external: true
+  prd-ph-shoppinglist-api-logs:
+    external: true
   prd-ph-shoppinglist-database:
     external: true
 
