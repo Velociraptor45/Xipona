@@ -16,12 +16,8 @@ namespace ProjectHermes.ShoppingList.Api.WebApp;
 
 public class Startup
 {
-    private readonly IWebHostEnvironment _environment;
-    private const int _mebibyte = 1024 * 1024;
-
-    public Startup(IConfiguration configuration, IWebHostEnvironment env)
+    public Startup(IConfiguration configuration)
     {
-        _environment = env;
         Configuration = configuration;
     }
 
