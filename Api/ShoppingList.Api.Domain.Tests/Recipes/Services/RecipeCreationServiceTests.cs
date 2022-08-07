@@ -62,11 +62,11 @@ public class RecipeCreationServiceTests
         private readonly RecipeRepositoryMock _recipeRepository = new(MockBehavior.Strict);
         private readonly RecipeFactoryMock _recipeFactoryMock = new(MockBehavior.Strict);
         private Recipe? _createdRecipe;
-        private readonly ILogger<IRecipeCreationService> _logger;
+        private readonly ILogger<RecipeCreationService> _logger;
 
         public RecipeCreationServiceFixture(ITestOutputHelper output)
         {
-            _logger = output.BuildLoggerFor<IRecipeCreationService>();
+            _logger = output.BuildLoggerFor<RecipeCreationService>();
         }
 
         public RecipeCreation? Creation { get; private set; }

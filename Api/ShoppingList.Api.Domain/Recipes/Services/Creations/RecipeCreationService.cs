@@ -8,14 +8,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
 
 public class RecipeCreationService : IRecipeCreationService
 {
-    private readonly ILogger<IRecipeCreationService> _logger;
+    private readonly ILogger<RecipeCreationService> _logger;
     private readonly IRecipeRepository _recipeRepository;
     private readonly IRecipeFactory _recipeFactory;
 
     public RecipeCreationService(
         Func<CancellationToken, IRecipeRepository> recipeRepositoryDelegate,
         Func<CancellationToken, IRecipeFactory> recipeFactoryDelegate,
-        ILogger<IRecipeCreationService> logger,
+        ILogger<RecipeCreationService> logger,
         CancellationToken cancellationToken)
     {
         _logger = logger;

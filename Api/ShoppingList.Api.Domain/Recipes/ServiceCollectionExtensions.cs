@@ -30,7 +30,7 @@ internal static class ServiceCollectionExtensions
         {
             var recipeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IRecipeRepository>>();
             var recipeFactoryDelegate = provider.GetRequiredService<Func<CancellationToken, IRecipeFactory>>();
-            var logger = provider.GetRequiredService<ILogger<IRecipeCreationService>>();
+            var logger = provider.GetRequiredService<ILogger<RecipeCreationService>>();
             return cancellationToken =>
                 new RecipeCreationService(recipeRepositoryDelegate, recipeFactoryDelegate, logger, cancellationToken);
         });
