@@ -43,6 +43,7 @@ services:
     volumes:
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
       - dev-ph-shoppinglist-api-tls:/app/ssl
+      - dev-ph-shoppinglist-api-logs:/app/logs
     networks:
       - dev-ph-shoppinglist
     secrets:

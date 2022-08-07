@@ -24,6 +24,7 @@ services:
       - Database
     volumes:
       - dev-ph-shoppinglist-api-tls:/app/ssl
+      - dev-ph-shoppinglist-api-logs:/app/logs
     networks:
       - dev-ph-shoppinglist
     secrets:

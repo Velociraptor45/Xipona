@@ -36,6 +36,7 @@ Prepare the following things:
 - Docker Volumes
   - Api
     - (prd/dev)-ph-shoppinglist-api-tls
+    - (prd/dev)-ph-shoppinglist-api-logs
   - Frontend
     - (prd/dev)-ph-shoppinglist-frontend-config
     - (prd/dev)-ph-shoppinglist-frontend-tls

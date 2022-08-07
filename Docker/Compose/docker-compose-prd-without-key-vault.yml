@@ -24,6 +24,7 @@ services:
       - Database
     volumes:
       - prd-ph-shoppinglist-api-tls:/app/ssl
+      - prd-ph-shoppinglist-api-logs:/app/logs
     networks: 
       - prd-ph-shoppinglist
     secrets:
