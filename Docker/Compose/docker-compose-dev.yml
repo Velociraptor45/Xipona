@@ -43,6 +43,7 @@ services:
     volumes:
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
       - dev-ph-shoppinglist-api-tls:/app/ssl
+      - dev-ph-shoppinglist-api-logs:/app/logs
     networks:
       - dev-ph-shoppinglist
     secrets:
@@ -68,6 +69,8 @@ volumes:
   dev-ph-shoppinglist-frontend-config:
     external: true
   dev-ph-shoppinglist-api-tls:
+    external: true
+  dev-ph-shoppinglist-api-logs:
     external: true
   dev-ph-shoppinglist-database:
     external: true

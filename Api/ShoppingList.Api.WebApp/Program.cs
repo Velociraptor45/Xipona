@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.WebApp.Services;
+using Serilog;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
@@ -34,6 +36,11 @@ public static class Program
                 });
                 webBuilder.UseStartup<Startup>();
                 webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
+            })
+            .ConfigureLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddConsole();
+                loggingBuilder.AddSerilog();
             });
     }
 

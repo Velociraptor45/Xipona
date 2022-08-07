@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using ProjectHermes.ShoppingList.Api.ApplicationServices;
 using ProjectHermes.ShoppingList.Api.Domain;
 using ProjectHermes.ShoppingList.Api.Infrastructure;
@@ -27,6 +29,8 @@ public abstract class DatabaseFixture : IDisposable
         services.AddEndpointControllers();
         services.AddInfrastructure(DockerFixture.ConnectionString);
         services.AddApplicationServices();
+
+        services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
         return services.BuildServiceProvider();
     }

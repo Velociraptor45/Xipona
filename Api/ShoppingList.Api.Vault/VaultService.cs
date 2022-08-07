@@ -10,6 +10,7 @@ namespace ProjectHermes.ShoppingList.Api.Vault;
 public class VaultService : IVaultService
 {
     private readonly string _uri;
+
     private readonly string _connectionStringsPath;
     private readonly string _mountPoint;
     private readonly string _password;
@@ -48,7 +49,8 @@ public class VaultService : IVaultService
     {
         var policy = Policy.Handle<Exception>().WaitAndRetryAsync(
             _retryCount,
-            i => TimeSpan.FromSeconds(Math.Pow(1.5, i) + 1)); // TODO #202 log exception
+            i => TimeSpan.FromSeconds(Math.Pow(1.5, i) + 1),
+            (e, _, tryNo, _) => Console.WriteLine($"Failed to retrieve connection string from vault (Try no. {tryNo}): {e}"));
 
         return await policy.ExecuteAsync(async () =>
         {
@@ -56,6 +58,8 @@ public class VaultService : IVaultService
             var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<ConnectionStrings>(
                 _connectionStringsPath,
                 mountPoint: _mountPoint);
+
+            Console.WriteLine("Successfully retrieved connection string from vault");
 
             return result.Data.Data;
         });

@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+﻿using Microsoft.Extensions.Logging;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -13,6 +14,7 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+using Xunit.Abstractions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services;
 
@@ -22,9 +24,9 @@ public class ShoppingListExchangeServiceTests
     {
         private readonly ExchangeItemAsyncWithoutTypesFixture _fixture;
 
-        public ExchangeItemAsyncTestsWithoutTypes()
+        public ExchangeItemAsyncTestsWithoutTypes(ITestOutputHelper output)
         {
-            _fixture = new ExchangeItemAsyncWithoutTypesFixture();
+            _fixture = new ExchangeItemAsyncWithoutTypesFixture(output);
         }
 
         #region ExchangeItemAsync
@@ -318,6 +320,10 @@ public class ShoppingListExchangeServiceTests
 
         private class ExchangeItemAsyncWithoutTypesFixture : ExchangeItemAsyncFixture
         {
+            public ExchangeItemAsyncWithoutTypesFixture(ITestOutputHelper output) : base(output)
+            {
+            }
+
             public void SetupNewItem()
             {
                 NewItem = ItemMother.Initial().Create();
@@ -442,9 +448,9 @@ public class ShoppingListExchangeServiceTests
     {
         private readonly ExchangeItemAsyncWithTypesFixture _fixture;
 
-        public ExchangeItemAsyncTestsWithTypes()
+        public ExchangeItemAsyncTestsWithTypes(ITestOutputHelper output)
         {
-            _fixture = new ExchangeItemAsyncWithTypesFixture();
+            _fixture = new ExchangeItemAsyncWithTypesFixture(output);
         }
 
         [Fact]
@@ -780,7 +786,7 @@ public class ShoppingListExchangeServiceTests
         {
             private readonly ItemTypeFactoryMock _itemTypeFactoryMock;
 
-            public ExchangeItemAsyncWithTypesFixture()
+            public ExchangeItemAsyncWithTypesFixture(ITestOutputHelper output) : base(output)
             {
                 _itemTypeFactoryMock = new ItemTypeFactoryMock(MockBehavior.Strict);
             }
@@ -921,9 +927,14 @@ public class ShoppingListExchangeServiceTests
         }
     }
 
-    public abstract class ExchangeItemAsyncFixture : LocalFixture
+    public abstract class ExchangeItemAsyncFixture : ShoppingListExchangeServiceFixture
     {
         protected ShoppingListMock? ShoppingListMock;
+
+        protected ExchangeItemAsyncFixture(ITestOutputHelper output) : base(output)
+        {
+        }
+
         public IItem? NewItem { get; protected set; }
         public IShoppingListItem? OldShoppingListItem { get; protected set; }
 
@@ -1012,23 +1023,26 @@ public class ShoppingListExchangeServiceTests
         #endregion Verify
     }
 
-    public abstract class LocalFixture
+    public abstract class ShoppingListExchangeServiceFixture
     {
         protected CommonFixture CommonFixture = new();
         protected ShoppingListRepositoryMock ShoppingListRepositoryMock;
         protected AddItemToShoppingListServiceMock AddItemToShoppingListServiceMock;
+        private readonly ILogger<ShoppingListExchangeService> _logger;
 
-        protected LocalFixture()
+        protected ShoppingListExchangeServiceFixture(ITestOutputHelper output)
         {
             ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
             AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(MockBehavior.Strict);
+            _logger = output.BuildLoggerFor<ShoppingListExchangeService>();
         }
 
         public ShoppingListExchangeService CreateSut()
         {
             return new ShoppingListExchangeService(
                 ShoppingListRepositoryMock.Object,
-                AddItemToShoppingListServiceMock.Object);
+                AddItemToShoppingListServiceMock.Object,
+                _logger);
         }
     }
 }
