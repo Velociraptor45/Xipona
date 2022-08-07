@@ -31,11 +31,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         Log.Logger = new LoggerConfiguration()
-            .WriteTo.File(
-                GetFileLoggingPath(),
-                rollOnFileSizeLimit: true,
-                fileSizeLimitBytes: _mebibyte,
-                retainedFileCountLimit: 20)
+            .ReadFrom.Configuration(Configuration)
             .CreateLogger();
 
         var fileLoadingService = new FileLoadingService();
@@ -88,13 +84,5 @@ public class Startup
         {
             endpoints.MapControllers();
         });
-    }
-
-    private string GetFileLoggingPath()
-    {
-        if (_environment.IsEnvironment("Local"))
-            return "./logs/logs.txt";
-
-        return $"/app/logs/{_environment.EnvironmentName}-ph-sl-api-logs.txt";
     }
 }
