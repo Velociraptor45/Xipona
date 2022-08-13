@@ -169,4 +169,32 @@ public class Item : IItem
     {
         ManufacturerId = null;
     }
+
+    public IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price)
+    {
+        Delete();
+        IItem newItem;
+        if (HasItemTypes)
+        {
+            var itemTypes = _itemTypes!.Update(storeId, itemTypeId, price);
+            newItem = new Item(ItemId.New, Name, false, Comment, ItemQuantity, ItemCategoryId!.Value, ManufacturerId,
+                itemTypes);
+        }
+        else
+        {
+            if (Availabilities.All(av => av.StoreId != storeId))
+                throw new DomainException(new ItemAtStoreNotAvailableReason(Id, storeId));
+
+            var availabilities = _availabilities.Select(av =>
+                av.StoreId == storeId
+                    ? new ItemAvailability(storeId, price, av.DefaultSectionId)
+                    : av);
+
+            newItem = new Item(ItemId.New, Name, false, Comment, IsTemporary, ItemQuantity, ItemCategoryId,
+                ManufacturerId, availabilities, TemporaryId);
+        }
+
+        newItem.SetPredecessor(this);
+        return newItem;
+    }
 }

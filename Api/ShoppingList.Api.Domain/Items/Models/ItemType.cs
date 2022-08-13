@@ -52,4 +52,30 @@ public class ItemType : IItemType
             modification.Name,
             modification.Availabilities);
     }
+
+    public IItemType Update(StoreId storeId, Price price)
+    {
+        if (Availabilities.All(av => av.StoreId != storeId))
+            throw new DomainException(new ItemTypeAtStoreNotAvailableReason(Id, storeId));
+
+        var availabilities = Availabilities.Select(av =>
+            av.StoreId == storeId
+                ? new ItemAvailability(storeId, price, av.DefaultSectionId)
+                : av);
+
+        var newItemType = new ItemType(ItemTypeId.New, Name, availabilities);
+        newItemType.Predecessor = this;
+        return newItemType;
+    }
+
+    public IItemType Update()
+    {
+        var newItemType = new ItemType(
+            ItemTypeId.New,
+            Name,
+            Availabilities);
+        newItemType.Predecessor = this;
+
+        return newItemType;
+    }
 }

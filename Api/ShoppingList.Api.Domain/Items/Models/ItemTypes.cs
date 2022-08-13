@@ -18,8 +18,6 @@ public class ItemTypes : IEnumerable<IItemType>
         _itemTypes = itemTypes.ToDictionary(t => t.Id);
     }
 
-    public int Count => _itemTypes.Count;
-
     public async Task ModifyManyAsync(IEnumerable<ItemTypeModification> modifications, IValidator validator)
     {
         var modificationsList = modifications.ToList();
@@ -111,5 +109,15 @@ public class ItemTypes : IEnumerable<IItemType>
     private void Add(IItemType section)
     {
         _itemTypes.Add(section.Id, section);
+    }
+
+    public ItemTypes Update(StoreId storeId, ItemTypeId? itemTypeId, Price price)
+    {
+        return new ItemTypes(
+            _itemTypes.Values.Select(t =>
+                t.IsAvailableAtStore(storeId) && (itemTypeId is null || t.Id == itemTypeId.Value)
+                    ? t.Update(storeId, price)
+                    : t.Update()),
+            _itemTypeFactory);
     }
 }

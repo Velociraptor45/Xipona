@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.TemporaryItems;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.TestTools.Extensions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
@@ -123,5 +124,16 @@ public class ItemMock : Mock<IItem>
     {
         Setup(i => i.MakePermanent(permanentItem,
             It.Is<IEnumerable<IItemAvailability>>(avs => avs.IsEquivalentTo(availabilities))));
+    }
+
+    public void SetupUpdate(StoreId storeId, ItemTypeId? itemTypeId, Price price, IItem returnValue)
+    {
+        Setup(m => m.Update(storeId, itemTypeId, price))
+            .Returns(returnValue);
+    }
+
+    public void VerifyUpdate(StoreId storeId, ItemTypeId? itemTypeId, Price price, Func<Times> times)
+    {
+        Verify(m => m.Update(storeId, itemTypeId, price), times);
     }
 }

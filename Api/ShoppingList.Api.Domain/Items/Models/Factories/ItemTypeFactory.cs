@@ -22,4 +22,12 @@ public class ItemTypeFactory : IItemTypeFactory
     {
         return Create(ItemTypeId.New, name, availabilities, predecessor);
     }
+
+    public IItemType CloneWithNewId(IItemType itemType)
+    {
+        return new ItemType(
+            ItemTypeId.New,
+            itemType.Name,
+            itemType.Availabilities);
+    }
 }

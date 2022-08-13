@@ -16,10 +16,10 @@ using System.Reflection;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoints.Tests.Common;
 
-public abstract class ControllerCommandTestsBase<TController, TCommand, TCommandReturnType, TReturnType, TFixture>
+public abstract class ControllerCommandTestsBase<TController, TCommand, TCommandReturnType, TFixture>
     where TController : ControllerBase
     where TCommand : ICommand<TCommandReturnType>
-    where TFixture : ControllerCommandTestsBase<TController, TCommand, TCommandReturnType, TReturnType, TFixture>
+    where TFixture : ControllerCommandTestsBase<TController, TCommand, TCommandReturnType, TFixture>
     .ControllerCommandFixtureBase
 {
     protected readonly TFixture Fixture;
@@ -43,44 +43,13 @@ public abstract class ControllerCommandTestsBase<TController, TCommand, TCommand
         Fixture.SetupCommandConverter();
         Fixture.SetupCommandResult(HttpStatusCode.OK);
         Fixture.SetupDispatcherSuccess();
-        Fixture.SetupExpectedResult();
         var sut = Fixture.CreateSut();
 
         // Act
         var result = await Fixture.ExecuteTestMethod(sut);
 
         // Assert
-        result.Should().BeOfType<OkObjectResult>();
-        var okResult = result as OkObjectResult;
-        okResult!.Value.Should().BeEquivalentTo(Fixture.ExpectedResult);
-    }
-
-    [SkippableFact]
-    public async Task EndpointCall_WithValidData_ShouldReturnCreated()
-    {
-        var statusResult =
-            Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.Created);
-
-        Skip.If(statusResult is null, $"Status code 201 not relevant for endpoint {Fixture.Method.Name}");
-
-        // Arrange
-        Fixture.SetupParameters();
-        Fixture.SetupCommand();
-        Fixture.SetupCommandConverter();
-        Fixture.SetupCommandResult(HttpStatusCode.Created);
-        Fixture.SetupDispatcherSuccess();
-        Fixture.SetupExpectedResult();
-        Fixture.SetupResultConverter();
-        var sut = Fixture.CreateSut();
-
-        // Act
-        var result = await Fixture.ExecuteTestMethod(sut);
-
-        // Assert
-        result.Should().BeOfType<CreatedAtActionResult>();
-        var createdResult = result as CreatedAtActionResult;
-        createdResult!.Value.Should().BeEquivalentTo(Fixture.ExpectedResult);
-        createdResult.ActionName.Should().StartWith("Get");
+        result.Should().BeOfType<OkResult>();
     }
 
     [SkippableFact]
@@ -167,28 +136,9 @@ public abstract class ControllerCommandTestsBase<TController, TCommand, TCommand
         // Assert
         result.Should().ContainSingle(attr => attr.StatusCode == StatusCodes.Status200OK);
 
-        var unprocessableEntityAttribute =
+        var okEntityAttribute =
             result.Single(attr => attr.StatusCode == StatusCodes.Status200OK);
-        unprocessableEntityAttribute.Type.Should().Be(typeof(void));
-    }
-
-    [SkippableFact]
-    public void EndpointCall_ShouldHaveCreatedResponseTypeAttribute()
-    {
-        var statusResult =
-            Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.Created);
-
-        Skip.If(statusResult is null, $"Status code 201 not relevant for endpoint {Fixture.Method.Name}");
-
-        // Act
-        var result = Fixture.GetAllResponseTypeAttributes().ToList();
-
-        // Assert
-        result.Should().ContainSingle(attr => attr.StatusCode == StatusCodes.Status201Created);
-
-        var unprocessableEntityAttribute =
-            result.Single(attr => attr.StatusCode == StatusCodes.Status201Created);
-        unprocessableEntityAttribute.Type.Should().Be(typeof(TReturnType));
+        okEntityAttribute.Type.Should().Be(typeof(void));
     }
 
     [SkippableFact]
@@ -205,9 +155,9 @@ public abstract class ControllerCommandTestsBase<TController, TCommand, TCommand
         // Assert
         result.Should().ContainSingle(attr => attr.StatusCode == StatusCodes.Status404NotFound);
 
-        var unprocessableEntityAttribute =
+        var notFoundEntityAttribute =
             result.Single(attr => attr.StatusCode == StatusCodes.Status404NotFound);
-        unprocessableEntityAttribute.Type.Should().Be(typeof(ErrorContract));
+        notFoundEntityAttribute.Type.Should().Be(typeof(ErrorContract));
     }
 
     [SkippableFact]
@@ -241,7 +191,6 @@ public abstract class ControllerCommandTestsBase<TController, TCommand, TCommand
 
         public TCommand? Command { get; protected set; }
         public TCommandReturnType? ExpectedCommandResult { get; protected set; }
-        public TReturnType? ExpectedResult { get; protected set; }
         public DomainException? DomainException { get; private set; }
         public ErrorContract? ExpectedErrorContract { get; private set; }
         public string ExpectedBadRequestMessage { get; protected set; } = string.Empty;
@@ -266,23 +215,11 @@ public abstract class ControllerCommandTestsBase<TController, TCommand, TCommand
 
         public abstract void SetupCommand();
 
-        public void SetupExpectedResult()
-        {
-            ExpectedResult = new DomainTestBuilder<TReturnType>().Create();
-        }
-
         public void SetupDomainExceptionInCommandDispatcher()
         {
             TestPropertyNotSetException.ThrowIfNull(DomainException);
             TestPropertyNotSetException.ThrowIfNull(Command);
             CommandDispatcherMock.SetupDispatchAsync(Command).ThrowsAsync(DomainException);
-        }
-
-        public virtual void SetupResultConverter()
-        {
-            TestPropertyNotSetException.ThrowIfNull(ExpectedCommandResult);
-            TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
-            EndpointConvertersMock.SetupToContract(ExpectedCommandResult, ExpectedResult);
         }
 
         public virtual void SetupCommandConverter()

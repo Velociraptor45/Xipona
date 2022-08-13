@@ -18,4 +18,6 @@ public interface IItemType
     bool IsAvailableAtStore(StoreId storeId);
 
     Task<IItemType> ModifyAsync(ItemTypeModification modification, IValidator validator);
+    IItemType Update(StoreId storeId, Price price);
+    IItemType Update();
 }

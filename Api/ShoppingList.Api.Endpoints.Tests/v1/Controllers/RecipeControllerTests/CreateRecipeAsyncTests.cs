@@ -15,14 +15,14 @@ using System.Reflection;
 namespace ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.RecipeControllerTests;
 
 public class CreateRecipeAsyncTests :
-    ControllerCommandTestsBase<RecipeController, CreateRecipeCommand, IRecipe, RecipeContract,
+    ControllerCommandWithReturnTypeTestsBase<RecipeController, CreateRecipeCommand, IRecipe, RecipeContract,
         CreateRecipeAsyncTests.CreateRecipeAsyncFixture>
 {
     public CreateRecipeAsyncTests() : base(new CreateRecipeAsyncFixture())
     {
     }
 
-    public sealed class CreateRecipeAsyncFixture : ControllerCommandFixtureBase
+    public sealed class CreateRecipeAsyncFixture : ControllerCommandWithReturnTypeFixtureBase
     {
         private CreateRecipeContract? _contract;
 
