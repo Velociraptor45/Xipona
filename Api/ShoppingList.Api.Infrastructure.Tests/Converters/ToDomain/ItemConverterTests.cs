@@ -27,7 +27,7 @@ public class ItemConverterTests : ToDomainConverterTestBase<Item, IItem>
 
     public static Item GetSource(IItem destination)
     {
-        Item predecessor = null;
+        Item? predecessor = null;
         if (destination.Predecessor != null)
             predecessor = GetSource(destination.Predecessor);
 

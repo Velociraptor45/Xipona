@@ -35,6 +35,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ShoppingList.Api.Domain.TestKit\ShoppingList.Api.Domain.TestKit.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Endpoint\ShoppingList.Api.Endpoint.csproj" />
+    <ProjectReference Include="..\ShoppingList.Api.Infrastructure.Tests\ShoppingList.Api.Infrastructure.Tests.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.TestTools\ShoppingList.Api.TestTools.csproj" />
   </ItemGroup>
 
