@@ -44,5 +44,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         Task RemoveItemFromShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId);
 
         Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync();
+
+        Task UpdateItemPriceAsync(Guid itemId, Guid? itemTypeId, Guid storeId, float updatedPrice,
+            Func<Task> onSuccessAction);
     }
 }

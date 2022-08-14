@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Exchanges;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 
@@ -13,7 +14,7 @@ public class ItemUpdateService : IItemUpdateService
     private readonly IItemRepository _itemRepository;
     private readonly IItemTypeFactory _itemTypeFactory;
     private readonly IItemFactory _itemFactory;
-    private readonly IShoppingListExchangeService _shoppingListUpdateService;
+    private readonly IShoppingListExchangeService _shoppingListExchangeService;
     private readonly IValidator _validator;
     private readonly CancellationToken _cancellationToken;
 
@@ -22,13 +23,13 @@ public class ItemUpdateService : IItemUpdateService
         Func<CancellationToken, IValidator> validatorDelegate,
         IItemTypeFactory itemTypeFactory,
         IItemFactory itemFactory,
-        IShoppingListExchangeService shoppingListUpdateService,
+        IShoppingListExchangeService shoppingListExchangeService,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
         _itemTypeFactory = itemTypeFactory;
         _itemFactory = itemFactory;
-        _shoppingListUpdateService = shoppingListUpdateService;
+        _shoppingListExchangeService = shoppingListExchangeService;
         _validator = validatorDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
     }
@@ -84,7 +85,7 @@ public class ItemUpdateService : IItemUpdateService
         _cancellationToken.ThrowIfCancellationRequested();
 
         // change existing item references on shopping lists
-        await _shoppingListUpdateService.ExchangeItemAsync(oldItem.Id, updatedItem, _cancellationToken);
+        await _shoppingListExchangeService.ExchangeItemAsync(oldItem.Id, updatedItem, _cancellationToken);
     }
 
     public async Task Update(ItemUpdate update)
@@ -121,6 +122,22 @@ public class ItemUpdateService : IItemUpdateService
         updatedItem = await _itemRepository.StoreAsync(updatedItem, _cancellationToken);
 
         // change existing item references on shopping lists
-        await _shoppingListUpdateService.ExchangeItemAsync(oldItem.Id, updatedItem, _cancellationToken);
+        await _shoppingListExchangeService.ExchangeItemAsync(oldItem.Id, updatedItem, _cancellationToken);
+    }
+
+    public async Task UpdateAsync(ItemId itemId, ItemTypeId? itemTypeId, StoreId storeId, Price price)
+    {
+        IItem? oldItem = await _itemRepository.FindByAsync(itemId, _cancellationToken);
+        if (oldItem == null)
+            throw new DomainException(new ItemNotFoundReason(itemId));
+        if (oldItem.IsTemporary)
+            throw new DomainException(new TemporaryItemNotUpdateableReason(itemId));
+
+        IItem updatedItem = oldItem.Update(storeId, itemTypeId, price);
+        await _itemRepository.StoreAsync(oldItem, _cancellationToken);
+        updatedItem = await _itemRepository.StoreAsync(updatedItem, _cancellationToken);
+
+        // change existing item references on shopping lists
+        await _shoppingListExchangeService.ExchangeItemAsync(oldItem.Id, updatedItem, _cancellationToken);
     }
 }

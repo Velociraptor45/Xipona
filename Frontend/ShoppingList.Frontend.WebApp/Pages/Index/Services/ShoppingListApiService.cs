@@ -54,6 +54,32 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             return _apiClient.GetAllQuantityTypesAsync();
         }
 
+        public async Task UpdateItemPriceAsync(Guid itemId, Guid? itemTypeId, Guid storeId, float updatedPrice,
+            Func<Task> onSuccessAction)
+        {
+            var request = new UpdateItemPriceRequest(itemId, itemTypeId, storeId, updatedPrice);
+            try
+            {
+                await _apiClient.UpdateItemPriceAsync(request);
+            }
+            catch (ApiException e)
+            {
+                ErrorContract contract = null;
+                if (e.Message.Contains("errorCode"))
+                    contract = e.DeserializeContent<ErrorContract>();
+
+                _notificationService.NotifyError("Updating price failed", contract?.Message ?? e.Message);
+                return;
+            }
+            catch (Exception e)
+            {
+                _notificationService.NotifyError("Unknown error while updating price", e.Message);
+                return;
+            }
+
+            await onSuccessAction();
+        }
+
         public async Task RemoveItemFromBasketAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId)
         {
             var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), shoppingListId, itemId, itemTypeId);
@@ -89,11 +115,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             }
             catch (ApiException e)
             {
-                var contract = e.DeserializeContent<ErrorContract>();
+                ErrorContract contract = null;
+                if (e.Message.Contains("errorCode"))
+                    contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadActiveShoppingListAsync(storeId, fragmentCreator, onSuccessAction));
-                _notificationService.NotifyError("Loading shopping list failed", contract.Message, fragment);
+                _notificationService.NotifyError("Loading shopping list failed", contract?.Message ?? e.Message, fragment);
                 return;
             }
             catch (Exception e)
@@ -118,17 +146,21 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             }
             catch (ApiException e)
             {
-                var contract = e.DeserializeContent<ErrorContract>();
+                ErrorContract contract = null;
+                if (e.Message.Contains("errorCode"))
+                    contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await FinishListAsync(shoppingListId, fragmentCreator, onSuccessAction));
-                _notificationService.NotifyError("Finishing shopping list failed", contract.Message, fragment);
+                _notificationService.NotifyError("Finishing shopping list failed", contract?.Message ?? e.Message, fragment);
+                return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await FinishListAsync(shoppingListId, fragmentCreator, onSuccessAction));
                 _notificationService.NotifyError("Unknown error while finishing shopping list", e.Message, fragment);
+                return;
             }
 
             await onSuccessAction();
@@ -146,11 +178,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             }
             catch (ApiException e)
             {
-                var contract = e.DeserializeContent<ErrorContract>();
+                ErrorContract contract = null;
+                if (e.Message.Contains("errorCode"))
+                    contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await LoadItemSearchResultAsync(input, storeId, fragmentCreator, onSuccessAction));
-                _notificationService.NotifyError("Searching for items failed", contract.Message, fragment);
+                _notificationService.NotifyError("Searching for items failed", contract?.Message ?? e.Message, fragment);
                 return;
             }
             catch (Exception e)
@@ -180,12 +214,15 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             }
             catch (ApiException e)
             {
-                var contract = e.DeserializeContent<ErrorContract>();
+                ErrorContract contract = null;
+                if (e.Message.Contains("errorCode"))
+                    contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await AddItemToShoppingListAsync(shoppingListId, itemId, quantity, sectionId, fragmentCreator,
                         onSuccessAction));
-                _notificationService.NotifyError("Adding item failed", contract.Message, fragment);
+                _notificationService.NotifyError("Adding item failed", contract?.Message ?? e.Message, fragment);
+                return;
             }
             catch (Exception e)
             {
@@ -193,6 +230,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
                     await AddItemToShoppingListAsync(shoppingListId, itemId, quantity, sectionId, fragmentCreator,
                         onSuccessAction));
                 _notificationService.NotifyError("Unknown error while adding item", e.Message, fragment);
+                return;
             }
 
             await onSuccessAction();
@@ -215,12 +253,15 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             }
             catch (ApiException e)
             {
-                var contract = e.DeserializeContent<ErrorContract>();
+                ErrorContract contract = null;
+                if (e.Message.Contains("errorCode"))
+                    contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await AddItemWithTypeToShoppingListAsync(shoppingListId, itemId, itemTypeId, quantity, sectionId,
                         fragmentCreator, onSuccessAction));
-                _notificationService.NotifyError("Adding item failed", contract.Message, fragment);
+                _notificationService.NotifyError("Adding item failed", contract?.Message ?? e.Message, fragment);
+                return;
             }
             catch (Exception e)
             {
@@ -228,6 +269,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
                     await AddItemWithTypeToShoppingListAsync(shoppingListId, itemId, itemTypeId, quantity, sectionId,
                         fragmentCreator, onSuccessAction));
                 _notificationService.NotifyError("Unknown error while adding item", e.Message, fragment);
+                return;
             }
 
             await onSuccessAction();
@@ -244,11 +286,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             }
             catch (ApiException e)
             {
-                var contract = e.DeserializeContent<ErrorContract>();
+                ErrorContract contract = null;
+                if (e.Message.Contains("errorCode"))
+                    contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(
                         async () => await LoadAllActiveStoresAsync(fragmentCreator, onSuccessAction));
-                _notificationService.NotifyError("Loading active stores failed", contract.Message, fragment);
+                _notificationService.NotifyError("Loading active stores failed", contract?.Message ?? e.Message, fragment);
                 return;
             }
             catch (Exception e)

@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
@@ -33,5 +34,10 @@ public class ItemTypeBuilder : DomainTestBuilderBase<ItemType>
     {
         FillConstructorWith("availabilities", availabilities);
         return this;
+    }
+
+    public ItemTypeBuilder WithAvailability(IItemAvailability availability)
+    {
+        return WithAvailabilities(availability.ToMonoList());
     }
 }

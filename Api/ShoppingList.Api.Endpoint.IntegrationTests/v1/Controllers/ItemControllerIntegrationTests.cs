@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.TestKit;
@@ -16,6 +17,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
@@ -23,13 +25,17 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Tests.Items.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
+using System.Text.RegularExpressions;
 using Xunit;
 using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
+using ItemType = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.ItemType;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
 
@@ -156,7 +162,7 @@ public class ItemControllerIntegrationTests
             var contractItemTypes = _fixture.Contract.ItemTypes.ToList();
             var entitiesAsContractTypes = newEntity.ItemTypes
                 .Select(t => new UpdateItemTypeContract(t.PredecessorId!.Value, t.Name,
-                    t.AvailableAt.Select(av => new ItemAvailabilityContract()
+                    t.AvailableAt.Select(av => new ItemAvailabilityContract
                     {
                         DefaultSectionId = av.DefaultSectionId,
                         Price = av.Price,
@@ -310,6 +316,258 @@ public class ItemControllerIntegrationTests
             public async Task PrepareDatabaseAsync()
             {
                 await ApplyMigrationsAsync(ArrangeScope);
+            }
+        }
+    }
+
+    [Collection(DockerCollection.Name)]
+    public sealed class UpdateItemPriceAsync
+    {
+        private readonly UpdateItemPriceAsyncFixture _fixture;
+
+        public UpdateItemPriceAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new UpdateItemPriceAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task UpdateItemPriceAsync_WithoutTypes_ShouldUpdateItem()
+        {
+            // Arrange
+            _fixture.SetupItemId();
+            _fixture.SetupContractWithoutItemType();
+            _fixture.SetupExistingItemWithoutTypes();
+            _fixture.SetupExpectedResultWithoutTypes();
+            await _fixture.PrepareDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedOldItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
+
+            // Act
+            await sut.UpdateItemPriceAsync(_fixture.ItemId.Value.Value, _fixture.Contract);
+
+            // Assert
+            var allStoredItems = (await _fixture.LoadAllItemEntities()).ToList();
+            allStoredItems.Should().HaveCount(2);
+            allStoredItems.Should().Contain(i => i.Id == _fixture.ExpectedOldItem.Id);
+            allStoredItems.Should().Contain(i => i.Id != _fixture.ExpectedOldItem.Id);
+
+            var oldItem = allStoredItems.First(i => i.Id == _fixture.ExpectedOldItem.Id);
+            oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
+                opt => opt.Excluding(info => Regex.IsMatch(info.SelectedMemberPath, @"AvailableAt\[\d+\].Item")));
+
+            var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
+            newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
+                opt => opt.Excluding(info => info.SelectedMemberPath == "Id"
+                                             || info.SelectedMemberPath == "Predecessor"
+                                             || Regex.IsMatch(info.SelectedMemberPath, @"AvailableAt\[\d+\].Item")));
+        }
+
+        [Fact]
+        public async Task UpdateItemPriceAsync_WithItemTypes_ShouldUpdateItem()
+        {
+            // Arrange
+            _fixture.SetupItemId();
+            _fixture.SetupContractWithoutItemType();
+            _fixture.SetupExistingItemWithTypes();
+            _fixture.SetupExpectedResultWithTypes();
+            await _fixture.PrepareDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedOldItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
+
+            // Act
+            await sut.UpdateItemPriceAsync(_fixture.ItemId.Value.Value, _fixture.Contract);
+
+            // Assert
+            var allStoredItems = (await _fixture.LoadAllItemEntities()).ToList();
+            allStoredItems.Should().HaveCount(2);
+            allStoredItems.Should().Contain(i => i.Id == _fixture.ExpectedOldItem.Id);
+            allStoredItems.Should().Contain(i => i.Id != _fixture.ExpectedOldItem.Id);
+
+            var oldItem = allStoredItems.First(i => i.Id == _fixture.ExpectedOldItem.Id);
+            oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
+                opt => opt.Excluding(info =>
+                    Regex.IsMatch(info.SelectedMemberPath, @"ItemTypes\[\d+\].Item")
+                    || Regex.IsMatch(info.SelectedMemberPath, @"AvailableAt\[\d+\].ItemType")
+                    ));
+
+            var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
+            newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
+                opt => opt.Excluding(info => info.SelectedMemberPath == "Id"
+                                             || info.SelectedMemberPath == "Predecessor"
+                                             || Regex.IsMatch(info.SelectedMemberPath, @"ItemTypes\[\d+\].Id")
+                                             || Regex.IsMatch(info.SelectedMemberPath, @"ItemTypes\[\d+\].Item")
+                                             || Regex.IsMatch(info.SelectedMemberPath, @"ItemTypes\[\d+\].Predecessor\b")
+                                             || Regex.IsMatch(info.SelectedMemberPath, @"AvailableAt\[\d+\].ItemType")
+                                             ));
+        }
+
+        private sealed class UpdateItemPriceAsyncFixture : ItemControllerFixture
+        {
+            private Item? _existingItem;
+
+            public UpdateItemPriceAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public ItemId? ItemId { get; private set; }
+            public UpdateItemPriceContract? Contract { get; private set; }
+            public Item? ExpectedNewItem { get; private set; }
+            public Item? ExpectedOldItem { get; private set; }
+
+            public void SetupItemId()
+            {
+                ItemId = Domain.Items.Models.ItemId.New;
+            }
+
+            public void SetupContractWithoutItemType()
+            {
+                var price = new DomainTestBuilder<Price>().Create();
+                Contract = new TestBuilder<UpdateItemPriceContract>()
+                    .FillPropertyWith(c => c.ItemTypeId, null)
+                    .FillPropertyWith(c => c.Price, price.Value)
+                    .Create();
+            }
+
+            public void SetupExistingItemWithoutTypes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+                TestPropertyNotSetException.ThrowIfNull(ItemId);
+
+                _existingItem = ItemEntityMother.InitialForStore(Contract.StoreId)
+                    .WithId(ItemId.Value)
+                    .Create();
+            }
+
+            public void SetupExistingItemWithTypes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+                TestPropertyNotSetException.ThrowIfNull(ItemId);
+
+                var itemTypes = ItemTypeEntityMother.InitialForStore(Contract.StoreId)
+                    .CreateMany(1)
+                    .ToList();
+                _existingItem = ItemEntityMother.InitialWithTypes()
+                    .WithId(ItemId.Value)
+                    .WithItemTypes(itemTypes)
+                    .Create();
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                TestPropertyNotSetException.ThrowIfNull(_existingItem);
+
+                using var scope = CreateServiceScope();
+                await using var context = GetContextInstance<ItemContext>(ArrangeScope);
+
+                context.Add(_existingItem);
+
+                await context.SaveChangesAsync();
+            }
+
+            public void SetupExpectedResultWithoutTypes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingItem);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                ExpectedOldItem = new Item
+                {
+                    Id = _existingItem.Id,
+                    AvailableAt = _existingItem.AvailableAt,
+                    Name = _existingItem.Name,
+                    Comment = _existingItem.Comment,
+                    CreatedFrom = _existingItem.CreatedFrom,
+                    Deleted = true,
+                    IsTemporary = _existingItem.IsTemporary,
+                    ItemCategoryId = _existingItem.ItemCategoryId,
+                    ManufacturerId = _existingItem.ManufacturerId,
+                    QuantityInPacket = _existingItem.QuantityInPacket,
+                    QuantityType = _existingItem.QuantityType,
+                    QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
+                    PredecessorId = null,
+                    ItemTypes = new List<ItemType>()
+                };
+
+                ExpectedNewItem = new Item
+                {
+                    AvailableAt = _existingItem.AvailableAt.Select(av => new AvailableAt
+                    {
+                        StoreId = av.StoreId,
+                        Price = Contract.Price,
+                        DefaultSectionId = av.DefaultSectionId
+                    }).ToList(),
+                    Name = _existingItem.Name,
+                    Comment = _existingItem.Comment,
+                    CreatedFrom = _existingItem.CreatedFrom,
+                    Deleted = false,
+                    IsTemporary = false,
+                    ItemCategoryId = _existingItem.ItemCategoryId,
+                    ManufacturerId = _existingItem.ManufacturerId,
+                    QuantityInPacket = _existingItem.QuantityInPacket,
+                    QuantityType = _existingItem.QuantityType,
+                    QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
+                    PredecessorId = _existingItem.Id,
+                    ItemTypes = new List<ItemType>()
+                };
+            }
+
+            public void SetupExpectedResultWithTypes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingItem);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                ExpectedOldItem = new Item
+                {
+                    Id = _existingItem.Id,
+                    AvailableAt = new List<AvailableAt>(),
+                    Name = _existingItem.Name,
+                    Comment = _existingItem.Comment,
+                    CreatedFrom = null,
+                    Deleted = true,
+                    IsTemporary = _existingItem.IsTemporary,
+                    ItemCategoryId = _existingItem.ItemCategoryId,
+                    ManufacturerId = _existingItem.ManufacturerId,
+                    QuantityInPacket = _existingItem.QuantityInPacket,
+                    QuantityType = _existingItem.QuantityType,
+                    QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
+                    PredecessorId = null,
+                    ItemTypes = _existingItem.ItemTypes
+                };
+
+                ExpectedNewItem = new Item
+                {
+                    AvailableAt = new List<AvailableAt>(),
+                    Name = _existingItem.Name,
+                    Comment = _existingItem.Comment,
+                    CreatedFrom = null,
+                    Deleted = false,
+                    IsTemporary = false,
+                    ItemCategoryId = _existingItem.ItemCategoryId,
+                    ManufacturerId = _existingItem.ManufacturerId,
+                    QuantityInPacket = _existingItem.QuantityInPacket,
+                    QuantityType = _existingItem.QuantityType,
+                    QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
+                    PredecessorId = _existingItem.Id,
+                    ItemTypes = _existingItem.ItemTypes.Select(t => new ItemType
+                    {
+                        Name = t.Name,
+                        PredecessorId = t.Id,
+                        AvailableAt = t.AvailableAt.Select(av =>
+                            new ItemTypeAvailableAtEntityBuilder(av)
+                                .WithPrice(Contract.Price)
+                                .Create())
+                            .ToList()
+                    }).ToList()
+                };
             }
         }
     }

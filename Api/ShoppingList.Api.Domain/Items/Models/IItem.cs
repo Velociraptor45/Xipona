@@ -44,4 +44,5 @@ public interface IItem
     bool TryGetTypeWithPredecessor(ItemTypeId predecessorTypeId, out IItemType? predecessor);
 
     void RemoveManufacturer();
+    IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price);
 }
