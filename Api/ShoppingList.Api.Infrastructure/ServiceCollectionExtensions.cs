@@ -8,6 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
@@ -98,10 +99,12 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IRecipeRepository>>(provider =>
         {
             var context = provider.GetRequiredService<RecipeContext>();
+            var searchResultToDomainConverter = provider.GetRequiredService<IToDomainConverter<Recipe, RecipeSearchResult>>();
             var toDomainConverter = provider.GetRequiredService<IToDomainConverter<Recipe, IRecipe>>();
             var toContractConverter = provider.GetRequiredService<IToContractConverter<IRecipe, Recipe>>();
             return cancellationToken =>
-                new RecipeRepository(context, toDomainConverter, toContractConverter, cancellationToken);
+                new RecipeRepository(context, searchResultToDomainConverter, toDomainConverter, toContractConverter,
+                    cancellationToken);
         });
         services.AddScoped<ITransactionGenerator, TransactionGenerator>();
 

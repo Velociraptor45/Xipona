@@ -18,6 +18,9 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForShopp
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
@@ -279,5 +282,19 @@ namespace ProjectHermes.ShoppingList.Api.Client
         }
 
         #endregion ItemCategoryController
+
+        #region RecipeController
+
+        public async Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByNameAsync(string searchInput)
+        {
+            return await _apiClient.SearchRecipesByNameAsync(searchInput);
+        }
+
+        public async Task<RecipeContract> CreateRecipeAsync(CreateRecipeContract contract)
+        {
+            return await _apiClient.CreateRecipeAsync(contract);
+        }
+
+        #endregion RecipeController
     }
 }
