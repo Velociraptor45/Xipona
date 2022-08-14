@@ -1,5 +1,5 @@
-﻿@inject IShoppingListApiService apiService;
-@inject IItemPriceCalculationService priceCalculationService;
+﻿@inject IShoppingListApiService _apiService;
+@inject IItemPriceCalculationService _priceCalculationService;
 
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
@@ -15,9 +15,9 @@
         Summary
     </Button>
     <Modal TitleTemplate="@GetTitle()"
-           Visible="@summaryVisible"
+           Visible="@_summaryVisible"
            OnCancel="@OnCloseSummaryButtonClicked"
-           ConfirmLoading="@loading"
+           ConfirmLoading="@_loading"
            Footer="@GetFooter()">
         <div>@GetItemInBasketCountText()</div>
         @if (State.ShoppingList.ItemNotInBasketCount > 0)
@@ -32,8 +32,8 @@
     [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
     [Parameter] public Func<Task> OnFinishList { get; set; }
     
-    private bool summaryVisible = false;
-    private bool loading = false;
+    private bool _summaryVisible = false;
+    private bool _loading = false;
     private string Title => $"Finish shopping at {State.SelectedStore?.Name}";
 
     private void OnSummaryButtonClicked()
@@ -41,24 +41,24 @@
         if (!State.ShoppingList.AnyItemInBasket)
             return;
 
-        summaryVisible = true;
+        _summaryVisible = true;
     }
 
     private void OnCloseSummaryButtonClicked()
     {
-        summaryVisible = false;
-        loading = false;
+        _summaryVisible = false;
+        _loading = false;
     }
 
     private async Task OnFinishListButtonClicked()
     {
-        loading = true;
-        await apiService.FinishListAsync(State.ShoppingList.Id, FragmentCreator, async () =>
+        _loading = true;
+        await _apiService.FinishListAsync(State.ShoppingList.Id, FragmentCreator, async () =>
         {
             await OnFinishList();
-            loading = false;
-            summaryVisible = false;
+            _summaryVisible = false;
         });
+        _loading = false;
     }
 
     private RenderFragment GetFooter()
@@ -69,8 +69,8 @@
                        <Button Class="ml-auto"
                                OnClick="OnFinishListButtonClicked"
                                @key="@("submit")"
-                               Type="primary"
-                               Loading="@loading">
+                               Type="@ButtonType.Primary"
+                               Loading="@_loading">
                            Finish
                        </Button>
                    </div>
@@ -113,7 +113,7 @@
 
     private string GetInBasketPrice()
     {
-        return State.ShoppingList.GetFormattedInBasketPrice(priceCalculationService);
+        return State.ShoppingList.GetFormattedInBasketPrice(_priceCalculationService);
     }
 
     private string GetDateTime()

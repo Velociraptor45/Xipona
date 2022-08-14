@@ -3,10 +3,11 @@
 @using ProjectHermes.ShoppingList.Frontend.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
+@using System.Text.RegularExpressions
 
-@inject NavigationManager navigationManager;
-@inject IItemPriceCalculationService itemPriceCalculationService;
-@inject IShoppingListApiService apiService;
+@inject NavigationManager _navigationManager;
+@inject IItemPriceCalculationService _itemPriceCalculationService;
+@inject IShoppingListApiService _apiService;
 
 <li class="list-style-non py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
     @if (State.ItemsInEditMode)
@@ -46,6 +47,14 @@
                             </Button>
                         </div>
                     }
+                    else
+                    {
+                        <div class="px-2 m-0 ml-auto">
+                            <Button class="oi-button" OnClick="OnOpenUpdatePriceClicked">
+                                <span class="oi oi-dollar"></span>
+                            </Button>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -66,10 +75,34 @@
         </div>
     }
 </li>
+<Modal Title="@GetTitle()"
+       Visible="@_updatePriceModalVisible"
+       OnCancel="@OnCloseUpdatePriceModalButtonClicked"
+       ConfirmLoading="@_modalLoading"
+       Footer="@GetFooter()">
+    <AntDesign.InputNumber Formatter="FormatUpdatePrice" 
+                           Parser="ParseUpdatePrice"
+                           Class="price-update-input"
+                           @bind-value="@_updatedPricePerQuantity"
+                           Min="0.01f"></AntDesign.InputNumber>
+    @if (Model.IsItemType)
+    {
+        <div class="pt-3">
+            <Checkbox @bind-Checked="@_updatePriceForAllOtherItemTypes">
+                Update for all types
+            </Checkbox>
+        </div>
+    }
+</Modal>
 
 @code{
     [Parameter] public ShoppingListState State { get; set; }
     [Parameter] public ShoppingListItem Model { get; set; }
+
+    private bool _updatePriceModalVisible = false;
+    private bool _modalLoading = false;
+    private float _updatedPricePerQuantity = 0.01f;
+    private bool _updatePriceForAllOtherItemTypes = true;
 
     private async Task OnItemClickedAsync()
     {
@@ -79,19 +112,19 @@
         if (Model.IsInBasket)
         {
             Model.RemoveFromBasket();
-            await apiService.RemoveItemFromBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
+            await _apiService.RemoveItemFromBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         }
         else
         {
             Model.PutInBasket();
-            await apiService.PutItemInBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
+            await _apiService.PutItemInBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         }
         State.StateChanged?.Invoke();
     }
 
     private float CalculatePrice()
     {
-        return itemPriceCalculationService.CalculatePrice(Model.QuantityType.Id, Model.PricePerQuantity, Model.Quantity);
+        return _itemPriceCalculationService.CalculatePrice(Model.QuantityType.Id, Model.PricePerQuantity, Model.Quantity);
     }
 
     private async Task OnQuantityInputValueChangedAsync(float quantity)
@@ -104,7 +137,7 @@
     private async Task OnRemoveItemButtonClickedAsync()
     {
         State.ShoppingList.Remove(Model.Id, Model.TypeId);
-        await apiService.RemoveItemFromShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
+        await _apiService.RemoveItemFromShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         State.StateChanged?.Invoke();
     }
 
@@ -125,12 +158,69 @@
 
     private async Task SendQuantityChangedRequestAsync()
     {
-        await apiService.ChangeItemQuantityOnShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId, 
+        await _apiService.ChangeItemQuantityOnShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId, 
             Model.Quantity);
     }
 
     private void OnMakeItemPermanentButtonClicked()
     {
-        navigationManager.NavigateTo($"items/{Model.Id.ActualId.Value}");
+        _navigationManager.NavigateTo($"items/{Model.Id.ActualId!.Value}");
+    }
+
+    private void OnOpenUpdatePriceClicked()
+    {
+        _updatePriceModalVisible = true;
+        _modalLoading = false;
+        _updatePriceForAllOtherItemTypes = true;
+        _updatedPricePerQuantity = Model.PricePerQuantity;
+    }
+
+    private void OnCloseUpdatePriceModalButtonClicked()
+    {
+        _updatePriceModalVisible = false;
+        _modalLoading = false;
+    }
+
+    private string GetTitle()
+    {
+        return $"Update price - {Model.Name}";
+    }
+
+    private RenderFragment GetFooter()
+    {
+        return @<Template>
+                   <div class="d-flex">
+                       <Button Class="ml-auto"
+                               OnClick="OnUpdatePriceButtonClicked"
+                               @key="@("submit")"
+                               Type="@ButtonType.Primary"
+                               Loading="@_modalLoading">
+                           Update
+                       </Button>
+                   </div>
+               </Template>;
+    }
+
+    private async Task OnUpdatePriceButtonClicked()
+    {
+        _modalLoading = true;
+        var itemTypeId = Model.IsItemType && !_updatePriceForAllOtherItemTypes ? Model.TypeId : null;
+        await _apiService.UpdateItemPriceAsync(Model.Id.ActualId!.Value, itemTypeId, State.SelectedStore.Id,
+            _updatedPricePerQuantity, async () =>
+            {
+                await State.RequestReloadAsync();
+                _updatePriceModalVisible = false;
+            });
+        _modalLoading = false;
+    }
+
+    private string FormatUpdatePrice(float value)
+    {
+        return $"{value:n2} {Model.QuantityType.PriceLabel}";
+    }
+
+    private string ParseUpdatePrice(string value)
+    {
+        return value.Replace(Model.QuantityType.PriceLabel, string.Empty);
     }
 }

@@ -8,6 +8,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemP
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
@@ -108,6 +109,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Put("items/without-types/{id}/update")]
         Task UpdateItemAsync([Path] Guid id, [Body] UpdateItemContract contract);
+
+        [Put("items/{id}/update-price")]
+        Task UpdateItemPriceAsync([Path] Guid id, [Body] UpdateItemPriceContract contract);
 
         [Put("items/with-types/{id}/update")]
         Task UpdateItemWithTypesAsync([Path] Guid id, [Body] UpdateItemWithTypesContract contract);

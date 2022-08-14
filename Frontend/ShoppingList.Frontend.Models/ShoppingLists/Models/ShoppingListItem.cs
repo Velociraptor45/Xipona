@@ -36,6 +36,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         public string Manufacturer { get; }
         public bool IsInBasket { get; set; }
         public float Quantity { get; private set; }
+        public bool IsItemType => TypeId is not null;
 
         public void PutInBasket()
         {

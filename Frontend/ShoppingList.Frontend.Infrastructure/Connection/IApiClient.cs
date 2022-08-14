@@ -94,5 +94,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         Task DeleteItemCategoryAsync(Guid id);
 
         Task ModifyItemCategoryAsync(ModifyItemCategoryRequest request);
+        Task UpdateItemPriceAsync(UpdateItemPriceRequest request);
     }
 }

@@ -9,6 +9,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemP
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
@@ -112,6 +113,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         {
             var contract = _converters.ToContract<Item, UpdateItemContract>(request.StoreItem);
             await _client.UpdateItemAsync(request.StoreItem.Id, contract);
+        }
+
+        public async Task UpdateItemPriceAsync(UpdateItemPriceRequest request)
+        {
+            var contract = _converters.ToContract<UpdateItemPriceRequest, UpdateItemPriceContract>(request);
+            await _client.UpdateItemPriceAsync(request.ItemId, contract);
         }
 
         public async Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request)
