@@ -1,8 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
-using System;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Tests.Items.Entities;
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
 
 public class ItemTypeAvailableAtEntityBuilder : TestBuilder<ItemTypeAvailableAt>
 {

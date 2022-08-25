@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Recipes.Contexts;
 using Recipe = ProjectHermes.ShoppingList.Api.Infrastructure.Recipes.Entities.Recipe;
 
@@ -10,20 +11,32 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.Recipes.Adapters;
 public class RecipeRepository : IRecipeRepository
 {
     private readonly RecipeContext _dbContext;
+    private readonly IToDomainConverter<Recipe, RecipeSearchResult> _searchToModelConverter;
     private readonly IToDomainConverter<Recipe, IRecipe> _toModelConverter;
     private readonly IToContractConverter<IRecipe, Recipe> _toEntityConverter;
     private readonly CancellationToken _cancellationToken;
 
     public RecipeRepository(
         RecipeContext dbContext,
+        IToDomainConverter<Recipe, RecipeSearchResult> searchToModelConverter,
         IToDomainConverter<Recipe, IRecipe> toModelConverter,
         IToContractConverter<IRecipe, Recipe> toEntityConverter,
         CancellationToken cancellationToken)
     {
         _dbContext = dbContext;
+        _searchToModelConverter = searchToModelConverter;
         _toModelConverter = toModelConverter;
         _toEntityConverter = toEntityConverter;
         _cancellationToken = cancellationToken;
+    }
+
+    public async Task<IEnumerable<RecipeSearchResult>> SearchByAsync(string searchInput)
+    {
+        var entities = await _dbContext.Recipes.AsNoTracking()
+            .Where(r => r.Name.Contains(searchInput))
+            .ToListAsync(_cancellationToken);
+
+        return _searchToModelConverter.ToDomain(entities);
     }
 
     public async Task<IRecipe> StoreAsync(IRecipe recipe)

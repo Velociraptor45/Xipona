@@ -1,9 +1,11 @@
-﻿using FluentAssertions;
+﻿using AutoFixture;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
@@ -38,7 +40,7 @@ public class RecipeControllerIntegrationTests
             _fixture.SetupContract();
             _fixture.SetupExpectedEntity();
             _fixture.SetupExpectedResult();
-            await _fixture.PrepareDatabase();
+            await _fixture.PrepareDatabaseAsync();
 
             var sut = _fixture.CreateSut();
 
@@ -77,7 +79,7 @@ public class RecipeControllerIntegrationTests
             public RecipeContract? ExpectedResult { get; private set; }
             public RecipeEntities.Recipe? ExpectedEntity { get; private set; }
 
-            public async Task PrepareDatabase()
+            public async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_model);
 
@@ -159,6 +161,138 @@ public class RecipeControllerIntegrationTests
             public void SetupModel()
             {
                 _model = new RecipeBuilder().Create();
+            }
+        }
+    }
+
+    [Collection(DockerCollection.Name)]
+    public class SearchRecipesByNameAsync
+    {
+        private readonly SearchRecipesByNameAsyncFixture _fixture;
+
+        public SearchRecipesByNameAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new SearchRecipesByNameAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task SearchRecipesByNameAsync_WithValidSearchInput_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupExistingRecipe();
+            await _fixture.PrepareDatabaseAsync();
+            _fixture.SetupSearchInput();
+            _fixture.SetupExpectedResult();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.SearchInput);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.SearchRecipesByNameAsync(_fixture.SearchInput);
+
+            // Assert
+            result.Should().BeOfType<OkObjectResult>();
+            var collection = ((OkObjectResult)result).Value;
+            collection.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class SearchRecipesByNameAsyncFixture : RecipeControllerFixture
+        {
+            private RecipeEntities.Recipe? _existingEntityToBeFound;
+            private RecipeEntities.Recipe? _existingEntityNotToBeFound;
+
+            public SearchRecipesByNameAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public IReadOnlyCollection<RecipeSearchResultContract>? ExpectedResult { get; private set; }
+            public string? SearchInput { get; private set; }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingEntityToBeFound);
+                TestPropertyNotSetException.ThrowIfNull(_existingEntityNotToBeFound);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+                await using var recipeContext = GetContextInstance<RecipeContext>(ArrangeScope);
+
+                recipeContext.Add(_existingEntityToBeFound);
+                recipeContext.Add(_existingEntityNotToBeFound);
+
+                await recipeContext.SaveChangesAsync();
+            }
+
+            public void SetupSearchInput()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingEntityToBeFound);
+
+                var nameLength = _existingEntityToBeFound.Name.Length;
+
+                var generatorStart = new RandomNumericSequenceGenerator(0, nameLength - 25);
+                var start = (int)generatorStart.Create(typeof(int), null);
+
+                var generatorEnd = new RandomNumericSequenceGenerator(start + 7, nameLength - 1);
+                var end = (int)generatorEnd.Create(typeof(int), null);
+
+                SearchInput = _existingEntityToBeFound.Name[start..end];
+            }
+
+            public void SetupExistingRecipe()
+            {
+                var modelToBeFound = new RecipeBuilder().Create();
+                _existingEntityToBeFound = new RecipeEntities.Recipe
+                {
+                    Id = modelToBeFound.Id.Value,
+                    Name = modelToBeFound.Name.Value,
+                    Ingredients = modelToBeFound.Ingredients.Select(i => new RecipeEntities.Ingredient
+                    {
+                        Id = i.Id.Value,
+                        ItemCategoryId = i.ItemCategoryId.Value,
+                        Quantity = i.Quantity.Value,
+                        QuantityType = (int)i.QuantityType,
+                        RecipeId = modelToBeFound.Id.Value
+                    }).ToList(),
+                    PreparationSteps = modelToBeFound.PreparationSteps.Select(p => new RecipeEntities.PreparationStep
+                    {
+                        Id = p.Id.Value,
+                        Instruction = p.Instruction.Value,
+                        SortingIndex = p.SortingIndex,
+                        RecipeId = modelToBeFound.Id.Value
+                    }).ToList()
+                };
+
+                var modelNotToBeFound = new RecipeBuilder().Create();
+                _existingEntityNotToBeFound = new RecipeEntities.Recipe
+                {
+                    Id = modelNotToBeFound.Id.Value,
+                    Name = modelNotToBeFound.Name.Value,
+                    Ingredients = modelNotToBeFound.Ingredients.Select(i => new RecipeEntities.Ingredient
+                    {
+                        Id = i.Id.Value,
+                        ItemCategoryId = i.ItemCategoryId.Value,
+                        Quantity = i.Quantity.Value,
+                        QuantityType = (int)i.QuantityType,
+                        RecipeId = modelNotToBeFound.Id.Value
+                    }).ToList(),
+                    PreparationSteps = modelNotToBeFound.PreparationSteps.Select(p => new RecipeEntities.PreparationStep
+                    {
+                        Id = p.Id.Value,
+                        Instruction = p.Instruction.Value,
+                        SortingIndex = p.SortingIndex,
+                        RecipeId = modelNotToBeFound.Id.Value
+                    }).ToList()
+                };
+            }
+
+            public void SetupExpectedResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingEntityToBeFound);
+
+                ExpectedResult = new List<RecipeSearchResultContract>()
+                {
+                    new(_existingEntityToBeFound.Id, _existingEntityToBeFound.Name)
+                };
             }
         }
     }

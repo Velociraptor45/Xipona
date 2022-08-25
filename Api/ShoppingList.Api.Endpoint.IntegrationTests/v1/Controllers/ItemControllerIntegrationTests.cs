@@ -29,7 +29,7 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Tests.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
 using System.Text.RegularExpressions;

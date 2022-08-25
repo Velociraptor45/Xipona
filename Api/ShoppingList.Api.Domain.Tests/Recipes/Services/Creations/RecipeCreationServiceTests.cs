@@ -8,7 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using Xunit.Abstractions;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Recipes.Services;
+namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Recipes.Services.Creations;
 
 public class RecipeCreationServiceTests
 {
