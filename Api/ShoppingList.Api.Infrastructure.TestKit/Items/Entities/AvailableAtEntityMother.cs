@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Tests.Items.Entities;
+﻿namespace ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
 
 public static class AvailableAtEntityMother
 {

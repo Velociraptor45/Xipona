@@ -3,11 +3,10 @@ using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
-using System;
 using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
 using ItemType = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.ItemType;
 
-namespace ProjectHermes.ShoppingList.Api.Infrastructure.Tests.Items.Entities;
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
 
 public class ItemEntityBuilder : TestBuilder<Item>
 {
