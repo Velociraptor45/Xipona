@@ -17,6 +17,7 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.AllQuanti
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.ItemById;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchItems;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchItemsByFilters;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItem;
@@ -30,6 +31,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
@@ -161,6 +163,39 @@ public class ItemController : ControllerBase
 
         var contracts =
             _converters.ToContract<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>(readModels);
+
+        return Ok(contracts);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<SearchItemByItemCategoryResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("search/by-item-category")]
+    public async Task<IActionResult> SearchItemsByItemCategoryAsync([FromQuery] Guid itemCategoryId)
+    {
+        var query = new SearchItemsByItemCategoryQuery(new ItemCategoryId(itemCategoryId));
+
+        List<SearchItemByItemCategoryResult> readModels;
+        try
+        {
+            readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.ItemCategoryNotFound or ErrorReasonCode.StoresNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+
+        if (!readModels.Any())
+            return NoContent();
+
+        var contracts =
+            _converters.ToContract<SearchItemByItemCategoryResult, SearchItemByItemCategoryResultContract>(readModels);
 
         return Ok(contracts);
     }
@@ -389,7 +424,7 @@ public class ItemController : ControllerBase
         catch (DomainException e)
         {
             var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
-            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+            if (e.Reason.ErrorCode is ErrorReasonCode.ItemNotFound or ErrorReasonCode.StoreNotFound)
                 return NotFound(errorContract);
 
             return UnprocessableEntity(errorContract);

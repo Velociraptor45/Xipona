@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion.ItemReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion.ItemSearchReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
@@ -29,6 +30,13 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IAvailabilityValidationService, AvailabilityValidationService>();
         services.AddTransient<IItemSearchReadModelConversionService, ItemSearchReadModelConversionService>();
         services.AddTransient<IItemReadModelConversionService, ItemReadModelConversionService>();
+
+        services.AddTransient<Func<CancellationToken, IItemAvailabilityReadModelConversionService>>(provider =>
+        {
+            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            return cancellationToken =>
+                new ItemAvailabilityReadModelConversionService(storeRepository, cancellationToken);
+        });
 
         services.AddTransient<IItemTypeFactory, ItemTypeFactory>();
 
@@ -59,8 +67,13 @@ public static class ServiceCollectionExtensions
             var storeRepository = provider.GetRequiredService<IStoreRepository>();
             var itemTypeReadRepository = provider.GetRequiredService<IItemTypeReadRepository>();
             var conversionService = provider.GetRequiredService<IItemSearchReadModelConversionService>();
+            var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
+            var availabilityConverterDelegate = provider.GetRequiredService<
+                Func<CancellationToken, IItemAvailabilityReadModelConversionService>>();
+
             return cancellationToken => new ItemSearchService(itemRepository, shoppingListRepository,
-                storeRepository, itemTypeReadRepository, conversionService, cancellationToken);
+                storeRepository, itemTypeReadRepository, conversionService, validatorDelegate,
+                availabilityConverterDelegate, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IItemCreationService>>(provider =>

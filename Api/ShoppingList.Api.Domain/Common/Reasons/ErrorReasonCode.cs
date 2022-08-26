@@ -40,4 +40,5 @@ public enum ErrorReasonCode
     InvalidQuantity = 38,
     IngredientQuantityNotValid = 39,
     DuplicatedSortingIndex = 40,
+    StoresNotFound = 41,
 }

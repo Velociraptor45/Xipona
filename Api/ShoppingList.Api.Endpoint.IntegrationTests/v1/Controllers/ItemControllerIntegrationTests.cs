@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
@@ -21,6 +21,7 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
@@ -30,12 +31,16 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Stores.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
 using System.Text.RegularExpressions;
 using Xunit;
 using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
+using ItemAvailabilityContract = ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared.ItemAvailabilityContract;
+using ItemCategoryEntities = ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities;
 using ItemType = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.ItemType;
+using Store = ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Store;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
 
@@ -303,6 +308,7 @@ public class ItemControllerIntegrationTests
                         .CreateMany(1);
 
                     var store = new StoreBuilder()
+                        .WithIsDeleted(false)
                         .WithId(new StoreId(av.StoreId))
                         .WithSections(new Sections(section, factory))
                         .Create();
@@ -568,6 +574,120 @@ public class ItemControllerIntegrationTests
                             .ToList()
                     }).ToList()
                 };
+            }
+        }
+    }
+
+    [Collection(DockerCollection.Name)]
+    public sealed class SearchItemsByItemCategoryAsync
+    {
+        private readonly SearchItemsByItemCategoryAsyncFixture _fixture;
+
+        public SearchItemsByItemCategoryAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new SearchItemsByItemCategoryAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task SearchItemsByItemCategoryAsync_WithValidItemCategoryId_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupItemCategory();
+            _fixture.SetupItemsWithAndWithoutItemCategory();
+            await _fixture.PrepareDatabaseAsync();
+            _fixture.SetupExpectedResult();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCategoryId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.SearchItemsByItemCategoryAsync(_fixture.ItemCategoryId.Value);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+            var resultValue = (result as OkObjectResult)!.Value;
+            resultValue.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class SearchItemsByItemCategoryAsyncFixture : ItemControllerFixture
+        {
+            private readonly CommonFixture _commonFixture = new();
+            private Item? _itemWithItemCategory;
+            private Item? _itemWithoutItemCategory;
+            private ItemCategoryEntities.ItemCategory? _itemCategory;
+            private Store? _store;
+
+            public SearchItemsByItemCategoryAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public Guid? ItemCategoryId => _itemCategory?.Id;
+            public IReadOnlyCollection<SearchItemByItemCategoryResultContract>? ExpectedResult { get; private set; }
+
+            public void SetupItemCategory()
+            {
+                _itemCategory = new TestBuilder<ItemCategoryEntities.ItemCategory>()
+                    .FillPropertyWith(c => c.Deleted, false)
+                    .Create();
+            }
+
+            public void SetupItemsWithAndWithoutItemCategory()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_itemCategory);
+                _store = StoreEntityMother.Initial().Create();
+
+                var defaultSectionId = _commonFixture.ChooseRandom(_store.Sections).Id;
+
+                _itemWithItemCategory =
+                    ItemEntityMother.Initial().WithItemCategoryId(_itemCategory.Id)
+                        .WithAvailabilities(AvailableAtEntityMother
+                            .InitialForStore(_store.Id)
+                            .WithDefaultSectionId(defaultSectionId)
+                            .CreateMany(1))
+                        .Create();
+                _itemWithoutItemCategory = ItemEntityMother.Initial().Create();
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_itemWithItemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_itemWithoutItemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_itemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                var itemContext = ArrangeScope.ServiceProvider.GetRequiredService<ItemContext>();
+                var itemCategoryContext = ArrangeScope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
+                var storeContext = ArrangeScope.ServiceProvider.GetRequiredService<StoreContext>();
+
+                itemCategoryContext.Add(_itemCategory);
+                storeContext.Add(_store);
+                itemContext.Add(_itemWithItemCategory);
+                itemContext.Add(_itemWithoutItemCategory);
+
+                await itemCategoryContext.SaveChangesAsync();
+                await itemContext.SaveChangesAsync();
+                await storeContext.SaveChangesAsync();
+            }
+
+            public void SetupExpectedResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                TestPropertyNotSetException.ThrowIfNull(_itemWithItemCategory);
+
+                ExpectedResult = new SearchItemByItemCategoryResultContract(
+                    _itemWithItemCategory.Id,
+                    null,
+                    _itemWithItemCategory.Name,
+                    _itemWithItemCategory.AvailableAt.Select(av =>
+                        new SearchItemByItemCategoryAvailabilityContract(
+                            _store.Id,
+                            _store.Name,
+                            av.Price)))
+                    .ToMonoList();
             }
         }
     }

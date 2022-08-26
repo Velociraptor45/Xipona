@@ -10,7 +10,8 @@ public static class ItemEntityMother
             .WithoutCreatedFrom()
             .WithoutPredecessorId()
             .WithoutPredecessor()
-            .WithEmptyItemTypes();
+            .WithEmptyItemTypes()
+            .WithAvailabilities(new AvailableAtEntityBuilder().CreateMany(3));
     }
 
     public static ItemEntityBuilder InitialForStore(Guid storeId)

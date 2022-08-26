@@ -48,6 +48,12 @@ public class StoreRepository : IStoreRepository
         return _toDomainConverter.ToDomain(entity);
     }
 
+    public async Task<IEnumerable<IStore>> FindActiveByAsync(IEnumerable<StoreId> ids,
+        CancellationToken cancellationToken)
+    {
+        return await FindByAsync(ids, true, cancellationToken);
+    }
+
     public async Task<IStore?> FindByAsync(StoreId id, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -60,7 +66,8 @@ public class StoreRepository : IStoreRepository
         return entity == null ? null : _toDomainConverter.ToDomain(entity);
     }
 
-    public async Task<IEnumerable<IStore>> FindByAsync(IEnumerable<StoreId> ids, CancellationToken cancellationToken)
+    public async Task<IEnumerable<IStore>> FindByAsync(IEnumerable<StoreId> ids, bool onlyActives,
+        CancellationToken cancellationToken)
     {
         if (ids == null)
             throw new ArgumentNullException(nameof(ids));
@@ -69,9 +76,13 @@ public class StoreRepository : IStoreRepository
 
         var idsList = ids.Select(id => id.Value).ToList();
 
-        var entities = await GetStoreQuery()
-            .Where(store => idsList.Contains(store.Id))
-            .ToListAsync(cancellationToken);
+        var query = GetStoreQuery()
+            .Where(store => idsList.Contains(store.Id));
+
+        if (onlyActives)
+            query = query.Where(s => !s.Deleted);
+
+        var entities = await query.ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 

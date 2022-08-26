@@ -14,6 +14,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
@@ -154,6 +155,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
             Guid storeId, string searchInput)
         {
             return await _apiClient.SearchItemsForShoppingListAsync(storeId, searchInput);
+        }
+
+        public async Task<IEnumerable<SearchItemByItemCategoryResultContract>> SearchItemsByItemCategoryAsync(
+            Guid itemCategoryId)
+        {
+            return await _apiClient.SearchItemsByItemCategoryAsync(itemCategoryId);
         }
 
         public async Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync(string searchInput)
