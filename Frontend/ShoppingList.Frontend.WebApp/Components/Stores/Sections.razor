@@ -28,6 +28,7 @@
                   LabelName="@nameof(Models.Stores.Models.Section.Name)"
                   DefaultValue="@State.EditedStore.Sections.First(s => s.IsDefaultSection).Id"
                   DataSource="@State.EditedStore.Sections.ToList()"
+                  IgnoreItemChanges="false"
                   OnItemChanged="OnDefaultSectionChanged"></SingleSelect>
 </div>
 
