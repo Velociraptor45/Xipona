@@ -92,9 +92,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync(
             [Path] Guid storeId, [Query] string searchInput);
 
-        [Get("items/search/by-item-category")]
+        [Get("items/search/by-item-category/{itemCategoryId}")]
         Task<IEnumerable<SearchItemByItemCategoryResultContract>> SearchItemsByItemCategoryAsync(
-            [Query] Guid itemCategoryId);
+            [Path] Guid itemCategoryId);
 
         [Get("items/search")]
         Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync([Query] string searchInput);

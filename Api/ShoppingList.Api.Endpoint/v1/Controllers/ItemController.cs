@@ -172,8 +172,8 @@ public class ItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("search/by-item-category")]
-    public async Task<IActionResult> SearchItemsByItemCategoryAsync([FromQuery] Guid itemCategoryId)
+    [Route("search/by-item-category/{itemCategoryId:guid}")]
+    public async Task<IActionResult> SearchItemsByItemCategoryAsync([FromRoute] Guid itemCategoryId)
     {
         var query = new SearchItemsByItemCategoryQuery(new ItemCategoryId(itemCategoryId));
 
