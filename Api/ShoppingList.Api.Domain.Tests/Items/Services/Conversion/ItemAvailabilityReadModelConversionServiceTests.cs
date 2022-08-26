@@ -9,7 +9,7 @@ public class ItemAvailabilityReadModelConversionServiceTests
         _fixture = new ItemAvailabilityReadModelConversionServiceFixture();
     }
 
-    // todo
+    // todo #54
 
     private sealed class ItemAvailabilityReadModelConversionServiceFixture
     {
