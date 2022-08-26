@@ -110,4 +110,10 @@ public class ItemEntityBuilder : TestBuilder<Item>
         FillPropertyWith(i => i.CreatedFrom, createFromId);
         return this;
     }
+
+    public ItemEntityBuilder WithItemCategoryId(Guid? itemCategoryId)
+    {
+        FillPropertyWith(i => i.ItemCategoryId, itemCategoryId);
+        return this;
+    }
 }

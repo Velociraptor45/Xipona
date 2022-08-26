@@ -15,6 +15,11 @@ public class UnprocessableEntityStatusResult : IStatusResult
         ExcludedErrorCodes = excludedErrorCodes;
     }
 
+    public UnprocessableEntityStatusResult(params ErrorReasonCode[] excludedErrorCodes)
+    {
+        ExcludedErrorCodes = excludedErrorCodes;
+    }
+
     public HttpStatusCode StatusCode => HttpStatusCode.UnprocessableEntity;
     public IEnumerable<ErrorReasonCode> ExcludedErrorCodes { get; }
 }

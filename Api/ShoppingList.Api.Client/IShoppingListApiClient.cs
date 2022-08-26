@@ -12,6 +12,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
@@ -90,6 +91,10 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Get("items/search/{storeId}")]
         Task<IEnumerable<SearchItemForShoppingListResultContract>> SearchItemsForShoppingListAsync(
             [Path] Guid storeId, [Query] string searchInput);
+
+        [Get("items/search/by-item-category/{itemCategoryId}")]
+        Task<IEnumerable<SearchItemByItemCategoryResultContract>> SearchItemsByItemCategoryAsync(
+            [Path] Guid itemCategoryId);
 
         [Get("items/search")]
         Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync([Query] string searchInput);

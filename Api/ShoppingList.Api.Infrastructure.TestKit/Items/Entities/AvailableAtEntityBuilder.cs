@@ -5,6 +5,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
 
 public class AvailableAtEntityBuilder : TestBuilder<AvailableAt>
 {
+    public AvailableAtEntityBuilder()
+    {
+        WithoutItem();
+    }
+
     public AvailableAtEntityBuilder WithStoreId(Guid storeId)
     {
         FillPropertyWith(av => av.StoreId, storeId);
@@ -19,6 +24,12 @@ public class AvailableAtEntityBuilder : TestBuilder<AvailableAt>
     public AvailableAtEntityBuilder WithItem(Item? item)
     {
         FillPropertyWith(av => av.Item, item);
+        return this;
+    }
+
+    public AvailableAtEntityBuilder WithDefaultSectionId(Guid defaultSectionId)
+    {
+        FillPropertyWith(av => av.DefaultSectionId, defaultSectionId);
         return this;
     }
 }

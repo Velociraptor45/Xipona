@@ -20,11 +20,11 @@ public class AvailabilityValidationService : IAvailabilityValidationService
     {
         var availabilitiesList = availabilities.ToList();
 
-        var storeIds = availabilitiesList.Select(av => av.StoreId);
+        var storeIds = availabilitiesList.Select(av => av.StoreId).ToList();
         if (!storeIds.SequenceEqual(storeIds.Distinct()))
             throw new DomainException(new MultipleAvailabilitiesForStoreReason());
 
-        var storesDict = (await _storeRepository.FindByAsync(storeIds, cancellationToken))
+        var storesDict = (await _storeRepository.FindByAsync(storeIds, true, cancellationToken))
             .ToDictionary(s => s.Id);
 
         foreach (var availability in availabilitiesList)

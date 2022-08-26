@@ -3,8 +3,10 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion.ItemSearchReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
@@ -21,11 +23,15 @@ public class ItemSearchService : IItemSearchService
     private readonly IStoreRepository _storeRepository;
     private readonly IItemTypeReadRepository _itemTypeReadRepository;
     private readonly IItemSearchReadModelConversionService _itemSearchReadModelConversionService;
+    private readonly IValidator _validator;
+    private readonly IItemAvailabilityReadModelConversionService _availabilityConverter;
     private readonly CancellationToken _cancellationToken;
 
     public ItemSearchService(IItemRepository itemRepository, IShoppingListRepository shoppingListRepository,
         IStoreRepository storeRepository, IItemTypeReadRepository itemTypeReadRepository,
         IItemSearchReadModelConversionService itemSearchReadModelConversionService,
+        Func<CancellationToken, IValidator> validatorDelegate,
+        Func<CancellationToken, IItemAvailabilityReadModelConversionService> availabilityConverterDelegate,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
@@ -33,6 +39,8 @@ public class ItemSearchService : IItemSearchService
         _storeRepository = storeRepository;
         _itemTypeReadRepository = itemTypeReadRepository;
         _itemSearchReadModelConversionService = itemSearchReadModelConversionService;
+        _validator = validatorDelegate(cancellationToken);
+        _availabilityConverter = availabilityConverterDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
     }
 
@@ -59,6 +67,41 @@ public class ItemSearchService : IItemSearchService
 
         var items = await _itemRepository.FindActiveByAsync(searchInput, _cancellationToken);
         return items.Select(i => new SearchItemResultReadModel(i.Id, i.Name));
+    }
+
+    public async Task<IEnumerable<SearchItemByItemCategoryResult>> SearchAsync(ItemCategoryId itemCategoryId)
+    {
+        await _validator.ValidateAsync(itemCategoryId);
+
+        var items = (await _itemRepository.FindActiveByAsync(itemCategoryId, _cancellationToken))
+            .ToList();
+        var itemsLookup = items.ToLookup(i => i.HasItemTypes);
+
+        var availabilitiesDict = await _availabilityConverter.ConvertAsync(items);
+
+        var results = new List<SearchItemByItemCategoryResult>();
+        foreach (var item in itemsLookup[true])
+        {
+            foreach (var type in item.ItemTypes)
+            {
+                results.Add(new SearchItemByItemCategoryResult(
+                    item.Id,
+                    type.Id,
+                    $"{item.Name} {type.Name}",
+                    availabilitiesDict[(item.Id, type.Id)]));
+            }
+        }
+
+        foreach (var item in itemsLookup[false])
+        {
+            results.Add(new SearchItemByItemCategoryResult(
+                item.Id,
+                null,
+                item.Name.Value,
+                availabilitiesDict[(item.Id, null)]));
+        }
+
+        return results;
     }
 
     public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> SearchForShoppingListAsync(string name, StoreId storeId)
