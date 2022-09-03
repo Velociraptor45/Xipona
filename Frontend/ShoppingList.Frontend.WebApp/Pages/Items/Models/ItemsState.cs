@@ -60,6 +60,11 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
             StateChanged?.Invoke();
         }
 
+        public Store GetStore(Guid id)
+        {
+            return Stores.FirstOrDefault(s => s.Id == id);
+        }
+
         public void EnterEditorForNewItem()
         {
             // todo: ugly
