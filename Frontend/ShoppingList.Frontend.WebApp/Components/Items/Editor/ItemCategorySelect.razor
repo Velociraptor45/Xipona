@@ -50,12 +50,14 @@
         State.EditedItem.ItemCategoryId = itemCategory.Id;
     }
 
-    private async Task OnNewItemCategoryCreatedAsync(string name)
+    private async Task<(ItemCategorySearchResult, Guid)> OnNewItemCategoryCreatedAsync(string name)
     {
-        await _itemApiService.CreateItemCategoryAsync(name, FragmentCreator, async () =>
-        {
-            await State.ItemCategoryCreated();
-            StateHasChanged();
-        });
+        var newItemCategory = await _itemApiService.CreateItemCategoryAsync(name, FragmentCreator);
+
+        if(newItemCategory == null)
+            return (null, Guid.Empty);
+
+        await State.ItemCategoryCreated();
+        return (new ItemCategorySearchResult(newItemCategory.Id, newItemCategory.Name), newItemCategory.Id);
     }
 }

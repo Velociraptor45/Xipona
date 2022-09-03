@@ -16,6 +16,7 @@
         DropdownRender="@OnRender"
         IgnoreItemChanges="@IgnoreItemChanges"
         OnDropdownVisibleChange="OnDropdownToggle"
+        OnClearSelected="() => _selectedItem = default"
         @bind-Value="@_selectedValue">
 </Select>
 
@@ -32,14 +33,15 @@
     [Parameter] public bool AllowClear { get; set; } = false;
 
     [Parameter] public EventCallback<TItem> OnItemChanged { get; set; }
-    [Parameter] public EventCallback<string> OnItemAdded { get; set; }
+    [Parameter] public Func<string, Task<(TItem, TValue)>> OnItemAdded { get; set; }
 
     [Parameter] public Func<string, Task<IEnumerable<TItem>>> SearchForItemsAsync { get; set; }
 
     [Parameter] public bool IgnoreItemChanges { get; set; } = true;
 
-    private string _itemSearchInput = "";
+    private string _itemSearchInput = string.Empty;
     private TValue _selectedValue;
+    private TItem _selectedItem;
 
     private List<TItem> _dataSource = new();
 
@@ -51,7 +53,9 @@
     {
         base.OnInitialized();
         if (DataSource is not null)
+        {
             _dataSource = DataSource;
+        }
     }
 
     protected override void OnParametersSet()
@@ -60,17 +64,32 @@
 
         if (_selectedValue is null || _selectedValue.Equals(default(TValue)))
             _selectedValue = DefaultValue;
+
+        if (_selectedItem is null || _selectedItem.Equals(default(TItem)))
+            _selectedItem = GetItemByValue(DefaultValue);
     }
 
     private async void OnSelectedItemChanged(TItem item)
     {
+        _selectedItem = item;
+        _itemSearchInput = string.Empty;
         await OnItemChanged.InvokeAsync(item);
     }
 
     private async void OnAddNewItem()
     {
-        await OnItemAdded.InvokeAsync(_itemSearchInput);
+        var (result, resultId) = await OnItemAdded(_itemSearchInput);
+        if (result is null)
+            return;
+
+        _dataSource.Clear();
+        _dataSource.Add(result);
+        _selectedValue = resultId;
+        _selectedItem = result;
         _itemSearchInput = "";
+        await OnItemChanged.InvokeAsync(result);
+        
+        StateHasChanged();
     }
 
     private void OnSearchInput(ChangeEventArgs args)
@@ -86,7 +105,7 @@
 
         _itemSearchInput = input;
 
-        RestartTimer();
+        RestartSearchTimer();
     }
 
     private async void OnSearchTimerExpired(object source, ElapsedEventArgs e)
@@ -101,15 +120,45 @@
     private void OnDropdownToggle(bool visible)
     {
         if (!visible)
+        {
+            ResetDropdown();
             return;
+        }
 
-        var startSearchTimer = new Timer(200d);
-        startSearchTimer.AutoReset = false;
-        startSearchTimer.Elapsed += (_, _) => _searchInput.Focus(FocusBehavior.FocusAndClear);
-        startSearchTimer.Start();
+        var focusInputTimer = new Timer(200d);
+        focusInputTimer.AutoReset = false;
+        focusInputTimer.Elapsed += (_, _) => _searchInput.Focus(FocusBehavior.FocusAndClear);
+        focusInputTimer.Start();
     }
 
-    private void RestartTimer()
+    private void ResetDropdown()
+    {
+        var item = GetItemByValue(_selectedValue);
+        if (item != null && !item.Equals(default))
+            return;
+
+        _dataSource.Clear();
+        if(_selectedItem != null && !_selectedItem.Equals(default))
+            _dataSource.Add(_selectedItem);
+
+        _itemSearchInput = string.Empty;
+        StateHasChanged();
+    }
+
+    private TItem GetItemByValue(TValue value)
+    {
+        foreach (var item in _dataSource)
+        {
+            var val = (TValue)typeof(TItem).GetProperty(ValueName)?.GetValue(item);
+            if (val != null && val.Equals(value))
+                return item;
+        }
+
+        return default;
+    }
+
+
+    private void RestartSearchTimer()
     {
         if (_startSearchTimer is not null)
         {

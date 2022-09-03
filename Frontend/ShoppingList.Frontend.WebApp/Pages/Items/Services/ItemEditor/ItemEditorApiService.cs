@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
@@ -247,31 +248,28 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
             onSuccessAction();
         }
 
-        public async Task CreateItemCategoryAsync(string name, IAsyncRetryFragmentCreator fragmentCreator,
-            Func<Task> onSuccessAction)
+        public async Task<ItemCategory> CreateItemCategoryAsync(string name, IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
             {
-                await _apiClient.CreateItemCategoryAsync(name);
+                return await _apiClient.CreateItemCategoryAsync(name);
             }
             catch (ApiException e)
             {
                 var contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await CreateItemCategoryAsync(name, fragmentCreator, onSuccessAction));
+                    await CreateItemCategoryAsync(name, fragmentCreator));
                 _notificationService.NotifyError("Creating item category failed", contract.Message, fragment);
-                return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await CreateItemCategoryAsync(name, fragmentCreator, onSuccessAction));
+                    await CreateItemCategoryAsync(name, fragmentCreator));
                 _notificationService.NotifyError("Unknown error while creating item category", e.Message, fragment);
-                return;
             }
 
-            await onSuccessAction();
+            return null;
         }
 
         public async Task CreateManufacturerAsync(string name, IAsyncRetryFragmentCreator fragmentCreator,

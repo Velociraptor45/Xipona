@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using System;
 using System.Threading.Tasks;
@@ -31,8 +32,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEd
         Task DeleteItemAsync(Guid itemId, IAsyncRetryFragmentCreator fragmentCreator,
             Action onSuccessAction);
 
-        Task CreateItemCategoryAsync(string name, IAsyncRetryFragmentCreator fragmentCreator,
-            Func<Task> onSuccessAction);
+        Task<ItemCategory> CreateItemCategoryAsync(string name, IAsyncRetryFragmentCreator fragmentCreator);
 
         Task CreateManufacturerAsync(string name, IAsyncRetryFragmentCreator fragmentCreator,
             Func<Task> onSuccessAction);
