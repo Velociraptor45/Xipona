@@ -16,8 +16,10 @@
             <div class="pb-3">
                 <Availability State="@State"
                               Model="@Available.Availabilities[i]"
+                              Stores="_storesPerAvailability[i]"
                               Index="i"
-                              OnRemove="index => Available.Availabilities.RemoveAt(index)"></Availability>
+                              OnRemove="OnRemoveAvailability"
+                              OnSelectedStoreChanged="OnSelectedStoreInAvailabilityChanged"></Availability>
             </div>
         }
     </div>
@@ -27,9 +29,72 @@
     [Parameter] public ItemsState State { get; set; }
     [Parameter] public IAvailable Available { get; set; }
 
+    private List<List<AvailabilityStore>> _storesPerAvailability;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        BuildDict();
+    }
+
     private void OnAddStoreButtonClicked()
     {
         Available.AddStore(State.Stores);
+        AddStoreAvailability(Available.Availabilities.Count - 1);
+        UpdateAvailabilityStoreDisabling();
+
         State.StateChanged();
+    }
+
+    private void BuildDict()
+    {
+        _storesPerAvailability = new();
+
+        for (int i = 0; i < Available.Availabilities.Count; i++)
+        {
+            AddStoreAvailability(i);
+        }
+        UpdateAvailabilityStoreDisabling();
+    }
+
+    private void AddStoreAvailability(int index)
+    {
+        var stores = State.Stores
+            .Select(s => new AvailabilityStore(s.Id, s.Name, false))
+            .ToList();
+        _storesPerAvailability.Insert(index, stores);
+    }
+
+    public void UpdateAvailabilityStoreDisabling()
+    {
+        var availableStores = Available
+            .GetNotRegisteredStores(State.Stores)
+            .Select(s => s.Id)
+            .ToHashSet();
+
+        for (int i = 0; i < Available.Availabilities.Count; i++)
+        {
+            var availability = Available.Availabilities[i];
+            var stores = _storesPerAvailability[i];
+
+            foreach (var store in stores)
+            {
+                store.IsDisabled = store.Id != availability.Store.Id && !availableStores.Contains(store.Id);
+            }
+        }
+    }
+
+    private void OnRemoveAvailability(int index)
+    {
+        Available.Availabilities.RemoveAt(index);
+        _storesPerAvailability.RemoveAt(index);
+        UpdateAvailabilityStoreDisabling();
+        StateHasChanged();
+    }
+
+    private void OnSelectedStoreInAvailabilityChanged()
+    {
+        UpdateAvailabilityStoreDisabling();
+        StateHasChanged();
     }
 }
