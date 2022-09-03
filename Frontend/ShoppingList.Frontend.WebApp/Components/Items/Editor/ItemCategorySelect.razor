@@ -1,41 +1,58 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.Items;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEditor
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 
-@inject IItemEditorApiService apiService;
+@inject IItemEditorApiService _itemApiService;
+@inject IItemCategoryApiService _itemCategoryApiService;
 
 <div>
     <div class="font-weight-bold">Category</div>
-    <SingleSelect
+    <SingleSearchSelect
         Class="mt-1 min-w-150"
-        TItem="ItemCategory"
+        TItem="ItemCategorySearchResult"
         TValue="Guid"
-        ValueName="@nameof(ItemCategory.Id)"
-        LabelName="@nameof(ItemCategory.Name)"
-        DataSource="@State.ItemCategories.ToList()"
+        DataSource="_dataSource"
+        ValueName="@nameof(ItemCategorySearchResult.Id)"
+        LabelName="@nameof(ItemCategorySearchResult.Name)"
         OnItemAdded="@OnNewItemCategoryCreatedAsync"
         OnItemChanged="@OnItemCategoryChanged"
         Placeholder="Item Category"
         DefaultValue="@State.EditedItem.ItemCategoryId.GetValueOrDefault()"
+        SearchForItemsAsync="_itemCategoryApiService.SearchAsync"
         CanAddItem="true">
-    </SingleSelect>
+    </SingleSearchSelect>
 </div>
 
 @code {
     [Parameter] public ItemsState State { get; set; }
     [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
 
-    private void OnItemCategoryChanged(ItemCategory itemCategory)
+    private List<ItemCategorySearchResult> _dataSource = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        if (State.EditedItem.ItemCategoryId.HasValue)
+        {
+
+            var itemCategory = await _itemCategoryApiService.GetAsync(State.EditedItem.ItemCategoryId.Value);
+            if(itemCategory is not null)
+                _dataSource.Add(new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name));
+        }
+    }
+
+    private void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
     {
         State.EditedItem.ItemCategoryId = itemCategory.Id;
     }
 
     private async Task OnNewItemCategoryCreatedAsync(string name)
     {
-        await apiService.CreateItemCategoryAsync(name, FragmentCreator, async () =>
+        await _itemApiService.CreateItemCategoryAsync(name, FragmentCreator, async () =>
         {
             await State.ItemCategoryCreated();
             StateHasChanged();

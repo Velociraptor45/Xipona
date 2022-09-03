@@ -1,0 +1,152 @@
+﻿@using System.Timers;
+@using System.Diagnostics
+
+@typeparam TValue
+@typeparam TItem
+
+<Select Class="@Class"
+        Placeholder="@Placeholder"
+        ValueName="@ValueName"
+        LabelName="@LabelName"
+        DataSource="@_dataSource"
+        TItemValue="TValue"
+        TItem="TItem"
+        OnSelectedItemChanged="OnSelectedItemChanged"
+        AllowClear="@AllowClear"
+        DropdownRender="@OnRender"
+        IgnoreItemChanges="@IgnoreItemChanges"
+        OnDropdownVisibleChange="OnDropdownToggle"
+        @bind-Value="@_selectedValue">
+</Select>
+
+@code {
+    [Parameter] public string Class { get; set; }
+    [Parameter] public string Placeholder { get; set; }
+
+    [Parameter] public List<TItem> DataSource { get; set; }
+    [Parameter] public TValue DefaultValue { get; set; }
+    [Parameter] public string ValueName { get; set; }
+    [Parameter] public string LabelName { get; set; }
+
+    [Parameter] public bool CanAddItem { get; set; } = false;
+    [Parameter] public bool AllowClear { get; set; } = false;
+
+    [Parameter] public EventCallback<TItem> OnItemChanged { get; set; }
+    [Parameter] public EventCallback<string> OnItemAdded { get; set; }
+
+    [Parameter] public Func<string, Task<IEnumerable<TItem>>> SearchForItemsAsync { get; set; }
+
+    [Parameter] public bool IgnoreItemChanges { get; set; } = true;
+
+    private string _itemSearchInput = "";
+    private TValue _selectedValue;
+
+    private List<TItem> _dataSource = new();
+
+    private Timer _startSearchTimer;
+
+    private Input<string> _searchInput;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (DataSource is not null)
+            _dataSource = DataSource;
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (_selectedValue is null || _selectedValue.Equals(default(TValue)))
+            _selectedValue = DefaultValue;
+    }
+
+    private async void OnSelectedItemChanged(TItem item)
+    {
+        await OnItemChanged.InvokeAsync(item);
+    }
+
+    private async void OnAddNewItem()
+    {
+        await OnItemAdded.InvokeAsync(_itemSearchInput);
+        _itemSearchInput = "";
+    }
+
+    private void OnSearchInput(ChangeEventArgs args)
+    {
+        if (args.Value is not string input || string.IsNullOrWhiteSpace(input))
+        {
+            _startSearchTimer?.Stop();
+            _itemSearchInput = string.Empty;
+            _dataSource.Clear();
+            StateHasChanged();
+            return;
+        }
+
+        _itemSearchInput = input;
+
+        RestartTimer();
+    }
+
+    private async void OnSearchTimerExpired(object source, ElapsedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(_itemSearchInput))
+            return;
+            
+        _dataSource = (await SearchForItemsAsync(_itemSearchInput)).ToList();
+        StateHasChanged();
+    }
+
+    private void OnDropdownToggle(bool visible)
+    {
+        if (!visible)
+            return;
+
+        var startSearchTimer = new Timer(200d);
+        startSearchTimer.AutoReset = false;
+        startSearchTimer.Elapsed += (_, _) => _searchInput.Focus(FocusBehavior.FocusAndClear);
+        startSearchTimer.Start();
+    }
+
+    private void RestartTimer()
+    {
+        if (_startSearchTimer is not null)
+        {
+            _startSearchTimer.Stop();
+            _startSearchTimer.Dispose();
+        }
+
+        _startSearchTimer = new(300d);
+        _startSearchTimer.AutoReset = false;
+        _startSearchTimer.Elapsed += OnSearchTimerExpired;
+        _startSearchTimer.Start();
+    }
+
+    private RenderFragment OnRender(RenderFragment originNode)
+    {
+        return
+    @<Template>
+        <div>
+            @originNode
+            @if (CanAddItem)
+            {
+                <Divider Class="my-1"></Divider>
+                <div class="d-flex p-2">
+                    <div class="max-w-100">
+                        <Input @ref="_searchInput" Value="_itemSearchInput" OnInput="OnSearchInput" />
+                    </div>
+                    <a class="d-flex align-items-center min-w-50 px-2 py-1" @onclick="OnAddNewItem">
+                        <Icon Type="plus" Theme="outline"></Icon>
+                    </a>
+                </div>
+            }
+        </div>
+    </Template>;
+    }
+
+    public void ResetToDefaultValue()
+    {
+        _selectedValue = DefaultValue;
+    }
+}
