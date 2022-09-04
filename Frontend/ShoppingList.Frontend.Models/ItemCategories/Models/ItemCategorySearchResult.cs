@@ -10,8 +10,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
             Name = name;
         }
 
-        public Guid Id { get; }
-        public string Name { get; private set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
 
         public void ChangeName(string name)
         {
