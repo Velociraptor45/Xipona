@@ -47,7 +47,7 @@
 
     private void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
     {
-        State.EditedItem.ItemCategoryId = itemCategory.Id;
+        State.EditedItem.ItemCategoryId = itemCategory?.Id;
     }
 
     private async Task<(ItemCategorySearchResult, Guid)> OnNewItemCategoryCreatedAsync(string name)
