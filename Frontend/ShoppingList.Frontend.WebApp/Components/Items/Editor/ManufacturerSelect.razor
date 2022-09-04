@@ -1,45 +1,61 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models;
-@using ProjectHermes.ShoppingList.Frontend.Models.Items;
-@using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEditor
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 
-@inject IItemEditorApiService apiService;
+@inject IItemEditorApiService _itemApiService;
+@inject IManufacturerApiService _manufacturerApiService;
 
 <div class="ml-3">
     <div class="font-weight-bold">Manufacturer</div>
-    <SingleSelect
+    <SingleSearchSelect
         Class="mt-1 min-w-150"
-        TItem="Manufacturer"
+        TItem="ManufacturerSearchResult"
         TValue="Guid"
-        ValueName="@nameof(Manufacturer.Id)"
-        LabelName="@nameof(Manufacturer.Name)"
-        DataSource="@State.Manufacturers.ToList()"
+        DataSource="_dataSource"
+        ValueName="@nameof(ManufacturerSearchResult.Id)"
+        LabelName="@nameof(ManufacturerSearchResult.Name)"
+        OnItemAdded="@OnNewManufacturerCreatedAsync"
         OnItemChanged="@OnManufacturerChanged"
-        OnItemAdded="@OnNewManufacturerCreated"
         Placeholder="Manufacturer"
         DefaultValue="@State.EditedItem.ManufacturerId.GetValueOrDefault()"
+        SearchForItemsAsync="_manufacturerApiService.SearchAsync"
         CanAddItem="true"
         AllowClear="true">
-    </SingleSelect>
+    </SingleSearchSelect>
 </div>
 
 @code {
     [Parameter] public ItemsState State { get; set; }
     [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
+    
+    private List<ManufacturerSearchResult> _dataSource = new();
 
-    private void OnManufacturerChanged(Manufacturer manufacturer)
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        if (State.EditedItem.ManufacturerId.HasValue)
+        {
+            var manufacturer = await _manufacturerApiService.GetAsync(State.EditedItem.ManufacturerId.Value);
+            if (manufacturer is not null)
+                _dataSource.Add(new ManufacturerSearchResult(manufacturer.Id, manufacturer.Name));
+        }
+    }
+
+    private void OnManufacturerChanged(ManufacturerSearchResult manufacturer)
     {
         State.EditedItem.ManufacturerId = manufacturer?.Id;
     }
 
-    private async Task OnNewManufacturerCreated(string name)
+    private async Task<(ManufacturerSearchResult, Guid)> OnNewManufacturerCreatedAsync(string name)
     {
-        await apiService.CreateManufacturerAsync(name, FragmentCreator, async () =>
-        {
-            await State.ManufacturerCreated();
-            StateHasChanged();
-        });
+        var newManufacturer = await _itemApiService.CreateManufacturerAsync(name, FragmentCreator);
+
+        if (newManufacturer == null)
+            return (null, Guid.Empty);
+
+        await State.ManufacturerCreated();
+        return (new ManufacturerSearchResult(newManufacturer.Id, newManufacturer.Name), newManufacturer.Id);
     }
 }
