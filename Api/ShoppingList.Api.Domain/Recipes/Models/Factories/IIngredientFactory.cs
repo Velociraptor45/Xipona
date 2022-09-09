@@ -8,4 +8,7 @@ public interface IIngredientFactory
     Task<IIngredient> CreateNewAsync(IngredientCreation creation);
     IIngredient Create(IngredientId id, ItemCategoryId itemCategoryId, IngredientQuantityType quantityType, 
         IngredientQuantity quantity);
+
+    Task<IIngredient> CreateNewAsync(ItemCategoryId itemCategoryId, IngredientQuantityType quantityType,
+        IngredientQuantity quantity);
 }

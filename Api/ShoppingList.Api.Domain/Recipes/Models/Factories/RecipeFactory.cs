@@ -28,8 +28,8 @@ public class RecipeFactory : IRecipeFactory
 
         var preparationSteps = creation.PreparationStepCreations.Select(_preparationStepFactory.CreateNew);
 
-        return new Recipe(RecipeId.New, creation.Name, new Ingredients(ingredients),
-            new PreparationSteps(preparationSteps));
+        return new Recipe(RecipeId.New, creation.Name, new Ingredients(ingredients, _ingredientFactory),
+            new PreparationSteps(preparationSteps, _preparationStepFactory));
     }
 
     public IRecipe Create(RecipeId id, RecipeName name, IEnumerable<IIngredient> ingredients,
@@ -38,7 +38,7 @@ public class RecipeFactory : IRecipeFactory
         return new Recipe(
             id,
             name,
-            new Ingredients(ingredients),
-            new PreparationSteps(steps));
+            new Ingredients(ingredients, _ingredientFactory),
+            new PreparationSteps(steps, _preparationStepFactory));
     }
 }

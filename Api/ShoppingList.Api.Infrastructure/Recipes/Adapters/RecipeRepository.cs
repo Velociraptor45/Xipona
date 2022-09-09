@@ -39,6 +39,14 @@ public class RecipeRepository : IRecipeRepository
         return _searchToModelConverter.ToDomain(entities);
     }
 
+    public async Task<IRecipe?> FindByAsync(RecipeId recipeId)
+    {
+        var entity = await GetRecipeQuery()
+            .FirstOrDefaultAsync(r => r.Id == recipeId.Value, _cancellationToken);
+
+        return entity is null ? null : _toModelConverter.ToDomain(entity);
+    }
+
     public async Task<IRecipe> StoreAsync(IRecipe recipe)
     {
         var existingEntity = await FindTrackedEntityBy(recipe.Id);

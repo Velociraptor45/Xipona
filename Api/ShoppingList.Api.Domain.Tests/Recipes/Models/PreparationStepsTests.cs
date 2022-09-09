@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Recipes.Models;
@@ -24,7 +25,7 @@ public class PreparationStepsTests
         TestPropertyNotSetException.ThrowIfNull(_fixture.PreparationSteps);
 
         // Act
-        var func = () => new PreparationSteps(_fixture.PreparationSteps);
+        var func = () => new PreparationSteps(_fixture.PreparationSteps, _fixture.PreparationStepFactoryMock.Object);
 
         // Assert
         func.Should().NotThrow();
@@ -39,7 +40,7 @@ public class PreparationStepsTests
         TestPropertyNotSetException.ThrowIfNull(_fixture.PreparationSteps);
 
         // Act
-        var func = () => new PreparationSteps(_fixture.PreparationSteps);
+        var func = () => new PreparationSteps(_fixture.PreparationSteps, _fixture.PreparationStepFactoryMock.Object);
 
         // Assert
         func.Should().ThrowDomainException(ErrorReasonCode.DuplicatedSortingIndex);
@@ -64,6 +65,7 @@ public class PreparationStepsTests
     private sealed class PreparationStepsFixture
     {
         public IReadOnlyCollection<IPreparationStep>? PreparationSteps { get; private set; }
+        public PreparationStepFactoryMock PreparationStepFactoryMock { get; } = new(MockBehavior.Strict);
 
         public void SetupValidPreparationSteps()
         {
@@ -93,7 +95,7 @@ public class PreparationStepsTests
         public PreparationSteps CreateSut()
         {
             TestPropertyNotSetException.ThrowIfNull(PreparationSteps);
-            return new PreparationSteps(PreparationSteps);
+            return new PreparationSteps(PreparationSteps, PreparationStepFactoryMock.Object);
         }
     }
 }

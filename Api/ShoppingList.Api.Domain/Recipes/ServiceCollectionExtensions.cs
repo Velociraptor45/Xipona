@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
@@ -40,6 +41,12 @@ internal static class ServiceCollectionExtensions
             var repository = provider.GetRequiredService<Func<CancellationToken, IRecipeRepository>>();
             var logger = provider.GetRequiredService<ILogger<RecipeQueryService>>();
             return cancellationToken => new RecipeQueryService(repository, logger, cancellationToken);
+        });
+        services.AddTransient<Func<CancellationToken, IRecipeModificationService>>(provider =>
+        {
+            var repository = provider.GetRequiredService<Func<CancellationToken, IRecipeRepository>>();
+            var validator = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
+            return cancellationToken => new RecipeModificationService(repository, validator, cancellationToken);
         });
     }
 }

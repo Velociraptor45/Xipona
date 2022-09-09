@@ -13,6 +13,14 @@ public class IngredientFactory : IIngredientFactory
         _validator = validatorDelegate(cancellationToken);
     }
 
+    public async Task<IIngredient> CreateNewAsync(ItemCategoryId itemCategoryId, IngredientQuantityType quantityType,
+        IngredientQuantity quantity)
+    {
+        await _validator.ValidateAsync(itemCategoryId);
+
+        return new Ingredient(IngredientId.New, itemCategoryId, quantityType, quantity);
+    }
+
     public async Task<IIngredient> CreateNewAsync(IngredientCreation creation)
     {
         await _validator.ValidateAsync(creation.ItemCategoryId);

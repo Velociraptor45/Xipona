@@ -6,5 +6,7 @@ public interface IPreparationStepFactory
 {
     IPreparationStep CreateNew(PreparationStepCreation creation);
 
+    IPreparationStep CreateNew(PreparationStepInstruction instruction, int sortingIndex);
+
     IPreparationStep Create(PreparationStepId id, PreparationStepInstruction instruction, int sortingIndex);
 }
