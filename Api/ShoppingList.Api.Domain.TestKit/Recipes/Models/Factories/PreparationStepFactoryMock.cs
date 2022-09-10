@@ -16,6 +16,12 @@ public class PreparationStepFactoryMock : Mock<IPreparationStepFactory>
             .Returns(returnValue);
     }
 
+    public void SetupCreateNew(PreparationStepInstruction instruction, int sortingIndex, IPreparationStep returnValue)
+    {
+        Setup(m => m.CreateNew(instruction, sortingIndex))
+            .Returns(returnValue);
+    }
+
     public void SetupCreate(PreparationStepId id, PreparationStepInstruction instruction, int sortingIndex,
         IPreparationStep returnValue)
     {

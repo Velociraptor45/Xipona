@@ -23,6 +23,13 @@ public class IngredientFactoryMock : Mock<IIngredientFactory>
             .ReturnsAsync(returnValue);
     }
 
+    public void SetupCreateNewAsync(ItemCategoryId itemCategoryId, IngredientQuantityType quantityType,
+        IngredientQuantity quantity, IIngredient returnValue)
+    {
+        Setup(m => m.CreateNewAsync(itemCategoryId, quantityType, quantity))
+            .ReturnsAsync(returnValue);
+    }
+
     public void SetupCreate(IngredientId id, ItemCategoryId itemCategoryId, IngredientQuantityType quantityType,
         IngredientQuantity quantity, IIngredient returnValue)
     {
