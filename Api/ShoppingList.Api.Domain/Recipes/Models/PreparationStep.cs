@@ -1,4 +1,6 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 
 public class PreparationStep : IPreparationStep
 {
@@ -12,4 +14,9 @@ public class PreparationStep : IPreparationStep
     public PreparationStepId Id { get; }
     public PreparationStepInstruction Instruction { get; }
     public int SortingIndex { get; }
+
+    public IPreparationStep Modify(PreparationStepModification modification)
+    {
+        return new PreparationStep(Id, modification.Instruction, modification.SortingIndex);
+    }
 }

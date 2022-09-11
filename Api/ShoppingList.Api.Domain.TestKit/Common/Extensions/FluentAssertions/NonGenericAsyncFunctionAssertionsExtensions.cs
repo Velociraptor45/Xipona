@@ -26,4 +26,11 @@ public static class NonGenericAsyncFunctionAssertionsExtensions
         return assertion.Throw<DomainException>()
             .Where(e => e.Reason.ErrorCode == code);
     }
+
+    public static ExceptionAssertions<DomainException> ThrowDomainException(
+        this ActionAssertions assertion, ErrorReasonCode code)
+    {
+        return assertion.Throw<DomainException>()
+            .Where(e => e.Reason.ErrorCode == code);
+    }
 }

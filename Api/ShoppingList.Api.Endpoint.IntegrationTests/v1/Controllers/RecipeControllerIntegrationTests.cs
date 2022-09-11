@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Core.TestKit;
@@ -12,6 +13,8 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Recipes.Contexts;
+using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.ItemCategories.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Recipes.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System.Text.RegularExpressions;
 using Xunit;
@@ -293,6 +296,229 @@ public class RecipeControllerIntegrationTests
                 {
                     new(_existingEntityToBeFound.Id, _existingEntityToBeFound.Name)
                 };
+            }
+        }
+    }
+
+    [Collection(DockerCollection.Name)]
+    public class ModifyRecipeAsync
+    {
+        private readonly ModifyRecipeAsyncFixture _fixture;
+
+        public ModifyRecipeAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new ModifyRecipeAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task ModifyRecipeAsync_WithAllModificationTypes_ShouldModifyRecipe()
+        {
+            // Arrange
+            _fixture.SetupRecipeId();
+            _fixture.SetupExistingRecipe();
+            _fixture.SetupExpectedRecipe();
+            _fixture.SetupContract();
+            await _fixture.PrepareDatabase();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.RecipeId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+
+            // Act
+            var result = await sut.ModifyRecipeAsync(_fixture.RecipeId.Value.Value, _fixture.Contract);
+
+            // Assert
+            result.Should().BeOfType<OkResult>();
+            var entities = (await _fixture.LoadAllRecipesAsync()).ToList();
+            entities.Should().HaveCount(1);
+            var entity = entities.First();
+            entity.Ingredients.Should().HaveCount(3);
+            entity.PreparationSteps.Should().HaveCount(3);
+
+            // ingredients
+            var firstExpectedIngredient = _fixture.ExpectedRecipe.Ingredients.ElementAt(0);
+            var secondExpectedIngredient = _fixture.ExpectedRecipe.Ingredients.ElementAt(1);
+            var thirdExpectedIngredient = _fixture.ExpectedRecipe.Ingredients.ElementAt(2);
+
+            var ingredientEntities = entity.Ingredients.ToDictionary(i => i.Id);
+
+            ingredientEntities.Should().ContainKey(firstExpectedIngredient.Id);
+            var firstIngredientEntity = ingredientEntities[firstExpectedIngredient.Id];
+            ingredientEntities.Remove(firstIngredientEntity.Id);
+            firstIngredientEntity.Should().BeEquivalentTo(firstExpectedIngredient,
+                opt => opt.Excluding(p => new[] { "Recipe" }.Contains(p.SelectedMemberPath)));
+
+            ingredientEntities.Should().ContainKey(secondExpectedIngredient.Id);
+            var secondIngredientEntity = ingredientEntities[secondExpectedIngredient.Id];
+            ingredientEntities.Remove(secondIngredientEntity.Id);
+            secondIngredientEntity.Should().BeEquivalentTo(secondExpectedIngredient,
+                opt => opt.Excluding(p => new[] { "Recipe" }.Contains(p.SelectedMemberPath)));
+
+            var thirdIngredientEntity = ingredientEntities.Single().Value;
+            thirdIngredientEntity.Should().BeEquivalentTo(thirdExpectedIngredient,
+                opt => opt.Excluding(p => new[] { "Id", "Recipe" }.Contains(p.SelectedMemberPath)));
+
+            // preparation steps
+            var firstExpectedStep = _fixture.ExpectedRecipe.PreparationSteps.ElementAt(0);
+            var secondExpectedStep = _fixture.ExpectedRecipe.PreparationSteps.ElementAt(1);
+            var thirdExpectedStep = _fixture.ExpectedRecipe.PreparationSteps.ElementAt(2);
+
+            var stepEntities = entity.PreparationSteps.ToDictionary(i => i.Id);
+
+            stepEntities.Should().ContainKey(firstExpectedStep.Id);
+            var firstStepEntity = stepEntities[firstExpectedStep.Id];
+            stepEntities.Remove(firstExpectedStep.Id);
+            firstStepEntity.Should().BeEquivalentTo(firstExpectedStep,
+                opt => opt.Excluding(p => new[] { "Recipe" }.Contains(p.SelectedMemberPath)));
+
+            stepEntities.Should().ContainKey(secondExpectedStep.Id);
+            var secondStepEntity = stepEntities[secondExpectedStep.Id];
+            stepEntities.Remove(secondStepEntity.Id);
+            secondStepEntity.Should().BeEquivalentTo(secondExpectedStep,
+                opt => opt.Excluding(p => new[] { "Recipe" }.Contains(p.SelectedMemberPath)));
+
+            var thirdStepEntity = stepEntities.Single().Value;
+            thirdStepEntity.Should().BeEquivalentTo(thirdExpectedStep,
+                opt => opt.Excluding(p => new[] { "Id", "Recipe" }.Contains(p.SelectedMemberPath)));
+        }
+
+        private class ModifyRecipeAsyncFixture : RecipeControllerFixture
+        {
+            private RecipeEntities.Recipe? _existingRecipe;
+            private List<ItemCategoryEntities.ItemCategory>? _itemCategories;
+
+            public ModifyRecipeAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public RecipeId? RecipeId { get; private set; }
+            public RecipeEntities.Recipe? ExpectedRecipe { get; private set; }
+            public ModifyRecipeContract? Contract { get; private set; }
+
+            public void SetupRecipeId()
+            {
+                RecipeId = Domain.Recipes.Models.RecipeId.New;
+            }
+
+            public void SetupExistingRecipe()
+            {
+                TestPropertyNotSetException.ThrowIfNull(RecipeId);
+
+                var recipeId = RecipeId.Value.Value;
+                _existingRecipe = new RecipeEntityBuilder()
+                    .WithId(recipeId)
+                    .WithIngredients(new IngredientEntityBuilder().WithRecipeId(recipeId).CreateMany(3))
+                    .WithPreparationSteps(new PreparationStepEntityBuilder().WithRecipeId(recipeId).CreateMany(3))
+                    .Create();
+            }
+
+            public void SetupExpectedRecipe()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
+                TestPropertyNotSetException.ThrowIfNull(RecipeId);
+
+                var recipeId = RecipeId.Value.Value;
+                var ingredients = GetExpectedIngredients().ToList();
+                var steps = GetExpectedPreparationSteps().ToList();
+
+                ExpectedRecipe = new RecipeEntityBuilder()
+                    .WithId(recipeId)
+                    .WithIngredients(ingredients)
+                    .WithPreparationSteps(steps)
+                    .Create();
+
+                _itemCategories = ingredients
+                        .Select(i => new ItemCategoryEntityBuilder().WithId(i.ItemCategoryId).Create())
+                        .ToList();
+            }
+
+            private IEnumerable<RecipeEntities.Ingredient> GetExpectedIngredients()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
+
+                var first = _existingRecipe.Ingredients.ElementAt(0);
+                var second = _existingRecipe.Ingredients.ElementAt(1);
+                var third = _existingRecipe.Ingredients.ElementAt(2);
+
+                yield return first;
+
+                yield return new IngredientEntityBuilder()
+                    .WithRecipeId(second.RecipeId)
+                    .WithId(second.Id)
+                    .Create();
+
+                yield return new IngredientEntityBuilder()
+                    .WithRecipeId(third.RecipeId)
+                    .Create();
+            }
+
+            private IEnumerable<RecipeEntities.PreparationStep> GetExpectedPreparationSteps()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
+
+                var first = _existingRecipe.PreparationSteps.ElementAt(0);
+                var second = _existingRecipe.PreparationSteps.ElementAt(1);
+                var third = _existingRecipe.PreparationSteps.ElementAt(2);
+
+                yield return first;
+
+                yield return new PreparationStepEntityBuilder()
+                    .WithRecipeId(second.RecipeId)
+                    .WithId(second.Id)
+                    .Create();
+
+                yield return new PreparationStepEntityBuilder()
+                    .WithRecipeId(third.RecipeId)
+                    .Create();
+            }
+
+            public void SetupContract()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedRecipe);
+
+                var firstIngredient = ExpectedRecipe.Ingredients.ElementAt(0);
+                var secondIngredient = ExpectedRecipe.Ingredients.ElementAt(1);
+                var thirdIngredient = ExpectedRecipe.Ingredients.ElementAt(2);
+                var ingredients = new List<ModifyIngredientContract>
+                {
+                    new(firstIngredient.Id, firstIngredient.ItemCategoryId, firstIngredient.QuantityType,
+                        firstIngredient.Quantity),
+                    new(secondIngredient.Id, secondIngredient.ItemCategoryId, secondIngredient.QuantityType,
+                        secondIngredient.Quantity),
+                    new(null, thirdIngredient.ItemCategoryId, thirdIngredient.QuantityType, thirdIngredient.Quantity)
+                };
+
+                var firstStep = ExpectedRecipe.PreparationSteps.ElementAt(0);
+                var secondStep = ExpectedRecipe.PreparationSteps.ElementAt(1);
+                var thirdStep = ExpectedRecipe.PreparationSteps.ElementAt(2);
+                var steps = new List<ModifyPreparationStepContract>
+                {
+                    new(firstStep.Id, firstStep.Instruction, firstStep.SortingIndex),
+                    new(secondStep.Id, secondStep.Instruction, secondStep.SortingIndex),
+                    new(null, thirdStep.Instruction, thirdStep.SortingIndex)
+                };
+
+                Contract = new ModifyRecipeContract(
+                    ExpectedRecipe.Name,
+                    ingredients,
+                    steps);
+            }
+
+            public async Task PrepareDatabase()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
+                TestPropertyNotSetException.ThrowIfNull(_itemCategories);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+                await using var dbContext = GetContextInstance<RecipeContext>(ArrangeScope);
+                await using var itemCategoryDbContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
+
+                dbContext.Add(_existingRecipe);
+                itemCategoryDbContext.AddRange(_itemCategories);
+
+                await dbContext.SaveChangesAsync();
+                await itemCategoryDbContext.SaveChangesAsync();
             }
         }
     }

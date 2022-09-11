@@ -25,4 +25,9 @@ public class RecipeRepositoryMock : Mock<IRecipeRepository>
     {
         Setup(m => m.SearchByAsync(searchInput)).ReturnsAsync(expectedResult);
     }
+
+    public void SetupFindByAsync(RecipeId recipeId, IRecipe? returnValue)
+    {
+        Setup(m => m.FindByAsync(recipeId)).ReturnsAsync(returnValue);
+    }
 }

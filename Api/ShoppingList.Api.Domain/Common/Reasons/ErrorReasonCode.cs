@@ -41,4 +41,7 @@ public enum ErrorReasonCode
     IngredientQuantityNotValid = 39,
     DuplicatedSortingIndex = 40,
     StoresNotFound = 41,
+    RecipeNotFound = 42,
+    IngredientNotFound = 43,
+    PreparationStepNotFound = 44,
 }

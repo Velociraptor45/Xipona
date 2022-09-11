@@ -8,4 +8,5 @@ public interface IRecipeRepository
     Task<IRecipe> StoreAsync(IRecipe recipe);
 
     Task<IEnumerable<RecipeSearchResult>> SearchByAsync(string searchInput);
+    Task<IRecipe?> FindByAsync(RecipeId recipeId);
 }
