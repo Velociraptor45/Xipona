@@ -18,6 +18,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
@@ -198,6 +199,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Post("recipes")]
         Task<RecipeContract> CreateRecipeAsync([Body] CreateRecipeContract contract);
+
+        [Put("recipes/{id}/modify")]
+        Task ModifyRecipeAsync([Path] Guid id, [Body] ModifyRecipeContract contract);
 
         #endregion RecipeController
     }

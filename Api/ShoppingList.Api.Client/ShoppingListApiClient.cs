@@ -20,6 +20,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
@@ -50,7 +51,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             _apiClient = new RestClient(httpClient)
             {
                 JsonSerializerSettings =
-                new JsonSerializerSettings()
+                new JsonSerializerSettings
                 {
                     NullValueHandling = NullValueHandling.Ignore,
                     ContractResolver = new CamelCasePropertyNamesContractResolver()
@@ -300,6 +301,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
         public async Task<RecipeContract> CreateRecipeAsync(CreateRecipeContract contract)
         {
             return await _apiClient.CreateRecipeAsync(contract);
+        }
+
+        public async Task ModifyRecipeAsync(Guid id, ModifyRecipeContract contract)
+        {
+            await _apiClient.ModifyRecipeAsync(id, contract);
         }
 
         #endregion RecipeController
