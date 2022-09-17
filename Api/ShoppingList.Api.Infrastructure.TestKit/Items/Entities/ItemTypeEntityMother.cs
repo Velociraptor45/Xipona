@@ -18,7 +18,7 @@ public static class ItemTypeEntityMother
             .ToList();
 
         return new ItemTypeEntityBuilder()
-            .WithAvailabilities(availabilities)
+            .WithAvailableAt(availabilities)
             .WithoutPredecessorId()
             .WithoutPredecessor()
             .WithoutItem();

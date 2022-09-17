@@ -3,11 +3,29 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
 
-public class ItemTypeEntityBuilder : TestBuilder<ItemType>
+public class ItemTypeEntityBuilder : TestBuilderBase<ItemType>
 {
-    public ItemTypeEntityBuilder WithAvailabilities(IEnumerable<ItemTypeAvailableAt> availabilities)
+    public ItemTypeEntityBuilder WithId(Guid id)
     {
-        FillPropertyWith(t => t.AvailableAt, availabilities.ToList());
+        FillPropertyWith(p => p.Id, id);
+        return this;
+    }
+
+    public ItemTypeEntityBuilder WithItemId(Guid itemId)
+    {
+        FillPropertyWith(p => p.ItemId, itemId);
+        return this;
+    }
+
+    public ItemTypeEntityBuilder WithName(string name)
+    {
+        FillPropertyWith(p => p.Name, name);
+        return this;
+    }
+
+    public ItemTypeEntityBuilder WithPredecessorId(Guid? predecessorId)
+    {
+        FillPropertyWith(p => p.PredecessorId, predecessorId);
         return this;
     }
 
@@ -16,20 +34,9 @@ public class ItemTypeEntityBuilder : TestBuilder<ItemType>
         return WithPredecessorId(null);
     }
 
-    public ItemTypeEntityBuilder WithPredecessorId(Guid? id)
+    public ItemTypeEntityBuilder WithItem(Item? item)
     {
-        FillPropertyWith(t => t.PredecessorId, id);
-        return this;
-    }
-
-    public ItemTypeEntityBuilder WithoutPredecessor()
-    {
-        return WithPredecessor(null);
-    }
-
-    public ItemTypeEntityBuilder WithPredecessor(ItemType? predecessor)
-    {
-        FillPropertyWith(i => i.Predecessor, predecessor);
+        FillPropertyWith(p => p.Item, item);
         return this;
     }
 
@@ -38,9 +45,20 @@ public class ItemTypeEntityBuilder : TestBuilder<ItemType>
         return WithItem(null);
     }
 
-    public ItemTypeEntityBuilder WithItem(Item? item)
+    public ItemTypeEntityBuilder WithPredecessor(ItemType? predecessor)
     {
-        FillPropertyWith(t => t.Item, item);
+        FillPropertyWith(p => p.Predecessor, predecessor);
+        return this;
+    }
+
+    public ItemTypeEntityBuilder WithoutPredecessor()
+    {
+        return WithPredecessor(null);
+    }
+
+    public ItemTypeEntityBuilder WithAvailableAt(ICollection<ItemTypeAvailableAt> availableAt)
+    {
+        FillPropertyWith(p => p.AvailableAt, availableAt);
         return this;
     }
 }

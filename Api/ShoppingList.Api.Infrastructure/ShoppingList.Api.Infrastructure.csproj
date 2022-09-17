@@ -31,5 +31,9 @@
     <Folder Include="Migrations\Stores\" />
     <Folder Include="Migrations\ShoppingLists\" />
   </ItemGroup>
+  
+  <PropertyGroup>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
 
 </Project>

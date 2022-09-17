@@ -408,8 +408,8 @@ public class RecipeControllerIntegrationTests
                 var recipeId = RecipeId.Value.Value;
                 _existingRecipe = new RecipeEntityBuilder()
                     .WithId(recipeId)
-                    .WithIngredients(new IngredientEntityBuilder().WithRecipeId(recipeId).CreateMany(3))
-                    .WithPreparationSteps(new PreparationStepEntityBuilder().WithRecipeId(recipeId).CreateMany(3))
+                    .WithIngredients(new IngredientEntityBuilder().WithRecipeId(recipeId).CreateMany(3).ToList())
+                    .WithPreparationSteps(new PreparationStepEntityBuilder().WithRecipeId(recipeId).CreateMany(3).ToList())
                     .Create();
             }
 

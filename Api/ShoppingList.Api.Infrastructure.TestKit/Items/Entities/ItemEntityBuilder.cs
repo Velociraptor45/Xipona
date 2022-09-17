@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
 using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
 using ItemType = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.ItemType;
@@ -15,50 +16,100 @@ public class ItemEntityBuilder : TestBuilder<Item>
         WithQuantityTypeInPacket(new DomainTestBuilder<QuantityTypeInPacket>().Create().ToInt());
         WithQuantityType(new DomainTestBuilder<QuantityType>().Create().ToInt());
     }
-
-    public ItemEntityBuilder WithId(ItemId id)
-    {
-        return WithId(id.Value);
-    }
-
     public ItemEntityBuilder WithId(Guid id)
     {
-        FillPropertyWith(i => i.Id, id);
+        FillPropertyWith(p => p.Id, id);
+        return this;
+    }
+
+    public ItemEntityBuilder WithName(string name)
+    {
+        FillPropertyWith(p => p.Name, name);
         return this;
     }
 
     public ItemEntityBuilder WithDeleted(bool deleted)
     {
-        FillPropertyWith(i => i.Deleted, deleted);
+        FillPropertyWith(p => p.Deleted, deleted);
+        return this;
+    }
+
+    public ItemEntityBuilder WithComment(string comment)
+    {
+        FillPropertyWith(p => p.Comment, comment);
         return this;
     }
 
     public ItemEntityBuilder WithIsTemporary(bool isTemporary)
     {
-        FillPropertyWith(i => i.IsTemporary, isTemporary);
-        return this;
-    }
-
-    public ItemEntityBuilder WithQuantityTypeInPacket(int quantityTypeInPacket)
-    {
-        FillPropertyWith(i => i.QuantityTypeInPacket, quantityTypeInPacket);
+        FillPropertyWith(p => p.IsTemporary, isTemporary);
         return this;
     }
 
     public ItemEntityBuilder WithQuantityType(int quantityType)
     {
-        FillPropertyWith(i => i.QuantityType, quantityType);
+        FillPropertyWith(p => p.QuantityType, quantityType);
         return this;
     }
 
-    public ItemEntityBuilder WithEmptyAvailabilities()
+    public ItemEntityBuilder WithQuantityInPacket(float? quantityInPacket)
     {
-        return WithAvailabilities(Enumerable.Empty<AvailableAt>());
+        FillPropertyWith(p => p.QuantityInPacket, quantityInPacket);
+        return this;
     }
 
-    public ItemEntityBuilder WithAvailabilities(IEnumerable<AvailableAt> availabilities)
+    public ItemEntityBuilder WithoutQuantityInPacket()
     {
-        FillPropertyWith(i => i.AvailableAt, availabilities.ToList());
+        return WithQuantityInPacket(null);
+    }
+
+    public ItemEntityBuilder WithQuantityTypeInPacket(int? quantityTypeInPacket)
+    {
+        FillPropertyWith(p => p.QuantityTypeInPacket, quantityTypeInPacket);
+        return this;
+    }
+
+    public ItemEntityBuilder WithoutQuantityTypeInPacket()
+    {
+        return WithQuantityTypeInPacket(null);
+    }
+
+    public ItemEntityBuilder WithItemCategoryId(Guid? itemCategoryId)
+    {
+        FillPropertyWith(p => p.ItemCategoryId, itemCategoryId);
+        return this;
+    }
+
+    public ItemEntityBuilder WithoutItemCategoryId()
+    {
+        return WithItemCategoryId(null);
+    }
+
+    public ItemEntityBuilder WithManufacturerId(Guid? manufacturerId)
+    {
+        FillPropertyWith(p => p.ManufacturerId, manufacturerId);
+        return this;
+    }
+
+    public ItemEntityBuilder WithoutManufacturerId()
+    {
+        return WithManufacturerId(null);
+    }
+
+    public ItemEntityBuilder WithCreatedFrom(Guid? createdFrom)
+    {
+        FillPropertyWith(p => p.CreatedFrom, createdFrom);
+        return this;
+    }
+
+    public ItemEntityBuilder WithoutCreatedFrom()
+    {
+        return WithCreatedFrom(null);
+    }
+
+    public ItemEntityBuilder WithPredecessorId(Guid? predecessorId)
+    {
+        FillPropertyWith(p => p.PredecessorId, predecessorId);
         return this;
     }
 
@@ -67,14 +118,9 @@ public class ItemEntityBuilder : TestBuilder<Item>
         return WithPredecessorId(null);
     }
 
-    public ItemEntityBuilder WithPredecessorId(ItemId id)
+    public ItemEntityBuilder WithPredecessor(Item? predecessor)
     {
-        return WithPredecessorId(id.Value);
-    }
-
-    public ItemEntityBuilder WithPredecessorId(Guid? id)
-    {
-        FillPropertyWith(i => i.PredecessorId, id);
+        FillPropertyWith(p => p.Predecessor, predecessor);
         return this;
     }
 
@@ -83,37 +129,25 @@ public class ItemEntityBuilder : TestBuilder<Item>
         return WithPredecessor(null);
     }
 
-    public ItemEntityBuilder WithPredecessor(Item? predecessor)
+    public ItemEntityBuilder WithItemTypes(ICollection<ItemType> itemTypes)
     {
-        FillPropertyWith(i => i.Predecessor, predecessor);
-        return this;
-    }
-
-    public ItemEntityBuilder WithItemTypes(IEnumerable<ItemType> itemTypes)
-    {
-        FillPropertyWith(i => i.ItemTypes, itemTypes.ToList());
+        FillPropertyWith(p => p.ItemTypes, itemTypes);
         return this;
     }
 
     public ItemEntityBuilder WithEmptyItemTypes()
     {
-        return WithItemTypes(Enumerable.Empty<ItemType>());
+        return WithItemTypes(new List<ItemType>());
     }
 
-    public ItemEntityBuilder WithoutCreatedFrom()
+    public ItemEntityBuilder WithAvailableAt(ICollection<AvailableAt> availableAt)
     {
-        return WithCreatedFrom(null);
-    }
-
-    public ItemEntityBuilder WithCreatedFrom(Guid? createFromId)
-    {
-        FillPropertyWith(i => i.CreatedFrom, createFromId);
+        FillPropertyWith(p => p.AvailableAt, availableAt);
         return this;
     }
 
-    public ItemEntityBuilder WithItemCategoryId(Guid? itemCategoryId)
+    public ItemEntityBuilder WithEmptyAvailableAt()
     {
-        FillPropertyWith(i => i.ItemCategoryId, itemCategoryId);
-        return this;
+        return WithAvailableAt(new List<AvailableAt>());
     }
 }

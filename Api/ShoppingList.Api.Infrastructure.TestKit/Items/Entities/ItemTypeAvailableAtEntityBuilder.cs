@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
 
-public class ItemTypeAvailableAtEntityBuilder : TestBuilder<ItemTypeAvailableAt>
+public class ItemTypeAvailableAtEntityBuilder : TestBuilderBase<ItemTypeAvailableAt>
 {
     public ItemTypeAvailableAtEntityBuilder()
     {
@@ -18,38 +18,38 @@ public class ItemTypeAvailableAtEntityBuilder : TestBuilder<ItemTypeAvailableAt>
         WithItemType(availability.ItemType);
     }
 
-    public ItemTypeAvailableAtEntityBuilder WithItemTypeId(Guid id)
+    public ItemTypeAvailableAtEntityBuilder WithItemTypeId(Guid itemTypeId)
     {
-        FillPropertyWith(av => av.ItemTypeId, id);
-        return this;
-    }
-
-    public ItemTypeAvailableAtEntityBuilder WithPrice(float price)
-    {
-        FillPropertyWith(av => av.Price, price);
+        FillPropertyWith(p => p.ItemTypeId, itemTypeId);
         return this;
     }
 
     public ItemTypeAvailableAtEntityBuilder WithStoreId(Guid storeId)
     {
-        FillPropertyWith(av => av.StoreId, storeId);
+        FillPropertyWith(p => p.StoreId, storeId);
         return this;
     }
 
-    public ItemTypeAvailableAtEntityBuilder WithDefaultSectionId(Guid sectionId)
+    public ItemTypeAvailableAtEntityBuilder WithPrice(float price)
     {
-        FillPropertyWith(av => av.DefaultSectionId, sectionId);
+        FillPropertyWith(p => p.Price, price);
+        return this;
+    }
+
+    public ItemTypeAvailableAtEntityBuilder WithDefaultSectionId(Guid defaultSectionId)
+    {
+        FillPropertyWith(p => p.DefaultSectionId, defaultSectionId);
+        return this;
+    }
+
+    public ItemTypeAvailableAtEntityBuilder WithItemType(ItemType? itemType)
+    {
+        FillPropertyWith(p => p.ItemType, itemType);
         return this;
     }
 
     public ItemTypeAvailableAtEntityBuilder WithoutItemType()
     {
         return WithItemType(null);
-    }
-
-    public ItemTypeAvailableAtEntityBuilder WithItemType(ItemType? itemType)
-    {
-        FillPropertyWith(av => av.ItemType, itemType);
-        return this;
     }
 }
