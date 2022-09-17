@@ -448,7 +448,7 @@ public class ItemControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(ItemId);
 
                 _existingItem = ItemEntityMother.InitialForStore(Contract.StoreId)
-                    .WithId(ItemId.Value)
+                    .WithId(ItemId.Value.Value)
                     .Create();
             }
 
@@ -461,7 +461,7 @@ public class ItemControllerIntegrationTests
                     .CreateMany(1)
                     .ToList();
                 _existingItem = ItemEntityMother.InitialWithTypes()
-                    .WithId(ItemId.Value)
+                    .WithId(ItemId.Value.Value)
                     .WithItemTypes(itemTypes)
                     .Create();
             }
@@ -642,10 +642,11 @@ public class ItemControllerIntegrationTests
 
                 _itemWithItemCategory =
                     ItemEntityMother.Initial().WithItemCategoryId(_itemCategory.Id)
-                        .WithAvailabilities(AvailableAtEntityMother
+                        .WithAvailableAt(AvailableAtEntityMother
                             .InitialForStore(_store.Id)
                             .WithDefaultSectionId(defaultSectionId)
-                            .CreateMany(1))
+                            .CreateMany(1)
+                            .ToList())
                         .Create();
                 _itemWithoutItemCategory = ItemEntityMother.Initial().Create();
             }

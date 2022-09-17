@@ -11,7 +11,7 @@ public static class ItemEntityMother
             .WithoutPredecessorId()
             .WithoutPredecessor()
             .WithEmptyItemTypes()
-            .WithAvailabilities(new AvailableAtEntityBuilder().CreateMany(3));
+            .WithAvailableAt(new AvailableAtEntityBuilder().CreateMany(3).ToList());
     }
 
     public static ItemEntityBuilder InitialForStore(Guid storeId)
@@ -21,7 +21,7 @@ public static class ItemEntityMother
             .CreateMany(1)
             .ToList();
 
-        return Initial().WithAvailabilities(availabilities);
+        return Initial().WithAvailableAt(availabilities);
     }
 
     public static ItemEntityBuilder InitialWithTypes()
@@ -32,6 +32,6 @@ public static class ItemEntityMother
             .WithoutCreatedFrom()
             .WithoutPredecessorId()
             .WithoutPredecessor()
-            .WithEmptyAvailabilities();
+            .WithEmptyAvailableAt();
     }
 }

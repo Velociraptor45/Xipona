@@ -7,7 +7,7 @@ using Recipe = ProjectHermes.ShoppingList.Api.Infrastructure.Recipes.Entities.Re
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Recipes.Entities;
 
-public class IngredientEntityBuilder : TestBuilder<Ingredient>
+public class IngredientEntityBuilder : TestBuilderBase<Ingredient>
 {
     public IngredientEntityBuilder()
     {
@@ -17,25 +17,42 @@ public class IngredientEntityBuilder : TestBuilder<Ingredient>
 
     public IngredientEntityBuilder WithId(Guid id)
     {
-        FillPropertyWith(e => e.Id, id);
+        FillPropertyWith(p => p.Id, id);
         return this;
     }
 
-    public IngredientEntityBuilder WithRecipeId(Guid id)
+    public IngredientEntityBuilder WithRecipeId(Guid recipeId)
     {
-        FillPropertyWith(e => e.RecipeId, id);
+        FillPropertyWith(p => p.RecipeId, recipeId);
+        return this;
+    }
+
+    public IngredientEntityBuilder WithItemCategoryId(Guid itemCategoryId)
+    {
+        FillPropertyWith(p => p.ItemCategoryId, itemCategoryId);
         return this;
     }
 
     public IngredientEntityBuilder WithQuantityType(int quantityType)
     {
-        FillPropertyWith(e => e.QuantityType, quantityType);
+        FillPropertyWith(p => p.QuantityType, quantityType);
+        return this;
+    }
+
+    public IngredientEntityBuilder WithQuantity(float quantity)
+    {
+        FillPropertyWith(p => p.Quantity, quantity);
         return this;
     }
 
     public IngredientEntityBuilder WithRecipe(Recipe? recipe)
     {
-        FillPropertyWith(e => e.Recipe, recipe);
+        FillPropertyWith(p => p.Recipe, recipe);
         return this;
+    }
+
+    public IngredientEntityBuilder WithoutRecipe()
+    {
+        return WithRecipe(null);
     }
 }

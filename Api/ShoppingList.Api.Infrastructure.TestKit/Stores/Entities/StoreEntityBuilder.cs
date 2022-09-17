@@ -3,22 +3,34 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Stores.Entities;
 
-public class StoreEntityBuilder : TestBuilder<Store>
+public class StoreEntityBuilder : TestBuilderBase<Store>
 {
     public StoreEntityBuilder()
     {
-        WithSections(new SectionEntityBuilder().CreateMany(3));
+        WithSections(new SectionEntityBuilder().CreateMany(3).ToList());
     }
 
-    public StoreEntityBuilder WithSections(IEnumerable<Section> sections)
+    public StoreEntityBuilder WithId(Guid id)
     {
-        FillPropertyWith(s => s.Sections, sections.ToList());
+        FillPropertyWith(p => p.Id, id);
+        return this;
+    }
+
+    public StoreEntityBuilder WithName(string name)
+    {
+        FillPropertyWith(p => p.Name, name);
         return this;
     }
 
     public StoreEntityBuilder WithDeleted(bool deleted)
     {
-        FillPropertyWith(s => s.Deleted, deleted);
+        FillPropertyWith(p => p.Deleted, deleted);
+        return this;
+    }
+
+    public StoreEntityBuilder WithSections(ICollection<Section> sections)
+    {
+        FillPropertyWith(p => p.Sections, sections);
         return this;
     }
 }
