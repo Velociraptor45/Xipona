@@ -45,6 +45,28 @@ public class IngredientEntityBuilder : TestBuilderBase<Ingredient>
         return this;
     }
 
+    public IngredientEntityBuilder WithDefaultItemId(Guid? defaultItemId)
+    {
+        FillPropertyWith(p => p.DefaultItemId, defaultItemId);
+        return this;
+    }
+
+    public IngredientEntityBuilder WithoutDefaultItemId()
+    {
+        return WithDefaultItemId(null);
+    }
+
+    public IngredientEntityBuilder WithDefaultItemTypeId(Guid? defaultItemTypeId)
+    {
+        FillPropertyWith(p => p.DefaultItemTypeId, defaultItemTypeId);
+        return this;
+    }
+
+    public IngredientEntityBuilder WithoutDefaultItemTypeId()
+    {
+        return WithDefaultItemTypeId(null);
+    }
+
     public IngredientEntityBuilder WithRecipe(Recipe? recipe)
     {
         FillPropertyWith(p => p.Recipe, recipe);

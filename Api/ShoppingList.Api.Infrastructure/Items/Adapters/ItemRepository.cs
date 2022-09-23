@@ -219,6 +219,33 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
+    public async Task<IItem?> FindActiveByAsync(ItemId itemId, ItemTypeId? itemTypeId,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var query = GetItemQuery()
+            .Where(item => item.ItemCategoryId.HasValue
+                           && item.Id == itemId.Value
+                           && !item.Deleted);
+
+        if (itemTypeId is null)
+            query = query.Where(i => !i.ItemTypes.Any());
+        else
+            query = query.Where(i => i.ItemTypes.Any(t => t.Id == itemTypeId.Value.Value));
+
+        var entity = await query.FirstOrDefaultAsync(cancellationToken);
+
+        if (entity is null)
+            return null;
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        entity.Predecessor = await LoadPredecessorsAsync(entity);
+
+        return _toModelConverter.ToDomain(entity);
+    }
+
     public async Task<IItem> StoreAsync(IItem item, CancellationToken cancellationToken)
     {
         if (item is null)

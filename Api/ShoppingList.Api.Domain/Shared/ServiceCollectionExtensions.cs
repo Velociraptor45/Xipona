@@ -15,8 +15,9 @@ public static class ServiceCollectionExtensions
             var availabilityValidationService = provider.GetRequiredService<IAvailabilityValidationService>();
             var itemCategoryValidationService = provider.GetRequiredService<IItemCategoryValidationService>();
             var manufacturerValidationService = provider.GetRequiredService<IManufacturerValidationService>();
+            var itemValidationService = provider.GetRequiredService<Func<CancellationToken, IItemValidationService>>();
             return cancellationToken => new Validator(availabilityValidationService,
-                itemCategoryValidationService, manufacturerValidationService, cancellationToken);
+                itemCategoryValidationService, manufacturerValidationService, itemValidationService, cancellationToken);
         });
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
 using Ingredient = ProjectHermes.ShoppingList.Api.Infrastructure.Recipes.Entities.Ingredient;
@@ -23,6 +24,8 @@ public class IngredientConverter : IToDomainConverter<Ingredient, IIngredient>
             new IngredientId(source.Id),
             new ItemCategoryId(source.ItemCategoryId),
             source.QuantityType.ToEnum<IngredientQuantityType>(),
-            new IngredientQuantity(source.Quantity));
+            new IngredientQuantity(source.Quantity),
+            source.DefaultItemId is null ? null : new ItemId(source.DefaultItemId.Value),
+            source.DefaultItemTypeId is null ? null : new ItemTypeId(source.DefaultItemTypeId.Value));
     }
 }

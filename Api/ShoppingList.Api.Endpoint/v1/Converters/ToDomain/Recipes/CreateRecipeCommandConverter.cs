@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
 
@@ -19,7 +20,9 @@ public class CreateRecipeCommandConverter : IToDomainConverter<CreateRecipeContr
         var ingredients = source.Ingredients.Select(i => new IngredientCreation(
             new ItemCategoryId(i.ItemCategoryId),
             i.QuantityType.ToEnum<IngredientQuantityType>(),
-            new IngredientQuantity(i.Quantity)));
+            new IngredientQuantity(i.Quantity),
+            i.DefaultItemId is null ? null : new ItemId(i.DefaultItemId.Value),
+            i.DefaultItemTypeId is null ? null : new ItemTypeId(i.DefaultItemTypeId.Value)));
 
         var creation = new RecipeCreation(
             new RecipeName(source.Name),

@@ -61,4 +61,9 @@ public class ItemTypeEntityBuilder : TestBuilderBase<ItemType>
         FillPropertyWith(p => p.AvailableAt, availableAt);
         return this;
     }
+
+    public ItemTypeEntityBuilder WithEmptyAvailableAt()
+    {
+        return WithAvailableAt(new List<ItemTypeAvailableAt>());
+    }
 }
