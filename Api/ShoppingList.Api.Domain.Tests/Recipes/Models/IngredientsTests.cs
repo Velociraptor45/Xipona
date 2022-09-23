@@ -150,7 +150,8 @@ public class IngredientsTests
                 _expectedResult.Add(createdIngredient);
 
                 _ingredientFactoryMock.SetupCreateNewAsync(modification.ItemCategoryId, modification.QuantityType,
-                    modification.Quantity, createdIngredient);
+                    modification.Quantity, modification.DefaultItemId, modification.DefaultItemTypeId,
+                    createdIngredient);
             }
 
             public void SetupIngredientToDelete()

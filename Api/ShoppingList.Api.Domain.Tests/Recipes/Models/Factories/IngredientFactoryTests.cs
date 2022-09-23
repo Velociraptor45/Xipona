@@ -1,8 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
@@ -34,7 +36,9 @@ public class IngredientFactoryTests
                 _fixture.ExpectedResult.Id,
                 _fixture.ExpectedResult.ItemCategoryId,
                 _fixture.ExpectedResult.QuantityType,
-                _fixture.ExpectedResult.Quantity);
+                _fixture.ExpectedResult.Quantity,
+                _fixture.ExpectedResult.DefaultItemId,
+                _fixture.ExpectedResult.DefaultItemTypeId);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedResult);
@@ -66,7 +70,8 @@ public class IngredientFactoryTests
             // Arrange
             _fixture.SetupExpectedResult();
             _fixture.SetupCreation();
-            _fixture.SetupValidationSuccessful();
+            _fixture.SetupItemCategoryValidationSuccessful();
+            _fixture.SetupItemValidationSuccessful();
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
@@ -85,7 +90,8 @@ public class IngredientFactoryTests
             // Arrange
             _fixture.SetupExpectedResult();
             _fixture.SetupCreation();
-            _fixture.SetupValidationFailed();
+            _fixture.SetupItemCategoryValidationFailed();
+            _fixture.SetupItemValidationSuccessful();
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Creation);
@@ -95,7 +101,27 @@ public class IngredientFactoryTests
             var func = async () => await sut.CreateNewAsync(_fixture.Creation);
 
             // Assert
-            (await func.Should().ThrowExactlyAsync<DomainException>()).Where(e => e == _fixture.ExpectedException);
+            await func.Should().ThrowDomainExceptionAsync(_fixture.ExpectedException.Reason.ErrorCode);
+        }
+
+        [Fact]
+        public async Task CreateNew_WithInvalidDefaultItemId_ShouldThrow()
+        {
+            // Arrange
+            _fixture.SetupExpectedResult();
+            _fixture.SetupCreation();
+            _fixture.SetupItemCategoryValidationSuccessful();
+            _fixture.SetupItemValidationFailed();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Creation);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedException);
+
+            // Act
+            var func = async () => await sut.CreateNewAsync(_fixture.Creation);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(_fixture.ExpectedException.Reason.ErrorCode);
         }
 
         private sealed class CreateNewFixture : IngredientFactoryFixture
@@ -115,20 +141,41 @@ public class IngredientFactoryTests
 
                 Creation = new IngredientCreation(ExpectedResult.ItemCategoryId,
                     ExpectedResult.QuantityType,
-                    ExpectedResult.Quantity);
+                    ExpectedResult.Quantity,
+                    ExpectedResult.DefaultItemId,
+                    ExpectedResult.DefaultItemTypeId);
             }
 
-            public void SetupValidationSuccessful()
+            public void SetupItemCategoryValidationSuccessful()
             {
                 TestPropertyNotSetException.ThrowIfNull(Creation);
                 ValidatorMock.SetupValidateAsync(Creation.ItemCategoryId);
             }
 
-            public void SetupValidationFailed()
+            public void SetupItemValidationSuccessful()
             {
                 TestPropertyNotSetException.ThrowIfNull(Creation);
+                TestPropertyNotSetException.ThrowIfNull(Creation.DefaultItemId);
+
+                ValidatorMock.SetupValidateAsync(Creation.DefaultItemId.Value, Creation.DefaultItemTypeId);
+            }
+
+            public void SetupItemCategoryValidationFailed()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Creation);
+
                 ExpectedException = new DomainException(new ItemCategoryNotFoundReason(Creation.ItemCategoryId));
                 ValidatorMock.SetupValidateAsyncAnd(Creation.ItemCategoryId).ThrowsAsync(ExpectedException);
+            }
+
+            public void SetupItemValidationFailed()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Creation);
+                TestPropertyNotSetException.ThrowIfNull(Creation.DefaultItemId);
+
+                ExpectedException = new DomainException(new ItemNotFoundReason(Creation.DefaultItemId.Value));
+                ValidatorMock.SetupValidateAsyncAnd(Creation.DefaultItemId.Value, Creation.DefaultItemTypeId)
+                    .ThrowsAsync(ExpectedException);
             }
         }
     }

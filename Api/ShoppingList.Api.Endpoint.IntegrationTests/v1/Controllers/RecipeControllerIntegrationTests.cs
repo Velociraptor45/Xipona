@@ -12,8 +12,11 @@ using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Recipes.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.ItemCategories.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Recipes.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System.Text.RegularExpressions;
@@ -88,6 +91,7 @@ public class RecipeControllerIntegrationTests
 
                 await ApplyMigrationsAsync(ArrangeScope);
                 await using var itemCategoryContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
 
                 foreach (var ingredient in _model.Ingredients)
                 {
@@ -97,9 +101,29 @@ public class RecipeControllerIntegrationTests
                         .Create();
 
                     itemCategoryContext.Add(itemCategory);
+
+                    var item = new ItemEntityBuilder()
+                        .WithId(ingredient.DefaultItemId!.Value.Value)
+                        .WithDeleted(false)
+                        .WithIsTemporary(false)
+                        .WithItemTypes(new ItemTypeEntityBuilder()
+                            .WithId(ingredient.DefaultItemTypeId!.Value.Value)
+                            .WithoutItem()
+                            .WithEmptyAvailableAt()
+                            .WithoutPredecessorId()
+                            .WithoutPredecessor()
+                            .CreateMany(1)
+                            .ToList())
+                        .WithEmptyAvailableAt()
+                        .WithoutPredecessorId()
+                        .WithoutPredecessor()
+                        .Create();
+
+                    itemContext.Add(item);
                 }
 
                 await itemCategoryContext.SaveChangesAsync();
+                await itemContext.SaveChangesAsync();
             }
 
             public void SetupContract()
@@ -111,7 +135,9 @@ public class RecipeControllerIntegrationTests
                     _model.Ingredients.Select(i => new CreateIngredientContract(
                         i.ItemCategoryId.Value,
                         (int)i.QuantityType,
-                        i.Quantity.Value)),
+                        i.Quantity.Value,
+                        i.DefaultItemId?.Value,
+                        i.DefaultItemTypeId?.Value)),
                     _model.PreparationSteps.Select(p => new CreatePreparationStepContract(
                         p.Instruction.Value,
                         p.SortingIndex)));
@@ -149,6 +175,8 @@ public class RecipeControllerIntegrationTests
                         ItemCategoryId = i.ItemCategoryId.Value,
                         Quantity = i.Quantity.Value,
                         QuantityType = (int)i.QuantityType,
+                        DefaultItemId = i.DefaultItemId?.Value,
+                        DefaultItemTypeId = i.DefaultItemTypeId?.Value,
                         RecipeId = _model.Id.Value
                     }).ToList(),
                     PreparationSteps = _model.PreparationSteps.Select(p => new RecipeEntities.PreparationStep
@@ -387,6 +415,7 @@ public class RecipeControllerIntegrationTests
         {
             private RecipeEntities.Recipe? _existingRecipe;
             private List<ItemCategoryEntities.ItemCategory>? _itemCategories;
+            private List<Item>? _items;
 
             public ModifyRecipeAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -431,6 +460,26 @@ public class RecipeControllerIntegrationTests
                 _itemCategories = ingredients
                         .Select(i => new ItemCategoryEntityBuilder().WithId(i.ItemCategoryId).Create())
                         .ToList();
+
+                _items = ingredients
+                    .Where(i => i.DefaultItemId.HasValue && i.DefaultItemTypeId.HasValue)
+                    .Select(i => new ItemEntityBuilder()
+                        .WithId(i.DefaultItemId!.Value)
+                        .WithDeleted(false)
+                        .WithIsTemporary(false)
+                        .WithItemTypes(new ItemTypeEntityBuilder()
+                            .WithId(i.DefaultItemTypeId!.Value)
+                            .WithoutItem()
+                            .WithEmptyAvailableAt()
+                            .WithoutPredecessorId()
+                            .WithoutPredecessor()
+                            .CreateMany(1)
+                            .ToList())
+                        .WithEmptyAvailableAt()
+                        .WithoutPredecessorId()
+                        .WithoutPredecessor()
+                        .Create())
+                    .ToList();
             }
 
             private IEnumerable<RecipeEntities.Ingredient> GetExpectedIngredients()
@@ -483,10 +532,11 @@ public class RecipeControllerIntegrationTests
                 var ingredients = new List<ModifyIngredientContract>
                 {
                     new(firstIngredient.Id, firstIngredient.ItemCategoryId, firstIngredient.QuantityType,
-                        firstIngredient.Quantity),
+                        firstIngredient.Quantity, firstIngredient.DefaultItemId, firstIngredient.DefaultItemTypeId),
                     new(secondIngredient.Id, secondIngredient.ItemCategoryId, secondIngredient.QuantityType,
-                        secondIngredient.Quantity),
-                    new(null, thirdIngredient.ItemCategoryId, thirdIngredient.QuantityType, thirdIngredient.Quantity)
+                        secondIngredient.Quantity, secondIngredient.DefaultItemId, secondIngredient.DefaultItemTypeId),
+                    new(null, thirdIngredient.ItemCategoryId, thirdIngredient.QuantityType, thirdIngredient.Quantity,
+                        thirdIngredient.DefaultItemId, thirdIngredient.DefaultItemTypeId)
                 };
 
                 var firstStep = ExpectedRecipe.PreparationSteps.ElementAt(0);
@@ -509,16 +559,20 @@ public class RecipeControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategories);
+                TestPropertyNotSetException.ThrowIfNull(_items);
 
                 await ApplyMigrationsAsync(ArrangeScope);
                 await using var dbContext = GetContextInstance<RecipeContext>(ArrangeScope);
                 await using var itemCategoryDbContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
+                await using var itemDbContext = GetContextInstance<ItemContext>(ArrangeScope);
 
                 dbContext.Add(_existingRecipe);
                 itemCategoryDbContext.AddRange(_itemCategories);
+                itemDbContext.AddRange(_items);
 
                 await dbContext.SaveChangesAsync();
                 await itemCategoryDbContext.SaveChangesAsync();
+                await itemDbContext.SaveChangesAsync();
             }
         }
     }
@@ -542,6 +596,7 @@ public class RecipeControllerIntegrationTests
         {
             yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
         }
 
         public async Task<IEnumerable<RecipeEntities.Recipe>> LoadAllRecipesAsync()

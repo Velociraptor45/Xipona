@@ -11,4 +11,6 @@ public interface IValidator
     Task ValidateAsync(ItemCategoryId itemCategoryId);
 
     Task ValidateAsync(ManufacturerId manufacturerId);
+
+    Task ValidateAsync(ItemId itemId, ItemTypeId? itemTypeId);
 }

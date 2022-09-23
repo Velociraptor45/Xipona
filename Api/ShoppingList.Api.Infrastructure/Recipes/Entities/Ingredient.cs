@@ -13,6 +13,8 @@ public class Ingredient
     public Guid ItemCategoryId { get; set; }
     public int QuantityType { get; set; }
     public float Quantity { get; set; }
+    public Guid? DefaultItemId { get; set; }
+    public Guid? DefaultItemTypeId { get; set; }
 
     [ForeignKey("RecipeId")]
     public Recipe? Recipe { get; set; }

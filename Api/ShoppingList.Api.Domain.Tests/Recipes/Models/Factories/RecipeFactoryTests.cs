@@ -121,7 +121,9 @@ public class RecipeFactoryTests
                     ExpectedResult.Ingredients.Select(i => new IngredientCreation(
                         i.ItemCategoryId,
                         i.QuantityType,
-                        i.Quantity)),
+                        i.Quantity,
+                        i.DefaultItemId,
+                        i.DefaultItemTypeId)),
                     ExpectedResult.PreparationSteps.Select(p => new PreparationStepCreation(
                         p.Instruction,
                         p.SortingIndex)));

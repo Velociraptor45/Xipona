@@ -28,6 +28,13 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IItemAvailabilityFactory, ItemAvailabilityFactory>();
 
         services.AddTransient<IAvailabilityValidationService, AvailabilityValidationService>();
+
+        services.AddTransient<Func<CancellationToken, IItemValidationService>>(provider =>
+        {
+            var itemRepository = provider.GetRequiredService<IItemRepository>();
+            return cancellationToken => new ItemValidationService(itemRepository, cancellationToken);
+        });
+
         services.AddTransient<IItemSearchReadModelConversionService, ItemSearchReadModelConversionService>();
         services.AddTransient<IItemReadModelConversionService, ItemReadModelConversionService>();
 
