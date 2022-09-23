@@ -414,7 +414,7 @@ public class RecipeControllerIntegrationTests
         {
             private RecipeEntities.Recipe? _existingRecipe;
             private List<ItemCategoryEntities.ItemCategory>? _itemCategories;
-            private List<Item> _items;
+            private List<Item>? _items;
 
             public ModifyRecipeAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -557,6 +557,7 @@ public class RecipeControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategories);
+                TestPropertyNotSetException.ThrowIfNull(_items);
 
                 await ApplyMigrationsAsync(ArrangeScope);
                 await using var dbContext = GetContextInstance<RecipeContext>(ArrangeScope);
