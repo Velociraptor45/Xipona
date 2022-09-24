@@ -13,6 +13,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
@@ -218,9 +219,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 .Select(_converters.ToDomain<SearchItemForShoppingListResultContract, SearchItemForShoppingListResult>);
         }
 
-        public async Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput)
+        public async Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput, Guid? itemCategoryId)
         {
-            var result = await _client.SearchItemsAsync(searchInput);
+            var result = await _client.SearchItemsAsync(searchInput, itemCategoryId);
 
             return result is null ?
                 Enumerable.Empty<SearchItemResult>() :
@@ -337,6 +338,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         {
             var contract = _converters.ToContract<ModifyItemCategoryRequest, ModifyItemCategoryContract>(request);
             await _client.ModifyItemCategoryAsync(contract);
+        }
+
+        public async Task<IEnumerable<SearchItemByItemCategoryResult>> SearchItemByItemCategoryAsync(Guid itemCategoryId)
+        {
+            var results = await _client.SearchItemsByItemCategoryAsync(itemCategoryId);
+            return _converters
+                .ToDomain<SearchItemByItemCategoryResultContract, SearchItemByItemCategoryResult>(results);
         }
 
         public async Task<Recipe> GetRecipeByIdAsync(Guid recipeId)

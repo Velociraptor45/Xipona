@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Items;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
@@ -28,5 +27,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 
         Task LoadManufacturersAsync(IAsyncRetryFragmentCreator fragmentCreator,
             Action<IEnumerable<Manufacturer>> onSuccessAction);
+
+        Task<IEnumerable<SearchItemByItemCategoryResult>> SearchItemsByItemCategoryAsync(Guid itemCategoryId);
     }
 }
