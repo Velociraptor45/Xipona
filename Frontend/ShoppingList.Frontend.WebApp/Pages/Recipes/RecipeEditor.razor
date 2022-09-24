@@ -1,0 +1,89 @@
+﻿@page "/recipes/{RecipeId:guid}"
+
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.Editor
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services
+
+@inject NavigationManager _navigationManager;
+@inject RecipesState _state;
+@inject IRecipesApiService _apiService
+
+@namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes
+@if (_state.EditedRecipe is not null)
+{
+    <div>
+        <div class="d-flex">
+            <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+                <Icon Type="arrow-left"></Icon>
+            </Button>
+            <div class="mx-3">
+                <Input @bind-Value="@_state.EditedRecipe.Name"/>
+            </div>
+        </div>
+        <div>
+            <div id="ingredients">
+                @foreach (var ingredient in _state.EditedRecipe.Ingredients)
+                {
+                    <Ingredient Model="@ingredient"></Ingredient>
+                }
+            </div>
+            <div id="preparation-steps">
+            </div>
+        </div>
+        <div class="d-flex justify-content-end mt-2">
+            @if (_state.EditedRecipe.Id == Guid.Empty)
+            {
+                <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
+            }
+            else
+            {
+                <Button @onclick="@OnModifyButtonClickedAsync">Save</Button>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public Guid RecipeId { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (RecipeId == Guid.Empty)
+        {
+            _state.SetNewEditedRecipe();
+            return;
+        }
+
+        var result = await _apiService.GetAsync(RecipeId);
+        if (result is null)
+            return;
+
+        _state.SetEditedRecipe(result);
+    }
+
+    private void OnBackButtonClicked()
+    {
+        _navigationManager.NavigateTo("recipes");
+    }
+
+    private async Task OnCreateButtonClickedAsync()
+    {
+        var newRecipe = await _apiService.CreateAsync(_state.EditedRecipe);
+        if (newRecipe is null)
+            return;
+        _navigationManager.NavigateTo($"recipes/{newRecipe.Id}");
+    }
+
+    private async Task OnModifyButtonClickedAsync()
+    {
+        var successful = await _apiService.ModifyAsync(_state.EditedRecipe);
+        if (successful)
+        {
+            //_state.UpdateRecipeSearchResultName(_state.EditedRecipe.Id, _state.EditedRecipe.Name); // todo
+            _navigationManager.NavigateTo("recipes");
+        }
+    }
+}

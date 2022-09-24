@@ -59,9 +59,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Servic
 
         public async Task<ItemCategory> CreateAsync(ItemCategory itemCategory)
         {
+            return await CreateAsync(itemCategory.Name);
+        }
+
+        public async Task<ItemCategory> CreateAsync(string itemCategoryName)
+        {
             try
             {
-                return await _client.CreateItemCategoryAsync(itemCategory.Name);
+                return await _client.CreateItemCategoryAsync(itemCategoryName);
             }
             catch (ApiException e)
             {

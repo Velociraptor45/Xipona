@@ -16,9 +16,9 @@ public class Ingredient
     }
 
     public Guid Id { get; }
-    public Guid ItemCategoryId { get; }
-    public int QuantityType { get; }
-    public float Quantity { get; }
-    public Guid? DefaultItemId { get; }
-    public Guid? DefaultItemTypeId { get; }
+    public Guid ItemCategoryId { get; set; }
+    public int QuantityType { get; set; }
+    public float Quantity { get; set; }
+    public Guid? DefaultItemId { get; set; }
+    public Guid? DefaultItemTypeId { get; set; }
 }

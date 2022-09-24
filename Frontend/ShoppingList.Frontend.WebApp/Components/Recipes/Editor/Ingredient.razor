@@ -1,0 +1,50 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services
+
+@inject IItemCategoryApiService _itemCategoryApiService;
+
+<div>
+    <SingleSearchSelect Class="mt-1 min-w-150"
+                        TItem="ItemCategorySearchResult"
+                        TValue="Guid"
+                        DataSource="_dataSource"
+                        ValueName="@nameof(ItemCategorySearchResult.Id)"
+                        LabelName="@nameof(ItemCategorySearchResult.Name)"
+                        OnItemAdded="@OnNewItemCategoryCreatedAsync"
+                        OnItemChanged="@OnItemCategoryChanged"
+                        Placeholder="Item Category"
+                        DefaultValue="@Model.ItemCategoryId"
+                        SearchForItemsAsync="_itemCategoryApiService.SearchAsync"
+                        CanAddItem="true">
+    </SingleSearchSelect>
+</div>
+
+@code {
+    [Parameter]
+    public ShoppingList.Frontend.Models.Recipes.Models.Ingredient Model { get; set; }
+
+    private List<ItemCategorySearchResult> _dataSource = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var itemCategory = await _itemCategoryApiService.GetAsync(Model.ItemCategoryId);
+        if (itemCategory is not null)
+            _dataSource.Add(new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name));
+    }
+
+    private void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
+    {
+        Model.ItemCategoryId = itemCategory?.Id ?? Guid.Empty;
+    }
+
+    private async Task<(ItemCategorySearchResult, Guid)> OnNewItemCategoryCreatedAsync(string name)
+    {
+        var newItemCategory = await _itemCategoryApiService.CreateAsync(name);
+
+        if (newItemCategory == null)
+            return (null, Guid.Empty);
+            
+        return (new ItemCategorySearchResult(newItemCategory.Id, newItemCategory.Name), newItemCategory.Id);
+    }
+}

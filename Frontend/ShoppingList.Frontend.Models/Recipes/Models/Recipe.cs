@@ -19,7 +19,7 @@ public class Recipe
     }
 
     public Guid Id { get; }
-    public string Name { get; }
+    public string Name { get; set; }
     public IReadOnlyCollection<Ingredient> Ingredients => _ingredients;
     public IReadOnlyCollection<PreparationStep> PreparationSteps => _preparationSteps;
 }
