@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchItems;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Core.TestKit;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Endpoints.Tests.Common;
@@ -22,6 +23,7 @@ public class SearchItemsAsyncTests :
     public sealed class SearchItemsAsyncFixture : ControllerEnumerableQueryFixtureBase
     {
         private string? _searchString;
+        private Guid? _itemCategoryId;
 
         public SearchItemsAsyncFixture()
         {
@@ -43,18 +45,21 @@ public class SearchItemsAsyncTests :
         public override async Task<IActionResult> ExecuteTestMethod(ItemController sut)
         {
             TestPropertyNotSetException.ThrowIfNull(_searchString);
-            return await sut.SearchItemsAsync(_searchString);
+            return await sut.SearchItemsAsync(_searchString, _itemCategoryId);
         }
 
         public override void SetupParameters()
         {
             _searchString = new TestBuilder<string>().Create();
+            _itemCategoryId = Guid.NewGuid();
         }
 
         public override void SetupQuery()
         {
             TestPropertyNotSetException.ThrowIfNull(_searchString);
-            Query = new SearchItemQuery(_searchString);
+            TestPropertyNotSetException.ThrowIfNull(_itemCategoryId);
+
+            Query = new SearchItemQuery(_searchString, new ItemCategoryId(_itemCategoryId.Value));
         }
     }
 }

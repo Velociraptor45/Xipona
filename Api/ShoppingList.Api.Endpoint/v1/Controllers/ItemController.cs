@@ -95,9 +95,10 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("search")]
-    public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput)
+    public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput, [FromQuery] Guid? itemCategoryId)
     {
-        var query = new SearchItemQuery(searchInput);
+        var itemCatId = itemCategoryId.HasValue ? new ItemCategoryId(itemCategoryId.Value) : (ItemCategoryId?)null;
+        var query = new SearchItemQuery(searchInput, itemCatId);
 
         var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
 

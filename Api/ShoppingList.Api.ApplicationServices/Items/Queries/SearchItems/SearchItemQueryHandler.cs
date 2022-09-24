@@ -18,6 +18,6 @@ public class SearchItemQueryHandler : IQueryHandler<SearchItemQuery, IEnumerable
         ArgumentNullException.ThrowIfNull(query);
 
         var itemSearchService = _itemQueryServiceDelegate(cancellationToken);
-        return await itemSearchService.SearchAsync(query.SearchInput);
+        return await itemSearchService.SearchAsync(query.SearchInput, query.ItemCategoryId);
     }
 }

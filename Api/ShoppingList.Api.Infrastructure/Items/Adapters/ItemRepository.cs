@@ -178,20 +178,23 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput,
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, ItemCategoryId? itemCategoryId,
         CancellationToken cancellationToken)
     {
-        var entities = await GetItemQuery()
+        var query = GetItemQuery()
             .Where(item =>
                 !item.Deleted
                 && !item.IsTemporary
-                && item.Name.Contains(searchInput))
-            .ToListAsync(cancellationToken);
+                && item.Name.Contains(searchInput));
 
-        cancellationToken.ThrowIfCancellationRequested();
+        if (itemCategoryId.HasValue)
+            query = query.Where(i => i.ItemCategoryId == itemCategoryId.Value.Value);
+
+        var entities = await query.ToListAsync(cancellationToken);
 
         foreach (var item in entities)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             item.Predecessor = await LoadPredecessorsAsync(item);
         }
 
