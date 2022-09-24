@@ -21,4 +21,5 @@ public class Ingredient
     public float Quantity { get; set; }
     public Guid? DefaultItemId { get; set; }
     public Guid? DefaultItemTypeId { get; set; }
+    public static Ingredient New => new(Guid.Empty, Guid.Empty, 0, 1, null, null);
 }

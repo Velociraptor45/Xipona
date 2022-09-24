@@ -2,6 +2,10 @@
     max-width: 400px;
 }
 
+.item-select {
+    width: 100%;
+}
+
 div .ingredient-quantity-type-select {
     width: 80px;
 }

@@ -21,7 +21,15 @@
             </div>
         </div>
         <div>
-            <div id="ingredients">
+            <div id="ingredients" class="pt-4">
+                <div class="d-flex align-items-center mb-3">
+                    <h4 class="mb-0 pr-2">Ingredients</h4>
+                    <Button class="d-flex align-items-center" 
+                            Size="@AntSizeLDSType.Small" 
+                            OnClick="OnAddIngredientButtonClicked">
+                        <Icon Type="plus"></Icon>
+                    </Button>
+                </div>
                 @foreach (var ingredient in _state.EditedRecipe.Ingredients)
                 {
                     <Ingredient Model="@ingredient"></Ingredient>
@@ -86,5 +94,10 @@
             //_state.UpdateRecipeSearchResultName(_state.EditedRecipe.Id, _state.EditedRecipe.Name); // todo
             _navigationManager.NavigateTo("recipes");
         }
+    }
+
+    private void OnAddIngredientButtonClicked()
+    {
+        _state.EditedRecipe.AddIngredient();
     }
 }

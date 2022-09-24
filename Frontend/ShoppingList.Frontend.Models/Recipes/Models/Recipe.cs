@@ -22,4 +22,9 @@ public class Recipe
     public string Name { get; set; }
     public IReadOnlyCollection<Ingredient> Ingredients => _ingredients;
     public IReadOnlyCollection<PreparationStep> PreparationSteps => _preparationSteps;
+
+    public void AddIngredient()
+    {
+        _ingredients.Add(Ingredient.New);
+    }
 }
