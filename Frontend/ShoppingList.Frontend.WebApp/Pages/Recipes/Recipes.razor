@@ -1,14 +1,51 @@
-﻿@page "/Recipes"
+﻿@page "/recipes"
 
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Shared;
 
 @inject NavigationManager _navigationManager;
 @inject RecipesState _state;
 @inject IRecipesApiService _apiService
 
-<h3>Recipes</h3>
+<div>
+    <div class="d-flex">
+        <div class="h4">Recipes</div>
+        <Button @onclick="@OnCreateRecipeButtonClicked" Class="d-flex align-items-center ml-auto">
+            <Icon Type="plus"></Icon>
+        </Button>
+    </div>
+    <div>
+        <Input TValue="string" @bind-value="@input" 
+               OnPressEnter="@OnLoadButtonClickedAsync" 
+               Placeholder="Recipe name ..."></Input>
+        <Button @onclick="@OnLoadButtonClickedAsync" Class="mt-2">Load</Button>
+    </div>
+    <div>
+        @foreach (var searchResult in _state.SearchResults)
+        {
+            <SearchResult Model="searchResult" RedirectPageName="recipes"></SearchResult>
+        }
+    </div>
+</div>
 
 @code {
-    
+    private string input = "";
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _state.ResetEditedRecipe();
+    }
+
+    private async Task OnLoadButtonClickedAsync()
+    {
+        var results = await _apiService.SearchAsync(input);
+        _state.RegisterSearchResults(results);
+    }
+
+    private void OnCreateRecipeButtonClicked()
+    {
+        _navigationManager.NavigateTo($"recipes/{Guid.Empty}");
+    }
 }

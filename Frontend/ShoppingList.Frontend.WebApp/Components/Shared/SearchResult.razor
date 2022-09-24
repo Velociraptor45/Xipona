@@ -1,0 +1,18 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Shared
+@inject NavigationManager _navigationManager;
+
+<div class="search-result p-2" @onclick="OnItemClicked">
+    <div>@Model.Name</div>
+</div>
+
+@code {
+    [Parameter]
+    public ISearchResult Model { get; set; }
+    [Parameter]
+    public string RedirectPageName { get; set; }
+
+    private void OnItemClicked()
+    {
+        _navigationManager.NavigateTo($"{RedirectPageName}/{Model.Id}");
+    }
+}

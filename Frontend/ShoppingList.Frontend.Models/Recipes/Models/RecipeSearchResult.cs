@@ -1,15 +1,16 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+using System;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
 
-public class RecipeSearchResult
+public class RecipeSearchResult : ISearchResult
 {
-    public RecipeSearchResult(Guid recipeId, string name)
+    public RecipeSearchResult(Guid id, string name)
     {
-        RecipeId = recipeId;
+        Id = id;
         Name = name;
     }
 
-    public Guid RecipeId { get; }
-    public string Name { get; }
+    public Guid Id { get; set; }
+    public string Name { get; set; }
 }

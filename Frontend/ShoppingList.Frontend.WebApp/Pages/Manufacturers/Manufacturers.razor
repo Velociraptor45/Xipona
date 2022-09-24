@@ -2,7 +2,7 @@
 
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Manufacturers;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Shared
 
 @inject NavigationManager _navigationManager;
 @inject ManufacturersState _state;
@@ -26,7 +26,7 @@
     <div>
         @foreach (var searchResult in _state.SearchResults)
         {
-            <SearchResult Model="searchResult"></SearchResult>
+            <SearchResult Model="searchResult" RedirectPageName="manufacturers"></SearchResult>
         }
     </div>
 </div>
