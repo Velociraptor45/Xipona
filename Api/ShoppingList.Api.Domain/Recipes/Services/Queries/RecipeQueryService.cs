@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 
@@ -16,6 +19,15 @@ public class RecipeQueryService : IRecipeQueryService
     {
         _recipeRepository = recipeRepositoryDelegate(cancellationToken);
         _logger = logger;
+    }
+
+    public async Task<IRecipe> GetAsync(RecipeId id)
+    {
+        var recipe = await _recipeRepository.FindByAsync(id);
+        if (recipe is null)
+            throw new DomainException(new RecipeNotFoundReason(id));
+
+        return recipe;
     }
 
     public async Task<IEnumerable<RecipeSearchResult>> SearchByNameAsync(string searchInput)

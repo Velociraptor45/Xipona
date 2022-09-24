@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Commands.ModifyRecipe;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.RecipeById;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
@@ -32,6 +33,32 @@ public class RecipeController : ControllerBase
         _queryDispatcher = queryDispatcher;
         _commandDispatcher = commandDispatcher;
         _converters = converters;
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(RecipeContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}")]
+    public async Task<IActionResult> GetAsync([FromRoute] Guid id)
+    {
+        try
+        {
+            var query = new RecipeByIdQuery(new RecipeId(id));
+            var result = await _queryDispatcher.DispatchAsync(query, default);
+
+            var contract = _converters.ToContract<IRecipe, RecipeContract>(result);
+
+            return Ok(contract);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.RecipeNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
     }
 
     [HttpGet]
@@ -81,8 +108,7 @@ public class RecipeController : ControllerBase
 
             var contract = _converters.ToContract<IRecipe, RecipeContract>(model);
 
-            // todo exchange when route is implemented
-            return CreatedAtAction("GetAsync", new { id = contract.Id }, contract);
+            return CreatedAtAction(nameof(GetAsync), new { id = contract.Id }, contract);
         }
         catch (DomainException e)
         {

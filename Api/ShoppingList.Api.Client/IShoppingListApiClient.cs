@@ -194,6 +194,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region RecipeController
 
+        [Get("recipes/{id}")]
+        Task<RecipeContract> GetRecipeByIdAsync([Path] Guid recipeId);
+
         [Get("recipes")]
         Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByNameAsync([Query] string searchInput);
 

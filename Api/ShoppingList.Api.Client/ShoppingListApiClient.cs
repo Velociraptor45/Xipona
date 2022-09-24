@@ -293,6 +293,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region RecipeController
 
+        public async Task<RecipeContract> GetRecipeByIdAsync(Guid recipeId)
+        {
+            return await _apiClient.GetRecipeByIdAsync(recipeId);
+        }
+
         public async Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByNameAsync(string searchInput)
         {
             return await _apiClient.SearchRecipesByNameAsync(searchInput);
