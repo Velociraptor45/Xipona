@@ -46,10 +46,11 @@
 @code {
     [Parameter] public Guid RecipeId { get; set; }
 
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        var ingredientQuantityTypes = await _apiService.GetAllIngredientQuantityTypes();
+        _state.RegisterIngredientQuantityTypes(ingredientQuantityTypes);
 
         if (RecipeId == Guid.Empty)
         {

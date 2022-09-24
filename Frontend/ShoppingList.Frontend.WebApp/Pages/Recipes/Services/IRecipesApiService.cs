@@ -11,4 +11,5 @@ public interface IRecipesApiService
     Task<Recipe> GetAsync(Guid recipeId);
     Task<Recipe> CreateAsync(Recipe recipe);
     Task<bool> ModifyAsync(Recipe recipe);
+    Task<IEnumerable<IngredientQuantityType>> GetAllIngredientQuantityTypes();
 }

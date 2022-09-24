@@ -20,6 +20,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
@@ -370,6 +371,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         {
             var contract = _converters.ToContract<Recipe, ModifyRecipeContract>(recipe);
             await _client.ModifyRecipeAsync(recipe.Id, contract);
+        }
+
+        public async Task<IEnumerable<IngredientQuantityType>> GetAllIngredientQuantityTypes()
+        {
+            var types = await _client.GetAllIngredientQuantityTypes();
+            return _converters.ToDomain<IngredientQuantityTypeContract, IngredientQuantityType>(types);
         }
     }
 }

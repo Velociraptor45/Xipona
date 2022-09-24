@@ -106,5 +106,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         Task ModifyRecipeAsync(Recipe recipe);
         Task<IEnumerable<SearchItemByItemCategoryResult>> SearchItemByItemCategoryAsync(Guid itemCategoryId);
+        Task<IEnumerable<IngredientQuantityType>> GetAllIngredientQuantityTypes();
     }
 }

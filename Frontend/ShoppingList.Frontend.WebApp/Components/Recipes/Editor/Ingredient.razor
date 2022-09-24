@@ -1,43 +1,72 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
+@using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services
 
 @inject IItemCategoryApiService _itemCategoryApiService;
 @inject IItemsApiService _itemsApiService;
+@inject IRecipesApiService _recipesApiService;
+@inject RecipesState _state;
 
-<div>
-    <SingleSearchSelect Class="mt-1 min-w-150"
-                        TItem="ItemCategorySearchResult"
-                        TValue="Guid"
-                        DataSource="_itemCategoryDataSource"
-                        ValueName="@nameof(ItemCategorySearchResult.Id)"
-                        LabelName="@nameof(ItemCategorySearchResult.Name)"
-                        OnItemAdded="@OnNewItemCategoryCreatedAsync"
-                        OnItemChanged="@OnItemCategoryChanged"
-                        Placeholder="Item Category"
-                        DefaultValue="@Model.ItemCategoryId"
-                        SearchForItemsAsync="_itemCategoryApiService.SearchAsync"
-                        CanAddItem="true">
-    </SingleSearchSelect>
-    @if (Model.ItemCategoryId != Guid.Empty)
-    {
-        <SingleSelect Class="mt-1 min-w-150"
-                      TItem="SearchItemByItemCategoryResult"
-                      TValue="string"
-                      DataSource="_itemDataSource"
-                      ValueName="@nameof(SearchItemByItemCategoryResult.SelectIdentificator)"
-                      LabelName="@nameof(SearchItemByItemCategoryResult.Name)"
-                      OnItemChanged="@OnItemChanged"
-                      Placeholder="Item Category"
-                      DefaultValue="@($"{Model.DefaultItemId?.ToString() ?? string.Empty}{Model.DefaultItemTypeId?.ToString() ?? string.Empty}")"
-                      CanAddItem="false"
-                      AllowClear="true">
-        </SingleSelect>
-    }
-    <!-- Quantity Type -->
-    <!-- Quantity -->
+<div class="ingredient">
+    <div class="d-flex align-items-start">
+        <div>
+            <SingleSearchSelect Class="min-w-150"
+                                TItem="ItemCategorySearchResult"
+                                TValue="Guid"
+                                DataSource="_itemCategoryDataSource"
+                                ValueName="@nameof(ItemCategorySearchResult.Id)"
+                                LabelName="@nameof(ItemCategorySearchResult.Name)"
+                                OnItemAdded="@OnNewItemCategoryCreatedAsync"
+                                OnItemChanged="@OnItemCategoryChanged"
+                                Placeholder="Item Category"
+                                DefaultValue="@Model.ItemCategoryId"
+                                SearchForItemsAsync="_itemCategoryApiService.SearchAsync"
+                                CanAddItem="true">
+            </SingleSearchSelect>
+            @if (Model.ItemCategoryId != Guid.Empty)
+            {
+                <SingleSelect Class="mt-1 min-w-150"
+                              TItem="SearchItemByItemCategoryResult"
+                              TValue="string"
+                              DataSource="_itemDataSource"
+                              ValueName="@nameof(SearchItemByItemCategoryResult.SelectIdentificator)"
+                              LabelName="@nameof(SearchItemByItemCategoryResult.Name)"
+                              OnItemChanged="@OnItemChanged"
+                              Placeholder="Default Item"
+                              DefaultValue="@($"{Model.DefaultItemId?.ToString() ?? string.Empty}{Model.DefaultItemTypeId?.ToString() ?? string.Empty}")"
+                              CanAddItem="false"
+                              AllowClear="true">
+                </SingleSelect>
+            }
+        </div>
+        <!-- Quantity -->
+        <AntDesign.InputNumber
+            Class="ml-4 mr-1"
+            @bind-value="@Model.Quantity"
+            TValue="float"
+            Min="0.01f"
+            Step="1"></AntDesign.InputNumber>
+        <!-- Quantity Type -->
+        <div class="ingredient-quantity-type-select">
+            <SingleSelect
+                Class=""
+                TItem="IngredientQuantityType"
+                TValue="int"
+                ValueName="@nameof(IngredientQuantityType.Id)"
+                LabelName="@nameof(IngredientQuantityType.QuantityLabel)"
+                Placeholder="QuantityInPacketType"
+                DefaultValue="@Model.QuantityType"
+                DataSource="@_state.IngredientQuantityTypes.ToList()"
+                OnItemChanged="@OnIngredientQuantityTypeChanged">
+            </SingleSelect>
+        </div>
+    </div>
+    <hr/>
 </div>
 
 @code {
@@ -94,5 +123,10 @@
     {
         Model.DefaultItemId = itemSearchResult?.ItemId;
         Model.DefaultItemTypeId = itemSearchResult?.ItemTypeId;
+    }
+
+    private void OnIngredientQuantityTypeChanged(IngredientQuantityType quantityType)
+    {
+        Model.QuantityType = quantityType.Id;
     }
 }

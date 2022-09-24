@@ -20,6 +20,11 @@ public class RecipesApiService : IRecipesApiService
         _notificationService = notificationService;
     }
 
+    public async Task<IEnumerable<IngredientQuantityType>> GetAllIngredientQuantityTypes()
+    {
+        return await _client.GetAllIngredientQuantityTypes();
+    }
+
     public async Task<IEnumerable<RecipeSearchResult>> SearchAsync(string searchInput)
     {
         return await _client.SearchRecipesByNameAsync(searchInput);

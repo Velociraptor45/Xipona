@@ -8,6 +8,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
 public class RecipesState
 {
     private List<RecipeSearchResult> _searchResults;
+    private List<IngredientQuantityType> _ingredientQuantityTypes;
 
     public RecipesState()
     {
@@ -15,6 +16,7 @@ public class RecipesState
     }
 
     public IReadOnlyCollection<RecipeSearchResult> SearchResults => _searchResults;
+    public IReadOnlyCollection<IngredientQuantityType> IngredientQuantityTypes => _ingredientQuantityTypes;
     public Recipe EditedRecipe { get; private set; }
 
     public void RegisterSearchResults(IEnumerable<RecipeSearchResult> searchResults)
@@ -36,5 +38,10 @@ public class RecipesState
     public void ResetEditedRecipe()
     {
         SetEditedRecipe(null);
+    }
+
+    public void RegisterIngredientQuantityTypes(IEnumerable<IngredientQuantityType> ingredientQuantityTypes)
+    {
+        _ingredientQuantityTypes = ingredientQuantityTypes.ToList();
     }
 }

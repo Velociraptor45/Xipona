@@ -33,12 +33,4 @@
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Components\Recipes\Editor\Ingredient.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Components\Recipes\Editor\Ingredient.razor" />
-  </ItemGroup>
-
 </Project>
