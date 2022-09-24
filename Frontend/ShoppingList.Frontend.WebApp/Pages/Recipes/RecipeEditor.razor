@@ -3,6 +3,7 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.Editor
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services
+@using Ingredient = ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models.Ingredient;
 
 @inject NavigationManager _navigationManager;
 @inject RecipesState _state;
@@ -32,7 +33,11 @@
                 </div>
                 @foreach (var ingredient in _state.EditedRecipe.Ingredients)
                 {
-                    <Ingredient Model="@ingredient"></Ingredient>
+                    <Ingredient
+                        @key="ingredient.Id == default ? Guid.NewGuid() : ingredient.Id"
+                        Model="@ingredient"
+                        OnRemove="OnRemoveIngredient"></Ingredient>
+                    <hr/>
                 }
             </div>
             <div id="preparation-steps">
@@ -99,5 +104,11 @@
     private void OnAddIngredientButtonClicked()
     {
         _state.EditedRecipe.AddIngredient();
+    }
+
+    private void OnRemoveIngredient(Ingredient ingredient)
+    {
+        _state.EditedRecipe.RemoveIngredient(ingredient);
+        StateHasChanged();
     }
 }

@@ -27,4 +27,9 @@ public class Recipe
     {
         _ingredients.Add(Ingredient.New);
     }
+
+    public void RemoveIngredient(Ingredient ingredient)
+    {
+        _ingredients.Remove(ingredient);
+    }
 }

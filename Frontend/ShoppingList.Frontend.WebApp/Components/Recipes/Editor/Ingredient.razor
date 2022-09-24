@@ -44,34 +44,44 @@
                 </SingleSelect>
             }
         </div>
-        <!-- Quantity -->
-        <AntDesign.InputNumber
-            Class="ml-4 mr-1"
-            @bind-value="@Model.Quantity"
-            TValue="float"
-            Min="0.01f"
-            Step="1"></AntDesign.InputNumber>
-        <!-- Quantity Type -->
-        <div class="ingredient-quantity-type-select">
-            <SingleSelect
-                Class=""
-                TItem="IngredientQuantityType"
-                TValue="int"
-                ValueName="@nameof(IngredientQuantityType.Id)"
-                LabelName="@nameof(IngredientQuantityType.QuantityLabel)"
-                Placeholder="QuantityInPacketType"
-                DefaultValue="@Model.QuantityType"
-                DataSource="@_state.IngredientQuantityTypes.ToList()"
-                OnItemChanged="@OnIngredientQuantityTypeChanged">
-            </SingleSelect>
+        <div>
+            <Button Class="d-flex align-items-center ml-auto"
+                    OnClick="@OnRemoveIngredientButtonClicked"
+                    Danger="true">
+                <Icon Type="minus"></Icon>
+            </Button>
+            <div class="d-flex mt-1">
+                <!-- Quantity -->
+                <AntDesign.InputNumber
+                    Class="ml-4 mr-1 w-75"
+                    @bind-value="@Model.Quantity"
+                    TValue="float"
+                    Min="1f"
+                    Step="1"></AntDesign.InputNumber>
+                <!-- Quantity Type -->
+                <div class="ingredient-quantity-type-select">
+                    <SingleSelect
+                        Class=""
+                        TItem="IngredientQuantityType"
+                        TValue="int"
+                        ValueName="@nameof(IngredientQuantityType.Id)"
+                        LabelName="@nameof(IngredientQuantityType.QuantityLabel)"
+                        Placeholder="QuantityInPacketType"
+                        DefaultValue="@Model.QuantityType"
+                        DataSource="@_state.IngredientQuantityTypes.ToList()"
+                        OnItemChanged="@OnIngredientQuantityTypeChanged">
+                    </SingleSelect>
+                </div>
+            </div>
         </div>
     </div>
-    <hr/>
 </div>
 
 @code {
     [Parameter]
     public ShoppingList.Frontend.Models.Recipes.Models.Ingredient Model { get; set; }
+    [Parameter]
+    public Action<ShoppingList.Frontend.Models.Recipes.Models.Ingredient> OnRemove { get; set; }
 
     private List<ItemCategorySearchResult> _itemCategoryDataSource = new();
     private List<SearchItemByItemCategoryResult> _itemDataSource = new();
@@ -128,5 +138,10 @@
     private void OnIngredientQuantityTypeChanged(IngredientQuantityType quantityType)
     {
         Model.QuantityType = quantityType.Id;
+    }
+
+    private void OnRemoveIngredientButtonClicked()
+    {
+        OnRemove(Model);
     }
 }
