@@ -20,7 +20,7 @@ public class ModifyRecipeContractConverter : IToContractConverter<Recipe, Modify
                 i.DefaultItemTypeId)),
             source.PreparationSteps.Select(p => new ModifyPreparationStepContract(
                 p.Id,
-                p.Instruction,
+                p.Name,
                 p.SortingIndex)));
     }
 }

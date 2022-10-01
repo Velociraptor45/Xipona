@@ -18,7 +18,7 @@ public class CreateRecipeContractConverter : IToContractConverter<Recipe, Create
                 i.DefaultItemId,
                 i.DefaultItemTypeId)),
             source.PreparationSteps.Select(p => new CreatePreparationStepContract(
-                p.Instruction,
+                p.Name,
                 p.SortingIndex)));
     }
 }

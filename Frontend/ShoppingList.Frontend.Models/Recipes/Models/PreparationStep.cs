@@ -1,17 +1,23 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+using System;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
 
-public class PreparationStep
+public class PreparationStep : ISortableItem
 {
     public PreparationStep(Guid id, string instruction, int sortingIndex)
     {
         Id = id;
-        Instruction = instruction;
+        Name = instruction;
         SortingIndex = sortingIndex;
     }
 
     public Guid Id { get; }
-    public string Instruction { get; }
-    public int SortingIndex { get; }
+    public string Name { get; set; }
+    public int SortingIndex { get; private set; }
+
+    public void SetSortingIndex(int index)
+    {
+        SortingIndex = index;
+    }
 }

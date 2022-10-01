@@ -1,3 +1,55 @@
-﻿#ingredients {
-    max-width: 400px;
+﻿@media (min-width: 1500px) {
+    .recipe-editor-main {
+        width: 60%;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1499.98px) {
+    .recipe-editor-main {
+        width: 70%;
+    }
+}
+
+@media (min-width: 1080px) and (max-width: 1199.98px) {
+    .recipe-editor-main {
+        width: 80%;
+    }
+}
+
+@media (min-width: 1080px) {
+    .recipe-editor-main {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .recipe-editor-content {
+        display: flex;
+    }
+
+        .recipe-editor-content #ingredients {
+            padding-right: 20px;
+            max-width: 500px;
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .recipe-editor-content #preparation-steps {
+            padding-left: 20px;
+            max-width: 500px;
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+        }
+}
+
+@media (max-width: 1079.98px) {
+    .recipe-editor {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    .recipe-editor-content {
+        display: block;
+    }
 }

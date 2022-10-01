@@ -1,8 +1,9 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
 {
-    public class Section
+    public class Section : ISortableItem
     {
         public Section(SectionId id, string name, int sortingIndex, bool isDefaultSection)
         {

@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Stores.Comparer;
+using ProjectHermes.ShoppingList.Frontend.Models.Shared.Comparer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
