@@ -20,11 +20,9 @@ public class SearchItemByItemCategoryResult
     public string Name { get; }
     public IReadOnlyCollection<SearchItemByItemCategoryAvailability> Availabilities { get; }
 
-    public string SelectIdentificator // todo
+    public string SelectIdentifier
     {
         get => $"{ItemId}{ItemTypeId?.ToString() ?? string.Empty}";
-        set
-        {
-        }
+        set { _ = value; }
     }
 }
