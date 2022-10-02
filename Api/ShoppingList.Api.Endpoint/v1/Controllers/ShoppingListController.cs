@@ -318,9 +318,9 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/finish")]
-    public async Task<IActionResult> FinishListAsync([FromRoute] Guid id)
+    public async Task<IActionResult> FinishListAsync([FromRoute] Guid id, [FromQuery] DateTimeOffset? finishedAt)
     {
-        var command = new FinishShoppingListCommand(new ShoppingListId(id), DateTimeOffset.UtcNow);
+        var command = new FinishShoppingListCommand(new ShoppingListId(id), finishedAt ?? DateTimeOffset.UtcNow);
         try
         {
             await _commandDispatcher.DispatchAsync(command, default);

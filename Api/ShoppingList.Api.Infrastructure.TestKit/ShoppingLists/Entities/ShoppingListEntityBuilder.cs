@@ -3,32 +3,32 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Entities;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.ShoppingLists.Entities;
 
-public class ShoppingListBuilder : TestBuilderBase<Infrastructure.ShoppingLists.Entities.ShoppingList>
+public class ShoppingListEntityBuilder : TestBuilderBase<Infrastructure.ShoppingLists.Entities.ShoppingList>
 {
-    public ShoppingListBuilder WithId(Guid id)
+    public ShoppingListEntityBuilder WithId(Guid id)
     {
         FillPropertyWith(p => p.Id, id);
         return this;
     }
 
-    public ShoppingListBuilder WithCompletionDate(DateTimeOffset? completionDate)
+    public ShoppingListEntityBuilder WithCompletionDate(DateTimeOffset? completionDate)
     {
         FillPropertyWith(p => p.CompletionDate, completionDate);
         return this;
     }
 
-    public ShoppingListBuilder WithoutCompletionDate()
+    public ShoppingListEntityBuilder WithoutCompletionDate()
     {
         return WithCompletionDate(null);
     }
 
-    public ShoppingListBuilder WithStoreId(Guid storeId)
+    public ShoppingListEntityBuilder WithStoreId(Guid storeId)
     {
         FillPropertyWith(p => p.StoreId, storeId);
         return this;
     }
 
-    public ShoppingListBuilder WithItemsOnList(ICollection<ItemsOnList> itemsOnList)
+    public ShoppingListEntityBuilder WithItemsOnList(ICollection<ItemsOnList> itemsOnList)
     {
         FillPropertyWith(p => p.ItemsOnList, itemsOnList);
         return this;
