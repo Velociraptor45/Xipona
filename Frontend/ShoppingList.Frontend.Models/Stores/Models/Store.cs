@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared.Comparer;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
 {
-    public class Store
+    public class Store : ISortable<Section>
     {
         public Store(Guid id, string name, IEnumerable<Section> sections)
         {
@@ -42,7 +43,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
             Sections.Add(section);
         }
 
-        public void IncrementSection(Section section)
+        public void Increment(Section section)
         {
             var sections = Sections.ToList();
 
@@ -59,7 +60,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
             Sections = new SortedSet<Section>(sections, new SortingIndexComparer());
         }
 
-        public void DecrementSection(Section section)
+        public void Decrement(Section section)
         {
             var sections = Sections.ToList();
 
@@ -82,6 +83,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
             {
                 sections[i].SetSortingIndex(i);
             }
+        }
+
+        public void Remove(Section model)
+        {
+            Sections.Remove(model);
         }
 
         public ItemStore AsItemStore()
