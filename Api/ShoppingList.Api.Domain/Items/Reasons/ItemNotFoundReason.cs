@@ -8,12 +8,12 @@ public class ItemNotFoundReason : IReason
 {
     public ItemNotFoundReason(ItemId id)
     {
-        Message = $"Item {id} not found.";
+        Message = $"Item {id.Value} not found.";
     }
 
     public ItemNotFoundReason(TemporaryItemId id)
     {
-        Message = $"Item {id} not found.";
+        Message = $"Item {id.Value} not found.";
     }
 
     public ItemNotFoundReason(OfflineTolerantItemId id)

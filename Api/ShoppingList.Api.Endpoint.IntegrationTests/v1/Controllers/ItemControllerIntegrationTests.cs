@@ -137,7 +137,7 @@ public class ItemControllerIntegrationTests
                 }
             }
 
-            // second level item should not be deleted but not altered otherwise
+            // second level item should be deleted but not altered otherwise
             currentEntity.Deleted.Should().BeTrue();
             currentEntity.PredecessorId.Should().Be(firstLevelEntity.Id);
             currentEntity.AvailableAt.Should().BeEmpty();
@@ -287,6 +287,7 @@ public class ItemControllerIntegrationTests
                 Contract = new TestBuilder<UpdateItemWithTypesContract>()
                     .AfterCreation(c => c.QuantityType = CurrentItem.ItemQuantity.Type.ToInt())
                     .AfterCreation(c => c.QuantityTypeInPacket = CurrentItem.ItemQuantity.InPacket?.Type.ToInt())
+                    .AfterCreation(c => c.QuantityInPacket = CurrentItem.ItemQuantity.InPacket?.Quantity.Value)
                     .AfterCreation(c => c.ItemTypes = itemTypes)
                     .Create();
 

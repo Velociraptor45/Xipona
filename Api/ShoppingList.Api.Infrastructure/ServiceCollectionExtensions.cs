@@ -33,11 +33,11 @@ namespace ProjectHermes.ShoppingList.Api.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
+    private static readonly MySqlServerVersion _sqlServerVersion = new(new Version(10, 3, 27));
+
     public static void AddInfrastructure(this IServiceCollection services, string? connectionString = null)
     {
-        var assembly = Assembly.GetExecutingAssembly()!;
-        var version = Assembly.GetEntryAssembly()!.GetName().Version!;
-        var serverVersion = new MySqlServerVersion(new Version(version.Major, version.Minor, version.Build));
+        var assembly = Assembly.GetExecutingAssembly();
 
         services.AddScoped<DbConnection>(provider =>
         {
@@ -51,44 +51,15 @@ public static class ServiceCollectionExtensions
             return connection;
         });
 
-        services.AddScoped<IList<DbContext>>(serviceProvider => GetAllDbContextInstances(serviceProvider).ToList());
+        services.AddScoped<IList<DbContext>>(
+            serviceProvider => GetAllDbContextInstances(serviceProvider, assembly).ToList());
 
-        services.AddDbContext<ShoppingListContext>(
-            (serviceProvider, options) =>
-            {
-                var connection = serviceProvider.GetService<DbConnection>();
-                options.UseMySql(connection, serverVersion);
-            });
-        services.AddDbContext<ItemCategoryContext>(
-            (serviceProvider, options) =>
-            {
-                var connection = serviceProvider.GetService<DbConnection>();
-                options.UseMySql(connection, serverVersion);
-            });
-        services.AddDbContext<ManufacturerContext>(
-            (serviceProvider, options) =>
-            {
-                var connection = serviceProvider.GetService<DbConnection>();
-                options.UseMySql(connection, serverVersion);
-            });
-        services.AddDbContext<ItemContext>(
-            (serviceProvider, options) =>
-            {
-                var connection = serviceProvider.GetService<DbConnection>();
-                options.UseMySql(connection, serverVersion);
-            });
-        services.AddDbContext<StoreContext>(
-            (serviceProvider, options) =>
-            {
-                var connection = serviceProvider.GetService<DbConnection>();
-                options.UseMySql(connection, serverVersion);
-            });
-        services.AddDbContext<RecipeContext>(
-            (serviceProvider, options) =>
-            {
-                var connection = serviceProvider.GetService<DbConnection>();
-                options.UseMySql(connection, serverVersion);
-            });
+        services.AddDbContext<ShoppingListContext>(SetDbConnection);
+        services.AddDbContext<ItemCategoryContext>(SetDbConnection);
+        services.AddDbContext<ManufacturerContext>(SetDbConnection);
+        services.AddDbContext<ItemContext>(SetDbConnection);
+        services.AddDbContext<StoreContext>(SetDbConnection);
+        services.AddDbContext<RecipeContext>(SetDbConnection);
 
         services.AddTransient<IShoppingListRepository, ShoppingListRepository>();
         services.AddTransient<IItemRepository, ItemRepository>();
@@ -106,6 +77,12 @@ public static class ServiceCollectionExtensions
                 new RecipeRepository(context, searchResultToDomainConverter, toDomainConverter, toContractConverter,
                     cancellationToken);
         });
+        services.AddScoped(_ =>
+        {
+            var guard = new SemaphoreSlim(0, 1);
+            guard.Release(1);
+            return guard;
+        });
         services.AddScoped<ITransactionGenerator, TransactionGenerator>();
 
         services.AddImplementationOfGenericType(assembly, typeof(IToEntityConverter<,>));
@@ -113,11 +90,17 @@ public static class ServiceCollectionExtensions
         services.AddImplementationOfGenericType(assembly, typeof(IToDomainConverter<,>));
     }
 
+    private static void SetDbConnection(IServiceProvider serviceProvider, DbContextOptionsBuilder options)
+    {
+        var connection = serviceProvider.GetService<DbConnection>()!;
+        options.UseMySql(connection, _sqlServerVersion);
+    }
+
 #pragma warning disable S1172 // Unused method parameters should be removed
 
-    private static IEnumerable<DbContext> GetAllDbContextInstances(IServiceProvider serviceProvider)
+    private static IEnumerable<DbContext> GetAllDbContextInstances(IServiceProvider serviceProvider, Assembly assembly)
     {
-        var types = GetAllDbContextTypes();
+        var types = GetAllDbContextTypes(assembly);
         var instances = types.Select(serviceProvider.GetRequiredService);
         foreach (var instance in instances)
         {
@@ -127,14 +110,9 @@ public static class ServiceCollectionExtensions
 
 #pragma warning restore S1172 // Unused method parameters should be removed
 
-    private static IEnumerable<Type> GetAllDbContextTypes()
+    private static IEnumerable<Type> GetAllDbContextTypes(Assembly assembly)
     {
-        // todo make this generic
-        yield return typeof(ShoppingListContext);
-        yield return typeof(ItemCategoryContext);
-        yield return typeof(ManufacturerContext);
-        yield return typeof(ItemContext);
-        yield return typeof(StoreContext);
-        yield return typeof(RecipeContext);
+        var baseType = typeof(DbContext);
+        return assembly.GetTypes().Where(t => t.BaseType == baseType).ToList();
     }
 }

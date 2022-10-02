@@ -54,5 +54,13 @@ public static class LoggerExtensions
         logger.LogError(ex, logFunction());
     }
 
+    public static void LogError<T>(this ILogger<T> logger, Func<string> logFunction)
+    {
+        if (!logger.IsEnabled(LogLevel.Error))
+            return;
+
+        logger.LogError(logFunction());
+    }
+
 #pragma warning restore CA2254 // Template should be a static expression
 }
