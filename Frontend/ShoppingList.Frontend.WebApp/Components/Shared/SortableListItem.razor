@@ -1,5 +1,4 @@
-﻿
-@using ProjectHermes.ShoppingList.Frontend.Models.Shared
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.Shared
 
 @typeparam T where T : class, ISortableItem
 
@@ -12,8 +11,16 @@
                 OnClick="@OnIncrementSortingIndexButtonClicked"
                 Disabled="@(Model.SortingIndex == State.MaxSortingIndex)"></Button>
     </div>
-    <div class="max-w-200">
-        <Input @bind-Value="@Model.Name" />
+    <div class="text-content">
+        @if (IsTextArea)
+        {
+            <TextArea MinRows="4" @bind-value="Model.Name"></TextArea>
+
+        }
+        else
+        {
+            <Input @bind-Value="@Model.Name"/>
+        }
     </div>
     <div class="ml-2">
         <Button Icon="close"
@@ -29,6 +36,8 @@
     public T Model { get; set; }
     [Parameter]
     public Action OnChanged { get; set; }
+    [Parameter]
+    public bool IsTextArea { get; set; }
 
     public void OnRemoveButtonClicked()
     {

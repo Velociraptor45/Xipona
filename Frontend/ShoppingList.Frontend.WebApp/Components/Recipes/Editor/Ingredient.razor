@@ -108,7 +108,7 @@
         _itemDataSource.AddRange(await _itemsApiService.SearchItemsByItemCategoryAsync(itemCategoryId));
     }
 
-    private void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
+    private async void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
     {
         if(Model.ItemCategoryId == itemCategory?.Id)
             return;
@@ -116,7 +116,7 @@
         Model.ItemCategoryId = itemCategory?.Id ?? Guid.Empty;
         Model.DefaultItemId = null;
         Model.DefaultItemTypeId = null;
-        LoadItemsAsync(Model.ItemCategoryId); // todo check this
+        await LoadItemsAsync(Model.ItemCategoryId);
     }
 
     private async Task<(ItemCategorySearchResult, Guid)> OnNewItemCategoryCreatedAsync(string name)
