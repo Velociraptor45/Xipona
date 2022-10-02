@@ -27,7 +27,6 @@ public class MakeTemporaryItemPermanentCommandConverter :
         ArgumentNullException.ThrowIfNull(contract);
 
         ItemQuantityInPacket? itemQuantityInPacket = null;
-        //todo improve this check
         if (contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is not null)
         {
             itemQuantityInPacket = new ItemQuantityInPacket(

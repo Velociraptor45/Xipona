@@ -26,7 +26,6 @@ public class UpdateItemCommandConverter : IToDomainConverter<(Guid id, UpdateIte
         ArgumentNullException.ThrowIfNull(contract);
 
         ItemQuantityInPacket? itemQuantityInPacket = null;
-        //todo improve this check
         if (contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is not null)
         {
             itemQuantityInPacket = new ItemQuantityInPacket(

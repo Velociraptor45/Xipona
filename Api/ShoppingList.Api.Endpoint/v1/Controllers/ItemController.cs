@@ -236,21 +236,29 @@ public class ItemController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(typeof(ItemContract), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("without-types")]
-    public async Task<IActionResult> CreateItemAsync([FromBody] CreateItemContract createItemContract)
+    public async Task<IActionResult> CreateItemAsync([FromBody] CreateItemContract contract)
     {
+        if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
+            || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
         try
         {
-            var model = _converters.ToDomain<CreateItemContract, ItemCreation>(createItemContract);
+            var model = _converters.ToDomain<CreateItemContract, ItemCreation>(contract);
             var command = new CreateItemCommand(model);
 
             var readModel = await _commandDispatcher.DispatchAsync(command, default);
 
-            var contract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
+            var createdContract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
 
             // ReSharper disable once Mvc.ActionNotResolved
-            return CreatedAtAction(nameof(GetAsync), new { id = contract.Id }, contract);
+            return CreatedAtAction(nameof(GetAsync), new { id = createdContract.Id }, createdContract);
         }
         catch (DomainException e)
         {
@@ -261,10 +269,18 @@ public class ItemController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(typeof(ItemContract), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("with-types")]
     public async Task<IActionResult> CreateItemWithTypesAsync([FromBody] CreateItemWithTypesContract contract)
     {
+        if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
+           || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
         try
         {
             var model = _converters.ToDomain<CreateItemWithTypesContract, IItem>(contract);
@@ -307,12 +323,20 @@ public class ItemController : ControllerBase
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("with-types/{id:guid}/modify")]
     public async Task<IActionResult> ModifyItemWithTypesAsync([FromRoute] Guid id,
         [FromBody] ModifyItemWithTypesContract contract)
     {
+        if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
+            || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
         var command =
             _converters.ToDomain<(Guid, ModifyItemWithTypesContract), ModifyItemWithTypesCommand>((id, contract));
 
@@ -334,12 +358,20 @@ public class ItemController : ControllerBase
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("without-types/{id:guid}/modify")]
     public async Task<IActionResult> ModifyItemAsync([FromRoute] Guid id,
         [FromBody] ModifyItemContract contract)
     {
+        if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
+            || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
         var command = _converters.ToDomain<(Guid, ModifyItemContract), ModifyItemCommand>((id, contract));
 
         try
@@ -360,11 +392,19 @@ public class ItemController : ControllerBase
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("without-types/{id:guid}/update")]
     public async Task<IActionResult> UpdateItemAsync([FromRoute] Guid id, [FromBody] UpdateItemContract contract)
     {
+        if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
+            || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
         var command = _converters.ToDomain<(Guid, UpdateItemContract), UpdateItemCommand>((id, contract));
 
         try
@@ -410,12 +450,20 @@ public class ItemController : ControllerBase
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("with-types/{id:guid}/update")]
     public async Task<IActionResult> UpdateItemWithTypesAsync([FromRoute] Guid id,
         [FromBody] UpdateItemWithTypesContract contract)
     {
+        if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
+            || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
         var command =
             _converters.ToDomain<(Guid, UpdateItemWithTypesContract), UpdateItemWithTypesCommand>((id, contract));
 
@@ -437,12 +485,20 @@ public class ItemController : ControllerBase
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("temporary/{id:guid}")]
     public async Task<IActionResult> MakeTemporaryItemPermanentAsync([FromRoute] Guid id,
         [FromBody] MakeTemporaryItemPermanentContract contract)
     {
+        if (contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null
+            || contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null)
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
         var command =
             _converters.ToDomain<(Guid, MakeTemporaryItemPermanentContract), MakeTemporaryItemPermanentCommand>((id,
                 contract));
