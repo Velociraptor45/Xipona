@@ -5,7 +5,6 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services
 @using Ingredient = ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models.Ingredient;
 @using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models
-@using ProjectHermes.ShoppingList.Frontend.Models.Shared
 
 @inject NavigationManager _navigationManager;
 @inject RecipesState _state;
@@ -110,7 +109,7 @@
         var newRecipe = await _apiService.CreateAsync(_state.EditedRecipe);
         if (newRecipe is null)
             return;
-        _navigationManager.NavigateTo($"recipes/{newRecipe.Id}");
+        _navigationManager.NavigateTo("recipes");
     }
 
     private async Task OnModifyButtonClickedAsync()
