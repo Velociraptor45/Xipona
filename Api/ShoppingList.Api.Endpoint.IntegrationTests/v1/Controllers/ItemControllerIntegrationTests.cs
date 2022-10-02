@@ -40,6 +40,7 @@ using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
 using ItemAvailabilityContract = ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared.ItemAvailabilityContract;
 using ItemCategoryEntities = ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities;
 using ItemType = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.ItemType;
+using Section = ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Section;
 using Store = ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Store;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
@@ -636,7 +637,12 @@ public class ItemControllerIntegrationTests
             public void SetupItemsWithAndWithoutItemCategory()
             {
                 TestPropertyNotSetException.ThrowIfNull(_itemCategory);
-                _store = StoreEntityMother.Initial().Create();
+                var sections = new List<Section>()
+                {
+                    new SectionEntityBuilder().WithIsDefaultSection(true).WithSortIndex(0).Create(),
+                    new SectionEntityBuilder().WithIsDefaultSection(false).WithSortIndex(1).Create()
+                };
+                _store = StoreEntityMother.Initial().WithSections(sections).Create();
 
                 var defaultSectionId = _commonFixture.ChooseRandom(_store.Sections).Id;
 

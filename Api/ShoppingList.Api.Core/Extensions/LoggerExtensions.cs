@@ -4,6 +4,8 @@ namespace ProjectHermes.ShoppingList.Api.Core.Extensions;
 
 public static class LoggerExtensions
 {
+#pragma warning disable CA2254 // Template should be a static expression
+
     public static void LogTrace<T>(this ILogger<T> logger, Func<string> logFunction)
     {
         if (!logger.IsEnabled(LogLevel.Trace))
@@ -51,4 +53,6 @@ public static class LoggerExtensions
 
         logger.LogError(ex, logFunction());
     }
+
+#pragma warning restore CA2254 // Template should be a static expression
 }

@@ -1,6 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
+﻿using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 
@@ -10,9 +8,7 @@ public static class StoreMother
     {
         if (builder == null)
             builder = new StoreBuilder();
-        var sections = new Sections(
-            SectionMother.Default().Create().ToMonoList(),
-            new SectionFactoryMock(MockBehavior.Strict).Object);
+        var sections = SectionsMother.Valid(1, new SectionFactoryMock(MockBehavior.Strict).Object);
 
         return builder
             .WithIsDeleted(false)
@@ -39,11 +35,7 @@ public static class StoreMother
         if (count == 1)
             return Initial(builder);
 
-        var defaultSection = SectionMother.Default().Create();
-        var allSections = SectionMother.NotDefault().CreateMany(count - 1).ToList();
-
-        allSections.Add(defaultSection);
-        var sections = new Sections(allSections, new SectionFactoryMock(MockBehavior.Strict).Object);
+        var sections = SectionsMother.Valid(count, new SectionFactoryMock(MockBehavior.Strict).Object);
         return builder
             .WithIsDeleted(false)
             .WithSections(sections);

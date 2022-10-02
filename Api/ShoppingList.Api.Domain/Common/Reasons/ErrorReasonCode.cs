@@ -44,5 +44,6 @@ public enum ErrorReasonCode
     RecipeNotFound = 42,
     IngredientNotFound = 43,
     PreparationStepNotFound = 44,
-    InvalidItemIdCombination = 45
+    InvalidItemIdCombination = 45,
+    MultipleDefaultSections = 46,
 }
