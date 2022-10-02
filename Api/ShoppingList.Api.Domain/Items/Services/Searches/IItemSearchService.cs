@@ -8,7 +8,7 @@ public interface IItemSearchService
 {
     Task<IEnumerable<SearchItemForShoppingResultReadModel>> SearchForShoppingListAsync(string name, StoreId storeId);
 
-    Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(string searchInput, ItemCategoryId? itemCategoryId);
+    Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(string searchInput);
 
     Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(IEnumerable<StoreId> storeIds,
         IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds);

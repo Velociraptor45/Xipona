@@ -220,9 +220,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 .Select(_converters.ToDomain<SearchItemForShoppingListResultContract, SearchItemForShoppingListResult>);
         }
 
-        public async Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput, Guid? itemCategoryId)
+        public async Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput)
         {
-            var result = await _client.SearchItemsAsync(searchInput, itemCategoryId);
+            var result = await _client.SearchItemsAsync(searchInput);
 
             return result is null ?
                 Enumerable.Empty<SearchItemResult>() :

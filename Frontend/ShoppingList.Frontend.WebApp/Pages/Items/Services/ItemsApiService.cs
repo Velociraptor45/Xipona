@@ -86,7 +86,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
         {
             try
             {
-                var results = await _apiClient.SearchItemsAsync(searchInput, null);
+                var results = await _apiClient.SearchItemsAsync(searchInput);
                 onSuccessAction(results);
             }
             catch (ApiException e)

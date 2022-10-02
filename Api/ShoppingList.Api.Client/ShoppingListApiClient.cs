@@ -165,10 +165,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.SearchItemsByItemCategoryAsync(itemCategoryId);
         }
 
-        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync(string searchInput, 
-            Guid? itemCategoryId)
+        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync(string searchInput)
         {
-            return await _apiClient.SearchItemsAsync(searchInput, itemCategoryId);
+            return await _apiClient.SearchItemsAsync(searchInput);
         }
 
         public async Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,

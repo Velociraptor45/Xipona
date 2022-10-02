@@ -59,14 +59,13 @@ public class ItemSearchService : IItemSearchService
             .Select(model => new SearchItemResultReadModel(model));
     }
 
-    public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(string searchInput,
-        ItemCategoryId? itemCategoryId)
+    public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(string searchInput)
     {
         ArgumentNullException.ThrowIfNull(searchInput);
         if (string.IsNullOrWhiteSpace(searchInput))
             return Enumerable.Empty<SearchItemResultReadModel>();
 
-        var items = await _itemRepository.FindActiveByAsync(searchInput, itemCategoryId, _cancellationToken);
+        var items = await _itemRepository.FindActiveByAsync(searchInput, _cancellationToken);
         return items.Select(i => new SearchItemResultReadModel(i.Id, i.Name));
     }
 
