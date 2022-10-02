@@ -21,13 +21,13 @@ public class ShoppingListItemIdCustomization : ICustomization
             return CreateInstance();
         }
 
-        private bool MatchesType(object request)
+        private static bool MatchesType(object request)
         {
             var t = request as Type;
             return typeof(ShoppingListItemId) == t;
         }
 
-        private ShoppingListItemId CreateInstance()
+        private static ShoppingListItemId CreateInstance()
         {
             return ShoppingListItemId.FromActualId(Guid.NewGuid());
         }

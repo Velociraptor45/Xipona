@@ -144,17 +144,16 @@ public class TemporaryItemServiceTests
             public void SetupPermanentItem(IEnumerable<IItemAvailability> availabilities)
             {
                 Fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<IItemAvailability>>(
-                    "availabilities", availabilities);
+                    nameof(availabilities), availabilities);
 
                 PermanentItem = Fixture.Create<PermanentItem>();
             }
 
-            public void SetupCommandWithoutManufacturerId(
-                IEnumerable<IItemAvailability> availabilities)
+            public void SetupCommandWithoutManufacturerId(IEnumerable<IItemAvailability> availabilities)
             {
                 Fixture.ConstructorArgumentFor<PermanentItem, ManufacturerId?>("manufacturerId", null);
                 Fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<IItemAvailability>>(
-                    "availabilities", availabilities);
+                    nameof(availabilities), availabilities);
 
                 PermanentItem = Fixture.Create<PermanentItem>();
             }

@@ -25,7 +25,6 @@ public class ItemCreationConverter : IToDomainConverter<CreateItemContract, Item
             throw new ArgumentNullException(nameof(source));
 
         ItemQuantityInPacket? itemQuantityInPacket = null;
-        //todo improve this check
         if (source.QuantityInPacket is not null && source.QuantityTypeInPacket is not null)
         {
             itemQuantityInPacket = new ItemQuantityInPacket(

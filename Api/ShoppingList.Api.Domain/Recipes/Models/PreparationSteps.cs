@@ -2,10 +2,11 @@
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.Shared.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 
-public class PreparationSteps : IEnumerable<IPreparationStep>
+public class PreparationSteps : IEnumerable<IPreparationStep>, ISortableCollection<IPreparationStep>
 {
     private readonly IPreparationStepFactory _preparationStepFactory;
     private readonly IDictionary<PreparationStepId, IPreparationStep> _steps;
@@ -15,8 +16,10 @@ public class PreparationSteps : IEnumerable<IPreparationStep>
         _preparationStepFactory = preparationStepFactory;
         _steps = steps.ToDictionary(s => s.Id);
 
-        ValidateSortingIndexes();
+        AsSortableCollection.ValidateSortingIndexes(_steps.Values);
     }
+
+    private ISortableCollection<IPreparationStep> AsSortableCollection => this;
 
     public IReadOnlyCollection<IPreparationStep> AsReadOnly()
     {
@@ -59,7 +62,7 @@ public class PreparationSteps : IEnumerable<IPreparationStep>
         }
 
         AddMany(newPreparationSteps);
-        ValidateSortingIndexes();
+        AsSortableCollection.ValidateSortingIndexes(_steps.Values);
     }
 
     private void Modify(PreparationStepModification modification)
@@ -92,15 +95,5 @@ public class PreparationSteps : IEnumerable<IPreparationStep>
     private void Add(IPreparationStep preparationStep)
     {
         _steps.Add(preparationStep.Id, preparationStep);
-    }
-
-    private void ValidateSortingIndexes()
-    {
-        var sortingIndexes = _steps.Values.Select(s => s.SortingIndex).ToLookup(si => si);
-        foreach (var sortingIndex in sortingIndexes)
-        {
-            if (sortingIndex.Count() > 1)
-                throw new DomainException(new DuplicatedSortingIndexReason(sortingIndex.Key));
-        }
     }
 }

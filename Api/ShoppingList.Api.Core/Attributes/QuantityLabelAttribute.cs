@@ -1,5 +1,6 @@
 ﻿namespace ProjectHermes.ShoppingList.Api.Core.Attributes;
 
+[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
 public class QuantityLabelAttribute : Attribute
 {
     public QuantityLabelAttribute(string quantityLabel)

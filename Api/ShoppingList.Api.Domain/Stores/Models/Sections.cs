@@ -1,22 +1,26 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Shared.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-public class Sections : IEnumerable<ISection>
+public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
 {
     private readonly ISectionFactory _sectionFactory;
     private readonly IDictionary<SectionId, ISection> _sections;
 
     public Sections(IEnumerable<ISection> sections, ISectionFactory sectionFactory)
     {
-        //todo add sorting & default section validation
-
         _sections = sections?.ToDictionary(s => s.Id) ?? throw new ArgumentNullException(nameof(sections));
         _sectionFactory = sectionFactory ?? throw new ArgumentNullException(nameof(sectionFactory));
+
+        AsSortableCollection.ValidateSortingIndexes(_sections.Values);
+        ValidateDefaultSection();
     }
+
+    private ISortableCollection<ISection> AsSortableCollection => this;
 
     public void UpdateMany(IEnumerable<SectionUpdate> updates)
     {
@@ -67,6 +71,13 @@ public class Sections : IEnumerable<ISection>
         return GetEnumerator();
     }
 
+    private void ValidateDefaultSection()
+    {
+        var defaultSectionCount = _sections.Values.Count(s => s.IsDefaultSection);
+        if (defaultSectionCount > 1)
+            throw new DomainException(new MultipleDefaultSectionsReason());
+    }
+
     private void Remove(SectionId id)
     {
         _sections.Remove(id);
@@ -84,6 +95,9 @@ public class Sections : IEnumerable<ISection>
 
         var updatedSection = section.Update(update);
         _sections[updatedSection.Id] = updatedSection;
+
+        AsSortableCollection.ValidateSortingIndexes(_sections.Values);
+        ValidateDefaultSection();
     }
 
     private void AddMany(IEnumerable<ISection> sections)

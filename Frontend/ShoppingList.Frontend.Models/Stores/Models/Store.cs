@@ -77,7 +77,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
             Sections = new SortedSet<Section>(sections, new SortingIndexComparer());
         }
 
-        private void UpdateSortingIndexes(List<Section> sections)
+        private static void UpdateSortingIndexes(List<Section> sections)
         {
             for (int i = 0; i < sections.Count; i++)
             {

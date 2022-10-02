@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 {
-    public class ShoppingListItemId
+    public sealed class ShoppingListItemId : IEquatable<ShoppingListItemId>
     {
         public Guid? ActualId { get; }
         public Guid? OfflineId { get; }
@@ -46,9 +45,37 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 
         public override bool Equals(object obj)
         {
-            return obj is ShoppingListItemId primitive
-                   && EqualityComparer<Guid?>.Default.Equals(ActualId, primitive.ActualId)
-                   && EqualityComparer<Guid?>.Default.Equals(OfflineId, primitive.OfflineId);
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj.GetType() != GetType())
+            {
+                return false;
+            }
+
+            return Equals((ShoppingListItemId)obj);
+        }
+
+        public bool Equals(ShoppingListItemId other)
+        {
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            return Nullable.Equals(ActualId, other.ActualId) && Nullable.Equals(OfflineId, other.OfflineId);
         }
 
         public override int GetHashCode()

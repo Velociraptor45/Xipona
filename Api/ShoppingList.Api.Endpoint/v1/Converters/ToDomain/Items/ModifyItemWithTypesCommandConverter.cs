@@ -32,7 +32,6 @@ public class ModifyItemWithTypesCommandConverter :
             _availabilityConverter.ToDomain(t.Availabilities)));
 
         ItemQuantityInPacket? itemQuantityInPacket = null;
-        //todo improve this check
         if (contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is not null)
         {
             itemQuantityInPacket = new ItemQuantityInPacket(
