@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Data.Common;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
@@ -8,11 +9,14 @@ public class TransactionGenerator : ITransactionGenerator
     private readonly object _lockObject = new();
     private readonly IList<DbContext> _dbContexts;
     private readonly DbConnection _connection;
+    private readonly ILogger<Transaction> _transactionLogger;
 
-    public TransactionGenerator(IList<DbContext> dbContexts, DbConnection connection)
+    public TransactionGenerator(IList<DbContext> dbContexts, DbConnection connection,
+        ILogger<Transaction> transactionLogger)
     {
         _dbContexts = dbContexts;
         _connection = connection;
+        _transactionLogger = transactionLogger;
     }
 
     public Task<ITransaction> GenerateAsync(CancellationToken cancellationToken)
@@ -31,7 +35,7 @@ public class TransactionGenerator : ITransactionGenerator
             }
 
             return Task.FromResult(
-                new Transaction(dbTransaction, async () => await RemoveTransactions(cancellationToken))
+                new Transaction(dbTransaction, async () => await RemoveTransactions(cancellationToken), _transactionLogger)
                     as ITransaction);
         }
     }
