@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes;
@@ -14,6 +15,7 @@ internal static class ServiceCollectionExtensions
     internal static void AddRecipes(this IServiceCollection services)
     {
         services.AddTransient<IPreparationStepFactory, PreparationStepFactory>();
+        services.AddTransient<IQuantitiesQueryService, QuantitiesQueryService>();
 
         services.AddTransient<Func<CancellationToken, IIngredientFactory>>(provider =>
         {

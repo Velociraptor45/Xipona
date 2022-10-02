@@ -1,8 +1,9 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+using System;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
 {
-    public class ItemCategorySearchResult
+    public class ItemCategorySearchResult : ISearchResult
     {
         public ItemCategorySearchResult(Guid id, string name)
         {

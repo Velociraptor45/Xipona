@@ -54,6 +54,7 @@ public class SearchItemsAsyncTests :
         public override void SetupQuery()
         {
             TestPropertyNotSetException.ThrowIfNull(_searchString);
+
             Query = new SearchItemQuery(_searchString);
         }
     }

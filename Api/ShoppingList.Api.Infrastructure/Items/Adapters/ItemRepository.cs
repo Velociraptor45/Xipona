@@ -178,8 +178,7 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput,
-        CancellationToken cancellationToken)
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, CancellationToken cancellationToken)
     {
         var entities = await GetItemQuery()
             .Where(item =>
@@ -188,10 +187,9 @@ public class ItemRepository : IItemRepository
                 && item.Name.Contains(searchInput))
             .ToListAsync(cancellationToken);
 
-        cancellationToken.ThrowIfCancellationRequested();
-
         foreach (var item in entities)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             item.Predecessor = await LoadPredecessorsAsync(item);
         }
 

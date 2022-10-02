@@ -18,7 +18,9 @@ public class RecipeContractConverter : IToContractConverter<IRecipe, RecipeContr
             i.Id.Value,
             i.ItemCategoryId.Value,
             i.QuantityType.ToInt(),
-            i.Quantity.Value));
+            i.Quantity.Value,
+            i.DefaultItemId?.Value,
+            i.DefaultItemTypeId?.Value));
 
         return new RecipeContract(
             source.Id.Value,

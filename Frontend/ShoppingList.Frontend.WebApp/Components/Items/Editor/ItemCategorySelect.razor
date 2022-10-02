@@ -38,7 +38,6 @@
         await base.OnInitializedAsync();
         if (State.EditedItem.ItemCategoryId.HasValue)
         {
-
             var itemCategory = await _itemCategoryApiService.GetAsync(State.EditedItem.ItemCategoryId.Value);
             if(itemCategory is not null)
                 _dataSource.Add(new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name));

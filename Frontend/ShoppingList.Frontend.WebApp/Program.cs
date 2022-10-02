@@ -12,6 +12,8 @@ using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEditor;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using System;
@@ -66,6 +68,10 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             var itemCategoryState = new ItemCategoriesState();
             builder.Services.AddSingleton(itemCategoryState);
             builder.Services.AddTransient<IItemCategoryApiService, ItemCategoryApiService>();
+
+            var recipeState = new RecipesState();
+            builder.Services.AddSingleton(recipeState);
+            builder.Services.AddTransient<IRecipesApiService, RecipesApiService>();
 
             builder.Services.AddInfrastructure();
         }

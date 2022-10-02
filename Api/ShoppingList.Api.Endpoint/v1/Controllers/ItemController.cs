@@ -249,6 +249,7 @@ public class ItemController : ControllerBase
 
             var contract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
 
+            // ReSharper disable once Mvc.ActionNotResolved
             return CreatedAtAction(nameof(GetAsync), new { id = contract.Id }, contract);
         }
         catch (DomainException e)
@@ -272,6 +273,7 @@ public class ItemController : ControllerBase
 
             var returnContract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
 
+            // ReSharper disable once Mvc.ActionNotResolved
             return CreatedAtAction(nameof(GetAsync), new { id = returnContract.Id }, returnContract);
         }
         catch (DomainException e)

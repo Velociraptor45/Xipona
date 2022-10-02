@@ -1,0 +1,147 @@
+﻿@using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
+@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
+@using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models
+@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services
+
+@inject IItemCategoryApiService _itemCategoryApiService;
+@inject IItemsApiService _itemsApiService;
+@inject IRecipesApiService _recipesApiService;
+@inject RecipesState _state;
+
+<div class="ingredient">
+    <div class="d-flex align-items-start">
+        <div class="item-select">
+            <SingleSearchSelect Class="min-w-150"
+                                TItem="ItemCategorySearchResult"
+                                TValue="Guid"
+                                DataSource="_itemCategoryDataSource"
+                                ValueName="@nameof(ItemCategorySearchResult.Id)"
+                                LabelName="@nameof(ItemCategorySearchResult.Name)"
+                                OnItemAdded="@OnNewItemCategoryCreatedAsync"
+                                OnItemChanged="@OnItemCategoryChanged"
+                                Placeholder="Item Category"
+                                DefaultValue="@Model.ItemCategoryId"
+                                SearchForItemsAsync="_itemCategoryApiService.SearchAsync"
+                                CanAddItem="true">
+            </SingleSearchSelect>
+            @if (Model.ItemCategoryId != Guid.Empty)
+            {
+                <SingleSelect Class="mt-1 min-w-150"
+                              TItem="SearchItemByItemCategoryResult"
+                              TValue="string"
+                              DataSource="_itemDataSource"
+                              ValueName="@nameof(SearchItemByItemCategoryResult.SelectIdentifier)"
+                              LabelName="@nameof(SearchItemByItemCategoryResult.Name)"
+                              OnItemChanged="@OnItemChanged"
+                              Placeholder="Default Item"
+                              DefaultValue="@($"{Model.DefaultItemId?.ToString() ?? string.Empty}{Model.DefaultItemTypeId?.ToString() ?? string.Empty}")"
+                              CanAddItem="false"
+                              AllowClear="true">
+                </SingleSelect>
+            }
+        </div>
+        <div>
+            <Button Class="d-flex align-items-center ml-auto"
+                    OnClick="@OnRemoveIngredientButtonClicked"
+                    Danger="true">
+                <Icon Type="minus"></Icon>
+            </Button>
+            <div class="d-flex mt-1">
+                <!-- Quantity -->
+                <AntDesign.InputNumber
+                    Class="ml-4 mr-1 w-75"
+                    @bind-value="@Model.Quantity"
+                    TValue="float"
+                    Min="1f"
+                    Step="1"></AntDesign.InputNumber>
+                <!-- Quantity Type -->
+                <div class="ingredient-quantity-type-select">
+                    <SingleSelect
+                        Class=""
+                        TItem="IngredientQuantityType"
+                        TValue="int"
+                        ValueName="@nameof(IngredientQuantityType.Id)"
+                        LabelName="@nameof(IngredientQuantityType.QuantityLabel)"
+                        Placeholder="QuantityInPacketType"
+                        DefaultValue="@Model.QuantityType"
+                        DataSource="@_state.IngredientQuantityTypes.ToList()"
+                        OnItemChanged="@OnIngredientQuantityTypeChanged">
+                    </SingleSelect>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ShoppingList.Frontend.Models.Recipes.Models.Ingredient Model { get; set; }
+    [Parameter]
+    public Action<ShoppingList.Frontend.Models.Recipes.Models.Ingredient> OnRemove { get; set; }
+
+    private List<ItemCategorySearchResult> _itemCategoryDataSource = new();
+    private List<SearchItemByItemCategoryResult> _itemDataSource = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (Model.ItemCategoryId != Guid.Empty)
+        {
+            var itemCategory = await _itemCategoryApiService.GetAsync(Model.ItemCategoryId);
+            if (itemCategory is not null)
+                _itemCategoryDataSource.Add(new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name));
+
+            await LoadItemsAsync(Model.ItemCategoryId);
+        }
+    }
+
+    private async Task LoadItemsAsync(Guid itemCategoryId)
+    {
+        if (itemCategoryId == Guid.Empty)
+            return;
+        _itemDataSource.Clear();
+        _itemDataSource.AddRange(await _itemsApiService.SearchItemsByItemCategoryAsync(itemCategoryId));
+    }
+
+    private async void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
+    {
+        if(Model.ItemCategoryId == itemCategory?.Id)
+            return;
+
+        Model.ItemCategoryId = itemCategory?.Id ?? Guid.Empty;
+        Model.DefaultItemId = null;
+        Model.DefaultItemTypeId = null;
+        await LoadItemsAsync(Model.ItemCategoryId);
+    }
+
+    private async Task<(ItemCategorySearchResult, Guid)> OnNewItemCategoryCreatedAsync(string name)
+    {
+        var newItemCategory = await _itemCategoryApiService.CreateAsync(name);
+
+        if (newItemCategory == null)
+            return (null, Guid.Empty);
+            
+        return (new ItemCategorySearchResult(newItemCategory.Id, newItemCategory.Name), newItemCategory.Id);
+    }
+
+    private void OnItemChanged(SearchItemByItemCategoryResult itemSearchResult)
+    {
+        Model.DefaultItemId = itemSearchResult?.ItemId;
+        Model.DefaultItemTypeId = itemSearchResult?.ItemTypeId;
+    }
+
+    private void OnIngredientQuantityTypeChanged(IngredientQuantityType quantityType)
+    {
+        Model.QuantityType = quantityType.Id;
+    }
+
+    private void OnRemoveIngredientButtonClicked()
+    {
+        OnRemove(Model);
+    }
+}

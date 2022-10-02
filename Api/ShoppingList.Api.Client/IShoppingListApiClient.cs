@@ -19,6 +19,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
@@ -194,8 +195,14 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region RecipeController
 
+        [Get("recipes/{id}")]
+        Task<RecipeContract> GetRecipeByIdAsync([Path] Guid id);
+
         [Get("recipes")]
         Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByNameAsync([Query] string searchInput);
+
+        [Get("recipes/ingredient-quantity-types")]
+        Task<IEnumerable<IngredientQuantityTypeContract>> GetAllIngredientQuantityTypes();
 
         [Post("recipes")]
         Task<RecipeContract> CreateRecipeAsync([Body] CreateRecipeContract contract);

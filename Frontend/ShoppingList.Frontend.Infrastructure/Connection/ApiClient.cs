@@ -13,10 +13,16 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
@@ -36,6 +42,7 @@ using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores;
 using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System;
@@ -332,6 +339,44 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         {
             var contract = _converters.ToContract<ModifyItemCategoryRequest, ModifyItemCategoryContract>(request);
             await _client.ModifyItemCategoryAsync(contract);
+        }
+
+        public async Task<IEnumerable<SearchItemByItemCategoryResult>> SearchItemByItemCategoryAsync(Guid itemCategoryId)
+        {
+            var results = await _client.SearchItemsByItemCategoryAsync(itemCategoryId);
+            return _converters
+                .ToDomain<SearchItemByItemCategoryResultContract, SearchItemByItemCategoryResult>(results);
+        }
+
+        public async Task<Recipe> GetRecipeByIdAsync(Guid recipeId)
+        {
+            var result = await _client.GetRecipeByIdAsync(recipeId);
+            return _converters.ToDomain<RecipeContract, Recipe>(result);
+        }
+
+        public async Task<IEnumerable<RecipeSearchResult>> SearchRecipesByNameAsync(string searchInput)
+        {
+            var results = await _client.SearchRecipesByNameAsync(searchInput);
+            return _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
+        }
+
+        public async Task<Recipe> CreateRecipeAsync(Recipe recipe)
+        {
+            var contract = _converters.ToContract<Recipe, CreateRecipeContract>(recipe);
+            var result = await _client.CreateRecipeAsync(contract);
+            return _converters.ToDomain<RecipeContract, Recipe>(result);
+        }
+
+        public async Task ModifyRecipeAsync(Recipe recipe)
+        {
+            var contract = _converters.ToContract<Recipe, ModifyRecipeContract>(recipe);
+            await _client.ModifyRecipeAsync(recipe.Id, contract);
+        }
+
+        public async Task<IEnumerable<IngredientQuantityType>> GetAllIngredientQuantityTypes()
+        {
+            var types = await _client.GetAllIngredientQuantityTypes();
+            return _converters.ToDomain<IngredientQuantityTypeContract, IngredientQuantityType>(types);
         }
     }
 }

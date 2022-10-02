@@ -12,5 +12,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Servic
         Task<bool> DeleteAsync(Guid itemCategoryId);
         Task<ItemCategory> CreateAsync(ItemCategory itemCategory);
         Task<bool> ModifyAsync(ItemCategory itemCategory);
+        Task<ItemCategory> CreateAsync(string itemCategoryName);
     }
 }

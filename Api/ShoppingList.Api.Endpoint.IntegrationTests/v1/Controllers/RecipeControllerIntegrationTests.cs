@@ -154,7 +154,9 @@ public class RecipeControllerIntegrationTests
                         i.Id.Value,
                         i.ItemCategoryId.Value,
                         (int)i.QuantityType,
-                        i.Quantity.Value)),
+                        i.Quantity.Value,
+                        i.DefaultItemId?.Value,
+                        i.DefaultItemTypeId?.Value)),
                     _model.PreparationSteps.Select(p => new PreparationStepContract(
                         p.Id.Value,
                         p.Instruction.Value,
