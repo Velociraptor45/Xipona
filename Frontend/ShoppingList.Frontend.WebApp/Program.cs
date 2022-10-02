@@ -40,7 +40,12 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
         private static void ConfigureHttpClient(WebAssemblyHostBuilder builder)
         {
-            var uri = new Uri(builder.Configuration["Connection:Uri"]);
+            var uriString = builder.Configuration["Connection:Uri"];
+
+            if (uriString is null)
+                throw new InvalidOperationException("The Connection:Uri section in the appsettings is missing");
+
+            var uri = new Uri(uriString);
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = uri });
         }
 

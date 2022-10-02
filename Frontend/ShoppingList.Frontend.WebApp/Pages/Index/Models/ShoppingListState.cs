@@ -8,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
 {
     public class ShoppingListState
     {
-        public CultureInfo Culture = CultureInfo.GetCultureInfo("de-DE");
+        public CultureInfo Culture { get; } = CultureInfo.GetCultureInfo("de-DE");
         public Action StateChanged { get; set; }
         public Func<Guid, Task> ReloadRequestedAsync { get; set; }
         public ShoppingListRoot ShoppingList { get; private set; }
