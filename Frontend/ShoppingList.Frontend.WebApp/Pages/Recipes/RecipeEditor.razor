@@ -118,7 +118,7 @@
         var successful = await _apiService.ModifyAsync(_state.EditedRecipe);
         if (successful)
         {
-            //_state.UpdateRecipeSearchResultName(_state.EditedRecipe.Id, _state.EditedRecipe.Name); // todo
+            _state.UpdateRecipeSearchResultName(_state.EditedRecipe.Id, _state.EditedRecipe.Name);
             _navigationManager.NavigateTo("recipes");
         }
     }

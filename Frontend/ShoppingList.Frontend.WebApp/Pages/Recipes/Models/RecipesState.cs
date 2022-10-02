@@ -44,4 +44,13 @@ public class RecipesState
     {
         _ingredientQuantityTypes = ingredientQuantityTypes.ToList();
     }
+
+    public void UpdateRecipeSearchResultName(Guid recipeId, string recipeName)
+    {
+        var recipe = _searchResults.FirstOrDefault(r => r.Id == recipeId);
+        if (recipe is null)
+            return;
+
+        recipe.ChangeName(recipeName);
+    }
 }

@@ -13,4 +13,9 @@ public class RecipeSearchResult : ISearchResult
 
     public Guid Id { get; set; }
     public string Name { get; set; }
+
+    public void ChangeName(string recipeName)
+    {
+        Name = recipeName;
+    }
 }
