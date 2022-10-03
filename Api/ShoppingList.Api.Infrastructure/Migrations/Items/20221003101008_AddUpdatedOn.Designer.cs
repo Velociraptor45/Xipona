@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
 
@@ -10,9 +11,10 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Migrations.Items
 {
     [DbContext(typeof(ItemContext))]
-    partial class ItemContextModelSnapshot : ModelSnapshot
+    [Migration("20221003101008_AddUpdatedOn")]
+    partial class AddUpdatedOn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
