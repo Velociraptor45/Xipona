@@ -45,7 +45,8 @@ public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
                         DefaultSectionId = av.DefaultSectionId.Value
                     }).ToList(),
             PredecessorId = source.Predecessor?.Id.Value,
-            ItemTypes = new List<ItemType>()
+            ItemTypes = new List<ItemType>(),
+            UpdatedOn = source.UpdatedOn
         };
     }
 
