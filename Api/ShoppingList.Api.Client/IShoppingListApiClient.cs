@@ -62,7 +62,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             [Body] ChangeItemQuantityOnShoppingListContract contract);
 
         [Put("shopping-lists/{id}/finish")]
-        Task FinishListAsync([Path] Guid id, [Query] DateTimeOffset? finishedAt);
+        Task FinishListAsync([Path] Guid id, [Query(Format = "yyyy/MM/ddTHH:mm:ss")] DateTimeOffset? finishedAt);
 
         [Put("shopping-lists/{id}/items/basket/add")]
         Task PutItemInBasketAsync([Path] Guid id, [Body] PutItemInBasketContract contract);

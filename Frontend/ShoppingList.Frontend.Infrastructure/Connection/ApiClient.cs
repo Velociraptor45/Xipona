@@ -91,7 +91,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task FinishListAsync(FinishListRequest request)
         {
-            await _client.FinishListAsync(request.ShoppingListId);
+            await _client.FinishListAsync(request.ShoppingListId, request.FinishedAt);
         }
 
         public async Task RemoveItemFromShoppingListAsync(RemoveItemFromShoppingListRequest request)

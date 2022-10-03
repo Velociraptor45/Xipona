@@ -55,7 +55,8 @@ namespace ProjectHermes.ShoppingList.Api.Client
                 new JsonSerializerSettings
                 {
                     NullValueHandling = NullValueHandling.Ignore,
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    DateFormatHandling = DateFormatHandling.IsoDateFormat
                 }
             }.For<IShoppingListApiClient>();
         }
