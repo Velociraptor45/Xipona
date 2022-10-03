@@ -14,7 +14,7 @@ public class IngredientTests
 {
     public class Ctor
     {
-        private static IEnumerable<object?[]> GetValidItemIdCombinationTestData()
+        public static IEnumerable<object?[]> GetValidItemIdCombinationTestData()
         {
             yield return new object?[] { ItemId.New, ItemTypeId.New };
             yield return new object?[] { ItemId.New, null };

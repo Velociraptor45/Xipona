@@ -24,7 +24,7 @@ public class ItemTypeFactoryTests
 
             // Assert
             result.Should().BeEquivalentTo(expectedResult,
-                opt => opt.Excluding(info => info.SelectedMemberPath == "Id"));
+                opt => opt.Excluding(info => info.Path == "Id"));
             result.Id.Should().NotBe(item.Id);
         }
     }

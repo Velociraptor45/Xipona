@@ -18,7 +18,7 @@ public class ItemTypesTests
             _fixture = new UpdateFixture();
         }
 
-        private static IEnumerable<object?[]> GetUpdatePriceItemTypeIdCombinations()
+        public static IEnumerable<object?[]> GetUpdatePriceItemTypeIdCombinations()
         {
             yield return new object?[] { null, ItemTypeId.New };
 
