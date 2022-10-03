@@ -17,7 +17,8 @@ public class ItemFactory : IItemFactory
 
     public IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
-        IItem? predecessor, IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId)
+        IItem? predecessor, IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId,
+        DateTimeOffset? updatedOn)
     {
         var item = new Item(
             id,
@@ -29,7 +30,8 @@ public class ItemFactory : IItemFactory
             itemCategoryId,
             manufacturerId,
             availabilities,
-            temporaryId);
+            temporaryId,
+            updatedOn);
 
         if (predecessor != null)
             item.SetPredecessor(predecessor);
@@ -39,7 +41,7 @@ public class ItemFactory : IItemFactory
 
     public IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, ItemQuantity itemQuantity,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IItem? predecessor,
-        IEnumerable<IItemType> itemTypes)
+        IEnumerable<IItemType> itemTypes, DateTimeOffset? updatedOn)
     {
         var item = new Item(
             id,
@@ -49,7 +51,8 @@ public class ItemFactory : IItemFactory
             itemQuantity,
             itemCategoryId,
             manufacturerId,
-            new ItemTypes(itemTypes, _itemTypeFactory));
+            new ItemTypes(itemTypes, _itemTypeFactory),
+            updatedOn);
 
         if (predecessor != null)
             item.SetPredecessor(predecessor);
@@ -69,6 +72,7 @@ public class ItemFactory : IItemFactory
             itemCreation.ItemCategoryId,
             itemCreation.ManufacturerId,
             itemCreation.Availabilities,
+            null,
             null);
     }
 
@@ -84,7 +88,8 @@ public class ItemFactory : IItemFactory
             null,
             null,
             model.Availability.ToMonoList(),
-            new TemporaryItemId(model.ClientSideId));
+            new TemporaryItemId(model.ClientSideId),
+            null);
     }
 
     public IItem Create(ItemUpdate itemUpdate, IItem predecessor)
@@ -99,6 +104,7 @@ public class ItemFactory : IItemFactory
             itemUpdate.ItemCategoryId,
             itemUpdate.ManufacturerId,
             itemUpdate.Availabilities,
+            null,
             null);
 
         model.SetPredecessor(predecessor);
@@ -117,7 +123,8 @@ public class ItemFactory : IItemFactory
             itemQuantity,
             itemCategoryId,
             manufacturerId,
-            new ItemTypes(itemTypes, _itemTypeFactory));
+            new ItemTypes(itemTypes, _itemTypeFactory),
+            null);
 
         if (predecessor != null)
             item.SetPredecessor(predecessor);

@@ -33,10 +33,8 @@ public class CreateItemWithTypesConverter : IToDomainConverter<CreateItemWithTyp
                 source.QuantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
         }
 
-        return _itemFactory.Create(
-            ItemId.New,
+        return _itemFactory.CreateNew(
             new ItemName(source.Name),
-            false,
             new Comment(source.Comment),
             new ItemQuantity(
                 source.QuantityType.ToEnum<QuantityType>(),

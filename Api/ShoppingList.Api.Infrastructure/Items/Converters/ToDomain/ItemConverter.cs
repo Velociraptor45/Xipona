@@ -77,7 +77,8 @@ public class ItemConverter : IToDomainConverter<Item, IItem>
                 itemCategoryId.Value,
                 manufacturerId,
                 predecessor,
-                itemTypes);
+                itemTypes,
+                source.UpdatedOn);
         }
 
         List<IItemAvailability> availabilities = _itemAvailabilityConverter.ToDomain(source.AvailableAt)
@@ -96,6 +97,7 @@ public class ItemConverter : IToDomainConverter<Item, IItem>
             manufacturerId,
             predecessor,
             availabilities,
-            temporaryId);
+            temporaryId,
+            source.UpdatedOn);
     }
 }

@@ -429,7 +429,8 @@ public class ItemTests
                     item.ItemCategoryId,
                     item.ManufacturerId,
                     item.Availabilities.Select(av => new ItemAvailability(av.StoreId, Price.Value, av.DefaultSectionId)),
-                    item.TemporaryId);
+                    item.TemporaryId,
+                    item.UpdatedOn);
                 ExpectedResult.SetPredecessor(item);
             }
 
@@ -457,7 +458,8 @@ public class ItemTests
                             type.SetPredecessor(t);
                             return type;
                         }),
-                        _itemTypeFactoryMock.Object));
+                        _itemTypeFactoryMock.Object),
+                    item.UpdatedOn);
 
                 ExpectedResult.SetPredecessor(item);
             }
@@ -487,7 +489,8 @@ public class ItemTests
                             type.SetPredecessor(t);
                             return type;
                         }),
-                        _itemTypeFactoryMock.Object));
+                        _itemTypeFactoryMock.Object),
+                    item.UpdatedOn);
                 ExpectedResult.SetPredecessor(item);
             }
         }
