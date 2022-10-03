@@ -25,7 +25,7 @@ public class ItemUpdateServiceTests
             _fixture = new UpdateAsyncPriceFixture();
         }
 
-        private static IEnumerable<object?[]> GetItemTypeIds()
+        public static IEnumerable<object?[]> GetItemTypeIds()
         {
             yield return new object?[] { null };
             yield return new object?[] { ItemTypeId.New };
