@@ -1,4 +1,5 @@
 ﻿using Moq.Language.Flow;
+using ProjectHermes.ShoppingList.Api.Core.Services;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
@@ -126,14 +127,16 @@ public class ItemMock : Mock<IItem>
             It.Is<IEnumerable<IItemAvailability>>(avs => avs.IsEquivalentTo(availabilities))));
     }
 
-    public void SetupUpdate(StoreId storeId, ItemTypeId? itemTypeId, Price price, IItem returnValue)
+    public void SetupUpdate(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService,
+        IItem returnValue)
     {
-        Setup(m => m.Update(storeId, itemTypeId, price))
+        Setup(m => m.Update(storeId, itemTypeId, price, dateTimeService))
             .Returns(returnValue);
     }
 
-    public void VerifyUpdate(StoreId storeId, ItemTypeId? itemTypeId, Price price, Func<Times> times)
+    public void VerifyUpdate(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService,
+        Func<Times> times)
     {
-        Verify(m => m.Update(storeId, itemTypeId, price), times);
+        Verify(m => m.Update(storeId, itemTypeId, price, dateTimeService), times);
     }
 }

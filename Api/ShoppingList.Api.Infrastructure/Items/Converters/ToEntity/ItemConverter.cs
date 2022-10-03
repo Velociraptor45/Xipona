@@ -28,6 +28,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
             CreatedFrom = source.TemporaryId?.Value,
             AvailableAt = source.Availabilities.Select(av => ToAvailableAt(av, source)).ToList(),
             ItemTypes = source.ItemTypes.Select(type => ToItemType(type, source)).ToList(),
+            UpdatedOn = source.UpdatedOn,
             PredecessorId = source.Predecessor?.Id.Value
         };
     }

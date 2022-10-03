@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.ShoppingList.Api.Core.Services;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
@@ -71,7 +72,7 @@ public class Item : IItem
     public ItemCategoryId? ItemCategoryId { get; private set; }
     public ManufacturerId? ManufacturerId { get; private set; }
     public TemporaryItemId? TemporaryId { get; }
-    public DateTimeOffset? UpdatedOn { get; }
+    public DateTimeOffset? UpdatedOn { get; private set; }
     public IItem? Predecessor { get; private set; } // todo: change this to an IItemPredecessor model to satisfy DDD
 
     public IReadOnlyCollection<IItemType> ItemTypes =>
@@ -173,15 +174,16 @@ public class Item : IItem
         ManufacturerId = null;
     }
 
-    public IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price)
+    public IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService)
     {
         Delete();
+        UpdatedOn = dateTimeService.UtcNow;
         IItem newItem;
         if (HasItemTypes)
         {
             var itemTypes = _itemTypes!.Update(storeId, itemTypeId, price);
             newItem = new Item(ItemId.New, Name, false, Comment, ItemQuantity, ItemCategoryId!.Value, ManufacturerId,
-                itemTypes, UpdatedOn);
+                itemTypes, null);
         }
         else
         {
@@ -194,7 +196,7 @@ public class Item : IItem
                     : av);
 
             newItem = new Item(ItemId.New, Name, false, Comment, IsTemporary, ItemQuantity, ItemCategoryId,
-                ManufacturerId, availabilities, TemporaryId, UpdatedOn);
+                ManufacturerId, availabilities, TemporaryId, null);
         }
 
         newItem.SetPredecessor(this);

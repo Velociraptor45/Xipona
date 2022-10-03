@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+﻿using ProjectHermes.ShoppingList.Api.Core.TestKit.Services;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -187,7 +188,7 @@ public class ItemUpdateServiceTests
                 TestPropertyNotSetException.ThrowIfNull(NewItem);
                 TestPropertyNotSetException.ThrowIfNull(StoreId);
 
-                OldItemMock.SetupUpdate(StoreId.Value, ItemTypeId, Price.Value, NewItem);
+                OldItemMock.SetupUpdate(StoreId.Value, ItemTypeId, Price.Value, DateTimeServiceMock.Object, NewItem);
             }
 
             public void VerifyUpdatingItem()
@@ -196,7 +197,7 @@ public class ItemUpdateServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OldItemMock);
                 TestPropertyNotSetException.ThrowIfNull(StoreId);
 
-                OldItemMock.VerifyUpdate(StoreId.Value, ItemTypeId, Price.Value, Times.Once);
+                OldItemMock.VerifyUpdate(StoreId.Value, ItemTypeId, Price.Value, DateTimeServiceMock.Object, Times.Once);
             }
 
             public void SetupWithValidItemId(ItemTypeId? itemTypeId)
@@ -315,6 +316,7 @@ public class ItemUpdateServiceTests
         private readonly ItemTypeFactoryMock _itemTypeFactoryMock = new(MockBehavior.Strict);
         private readonly ItemFactoryMock _itemFactoryMock = new(MockBehavior.Strict);
         protected readonly ShoppingListExchangeServiceMock ShoppingListExchangeServiceMock = new(MockBehavior.Strict);
+        protected readonly DateTimeServiceMock DateTimeServiceMock = new(MockBehavior.Strict);
         private readonly ValidatorMock _validatorMock = new(MockBehavior.Strict);
 
         public ItemUpdateService CreateSut()
@@ -325,6 +327,7 @@ public class ItemUpdateServiceTests
                 _itemTypeFactoryMock.Object,
                 _itemFactoryMock.Object,
                 ShoppingListExchangeServiceMock.Object,
+                DateTimeServiceMock.Object,
                 default);
         }
 

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProjectHermes.ShoppingList.Api.ApplicationServices;
+using ProjectHermes.ShoppingList.Api.Core;
 using ProjectHermes.ShoppingList.Api.Core.Files;
 using ProjectHermes.ShoppingList.Api.Domain;
 using ProjectHermes.ShoppingList.Api.Endpoint;
@@ -37,6 +38,7 @@ public class Startup
         services.AddSingleton(connectionStrings);
 
         services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
+        services.AddCore();
         services.AddDomain();
         services.AddEndpointControllers();
         services.AddSwaggerGen(options =>
