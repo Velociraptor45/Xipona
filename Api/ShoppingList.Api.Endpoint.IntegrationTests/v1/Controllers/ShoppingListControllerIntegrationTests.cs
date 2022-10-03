@@ -147,10 +147,6 @@ public class ShoppingListControllerIntegrationTests
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)
         {
             yield return scope.ServiceProvider.GetRequiredService<ShoppingListContext>();
-            //yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
-            //yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
-            //yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
-            //yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
         }
 
         public async Task<IEnumerable<Infrastructure.ShoppingLists.Entities.ShoppingList>> LoadAllShoppingLists()
