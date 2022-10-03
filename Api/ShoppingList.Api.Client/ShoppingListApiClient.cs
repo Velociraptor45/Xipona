@@ -55,7 +55,8 @@ namespace ProjectHermes.ShoppingList.Api.Client
                 new JsonSerializerSettings
                 {
                     NullValueHandling = NullValueHandling.Ignore,
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    DateFormatHandling = DateFormatHandling.IsoDateFormat
                 }
             }.For<IShoppingListApiClient>();
         }
@@ -104,9 +105,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await _apiClient.ChangeItemQuantityOnShoppingListAsync(id, contract);
         }
 
-        public async Task FinishListAsync(Guid id)
+        public async Task FinishListAsync(Guid id, DateTimeOffset? finishedAt)
         {
-            await _apiClient.FinishListAsync(id);
+            await _apiClient.FinishListAsync(id, finishedAt);
         }
 
         #endregion ShoppingListController

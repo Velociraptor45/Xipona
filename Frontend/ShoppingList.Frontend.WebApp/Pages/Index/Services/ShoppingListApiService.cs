@@ -135,10 +135,10 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             onSuccessAction(shoppingList);
         }
 
-        public async Task FinishListAsync(Guid shoppingListId, IAsyncRetryFragmentCreator fragmentCreator,
+        public async Task FinishListAsync(Guid shoppingListId, DateTimeOffset? finishedAt, IAsyncRetryFragmentCreator fragmentCreator,
             Func<Task> onSuccessAction)
         {
-            var request = new FinishListRequest(Guid.NewGuid(), shoppingListId);
+            var request = new FinishListRequest(Guid.NewGuid(), shoppingListId, finishedAt);
 
             try
             {
@@ -151,14 +151,14 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
                     contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await FinishListAsync(shoppingListId, fragmentCreator, onSuccessAction));
+                    await FinishListAsync(shoppingListId, finishedAt, fragmentCreator, onSuccessAction));
                 _notificationService.NotifyError("Finishing shopping list failed", contract?.Message ?? e.Message, fragment);
                 return;
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await FinishListAsync(shoppingListId, fragmentCreator, onSuccessAction));
+                    await FinishListAsync(shoppingListId, finishedAt, fragmentCreator, onSuccessAction));
                 _notificationService.NotifyError("Unknown error while finishing shopping list", e.Message, fragment);
                 return;
             }

@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="4.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ShoppingList.Api.Core.TestKit\ShoppingList.Api.Core.TestKit.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Domain.TestKit\ShoppingList.Api.Domain.TestKit.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Infrastructure\ShoppingList.Api.Infrastructure.csproj" />
