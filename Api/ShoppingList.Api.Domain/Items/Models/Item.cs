@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.ShoppingList.Api.Core.Services;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
@@ -17,7 +18,7 @@ public class Item : IItem
 
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
-        IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId)
+        IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId, DateTimeOffset? updatedOn)
     {
         Id = id;
         Name = name;
@@ -28,6 +29,7 @@ public class Item : IItem
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
         TemporaryId = temporaryId;
+        UpdatedOn = updatedOn;
         _itemTypes = null;
         _availabilities = availabilities.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
 
@@ -38,7 +40,7 @@ public class Item : IItem
 
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment,
         ItemQuantity itemQuantity, ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
-        ItemTypes itemTypes)
+        ItemTypes itemTypes, DateTimeOffset? updatedOn)
     {
         Id = id;
         Name = name;
@@ -48,6 +50,7 @@ public class Item : IItem
         IsTemporary = false;
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
+        UpdatedOn = updatedOn;
         TemporaryId = null;
         _itemTypes = itemTypes ?? throw new ArgumentNullException(nameof(itemTypes));
         _availabilities = new List<IItemAvailability>();
@@ -69,6 +72,7 @@ public class Item : IItem
     public ItemCategoryId? ItemCategoryId { get; private set; }
     public ManufacturerId? ManufacturerId { get; private set; }
     public TemporaryItemId? TemporaryId { get; }
+    public DateTimeOffset? UpdatedOn { get; private set; }
     public IItem? Predecessor { get; private set; } // todo: change this to an IItemPredecessor model to satisfy DDD
 
     public IReadOnlyCollection<IItemType> ItemTypes =>
@@ -170,15 +174,16 @@ public class Item : IItem
         ManufacturerId = null;
     }
 
-    public IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price)
+    public IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService)
     {
         Delete();
+        UpdatedOn = dateTimeService.UtcNow;
         IItem newItem;
         if (HasItemTypes)
         {
             var itemTypes = _itemTypes!.Update(storeId, itemTypeId, price);
             newItem = new Item(ItemId.New, Name, false, Comment, ItemQuantity, ItemCategoryId!.Value, ManufacturerId,
-                itemTypes);
+                itemTypes, null);
         }
         else
         {
@@ -191,7 +196,7 @@ public class Item : IItem
                     : av);
 
             newItem = new Item(ItemId.New, Name, false, Comment, IsTemporary, ItemQuantity, ItemCategoryId,
-                ManufacturerId, availabilities, TemporaryId);
+                ManufacturerId, availabilities, TemporaryId, null);
         }
 
         newItem.SetPredecessor(this);

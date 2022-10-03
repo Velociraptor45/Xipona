@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using ProjectHermes.ShoppingList.Api.ApplicationServices;
+using ProjectHermes.ShoppingList.Api.Core;
 using ProjectHermes.ShoppingList.Api.Domain;
 using ProjectHermes.ShoppingList.Api.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
@@ -25,6 +26,7 @@ public abstract class DatabaseFixture : IDisposable
     protected IServiceProvider CreateServiceProvider()
     {
         var services = new ServiceCollection();
+        services.AddCore();
         services.AddDomain();
         services.AddEndpointControllers();
         services.AddInfrastructure(DockerFixture.ConnectionString);

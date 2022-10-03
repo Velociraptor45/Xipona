@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.ShoppingList.Api.Core.Services;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
@@ -15,6 +16,7 @@ public class ItemUpdateService : IItemUpdateService
     private readonly IItemTypeFactory _itemTypeFactory;
     private readonly IItemFactory _itemFactory;
     private readonly IShoppingListExchangeService _shoppingListExchangeService;
+    private readonly IDateTimeService _dateTimeService;
     private readonly IValidator _validator;
     private readonly CancellationToken _cancellationToken;
 
@@ -24,12 +26,14 @@ public class ItemUpdateService : IItemUpdateService
         IItemTypeFactory itemTypeFactory,
         IItemFactory itemFactory,
         IShoppingListExchangeService shoppingListExchangeService,
+        IDateTimeService dateTimeService,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
         _itemTypeFactory = itemTypeFactory;
         _itemFactory = itemFactory;
         _shoppingListExchangeService = shoppingListExchangeService;
+        _dateTimeService = dateTimeService;
         _validator = validatorDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
     }
@@ -133,7 +137,7 @@ public class ItemUpdateService : IItemUpdateService
         if (oldItem.IsTemporary)
             throw new DomainException(new TemporaryItemNotUpdateableReason(itemId));
 
-        IItem updatedItem = oldItem.Update(storeId, itemTypeId, price);
+        IItem updatedItem = oldItem.Update(storeId, itemTypeId, price, _dateTimeService);
         await _itemRepository.StoreAsync(oldItem, _cancellationToken);
         updatedItem = await _itemRepository.StoreAsync(updatedItem, _cancellationToken);
 

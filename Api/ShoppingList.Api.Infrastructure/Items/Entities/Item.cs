@@ -29,6 +29,7 @@ public class Item
     public Guid? ItemCategoryId { get; set; }
     public Guid? ManufacturerId { get; set; }
     public Guid? CreatedFrom { get; set; }
+    public DateTimeOffset? UpdatedOn { get; set; }
     public Guid? PredecessorId { get; set; }
 
     [ForeignKey("PredecessorId")]

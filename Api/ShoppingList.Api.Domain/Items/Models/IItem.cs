@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Core.Services;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.TemporaryItems;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
@@ -22,6 +23,7 @@ public interface IItem
     IReadOnlyCollection<IItemAvailability> Availabilities { get; }
     IReadOnlyCollection<IItemType> ItemTypes { get; }
     bool HasItemTypes { get; }
+    DateTimeOffset? UpdatedOn { get; }
 
     void Delete();
 
@@ -44,5 +46,5 @@ public interface IItem
     bool TryGetTypeWithPredecessor(ItemTypeId predecessorTypeId, out IItemType? predecessor);
 
     void RemoveManufacturer();
-    IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price);
+    IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService);
 }

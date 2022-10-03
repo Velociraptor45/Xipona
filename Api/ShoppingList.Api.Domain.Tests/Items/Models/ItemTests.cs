@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.ShoppingList.Api.Core.TestKit.Services;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
@@ -227,12 +228,14 @@ public class ItemTests
             _fixture.SetupItemAvailableAtStore();
             var sut = _fixture.CreateSut();
             _fixture.SetupExpectedResult(sut);
+            _fixture.SetupDateTimeServiceReturningExpectedUpdatedOn();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.Price);
 
             // Act
-            var result = sut.Update(_fixture.StoreId.Value, _fixture.ItemTypeId, _fixture.Price.Value);
+            var result = sut.Update(_fixture.StoreId.Value, _fixture.ItemTypeId, _fixture.Price.Value,
+                _fixture.DateTimeServiceMock.Object);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedResult,
@@ -251,15 +254,43 @@ public class ItemTests
             _fixture.SetupItemAvailableAtStore();
             var sut = _fixture.CreateSut();
             _fixture.SetupExpectedResult(sut);
+            _fixture.SetupDateTimeServiceReturningExpectedUpdatedOn();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.Price);
 
             // Act
-            sut.Update(_fixture.StoreId.Value, _fixture.ItemTypeId, _fixture.Price.Value);
+            sut.Update(_fixture.StoreId.Value, _fixture.ItemTypeId, _fixture.Price.Value,
+                _fixture.DateTimeServiceMock.Object);
 
             // Assert
             sut.IsDeleted.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Update_WithItemWithoutTypes_ShouldSetUpdatedOn()
+        {
+            // Arrange
+            _fixture.SetupAsItemWithoutTypes();
+            _fixture.SetupStoreId();
+            _fixture.SetupItemTypeIdNull();
+            _fixture.SetupPrice();
+            _fixture.SetupItemAvailableAtStore();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedResult(sut);
+            _fixture.SetupDateTimeServiceReturningExpectedUpdatedOn();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Price);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedUpdatedOn);
+
+            // Act
+            sut.Update(_fixture.StoreId.Value, _fixture.ItemTypeId, _fixture.Price.Value,
+                _fixture.DateTimeServiceMock.Object);
+
+            // Assert
+            sut.UpdatedOn.Should().NotBeNull();
+            sut.UpdatedOn.Should().Be(_fixture.ExpectedUpdatedOn.Value);
         }
 
         [Fact]
@@ -276,7 +307,8 @@ public class ItemTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Price);
 
             // Act
-            var func = () => sut.Update(_fixture.StoreId.Value, _fixture.ItemTypeId, _fixture.Price.Value);
+            var func = () => sut.Update(_fixture.StoreId.Value, _fixture.ItemTypeId, _fixture.Price.Value,
+                _fixture.DateTimeServiceMock.Object);
 
             // Assert
             func.Should().ThrowDomainException(ErrorReasonCode.ItemAtStoreNotAvailable);
@@ -298,7 +330,8 @@ public class ItemTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Price);
 
             // Act
-            var result = sut.Update(_fixture.StoreId.Value, _fixture.ItemTypeId, _fixture.Price.Value);
+            var result = sut.Update(_fixture.StoreId.Value, _fixture.ItemTypeId, _fixture.Price.Value,
+                _fixture.DateTimeServiceMock.Object);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedResult,
@@ -330,7 +363,8 @@ public class ItemTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Price);
 
             // Act
-            var result = sut.Update(_fixture.StoreId.Value, _fixture.ItemTypeId, _fixture.Price.Value);
+            var result = sut.Update(_fixture.StoreId.Value, _fixture.ItemTypeId, _fixture.Price.Value,
+                _fixture.DateTimeServiceMock.Object);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedResult,
@@ -360,6 +394,8 @@ public class ItemTests
             public StoreId? StoreId { get; private set; }
             public ItemTypeId? ItemTypeId { get; private set; }
             public Item? ExpectedResult { get; private set; }
+            public DateTimeOffset? ExpectedUpdatedOn { get; private set; }
+            public DateTimeServiceMock DateTimeServiceMock { get; } = new(MockBehavior.Strict);
 
             public Item CreateSut()
             {
@@ -415,6 +451,12 @@ public class ItemTests
                 Price = new DomainTestBuilder<Price>().Create();
             }
 
+            public void SetupDateTimeServiceReturningExpectedUpdatedOn()
+            {
+                ExpectedUpdatedOn = DateTimeOffset.UtcNow;
+                DateTimeServiceMock.SetupUtcNow(ExpectedUpdatedOn.Value);
+            }
+
             public void SetupExpectedResult(Item item)
             {
                 TestPropertyNotSetException.ThrowIfNull(Price);
@@ -429,7 +471,8 @@ public class ItemTests
                     item.ItemCategoryId,
                     item.ManufacturerId,
                     item.Availabilities.Select(av => new ItemAvailability(av.StoreId, Price.Value, av.DefaultSectionId)),
-                    item.TemporaryId);
+                    item.TemporaryId,
+                    null);
                 ExpectedResult.SetPredecessor(item);
             }
 
@@ -457,7 +500,8 @@ public class ItemTests
                             type.SetPredecessor(t);
                             return type;
                         }),
-                        _itemTypeFactoryMock.Object));
+                        _itemTypeFactoryMock.Object),
+                    null);
 
                 ExpectedResult.SetPredecessor(item);
             }
@@ -487,7 +531,8 @@ public class ItemTests
                             type.SetPredecessor(t);
                             return type;
                         }),
-                        _itemTypeFactoryMock.Object));
+                        _itemTypeFactoryMock.Object),
+                    null);
                 ExpectedResult.SetPredecessor(item);
             }
         }

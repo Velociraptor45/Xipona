@@ -365,7 +365,10 @@ public class ItemControllerIntegrationTests
 
             var oldItem = allStoredItems.First(i => i.Id == _fixture.ExpectedOldItem.Id);
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
-                opt => opt.Excluding(info => Regex.IsMatch(info.SelectedMemberPath, @"AvailableAt\[\d+\].Item")));
+                opt => opt.Excluding(info => info.SelectedMemberPath == "UpdatedOn"
+                                             || Regex.IsMatch(info.SelectedMemberPath, @"AvailableAt\[\d+\].Item")));
+            oldItem.UpdatedOn.Should().NotBeNull();
+            oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
@@ -401,10 +404,12 @@ public class ItemControllerIntegrationTests
 
             var oldItem = allStoredItems.First(i => i.Id == _fixture.ExpectedOldItem.Id);
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
-                opt => opt.Excluding(info =>
-                    Regex.IsMatch(info.SelectedMemberPath, @"ItemTypes\[\d+\].Item")
+                opt => opt.Excluding(info => info.SelectedMemberPath == "UpdatedOn"
+                    || Regex.IsMatch(info.SelectedMemberPath, @"ItemTypes\[\d+\].Item")
                     || Regex.IsMatch(info.SelectedMemberPath, @"AvailableAt\[\d+\].ItemType")
                     ));
+            oldItem.UpdatedOn.Should().NotBeNull();
+            oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
