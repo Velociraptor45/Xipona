@@ -47,7 +47,7 @@ public class StoreControllerIntegrationTests
             var createdResult = result as CreatedResult;
             createdResult!.Value.Should().BeOfType<StoreContract>();
             createdResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResultValue!,
-                opts => opts.Excluding(x => x.SelectedMemberPath.EndsWith("Id")));
+                opts => opts.Excluding(x => x.Path.EndsWith("Id")));
         }
 
         [Fact]
@@ -67,7 +67,7 @@ public class StoreControllerIntegrationTests
 
             stores.Should().HaveCount(1);
             stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
-                opts => opts.Excluding(x => x.SelectedMemberPath.EndsWith("Id")));
+                opts => opts.Excluding(x => x.Path.EndsWith("Id")));
         }
 
         private class CreateStoreAsyncFixture : LocalFixture

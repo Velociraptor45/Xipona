@@ -61,15 +61,15 @@ public class RecipeControllerIntegrationTests
             result.Should().BeOfType<CreatedAtActionResult>();
             var createdResult = result as CreatedAtActionResult;
             createdResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt.Excluding(info =>
-                info.SelectedMemberPath.EndsWith(".Id") || info.SelectedMemberPath == "Id"));
+                info.Path.EndsWith(".Id") || info.Path == "Id"));
 
             var recipeEntities = (await _fixture.LoadAllRecipesAsync()).ToList();
             recipeEntities.Should().HaveCount(1);
             recipeEntities.First().Should().BeEquivalentTo(_fixture.ExpectedEntity, opt => opt.Excluding(info =>
-                info.SelectedMemberPath.EndsWith(".Id")
-                || info.SelectedMemberPath == "Id"
-                || Regex.IsMatch(info.SelectedMemberPath, @"Ingredients\[\d+\]\.Recipe")
-                || Regex.IsMatch(info.SelectedMemberPath, @"PreparationSteps\[\d+\]\.Recipe")
+                info.Path.EndsWith(".Id")
+                || info.Path == "Id"
+                || Regex.IsMatch(info.Path, @"Ingredients\[\d+\]\.Recipe")
+                || Regex.IsMatch(info.Path, @"PreparationSteps\[\d+\]\.Recipe")
             ));
         }
 
@@ -377,17 +377,17 @@ public class RecipeControllerIntegrationTests
             var firstIngredientEntity = ingredientEntities[firstExpectedIngredient.Id];
             ingredientEntities.Remove(firstIngredientEntity.Id);
             firstIngredientEntity.Should().BeEquivalentTo(firstExpectedIngredient,
-                opt => opt.Excluding(p => new[] { "Recipe" }.Contains(p.SelectedMemberPath)));
+                opt => opt.Excluding(p => new[] { "Recipe" }.Contains(p.Path)));
 
             ingredientEntities.Should().ContainKey(secondExpectedIngredient.Id);
             var secondIngredientEntity = ingredientEntities[secondExpectedIngredient.Id];
             ingredientEntities.Remove(secondIngredientEntity.Id);
             secondIngredientEntity.Should().BeEquivalentTo(secondExpectedIngredient,
-                opt => opt.Excluding(p => new[] { "Recipe" }.Contains(p.SelectedMemberPath)));
+                opt => opt.Excluding(p => new[] { "Recipe" }.Contains(p.Path)));
 
             var thirdIngredientEntity = ingredientEntities.Single().Value;
             thirdIngredientEntity.Should().BeEquivalentTo(thirdExpectedIngredient,
-                opt => opt.Excluding(p => new[] { "Id", "Recipe" }.Contains(p.SelectedMemberPath)));
+                opt => opt.Excluding(p => new[] { "Id", "Recipe" }.Contains(p.Path)));
 
             // preparation steps
             var firstExpectedStep = _fixture.ExpectedRecipe.PreparationSteps.ElementAt(0);
@@ -400,17 +400,17 @@ public class RecipeControllerIntegrationTests
             var firstStepEntity = stepEntities[firstExpectedStep.Id];
             stepEntities.Remove(firstExpectedStep.Id);
             firstStepEntity.Should().BeEquivalentTo(firstExpectedStep,
-                opt => opt.Excluding(p => new[] { "Recipe" }.Contains(p.SelectedMemberPath)));
+                opt => opt.Excluding(p => new[] { "Recipe" }.Contains(p.Path)));
 
             stepEntities.Should().ContainKey(secondExpectedStep.Id);
             var secondStepEntity = stepEntities[secondExpectedStep.Id];
             stepEntities.Remove(secondStepEntity.Id);
             secondStepEntity.Should().BeEquivalentTo(secondExpectedStep,
-                opt => opt.Excluding(p => new[] { "Recipe" }.Contains(p.SelectedMemberPath)));
+                opt => opt.Excluding(p => new[] { "Recipe" }.Contains(p.Path)));
 
             var thirdStepEntity = stepEntities.Single().Value;
             thirdStepEntity.Should().BeEquivalentTo(thirdExpectedStep,
-                opt => opt.Excluding(p => new[] { "Id", "Recipe" }.Contains(p.SelectedMemberPath)));
+                opt => opt.Excluding(p => new[] { "Id", "Recipe" }.Contains(p.Path)));
         }
 
         private class ModifyRecipeAsyncFixture : RecipeControllerFixture

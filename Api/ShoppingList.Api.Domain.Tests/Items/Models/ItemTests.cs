@@ -239,7 +239,7 @@ public class ItemTests
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.Excluding(info => info.SelectedMemberPath == "Id"));
+                opt => opt.Excluding(info => info.Path == "Id"));
             result.Id.Should().NotBe(sut.Id);
         }
 
@@ -336,8 +336,8 @@ public class ItemTests
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedResult,
                 opt => opt.Excluding(info =>
-                    info.SelectedMemberPath == "Id"
-                    || Regex.IsMatch(info.SelectedMemberPath, @"ItemTypes\[\d+\].Id")));
+                    info.Path == "Id"
+                    || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Id")));
 
             result.Id.Should().NotBe(sut.Id);
             var newItemTypeIds = result.ItemTypes.Select(t => t.Id).ToList();
@@ -369,8 +369,8 @@ public class ItemTests
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedResult,
                 opt => opt.Excluding(info =>
-                    info.SelectedMemberPath == "Id"
-                    || Regex.IsMatch(info.SelectedMemberPath, @"ItemTypes\[\d+\].Id")));
+                    info.Path == "Id"
+                    || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Id")));
 
             result.Id.Should().NotBe(sut.Id);
             var newItemTypeIds = result.ItemTypes.Select(t => t.Id).ToList();
