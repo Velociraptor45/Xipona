@@ -99,30 +99,10 @@ public class ItemUpdateService : IItemUpdateService
         IItem? oldItem = await _itemRepository.FindByAsync(update.OldId, _cancellationToken);
         if (oldItem == null)
             throw new DomainException(new ItemNotFoundReason(update.OldId));
-        if (oldItem.IsTemporary)
-            throw new DomainException(new TemporaryItemNotUpdateableReason(update.OldId));
 
-        oldItem.Delete();
-
-        var itemCategoryId = update.ItemCategoryId;
-        var manufacturerId = update.ManufacturerId;
-
-        await _validator.ValidateAsync(itemCategoryId);
-
-        if (manufacturerId != null)
-        {
-            await _validator.ValidateAsync(manufacturerId.Value);
-        }
-
-        _cancellationToken.ThrowIfCancellationRequested();
-
-        var availabilities = update.Availabilities;
-        await _validator.ValidateAsync(availabilities);
+        var updatedItem = await oldItem.UpdateAsync(update, _validator, _dateTimeService);
 
         await _itemRepository.StoreAsync(oldItem, _cancellationToken);
-
-        // create new Item
-        IItem updatedItem = _itemFactory.Create(update, oldItem);
         updatedItem = await _itemRepository.StoreAsync(updatedItem, _cancellationToken);
 
         // change existing item references on shopping lists

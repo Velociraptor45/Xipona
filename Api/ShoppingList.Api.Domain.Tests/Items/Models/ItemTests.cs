@@ -1,14 +1,18 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.TestKit.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.TemporaryItems;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
@@ -208,13 +212,157 @@ public class ItemTests
 
     #endregion SetPredecessor
 
+    public class UpdateAsync_WithoutTypes
+    {
+        private readonly UpdateAsyncFixture _fixture;
+
+        public UpdateAsync_WithoutTypes()
+        {
+            _fixture = new UpdateAsyncFixture();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidData_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupNotDeleted();
+            _fixture.SetupNotTemporary();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedItem(sut);
+            _fixture.SetupItemUpdate();
+            _fixture.SetupValidatingItemCategorySuccess();
+            _fixture.SetupValidatingManufacturerSuccess();
+            _fixture.SetupValidatingAvailabilitiesSuccess();
+            _fixture.SetupDateTimeServiceReturningExpectedUpdatedOn();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemUpdate);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
+
+            // Act
+            var result = await sut.UpdateAsync(_fixture.ItemUpdate, _fixture.ValidatorMock.Object,
+                _fixture.DateTimeServiceMock.Object);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedItem, opt => opt.Excluding(info => info.Path == "Id"));
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidData_ShouldDeleteOldItem()
+        {
+            // Arrange
+            _fixture.SetupNotDeleted();
+            _fixture.SetupNotTemporary();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedItem(sut);
+            _fixture.SetupItemUpdate();
+            _fixture.SetupValidatingItemCategorySuccess();
+            _fixture.SetupValidatingManufacturerSuccess();
+            _fixture.SetupValidatingAvailabilitiesSuccess();
+            _fixture.SetupDateTimeServiceReturningExpectedUpdatedOn();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemUpdate);
+
+            // Act
+            await sut.UpdateAsync(_fixture.ItemUpdate, _fixture.ValidatorMock.Object,
+                _fixture.DateTimeServiceMock.Object);
+
+            // Assert
+            sut.IsDeleted.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidData_ShouldSetUpdateOnAtOldItem()
+        {
+            // Arrange
+            _fixture.SetupNotDeleted();
+            _fixture.SetupNotTemporary();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedItem(sut);
+            _fixture.SetupItemUpdate();
+            _fixture.SetupValidatingItemCategorySuccess();
+            _fixture.SetupValidatingManufacturerSuccess();
+            _fixture.SetupValidatingAvailabilitiesSuccess();
+            _fixture.SetupDateTimeServiceReturningExpectedUpdatedOn();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemUpdate);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedUpdatedOn);
+
+            // Act
+            await sut.UpdateAsync(_fixture.ItemUpdate, _fixture.ValidatorMock.Object,
+                _fixture.DateTimeServiceMock.Object);
+
+            // Assert
+            sut.UpdatedOn.Should().Be(_fixture.ExpectedUpdatedOn);
+        }
+
+        private sealed class UpdateAsyncFixture : UpdateFixture
+        {
+            public ItemUpdate? ItemUpdate { get; private set; }
+            public IItem? ExpectedItem { get; private set; }
+
+            public void SetupNotDeleted()
+            {
+                Builder.WithIsDeleted(false);
+            }
+
+            public void SetupNotTemporary()
+            {
+                Builder.WithIsTemporary(false);
+            }
+
+            public void SetupExpectedItem(IItem sut)
+            {
+                ExpectedItem = ItemMother.Initial().Create();
+                ExpectedItem.SetPredecessor(sut);
+            }
+
+            public void SetupItemUpdate()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedItem);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedItem.ItemCategoryId);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedItem.ManufacturerId);
+
+                ItemUpdate = new ItemUpdate(
+                    ItemId.New,
+                    ExpectedItem.Name,
+                    ExpectedItem.Comment,
+                    ExpectedItem.ItemQuantity,
+                    ExpectedItem.ItemCategoryId.Value,
+                    ExpectedItem.ManufacturerId.Value,
+                    ExpectedItem.Availabilities);
+            }
+
+            public void SetupValidatingItemCategorySuccess()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemUpdate);
+
+                SetupValidatingItemCategorySuccess(ItemUpdate.ItemCategoryId);
+            }
+
+            public void SetupValidatingManufacturerSuccess()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemUpdate);
+                TestPropertyNotSetException.ThrowIfNull(ItemUpdate.ManufacturerId);
+
+                SetupValidatingManufacturerSuccess(ItemUpdate.ManufacturerId.Value);
+            }
+
+            public void SetupValidatingAvailabilitiesSuccess()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemUpdate);
+
+                SetupValidatingAvailabilitiesSuccess(ItemUpdate.Availabilities);
+            }
+        }
+    }
+
     public class Update_Price
     {
-        private readonly UpdateFixture _fixture;
+        private readonly UpdateFixture_Price _fixture;
 
         public Update_Price()
         {
-            _fixture = new UpdateFixture();
+            _fixture = new UpdateFixture_Price();
         }
 
         [Fact]
@@ -380,42 +528,28 @@ public class ItemTests
             }
         }
 
-        private sealed class UpdateFixture
+        private sealed class UpdateFixture_Price : UpdateFixture
         {
-            private ItemBuilder _builder;
             private readonly ItemTypeFactoryMock _itemTypeFactoryMock = new(MockBehavior.Strict);
-
-            public UpdateFixture()
-            {
-                _builder = new ItemBuilder();
-            }
 
             public Price? Price { get; private set; }
             public StoreId? StoreId { get; private set; }
             public ItemTypeId? ItemTypeId { get; private set; }
-            public Item? ExpectedResult { get; private set; }
-            public DateTimeOffset? ExpectedUpdatedOn { get; private set; }
-            public DateTimeServiceMock DateTimeServiceMock { get; } = new(MockBehavior.Strict);
-
-            public Item CreateSut()
-            {
-                return _builder.Create();
-            }
 
             public void SetupAsItemWithTypes()
             {
-                _builder = ItemMother.InitialWithTypes();
+                ItemMother.InitialWithTypes(Builder);
             }
 
             public void SetupAsItemWithoutTypes()
             {
-                _builder = ItemMother.Initial();
+                ItemMother.Initial(Builder);
             }
 
             public void SetupItemAvailableAtStore()
             {
                 TestPropertyNotSetException.ThrowIfNull(StoreId);
-                _builder.WithAvailability(ItemAvailabilityMother.ForStore(StoreId.Value).Create());
+                Builder.WithAvailability(ItemAvailabilityMother.ForStore(StoreId.Value).Create());
             }
 
             public void SetupItemTypeAvailableAtStore()
@@ -428,7 +562,7 @@ public class ItemTests
                 var type2 = new ItemTypeBuilder()
                     .Create();
 
-                _builder.WithTypes(new ItemTypes(new List<IItemType> { type1, type2 }, _itemTypeFactoryMock.Object));
+                Builder.WithTypes(new ItemTypes(new List<IItemType> { type1, type2 }, _itemTypeFactoryMock.Object));
             }
 
             public void SetupStoreId()
@@ -449,12 +583,6 @@ public class ItemTests
             public void SetupPrice()
             {
                 Price = new DomainTestBuilder<Price>().Create();
-            }
-
-            public void SetupDateTimeServiceReturningExpectedUpdatedOn()
-            {
-                ExpectedUpdatedOn = DateTimeOffset.UtcNow;
-                DateTimeServiceMock.SetupUtcNow(ExpectedUpdatedOn.Value);
             }
 
             public void SetupExpectedResult(Item item)
@@ -535,6 +663,45 @@ public class ItemTests
                     null);
                 ExpectedResult.SetPredecessor(item);
             }
+        }
+    }
+
+    private abstract class UpdateFixture : ItemFixture
+    {
+        public ValidatorMock ValidatorMock { get; } = new(MockBehavior.Strict);
+        public DateTimeServiceMock DateTimeServiceMock { get; } = new(MockBehavior.Strict);
+        public Item? ExpectedResult { get; protected set; }
+        public DateTimeOffset? ExpectedUpdatedOn { get; private set; }
+
+        protected void SetupValidatingItemCategorySuccess(ItemCategoryId itemCategoryId)
+        {
+            ValidatorMock.SetupValidateAsync(itemCategoryId);
+        }
+
+        protected void SetupValidatingManufacturerSuccess(ManufacturerId manufacturerId)
+        {
+            ValidatorMock.SetupValidateAsync(manufacturerId);
+        }
+
+        protected void SetupValidatingAvailabilitiesSuccess(IEnumerable<IItemAvailability> availabilities)
+        {
+            ValidatorMock.SetupValidateAsync(availabilities);
+        }
+
+        public void SetupDateTimeServiceReturningExpectedUpdatedOn()
+        {
+            ExpectedUpdatedOn = DateTimeOffset.UtcNow;
+            DateTimeServiceMock.SetupUtcNow(ExpectedUpdatedOn.Value);
+        }
+    }
+
+    private abstract class ItemFixture
+    {
+        protected readonly ItemBuilder Builder = new();
+
+        public Item CreateSut()
+        {
+            return Builder.Create();
         }
     }
 }

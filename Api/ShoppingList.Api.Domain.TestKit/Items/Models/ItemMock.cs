@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.TemporaryItems;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -138,5 +139,18 @@ public class ItemMock : Mock<IItem>
         Func<Times> times)
     {
         Verify(m => m.Update(storeId, itemTypeId, price, dateTimeService), times);
+    }
+
+    public void SetupUpdateAsync(ItemUpdate update, IValidator validator, IDateTimeService dateTimeService,
+        IItem returnValue)
+    {
+        Setup(m => m.UpdateAsync(update, validator, dateTimeService))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void VerifyUpdateAsync(ItemUpdate update, IValidator validator, IDateTimeService dateTimeService,
+        Func<Times> times)
+    {
+        Verify(m => m.UpdateAsync(update, validator, dateTimeService), times);
     }
 }

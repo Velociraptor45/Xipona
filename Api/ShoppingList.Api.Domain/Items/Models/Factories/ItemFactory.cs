@@ -1,7 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
@@ -90,25 +89,6 @@ public class ItemFactory : IItemFactory
             model.Availability.ToMonoList(),
             new TemporaryItemId(model.ClientSideId),
             null);
-    }
-
-    public IItem Create(ItemUpdate itemUpdate, IItem predecessor)
-    {
-        var model = new Item(
-            ItemId.New,
-            itemUpdate.Name,
-            isDeleted: false,
-            itemUpdate.Comment,
-            isTemporary: false,
-            itemUpdate.ItemQuantity,
-            itemUpdate.ItemCategoryId,
-            itemUpdate.ManufacturerId,
-            itemUpdate.Availabilities,
-            null,
-            null);
-
-        model.SetPredecessor(predecessor);
-        return model;
     }
 
     public IItem CreateNew(ItemName name, Comment comment, ItemQuantity itemQuantity,
