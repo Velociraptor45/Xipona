@@ -1,3 +1,7 @@
 ﻿.text-content {
     width: 100%;
 }
+
+.area {
+    max-width: 200px;
+}

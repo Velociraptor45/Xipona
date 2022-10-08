@@ -13,3 +13,13 @@
 .summary-datetime:hover {
     cursor: pointer;
 }
+
+.summary-datetime {
+    color: grey;
+    font-size: 10px;
+    margin-top: -5px;
+}
+
+.summary-price {
+    font-size: 16px;
+}
