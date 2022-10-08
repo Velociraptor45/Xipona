@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.TestKit.Services;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.TestKit.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
@@ -212,6 +213,199 @@ public class ItemTests
 
     #endregion SetPredecessor
 
+    public class UpdateAsync_WithTypes
+    {
+        private readonly UpdateAsyncFixture _fixture;
+
+        public UpdateAsync_WithTypes()
+        {
+            _fixture = new UpdateAsyncFixture();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithoutTypes_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupOldItemWithoutTypes();
+            _fixture.SetupItemWithTypesUpdateNotCustomized();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemWithTypesUpdate);
+
+            // Act
+            var func = async () => await sut.UpdateAsync(_fixture.ItemWithTypesUpdate, _fixture.ValidatorMock.Object,
+                _fixture.DateTimeServiceMock.Object);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.CannotUpdateItemAsItemWithTypes);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidData_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupOldItem();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedItem(sut);
+            _fixture.SetupItemWithTypesUpdate();
+            _fixture.SetupUpdatingItemType();
+            _fixture.SetupValidatingManufacturerSuccess();
+            _fixture.SetupValidatingItemCategorySuccess();
+            _fixture.SetupValidatingAvailabilitiesSuccess();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemWithTypesUpdate);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.UpdateAsync(_fixture.ItemWithTypesUpdate, _fixture.ValidatorMock.Object,
+                _fixture.DateTimeServiceMock.Object);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt.Excluding(info => info.Path == "Id"));
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidData_ShouldDeleteOldItem()
+        {
+            // Arrange
+            _fixture.SetupOldItem();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedItem(sut);
+            _fixture.SetupItemWithTypesUpdate();
+            _fixture.SetupUpdatingItemType();
+            _fixture.SetupValidatingManufacturerSuccess();
+            _fixture.SetupValidatingItemCategorySuccess();
+            _fixture.SetupValidatingAvailabilitiesSuccess();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemWithTypesUpdate);
+
+            // Act
+            await sut.UpdateAsync(_fixture.ItemWithTypesUpdate, _fixture.ValidatorMock.Object,
+                _fixture.DateTimeServiceMock.Object);
+
+            // Assert
+            sut.IsDeleted.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidData_ShouldSetUpdateOnAtOldItem()
+        {
+            // Arrange
+            _fixture.SetupOldItem();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedItem(sut);
+            _fixture.SetupItemWithTypesUpdate();
+            _fixture.SetupUpdatingItemType();
+            _fixture.SetupValidatingManufacturerSuccess();
+            _fixture.SetupValidatingItemCategorySuccess();
+            _fixture.SetupValidatingAvailabilitiesSuccess();
+            _fixture.SetupDateTimeServiceReturningExpectedUpdatedOn();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemWithTypesUpdate);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedUpdatedOn);
+
+            // Act
+            await sut.UpdateAsync(_fixture.ItemWithTypesUpdate, _fixture.ValidatorMock.Object,
+                _fixture.DateTimeServiceMock.Object);
+
+            // Assert
+            sut.UpdatedOn.Should().Be(_fixture.ExpectedUpdatedOn);
+        }
+
+        private sealed class UpdateAsyncFixture : UpdateFixture
+        {
+            private readonly ItemTypeFactoryMock _itemTypeFactoryMock = new(MockBehavior.Strict);
+            private ItemTypeMock? _existingItemTypeMock;
+            public ItemWithTypesUpdate? ItemWithTypesUpdate { get; private set; }
+            public IItemType? ExpectedItemType { get; private set; }
+
+            public void SetupOldItem()
+            {
+                _existingItemTypeMock = new ItemTypeMock(new ItemTypeBuilder().Create(), MockBehavior.Strict);
+
+                var types = new ItemTypes(_existingItemTypeMock.Object.ToMonoList(), _itemTypeFactoryMock.Object);
+                ItemMother.InitialWithTypes(Builder)
+                    .WithTypes(types);
+            }
+
+            public void SetupOldItemWithoutTypes()
+            {
+                ItemMother.Initial(Builder);
+            }
+
+            public void SetupExpectedItem(IItem sut)
+            {
+                ExpectedItemType = new ItemTypeBuilder().Create();
+                ExpectedResult = ItemMother.InitialWithTypes()
+                    .WithTypes(new ItemTypes(ExpectedItemType.ToMonoList(), _itemTypeFactoryMock.Object))
+                    .Create();
+                ExpectedResult.SetPredecessor(sut);
+            }
+
+            public void SetupUpdatingItemType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingItemTypeMock);
+                TestPropertyNotSetException.ThrowIfNull(ItemWithTypesUpdate);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedItemType);
+
+                _existingItemTypeMock.SetupUpdateAsync(ItemWithTypesUpdate.TypeUpdates.First(), ValidatorMock.Object,
+                    ExpectedItemType);
+            }
+
+            public void SetupItemWithTypesUpdate()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult.ItemCategoryId);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult.ManufacturerId);
+                TestPropertyNotSetException.ThrowIfNull(_existingItemTypeMock);
+
+                ItemWithTypesUpdate = new ItemWithTypesUpdate(
+                    ItemId.New,
+                    ExpectedResult.Name,
+                    ExpectedResult.Comment,
+                    ExpectedResult.ItemQuantity,
+                    ExpectedResult.ItemCategoryId.Value,
+                    ExpectedResult.ManufacturerId.Value,
+                    ExpectedResult.ItemTypes
+                        .Select(t => new ItemTypeUpdate(
+                            _existingItemTypeMock.Object.Id,
+                            t.Name,
+                            t.Availabilities))
+                        .ToArray());
+            }
+
+            public void SetupItemWithTypesUpdateNotCustomized()
+            {
+                ItemWithTypesUpdate = new DomainTestBuilder<ItemWithTypesUpdate>().Create();
+            }
+
+            public void SetupValidatingItemCategorySuccess()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemWithTypesUpdate);
+
+                SetupValidatingItemCategorySuccess(ItemWithTypesUpdate.ItemCategoryId);
+            }
+
+            public void SetupValidatingManufacturerSuccess()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemWithTypesUpdate);
+                TestPropertyNotSetException.ThrowIfNull(ItemWithTypesUpdate.ManufacturerId);
+
+                SetupValidatingManufacturerSuccess(ItemWithTypesUpdate.ManufacturerId.Value);
+            }
+
+            public void SetupValidatingAvailabilitiesSuccess()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemWithTypesUpdate);
+
+                foreach (var itemTypeUpdate in ItemWithTypesUpdate.TypeUpdates)
+                {
+                    SetupValidatingAvailabilitiesSuccess(itemTypeUpdate.Availabilities);
+                }
+            }
+        }
+    }
+
     public class UpdateAsync_WithoutTypes
     {
         private readonly UpdateAsyncFixture _fixture;
@@ -222,11 +416,46 @@ public class ItemTests
         }
 
         [Fact]
+        public async Task UpdateAsync_WithTypes_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupOldItemWithTypes();
+            _fixture.SetupItemUpdateNotCustomized();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemUpdate);
+
+            // Act
+            var func = async () => await sut.UpdateAsync(_fixture.ItemUpdate, _fixture.ValidatorMock.Object,
+                _fixture.DateTimeServiceMock.Object);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.CannotUpdateItemWithTypesAsItem);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithItemIsTemporary_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupOldItemTemporary();
+            _fixture.SetupItemUpdateNotCustomized();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemUpdate);
+
+            // Act
+            var func = async () => await sut.UpdateAsync(_fixture.ItemUpdate, _fixture.ValidatorMock.Object,
+                _fixture.DateTimeServiceMock.Object);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.TemporaryItemNotUpdateable);
+        }
+
+        [Fact]
         public async Task UpdateAsync_WithValidData_ShouldReturnExpectedResult()
         {
             // Arrange
-            _fixture.SetupNotDeleted();
-            _fixture.SetupNotTemporary();
+            _fixture.SetupOldItem();
             var sut = _fixture.CreateSut();
             _fixture.SetupExpectedItem(sut);
             _fixture.SetupItemUpdate();
@@ -236,22 +465,21 @@ public class ItemTests
             _fixture.SetupDateTimeServiceReturningExpectedUpdatedOn();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemUpdate);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
             var result = await sut.UpdateAsync(_fixture.ItemUpdate, _fixture.ValidatorMock.Object,
                 _fixture.DateTimeServiceMock.Object);
 
             // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedItem, opt => opt.Excluding(info => info.Path == "Id"));
+            result.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt.Excluding(info => info.Path == "Id"));
         }
 
         [Fact]
         public async Task UpdateAsync_WithValidData_ShouldDeleteOldItem()
         {
             // Arrange
-            _fixture.SetupNotDeleted();
-            _fixture.SetupNotTemporary();
+            _fixture.SetupOldItem();
             var sut = _fixture.CreateSut();
             _fixture.SetupExpectedItem(sut);
             _fixture.SetupItemUpdate();
@@ -274,8 +502,7 @@ public class ItemTests
         public async Task UpdateAsync_WithValidData_ShouldSetUpdateOnAtOldItem()
         {
             // Arrange
-            _fixture.SetupNotDeleted();
-            _fixture.SetupNotTemporary();
+            _fixture.SetupOldItem();
             var sut = _fixture.CreateSut();
             _fixture.SetupExpectedItem(sut);
             _fixture.SetupItemUpdate();
@@ -298,38 +525,47 @@ public class ItemTests
         private sealed class UpdateAsyncFixture : UpdateFixture
         {
             public ItemUpdate? ItemUpdate { get; private set; }
-            public IItem? ExpectedItem { get; private set; }
 
-            public void SetupNotDeleted()
+            public void SetupOldItem()
             {
-                Builder.WithIsDeleted(false);
+                ItemMother.Initial(Builder);
             }
 
-            public void SetupNotTemporary()
+            public void SetupOldItemWithTypes()
             {
-                Builder.WithIsTemporary(false);
+                ItemMother.InitialWithTypes(Builder);
+            }
+
+            public void SetupOldItemTemporary()
+            {
+                ItemMother.InitialTemporary(Builder);
             }
 
             public void SetupExpectedItem(IItem sut)
             {
-                ExpectedItem = ItemMother.Initial().Create();
-                ExpectedItem.SetPredecessor(sut);
+                ExpectedResult = ItemMother.Initial().Create();
+                ExpectedResult.SetPredecessor(sut);
             }
 
             public void SetupItemUpdate()
             {
-                TestPropertyNotSetException.ThrowIfNull(ExpectedItem);
-                TestPropertyNotSetException.ThrowIfNull(ExpectedItem.ItemCategoryId);
-                TestPropertyNotSetException.ThrowIfNull(ExpectedItem.ManufacturerId);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult.ItemCategoryId);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult.ManufacturerId);
 
                 ItemUpdate = new ItemUpdate(
                     ItemId.New,
-                    ExpectedItem.Name,
-                    ExpectedItem.Comment,
-                    ExpectedItem.ItemQuantity,
-                    ExpectedItem.ItemCategoryId.Value,
-                    ExpectedItem.ManufacturerId.Value,
-                    ExpectedItem.Availabilities);
+                    ExpectedResult.Name,
+                    ExpectedResult.Comment,
+                    ExpectedResult.ItemQuantity,
+                    ExpectedResult.ItemCategoryId.Value,
+                    ExpectedResult.ManufacturerId.Value,
+                    ExpectedResult.Availabilities);
+            }
+
+            public void SetupItemUpdateNotCustomized()
+            {
+                ItemUpdate = new DomainTestBuilder<ItemUpdate>().Create();
             }
 
             public void SetupValidatingItemCategorySuccess()

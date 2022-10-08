@@ -175,10 +175,46 @@ public class Item : IItem
         ManufacturerId = null;
     }
 
+    public async Task<IItem> UpdateAsync(ItemWithTypesUpdate update, IValidator validator,
+        IDateTimeService dateTimeService)
+    {
+        if (!HasItemTypes)
+            throw new DomainException(new CannotUpdateItemAsItemWithTypesReason(update.OldId));
+
+        Delete();
+        UpdatedOn = dateTimeService.UtcNow;
+
+        await validator.ValidateAsync(update.ItemCategoryId);
+
+        if (update.ManufacturerId != null)
+        {
+            await validator.ValidateAsync(update.ManufacturerId.Value);
+        }
+
+        var types = await _itemTypes!.UpdateAsync(update.TypeUpdates, validator);
+
+        // create new Item
+        var updatedItem = new Item(
+            ItemId.New,
+            update.Name,
+            isDeleted: false,
+            update.Comment,
+            update.ItemQuantity,
+            update.ItemCategoryId,
+            update.ManufacturerId,
+            types,
+            null);
+        updatedItem.SetPredecessor(this);
+
+        return updatedItem;
+    }
+
     public async Task<IItem> UpdateAsync(ItemUpdate update, IValidator validator, IDateTimeService dateTimeService)
     {
         if (IsTemporary)
             throw new DomainException(new TemporaryItemNotUpdateableReason(update.OldId));
+        if (HasItemTypes)
+            throw new DomainException(new CannotUpdateItemWithTypesAsItemReason(update.OldId));
 
         Delete();
         UpdatedOn = dateTimeService.UtcNow;

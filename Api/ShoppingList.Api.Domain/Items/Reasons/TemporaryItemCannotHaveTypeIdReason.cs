@@ -11,5 +11,5 @@ public class TemporaryItemCannotHaveTypeIdReason : IReason
 
     public string Message { get; }
 
-    public ErrorReasonCode ErrorCode => ErrorReasonCode.TemporaryItemCannotHaveTypeIdReason;
+    public ErrorReasonCode ErrorCode => ErrorReasonCode.TemporaryItemCannotHaveTypeId;
 }

@@ -12,5 +12,5 @@ public class CannotUpdateItemAsItemWithTypesReason : IReason
 
     public string Message { get; }
 
-    public ErrorReasonCode ErrorCode => ErrorReasonCode.CannotUpdateItemAsItemWithTypesReason;
+    public ErrorReasonCode ErrorCode => ErrorReasonCode.CannotUpdateItemAsItemWithTypes;
 }

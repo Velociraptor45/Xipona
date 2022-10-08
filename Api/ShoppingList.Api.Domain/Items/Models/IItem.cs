@@ -50,5 +50,8 @@ public interface IItem
 
     Task<IItem> UpdateAsync(ItemUpdate update, IValidator validator, IDateTimeService dateTimeService);
 
+    Task<IItem> UpdateAsync(ItemWithTypesUpdate update, IValidator validator,
+        IDateTimeService dateTimeService);
+
     IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService);
 }

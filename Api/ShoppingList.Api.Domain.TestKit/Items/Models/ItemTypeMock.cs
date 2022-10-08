@@ -1,4 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
+using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
@@ -46,6 +48,11 @@ public class ItemTypeMock : Mock<IItemType>
     public void SetupUpdate(IItemType returnValue)
     {
         Setup(m => m.Update()).Returns(returnValue);
+    }
+
+    public void SetupUpdateAsync(ItemTypeUpdate update, IValidator validator, IItemType returnValue)
+    {
+        Setup(m => m.UpdateAsync(update, validator)).ReturnsAsync(returnValue);
     }
 
     public void VerifyUpdate(StoreId storeId, Price price, Func<Times> times)

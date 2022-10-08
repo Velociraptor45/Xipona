@@ -93,6 +93,33 @@ public class ItemMock : Mock<IItem>
         Setup(i => i.Delete());
     }
 
+    public void SetupMakePermanent(PermanentItem permanentItem, IEnumerable<IItemAvailability> availabilities)
+    {
+        Setup(i => i.MakePermanent(permanentItem,
+            It.Is<IEnumerable<IItemAvailability>>(avs => avs.IsEquivalentTo(availabilities))));
+    }
+
+    public void SetupUpdate(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService,
+        IItem returnValue)
+    {
+        Setup(m => m.Update(storeId, itemTypeId, price, dateTimeService))
+            .Returns(returnValue);
+    }
+
+    public void SetupUpdateAsync(ItemUpdate update, IValidator validator, IDateTimeService dateTimeService,
+        IItem returnValue)
+    {
+        Setup(m => m.UpdateAsync(update, validator, dateTimeService))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupUpdateAsync(ItemWithTypesUpdate update, IValidator validator, IDateTimeService dateTimeService,
+        IItem returnValue)
+    {
+        Setup(m => m.UpdateAsync(update, validator, dateTimeService))
+            .ReturnsAsync(returnValue);
+    }
+
     #region Verify
 
     public void VerifyDeleteOnce()
@@ -120,32 +147,10 @@ public class ItemMock : Mock<IItem>
         Verify(m => m.ModifyAsync(modification, validator), times);
     }
 
-    #endregion Verify
-
-    public void SetupMakePermanent(PermanentItem permanentItem, IEnumerable<IItemAvailability> availabilities)
-    {
-        Setup(i => i.MakePermanent(permanentItem,
-            It.Is<IEnumerable<IItemAvailability>>(avs => avs.IsEquivalentTo(availabilities))));
-    }
-
-    public void SetupUpdate(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService,
-        IItem returnValue)
-    {
-        Setup(m => m.Update(storeId, itemTypeId, price, dateTimeService))
-            .Returns(returnValue);
-    }
-
     public void VerifyUpdate(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService,
         Func<Times> times)
     {
         Verify(m => m.Update(storeId, itemTypeId, price, dateTimeService), times);
-    }
-
-    public void SetupUpdateAsync(ItemUpdate update, IValidator validator, IDateTimeService dateTimeService,
-        IItem returnValue)
-    {
-        Setup(m => m.UpdateAsync(update, validator, dateTimeService))
-            .ReturnsAsync(returnValue);
     }
 
     public void VerifyUpdateAsync(ItemUpdate update, IValidator validator, IDateTimeService dateTimeService,
@@ -153,4 +158,12 @@ public class ItemMock : Mock<IItem>
     {
         Verify(m => m.UpdateAsync(update, validator, dateTimeService), times);
     }
+
+    public void VerifyUpdateAsync(ItemWithTypesUpdate update, IValidator validator, IDateTimeService dateTimeService,
+        Func<Times> times)
+    {
+        Verify(m => m.UpdateAsync(update, validator, dateTimeService), times);
+    }
+
+    #endregion Verify
 }

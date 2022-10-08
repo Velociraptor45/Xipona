@@ -1,7 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
@@ -13,8 +12,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 public class ItemUpdateService : IItemUpdateService
 {
     private readonly IItemRepository _itemRepository;
-    private readonly IItemTypeFactory _itemTypeFactory;
-    private readonly IItemFactory _itemFactory;
     private readonly IShoppingListExchangeService _shoppingListExchangeService;
     private readonly IDateTimeService _dateTimeService;
     private readonly IValidator _validator;
@@ -23,22 +20,18 @@ public class ItemUpdateService : IItemUpdateService
     public ItemUpdateService(
         IItemRepository itemRepository,
         Func<CancellationToken, IValidator> validatorDelegate,
-        IItemTypeFactory itemTypeFactory,
-        IItemFactory itemFactory,
         IShoppingListExchangeService shoppingListExchangeService,
         IDateTimeService dateTimeService,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
-        _itemTypeFactory = itemTypeFactory;
-        _itemFactory = itemFactory;
         _shoppingListExchangeService = shoppingListExchangeService;
         _dateTimeService = dateTimeService;
         _validator = validatorDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
     }
 
-    public async Task UpdateItemWithTypesAsync(ItemWithTypesUpdate update)
+    public async Task UpdateAsync(ItemWithTypesUpdate update)
     {
         if (update is null)
             throw new ArgumentNullException(nameof(update));
@@ -46,42 +39,8 @@ public class ItemUpdateService : IItemUpdateService
         var oldItem = await _itemRepository.FindByAsync(update.OldId, _cancellationToken);
         if (oldItem == null)
             throw new DomainException(new ItemNotFoundReason(update.OldId));
-        if (!oldItem.HasItemTypes)
-            throw new DomainException(new CannotUpdateItemAsItemWithTypesReason(update.OldId));
 
-        oldItem.Delete();
-
-        await _validator.ValidateAsync(update.ItemCategoryId);
-
-        if (update.ManufacturerId != null)
-        {
-            await _validator.ValidateAsync(update.ManufacturerId.Value);
-        }
-
-        _cancellationToken.ThrowIfCancellationRequested();
-
-        var types = new List<IItemType>();
-        foreach (var typeUpdate in update.TypeUpdates)
-        {
-            oldItem.TryGetType(typeUpdate.OldId, out var predecessorType);
-            var type = _itemTypeFactory.CreateNew(typeUpdate.Name, typeUpdate.Availabilities, predecessorType);
-
-            await _validator.ValidateAsync(type.Availabilities);
-
-            types.Add(type);
-        }
-
-        _cancellationToken.ThrowIfCancellationRequested();
-
-        // create new Item
-        var updatedItem = _itemFactory.CreateNew(
-            update.Name,
-            update.Comment,
-            update.ItemQuantity,
-            update.ItemCategoryId,
-            update.ManufacturerId,
-            oldItem,
-            types);
+        var updatedItem = await oldItem.UpdateAsync(update, _validator, _dateTimeService);
 
         await _itemRepository.StoreAsync(oldItem, _cancellationToken);
         updatedItem = await _itemRepository.StoreAsync(updatedItem, _cancellationToken);
@@ -92,7 +51,7 @@ public class ItemUpdateService : IItemUpdateService
         await _shoppingListExchangeService.ExchangeItemAsync(oldItem.Id, updatedItem, _cancellationToken);
     }
 
-    public async Task Update(ItemUpdate update)
+    public async Task UpdateAsync(ItemUpdate update)
     {
         ArgumentNullException.ThrowIfNull(update);
 
@@ -104,6 +63,8 @@ public class ItemUpdateService : IItemUpdateService
 
         await _itemRepository.StoreAsync(oldItem, _cancellationToken);
         updatedItem = await _itemRepository.StoreAsync(updatedItem, _cancellationToken);
+
+        _cancellationToken.ThrowIfCancellationRequested();
 
         // change existing item references on shopping lists
         await _shoppingListExchangeService.ExchangeItemAsync(oldItem.Id, updatedItem, _cancellationToken);

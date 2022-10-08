@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
@@ -41,6 +42,28 @@ public class ItemTypes : IEnumerable<IItemType>
         }
 
         AddMany(newTypes);
+    }
+
+    public async Task<ItemTypes> UpdateAsync(IEnumerable<ItemTypeUpdate> itemTypeUpdates, IValidator validator)
+    {
+        var typeUpdates = itemTypeUpdates.ToArray();
+        var newTypes = new List<IItemType>();
+        foreach (var update in typeUpdates)
+        {
+            IItemType newType;
+            if (_itemTypes.TryGetValue(update.OldId, out var existingType))
+            {
+                newType = await existingType.UpdateAsync(update, validator);
+                newTypes.Add(newType);
+                continue;
+            }
+
+            await validator.ValidateAsync(update.Availabilities);
+            newType = _itemTypeFactory.CreateNew(update.Name, update.Availabilities);
+            newTypes.Add(newType);
+        }
+
+        return new ItemTypes(newTypes, _itemTypeFactory);
     }
 
     public IEnumerator<IItemType> GetEnumerator()

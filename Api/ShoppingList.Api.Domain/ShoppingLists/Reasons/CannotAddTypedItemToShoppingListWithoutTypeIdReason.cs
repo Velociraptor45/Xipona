@@ -12,5 +12,5 @@ public class CannotAddTypedItemToShoppingListWithoutTypeIdReason : IReason
 
     public string Message { get; }
 
-    public ErrorReasonCode ErrorCode => ErrorReasonCode.CannotAddTypedItemToShoppingListWithoutTypeIdReason;
+    public ErrorReasonCode ErrorCode => ErrorReasonCode.CannotAddTypedItemToShoppingListWithoutTypeId;
 }
