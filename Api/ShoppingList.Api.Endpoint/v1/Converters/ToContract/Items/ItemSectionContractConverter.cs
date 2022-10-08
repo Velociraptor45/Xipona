@@ -9,9 +9,6 @@ public class ItemSectionContractConverter :
 {
     public ItemSectionContract ToContract(ItemSectionReadModel source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new ItemSectionContract(source.Id.Value, source.Name.Value, source.SortingIndex);
     }
 }

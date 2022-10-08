@@ -35,8 +35,6 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     public async Task AddAsync(ShoppingListId shoppingListId, OfflineTolerantItemId itemId, SectionId? sectionId,
         QuantityInBasket quantity, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(itemId);
-
         var list = await _shoppingListRepository.FindByAsync(shoppingListId, cancellationToken);
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));

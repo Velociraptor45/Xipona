@@ -23,9 +23,6 @@ public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, I
 
     public IShoppingList ToDomain(Entities.ShoppingList source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         var itemMapsPerSection = source.ItemsOnList.GroupBy(
                 map => map.SectionId,
                 map => map,

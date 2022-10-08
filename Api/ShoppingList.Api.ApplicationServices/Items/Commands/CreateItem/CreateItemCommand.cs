@@ -8,7 +8,7 @@ public class CreateItemCommand : ICommand<ItemReadModel>
 {
     public CreateItemCommand(ItemCreation itemCreation)
     {
-        ItemCreation = itemCreation ?? throw new ArgumentNullException(nameof(itemCreation));
+        ItemCreation = itemCreation;
     }
 
     public ItemCreation ItemCreation { get; }

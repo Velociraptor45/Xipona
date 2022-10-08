@@ -19,8 +19,6 @@ public class StoreUpdateService : IStoreUpdateService
 
     public async Task UpdateAsync(StoreUpdate update)
     {
-        ArgumentNullException.ThrowIfNull(update);
-
         var store = await _storeRepository.FindByAsync(update.Id, _cancellationToken);
         if (store == null)
             throw new DomainException(new StoreNotFoundReason(update.Id));

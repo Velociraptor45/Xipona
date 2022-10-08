@@ -62,20 +62,6 @@ public class ItemSearchServiceTests
         }
 
         [Fact]
-        public async Task SearchAsync_WithNameNull_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            _fixture.SetupStoreId();
-            var sut = _fixture.CreateSut();
-
-            // Act
-            Func<Task> func = async () => await sut.SearchForShoppingListAsync(null!, _fixture.StoreId);
-
-            // Assert
-            await func.Should().ThrowExactlyAsync<ArgumentNullException>().WithMessage("*name*");
-        }
-
-        [Fact]
         public async Task SearchAsync_WithStoreNotFound_ShouldThrowDomainException()
         {
             // Arrange

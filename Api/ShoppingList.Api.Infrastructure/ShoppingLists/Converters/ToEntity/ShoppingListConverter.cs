@@ -8,9 +8,6 @@ public class ShoppingListConverter : IToEntityConverter<IShoppingList, Entities.
 {
     public Entities.ShoppingList ToEntity(IShoppingList source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new Entities.ShoppingList()
         {
             Id = source.Id.Value,

@@ -30,9 +30,6 @@ public class Validator : IValidator
 
     public async Task ValidateAsync(IEnumerable<IItemAvailability> availabilities)
     {
-        if (availabilities is null)
-            throw new ArgumentNullException(nameof(availabilities));
-
         await _availabilityValidationService.ValidateAsync(availabilities, _cancellationToken);
     }
 

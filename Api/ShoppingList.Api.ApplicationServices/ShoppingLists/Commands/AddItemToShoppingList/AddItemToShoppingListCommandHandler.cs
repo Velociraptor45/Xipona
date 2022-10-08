@@ -18,8 +18,6 @@ public class AddItemToShoppingListCommandHandler : ICommandHandler<AddItemToShop
 
     public async Task<bool> HandleAsync(AddItemToShoppingListCommand command, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(command);
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         await _addItemToShoppingListService.AddAsync(command.ShoppingListId, command.ItemId, command.SectionId,

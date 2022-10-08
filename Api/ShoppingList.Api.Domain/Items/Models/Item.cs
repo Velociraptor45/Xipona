@@ -32,7 +32,7 @@ public class Item : IItem
         TemporaryId = temporaryId;
         UpdatedOn = updatedOn;
         _itemTypes = null;
-        _availabilities = availabilities.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
+        _availabilities = availabilities.ToList();
 
         // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
         // https://github.com/AutoFixture/AutoFixture/issues/1108
@@ -53,7 +53,7 @@ public class Item : IItem
         ManufacturerId = manufacturerId;
         UpdatedOn = updatedOn;
         TemporaryId = null;
-        _itemTypes = itemTypes ?? throw new ArgumentNullException(nameof(itemTypes));
+        _itemTypes = itemTypes;
         _availabilities = new List<IItemAvailability>();
 
         if (!_itemTypes.Any())
@@ -115,9 +115,6 @@ public class Item : IItem
 
     public async Task ModifyAsync(ItemWithTypesModification modification, IValidator validator)
     {
-        if (modification is null)
-            throw new ArgumentNullException(nameof(modification));
-
         if (!HasItemTypes)
             throw new DomainException(new CannotModifyItemAsItemWithTypesReason(Id));
 

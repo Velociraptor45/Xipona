@@ -19,9 +19,6 @@ public class StoreConverter : IToDomainConverter<Entities.Store, IStore>
 
     public IStore ToDomain(Entities.Store source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         List<ISection> sections = _sectionConverter.ToDomain(source.Sections).ToList();
 
         return _storeFactory.Create(

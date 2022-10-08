@@ -17,9 +17,6 @@ public class ItemTypeContractConverter : IToContractConverter<ItemTypeReadModel,
 
     public ItemTypeContract ToContract(ItemTypeReadModel source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new ItemTypeContract(
             source.Id.Value,
             source.Name.Value,

@@ -18,9 +18,6 @@ public class TemporaryItemCreationConverter : IToDomainConverter<CreateTemporary
 
     public TemporaryItemCreation ToDomain(CreateTemporaryItemContract source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new TemporaryItemCreation(
             source.ClientSideId,
             new ItemName(source.Name),

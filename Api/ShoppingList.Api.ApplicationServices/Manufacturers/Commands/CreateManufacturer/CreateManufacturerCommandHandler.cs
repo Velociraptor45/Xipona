@@ -20,8 +20,6 @@ public class CreateManufacturerCommandHandler : ICommandHandler<CreateManufactur
 
     public async Task<IManufacturer> HandleAsync(CreateManufacturerCommand command, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(command);
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _manufacturerCreationServiceDelegate(cancellationToken);

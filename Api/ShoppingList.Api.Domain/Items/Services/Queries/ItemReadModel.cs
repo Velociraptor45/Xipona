@@ -17,13 +17,13 @@ public class ItemReadModel
         IsDeleted = isDeleted;
         Comment = comment;
         IsTemporary = isTemporary;
-        QuantityType = quantityType ?? throw new ArgumentNullException(nameof(quantityType));
+        QuantityType = quantityType;
         QuantityInPacket = quantityInPacket;
         QuantityTypeInPacket = quantityTypeInPacket;
         ItemCategory = itemCategory;
         Manufacturer = manufacturer;
-        Availabilities = availabilities?.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
-        ItemTypes = itemTypes?.ToList() ?? throw new ArgumentNullException(nameof(itemTypes));
+        Availabilities = availabilities.ToList();
+        ItemTypes = itemTypes.ToList();
     }
 
     public ItemId Id { get; }

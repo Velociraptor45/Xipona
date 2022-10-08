@@ -8,9 +8,6 @@ public class ShoppingListItemIdConverter : IToDomainConverter<ItemIdContract, Of
 {
     public OfflineTolerantItemId ToDomain(ItemIdContract source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         if (source.Actual != null)
         {
             return OfflineTolerantItemId.FromActualId(source.Actual.Value);

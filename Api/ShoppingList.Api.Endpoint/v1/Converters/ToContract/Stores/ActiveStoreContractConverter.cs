@@ -17,9 +17,6 @@ public class ActiveStoreContractConverter : IToContractConverter<StoreReadModel,
 
     public ActiveStoreContract ToContract(StoreReadModel source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new ActiveStoreContract(
             source.Id.Value,
             source.Name.Value,

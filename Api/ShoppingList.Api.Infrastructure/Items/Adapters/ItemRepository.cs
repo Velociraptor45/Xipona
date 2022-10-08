@@ -80,9 +80,6 @@ public class ItemRepository : IItemRepository
 
     public async Task<IEnumerable<IItem>> FindByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken)
     {
-        if (itemIds == null)
-            throw new ArgumentNullException(nameof(itemIds));
-
         var idList = itemIds.Select(id => id.Value).ToList();
 
         var entities = await GetItemQuery()
@@ -119,13 +116,6 @@ public class ItemRepository : IItemRepository
         IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
         CancellationToken cancellationToken)
     {
-        if (storeIds is null)
-            throw new ArgumentNullException(nameof(storeIds));
-        if (itemCategoriesIds is null)
-            throw new ArgumentNullException(nameof(itemCategoriesIds));
-        if (manufacturerIds is null)
-            throw new ArgumentNullException(nameof(manufacturerIds));
-
         cancellationToken.ThrowIfCancellationRequested();
 
         var storeIdLists = storeIds.Select(id => id.Value).ToList();
@@ -246,9 +236,6 @@ public class ItemRepository : IItemRepository
 
     public async Task<IItem> StoreAsync(IItem item, CancellationToken cancellationToken)
     {
-        if (item is null)
-            throw new ArgumentNullException(nameof(item));
-
         cancellationToken.ThrowIfCancellationRequested();
 
         var existingEntity = await FindTrackedEntityBy(item.Id);

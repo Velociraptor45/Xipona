@@ -27,9 +27,6 @@ public class ShoppingListRepository : IShoppingListRepository
 
     public async Task StoreAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
     {
-        if (shoppingList is null)
-            throw new ArgumentNullException(nameof(shoppingList));
-
         cancellationToken.ThrowIfCancellationRequested();
 
         var listEntity = await FindEntityByIdAsync(shoppingList.Id);

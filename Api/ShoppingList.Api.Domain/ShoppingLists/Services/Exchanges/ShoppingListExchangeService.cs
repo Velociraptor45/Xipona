@@ -26,9 +26,6 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
 
     public async Task ExchangeItemAsync(ItemId oldItemId, IItem newItem, CancellationToken cancellationToken)
     {
-        if (newItem is null)
-            throw new ArgumentNullException(nameof(newItem));
-
         var shoppingListsWithOldItem = (await _shoppingListRepository
                 .FindActiveByAsync(oldItemId, cancellationToken))
             .ToList();

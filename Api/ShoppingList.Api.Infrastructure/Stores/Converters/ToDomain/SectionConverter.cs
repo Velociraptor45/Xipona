@@ -16,9 +16,6 @@ public class SectionConverter : IToDomainConverter<Section, ISection>
 
     public ISection ToDomain(Section source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return _sectionFactory.Create(
             new SectionId(source.Id),
             new SectionName(source.Name),

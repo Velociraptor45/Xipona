@@ -19,9 +19,6 @@ public class ItemTypeConverter : IToDomainConverter<Entities.ItemType, IItemType
 
     public IItemType ToDomain(Entities.ItemType source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         IItemType? predecessor = source.PredecessorId is null || source.Predecessor is null
             ? null
             : ToDomain(source.Predecessor!);

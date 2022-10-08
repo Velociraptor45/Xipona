@@ -53,9 +53,6 @@ public class ItemCategoryRepository : IItemCategoryRepository
     public async Task<IEnumerable<IItemCategory>> FindByAsync(IEnumerable<ItemCategoryId> ids,
         CancellationToken cancellationToken)
     {
-        if (ids == null)
-            throw new ArgumentNullException(nameof(ids));
-
         var idHashSet = ids.Select(id => id.Value).ToHashSet();
 
         cancellationToken.ThrowIfCancellationRequested();

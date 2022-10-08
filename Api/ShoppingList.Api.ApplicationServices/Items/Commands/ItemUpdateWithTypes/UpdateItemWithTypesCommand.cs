@@ -7,7 +7,7 @@ public class UpdateItemWithTypesCommand : ICommand<bool>
 {
     public UpdateItemWithTypesCommand(ItemWithTypesUpdate itemWithTypesUpdate)
     {
-        ItemWithTypesUpdate = itemWithTypesUpdate ?? throw new ArgumentNullException(nameof(itemWithTypesUpdate));
+        ItemWithTypesUpdate = itemWithTypesUpdate;
     }
 
     public ItemWithTypesUpdate ItemWithTypesUpdate { get; }

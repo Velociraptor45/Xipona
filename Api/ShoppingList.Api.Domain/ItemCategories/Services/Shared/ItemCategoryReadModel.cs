@@ -13,8 +13,6 @@ public class ItemCategoryReadModel
 
     public ItemCategoryReadModel(IItemCategory itemCategory)
     {
-        ArgumentNullException.ThrowIfNull(itemCategory);
-
         Id = itemCategory.Id;
         Name = itemCategory.Name;
         IsDeleted = itemCategory.IsDeleted;

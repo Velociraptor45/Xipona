@@ -20,11 +20,6 @@ public class CreateTemporaryItemCommandHandler : ICommandHandler<CreateTemporary
 
     public async Task<ItemReadModel> HandleAsync(CreateTemporaryItemCommand command, CancellationToken cancellationToken)
     {
-        if (command is null)
-        {
-            throw new ArgumentNullException(nameof(command));
-        }
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _itemCreationServiceDelegate(cancellationToken);

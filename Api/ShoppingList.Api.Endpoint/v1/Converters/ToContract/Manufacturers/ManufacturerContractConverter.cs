@@ -11,17 +11,11 @@ public class ManufacturerContractConverter :
 {
     public ManufacturerContract ToContract(ManufacturerReadModel source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new ManufacturerContract(source.Id.Value, source.Name.Value, source.IsDeleted);
     }
 
     public ManufacturerContract ToContract(IManufacturer source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new ManufacturerContract(source.Id.Value, source.Name.Value, source.IsDeleted);
     }
 }

@@ -10,12 +10,12 @@ public class ItemWithTypesUpdate
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IEnumerable<ItemTypeUpdate> typeUpdates)
     {
         OldId = oldId;
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        Comment = comment ?? throw new ArgumentNullException(nameof(comment));
-        ItemQuantity = itemQuantity ?? throw new ArgumentNullException(nameof(itemQuantity));
+        Name = name;
+        Comment = comment;
+        ItemQuantity = itemQuantity;
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
-        TypeUpdates = typeUpdates?.ToList() ?? throw new ArgumentNullException(nameof(typeUpdates));
+        TypeUpdates = typeUpdates.ToList();
     }
 
     public ItemId OldId { get; }

@@ -19,8 +19,6 @@ public class DeleteItemCategoryCommandHandler : ICommandHandler<DeleteItemCatego
 
     public async Task<bool> HandleAsync(DeleteItemCategoryCommand command, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(command);
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _itemCategoryDeletionServiceDelegate(cancellationToken);

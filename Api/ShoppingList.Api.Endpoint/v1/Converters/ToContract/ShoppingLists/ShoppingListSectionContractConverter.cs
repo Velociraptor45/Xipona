@@ -17,9 +17,6 @@ public class ShoppingListSectionContractConverter :
 
     public ShoppingListSectionContract ToContract(ShoppingListSectionReadModel source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new ShoppingListSectionContract(
             source.Id.Value,
             source.Name.Value,

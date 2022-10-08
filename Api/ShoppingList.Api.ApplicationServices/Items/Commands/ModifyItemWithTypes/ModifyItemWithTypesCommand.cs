@@ -7,8 +7,7 @@ public class ModifyItemWithTypesCommand : ICommand<bool>
 {
     public ModifyItemWithTypesCommand(ItemWithTypesModification itemWithTypesModification)
     {
-        ItemWithTypesModification = itemWithTypesModification ??
-                                    throw new ArgumentNullException(nameof(itemWithTypesModification));
+        ItemWithTypesModification = itemWithTypesModification;
     }
 
     public ItemWithTypesModification ItemWithTypesModification { get; }

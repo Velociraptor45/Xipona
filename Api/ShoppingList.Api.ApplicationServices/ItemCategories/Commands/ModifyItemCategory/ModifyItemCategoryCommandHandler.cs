@@ -18,8 +18,6 @@ public class ModifyItemCategoryCommandHandler : ICommandHandler<ModifyItemCatego
 
     public async Task<bool> HandleAsync(ModifyItemCategoryCommand command, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(command);
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _itemCategoryModificationServiceDelegate(cancellationToken);

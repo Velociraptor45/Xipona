@@ -17,8 +17,6 @@ public class ManufacturerSearchQueryHandler
     public async Task<IEnumerable<ManufacturerSearchResultReadModel>> HandleAsync(ManufacturerSearchQuery query,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(query);
-
         var service = _manufacturerQueryServiceDelegate(cancellationToken);
         return await service.SearchAsync(query.SearchInput, query.IncludeDeleted);
     }
