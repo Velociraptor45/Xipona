@@ -13,8 +13,8 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
 
     public Sections(IEnumerable<ISection> sections, ISectionFactory sectionFactory)
     {
-        _sections = sections?.ToDictionary(s => s.Id) ?? throw new ArgumentNullException(nameof(sections));
-        _sectionFactory = sectionFactory ?? throw new ArgumentNullException(nameof(sectionFactory));
+        _sections = sections.ToDictionary(s => s.Id);
+        _sectionFactory = sectionFactory;
 
         AsSortableCollection.ValidateSortingIndexes(_sections.Values);
         ValidateDefaultSection();

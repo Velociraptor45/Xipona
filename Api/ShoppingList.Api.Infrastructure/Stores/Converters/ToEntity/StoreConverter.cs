@@ -15,9 +15,6 @@ public class StoreConverter : IToEntityConverter<IStore, Entities.Store>
 
     public Entities.Store ToEntity(IStore source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new Entities.Store()
         {
             Id = source.Id.Value,

@@ -24,7 +24,6 @@ public class ModifyItemWithTypesCommandConverter :
     public ModifyItemWithTypesCommand ToDomain((Guid id, ModifyItemWithTypesContract contract) source)
     {
         var (id, contract) = source;
-        ArgumentNullException.ThrowIfNull(contract);
 
         var types = contract.ItemTypes.Select(t => new ItemTypeModification(
             t.Id.HasValue ? new ItemTypeId(t.Id.Value) : null,

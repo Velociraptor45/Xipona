@@ -26,9 +26,6 @@ public class ItemConverter : IToDomainConverter<Item, IItem>
 
     public IItem ToDomain(Item source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         IItem? predecessor = source.PredecessorId is null ? null : ToDomain(source.Predecessor!);
 
         var itemCategoryId = source.ItemCategoryId.HasValue

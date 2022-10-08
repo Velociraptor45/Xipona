@@ -7,7 +7,7 @@ public class SectionUpdate
     public SectionUpdate(SectionId? id, SectionName name, int sortingIndex, bool isDefaultSection)
     {
         Id = id;
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Name = name;
         SortingIndex = sortingIndex;
         IsDefaultSection = isDefaultSection;
     }

@@ -29,8 +29,6 @@ public class ManufacturerQueryService : IManufacturerQueryService
     public async Task<IEnumerable<ManufacturerSearchResultReadModel>> SearchAsync(string searchInput,
         bool includeDeleted)
     {
-        ArgumentNullException.ThrowIfNull(searchInput);
-
         if (string.IsNullOrWhiteSpace(searchInput))
             return Enumerable.Empty<ManufacturerSearchResultReadModel>();
 

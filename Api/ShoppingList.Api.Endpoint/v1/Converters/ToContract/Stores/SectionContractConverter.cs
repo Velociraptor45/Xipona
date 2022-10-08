@@ -11,8 +11,6 @@ public class SectionContractConverter :
 {
     public SectionContract ToContract(SectionReadModel source)
     {
-        ArgumentNullException.ThrowIfNull(source);
-
         return new SectionContract(
             source.Id.Value,
             source.Name.Value,
@@ -22,8 +20,6 @@ public class SectionContractConverter :
 
     public SectionContract ToContract(ISection source)
     {
-        ArgumentNullException.ThrowIfNull(source);
-
         return new SectionContract(
             source.Id.Value,
             source.Name.Value,

@@ -12,12 +12,12 @@ public class PermanentItem
         ManufacturerId? manufacturerId, IEnumerable<IItemAvailability> availabilities)
     {
         Id = id;
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        Comment = comment ?? throw new ArgumentNullException(nameof(comment));
-        ItemQuantity = itemQuantity ?? throw new ArgumentNullException(nameof(itemQuantity));
+        Name = name;
+        Comment = comment;
+        ItemQuantity = itemQuantity;
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
-        _availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
+        _availabilities = availabilities;
     }
 
     public IReadOnlyCollection<IItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();

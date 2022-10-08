@@ -15,9 +15,6 @@ public class ItemCategoryConverter : IToDomainConverter<Entities.ItemCategory, I
 
     public IItemCategory ToDomain(Entities.ItemCategory source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return _itemCategoryFactory.Create(
             new ItemCategoryId(source.Id),
             new ItemCategoryName(source.Name),

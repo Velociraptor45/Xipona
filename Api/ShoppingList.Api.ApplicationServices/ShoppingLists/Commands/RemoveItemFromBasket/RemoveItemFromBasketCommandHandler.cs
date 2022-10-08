@@ -19,8 +19,6 @@ public class RemoveItemFromBasketCommandHandler : ICommandHandler<RemoveItemFrom
 
     public async Task<bool> HandleAsync(RemoveItemFromBasketCommand command, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(command);
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _shoppingListModificationServiceDelegate(cancellationToken);

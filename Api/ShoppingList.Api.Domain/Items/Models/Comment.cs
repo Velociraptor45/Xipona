@@ -4,7 +4,7 @@ public sealed class Comment : IEquatable<Comment>
 {
     public Comment(string value)
     {
-        Value = value ?? throw new ArgumentNullException(nameof(value));
+        Value = value;
     }
 
     public string Value { get; }

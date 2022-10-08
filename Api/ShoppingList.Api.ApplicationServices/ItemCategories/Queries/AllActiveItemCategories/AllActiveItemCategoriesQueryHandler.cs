@@ -17,8 +17,6 @@ public class AllActiveItemCategoriesQueryHandler
 
     public async Task<IEnumerable<ItemCategoryReadModel>> HandleAsync(AllActiveItemCategoriesQuery query, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(query);
-
         var service = _itemCategoryQueryServiceDelegate(cancellationToken);
         return await service.GetAllActive();
     }

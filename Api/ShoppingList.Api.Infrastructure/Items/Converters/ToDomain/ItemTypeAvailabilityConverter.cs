@@ -17,9 +17,6 @@ public class ItemTypeAvailabilityConverter : IToDomainConverter<ItemTypeAvailabl
 
     public IItemAvailability ToDomain(ItemTypeAvailableAt source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return _itemAvailabilityFactory.Create(
             new StoreId(source.StoreId),
             new Price(source.Price),

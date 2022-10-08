@@ -11,7 +11,7 @@ public class ChangeItemQuantityOnShoppingListCommand : ICommand<bool>
         ItemTypeId? itemTypeId, QuantityInBasket quantity)
     {
         ShoppingListId = shoppingListId;
-        OfflineTolerantItemId = itemId ?? throw new ArgumentNullException(nameof(itemId));
+        OfflineTolerantItemId = itemId;
         ItemTypeId = itemTypeId;
         Quantity = quantity;
     }

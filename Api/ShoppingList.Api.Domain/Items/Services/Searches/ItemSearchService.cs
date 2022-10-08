@@ -47,10 +47,6 @@ public class ItemSearchService : IItemSearchService
     public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(IEnumerable<StoreId> storeIds,
         IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds)
     {
-        ArgumentNullException.ThrowIfNull(storeIds);
-        ArgumentNullException.ThrowIfNull(itemCategoriesIds);
-        ArgumentNullException.ThrowIfNull(manufacturerIds);
-
         var items = await _itemRepository.FindPermanentByAsync(storeIds, itemCategoriesIds,
             manufacturerIds, _cancellationToken);
 
@@ -61,7 +57,6 @@ public class ItemSearchService : IItemSearchService
 
     public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(string searchInput)
     {
-        ArgumentNullException.ThrowIfNull(searchInput);
         if (string.IsNullOrWhiteSpace(searchInput))
             return Enumerable.Empty<SearchItemResultReadModel>();
 
@@ -106,8 +101,6 @@ public class ItemSearchService : IItemSearchService
 
     public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> SearchForShoppingListAsync(string name, StoreId storeId)
     {
-        if (name == null)
-            throw new ArgumentNullException(nameof(name));
         if (string.IsNullOrWhiteSpace(name))
             return Enumerable.Empty<SearchItemForShoppingResultReadModel>();
 

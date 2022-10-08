@@ -18,8 +18,6 @@ public class AllActiveManufacturersQueryHandler
     public async Task<IEnumerable<ManufacturerReadModel>> HandleAsync(AllActiveManufacturersQuery query,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(query);
-
         var service = _manufacturerQueryServiceDelegate(cancellationToken);
         return await service.GetAllActiveAsync();
     }

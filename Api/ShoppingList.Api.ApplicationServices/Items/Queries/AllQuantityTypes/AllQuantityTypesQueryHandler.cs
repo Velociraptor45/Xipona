@@ -15,9 +15,6 @@ public class AllQuantityTypesQueryHandler : IQueryHandler<AllQuantityTypesQuery,
     public Task<IEnumerable<QuantityTypeReadModel>> HandleAsync(AllQuantityTypesQuery query,
         CancellationToken cancellationToken)
     {
-        if (query == null)
-            throw new ArgumentNullException(nameof(query));
-
         var result = _quantitiesQueryService.GetAllQuantityTypes();
 
         return Task.FromResult(result);

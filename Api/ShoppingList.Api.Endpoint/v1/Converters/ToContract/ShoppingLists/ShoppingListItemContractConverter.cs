@@ -30,9 +30,6 @@ public class ShoppingListItemContractConverter : IToContractConverter<ShoppingLi
 
     public ShoppingListItemContract ToContract(ShoppingListItemReadModel source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         ItemCategoryContract? itemCategoryContract = null;
         if (source.ItemCategory != null)
             itemCategoryContract = _itemCategoryContractConverter.ToContract(source.ItemCategory);

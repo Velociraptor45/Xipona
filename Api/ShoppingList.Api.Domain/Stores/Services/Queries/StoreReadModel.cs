@@ -8,9 +8,9 @@ public class StoreReadModel
         IEnumerable<SectionReadModel> sections)
     {
         Id = id;
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Name = name;
         ItemCount = itemCount;
-        Sections = sections?.ToList().AsReadOnly() ?? throw new ArgumentNullException(nameof(sections));
+        Sections = sections.ToArray();
     }
 
     public StoreReadModel(IStore store, int itemCount) :

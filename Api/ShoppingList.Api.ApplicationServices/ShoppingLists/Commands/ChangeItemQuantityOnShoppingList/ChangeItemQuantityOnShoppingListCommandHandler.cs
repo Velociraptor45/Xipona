@@ -20,9 +20,6 @@ public class ChangeItemQuantityOnShoppingListCommandHandler
 
     public async Task<bool> HandleAsync(ChangeItemQuantityOnShoppingListCommand command, CancellationToken cancellationToken)
     {
-        if (command == null)
-            throw new ArgumentNullException(nameof(command));
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _shoppingListModificationServiceDelegate(cancellationToken);

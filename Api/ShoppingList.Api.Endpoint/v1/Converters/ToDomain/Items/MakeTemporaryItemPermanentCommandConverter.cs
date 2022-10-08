@@ -24,7 +24,6 @@ public class MakeTemporaryItemPermanentCommandConverter :
     public MakeTemporaryItemPermanentCommand ToDomain((Guid id, MakeTemporaryItemPermanentContract contract) source)
     {
         var (id, contract) = source;
-        ArgumentNullException.ThrowIfNull(contract);
 
         ItemQuantityInPacket? itemQuantityInPacket = null;
         if (contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is not null)

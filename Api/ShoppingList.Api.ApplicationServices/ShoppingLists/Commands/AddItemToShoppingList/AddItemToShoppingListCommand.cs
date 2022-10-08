@@ -11,7 +11,7 @@ public class AddItemToShoppingListCommand : ICommand<bool>
         SectionId? sectionId, QuantityInBasket quantity)
     {
         ShoppingListId = shoppingListId;
-        ItemId = itemId ?? throw new ArgumentNullException(nameof(itemId));
+        ItemId = itemId;
         SectionId = sectionId;
         Quantity = quantity;
     }

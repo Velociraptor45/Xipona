@@ -9,9 +9,6 @@ public class SearchItemResultContractConverter :
 {
     public SearchItemResultContract ToContract(SearchItemResultReadModel source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new SearchItemResultContract(source.Id.Value, source.ItemName.Value);
     }
 }

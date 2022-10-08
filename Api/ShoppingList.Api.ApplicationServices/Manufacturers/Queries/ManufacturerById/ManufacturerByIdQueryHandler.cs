@@ -16,8 +16,6 @@ public class ManufacturerByIdQueryHandler : IQueryHandler<ManufacturerByIdQuery,
 
     public async Task<IManufacturer> HandleAsync(ManufacturerByIdQuery query, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(query);
-
         var service = _manufacturerQueryServiceDelegate(cancellationToken);
         return await service.GetAsync(query.ManufacturerId);
     }

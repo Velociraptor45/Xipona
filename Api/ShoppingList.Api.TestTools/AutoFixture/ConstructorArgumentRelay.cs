@@ -17,8 +17,6 @@ public class ConstructorArgumentRelay<TTarget, TValueType> : ISpecimenBuilder
 
     public object Create(object request, ISpecimenContext context)
     {
-        if (context == null)
-            throw new ArgumentNullException(nameof(context));
         ParameterInfo? parameter = request as ParameterInfo;
         if (parameter == null)
             return new NoSpecimen();

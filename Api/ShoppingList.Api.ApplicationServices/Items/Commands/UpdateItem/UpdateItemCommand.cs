@@ -7,7 +7,7 @@ public class UpdateItemCommand : ICommand<bool>
 {
     public UpdateItemCommand(ItemUpdate itemUpdate)
     {
-        ItemUpdate = itemUpdate ?? throw new ArgumentNullException(nameof(itemUpdate));
+        ItemUpdate = itemUpdate;
     }
 
     public ItemUpdate ItemUpdate { get; }

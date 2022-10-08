@@ -15,9 +15,6 @@ public class ManufacturerConverter : IToDomainConverter<Entities.Manufacturer, I
 
     public IManufacturer ToDomain(Entities.Manufacturer source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return _manufacturerFactory.Create(
             new ManufacturerId(source.Id),
             new ManufacturerName(source.Name),

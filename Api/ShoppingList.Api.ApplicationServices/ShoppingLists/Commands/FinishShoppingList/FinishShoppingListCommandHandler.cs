@@ -19,8 +19,6 @@ public class FinishShoppingListCommandHandler : ICommandHandler<FinishShoppingLi
 
     public async Task<bool> HandleAsync(FinishShoppingListCommand command, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(command);
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _shoppingListModificationServiceDelegate(cancellationToken);

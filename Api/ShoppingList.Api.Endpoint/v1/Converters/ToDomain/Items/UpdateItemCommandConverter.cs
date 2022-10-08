@@ -23,7 +23,6 @@ public class UpdateItemCommandConverter : IToDomainConverter<(Guid id, UpdateIte
     public UpdateItemCommand ToDomain((Guid id, UpdateItemContract contract) source)
     {
         var (id, contract) = source;
-        ArgumentNullException.ThrowIfNull(contract);
 
         ItemQuantityInPacket? itemQuantityInPacket = null;
         if (contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is not null)

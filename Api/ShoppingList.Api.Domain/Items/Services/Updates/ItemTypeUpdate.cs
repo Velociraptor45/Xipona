@@ -8,7 +8,7 @@ public class ItemTypeUpdate
     {
         OldId = oldId;
         Name = name;
-        Availabilities = availabilities?.ToList() ?? throw new ArgumentNullException(nameof(availabilities));
+        Availabilities = availabilities.ToArray();
     }
 
     public ItemTypeId OldId { get; }

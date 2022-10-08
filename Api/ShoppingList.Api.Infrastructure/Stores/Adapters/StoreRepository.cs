@@ -69,9 +69,6 @@ public class StoreRepository : IStoreRepository
     public async Task<IEnumerable<IStore>> FindByAsync(IEnumerable<StoreId> ids, bool onlyActives,
         CancellationToken cancellationToken)
     {
-        if (ids == null)
-            throw new ArgumentNullException(nameof(ids));
-
         cancellationToken.ThrowIfCancellationRequested();
 
         var idsList = ids.Select(id => id.Value).ToList();
@@ -91,9 +88,6 @@ public class StoreRepository : IStoreRepository
 
     public async Task<IStore> StoreAsync(IStore store, CancellationToken cancellationToken)
     {
-        if (store == null)
-            throw new ArgumentNullException(nameof(store));
-
         cancellationToken.ThrowIfCancellationRequested();
 
         var existingEntity = await FindEntityById(store.Id.Value, cancellationToken);

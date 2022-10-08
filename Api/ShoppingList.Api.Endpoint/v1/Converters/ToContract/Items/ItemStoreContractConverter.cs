@@ -17,9 +17,6 @@ public class ItemStoreContractConverter :
 
     public ItemStoreContract ToContract(ItemStoreReadModel source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new ItemStoreContract(
             source.Id.Value,
             source.Name.Value,

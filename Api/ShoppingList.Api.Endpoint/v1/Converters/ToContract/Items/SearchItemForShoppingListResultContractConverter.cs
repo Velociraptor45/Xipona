@@ -19,9 +19,6 @@ public class SearchItemForShoppingListResultContractConverter :
 
     public SearchItemForShoppingListResultContract ToContract(SearchItemForShoppingResultReadModel source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new SearchItemForShoppingListResultContract(
             source.Id.Value,
             source.TypeId?.Value,

@@ -33,9 +33,6 @@ public class ItemUpdateService : IItemUpdateService
 
     public async Task UpdateAsync(ItemWithTypesUpdate update)
     {
-        if (update is null)
-            throw new ArgumentNullException(nameof(update));
-
         var oldItem = await _itemRepository.FindByAsync(update.OldId, _cancellationToken);
         if (oldItem == null)
             throw new DomainException(new ItemNotFoundReason(update.OldId));
@@ -53,8 +50,6 @@ public class ItemUpdateService : IItemUpdateService
 
     public async Task UpdateAsync(ItemUpdate update)
     {
-        ArgumentNullException.ThrowIfNull(update);
-
         IItem? oldItem = await _itemRepository.FindByAsync(update.OldId, _cancellationToken);
         if (oldItem == null)
             throw new DomainException(new ItemNotFoundReason(update.OldId));

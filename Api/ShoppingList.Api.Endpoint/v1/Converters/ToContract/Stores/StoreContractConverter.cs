@@ -16,8 +16,6 @@ public class StoreContractConverter : IToContractConverter<IStore, StoreContract
 
     public StoreContract ToContract(IStore source)
     {
-        ArgumentNullException.ThrowIfNull(source);
-
         var sections = _sectionConverter.ToContract(source.Sections);
         return new StoreContract(source.Id.Value, source.Name.Value, sections);
     }

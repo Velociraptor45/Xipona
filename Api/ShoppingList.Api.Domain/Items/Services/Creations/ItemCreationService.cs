@@ -56,9 +56,6 @@ public class ItemCreationService : IItemCreationService
 
     public async Task<ItemReadModel> CreateItemWithTypesAsync(IItem item)
     {
-        if (item is null)
-            throw new ArgumentNullException(nameof(item));
-
         var storedItem = await _itemRepository.StoreAsync(item, _cancellationToken);
 
         return await _conversionService.ConvertAsync(storedItem, _cancellationToken);

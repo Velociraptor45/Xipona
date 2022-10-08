@@ -15,9 +15,6 @@ public class ItemConstructorQuery : IMethodQuery
 
     public IEnumerable<IMethod> SelectMethods(Type type)
     {
-        if (type is null)
-            throw new ArgumentNullException(nameof(type));
-
         var ctors = type.GetConstructors();
         var ctor = ctors.Single(ctor => ctor.GetParameters().Any(p => p.ParameterType == _availabilitiesType));
 

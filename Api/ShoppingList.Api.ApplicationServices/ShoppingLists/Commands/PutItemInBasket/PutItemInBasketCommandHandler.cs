@@ -19,8 +19,6 @@ public class PutItemInBasketCommandHandler : ICommandHandler<PutItemInBasketComm
 
     public async Task<bool> HandleAsync(PutItemInBasketCommand command, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(command);
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _shoppingListModificationServiceDelegate(cancellationToken);

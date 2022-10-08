@@ -7,9 +7,6 @@ public class ManufacturerConverter : IToEntityConverter<IManufacturer, Entities.
 {
     public Entities.Manufacturer ToEntity(IManufacturer source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new Entities.Manufacturer()
         {
             Id = source.Id.Value,

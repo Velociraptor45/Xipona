@@ -18,9 +18,6 @@ public class UpdateItemWithTypesCommandHandler : ICommandHandler<UpdateItemWithT
 
     public async Task<bool> HandleAsync(UpdateItemWithTypesCommand command, CancellationToken cancellationToken)
     {
-        if (command is null)
-            throw new ArgumentNullException(nameof(command));
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _itemExchangeServiceDelegat(cancellationToken);

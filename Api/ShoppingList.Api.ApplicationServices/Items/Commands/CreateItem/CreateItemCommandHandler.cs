@@ -19,9 +19,6 @@ public class CreateItemCommandHandler : ICommandHandler<CreateItemCommand, ItemR
 
     public async Task<ItemReadModel> HandleAsync(CreateItemCommand command, CancellationToken cancellationToken)
     {
-        if (command == null)
-            throw new ArgumentNullException(nameof(command));
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var itemCreationService = _itemCreationServiceDelegate(cancellationToken);

@@ -9,8 +9,6 @@ public class ManufacturerSearchResultContractConverter :
 {
     public ManufacturerSearchResultContract ToContract(ManufacturerSearchResultReadModel source)
     {
-        ArgumentNullException.ThrowIfNull(source);
-
         return new ManufacturerSearchResultContract(source.Id.Value, source.Name.Value);
     }
 }

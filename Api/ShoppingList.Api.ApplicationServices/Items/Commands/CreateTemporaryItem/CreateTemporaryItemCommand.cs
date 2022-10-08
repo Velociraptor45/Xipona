@@ -8,7 +8,7 @@ public class CreateTemporaryItemCommand : ICommand<ItemReadModel>
 {
     public CreateTemporaryItemCommand(TemporaryItemCreation temporaryItemCreation)
     {
-        TemporaryItemCreation = temporaryItemCreation ?? throw new ArgumentNullException(nameof(temporaryItemCreation));
+        TemporaryItemCreation = temporaryItemCreation;
     }
 
     public TemporaryItemCreation TemporaryItemCreation { get; }

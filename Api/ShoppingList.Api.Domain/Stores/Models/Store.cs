@@ -9,7 +9,7 @@ public class Store : IStore
     public Store(StoreId id, StoreName name, bool isDeleted, Sections sections)
     {
         Id = id;
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Name = name;
         IsDeleted = isDeleted;
         _sections = sections;
     }
@@ -31,8 +31,6 @@ public class Store : IStore
 
     public void ChangeName(StoreName name)
     {
-        ArgumentNullException.ThrowIfNull(name);
-
         Name = name;
     }
 

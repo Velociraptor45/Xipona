@@ -7,8 +7,8 @@ public class TemporaryItemCreation
     public TemporaryItemCreation(Guid clientSideId, ItemName name, IItemAvailability availability)
     {
         ClientSideId = clientSideId;
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        Availability = availability ?? throw new ArgumentNullException(nameof(availability));
+        Name = name;
+        Availability = availability;
     }
 
     public Guid ClientSideId { get; }

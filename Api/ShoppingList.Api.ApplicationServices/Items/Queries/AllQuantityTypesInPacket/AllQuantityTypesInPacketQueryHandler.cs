@@ -16,9 +16,6 @@ public class AllQuantityTypesInPacketQueryHandler :
     public Task<IEnumerable<QuantityTypeInPacketReadModel>> HandleAsync(AllQuantityTypesInPacketQuery query,
         CancellationToken cancellationToken)
     {
-        if (query == null)
-            throw new ArgumentNullException(nameof(query));
-
         var result = _quantitiesQueryService.GetAllQuantityTypesInPacket();
 
         return Task.FromResult(result);

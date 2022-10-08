@@ -10,9 +10,6 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
 {
     public Item ToEntity(IItem source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new Item
         {
             Id = source.Id.Value,

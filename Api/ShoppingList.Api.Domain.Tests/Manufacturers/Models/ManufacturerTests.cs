@@ -18,7 +18,7 @@ public class ManufacturerTests
         }
 
         [Fact]
-        public void Modify_WithValidData_ShouldThrowArgumentNullException()
+        public void Modify_WithValidData_ShouldModifyManufacturer()
         {
             // Arrange
             _fixture.SetupManufacturerModification();

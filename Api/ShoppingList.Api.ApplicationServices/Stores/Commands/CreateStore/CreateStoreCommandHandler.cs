@@ -19,8 +19,6 @@ public class CreateStoreCommandHandler : ICommandHandler<CreateStoreCommand, ISt
 
     public async Task<IStore> HandleAsync(CreateStoreCommand command, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(command);
-
         using ITransaction transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _storeCreationServiceDelegate(cancellationToken);

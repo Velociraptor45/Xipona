@@ -17,8 +17,6 @@ public class PropertyRelay<TTarget, TValueType> : ISpecimenBuilder
 
     public object Create(object request, ISpecimenContext context)
     {
-        if (context == null)
-            throw new ArgumentNullException(nameof(context));
         PropertyInfo? parameter = request as PropertyInfo;
         if (parameter == null)
             return new NoSpecimen();

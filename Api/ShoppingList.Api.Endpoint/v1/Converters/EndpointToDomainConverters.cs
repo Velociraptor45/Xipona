@@ -17,9 +17,6 @@ public class EndpointToDomainConverters : Dictionary<(Type, Type), IToDomainConv
 
     public IEnumerable<TDomain> ToDomain<TContract, TDomain>(IEnumerable<TContract> contract)
     {
-        if (contract is null)
-            throw new ArgumentNullException(nameof(contract));
-
         var typedConverter = GetConverter<TContract, TDomain>();
 
         return typedConverter.ToDomain(contract);
@@ -27,9 +24,6 @@ public class EndpointToDomainConverters : Dictionary<(Type, Type), IToDomainConv
 
     public TDomain ToDomain<TContract, TDomain>(TContract contract)
     {
-        if (contract == null)
-            throw new ArgumentNullException(nameof(contract));
-
         var typedConverter = GetConverter<TContract, TDomain>();
 
         return typedConverter.ToDomain(contract);

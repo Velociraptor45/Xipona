@@ -11,12 +11,12 @@ public class ItemWithTypesModification
         IEnumerable<ItemTypeModification> itemTypes)
     {
         Id = id;
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        Comment = comment ?? throw new ArgumentNullException(nameof(comment));
-        ItemQuantity = itemQuantity ?? throw new ArgumentNullException(nameof(itemQuantity));
+        Name = name;
+        Comment = comment;
+        ItemQuantity = itemQuantity;
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
-        ItemTypes = itemTypes?.ToList() ?? throw new ArgumentNullException(nameof(itemTypes));
+        ItemTypes = itemTypes.ToList();
     }
 
     public ItemId Id { get; }

@@ -12,7 +12,7 @@ public class Transaction : ITransaction
 
     public Transaction(DbTransaction transaction, Func<Task> onCloseTransactionAsync, ILogger<Transaction> logger)
     {
-        _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
+        _transaction = transaction;
         _onCloseTransactionAsync = onCloseTransactionAsync;
         _logger = logger;
     }

@@ -15,8 +15,6 @@ public class SearchItemsForShoppingListQueryHandler : IQueryHandler<SearchItemsF
     public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> HandleAsync(SearchItemsForShoppingListQuery query,
         CancellationToken cancellationToken)
     {
-        if (query == null)
-            throw new ArgumentNullException(nameof(query));
         if (string.IsNullOrWhiteSpace(query.SearchInput))
             return Enumerable.Empty<SearchItemForShoppingResultReadModel>();
 

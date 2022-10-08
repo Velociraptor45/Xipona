@@ -37,9 +37,6 @@ public class ItemContractConverter :
 
     public ItemContract ToContract(ItemReadModel source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         ItemCategoryContract? itemCategoryContract = null;
         if (source.ItemCategory != null)
             itemCategoryContract = _itemCategoryContractConverter.ToContract(source.ItemCategory);

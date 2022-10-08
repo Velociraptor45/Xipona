@@ -11,17 +11,11 @@ public class ItemCategoryContractConverter :
 {
     public ItemCategoryContract ToContract(ItemCategoryReadModel source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new ItemCategoryContract(source.Id.Value, source.Name.Value, source.IsDeleted);
     }
 
     public ItemCategoryContract ToContract(IItemCategory source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new ItemCategoryContract(source.Id.Value, source.Name.Value, source.IsDeleted);
     }
 }

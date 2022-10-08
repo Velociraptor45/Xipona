@@ -11,12 +11,12 @@ public class ItemCreation
     public ItemCreation(ItemName name, Comment comment, ItemQuantity itemQuantity, ItemCategoryId itemCategoryId,
         ManufacturerId? manufacturerId, IEnumerable<IItemAvailability> availabilities)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        Comment = comment ?? throw new ArgumentNullException(nameof(comment));
-        ItemQuantity = itemQuantity ?? throw new ArgumentNullException(nameof(itemQuantity));
+        Name = name;
+        Comment = comment;
+        ItemQuantity = itemQuantity;
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
-        _availabilities = availabilities ?? throw new ArgumentNullException(nameof(availabilities));
+        _availabilities = availabilities;
     }
 
     public ItemName Name { get; }

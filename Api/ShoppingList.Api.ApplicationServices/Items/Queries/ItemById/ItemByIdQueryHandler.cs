@@ -14,8 +14,6 @@ public class ItemByIdQueryHandler : IQueryHandler<ItemByIdQuery, ItemReadModel>
 
     public async Task<ItemReadModel> HandleAsync(ItemByIdQuery query, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(query);
-
         var service = _itemQueryServiceDelegate(cancellationToken);
         return await service.GetAsync(query.ItemId);
     }

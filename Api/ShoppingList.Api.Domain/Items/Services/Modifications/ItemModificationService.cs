@@ -64,8 +64,6 @@ public class ItemModificationService : IItemModificationService
 
     public async Task Modify(ItemModification modification)
     {
-        ArgumentNullException.ThrowIfNull(modification);
-
         var item = await _itemRepository.FindByAsync(modification.Id, _cancellationToken);
 
         if (item == null)

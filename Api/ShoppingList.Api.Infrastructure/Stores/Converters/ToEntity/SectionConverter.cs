@@ -8,9 +8,6 @@ public class SectionConverter : IToEntityConverter<ISection, Section>
 {
     public Section ToEntity(ISection source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new Section
         {
             Id = source.Id.Value,

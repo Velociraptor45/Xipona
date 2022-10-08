@@ -20,9 +20,6 @@ public class ItemAvailabilityContractConverter :
 
     public ItemAvailabilityContract ToContract(ItemAvailabilityReadModel source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         return new ItemAvailabilityContract(
             _itemStoreContractConverter.ToContract(source.Store),
             source.Price.Value,
