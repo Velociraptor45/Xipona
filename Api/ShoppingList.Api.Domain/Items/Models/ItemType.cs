@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -53,6 +54,19 @@ public class ItemType : IItemType
             modification.Availabilities);
     }
 
+    public async Task<IItemType> UpdateAsync(ItemTypeUpdate update, IValidator validator)
+    {
+        await validator.ValidateAsync(update.Availabilities);
+
+        var type = new ItemType(
+            ItemTypeId.New,
+            update.Name,
+            update.Availabilities);
+        type.SetPredecessor(this);
+
+        return type;
+    }
+
     public IItemType Update(StoreId storeId, Price price)
     {
         if (Availabilities.All(av => av.StoreId != storeId))
@@ -64,7 +78,7 @@ public class ItemType : IItemType
                 : av);
 
         var newItemType = new ItemType(ItemTypeId.New, Name, availabilities);
-        newItemType.Predecessor = this;
+        newItemType.SetPredecessor(this);
         return newItemType;
     }
 
@@ -74,7 +88,7 @@ public class ItemType : IItemType
             ItemTypeId.New,
             Name,
             Availabilities);
-        newItemType.Predecessor = this;
+        newItemType.SetPredecessor(this);
 
         return newItemType;
     }

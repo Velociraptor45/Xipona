@@ -4,47 +4,61 @@ namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 
 public static class ItemMother
 {
-    public static ItemBuilder Initial()
+    public static ItemBuilder Initial(ItemBuilder? builder = null)
     {
-        return new ItemBuilder()
+        builder ??= new ItemBuilder();
+
+        return builder
             .WithIsDeleted(false)
             .WithIsTemporary(false)
             .WithoutTemporaryId()
+            .WithoutUpdatedOn()
             .AsItem();
     }
 
-    public static ItemBuilder InitialWithTypes()
+    public static ItemBuilder InitialWithTypes(ItemBuilder? builder = null)
     {
-        return new ItemBuilder()
+        builder ??= new ItemBuilder();
+
+        return builder
             .WithIsDeleted(false)
             .WithIsTemporary(false)
-            .WithoutTemporaryId();
+            .WithoutTemporaryId()
+            .WithoutUpdatedOn();
     }
 
-    public static ItemBuilder InitialTemporary()
+    public static ItemBuilder InitialTemporary(ItemBuilder? builder = null)
     {
-        return new ItemBuilder()
+        builder ??= new ItemBuilder();
+
+        return builder
             .WithIsDeleted(false)
             .WithIsTemporary(true)
             .WithoutItemCategoryId()
             .WithoutManufacturerId()
             .WithAvailabilities(ItemAvailabilityMother.Initial().Create().ToMonoList())
+            .WithoutUpdatedOn()
             .AsItem();
     }
 
-    public static ItemBuilder InitialWithoutManufacturer()
+    public static ItemBuilder InitialWithoutManufacturer(ItemBuilder? builder = null)
     {
-        return new ItemBuilder()
+        builder ??= new ItemBuilder();
+
+        return builder
             .WithIsDeleted(false)
             .WithIsTemporary(false)
             .WithoutTemporaryId()
             .WithoutManufacturerId()
+            .WithoutUpdatedOn()
             .AsItem();
     }
 
-    public static ItemBuilder Deleted()
+    public static ItemBuilder Deleted(ItemBuilder? builder = null)
     {
-        return new ItemBuilder()
+        builder ??= new ItemBuilder();
+
+        return builder
             .WithIsDeleted(true)
             .AsItem();
     }

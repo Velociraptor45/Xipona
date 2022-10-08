@@ -59,14 +59,12 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IItemUpdateService>>(provider =>
         {
             var itemRepository = provider.GetRequiredService<IItemRepository>();
-            var itemTypeFactory = provider.GetRequiredService<IItemTypeFactory>();
-            var itemFactory = provider.GetRequiredService<IItemFactory>();
             var shoppingListUpdateService = provider.GetRequiredService<IShoppingListExchangeService>();
             var dateTimeService = provider.GetRequiredService<IDateTimeService>();
             var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
 
-            return cancellationToken => new ItemUpdateService(itemRepository, validatorDelegate, itemTypeFactory,
-                itemFactory, shoppingListUpdateService, dateTimeService, cancellationToken);
+            return cancellationToken => new ItemUpdateService(itemRepository, validatorDelegate,
+                shoppingListUpdateService, dateTimeService, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IItemSearchService>>(provider =>

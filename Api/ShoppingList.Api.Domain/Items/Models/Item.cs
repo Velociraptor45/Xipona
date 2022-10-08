@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.TemporaryItems;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
@@ -172,6 +173,81 @@ public class Item : IItem
     public void RemoveManufacturer()
     {
         ManufacturerId = null;
+    }
+
+    public async Task<IItem> UpdateAsync(ItemWithTypesUpdate update, IValidator validator,
+        IDateTimeService dateTimeService)
+    {
+        if (!HasItemTypes)
+            throw new DomainException(new CannotUpdateItemAsItemWithTypesReason(update.OldId));
+
+        Delete();
+        UpdatedOn = dateTimeService.UtcNow;
+
+        await validator.ValidateAsync(update.ItemCategoryId);
+
+        if (update.ManufacturerId != null)
+        {
+            await validator.ValidateAsync(update.ManufacturerId.Value);
+        }
+
+        var types = await _itemTypes!.UpdateAsync(update.TypeUpdates, validator);
+
+        // create new Item
+        var updatedItem = new Item(
+            ItemId.New,
+            update.Name,
+            isDeleted: false,
+            update.Comment,
+            update.ItemQuantity,
+            update.ItemCategoryId,
+            update.ManufacturerId,
+            types,
+            null);
+        updatedItem.SetPredecessor(this);
+
+        return updatedItem;
+    }
+
+    public async Task<IItem> UpdateAsync(ItemUpdate update, IValidator validator, IDateTimeService dateTimeService)
+    {
+        if (IsTemporary)
+            throw new DomainException(new TemporaryItemNotUpdateableReason(update.OldId));
+        if (HasItemTypes)
+            throw new DomainException(new CannotUpdateItemWithTypesAsItemReason(update.OldId));
+
+        Delete();
+        UpdatedOn = dateTimeService.UtcNow;
+
+        var itemCategoryId = update.ItemCategoryId;
+        var manufacturerId = update.ManufacturerId;
+
+        await validator.ValidateAsync(itemCategoryId);
+
+        if (manufacturerId != null)
+        {
+            await validator.ValidateAsync(manufacturerId.Value);
+        }
+
+        var availabilities = update.Availabilities;
+        await validator.ValidateAsync(availabilities);
+
+        var newItem = new Item(
+            ItemId.New,
+            update.Name,
+            isDeleted: false,
+            update.Comment,
+            isTemporary: false,
+            update.ItemQuantity,
+            update.ItemCategoryId,
+            update.ManufacturerId,
+            update.Availabilities,
+            null,
+            null);
+
+        newItem.SetPredecessor(this);
+
+        return newItem;
     }
 
     public IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService)

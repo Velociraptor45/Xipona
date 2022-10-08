@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
@@ -18,6 +19,10 @@ public interface IItemType
     bool IsAvailableAtStore(StoreId storeId);
 
     Task<IItemType> ModifyAsync(ItemTypeModification modification, IValidator validator);
+
+    Task<IItemType> UpdateAsync(ItemTypeUpdate update, IValidator validator);
+
     IItemType Update(StoreId storeId, Price price);
+
     IItemType Update();
 }

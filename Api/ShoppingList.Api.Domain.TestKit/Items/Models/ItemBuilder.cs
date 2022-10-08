@@ -96,4 +96,15 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
         FillConstructorWith("itemTypes", itemTypes);
         return this;
     }
+
+    public ItemBuilder WithUpdatedOn(DateTimeOffset? updatedOn)
+    {
+        FillConstructorWith(nameof(updatedOn), updatedOn);
+        return this;
+    }
+
+    public ItemBuilder WithoutUpdatedOn()
+    {
+        return WithUpdatedOn(null);
+    }
 }

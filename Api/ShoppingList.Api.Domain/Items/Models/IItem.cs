@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.TemporaryItems;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -46,5 +47,11 @@ public interface IItem
     bool TryGetTypeWithPredecessor(ItemTypeId predecessorTypeId, out IItemType? predecessor);
 
     void RemoveManufacturer();
+
+    Task<IItem> UpdateAsync(ItemUpdate update, IValidator validator, IDateTimeService dateTimeService);
+
+    Task<IItem> UpdateAsync(ItemWithTypesUpdate update, IValidator validator,
+        IDateTimeService dateTimeService);
+
     IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService);
 }

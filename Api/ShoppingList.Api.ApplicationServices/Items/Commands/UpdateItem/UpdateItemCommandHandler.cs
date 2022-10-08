@@ -27,7 +27,7 @@ public class UpdateItemCommandHandler : ICommandHandler<UpdateItemCommand, bool>
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _itemUpdateServiceDelegate(cancellationToken);
-        await service.Update(command.ItemUpdate);
+        await service.UpdateAsync(command.ItemUpdate);
 
         await transaction.CommitAsync(cancellationToken);
 

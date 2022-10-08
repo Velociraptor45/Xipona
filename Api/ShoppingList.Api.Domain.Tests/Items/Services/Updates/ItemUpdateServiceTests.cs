@@ -6,7 +6,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Exchanges;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
@@ -217,6 +216,275 @@ public class ItemUpdateServiceTests
         }
     }
 
+    public class UpdateAsyncWithTypes
+    {
+        private readonly UpdateAsyncWithTypesFixture _fixture;
+
+        public UpdateAsyncWithTypes()
+        {
+            _fixture = new UpdateAsyncWithTypesFixture();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithInvalidItemId_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupOldItemId();
+            _fixture.SetupNotFindingOldItem();
+            _fixture.SetupItemUpdate();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemWithTypesUpdate);
+
+            // Act
+            var func = async () => await sut.UpdateAsync(_fixture.ItemWithTypesUpdate);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemNotFound);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidItemId_ShouldUpdateItem()
+        {
+            // Arrange
+            _fixture.SetupWithValidItemId();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemWithTypesUpdate);
+
+            // Act
+            await sut.UpdateAsync(_fixture.ItemWithTypesUpdate);
+
+            // Assert
+            _fixture.VerifyUpdatingItem();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidItemId_ShouldStoreOldItem()
+        {
+            // Arrange
+            _fixture.SetupWithValidItemId();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemWithTypesUpdate);
+
+            // Act
+            await sut.UpdateAsync(_fixture.ItemWithTypesUpdate);
+
+            // Assert
+            _fixture.VerifyStoringOldItem();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidItemId_ShouldStoreNewItem()
+        {
+            // Arrange
+            _fixture.SetupWithValidItemId();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemWithTypesUpdate);
+
+            // Act
+            await sut.UpdateAsync(_fixture.ItemWithTypesUpdate);
+
+            // Assert
+            _fixture.VerifyStoringNewItem();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidItemId_ShouldExchangeItems()
+        {
+            // Arrange
+            _fixture.SetupWithValidItemId();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemWithTypesUpdate);
+
+            // Act
+            await sut.UpdateAsync(_fixture.ItemWithTypesUpdate);
+
+            // Assert
+            _fixture.VerifyExchangingItems();
+        }
+
+        private sealed class UpdateAsyncWithTypesFixture : UpdateAsyncFixture
+        {
+            public ItemWithTypesUpdate? ItemWithTypesUpdate { get; private set; }
+
+            public void SetupItemUpdate()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldItemId);
+
+                ItemWithTypesUpdate = new DomainTestBuilder<ItemWithTypesUpdate>()
+                    .FillConstructorWith("oldId", OldItemId.Value).Create();
+            }
+
+            private void SetupUpdatingItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemWithTypesUpdate);
+                TestPropertyNotSetException.ThrowIfNull(NewItem);
+                TestPropertyNotSetException.ThrowIfNull(OldItemMock);
+
+                OldItemMock.SetupUpdateAsync(ItemWithTypesUpdate, ValidatorMock.Object, DateTimeServiceMock.Object, NewItem);
+            }
+
+            public void VerifyUpdatingItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemWithTypesUpdate);
+                TestPropertyNotSetException.ThrowIfNull(OldItemMock);
+
+                OldItemMock.VerifyUpdateAsync(ItemWithTypesUpdate, ValidatorMock.Object, DateTimeServiceMock.Object, Times.Once);
+            }
+
+            public void SetupWithValidItemId()
+            {
+                SetupOldItemId();
+                SetupOldItem();
+                SetupNewItem();
+                SetupItemUpdate();
+                SetupFindingOldItem();
+                SetupUpdatingItem();
+                SetupStoringOldItem();
+                SetupStoringNewItem();
+                SetupExchangingItems();
+            }
+        }
+    }
+
+    public class UpdateAsyncWithoutTypes
+    {
+        private readonly UpdateAsyncWithoutTypesFixture _fixture;
+
+        public UpdateAsyncWithoutTypes()
+        {
+            _fixture = new UpdateAsyncWithoutTypesFixture();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithInvalidItemId_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupOldItemId();
+            _fixture.SetupNotFindingOldItem();
+            _fixture.SetupItemUpdate();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemUpdate);
+
+            // Act
+            var func = async () => await sut.UpdateAsync(_fixture.ItemUpdate);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemNotFound);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidItemId_ShouldUpdateItem()
+        {
+            // Arrange
+            _fixture.SetupWithValidItemId();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemUpdate);
+
+            // Act
+            await sut.UpdateAsync(_fixture.ItemUpdate);
+
+            // Assert
+            _fixture.VerifyUpdatingItem();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidItemId_ShouldStoreOldItem()
+        {
+            // Arrange
+            _fixture.SetupWithValidItemId();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemUpdate);
+
+            // Act
+            await sut.UpdateAsync(_fixture.ItemUpdate);
+
+            // Assert
+            _fixture.VerifyStoringOldItem();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidItemId_ShouldStoreNewItem()
+        {
+            // Arrange
+            _fixture.SetupWithValidItemId();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemUpdate);
+
+            // Act
+            await sut.UpdateAsync(_fixture.ItemUpdate);
+
+            // Assert
+            _fixture.VerifyStoringNewItem();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithValidItemId_ShouldExchangeItems()
+        {
+            // Arrange
+            _fixture.SetupWithValidItemId();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemUpdate);
+
+            // Act
+            await sut.UpdateAsync(_fixture.ItemUpdate);
+
+            // Assert
+            _fixture.VerifyExchangingItems();
+        }
+
+        private sealed class UpdateAsyncWithoutTypesFixture : UpdateAsyncFixture
+        {
+            public ItemUpdate? ItemUpdate { get; private set; }
+
+            public void SetupItemUpdate()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldItemId);
+
+                ItemUpdate = new DomainTestBuilder<ItemUpdate>().FillConstructorWith("oldId", OldItemId.Value).Create();
+            }
+
+            private void SetupUpdatingItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemUpdate);
+                TestPropertyNotSetException.ThrowIfNull(NewItem);
+                TestPropertyNotSetException.ThrowIfNull(OldItemMock);
+
+                OldItemMock.SetupUpdateAsync(ItemUpdate, ValidatorMock.Object, DateTimeServiceMock.Object, NewItem);
+            }
+
+            public void VerifyUpdatingItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemUpdate);
+                TestPropertyNotSetException.ThrowIfNull(OldItemMock);
+
+                OldItemMock.VerifyUpdateAsync(ItemUpdate, ValidatorMock.Object, DateTimeServiceMock.Object, Times.Once);
+            }
+
+            public void SetupWithValidItemId()
+            {
+                SetupOldItemId();
+                SetupOldItem();
+                SetupNewItem();
+                SetupItemUpdate();
+                SetupFindingOldItem();
+                SetupUpdatingItem();
+                SetupStoringOldItem();
+                SetupStoringNewItem();
+                SetupExchangingItems();
+            }
+        }
+    }
+
     private abstract class UpdateAsyncFixture : ItemUpdateServiceFixture
     {
         protected ItemMock? OldItemMock;
@@ -313,19 +581,15 @@ public class ItemUpdateServiceTests
     private abstract class ItemUpdateServiceFixture
     {
         private readonly ItemRepositoryMock _itemRepositoryMock = new(MockBehavior.Strict);
-        private readonly ItemTypeFactoryMock _itemTypeFactoryMock = new(MockBehavior.Strict);
-        private readonly ItemFactoryMock _itemFactoryMock = new(MockBehavior.Strict);
         protected readonly ShoppingListExchangeServiceMock ShoppingListExchangeServiceMock = new(MockBehavior.Strict);
         protected readonly DateTimeServiceMock DateTimeServiceMock = new(MockBehavior.Strict);
-        private readonly ValidatorMock _validatorMock = new(MockBehavior.Strict);
+        protected readonly ValidatorMock ValidatorMock = new(MockBehavior.Strict);
 
         public ItemUpdateService CreateSut()
         {
             return new ItemUpdateService(
                 _itemRepositoryMock.Object,
-                _ => _validatorMock.Object,
-                _itemTypeFactoryMock.Object,
-                _itemFactoryMock.Object,
+                _ => ValidatorMock.Object,
                 ShoppingListExchangeServiceMock.Object,
                 DateTimeServiceMock.Object,
                 default);

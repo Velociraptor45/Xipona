@@ -24,7 +24,7 @@ public class UpdateItemWithTypesCommandHandler : ICommandHandler<UpdateItemWithT
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _itemExchangeServiceDelegat(cancellationToken);
-        await service.UpdateItemWithTypesAsync(command.ItemWithTypesUpdate);
+        await service.UpdateAsync(command.ItemWithTypesUpdate);
 
         await transaction.CommitAsync(cancellationToken);
 
