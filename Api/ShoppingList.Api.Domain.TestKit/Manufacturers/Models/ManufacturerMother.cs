@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 
 public static class ManufacturerMother
 {

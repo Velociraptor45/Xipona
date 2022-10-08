@@ -1,7 +1,7 @@
 ﻿using AutoFixture.Kernel;
 using System.Linq;
 
-namespace ShoppingList.Api.Core.TestKit;
+namespace ProjectHermes.ShoppingList.Api.Core.TestKit;
 
 public class EnumExclusionCustomization<T> : ICustomization
     where T : Enum

@@ -2,16 +2,19 @@
 @using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
 
 <div class="availability d-flex">
     <div class="data">
         <Select Class="mr-2 store"
-                DataSource="State.Stores.ToList()"
-                TItem="Store"
+                DataSource="Stores"
+                TItem="AvailabilityStore"
                 TItemValue="Guid"
                 DefaultValue="Model.Store.Id"
-                ValueName="@nameof(Store.Id)"
-                LabelName="@nameof(Store.Name)"
+                ValueName="@nameof(AvailabilityStore.Id)"
+                LabelName="@nameof(AvailabilityStore.Name)"
+                DisabledName="@nameof(AvailabilityStore.IsDisabled)"
+                IgnoreItemChanges="false"
                 OnSelectedItemChanged="@OnStoreChanged">
         </Select>
         <div class="d-flex pt-1">
@@ -21,7 +24,7 @@
                 </div>
                 <div class="mr-2">@(State.EditedItem.QuantityType.PriceLabel)</div>
             </div>
-            <SingleSelect Class="section ml-2"
+            <SingleSelect Class="ml-2"
                           TItem="ItemSection"
                           TValue="Guid"
                           ValueName="@nameof(ItemSection.Id)"
@@ -41,22 +44,24 @@
 @code {
     [Parameter] public ItemsState State { get; set; }
     [Parameter] public ItemAvailability Model { get; set; }
+    [Parameter] public List<AvailabilityStore> Stores { get; set; }
     [Parameter] public int Index { get; set; }
     [Parameter] public Action<int> OnRemove { get; set; }
-
-    private void OnStoreChanged(Store store)
+    [Parameter] public Action OnSelectedStoreChanged { get; set; }
+    
+    private void OnStoreChanged(AvailabilityStore availabilityStore)
     {
+        var store = State.GetStore(availabilityStore.Id);
         Model.Store = store.AsItemStore();
 
         var defaultSection = store.Sections.Single(s => s.IsDefaultSection);
         Model.ChangeDefaultSectionId(defaultSection.Id.BackendId);
-        StateHasChanged();
+        OnSelectedStoreChanged?.Invoke();
     }
 
     private void OnRemoveStoreButtonClicked()
     {
         OnRemove(Index);
-        State.StateChanged();
     }
 
     private void OnDefaultSectionChanged(ItemSection section)

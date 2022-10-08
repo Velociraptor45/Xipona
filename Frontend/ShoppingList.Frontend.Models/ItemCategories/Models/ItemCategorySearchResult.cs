@@ -1,8 +1,9 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+using System;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
 {
-    public class ItemCategorySearchResult
+    public class ItemCategorySearchResult : ISearchResult
     {
         public ItemCategorySearchResult(Guid id, string name)
         {
@@ -10,8 +11,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
             Name = name;
         }
 
-        public Guid Id { get; }
-        public string Name { get; private set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
 
         public void ChangeName(string name)
         {

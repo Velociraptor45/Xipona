@@ -6,10 +6,11 @@ setx PH_SL_VAULT_PASSWORD_FILE "E:\\prd-ph-shoppinglist-vault-api-password.txt"
 cd ../ShoppingList.Api.Infrastructure/
 
 dotnet ef database update --context ItemCategoryContext
-dotnet ef database update --context ManufacturerContext
-dotnet ef database update --context ShoppingListContext
-dotnet ef database update --context ItemContext
-dotnet ef database update --context StoreContext
+dotnet ef database update --context ManufacturerContext --no-build
+dotnet ef database update --context ShoppingListContext --no-build
+dotnet ef database update --context ItemContext --no-build
+dotnet ef database update --context StoreContext --no-build
+dotnet ef database update --context RecipeContext --no-build
 
 setx ASPNETCORE_ENVIRONMENT ""
 setx PH_SL_VAULT_USERNAME_FILE ""

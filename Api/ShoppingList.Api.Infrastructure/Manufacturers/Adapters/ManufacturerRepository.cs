@@ -54,9 +54,6 @@ public class ManufacturerRepository : IManufacturerRepository
     public async Task<IEnumerable<IManufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids,
         CancellationToken cancellationToken)
     {
-        if (ids == null)
-            throw new ArgumentNullException(nameof(ids));
-
         var idHashSet = ids.Select(id => id.Value).ToHashSet();
 
         cancellationToken.ThrowIfCancellationRequested();

@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Modifications;
-using ShoppingList.Api.Domain.TestKit.Common;
-using ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Manufacturers.Models;
 
@@ -18,7 +18,7 @@ public class ManufacturerTests
         }
 
         [Fact]
-        public void Modify_WithValidData_ShouldThrowArgumentNullException()
+        public void Modify_WithValidData_ShouldModifyManufacturer()
         {
             // Arrange
             _fixture.SetupManufacturerModification();

@@ -10,7 +10,7 @@ public class ShoppingListSectionReadModel
         bool isDefaultSection, IEnumerable<ShoppingListItemReadModel> itemReadModels)
     {
         Id = id;
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Name = name;
         SortingIndex = sortingIndex;
         IsDefaultSection = isDefaultSection;
         _itemReadModels = itemReadModels;

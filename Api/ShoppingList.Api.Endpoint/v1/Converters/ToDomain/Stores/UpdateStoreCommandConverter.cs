@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.UpdateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;

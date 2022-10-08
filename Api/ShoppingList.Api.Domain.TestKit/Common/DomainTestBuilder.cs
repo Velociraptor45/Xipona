@@ -1,6 +1,6 @@
-﻿using ShoppingList.Api.Core.TestKit;
+﻿using ProjectHermes.ShoppingList.Api.Core.TestKit;
 
-namespace ShoppingList.Api.Domain.TestKit.Common;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
 public class DomainTestBuilder<TModel> : TestBuilder<TModel, DomainTestBuilder<TModel>>
 {

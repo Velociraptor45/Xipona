@@ -19,8 +19,6 @@ public class DeleteManufacturerCommandHandler : ICommandHandler<DeleteManufactur
 
     public async Task<bool> HandleAsync(DeleteManufacturerCommand command, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(command);
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _manufacturerDeletionServiceDelegate(cancellationToken);

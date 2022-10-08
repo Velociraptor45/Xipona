@@ -1,0 +1,25 @@
+﻿.summary-header .summary-date-picker {
+    padding-right: 5px;
+}
+
+.summary-header .summary-time-picker {
+    padding-right: 5px;
+}
+
+.summary-header .summary-datetime-edit {
+    padding-top: 2px;
+}
+
+.summary-datetime:hover {
+    cursor: pointer;
+}
+
+.summary-datetime {
+    color: grey;
+    font-size: 10px;
+    margin-top: -5px;
+}
+
+.summary-price {
+    font-size: 16px;
+}

@@ -17,8 +17,6 @@ public class ItemCategorySearchQueryHandler :
     public async Task<IEnumerable<ItemCategorySearchResultReadModel>> HandleAsync(ItemCategorySearchQuery query,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(query);
-
         var service = _itemCategoryQueryServiceDelegate(cancellationToken);
         return await service.GetAsync(query.SearchInput, query.IncludeDeleted);
     }

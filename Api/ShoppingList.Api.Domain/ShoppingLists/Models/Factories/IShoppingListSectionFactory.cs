@@ -6,7 +6,7 @@ public interface IShoppingListSectionFactory
 {
     IShoppingListSection Create(SectionId sectionId, IEnumerable<IShoppingListItem> shoppingListItems);
 
-    IShoppingListSection CreateEmpty(IStoreSection storeSection);
+    IShoppingListSection CreateEmpty(ISection section);
 
     IShoppingListSection CreateEmpty(SectionId sectionId);
 }

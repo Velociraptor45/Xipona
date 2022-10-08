@@ -2,7 +2,7 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 
-@inject IStoresApiService apiService;
+@inject IStoresApiService _apiService;
 
 @if (State.IsInEditMode)
 {
@@ -42,11 +42,11 @@
 
     private async Task OnCreateButtonClickedAsync()
     {
-        await apiService.CreateStoreAsync(State.EditedStore, FragmentCreator, async () => await State.LeaveEditorAsync());
+        await _apiService.CreateStoreAsync(State.EditedStore, FragmentCreator, async () => await State.LeaveEditorAsync());
     }
 
     private async Task OnSaveButtonClickedAsync()
     {
-        await apiService.SaveStoreAsync(State.EditedStore, FragmentCreator, async () => await State.LeaveEditorAsync());
+        await _apiService.SaveStoreAsync(State.EditedStore, FragmentCreator, async () => await State.LeaveEditorAsync());
     }
 }

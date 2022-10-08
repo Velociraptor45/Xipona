@@ -4,13 +4,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLi
 {
     public class FinishListRequest : IApiRequest
     {
-        public FinishListRequest(Guid requestId, Guid shoppingListId)
+        public FinishListRequest(Guid requestId, Guid shoppingListId, DateTimeOffset? finishedAt)
         {
             RequestId = requestId;
             ShoppingListId = shoppingListId;
+            FinishedAt = finishedAt;
         }
 
         public Guid RequestId { get; }
         public Guid ShoppingListId { get; }
+        public DateTimeOffset? FinishedAt { get; }
     }
 }

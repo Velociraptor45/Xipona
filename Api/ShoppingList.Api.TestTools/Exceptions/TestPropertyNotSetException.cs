@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace ShoppingList.Api.TestTools.Exceptions;
+namespace ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 public class TestPropertyNotSetException : Exception
 {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Creations;
@@ -6,7 +7,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Deletions;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Validations;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers;
 

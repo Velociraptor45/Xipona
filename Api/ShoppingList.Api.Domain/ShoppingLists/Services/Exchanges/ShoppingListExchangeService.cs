@@ -1,9 +1,11 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+﻿using Microsoft.Extensions.Logging;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Exchanges;
 
@@ -11,19 +13,19 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
 {
     private readonly IShoppingListRepository _shoppingListRepository;
     private readonly IAddItemToShoppingListService _addItemToShoppingListService;
+    private readonly ILogger<ShoppingListExchangeService> _logger;
 
     public ShoppingListExchangeService(IShoppingListRepository shoppingListRepository,
-        IAddItemToShoppingListService addItemToShoppingListService)
+        IAddItemToShoppingListService addItemToShoppingListService,
+        ILogger<ShoppingListExchangeService> logger)
     {
         _shoppingListRepository = shoppingListRepository;
         _addItemToShoppingListService = addItemToShoppingListService;
+        _logger = logger;
     }
 
-    public async Task ExchangeItemAsync(ItemId oldItemId, IStoreItem newItem, CancellationToken cancellationToken)
+    public async Task ExchangeItemAsync(ItemId oldItemId, IItem newItem, CancellationToken cancellationToken)
     {
-        if (newItem is null)
-            throw new ArgumentNullException(nameof(newItem));
-
         var shoppingListsWithOldItem = (await _shoppingListRepository
                 .FindActiveByAsync(oldItemId, cancellationToken))
             .ToList();
@@ -35,7 +37,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
     }
 
     private async Task ExchangeItemWithoutTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
-        IStoreItem newItem, CancellationToken cancellationToken)
+        IItem newItem, CancellationToken cancellationToken)
     {
         foreach (var list in shoppingLists)
         {
@@ -45,6 +47,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
                 throw new DomainException(new ShoppingListItemHasTypeReason(list.Id, oldListItem.Id));
 
             list.RemoveItem(oldListItem.Id);
+            _logger.LogInformation(() => $"Removed item {oldListItem.Id.Value} from list {list.Id.Value}");
             if (newItem.IsAvailableInStore(list.StoreId))
             {
                 var sectionId = newItem.GetDefaultSectionIdForStore(list.StoreId);
@@ -60,7 +63,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
     }
 
     private async Task ExchangeItemWithTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
-        IStoreItem newItem, CancellationToken cancellationToken)
+        IItem newItem, CancellationToken cancellationToken)
     {
         foreach (var list in shoppingLists)
         {

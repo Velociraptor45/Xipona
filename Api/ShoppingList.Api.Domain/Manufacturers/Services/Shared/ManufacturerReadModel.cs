@@ -13,8 +13,6 @@ public class ManufacturerReadModel
 
     public ManufacturerReadModel(IManufacturer manufacturer)
     {
-        ArgumentNullException.ThrowIfNull(manufacturer);
-
         Id = manufacturer.Id;
         Name = manufacturer.Name;
         IsDeleted = manufacturer.IsDeleted;

@@ -2,43 +2,47 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateItem;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.CreateTemporaryItem;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.DeleteItem;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ItemUpdateWithTypes;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.MakeTemporaryItemPermanent;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ModifyItem;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.ModifyItemWithTypes;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Commands.UpdateItem;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.AllQuantityTypes;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.AllQuantityTypesInPacket;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.ItemById;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItems;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItemsByFilters;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.StoreItems.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.CreateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.CreateTemporaryItem;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.DeleteItem;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.ItemUpdateWithTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.ModifyItem;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.ModifyItemWithTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.AllQuantityTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.AllQuantityTypesInPacket;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.ItemById;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchItems;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchItemsByFilters;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchItemsByItemCategory;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.AllQuantityTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateTemporaryItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries.Quantities;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Creations;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 
@@ -61,14 +65,14 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}")]
     public async Task<IActionResult> GetAsync([FromRoute] Guid id)
     {
         var query = new ItemByIdQuery(new ItemId(id));
-        StoreItemReadModel result;
+        ItemReadModel result;
         try
         {
             result = await _queryDispatcher.DispatchAsync(query, default);
@@ -82,7 +86,7 @@ public class ItemController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        var contract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(result);
+        var contract = _converters.ToContract<ItemReadModel, ItemContract>(result);
 
         return Ok(contract);
     }
@@ -164,6 +168,39 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<SearchItemByItemCategoryResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("search/by-item-category/{itemCategoryId:guid}")]
+    public async Task<IActionResult> SearchItemsByItemCategoryAsync([FromRoute] Guid itemCategoryId)
+    {
+        var query = new SearchItemsByItemCategoryQuery(new ItemCategoryId(itemCategoryId));
+
+        List<SearchItemByItemCategoryResult> readModels;
+        try
+        {
+            readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.ItemCategoryNotFound or ErrorReasonCode.StoresNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+
+        if (!readModels.Any())
+            return NoContent();
+
+        var contracts =
+            _converters.ToContract<SearchItemByItemCategoryResult, SearchItemByItemCategoryResultContract>(readModels);
+
+        return Ok(contracts);
+    }
+
+    [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<QuantityTypeContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("quantity-types")]
@@ -198,21 +235,30 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("without-types")]
-    public async Task<IActionResult> CreateItemAsync([FromBody] CreateItemContract createItemContract)
+    public async Task<IActionResult> CreateItemAsync([FromBody] CreateItemContract contract)
     {
+        if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
+            || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
         try
         {
-            var model = _converters.ToDomain<CreateItemContract, ItemCreation>(createItemContract);
+            var model = _converters.ToDomain<CreateItemContract, ItemCreation>(contract);
             var command = new CreateItemCommand(model);
 
             var readModel = await _commandDispatcher.DispatchAsync(command, default);
 
-            var contract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
+            var createdContract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
 
-            return CreatedAtAction(nameof(GetAsync), new { id = contract.Id }, contract);
+            // ReSharper disable once Mvc.ActionNotResolved
+            return CreatedAtAction(nameof(GetAsync), new { id = createdContract.Id }, createdContract);
         }
         catch (DomainException e)
         {
@@ -222,19 +268,28 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("with-types")]
     public async Task<IActionResult> CreateItemWithTypesAsync([FromBody] CreateItemWithTypesContract contract)
     {
+        if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
+           || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
         try
         {
-            var model = _converters.ToDomain<CreateItemWithTypesContract, IStoreItem>(contract);
+            var model = _converters.ToDomain<CreateItemWithTypesContract, IItem>(contract);
             var command = new CreateItemWithTypesCommand(model);
             var readModel = await _commandDispatcher.DispatchAsync(command, default);
 
-            var returnContract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
+            var returnContract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
 
+            // ReSharper disable once Mvc.ActionNotResolved
             return CreatedAtAction(nameof(GetAsync), new { id = returnContract.Id }, returnContract);
         }
         catch (DomainException e)
@@ -245,7 +300,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(StoreItemContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("temporary")]
     public async Task<IActionResult> CreateTemporaryItemAsync([FromBody] CreateTemporaryItemContract contract)
@@ -256,7 +311,7 @@ public class ItemController : ControllerBase
         {
             var readModel = await _commandDispatcher.DispatchAsync(command, default);
 
-            var returnContract = _converters.ToContract<StoreItemReadModel, StoreItemContract>(readModel);
+            var returnContract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
             return Ok(returnContract);
         }
         catch (DomainException e)
@@ -268,12 +323,20 @@ public class ItemController : ControllerBase
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("with-types/{id:guid}/modify")]
     public async Task<IActionResult> ModifyItemWithTypesAsync([FromRoute] Guid id,
         [FromBody] ModifyItemWithTypesContract contract)
     {
+        if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
+            || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
         var command =
             _converters.ToDomain<(Guid, ModifyItemWithTypesContract), ModifyItemWithTypesCommand>((id, contract));
 
@@ -295,12 +358,20 @@ public class ItemController : ControllerBase
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("without-types/{id:guid}/modify")]
     public async Task<IActionResult> ModifyItemAsync([FromRoute] Guid id,
         [FromBody] ModifyItemContract contract)
     {
+        if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
+            || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
         var command = _converters.ToDomain<(Guid, ModifyItemContract), ModifyItemCommand>((id, contract));
 
         try
@@ -321,12 +392,19 @@ public class ItemController : ControllerBase
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("without-types/{id:guid}/update")]
-    public async Task<IActionResult> UpdateItemAsync([FromRoute] Guid id,
-        [FromBody] UpdateItemContract contract)
+    public async Task<IActionResult> UpdateItemAsync([FromRoute] Guid id, [FromBody] UpdateItemContract contract)
     {
+        if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
+            || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
         var command = _converters.ToDomain<(Guid, UpdateItemContract), UpdateItemCommand>((id, contract));
 
         try
@@ -349,12 +427,10 @@ public class ItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("with-types/{id:guid}/update")]
-    public async Task<IActionResult> UpdateItemWithTypesAsync([FromRoute] Guid id,
-        [FromBody] UpdateItemWithTypesContract contract)
+    [Route("{id:guid}/update-price")]
+    public async Task<IActionResult> UpdateItemPriceAsync([FromRoute] Guid id, [FromBody] UpdateItemPriceContract contract)
     {
-        var command =
-            _converters.ToDomain<(Guid, UpdateItemWithTypesContract), UpdateItemWithTypesCommand>((id, contract));
+        var command = _converters.ToDomain<(Guid, UpdateItemPriceContract), UpdateItemPriceCommand>((id, contract));
 
         try
         {
@@ -363,7 +439,7 @@ public class ItemController : ControllerBase
         catch (DomainException e)
         {
             var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
-            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+            if (e.Reason.ErrorCode is ErrorReasonCode.ItemNotFound or ErrorReasonCode.ItemTypeNotFound)
                 return NotFound(errorContract);
 
             return UnprocessableEntity(errorContract);
@@ -374,12 +450,55 @@ public class ItemController : ControllerBase
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("with-types/{id:guid}/update")]
+    public async Task<IActionResult> UpdateItemWithTypesAsync([FromRoute] Guid id,
+        [FromBody] UpdateItemWithTypesContract contract)
+    {
+        if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
+            || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
+        var command =
+            _converters.ToDomain<(Guid, UpdateItemWithTypesContract), UpdateItemWithTypesCommand>((id, contract));
+
+        try
+        {
+            await _commandDispatcher.DispatchAsync(command, default);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.ItemNotFound or ErrorReasonCode.StoreNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+
+        return Ok();
+    }
+
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("temporary/{id:guid}")]
     public async Task<IActionResult> MakeTemporaryItemPermanentAsync([FromRoute] Guid id,
         [FromBody] MakeTemporaryItemPermanentContract contract)
     {
+        if (contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null
+            || contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null)
+        {
+            return BadRequest(
+                $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
+        }
+
         var command =
             _converters.ToDomain<(Guid, MakeTemporaryItemPermanentContract), MakeTemporaryItemPermanentCommand>((id,
                 contract));

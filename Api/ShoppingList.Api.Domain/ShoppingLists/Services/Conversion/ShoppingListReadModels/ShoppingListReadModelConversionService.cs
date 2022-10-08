@@ -2,16 +2,16 @@
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Reasons;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
@@ -58,70 +58,70 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
     }
 
     private static ShoppingListReadModel ToReadModel(IShoppingList shoppingList, IStore store,
-        IReadOnlyDictionary<ItemId, IStoreItem> storeItems, IReadOnlyDictionary<ItemCategoryId,
+        IReadOnlyDictionary<ItemId, IItem> items, IReadOnlyDictionary<ItemCategoryId,
             IItemCategory> itemCategories, IReadOnlyDictionary<ManufacturerId, IManufacturer> manufacturers)
     {
         List<ShoppingListSectionReadModel> sectionReadModels = new();
-        foreach (var section in shoppingList.Sections)
+        foreach (var shoppingListSection in shoppingList.Sections)
         {
             List<ShoppingListItemReadModel> itemReadModels = new();
-            foreach (var item in section.Items)
+            foreach (var sectionItem in shoppingListSection.Items)
             {
-                var storeItem = storeItems[item.Id];
+                var item = items[sectionItem.Id];
 
                 Price price;
                 string name;
-                if (storeItem.HasItemTypes)
+                if (item.HasItemTypes)
                 {
-                    if (item.TypeId == null)
-                        throw new DomainException(new ShoppingListItemMissingTypeReason(item.Id));
+                    if (sectionItem.TypeId == null)
+                        throw new DomainException(new ShoppingListItemMissingTypeReason(sectionItem.Id));
 
-                    var itemType = storeItem.ItemTypes.FirstOrDefault(t => t.Id == item.TypeId);
+                    var itemType = item.ItemTypes.FirstOrDefault(t => t.Id == sectionItem.TypeId);
                     if (itemType == null)
-                        throw new DomainException(new ItemTypeNotFoundReason(item.Id, item.TypeId.Value));
+                        throw new DomainException(new ItemTypeNotFoundReason(sectionItem.Id, sectionItem.TypeId.Value));
 
                     price = itemType.Availabilities.First(av => av.StoreId == store.Id).Price;
-                    name = $"{storeItem.Name} {itemType.Name}";
+                    name = $"{item.Name} {itemType.Name}";
                 }
                 else
                 {
-                    price = storeItem.Availabilities.First(av => av.StoreId == store.Id).Price;
-                    name = storeItem.Name.Value;
+                    price = item.Availabilities.First(av => av.StoreId == store.Id).Price;
+                    name = item.Name.Value;
                 }
 
-                var itemQuantityInPacket = storeItem.ItemQuantity.InPacket;
+                var itemQuantityInPacket = item.ItemQuantity.InPacket;
                 var quantityTypeInPacketReadModel = itemQuantityInPacket is null
                     ? null
                     : new QuantityTypeInPacketReadModel(itemQuantityInPacket.Type);
 
                 var itemReadModel = new ShoppingListItemReadModel(
-                    item.Id,
-                    item.TypeId,
+                    sectionItem.Id,
+                    sectionItem.TypeId,
                     name,
-                    storeItem.IsDeleted,
-                    storeItem.Comment,
-                    storeItem.IsTemporary,
+                    item.IsDeleted,
+                    item.Comment,
+                    item.IsTemporary,
                     price,
-                    new QuantityTypeReadModel(storeItem.ItemQuantity.Type),
+                    new QuantityTypeReadModel(item.ItemQuantity.Type),
                     itemQuantityInPacket?.Quantity,
                     quantityTypeInPacketReadModel,
-                    storeItem.ItemCategoryId == null ?
-                        null : new ItemCategoryReadModel(itemCategories[storeItem.ItemCategoryId.Value]),
-                    storeItem.ManufacturerId == null ?
-                        null : new ManufacturerReadModel(manufacturers[storeItem.ManufacturerId.Value]),
-                    item.IsInBasket,
-                    item.Quantity);
+                    item.ItemCategoryId == null ?
+                        null : new ItemCategoryReadModel(itemCategories[item.ItemCategoryId.Value]),
+                    item.ManufacturerId == null ?
+                        null : new ManufacturerReadModel(manufacturers[item.ManufacturerId.Value]),
+                    sectionItem.IsInBasket,
+                    sectionItem.Quantity);
 
                 itemReadModels.Add(itemReadModel);
             }
 
-            var storeSection = store.Sections.First(s => s.Id == section.Id);
+            var section = store.Sections.First(s => s.Id == shoppingListSection.Id);
 
             var sectionReadModel = new ShoppingListSectionReadModel(
-                section.Id,
-                storeSection.Name,
-                storeSection.SortingIndex,
-                storeSection.IsDefaultSection,
+                shoppingListSection.Id,
+                section.Name,
+                section.SortingIndex,
+                section.IsDefaultSection,
                 itemReadModels);
 
             sectionReadModels.Add(sectionReadModel);

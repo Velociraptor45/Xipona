@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Reasons;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Deletions;
 

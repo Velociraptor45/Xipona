@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
-namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 
 public class ItemCategoryBuilder : DomainTestBuilderBase<ItemCategory>
 {

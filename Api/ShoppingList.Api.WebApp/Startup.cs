@@ -4,12 +4,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProjectHermes.ShoppingList.Api.ApplicationServices;
+using ProjectHermes.ShoppingList.Api.Core;
 using ProjectHermes.ShoppingList.Api.Core.Files;
 using ProjectHermes.ShoppingList.Api.Domain;
 using ProjectHermes.ShoppingList.Api.Endpoint;
 using ProjectHermes.ShoppingList.Api.Infrastructure;
+using ProjectHermes.ShoppingList.Api.Vault;
 using ProjectHermes.ShoppingList.Api.WebApp.Services;
-using ShoppingList.Api.Vault;
+using Serilog;
 
 namespace ProjectHermes.ShoppingList.Api.WebApp;
 
@@ -25,6 +27,10 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(Configuration)
+            .CreateLogger();
+
         var fileLoadingService = new FileLoadingService();
         var vaultService = new VaultService(Configuration, fileLoadingService);
         var configurationLoadingService = new ConfigurationLoadingService(fileLoadingService, vaultService);
@@ -32,9 +38,13 @@ public class Startup
         services.AddSingleton(connectionStrings);
 
         services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
+        services.AddCore();
         services.AddDomain();
         services.AddEndpointControllers();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(options =>
+        {
+            options.CustomSchemaIds(type => type.ToString());
+        });
 
         services.AddCors(options =>
         {
@@ -51,7 +61,7 @@ public class Startup
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        if (env.IsDevelopment())
+        if (!env.IsProduction())
         {
             app.UseDeveloperExceptionPage();
         }

@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ShoppingList.Api.Domain.TestKit.Common;
-using ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
 
-namespace ShoppingList.Api.Domain.TestKit.Stores.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 
 public class StoreBuilder : DomainTestBuilderBase<Store>
 {
@@ -24,7 +24,7 @@ public class StoreBuilder : DomainTestBuilderBase<Store>
         return this;
     }
 
-    public StoreBuilder WithSections(StoreSections sections)
+    public StoreBuilder WithSections(Sections sections)
     {
         FillConstructorWith("sections", sections);
         return this;
@@ -32,7 +32,7 @@ public class StoreBuilder : DomainTestBuilderBase<Store>
 
     public StoreBuilder WithoutSections()
     {
-        return WithSections(new StoreSections(Enumerable.Empty<IStoreSection>(),
-            new StoreSectionFactoryMock(MockBehavior.Strict).Object));
+        return WithSections(new Sections(Enumerable.Empty<ISection>(),
+            new SectionFactoryMock(MockBehavior.Strict).Object));
     }
 }

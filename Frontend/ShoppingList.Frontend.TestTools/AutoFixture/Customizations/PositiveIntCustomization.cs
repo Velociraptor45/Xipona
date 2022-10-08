@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
 
-namespace ShoppingList.Frontend.TestTools.AutoFixture.Customizations;
+namespace ProjectHermes.ShoppingList.Frontend.TestTools.AutoFixture.Customizations;
 
 public class PositiveIntCustomization : ICustomization
 {
@@ -42,7 +42,7 @@ public class PositiveIntCustomization : ICustomization
             return CreateInstance(context);
         }
 
-        private bool MatchesType(object request)
+        private static bool MatchesType(object request)
         {
             var t = request as Type;
             return typeof(int) == t;

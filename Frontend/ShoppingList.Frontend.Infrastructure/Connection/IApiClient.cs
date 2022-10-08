@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores;
 using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System;
@@ -94,5 +95,17 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         Task DeleteItemCategoryAsync(Guid id);
 
         Task ModifyItemCategoryAsync(ModifyItemCategoryRequest request);
+
+        Task UpdateItemPriceAsync(UpdateItemPriceRequest request);
+
+        Task<Recipe> GetRecipeByIdAsync(Guid recipeId);
+
+        Task<IEnumerable<RecipeSearchResult>> SearchRecipesByNameAsync(string searchInput);
+
+        Task<Recipe> CreateRecipeAsync(Recipe recipe);
+
+        Task ModifyRecipeAsync(Recipe recipe);
+        Task<IEnumerable<SearchItemByItemCategoryResult>> SearchItemByItemCategoryAsync(Guid itemCategoryId);
+        Task<IEnumerable<IngredientQuantityType>> GetAllIngredientQuantityTypes();
     }
 }

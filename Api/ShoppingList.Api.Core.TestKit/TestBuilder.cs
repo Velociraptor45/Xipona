@@ -1,6 +1,7 @@
-﻿using ShoppingList.Api.TestTools.AutoFixture;
+﻿using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
+using System.Linq.Expressions;
 
-namespace ShoppingList.Api.Core.TestKit;
+namespace ProjectHermes.ShoppingList.Api.Core.TestKit;
 
 public class TestBuilder<TModel, TBuilder> : TestBuilderBase<TModel>
     where TBuilder : TestBuilder<TModel, TBuilder>
@@ -25,9 +26,11 @@ public class TestBuilder<TModel, TBuilder> : TestBuilderBase<TModel>
     /// This method will fill a property matching the given propertyName with the provided value <b>upon</b> object
     /// creation if the data types match
     /// </summary>
-    public new TBuilder FillPropertyWith<TParameter>(string propertyName, TParameter value)
+    public new TBuilder FillPropertyWith<TParameter>(Expression<Func<TModel, TParameter>> property, TParameter value)
     {
-        this.PropertyFor<TModel, TParameter>(propertyName, value);
+        // expression source: https://handcraftsman.wordpress.com/2008/11/11/how-to-get-c-property-names-without-magic-strings/
+        var body = (MemberExpression)property.Body;
+        this.PropertyFor<TModel, TParameter>(body.Member.Name, value);
         return (TBuilder)this;
     }
 

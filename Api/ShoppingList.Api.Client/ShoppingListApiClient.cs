@@ -3,31 +3,38 @@ using Newtonsoft.Json.Serialization;
 using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Queries;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateTemporaryItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemToShoppingList;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.AddItemWithTypeToShoppingList;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.ChangeItemQuantityOnShoppingList;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.PutItemInBasket;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromBasket;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.RemoveItemFromShoppingList;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Queries.GetActiveShoppingListByStoreId;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.CreateTemporaryItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.MakeTemporaryItemPermanent;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.ModifyItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItem;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Commands.UpdateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.AllQuantityTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Get;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.SearchItemsForShoppingLists;
-using ProjectHermes.ShoppingList.Api.Contracts.StoreItem.Queries.Shared;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
 using RestEase;
 using System;
 using System.Collections.Generic;
@@ -45,10 +52,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
             _apiClient = new RestClient(httpClient)
             {
                 JsonSerializerSettings =
-                new JsonSerializerSettings()
+                new JsonSerializerSettings
                 {
                     NullValueHandling = NullValueHandling.Ignore,
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    DateFormatHandling = DateFormatHandling.IsoDateFormat
                 }
             }.For<IShoppingListApiClient>();
         }
@@ -97,9 +105,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await _apiClient.ChangeItemQuantityOnShoppingListAsync(id, contract);
         }
 
-        public async Task FinishListAsync(Guid id)
+        public async Task FinishListAsync(Guid id, DateTimeOffset? finishedAt)
         {
-            await _apiClient.FinishListAsync(id);
+            await _apiClient.FinishListAsync(id, finishedAt);
         }
 
         #endregion ShoppingListController
@@ -131,6 +139,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
             await _apiClient.UpdateItemAsync(id, contract);
         }
 
+        public async Task UpdateItemPriceAsync(Guid id, UpdateItemPriceContract contract)
+        {
+            await _apiClient.UpdateItemPriceAsync(id, contract);
+        }
+
         public async Task UpdateItemWithTypesAsync(Guid id, UpdateItemWithTypesContract contract)
         {
             await _apiClient.UpdateItemWithTypesAsync(id, contract);
@@ -147,6 +160,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.SearchItemsForShoppingListAsync(storeId, searchInput);
         }
 
+        public async Task<IEnumerable<SearchItemByItemCategoryResultContract>> SearchItemsByItemCategoryAsync(
+            Guid itemCategoryId)
+        {
+            return await _apiClient.SearchItemsByItemCategoryAsync(itemCategoryId);
+        }
+
         public async Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync(string searchInput)
         {
             return await _apiClient.SearchItemsAsync(searchInput);
@@ -158,7 +177,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.SearchItemsByFilterAsync(storeIds, itemCategoryIds, manufacturerIds);
         }
 
-        public async Task<StoreItemContract> GetAsync(Guid id)
+        public async Task<ItemContract> GetAsync(Guid id)
         {
             return await _apiClient.GetAsync(id);
         }
@@ -273,5 +292,34 @@ namespace ProjectHermes.ShoppingList.Api.Client
         }
 
         #endregion ItemCategoryController
+
+        #region RecipeController
+
+        public async Task<RecipeContract> GetRecipeByIdAsync(Guid id)
+        {
+            return await _apiClient.GetRecipeByIdAsync(id);
+        }
+
+        public async Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByNameAsync(string searchInput)
+        {
+            return await _apiClient.SearchRecipesByNameAsync(searchInput);
+        }
+
+        public async Task<IEnumerable<IngredientQuantityTypeContract>> GetAllIngredientQuantityTypes()
+        {
+            return await _apiClient.GetAllIngredientQuantityTypes();
+        }
+
+        public async Task<RecipeContract> CreateRecipeAsync(CreateRecipeContract contract)
+        {
+            return await _apiClient.CreateRecipeAsync(contract);
+        }
+
+        public async Task ModifyRecipeAsync(Guid id, ModifyRecipeContract contract)
+        {
+            await _apiClient.ModifyRecipeAsync(id, contract);
+        }
+
+        #endregion RecipeController
     }
 }

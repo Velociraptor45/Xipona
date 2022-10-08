@@ -6,10 +6,10 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.CreateS
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.UpdateStore;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.CreateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Commands.UpdateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.AllActiveStores;
-using ProjectHermes.ShoppingList.Api.Contracts.Store.Queries.Shared;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;

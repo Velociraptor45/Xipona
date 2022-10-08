@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
 public static class ShoppingListItemMother
 {

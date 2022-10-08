@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Creations;
@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<IStoreFactory, StoreFactory>();
 
-        services.AddTransient<IStoreSectionFactory, StoreSectionFactory>();
+        services.AddTransient<ISectionFactory, SectionFactory>();
 
         // services
         services.AddTransient<Func<CancellationToken, IStoreCreationService>>(provider =>

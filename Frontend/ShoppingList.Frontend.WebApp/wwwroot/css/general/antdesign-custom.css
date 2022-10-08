@@ -1,3 +1,35 @@
-﻿.ant-btn span .anticon {
+﻿/* button */
+
+.ant-btn span .anticon {
     margin-bottom: 8px;
+}
+
+.ant-btn.oi-button {
+    padding-left: 9.75px;
+    padding-right: 9.75px;
+}
+
+/* input */
+
+.ant-input-number.price-update-input {
+    width: 75px;
+}
+
+/* modal */
+
+.ant-modal-content .ant-modal-header {
+    border-bottom: 0;
+}
+
+.ant-modal-content .ant-modal-body {
+    padding-top: 0;
+}
+
+.ant-modal-content .ant-modal-footer {
+    margin: 0 16px 0 24px;
+    padding: 10px 0;
+}
+
+.ant-modal-close {
+    margin-top: -8px;
 }

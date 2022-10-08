@@ -1,7 +1,7 @@
 ﻿using AutoFixture.Kernel;
 using System.Reflection;
 
-namespace ShoppingList.Api.TestTools.AutoFixture;
+namespace ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 
 public class PropertyRelay<TTarget, TValueType> : ISpecimenBuilder
 {
@@ -17,8 +17,6 @@ public class PropertyRelay<TTarget, TValueType> : ISpecimenBuilder
 
     public object Create(object request, ISpecimenContext context)
     {
-        if (context == null)
-            throw new ArgumentNullException(nameof(context));
         PropertyInfo? parameter = request as PropertyInfo;
         if (parameter == null)
             return new NoSpecimen();

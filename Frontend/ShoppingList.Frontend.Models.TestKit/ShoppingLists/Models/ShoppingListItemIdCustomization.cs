@@ -2,7 +2,7 @@
 using AutoFixture.Kernel;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 
-namespace ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
+namespace ProjectHermes.ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
 
 public class ShoppingListItemIdCustomization : ICustomization
 {
@@ -21,13 +21,13 @@ public class ShoppingListItemIdCustomization : ICustomization
             return CreateInstance();
         }
 
-        private bool MatchesType(object request)
+        private static bool MatchesType(object request)
         {
             var t = request as Type;
             return typeof(ShoppingListItemId) == t;
         }
 
-        private ShoppingListItemId CreateInstance()
+        private static ShoppingListItemId CreateInstance()
         {
             return ShoppingListItemId.FromActualId(Guid.NewGuid());
         }

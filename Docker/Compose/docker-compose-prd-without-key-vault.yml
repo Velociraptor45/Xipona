@@ -24,6 +24,7 @@ services:
       - Database
     volumes:
       - prd-ph-shoppinglist-api-tls:/app/ssl
+      - prd-ph-shoppinglist-api-logs:/app/logs
     networks: 
       - prd-ph-shoppinglist
     secrets:
@@ -48,6 +49,8 @@ volumes:
   prd-ph-shoppinglist-frontend-config:
     external: true
   prd-ph-shoppinglist-api-tls:
+    external: true
+  prd-ph-shoppinglist-api-logs:
     external: true
   prd-ph-shoppinglist-database:
     external: true

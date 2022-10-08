@@ -20,9 +20,6 @@ public class AddItemWithTypeToShoppingListCommandHandler
     public async Task<bool> HandleAsync(AddItemWithTypeToShoppingListCommand command,
         CancellationToken cancellationToken)
     {
-        if (command is null)
-            throw new ArgumentNullException(nameof(command));
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         await _addItemToShoppingListService.AddItemWithTypeToShoppingListAsync(command.ShoppingListId, command.ItemId,

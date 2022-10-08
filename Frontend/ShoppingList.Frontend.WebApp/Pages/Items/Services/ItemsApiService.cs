@@ -1,14 +1,15 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Items;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using RestEase;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
@@ -58,6 +59,26 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
                     await LoadInitialPageStateAsync(fragmentCreator, onSuccessAction));
                 _notificationService.NotifyError("Unknown error while loading page", e.Message, fragment);
             }
+        }
+
+        public async Task<IEnumerable<SearchItemByItemCategoryResult>> SearchItemsByItemCategoryAsync(
+            Guid itemCategoryId)
+        {
+            try
+            {
+                return await _apiClient.SearchItemByItemCategoryAsync(itemCategoryId);
+            }
+            catch (ApiException e)
+            {
+                var contract = e.DeserializeContent<ErrorContract>();
+                _notificationService.NotifyError("Searching for items by item category failed", contract.Message);
+            }
+            catch (Exception e)
+            {
+                _notificationService.NotifyError("Unknown error while searching for items by item category", e.Message);
+            }
+
+            return Enumerable.Empty<SearchItemByItemCategoryResult>();
         }
 
         public async Task SearchItemsAsync(string searchInput, IAsyncRetryFragmentCreator fragmentCreator,

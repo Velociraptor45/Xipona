@@ -10,6 +10,8 @@
         @bind-Value="availableStores.SelectedStoreId"
         ValueName="@nameof(Store.Id)"
         LabelName="@nameof(Store.Name)"
+        TItemValue="Guid"
+        TItem="Store"
         OnSelectedItemChanged="OnSelectionChanged">
 </Select>
 

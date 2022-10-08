@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ProjectHermes.ShoppingList.Api.Core.Files;
-using ShoppingList.Api.Vault;
+using ProjectHermes.ShoppingList.Api.Vault;
 using System.IO;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Contexts;

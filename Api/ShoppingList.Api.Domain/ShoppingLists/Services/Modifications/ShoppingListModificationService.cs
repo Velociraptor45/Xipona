@@ -1,11 +1,11 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
 
@@ -67,7 +67,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        IStoreItem? item;
+        IItem? item;
         if (offlineTolerantItemId.IsActualId)
         {
             ItemId itemId = new ItemId(offlineTolerantItemId.ActualId!.Value);
@@ -120,7 +120,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
                 throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
 
             var temporaryId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
-            IStoreItem? item = await _itemRepository.FindByAsync(temporaryId, _cancellationToken);
+            IItem? item = await _itemRepository.FindByAsync(temporaryId, _cancellationToken);
 
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryId));
@@ -151,7 +151,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
                 throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
 
             var temporaryId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
-            IStoreItem? item = await _itemRepository.FindByAsync(temporaryId, _cancellationToken);
+            IItem? item = await _itemRepository.FindByAsync(temporaryId, _cancellationToken);
 
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryId));

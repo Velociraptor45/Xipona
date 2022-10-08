@@ -1,0 +1,12 @@
+﻿.availability {
+    width: 100%;
+}
+
+    .availability div.data {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .availability .price-input {
+        width: 55px;
+    }

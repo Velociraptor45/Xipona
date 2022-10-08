@@ -1,8 +1,8 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoMoq;
-using ShoppingList.Frontend.TestTools.AutoFixture;
+using ProjectHermes.ShoppingList.Frontend.TestTools.AutoFixture;
 
-namespace ShoppingList.Frontend.TestTools;
+namespace ProjectHermes.ShoppingList.Frontend.TestTools;
 
 public abstract class TestBuilderBase<TModel> : Fixture
 {

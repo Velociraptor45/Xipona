@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
-namespace ShoppingList.Api.Domain.TestKit.Stores.Ports;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Ports;
 
 public class StoreRepositoryMock : Mock<IStoreRepository>
 {
@@ -24,10 +24,11 @@ public class StoreRepositoryMock : Mock<IStoreRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindByAsync(IEnumerable<StoreId> storeIds, IEnumerable<IStore> returnValue)
+    public void SetupFindByAsync(IEnumerable<StoreId> storeIds, bool onlyActives, IEnumerable<IStore> returnValue)
     {
         Setup(i => i.FindByAsync(
                 It.Is<IEnumerable<StoreId>>(ids => ids.SequenceEqual(storeIds)),
+                onlyActives,
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);
     }

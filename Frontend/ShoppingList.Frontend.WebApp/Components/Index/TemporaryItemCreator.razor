@@ -4,8 +4,8 @@
 
 @using StoreModels = Models.Stores.Models;
 
-@inject ITemporaryItemCreationService temporaryItemCreationService;
-@inject IShoppingListApiService apiService;
+@inject ITemporaryItemCreationService _temporaryItemCreationService;
+@inject IShoppingListApiService _apiService;
 
 <div class="temporary-item-creator">
     <Button Type="@ButtonType.Primary"
@@ -15,12 +15,12 @@
         <Icon Type="plus"></Icon>
     </Button>
     <Modal Title="Add temporary item"
-           Visible="@visible"
+           Visible="@_visible"
            OnCancel="@CloseModal"
-           ConfirmLoading="@loading"
+           ConfirmLoading="@_loading"
            Footer="@GetFooter()">
         <div>
-            <Input @bind-Value="@name"></Input>
+            <Input @bind-Value="@_name"></Input>
             <div>
                 <div>Section</div>
                 <div class="d-flex">
@@ -31,10 +31,10 @@
                                   DataSource="@State.SelectedStore.Sections.ToList()"
                                   OnItemChanged="@OnSelectedSectionChanged"
                                   DefaultValue="@State.SelectedStore.DefaultSection.Id.BackendId"
-                                  @ref="@singleSelect"></SingleSelect>
+                                  @ref="@_singleSelect"></SingleSelect>
                     <div class="d-flex pl-2 align-items-center">
                         <div class="price-input">
-                            <Input @bind-Value="@price"></Input>
+                            <Input @bind-Value="@_price"></Input>
                         </div>
                         <div>€</div>
                     </div>
@@ -47,14 +47,14 @@
 @code {
     [Parameter] public ShoppingListState State { get; set; }
 
-    private bool visible = false;
-    private bool loading = false;
+    private bool _visible = false;
+    private bool _loading = false;
 
-    private string name = string.Empty;
-    private StoreModels.Section selectedSection;
-    private float price = 1f;
+    private string _name = string.Empty;
+    private StoreModels.Section _selectedSection;
+    private float _price = 1f;
 
-    private SingleSelect<Guid, StoreModels.Section> singleSelect;
+    private SingleSelect<Guid, StoreModels.Section> _singleSelect;
 
     protected override void OnInitialized()
     {
@@ -68,44 +68,44 @@
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        name = State.SearchBar.Input;
-        selectedSection = State.SelectedStore.DefaultSection;
+        _name = State.SearchBar.Input;
+        _selectedSection = State.SelectedStore.DefaultSection;
     }
 
     private void OnOpenCreationButtonClicked()
     {
-        visible = true;
-        loading = false;
+        _visible = true;
+        _loading = false;
 
-        selectedSection = State.SelectedStore.DefaultSection;
-        price = 1f;
-        name = State.SearchBar.Input;
+        _selectedSection = State.SelectedStore.DefaultSection;
+        _price = 1f;
+        _name = State.SearchBar.Input;
 
-        singleSelect?.ResetToDefaultValue();
+        _singleSelect?.ResetToDefaultValue();
     }
 
     private void CloseModal()
     {
-        visible = false;
-        loading = false;
+        _visible = false;
+        _loading = false;
         State.SearchBar.ResetInput();
     }
 
     private void OnSelectedSectionChanged(StoreModels.Section section)
     {
-        selectedSection = section;
+        _selectedSection = section;
     }
 
     private async Task OnAddButtonClicked()
     {
-        loading = true;
+        _loading = true;
         
-        var item = temporaryItemCreationService.Create(name, price);
+        var item = _temporaryItemCreationService.Create(_name, _price);
 
-        await apiService.CreateTemporaryItemOnShoppingListAsync(item, State.ShoppingList.Id,
-            State.ShoppingList.Store.Id, selectedSection.Id);
+        await _apiService.CreateTemporaryItemOnShoppingListAsync(item, State.ShoppingList.Id,
+            State.ShoppingList.Store.Id, _selectedSection.Id);
 
-        State.AddItem(item, selectedSection);
+        State.AddItem(item, _selectedSection);
 
         CloseModal();
     }
@@ -121,8 +121,8 @@
                    <Button Class="ml-auto"
                            OnClick="OnAddButtonClicked"
                            @key="@("submit")"
-                           Type="primary"
-                           Loading="@loading">
+                           Type="@ButtonType.Primary"
+                           Loading="@_loading">
                        Add
                    </Button>
                </Template>;

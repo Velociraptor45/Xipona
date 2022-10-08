@@ -1,12 +1,13 @@
 ﻿using FluentAssertions.Common;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ShoppingList.Api.Domain.TestKit.Shared;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.TestTools.Extensions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists;
 
@@ -126,7 +127,7 @@ public class ShoppingListTests
 
         foreach (var sectionMock in sectionMocks)
             sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
-                sectionMock.IsSameOrEqualTo(chosenSectionMock));
+                sectionMock.Object.IsEquivalentTo(chosenSectionMock.Object));
 
         // Act
         shoppingList.RemoveItem(chosenItem.Id, chosenItem.TypeId);
@@ -180,7 +181,7 @@ public class ShoppingListTests
 
         foreach (var sectionMock in sectionMocks)
             sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
-                sectionMock.IsSameOrEqualTo(chosenSectionMock));
+                sectionMock.Object.IsEquivalentTo(chosenSectionMock.Object));
 
         // Act
         shoppingList.PutItemInBasket(chosenItem.Id, chosenItem.TypeId);
@@ -234,7 +235,7 @@ public class ShoppingListTests
 
         foreach (var sectionMock in sectionMocks)
             sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
-                sectionMock.IsSameOrEqualTo(chosenSectionMock));
+                sectionMock.Object.IsEquivalentTo(chosenSectionMock.Object));
 
         // Act
         shoppingList.RemoveFromBasket(chosenItem.Id, chosenItem.TypeId);
@@ -289,7 +290,8 @@ public class ShoppingListTests
 
         foreach (var sectionMock in sectionMocks)
         {
-            sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId, sectionMock.IsSameOrEqualTo(chosenSectionMock));
+            sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
+                sectionMock.Object.IsEquivalentTo(chosenSectionMock.Object));
         }
 
         var quantity = new QuantityInBasketBuilder().Create();

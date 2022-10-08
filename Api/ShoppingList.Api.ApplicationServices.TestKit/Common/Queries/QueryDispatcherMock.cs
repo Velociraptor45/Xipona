@@ -1,6 +1,6 @@
 ﻿using Moq.Language.Flow;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
-using ShoppingList.Api.TestTools.Extensions;
+using ProjectHermes.ShoppingList.Api.TestTools.Extensions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.TestKit.Common.Queries;
 

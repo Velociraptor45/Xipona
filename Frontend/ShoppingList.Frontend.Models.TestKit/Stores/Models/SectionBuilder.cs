@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
-using ShoppingList.Frontend.TestTools;
+using ProjectHermes.ShoppingList.Frontend.TestTools;
 
-namespace ShoppingList.Frontend.Models.TestKit.Stores.Models;
+namespace ProjectHermes.ShoppingList.Frontend.Models.TestKit.Stores.Models;
 
 public class SectionBuilder : TestBuilderBase<Section>
 {

@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 
-namespace ShoppingList.Api.Core.Tests.Extensions;
+namespace ProjectHermes.ShoppingList.Api.Core.Tests.Extensions;
 
 public class ObjectExtensionsTests
 {

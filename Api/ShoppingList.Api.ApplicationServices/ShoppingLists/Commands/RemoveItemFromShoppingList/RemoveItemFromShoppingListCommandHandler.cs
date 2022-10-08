@@ -20,8 +20,6 @@ public class RemoveItemFromShoppingListCommandHandler :
 
     public async Task<bool> HandleAsync(RemoveItemFromShoppingListCommand command, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(command);
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _shoppingListModificationServiceDelegate(cancellationToken);

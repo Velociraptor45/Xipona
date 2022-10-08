@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Modifications;
 
-namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 
 public class ManufacturerMock : Mock<IManufacturer>
 {

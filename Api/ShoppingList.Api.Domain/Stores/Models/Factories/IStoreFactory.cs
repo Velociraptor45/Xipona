@@ -4,7 +4,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 
 public interface IStoreFactory
 {
-    IStore Create(StoreId id, StoreName name, bool isDeleted, IEnumerable<IStoreSection> sections);
+    IStore Create(StoreId id, StoreName name, bool isDeleted, IEnumerable<ISection> sections);
 
     IStore CreateNew(StoreCreation creationInfo);
 }

@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
-using ShoppingList.Frontend.Models.TestKit.Stores.Models;
+using ProjectHermes.ShoppingList.Frontend.Models.TestKit.Stores.Models;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace ShoppingList.Frontend.Models.Tests.Items.Models;
+namespace ProjectHermes.ShoppingList.Frontend.Models.Tests.Items.Models;
 
 public class AvailableTests
 {
@@ -23,7 +23,7 @@ public class AvailableTests
         public void AddStore_WithEmptyStores_ShouldReturnFalse()
         {
             // Arrange
-            var sut = _fixture.CreateSut();
+            var sut = AvailableFixture.CreateSut();
 
             // Act
             var result = sut.AddStore(Enumerable.Empty<Store>());
@@ -36,7 +36,7 @@ public class AvailableTests
         public void AddStore_WithEmptyStores_ShouldNotAddAvailability()
         {
             // Arrange
-            var sut = _fixture.CreateSut();
+            var sut = AvailableFixture.CreateSut();
 
             // Act
             sut.AddStore(Enumerable.Empty<Store>());
@@ -50,7 +50,7 @@ public class AvailableTests
         {
             // Arrange
             _fixture.SetupStores();
-            var sut = _fixture.CreateSut();
+            var sut = AvailableFixture.CreateSut();
 
             // Act
             var result = sut.AddStore(_fixture.Stores);
@@ -65,7 +65,7 @@ public class AvailableTests
             // Arrange
             _fixture.SetupStores();
             _fixture.SetupExpectedAvailability(0);
-            var sut = _fixture.CreateSut();
+            var sut = AvailableFixture.CreateSut();
 
             // Act
             sut.AddStore(_fixture.Stores);
@@ -81,7 +81,7 @@ public class AvailableTests
             // Arrange
             _fixture.SetupStores();
             _fixture.SetupExpectedAvailability(1);
-            var sut = _fixture.CreateSut();
+            var sut = AvailableFixture.CreateSut();
             _fixture.AddAvailability(sut.Availabilities, 0);
 
             // Act
@@ -98,7 +98,7 @@ public class AvailableTests
             // Arrange
             _fixture.SetupStores();
             _fixture.SetupExpectedAvailability(1);
-            var sut = _fixture.CreateSut();
+            var sut = AvailableFixture.CreateSut();
             _fixture.AddAvailability(sut.Availabilities, 0);
 
             // Act
@@ -113,7 +113,7 @@ public class AvailableTests
         {
             // Arrange
             _fixture.SetupStores();
-            var sut = _fixture.CreateSut();
+            var sut = AvailableFixture.CreateSut();
             _fixture.AddAvailability(sut.Availabilities, 0);
             _fixture.AddAvailability(sut.Availabilities, 1);
 
@@ -129,7 +129,7 @@ public class AvailableTests
         {
             // Arrange
             _fixture.SetupStores();
-            var sut = _fixture.CreateSut();
+            var sut = AvailableFixture.CreateSut();
             _fixture.AddAvailability(sut.Availabilities, 0);
             _fixture.AddAvailability(sut.Availabilities, 1);
 
@@ -165,7 +165,7 @@ public class AvailableTests
         public void GetNotRegisteredStores_WithNoStores_ShouldReturnEmptyResult()
         {
             // Arrange
-            var sut = _fixture.CreateSut();
+            var sut = AvailableFixture.CreateSut();
 
             // Act
             var result = sut.GetNotRegisteredStores(Enumerable.Empty<Store>());
@@ -179,7 +179,7 @@ public class AvailableTests
         {
             // Arrange
             _fixture.SetupStores();
-            var sut = _fixture.CreateSut();
+            var sut = AvailableFixture.CreateSut();
 
             // Act
             var result = sut.GetNotRegisteredStores(_fixture.Stores);
@@ -194,7 +194,7 @@ public class AvailableTests
             // Arrange
             _fixture.SetupStores();
             _fixture.SetupExpectedStore(1);
-            var sut = _fixture.CreateSut();
+            var sut = AvailableFixture.CreateSut();
             _fixture.AddAvailability(sut.Availabilities, 0);
 
             // Act
@@ -221,9 +221,9 @@ public class AvailableTests
     {
         public IReadOnlyCollection<Store> Stores { get; private set; } = new List<Store>();
 
-        public IAvailable CreateSut()
+        public static IAvailable CreateSut()
         {
-            return new AvailableMock();
+            return new AvailableDummy();
         }
 
         public void SetupStores()
@@ -245,7 +245,7 @@ public class AvailableTests
             availabilities.Add(CreateAvailability(store));
         }
 
-        protected ItemAvailability CreateAvailability(Store store)
+        protected static ItemAvailability CreateAvailability(Store store)
         {
             return new ItemAvailability(
                 CreateItemStore(store),
@@ -253,7 +253,7 @@ public class AvailableTests
                 store.DefaultSection.Id.BackendId);
         }
 
-        protected ItemStore CreateItemStore(Store store)
+        protected static ItemStore CreateItemStore(Store store)
         {
             return new ItemStore(
                 store.Id,
@@ -261,14 +261,14 @@ public class AvailableTests
                 store.Sections.Select(s => new ItemSection(s.Id.BackendId, s.Name, s.SortingIndex)));
         }
 
-        private IEnumerable<Section> CreateSections()
+        private static IEnumerable<Section> CreateSections()
         {
             yield return SectionMother.NotDefault().Create();
             yield return SectionMother.Default().Create();
         }
     }
 
-    private class AvailableMock : IAvailable
+    private class AvailableDummy : IAvailable
 
     {
         public List<ItemAvailability> Availabilities { get; } = new();

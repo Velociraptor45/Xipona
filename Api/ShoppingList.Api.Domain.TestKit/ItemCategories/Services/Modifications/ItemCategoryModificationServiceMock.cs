@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Modifications;
 
-namespace ShoppingList.Api.Domain.TestKit.ItemCategories.Services.Modifications;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Services.Modifications;
 
 public class ItemCategoryModificationServiceMock : Mock<IItemCategoryModificationService>
 {

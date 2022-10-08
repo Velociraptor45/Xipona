@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 
-namespace ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 
 public static class NonGenericAsyncFunctionAssertionsExtensions
 {
@@ -17,6 +17,20 @@ public static class NonGenericAsyncFunctionAssertionsExtensions
         this GenericAsyncFunctionAssertions<T> assertion, ErrorReasonCode code)
     {
         return (await assertion.ThrowAsync<DomainException>())
+            .Where(e => e.Reason.ErrorCode == code);
+    }
+
+    public static ExceptionAssertions<DomainException> ThrowDomainException<T>(
+        this FunctionAssertions<T> assertion, ErrorReasonCode code)
+    {
+        return assertion.Throw<DomainException>()
+            .Where(e => e.Reason.ErrorCode == code);
+    }
+
+    public static ExceptionAssertions<DomainException> ThrowDomainException(
+        this ActionAssertions assertion, ErrorReasonCode code)
+    {
+        return assertion.Throw<DomainException>()
             .Where(e => e.Reason.ErrorCode == code);
     }
 }

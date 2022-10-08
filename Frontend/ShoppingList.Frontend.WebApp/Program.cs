@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Client;
@@ -11,6 +12,8 @@ using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEditor;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using System;
@@ -25,6 +28,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
+            builder.RootComponents.Add<HeadOutlet>("head::after");
 
             ConfigureHttpClient(builder);
 
@@ -36,7 +40,12 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
         private static void ConfigureHttpClient(WebAssemblyHostBuilder builder)
         {
-            var uri = new Uri(builder.Configuration["Connection:Uri"]);
+            var uriString = builder.Configuration["Connection:Uri"];
+
+            if (uriString is null)
+                throw new InvalidOperationException("The Connection:Uri section in the appsettings is missing");
+
+            var uri = new Uri(uriString);
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = uri });
         }
 
@@ -64,6 +73,10 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             var itemCategoryState = new ItemCategoriesState();
             builder.Services.AddSingleton(itemCategoryState);
             builder.Services.AddTransient<IItemCategoryApiService, ItemCategoryApiService>();
+
+            var recipeState = new RecipesState();
+            builder.Services.AddSingleton(recipeState);
+            builder.Services.AddTransient<IRecipesApiService, RecipesApiService>();
 
             builder.Services.AddInfrastructure();
         }

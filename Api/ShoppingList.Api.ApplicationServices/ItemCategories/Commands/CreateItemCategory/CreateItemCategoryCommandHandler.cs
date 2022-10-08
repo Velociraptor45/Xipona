@@ -20,8 +20,6 @@ public class CreateItemCategoryCommandHandler : ICommandHandler<CreateItemCatego
 
     public async Task<IItemCategory> HandleAsync(CreateItemCategoryCommand command, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(command);
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _itemCategoryCreationServiceDelegate(cancellationToken);

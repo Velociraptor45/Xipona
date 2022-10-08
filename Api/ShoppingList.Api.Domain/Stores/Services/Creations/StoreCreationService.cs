@@ -30,8 +30,6 @@ public class StoreCreationService : IStoreCreationService
 
     public async Task<IStore> CreateAsync(StoreCreation creation)
     {
-        ArgumentNullException.ThrowIfNull(creation);
-
         _cancellationToken.ThrowIfCancellationRequested();
 
         IStore store = _storeFactory.CreateNew(creation);

@@ -1,9 +1,10 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
 @using ProjectHermes.ShoppingList.Frontend.Models.Items
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 
 
-@inject IItemsApiService loadingService;
+@inject IItemsApiService _loadingService;
 
 <div>
     <Input TValue="string" @bind-value="@input" OnPressEnter="@OnLoadButtonClickedAsync"></Input>
@@ -18,6 +19,6 @@
 
     private async Task OnLoadButtonClickedAsync()
     {
-        await loadingService.SearchItemsAsync(input, FragmentCreator, items => State.UpdateItems(items));
+        await _loadingService.SearchItemsAsync(input, FragmentCreator, items => State.UpdateItems(items));
     }
 }

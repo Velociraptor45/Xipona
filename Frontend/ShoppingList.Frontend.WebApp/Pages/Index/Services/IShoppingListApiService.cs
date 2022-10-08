@@ -17,7 +17,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         Task AddItemWithTypeToShoppingListAsync(Guid shoppingListId, Guid itemId, Guid itemTypeId,
             int quantity, Guid sectionId, IAsyncRetryFragmentCreator fragmentCreator, Func<Task> onSuccessAction);
 
-        Task FinishListAsync(Guid shoppingListId, IAsyncRetryFragmentCreator fragmentCreator,
+        Task FinishListAsync(Guid shoppingListId, DateTimeOffset? finishedAt,
+            IAsyncRetryFragmentCreator fragmentCreator,
             Func<Task> onSuccessAction);
 
         void InitializeCommandQueue(ICommandQueueErrorHandler errorHandler);
@@ -44,5 +45,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         Task RemoveItemFromShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId);
 
         Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync();
+
+        Task UpdateItemPriceAsync(Guid itemId, Guid? itemTypeId, Guid storeId, float updatedPrice,
+            Func<Task> onSuccessAction);
     }
 }

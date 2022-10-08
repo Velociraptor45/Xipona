@@ -6,8 +6,8 @@ public class StoreCreation
 {
     public StoreCreation(StoreName name, IEnumerable<SectionCreation> sections)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        Sections = sections?.ToList().AsReadOnly() ?? throw new ArgumentNullException(nameof(sections));
+        Name = name;
+        Sections = sections.ToArray();
     }
 
     public StoreName Name { get; }

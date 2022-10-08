@@ -1,15 +1,16 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
-using ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Ports;
-using ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+using DomainModels = ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.ShoppingListModifications;
 
@@ -116,7 +117,7 @@ public class ShoppingListModificationServiceTests
             _fixture.SetupItemTypeIdNull();
             _fixture.SetupQuantity();
             _fixture.SetupShoppingListMock();
-            _fixture.SetupStoreItem();
+            _fixture.SetupItem();
 
             _fixture.SetupShoppingListRepositoryFindBy();
             _fixture.SetupFindingTemporaryItem();
@@ -139,7 +140,7 @@ public class ShoppingListModificationServiceTests
         private sealed class ChangeItemQuantityAsyncFixture : LocalFixture
         {
             private ShoppingListMock? _shoppingListMock;
-            private IStoreItem? _storeItem;
+            private IItem? _item;
 
             public ShoppingListId ShoppingListId { get; private set; }
             public ItemTypeId? ItemTypeId { get; private set; }
@@ -163,7 +164,7 @@ public class ShoppingListModificationServiceTests
 
             public void SetupItemTypeId()
             {
-                ItemTypeId = Domain.StoreItems.Models.ItemTypeId.New;
+                ItemTypeId = DomainModels.ItemTypeId.New;
             }
 
             public void SetupItemTypeIdNull()
@@ -181,9 +182,9 @@ public class ShoppingListModificationServiceTests
                 _shoppingListMock = new ShoppingListMock(ShoppingListMother.Sections(2).Create());
             }
 
-            public void SetupStoreItem()
+            public void SetupItem()
             {
-                _storeItem = StoreItemMother.Initial().Create();
+                _item = ItemMother.Initial().Create();
             }
 
             #region Fixture Setup
@@ -210,7 +211,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var itemId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(itemId, _storeItem);
+                ItemRepositoryMock.SetupFindByAsync(itemId, _item);
             }
 
             public void SetupNotFindingTemporaryItem()
@@ -233,9 +234,9 @@ public class ShoppingListModificationServiceTests
 
             public void VerifyChangeItemQuantityOnce()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItem);
+                TestPropertyNotSetException.ThrowIfNull(_item);
                 TestPropertyNotSetException.ThrowIfNull(_shoppingListMock);
-                _shoppingListMock.VerifyChangeItemQuantityOnce(_storeItem.Id, ItemTypeId, Quantity);
+                _shoppingListMock.VerifyChangeItemQuantityOnce(_item.Id, ItemTypeId, Quantity);
             }
 
             public void VerifyChangingItemQuantity()
@@ -391,12 +392,12 @@ public class ShoppingListModificationServiceTests
                 if (isTemporaryItem)
                 {
                     _fixture.VerifyDeleteItemOnce();
-                    _fixture.VerifyStoreItemOnce();
+                    _fixture.VerifyItemOnce();
                 }
                 else
                 {
                     _fixture.VerifyDeleteItemNever();
-                    _fixture.VerifyStoreItemNever();
+                    _fixture.VerifyItemNever();
                 }
             }
         }
@@ -406,7 +407,7 @@ public class ShoppingListModificationServiceTests
             public ShoppingListId ShoppingListId { get; private set; }
             public ItemTypeId? ItemTypeId { get; private set; }
             public OfflineTolerantItemId? OfflineTolerantItemId { get; private set; }
-            private StoreItemMock? _itemMock;
+            private ItemMock? _itemMock;
             private ShoppingListMock? _shoppingListMock;
 
             public void SetupActualItemId()
@@ -426,7 +427,7 @@ public class ShoppingListModificationServiceTests
 
             public void SetupItemTypeId()
             {
-                ItemTypeId = Domain.StoreItems.Models.ItemTypeId.New;
+                ItemTypeId = DomainModels.ItemTypeId.New;
             }
 
             public void SetupItemTypeIdNull()
@@ -436,14 +437,14 @@ public class ShoppingListModificationServiceTests
 
             public void SetupTemporaryItemMock()
             {
-                var item = StoreItemMother.InitialTemporary().Create();
-                _itemMock = new StoreItemMock(item, MockBehavior.Strict);
+                var item = ItemMother.InitialTemporary().Create();
+                _itemMock = new ItemMock(item, MockBehavior.Strict);
             }
 
             public void SetupItemMock()
             {
-                var item = StoreItemMother.Initial().Create();
-                _itemMock = new StoreItemMock(item, MockBehavior.Strict);
+                var item = ItemMother.Initial().Create();
+                _itemMock = new ItemMock(item, MockBehavior.Strict);
             }
 
             public void SetupShoppingListMock()
@@ -538,13 +539,13 @@ public class ShoppingListModificationServiceTests
                 _itemMock.VerifyDeleteNever();
             }
 
-            public void VerifyStoreItemOnce()
+            public void VerifyItemOnce()
             {
                 TestPropertyNotSetException.ThrowIfNull(_itemMock);
                 ItemRepositoryMock.VerifyStoreAsyncOnce(_itemMock.Object);
             }
 
-            public void VerifyStoreItemNever()
+            public void VerifyItemNever()
             {
                 ItemRepositoryMock.VerifyStoreAsyncNever();
             }
@@ -678,7 +679,7 @@ public class ShoppingListModificationServiceTests
             // Assert
             using (new AssertionScope())
             {
-                _fixture.VerifyRemoveItemFromBasketWithStoreItemId();
+                _fixture.VerifyRemoveItemFromBasketWithItemId();
             }
         }
 
@@ -706,7 +707,7 @@ public class ShoppingListModificationServiceTests
 
         private sealed class RemoveItemFromBasketAsyncFixture : LocalFixture
         {
-            private IStoreItem? _storeItem;
+            private IItem? _item;
             private ShoppingListMock? _shoppingListMock;
 
             public ShoppingListId ShoppingListId { get; private set; }
@@ -730,7 +731,7 @@ public class ShoppingListModificationServiceTests
 
             public void SetupItemTypeId()
             {
-                ItemTypeId = Domain.StoreItems.Models.ItemTypeId.New;
+                ItemTypeId = DomainModels.ItemTypeId.New;
             }
 
             public void SetupItemTypeIdNull()
@@ -740,7 +741,7 @@ public class ShoppingListModificationServiceTests
 
             public void SetupItem()
             {
-                _storeItem = StoreItemMother.Initial().Create();
+                _item = ItemMother.Initial().Create();
             }
 
             public void SetupShoppingListMock()
@@ -772,7 +773,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var tempId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(tempId, _storeItem);
+                ItemRepositoryMock.SetupFindByAsync(tempId, _item);
             }
 
             public void SetupFindingNoItemByOfflineId()
@@ -787,11 +788,11 @@ public class ShoppingListModificationServiceTests
 
             #region Verify
 
-            public void VerifyRemoveItemFromBasketWithStoreItemId()
+            public void VerifyRemoveItemFromBasketWithItemId()
             {
                 TestPropertyNotSetException.ThrowIfNull(_shoppingListMock);
-                TestPropertyNotSetException.ThrowIfNull(_storeItem);
-                _shoppingListMock.VerifyRemoveItemFromBasketOnce(_storeItem.Id, ItemTypeId);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _shoppingListMock.VerifyRemoveItemFromBasketOnce(_item.Id, ItemTypeId);
             }
 
             public void VerifyRemoveItemFromBasketWithCommandActualId()
@@ -937,7 +938,7 @@ public class ShoppingListModificationServiceTests
             _fixture.SetupTemporaryItemId();
             _fixture.SetupItemTypeIdNull();
 
-            _fixture.SetupStoreItem();
+            _fixture.SetupItem();
             _fixture.SetupShoppingListMock();
 
             _fixture.SetupShoppingListRepositoryFindBy();
@@ -962,7 +963,7 @@ public class ShoppingListModificationServiceTests
         private sealed class PutItemInBasketAsyncFixture : LocalFixture
         {
             private ShoppingListMock? _shoppingListMock;
-            private IStoreItem? _storeItem;
+            private IItem? _item;
 
             public ShoppingListId ShoppingListId { get; private set; }
             public ItemTypeId? ItemTypeId { get; private set; }
@@ -985,7 +986,7 @@ public class ShoppingListModificationServiceTests
 
             public void SetupItemTypeId()
             {
-                ItemTypeId = Domain.StoreItems.Models.ItemTypeId.New;
+                ItemTypeId = DomainModels.ItemTypeId.New;
             }
 
             public void SetupItemTypeIdNull()
@@ -998,9 +999,9 @@ public class ShoppingListModificationServiceTests
                 _shoppingListMock = new ShoppingListMock(ShoppingListMother.Sections(2).Create());
             }
 
-            public void SetupStoreItem()
+            public void SetupItem()
             {
-                _storeItem = StoreItemMother.Initial().Create();
+                _item = ItemMother.Initial().Create();
             }
 
             #region Fixture Setup
@@ -1027,7 +1028,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var itemId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(itemId, _storeItem);
+                ItemRepositoryMock.SetupFindByAsync(itemId, _item);
             }
 
             public void SetupItemRepositoryFindingNoItem()
@@ -1050,9 +1051,9 @@ public class ShoppingListModificationServiceTests
 
             public void VerifyPutItemInBasketOnce()
             {
-                TestPropertyNotSetException.ThrowIfNull(_storeItem);
+                TestPropertyNotSetException.ThrowIfNull(_item);
                 TestPropertyNotSetException.ThrowIfNull(_shoppingListMock);
-                _shoppingListMock.VerifyPutItemInBasket(_storeItem.Id, ItemTypeId, Times.Once);
+                _shoppingListMock.VerifyPutItemInBasket(_item.Id, ItemTypeId, Times.Once);
             }
 
             public void VerifyPutItemInBasketWithOfflineIdOnce()

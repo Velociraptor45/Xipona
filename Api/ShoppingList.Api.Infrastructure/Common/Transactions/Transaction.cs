@@ -1,4 +1,6 @@
-﻿using System.Data.Common;
+﻿using Microsoft.Extensions.Logging;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using System.Data.Common;
 
 namespace ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
 
@@ -6,11 +8,13 @@ public class Transaction : ITransaction
 {
     private DbTransaction? _transaction;
     private readonly Func<Task> _onCloseTransactionAsync;
+    private readonly ILogger<Transaction> _logger;
 
-    public Transaction(DbTransaction transaction, Func<Task> onCloseTransactionAsync)
+    public Transaction(DbTransaction transaction, Func<Task> onCloseTransactionAsync, ILogger<Transaction> logger)
     {
-        _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
+        _transaction = transaction;
         _onCloseTransactionAsync = onCloseTransactionAsync;
+        _logger = logger;
     }
 
     public async Task CommitAsync(CancellationToken cancellationToken)
@@ -27,9 +31,9 @@ public class Transaction : ITransaction
             {
                 await _transaction!.DisposeAsync();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // todo log
+                _logger.LogError(e, () => "An error occurred while commiting a transaction");
             }
 
             _transaction = null;
@@ -51,9 +55,9 @@ public class Transaction : ITransaction
             {
                 await _transaction!.DisposeAsync();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // todo log
+                _logger.LogError(e, () => "An error occurred while rolling back a transaction");
             }
 
             _transaction = null;

@@ -7,7 +7,7 @@ public class CreateItemCategoryCommand : ICommand<IItemCategory>
 {
     public CreateItemCategoryCommand(ItemCategoryName name)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Name = name;
     }
 
     public ItemCategoryName Name { get; }

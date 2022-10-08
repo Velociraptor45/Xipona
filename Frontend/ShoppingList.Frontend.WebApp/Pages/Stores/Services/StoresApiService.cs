@@ -36,6 +36,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await SaveStoreAsync(store, fragmentCreator, onSuccessAction));
                 _notificationService.NotifyError("Saving store failed", e.Message, fragment);
+                return;
             }
 
             await onSuccessAction();
@@ -55,6 +56,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
                     await CreateStoreAsync(store, fragmentCreator, onSuccessAction));
                 _notificationService.NotifyError("Creating store failed", e.Message, fragment);
+                return;
             }
 
             await onSuccessAction();

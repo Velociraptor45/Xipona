@@ -1,24 +1,26 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Models;
-using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Converters.ToEntity;
-using ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities;
-using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.StoreItems.Models;
+using ProjectHermes.ShoppingList.Api.Core.TestKit.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Converters.ToEntity;
+using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
+using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
+using ItemType = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.ItemType;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity;
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity;
 
-public class ItemConverterTests : ToEntityConverterTestBase<IStoreItem, Item>
+public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
 {
-    protected override (IStoreItem, Item) CreateTestObjects()
+    protected override (IItem, Item) CreateTestObjects()
     {
-        var source = StoreItemMother.Initial().Create();
+        var source = ItemMother.Initial().Create();
         var destination = GetDestination(source);
 
         return (source, destination);
     }
 
-    public static Item GetDestination(IStoreItem source)
+    public static Item GetDestination(IItem source)
     {
         return new Item
         {
@@ -43,7 +45,8 @@ public class ItemConverterTests : ToEntityConverterTestBase<IStoreItem, Item>
                         DefaultSectionId = av.DefaultSectionId.Value
                     }).ToList(),
             PredecessorId = source.Predecessor?.Id.Value,
-            ItemTypes = new List<ProjectHermes.ShoppingList.Api.Infrastructure.StoreItems.Entities.ItemType>()
+            ItemTypes = new List<ItemType>(),
+            UpdatedOn = source.UpdatedOn
         };
     }
 

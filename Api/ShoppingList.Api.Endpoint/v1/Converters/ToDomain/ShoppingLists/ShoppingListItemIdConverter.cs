@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingList.Commands.Shared;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 
@@ -8,9 +8,6 @@ public class ShoppingListItemIdConverter : IToDomainConverter<ItemIdContract, Of
 {
     public OfflineTolerantItemId ToDomain(ItemIdContract source)
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
         if (source.Actual != null)
         {
             return OfflineTolerantItemId.FromActualId(source.Actual.Value);

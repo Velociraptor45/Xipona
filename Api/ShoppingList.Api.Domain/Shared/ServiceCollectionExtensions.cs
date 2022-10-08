@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Services.Validations;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Shared;
 
@@ -15,8 +15,9 @@ public static class ServiceCollectionExtensions
             var availabilityValidationService = provider.GetRequiredService<IAvailabilityValidationService>();
             var itemCategoryValidationService = provider.GetRequiredService<IItemCategoryValidationService>();
             var manufacturerValidationService = provider.GetRequiredService<IManufacturerValidationService>();
+            var itemValidationService = provider.GetRequiredService<Func<CancellationToken, IItemValidationService>>();
             return cancellationToken => new Validator(availabilityValidationService,
-                itemCategoryValidationService, manufacturerValidationService, cancellationToken);
+                itemCategoryValidationService, manufacturerValidationService, itemValidationService, cancellationToken);
         });
     }
 }

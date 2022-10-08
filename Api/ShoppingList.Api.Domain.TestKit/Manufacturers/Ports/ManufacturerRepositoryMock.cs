@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
-using ShoppingList.Api.TestTools.Extensions;
+using ProjectHermes.ShoppingList.Api.TestTools.Extensions;
 
-namespace ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
+namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
 
 public class ManufacturerRepositoryMock : Mock<IManufacturerRepository>
 {

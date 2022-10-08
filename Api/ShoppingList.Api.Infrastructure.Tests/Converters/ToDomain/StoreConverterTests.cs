@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.TestKit.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Converters.ToDomain;
-using ShoppingList.Api.Core.TestKit.Converter;
-using ShoppingList.Api.Domain.TestKit.Stores.Models;
 
-namespace ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain;
+namespace ProjectHermes.ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain;
 
 public class StoreConverterTests : ToDomainConverterTestBase<ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Store, IStore>
 {
@@ -27,7 +27,7 @@ public class StoreConverterTests : ToDomainConverterTestBase<ProjectHermes.Shopp
     public static ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Store GetSource(IStore destination)
     {
         var sections = destination.Sections
-            .Select(s => StoreSectionConverterTests.GetSource(s))
+            .Select(s => SectionConverterTests.GetSource(s))
             .ToList();
 
         return new ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Store
@@ -44,6 +44,6 @@ public class StoreConverterTests : ToDomainConverterTestBase<ProjectHermes.Shopp
         serviceCollection.AddImplementationOfGenericType(typeof(StoreConverter).Assembly, typeof(IToDomainConverter<,>));
         serviceCollection.AddImplementationOfNonGenericType(typeof(IStoreFactory).Assembly, typeof(IStoreFactory));
 
-        StoreSectionConverterTests.AddDependencies(serviceCollection);
+        SectionConverterTests.AddDependencies(serviceCollection);
     }
 }

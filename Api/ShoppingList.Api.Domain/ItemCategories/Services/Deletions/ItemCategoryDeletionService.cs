@@ -2,8 +2,8 @@
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.StoreItems.Ports;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Deletions;
 
@@ -34,10 +34,10 @@ public class ItemCategoryDeletionService : IItemCategoryDeletionService
 
         category.Delete();
 
-        var storeItems = (await _itemRepository.FindActiveByAsync(itemCategoryId, _cancellationToken))
+        var items = (await _itemRepository.FindActiveByAsync(itemCategoryId, _cancellationToken))
             .ToList();
 
-        foreach (var item in storeItems)
+        foreach (var item in items)
         {
             var lists = await _shoppingListRepository.FindActiveByAsync(item.Id, _cancellationToken);
             foreach (var list in lists)

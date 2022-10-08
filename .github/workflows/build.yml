@@ -31,15 +31,12 @@ jobs:
         run: |
           dotnet restore Api/ShoppingListApi.sln
           dotnet restore Frontend/ShoppingList.Frontend.sln
-      - name: Install dotnet-coverage
-        run: |
-          dotnet tool install --global dotnet-coverage
       - name: Begin Sonar scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions=**/*TestTools*/** /d:sonar.cs.vscoveragexml.reportsPaths=api/coverage.xml,frontend/coverage.xml
+          dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions=**/*TestTools*/**,**/Migrations/** /d:sonar.cs.opencover.reportsPaths=Api/TestResults/coverage.opencover.xml,Frontend/TestResults/coverage.opencover.xml
       - name: Build Backend
         run: |
           dotnet build Api/ShoppingListApi.sln
@@ -51,8 +48,8 @@ jobs:
           dotnet build Frontend/ShoppingList.Frontend.sln
       - name: Test
         run: |
-          dotnet-coverage collect 'dotnet test Api/ShoppingListApi.sln --no-build' -f xml  -o 'api/coverage.xml'
-          dotnet-coverage collect 'dotnet test Frontend/ShoppingList.Frontend.sln --no-build' -f xml  -o 'frontend/coverage.xml'
+          dotnet test ./Api/ShoppingListApi.sln --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverage.json" "/p:CoverletOutputFormat=\"json,opencover\""
+          dotnet test ./Frontend/ShoppingList.Frontend.sln --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverage.json" "/p:CoverletOutputFormat=\"json,opencover\""
       - name: End Sonar scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
