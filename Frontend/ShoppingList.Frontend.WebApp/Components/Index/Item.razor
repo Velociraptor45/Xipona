@@ -9,7 +9,7 @@
 @inject IItemPriceCalculationService _itemPriceCalculationService;
 @inject IShoppingListApiService _apiService;
 
-<li class="list-style-non py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
+<li class="item py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
     @if (State.ItemsInEditMode)
     {
         <div class="d-flex flex-column ml-2">
