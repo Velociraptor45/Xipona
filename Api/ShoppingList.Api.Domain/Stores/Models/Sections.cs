@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
@@ -22,20 +23,20 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
 
     private ISortableCollection<ISection> AsSortableCollection => this;
 
-    public void UpdateMany(IEnumerable<SectionUpdate> updates)
+    public async Task UpdateManyAsync(IEnumerable<SectionUpdate> updates, IItemModificationService itemModificationService)
     {
         var updatesList = updates.ToList();
 
         var sectionsToUpdate = updatesList.Where(s => s.Id.HasValue).ToDictionary(update => update.Id!.Value);
         var sectionsToCreate = updatesList.Where(s => !s.Id.HasValue);
-        var sectionIdsToDelete = _sections.Keys.Where(id => !sectionsToUpdate.ContainsKey(id));
+        var sectionIdsToDelete = _sections.Keys.Where(id => !sectionsToUpdate.ContainsKey(id)).ToArray();
         var newSections = sectionsToCreate
             .Select(section => _sectionFactory.CreateNew(section.Name, section.SortingIndex, section.IsDefaultSection))
             .ToList();
 
         foreach (var sectionId in sectionIdsToDelete)
         {
-            Remove(sectionId);
+            Delete(sectionId);
         }
 
         foreach (var section in sectionsToUpdate.Values)
@@ -44,6 +45,13 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
         }
 
         AddMany(newSections);
+
+        ValidateDefaultSection();
+
+        foreach (var sectionId in sectionIdsToDelete)
+        {
+            await itemModificationService.TransferToSectionAsync(sectionId, GetDefaultSection().Id);
+        }
     }
 
     public ISection GetDefaultSection()
@@ -73,14 +81,17 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
 
     private void ValidateDefaultSection()
     {
-        var defaultSectionCount = _sections.Values.Count(s => s.IsDefaultSection);
+        var defaultSectionCount = _sections.Values.Count(s => s.IsDefaultSection && !s.IsDeleted);
         if (defaultSectionCount > 1)
             throw new DomainException(new MultipleDefaultSectionsReason());
     }
 
-    private void Remove(SectionId id)
+    private void Delete(SectionId id)
     {
-        _sections.Remove(id);
+        if (!_sections.TryGetValue(id, out var section))
+            return;
+
+        _sections[id] = section.Delete();
     }
 
     private void Update(SectionUpdate update)
@@ -96,7 +107,9 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
         var updatedSection = section.Update(update);
         _sections[updatedSection.Id] = updatedSection;
 
-        AsSortableCollection.ValidateSortingIndexes(_sections.Values);
+        var activeSections = _sections.Values.Where(s => !s.IsDeleted);
+
+        AsSortableCollection.ValidateSortingIndexes(activeSections);
         ValidateDefaultSection();
     }
 

@@ -14,4 +14,12 @@ public class ItemAvailability : IItemAvailability
     public StoreId StoreId { get; }
     public Price Price { get; }
     public SectionId DefaultSectionId { get; }
+
+    public IItemAvailability TransferToDefaultSection(SectionId sectionId)
+    {
+        return new ItemAvailability(
+            StoreId,
+            Price,
+            sectionId);
+    }
 }

@@ -15,4 +15,6 @@ public interface IStoreRepository
     Task<IStore?> FindActiveByAsync(StoreId id, CancellationToken cancellationToken);
 
     Task<IEnumerable<IStore>> FindActiveByAsync(IEnumerable<StoreId> ids, CancellationToken cancellationToken);
+
+    Task<IStore?> FindActiveByAsync(SectionId sectionId, CancellationToken cancellationToken);
 }

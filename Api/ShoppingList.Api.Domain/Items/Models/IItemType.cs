@@ -16,7 +16,9 @@ public interface IItemType
 
     SectionId GetDefaultSectionIdForStore(StoreId storeId);
 
-    bool IsAvailableAtStore(StoreId storeId);
+    bool IsAvailableAt(StoreId storeId);
+
+    bool IsAvailableAt(SectionId sectionId);
 
     Task<IItemType> ModifyAsync(ItemTypeModification modification, IValidator validator);
 
@@ -25,4 +27,5 @@ public interface IItemType
     IItemType Update(StoreId storeId, Price price);
 
     IItemType Update();
+    IItemType TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId);
 }

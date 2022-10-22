@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
@@ -34,8 +35,9 @@ public class Store : IStore
         Name = name;
     }
 
-    public void UpdateSections(IEnumerable<SectionUpdate> sectionUpdates)
+    public async Task UpdateSectionsAsync(IEnumerable<SectionUpdate> sectionUpdates,
+        IItemModificationService itemModificationService)
     {
-        _sections.UpdateMany(sectionUpdates);
+        await _sections.UpdateManyAsync(sectionUpdates, itemModificationService);
     }
 }

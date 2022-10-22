@@ -11,6 +11,7 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
@@ -352,6 +353,7 @@ public class ItemModificationServiceTests
         private readonly ItemRepositoryMock _itemRepositoryMock;
         private readonly ValidatorMock _validatorMock;
         private readonly CommonFixture _commonFixture = new();
+        private readonly StoreRepositoryMock _storeRepositoryMock;
         private readonly ShoppingListRepositoryMock _shoppingListRepositoryMock;
 
         private Dictionary<ItemTypeId, List<ShoppingListMock>>? _shoppingListDict;
@@ -365,6 +367,7 @@ public class ItemModificationServiceTests
             _fixture = _commonFixture.GetNewFixture();
             _itemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
             _validatorMock = new ValidatorMock(MockBehavior.Strict);
+            _storeRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
             _shoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
         }
 
@@ -376,6 +379,7 @@ public class ItemModificationServiceTests
                 _itemRepositoryMock.Object,
                 _ => _validatorMock.Object,
                 _shoppingListRepositoryMock.Object,
+                _storeRepositoryMock.Object,
                 default);
         }
 

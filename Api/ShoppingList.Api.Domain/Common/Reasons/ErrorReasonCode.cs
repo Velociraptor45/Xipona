@@ -47,4 +47,5 @@ public enum ErrorReasonCode
     InvalidItemIdCombination = 45,
     MultipleDefaultSections = 46,
     CannotUpdateItemWithTypesAsItem = 47,
+    OldAndNewSectionNotInSameStore = 48,
 }

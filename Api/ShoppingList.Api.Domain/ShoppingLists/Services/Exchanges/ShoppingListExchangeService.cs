@@ -77,7 +77,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
 
                 list.RemoveItem(oldItemId, oldListItem.TypeId);
                 if (!newItem.TryGetTypeWithPredecessor(oldListItem.TypeId.Value, out var itemType)
-                    || !itemType!.IsAvailableAtStore(list.StoreId))
+                    || !itemType!.IsAvailableAt(list.StoreId))
                     continue;
 
                 var sectionId = itemType.GetDefaultSectionIdForStore(list.StoreId);

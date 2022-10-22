@@ -77,12 +77,7 @@ public static class ServiceCollectionExtensions
                 new RecipeRepository(context, searchResultToDomainConverter, toDomainConverter, toContractConverter,
                     cancellationToken);
         });
-        services.AddScoped(_ =>
-        {
-            var guard = new SemaphoreSlim(0, 1);
-            guard.Release(1);
-            return guard;
-        });
+        services.AddScoped(_ => new SemaphoreSlim(1, 1));
         services.AddScoped<ITransactionGenerator, TransactionGenerator>();
 
         services.AddImplementationOfGenericType(assembly, typeof(IToEntityConverter<,>));

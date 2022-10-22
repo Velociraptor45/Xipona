@@ -275,4 +275,20 @@ public class Item : IItem
         newItem.SetPredecessor(this);
         return newItem;
     }
+
+    public void TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId)
+    {
+        if (HasItemTypes)
+        {
+            _itemTypes!.TransferToDefaultSection(oldSectionId, newSectionId);
+            return;
+        }
+
+        for (int i = 0; i < _availabilities.Count; i++)
+        {
+            var availability = _availabilities[i];
+            if (availability.DefaultSectionId == oldSectionId)
+                _availabilities[i] = availability.TransferToDefaultSection(newSectionId);
+        }
+    }
 }

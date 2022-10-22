@@ -54,4 +54,5 @@ public interface IItem
         IDateTimeService dateTimeService);
 
     IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService);
+    void TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId);
 }

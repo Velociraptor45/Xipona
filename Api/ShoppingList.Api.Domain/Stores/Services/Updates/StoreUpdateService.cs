@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
 
@@ -8,12 +9,15 @@ public class StoreUpdateService : IStoreUpdateService
 {
     private readonly IStoreRepository _storeRepository;
     private readonly CancellationToken _cancellationToken;
+    private readonly IItemModificationService _itemModificationService;
 
     public StoreUpdateService(
         IStoreRepository storeRepository,
+        Func<CancellationToken, IItemModificationService> itemModificationServiceDelegate,
         CancellationToken cancellationToken)
     {
         _storeRepository = storeRepository;
+        _itemModificationService = itemModificationServiceDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
     }
 
@@ -24,7 +28,7 @@ public class StoreUpdateService : IStoreUpdateService
             throw new DomainException(new StoreNotFoundReason(update.Id));
 
         store.ChangeName(update.Name);
-        store.UpdateSections(update.Sections);
+        await store.UpdateSectionsAsync(update.Sections, _itemModificationService);
 
         _cancellationToken.ThrowIfCancellationRequested();
 

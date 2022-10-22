@@ -40,6 +40,12 @@ public class SectionEntityBuilder : TestBuilderBase<Section>
         return this;
     }
 
+    public SectionEntityBuilder WithIsDeleted(bool isDeleted)
+    {
+        FillPropertyWith(p => p.IsDeleted, isDeleted);
+        return this;
+    }
+
     public SectionEntityBuilder WithStore(Store store)
     {
         FillPropertyWith(p => p.Store, store);

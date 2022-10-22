@@ -13,7 +13,8 @@ public class SectionConverter : IToEntityConverter<ISection, Section>
             Id = source.Id.Value,
             Name = source.Name.Value,
             SortIndex = source.SortingIndex,
-            IsDefaultSection = source.IsDefaultSection
+            IsDefaultSection = source.IsDefaultSection,
+            IsDeleted = source.IsDeleted
         };
     }
 }

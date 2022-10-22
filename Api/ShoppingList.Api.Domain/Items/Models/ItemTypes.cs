@@ -138,9 +138,20 @@ public class ItemTypes : IEnumerable<IItemType>
     {
         return new ItemTypes(
             _itemTypes.Values.Select(t =>
-                t.IsAvailableAtStore(storeId) && (itemTypeId is null || t.Id == itemTypeId.Value)
+                t.IsAvailableAt(storeId) && (itemTypeId is null || t.Id == itemTypeId.Value)
                     ? t.Update(storeId, price)
                     : t.Update()),
             _itemTypeFactory);
+    }
+
+    public void TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId)
+    {
+        foreach (var itemType in _itemTypes.Values)
+        {
+            if (!itemType.IsAvailableAt(oldSectionId))
+                continue;
+
+            _itemTypes[itemType.Id] = itemType.TransferToDefaultSection(oldSectionId, newSectionId);
+        }
     }
 }

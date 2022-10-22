@@ -19,6 +19,7 @@ public class Section
     public Guid StoreId { get; set; }
     public int SortIndex { get; set; }
     public bool IsDefaultSection { get; set; }
+    public bool IsDeleted { get; set; }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
