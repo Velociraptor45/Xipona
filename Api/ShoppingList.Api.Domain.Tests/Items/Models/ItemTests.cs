@@ -931,6 +931,170 @@ public class ItemTests
         }
     }
 
+    public class TransferToDefaultSection
+    {
+        private readonly TransferToDefaultSectionFixture _fixture;
+
+        public TransferToDefaultSection()
+        {
+            _fixture = new TransferToDefaultSectionFixture();
+        }
+
+        [Fact]
+        public void TransferToDefaultSection_WithAvailabilityInOldSection_ShouldTransferToNewSection()
+        {
+            // Arrange
+            _fixture.SetupWithoutTypes();
+            _fixture.SetupSectionIds();
+            _fixture.SetupAvailabilityInOldSection();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
+
+            // Act
+            sut.TransferToDefaultSection(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+
+            // Assert
+            sut.Availabilities.Single().DefaultSectionId.Should().Be(_fixture.NewSectionId.Value);
+        }
+
+        [Fact]
+        public void TransferToDefaultSection_WithAvailabilityNotInOldSection_ShouldNotTransferToNewSection()
+        {
+            // Arrange
+            _fixture.SetupWithoutTypes();
+            _fixture.SetupSectionIds();
+            _fixture.SetupAvailabilityNotInOldSection();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
+
+            // Act
+            sut.TransferToDefaultSection(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+
+            // Assert
+            sut.Availabilities.Single().DefaultSectionId.Should().NotBe(_fixture.NewSectionId.Value);
+        }
+
+        [Fact]
+        public void TransferToDefaultSection_WithTypeAvailabilityInOldSection_ShouldNotTransferToNewSection()
+        {
+            // Arrange
+            _fixture.SetupWithTypes();
+            _fixture.SetupSectionIds();
+            _fixture.SetupTypeAvailabilityInOldSection();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
+
+            // Act
+            sut.TransferToDefaultSection(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+
+            // Assert
+            sut.ItemTypes.Single().Availabilities.Single().DefaultSectionId.Should().Be(_fixture.NewSectionId.Value);
+        }
+
+        [Fact]
+        public void TransferToDefaultSection_WithTypeAvailabilityNotInOldSection_ShouldNotTransferToNewSection()
+        {
+            // Arrange
+            _fixture.SetupWithTypes();
+            _fixture.SetupSectionIds();
+            _fixture.SetupTypeAvailabilityNotInOldSection();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
+
+            // Act
+            sut.TransferToDefaultSection(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+
+            // Assert
+            sut.ItemTypes.Single().Availabilities.Single().DefaultSectionId.Should().NotBe(_fixture.NewSectionId.Value);
+        }
+
+        private sealed class TransferToDefaultSectionFixture : ItemFixture
+        {
+            private readonly ItemTypeFactoryMock _itemTypeFactoryMock = new(MockBehavior.Strict);
+
+            public SectionId? OldSectionId { get; private set; }
+            public SectionId? NewSectionId { get; private set; }
+
+            public void SetupWithTypes()
+            {
+                ItemMother.InitialWithTypes(Builder);
+            }
+
+            public void SetupWithoutTypes()
+            {
+                ItemMother.Initial(Builder);
+            }
+
+            public void SetupSectionIds()
+            {
+                OldSectionId = SectionId.New;
+                NewSectionId = SectionId.New;
+            }
+
+            public void SetupTypeAvailabilityInOldSection()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldSectionId);
+
+                var av = new ItemAvailabilityBuilder()
+                    .WithDefaultSectionId(OldSectionId.Value)
+                    .Create();
+
+                var type = new ItemTypeBuilder()
+                    .WithAvailability(av)
+                    .CreateMany(1);
+
+                var types = new ItemTypes(type, _itemTypeFactoryMock.Object);
+
+                Builder.WithTypes(types);
+            }
+
+            public void SetupTypeAvailabilityNotInOldSection()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldSectionId);
+
+                var av = new ItemAvailabilityBuilder()
+                    .Create();
+
+                var type = new ItemTypeBuilder()
+                    .WithAvailability(av)
+                    .CreateMany(1);
+
+                var types = new ItemTypes(type, _itemTypeFactoryMock.Object);
+
+                Builder.WithTypes(types);
+            }
+
+            public void SetupAvailabilityInOldSection()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldSectionId);
+
+                var av = new ItemAvailabilityBuilder()
+                    .WithDefaultSectionId(OldSectionId.Value)
+                    .Create();
+
+                Builder.WithAvailability(av);
+            }
+
+            public void SetupAvailabilityNotInOldSection()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldSectionId);
+
+                var av = new ItemAvailabilityBuilder()
+                    .Create();
+
+                Builder.WithAvailability(av);
+            }
+        }
+    }
+
     private abstract class ItemFixture
     {
         protected readonly ItemBuilder Builder = new();
