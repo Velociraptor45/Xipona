@@ -52,9 +52,14 @@ public class ItemsOnListEntityBuilder : TestBuilderBase<ItemsOnList>
         return this;
     }
 
-    public ItemsOnListEntityBuilder WithShoppingList(Infrastructure.ShoppingLists.Entities.ShoppingList shoppingList)
+    public ItemsOnListEntityBuilder WithShoppingList(Infrastructure.ShoppingLists.Entities.ShoppingList? shoppingList)
     {
         FillPropertyWith(p => p.ShoppingList, shoppingList);
         return this;
+    }
+
+    public ItemsOnListEntityBuilder WithoutShoppingList()
+    {
+        return WithShoppingList(null);
     }
 }

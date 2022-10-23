@@ -48,4 +48,6 @@ public enum ErrorReasonCode
     MultipleDefaultSections = 46,
     CannotUpdateItemWithTypesAsItem = 47,
     OldAndNewSectionNotInSameStore = 48,
+    ItemWithTypesHasNoAvailabilities = 49,
+    ItemHasNoItemTypes = 50,
 }

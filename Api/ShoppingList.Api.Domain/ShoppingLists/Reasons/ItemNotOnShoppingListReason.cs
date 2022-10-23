@@ -6,9 +6,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 
 public class ItemNotOnShoppingListReason : IReason
 {
-    public ItemNotOnShoppingListReason(ShoppingListId shoppingListId, ItemId shoppingListItemId)
+    public ItemNotOnShoppingListReason(ShoppingListId shoppingListId, ItemId shoppingListItemId,
+        ItemTypeId? itemTypeId = null)
     {
-        Message = $"Item {shoppingListItemId} is not on shopping list {shoppingListId.Value}.";
+        Message = itemTypeId is null
+            ? $"Item {shoppingListItemId} is not on shopping list {shoppingListId.Value}."
+            : $"Item {shoppingListItemId} with type {itemTypeId} is not on shopping list {shoppingListId.Value}.";
     }
 
     public string Message { get; }

@@ -9,7 +9,9 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+
 using DomainModels = ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.ShoppingListModifications;
@@ -1220,11 +1222,15 @@ public class ShoppingListModificationServiceTests
     {
         protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
         protected readonly ItemRepositoryMock ItemRepositoryMock;
+        protected readonly StoreRepositoryMock StoreRepositoryMock;
+        protected readonly ShoppingListSectionFactoryMock ShoppingListSectionFactoryMock;
 
         protected LocalFixture()
         {
             ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
             ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
+            StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
+            ShoppingListSectionFactoryMock = new ShoppingListSectionFactoryMock(MockBehavior.Strict);
         }
 
         public ShoppingListModificationService CreateSut()
@@ -1232,6 +1238,8 @@ public class ShoppingListModificationServiceTests
             return new ShoppingListModificationService(
                 ShoppingListRepositoryMock.Object,
                 ItemRepositoryMock.Object,
+                StoreRepositoryMock.Object,
+                ShoppingListSectionFactoryMock.Object,
                 default);
         }
     }

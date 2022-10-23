@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
@@ -23,7 +24,9 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
 
     private ISortableCollection<ISection> AsSortableCollection => this;
 
-    public async Task UpdateManyAsync(IEnumerable<SectionUpdate> updates, IItemModificationService itemModificationService)
+    public async Task UpdateManyAsync(IEnumerable<SectionUpdate> updates,
+        IItemModificationService itemModificationService,
+        IShoppingListModificationService shoppingListModificationService)
     {
         var updatesList = updates.ToList();
 
@@ -51,12 +54,13 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
         foreach (var sectionId in sectionIdsToDelete)
         {
             await itemModificationService.TransferToSectionAsync(sectionId, GetDefaultSection().Id);
+            await shoppingListModificationService.RemoveSectionAsync(sectionId);
         }
     }
 
     public ISection GetDefaultSection()
     {
-        return _sections.Values.First(s => s.IsDefaultSection);
+        return GetActive().First(s => s.IsDefaultSection);
     }
 
     public IReadOnlyCollection<ISection> AsReadOnly()
@@ -81,7 +85,7 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
 
     private void ValidateDefaultSection()
     {
-        var defaultSectionCount = _sections.Values.Count(s => s.IsDefaultSection && !s.IsDeleted);
+        var defaultSectionCount = GetActive().Count(s => s.IsDefaultSection);
         if (defaultSectionCount > 1)
             throw new DomainException(new MultipleDefaultSectionsReason());
     }
@@ -124,5 +128,10 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
     private void Add(ISection section)
     {
         _sections.Add(section.Id, section);
+    }
+
+    private IEnumerable<ISection> GetActive()
+    {
+        return _sections.Values.Where(s => !s.IsDeleted);
     }
 }

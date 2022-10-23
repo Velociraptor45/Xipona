@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Extensions;
+using Force.DeepCloner;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
 using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.ShoppingLists.Entities;
 using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Stores.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
@@ -114,6 +116,7 @@ public class StoreControllerIntegrationTests
                         .WithName(new SectionName(section.Name))
                         .WithIsDefaultSection(section.IsDefaultSection)
                         .WithSortingIndex(section.SortingIndex)
+                        .WithIsDeleted(false)
                         .Create());
                 }
 
@@ -149,11 +152,17 @@ public class StoreControllerIntegrationTests
             // Arrange
             _fixture.SetupExistingStore();
             _fixture.SetupExistingItem();
+            _fixture.SetupExistingShoppingList();
             await _fixture.PrepareDatabaseAsync();
             _fixture.SetupContract();
             _fixture.SetupExpectedPersistedStoreWithSameSectionIds();
             _fixture.SetupExpectedItem();
+            _fixture.SetupExpectedShoppingList();
             var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedPersistedStore);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
 
             // Act
             var response = await sut.UpdateStoreAsync(_fixture.Contract!);
@@ -173,6 +182,54 @@ public class StoreControllerIntegrationTests
                     .Excluding(info => info.Path.EndsWith(".Item"))
                     .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1.Milliseconds()))
                     .When(info => info.Path == "UpdatedOn"));
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync()).ToArray();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
+                opt => opt.Excluding(info => info.Path.EndsWith(".ShoppingList")));
+        }
+
+        [Fact]
+        public async Task UpdateStoreAsync_WithEquivalentSectionIdAndItemTypes_ShouldUpdateStore()
+        {
+            // Arrange
+            _fixture.SetupExistingStore();
+            _fixture.SetupExistingItemWithTypes();
+            _fixture.SetupExistingShoppingListWithItemType();
+            await _fixture.PrepareDatabaseAsync();
+            _fixture.SetupContract();
+            _fixture.SetupExpectedPersistedStoreWithSameSectionIds();
+            _fixture.SetupExpectedItemWithTypes();
+            _fixture.SetupExpectedShoppingList();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedPersistedStore);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
+
+            // Act
+            var response = await sut.UpdateStoreAsync(_fixture.Contract!);
+
+            // Assert
+            response.Should().BeOfType<OkResult>();
+
+            var stores = (await _fixture.LoadAllStoresAsync()).ToArray();
+            stores.Should().HaveCount(1);
+            stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
+                opt => opt.Excluding(info => info.Path.EndsWith(".Store")));
+
+            var items = (await _fixture.LoadAllItemsAsync()).ToArray();
+            items.Should().HaveCount(1);
+            items.First().Should().BeEquivalentTo(_fixture.ExpectedItem,
+                opt => opt
+                    .Excluding(info => info.Path.EndsWith(".Item") || info.Path.EndsWith(".ItemType"))
+                    .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1.Milliseconds()))
+                    .When(info => info.Path == "UpdatedOn"));
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync()).ToArray();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
+                opt => opt.Excluding(info => info.Path.EndsWith(".ShoppingList")));
         }
 
         private class UpdateStoreAsyncFixture : LocalFixture
@@ -186,6 +243,8 @@ public class StoreControllerIntegrationTests
             public Infrastructure.Stores.Entities.Store? ExpectedPersistedStore { get; private set; }
             public Item? ExistingItem { get; private set; }
             public Item? ExpectedItem { get; private set; }
+            public Infrastructure.ShoppingLists.Entities.ShoppingList? ExistingShoppingList { get; private set; }
+            public Infrastructure.ShoppingLists.Entities.ShoppingList? ExpectedShoppingList { get; private set; }
 
             public void SetupContract()
             {
@@ -201,19 +260,23 @@ public class StoreControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(ExistingStore);
                 TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+                TestPropertyNotSetException.ThrowIfNull(ExistingShoppingList);
 
-                using var scope = CreateServiceScope();
-                await ApplyMigrationsAsync(scope);
+                await ApplyMigrationsAsync(SetupScope);
 
-                using var transaction = await CreateTransactionAsync(scope);
-                await using var storeContext = GetContextInstance<StoreContext>(scope);
-                await using var itemContext = GetContextInstance<ItemContext>(scope);
+                using var transaction = await CreateTransactionAsync(SetupScope);
+                await using var storeContext = GetContextInstance<StoreContext>(SetupScope);
+                await using var itemContext = GetContextInstance<ItemContext>(SetupScope);
+                await using var shoppingListContext = GetContextInstance<ShoppingListContext>(SetupScope);
 
                 storeContext.Add(ExistingStore);
                 await storeContext.SaveChangesAsync();
 
                 itemContext.Add(ExistingItem);
                 await itemContext.SaveChangesAsync();
+
+                shoppingListContext.Add(ExistingShoppingList);
+                await shoppingListContext.SaveChangesAsync();
 
                 await transaction.CommitAsync(default);
             }
@@ -233,38 +296,74 @@ public class StoreControllerIntegrationTests
                     .Create();
             }
 
+            public void SetupExistingItemWithTypes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingStore);
+
+                var availability = new ItemTypeAvailableAtEntityBuilder()
+                    .WithStoreId(ExistingStore.Id)
+                    .WithDefaultSectionId(ExistingStore.Sections.ElementAt(1).Id)
+                    .CreateMany(1)
+                    .ToArray();
+
+                var types = ItemTypeEntityMother.Initial()
+                    .WithAvailableAt(availability)
+                    .CreateMany(1)
+                    .ToArray();
+
+                ExistingItem = ItemEntityMother.InitialWithTypes()
+                    .WithItemTypes(types)
+                    .Create();
+            }
+
+            public void SetupExistingShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+                TestPropertyNotSetException.ThrowIfNull(ExistingStore);
+
+                ExistingShoppingList = ShoppingListEntityMother
+                    .InitialWithOneItem(ExistingItem.Id, null, ExistingStore.Sections.ElementAt(1).Id)
+                    .WithStoreId(ExistingStore.Id)
+                    .Create();
+            }
+
+            public void SetupExistingShoppingListWithItemType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+                TestPropertyNotSetException.ThrowIfNull(ExistingStore);
+
+                ExistingShoppingList = ShoppingListEntityMother
+                    .InitialWithOneItem(ExistingItem.Id, ExistingItem.ItemTypes.First().Id,
+                        ExistingStore.Sections.ElementAt(1).Id)
+                    .WithStoreId(ExistingStore.Id)
+                    .Create();
+            }
+
+            public void SetupExpectedShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingShoppingList);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                ExpectedShoppingList = ExistingShoppingList.DeepClone();
+                ExpectedShoppingList.ItemsOnList.First().SectionId = Contract.Sections.First().Id!.Value;
+            }
+
             public void SetupExpectedItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExistingItem);
                 TestPropertyNotSetException.ThrowIfNull(ExistingStore);
 
-                ExpectedItem = new Item
-                {
-                    Id = ExistingItem.Id,
-                    Name = ExistingItem.Name,
-                    Deleted = ExistingItem.Deleted,
-                    Comment = ExistingItem.Comment,
-                    IsTemporary = ExistingItem.IsTemporary,
-                    QuantityInPacket = ExistingItem.QuantityInPacket,
-                    QuantityType = ExistingItem.QuantityType,
-                    QuantityTypeInPacket = ExistingItem.QuantityTypeInPacket,
-                    ItemCategoryId = ExistingItem.ItemCategoryId,
-                    ManufacturerId = ExistingItem.ManufacturerId,
-                    CreatedFrom = ExistingItem.CreatedFrom,
-                    UpdatedOn = ExistingItem.UpdatedOn,
-                    PredecessorId = ExistingItem.PredecessorId,
-                    ItemTypes = new List<ItemType>(),
-                    AvailableAt = new List<AvailableAt>
-                    {
-                        new()
-                        {
-                            ItemId = ExistingItem.AvailableAt.First().ItemId,
-                            StoreId = ExistingItem.AvailableAt.First().StoreId,
-                            DefaultSectionId = ExistingStore.Sections.First().Id,
-                            Price = ExistingItem.AvailableAt.First().Price
-                        }
-                    }
-                };
+                ExpectedItem = ExistingItem.DeepClone();
+                ExpectedItem.AvailableAt.First().DefaultSectionId = ExistingStore.Sections.First().Id;
+            }
+
+            public void SetupExpectedItemWithTypes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+                TestPropertyNotSetException.ThrowIfNull(ExistingStore);
+
+                ExpectedItem = ExistingItem.DeepClone();
+                ExpectedItem.ItemTypes.First().AvailableAt.First().DefaultSectionId = ExistingStore.Sections.First().Id;
             }
 
             public void SetupExistingStore()
@@ -352,6 +451,16 @@ public class StoreControllerIntegrationTests
 
             return await storeContext.Stores.AsNoTracking()
                 .Include(s => s.Sections)
+                .ToArrayAsync();
+        }
+
+        public async Task<IEnumerable<Infrastructure.ShoppingLists.Entities.ShoppingList>> LoadAllShoppingListsAsync()
+        {
+            using var assertScope = CreateServiceScope();
+            var shoppingListContext = GetContextInstance<ShoppingListContext>(assertScope);
+
+            return await shoppingListContext.ShoppingLists.AsNoTracking()
+                .Include(l => l.ItemsOnList)
                 .ToArrayAsync();
         }
 
