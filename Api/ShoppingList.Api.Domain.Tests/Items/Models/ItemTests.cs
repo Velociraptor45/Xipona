@@ -1018,8 +1018,6 @@ public class ItemTests
 
         private sealed class TransferToDefaultSectionFixture : ItemFixture
         {
-            private readonly ItemTypeFactoryMock _itemTypeFactoryMock = new(MockBehavior.Strict);
-
             public SectionId? OldSectionId { get; private set; }
             public SectionId? NewSectionId { get; private set; }
 
@@ -1051,7 +1049,7 @@ public class ItemTests
                     .WithAvailability(av)
                     .CreateMany(1);
 
-                var types = new ItemTypes(type, _itemTypeFactoryMock.Object);
+                var types = new ItemTypes(type, ItemTypeFactoryMock.Object);
 
                 Builder.WithTypes(types);
             }
@@ -1067,7 +1065,7 @@ public class ItemTests
                     .WithAvailability(av)
                     .CreateMany(1);
 
-                var types = new ItemTypes(type, _itemTypeFactoryMock.Object);
+                var types = new ItemTypes(type, ItemTypeFactoryMock.Object);
 
                 Builder.WithTypes(types);
             }
@@ -1095,9 +1093,163 @@ public class ItemTests
         }
     }
 
+    public class GetDefaultSectionIdForStore_ItemType
+    {
+        private readonly GetDefaultSectionIdForStoreFixture _fixture;
+
+        public GetDefaultSectionIdForStore_ItemType()
+        {
+            _fixture = new GetDefaultSectionIdForStoreFixture();
+        }
+
+        [Fact]
+        public void GetDefaultSectionIdForStore_WithValidData_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupItemTypeId();
+            _fixture.SetupExpectedResult();
+            _fixture.SetupAvailableAtStore();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = sut.GetDefaultSectionIdForStore(_fixture.StoreId.Value, _fixture.ItemTypeId.Value);
+
+            // Assert
+            result.Should().Be(_fixture.ExpectedResult.Value);
+        }
+
+        [Fact]
+        public void GetDefaultSectionIdForStore_WithNotAvailableAtStore_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupItemTypeId();
+            _fixture.SetupNotAvailableAtStore();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+
+            // Act
+            var func = () => sut.GetDefaultSectionIdForStore(_fixture.StoreId.Value, _fixture.ItemTypeId.Value);
+
+            // Assert
+            func.Should().ThrowDomainException(ErrorReasonCode.ItemAtStoreNotAvailable);
+        }
+
+        [Fact]
+        public void GetDefaultSectionIdForStore_WithNotContainingItemType_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupItemTypeId();
+            _fixture.SetupNotContainingItemType();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+
+            // Act
+            var func = () => sut.GetDefaultSectionIdForStore(_fixture.StoreId.Value, _fixture.ItemTypeId.Value);
+
+            // Assert
+            func.Should().ThrowDomainException(ErrorReasonCode.ItemTypeNotFound);
+        }
+
+        [Fact]
+        public void GetDefaultSectionIdForStore_WithNotHavingItemTypes_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupItemTypeId();
+            _fixture.SetupNotHavingItemTypes();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+
+            // Act
+            var func = () => sut.GetDefaultSectionIdForStore(_fixture.StoreId.Value, _fixture.ItemTypeId.Value);
+
+            // Assert
+            func.Should().ThrowDomainException(ErrorReasonCode.ItemHasNoItemTypes);
+        }
+
+        private sealed class GetDefaultSectionIdForStoreFixture : ItemFixture
+        {
+            public StoreId? StoreId { get; set; }
+            public ItemTypeId? ItemTypeId { get; set; }
+            public SectionId? ExpectedResult { get; set; }
+
+            public void SetupStoreId()
+            {
+                StoreId = Domain.Stores.Models.StoreId.New;
+            }
+
+            public void SetupItemTypeId()
+            {
+                ItemTypeId = Domain.Items.Models.ItemTypeId.New;
+            }
+
+            public void SetupExpectedResult()
+            {
+                ExpectedResult = SectionId.New;
+            }
+
+            public void SetupAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+                TestPropertyNotSetException.ThrowIfNull(ItemTypeId);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                var availability = new ItemAvailabilityBuilder()
+                    .WithStoreId(StoreId.Value)
+                    .WithDefaultSectionId(ExpectedResult.Value)
+                    .Create();
+
+                var itemTypes = new ItemTypeBuilder()
+                    .WithId(ItemTypeId.Value)
+                    .WithAvailability(availability)
+                    .CreateMany(1);
+
+                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+            }
+
+            public void SetupNotAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemTypeId);
+
+                var itemTypes = new ItemTypeBuilder()
+                    .WithId(ItemTypeId.Value)
+                    .CreateMany(1);
+
+                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+            }
+
+            public void SetupNotContainingItemType()
+            {
+                var itemTypes = new ItemTypeBuilder()
+                    .CreateMany(1);
+
+                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+            }
+
+            public void SetupNotHavingItemTypes()
+            {
+                Builder.AsItem();
+            }
+        }
+    }
+
     private abstract class ItemFixture
     {
         protected readonly ItemBuilder Builder = new();
+        protected readonly ItemTypeFactoryMock ItemTypeFactoryMock = new(MockBehavior.Strict);
 
         public Item CreateSut()
         {
