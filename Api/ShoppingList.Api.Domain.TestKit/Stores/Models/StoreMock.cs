@@ -9,6 +9,10 @@ public class StoreMock : Mock<IStore>
 {
     public StoreMock(MockBehavior behavior, IStore store) : base(behavior)
     {
+        SetupId(store.Id);
+        SetupName(store.Name);
+        SetupIsDeleted(store.IsDeleted);
+        SetupSections(store.Sections);
     }
 
     public void SetupId(StoreId id)
