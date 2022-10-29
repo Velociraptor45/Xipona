@@ -36,6 +36,11 @@ public class StoreMock : Mock<IStore>
         Setup(m => m.ChangeName(name));
     }
 
+    public void SetupContainsSection(SectionId sectionId, bool returnValue)
+    {
+        Setup(m => m.ContainsSection(sectionId)).Returns(returnValue);
+    }
+
     public void SetupUpdateSectionsAsync(IEnumerable<SectionUpdate> sectionUpdates,
         IItemModificationService itemModificationService,
         IShoppingListModificationService shoppingListModificationService)

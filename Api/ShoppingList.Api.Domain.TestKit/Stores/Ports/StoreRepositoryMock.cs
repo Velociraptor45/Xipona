@@ -33,10 +33,18 @@ public class StoreRepositoryMock : Mock<IStoreRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindActiveByAsync(StoreId storeId, IStore returnValue)
+    public void SetupFindActiveByAsync(StoreId storeId, IStore? returnValue)
     {
         Setup(i => i.FindActiveByAsync(
                 storeId,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupFindActiveByAsync(SectionId sectionId, IStore? returnValue)
+    {
+        Setup(i => i.FindActiveByAsync(
+                sectionId,
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);
     }

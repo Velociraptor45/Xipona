@@ -19,25 +19,25 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Items.Services.ItemModific
 
 public class ItemModificationServiceTests
 {
-    private readonly LocalFixture _fixture;
+    private readonly LocalFixture _localFixture;
 
     public ItemModificationServiceTests()
     {
-        _fixture = new LocalFixture();
+        _localFixture = new LocalFixture();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithNotFindingItem_ShouldThrowDomainException()
     {
         // Arrange
-        _fixture.SetupNotFindingItem();
-        _fixture.SetupModification();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupNotFindingItem();
+        _localFixture.SetupModification();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        Func<Task> func = async () => await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        Func<Task> func = async () => await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
         await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemNotFound);
@@ -49,64 +49,64 @@ public class ItemModificationServiceTests
     public async Task ModifyItemWithTypesAsync_WithModifiedItemTypesEqualToExisting_ShouldRemoveNoItemFromAnyShoppingList()
     {
         // Arrange
-        _fixture.SetupForWithModifiedItemTypesEqualToExisting();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithModifiedItemTypesEqualToExisting();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyRemovingNoItemTypesFromAnyShoppingList();
+        _localFixture.VerifyRemovingNoItemTypesFromAnyShoppingList();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithModifiedItemTypesEqualToExisting_ShouldStoreNoShoppingList()
     {
         // Arrange
-        _fixture.SetupForWithModifiedItemTypesEqualToExisting();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithModifiedItemTypesEqualToExisting();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyStoringNoShoppingList();
+        _localFixture.VerifyStoringNoShoppingList();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithModifiedItemTypesEqualToExisting_ShouldModifyItem()
     {
         // Arrange
-        _fixture.SetupForWithModifiedItemTypesEqualToExisting();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithModifiedItemTypesEqualToExisting();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyModifyingItem();
+        _localFixture.VerifyModifyingItem();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithModifiedItemTypesEqualToExisting_ShouldStoreItem()
     {
         // Arrange
-        _fixture.SetupForWithModifiedItemTypesEqualToExisting();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithModifiedItemTypesEqualToExisting();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyStoringItem();
+        _localFixture.VerifyStoringItem();
     }
 
     #endregion WithModifiedItemTypesEqualToExisting
@@ -117,80 +117,80 @@ public class ItemModificationServiceTests
     public async Task ModifyItemWithTypesAsync_WithModifiedItemTypesNotContainingAllExisting_ShouldRemoveNotExistingItemTypesFromShoppingList()
     {
         // Arrange
-        _fixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyRemovingNotExistingItemTypesFromAllShoppingLists();
+        _localFixture.VerifyRemovingNotExistingItemTypesFromAllShoppingLists();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithModifiedItemTypesNotContainingAllExisting_ShouldNotRemoveStillExistingItemTypesFromShoppingLists()
     {
         // Arrange
-        _fixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyRemovingNoStillExistingItemTypesFromAnyShoppingList();
+        _localFixture.VerifyRemovingNoStillExistingItemTypesFromAnyShoppingList();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithModifiedItemTypesNotContainingAllExisting_ShouldStoreShoppingListsOfNotExistingItemTypes()
     {
         // Arrange
-        _fixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyStoringShoppingListsOfNotExistingItemTypes();
+        _localFixture.VerifyStoringShoppingListsOfNotExistingItemTypes();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithModifiedItemTypesNotContainingAllExisting_ShouldModifyItem()
     {
         // Arrange
-        _fixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyModifyingItem();
+        _localFixture.VerifyModifyingItem();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithModifiedItemTypesNotContainingAllExisting_ShouldStoreItem()
     {
         // Arrange
-        _fixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithModifiedItemTypesNotContainingAllExisting();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyStoringItem();
+        _localFixture.VerifyStoringItem();
     }
 
     #endregion WithModifiedItemTypesNotContainingAllExisting
@@ -201,64 +201,64 @@ public class ItemModificationServiceTests
     public async Task ModifyItemWithTypesAsync_WithModifiedItemTypesContainingNew_ShouldRemoveNoItemFromAnyShoppingList()
     {
         // Arrange
-        _fixture.SetupForWithModifiedItemTypesContainingNew();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithModifiedItemTypesContainingNew();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyRemovingNoItemTypesFromAnyShoppingList();
+        _localFixture.VerifyRemovingNoItemTypesFromAnyShoppingList();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithModifiedItemTypesContainingNew_ShouldStoreNoShoppingList()
     {
         // Arrange
-        _fixture.SetupForWithModifiedItemTypesContainingNew();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithModifiedItemTypesContainingNew();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyStoringNoShoppingList();
+        _localFixture.VerifyStoringNoShoppingList();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithModifiedItemTypesContainingNew_ShouldModifyItem()
     {
         // Arrange
-        _fixture.SetupForWithModifiedItemTypesContainingNew();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithModifiedItemTypesContainingNew();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyModifyingItem();
+        _localFixture.VerifyModifyingItem();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithModifiedItemTypesContainingNew_ShouldStoreItem()
     {
         // Arrange
-        _fixture.SetupForWithModifiedItemTypesContainingNew();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithModifiedItemTypesContainingNew();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyStoringItem();
+        _localFixture.VerifyStoringItem();
     }
 
     #endregion WithModifiedItemTypesContainingNew
@@ -269,92 +269,88 @@ public class ItemModificationServiceTests
     public async Task ModifyItemWithTypesAsync_WithSameItemsButStoresChanged_ShouldRemoveItemTypeWithChangedStoreFromShoppingLists()
     {
         // Arrange
-        _fixture.SetupForWithSameItemsButStoresChanged();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithSameItemsButStoresChanged();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyRemovingItemTypeWithChangedStoreFromAllShoppingLists();
+        _localFixture.VerifyRemovingItemTypeWithChangedStoreFromAllShoppingLists();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithSameItemsButStoresChanged_ShouldNotRemoveStillExistingItemTypesFromShoppingLists()
     {
         // Arrange
-        _fixture.SetupForWithSameItemsButStoresChanged();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithSameItemsButStoresChanged();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyRemovingNoStillExistingItemTypesFromAnyShoppingList();
+        _localFixture.VerifyRemovingNoStillExistingItemTypesFromAnyShoppingList();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithSameItemsButStoresChanged_ShouldStoreShoppingListOfItemTypeWithChangedStore()
     {
         // Arrange
-        _fixture.SetupForWithSameItemsButStoresChanged();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithSameItemsButStoresChanged();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyStoringShoppingListsOfItemTypeWithChangedStore();
+        _localFixture.VerifyStoringShoppingListsOfItemTypeWithChangedStore();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithSameItemsButStoresChanged_ShouldModifyItem()
     {
         // Arrange
-        _fixture.SetupForWithSameItemsButStoresChanged();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithSameItemsButStoresChanged();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyModifyingItem();
+        _localFixture.VerifyModifyingItem();
     }
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithSameItemsButStoresChanged_ShouldStoreItem()
     {
         // Arrange
-        _fixture.SetupForWithSameItemsButStoresChanged();
-        var sut = _fixture.CreateSut();
+        _localFixture.SetupForWithSameItemsButStoresChanged();
+        var sut = _localFixture.CreateSut();
 
-        TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+        TestPropertyNotSetException.ThrowIfNull(_localFixture.Modification);
 
         // Act
-        await sut.ModifyItemWithTypesAsync(_fixture.Modification);
+        await sut.ModifyItemWithTypesAsync(_localFixture.Modification);
 
         // Assert
-        _fixture.VerifyStoringItem();
+        _localFixture.VerifyStoringItem();
     }
 
     #endregion WithSameItemsButStoresChanged
 
-    private class LocalFixture
+    private class LocalFixture : ItemModificationServiceFixture
     {
         private readonly Fixture _fixture;
-        private readonly ItemRepositoryMock _itemRepositoryMock;
-        private readonly ValidatorMock _validatorMock;
         private readonly CommonFixture _commonFixture = new();
-        private readonly StoreRepositoryMock _storeRepositoryMock;
-        private readonly ShoppingListRepositoryMock _shoppingListRepositoryMock;
 
         private Dictionary<ItemTypeId, List<ShoppingListMock>>? _shoppingListDict;
         private List<IItemType>? _notExistingItemTypes;
@@ -365,23 +361,9 @@ public class ItemModificationServiceTests
         public LocalFixture()
         {
             _fixture = _commonFixture.GetNewFixture();
-            _itemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
-            _validatorMock = new ValidatorMock(MockBehavior.Strict);
-            _storeRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
-            _shoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
         }
 
         public ItemWithTypesModification? Modification { get; private set; }
-
-        public ItemModificationService CreateSut()
-        {
-            return new ItemModificationService(
-                _itemRepositoryMock.Object,
-                _ => _validatorMock.Object,
-                _shoppingListRepositoryMock.Object,
-                _storeRepositoryMock.Object,
-                default);
-        }
 
         public void SetupModification()
         {
@@ -398,13 +380,13 @@ public class ItemModificationServiceTests
         private void SetupFindingItem()
         {
             _itemMock = new ItemMock(ItemMother.InitialWithTypes().Create(), MockBehavior.Strict);
-            _itemRepositoryMock.SetupFindByAsync(_itemMock.Object.Id, _itemMock.Object);
+            ItemRepositoryMock.SetupFindByAsync(_itemMock.Object.Id, _itemMock.Object);
         }
 
         public void SetupNotFindingItem()
         {
             _itemMock = new ItemMock(ItemMother.InitialWithTypes().Create(), MockBehavior.Strict);
-            _itemRepositoryMock.SetupFindByAsync(_itemMock.Object.Id, null);
+            ItemRepositoryMock.SetupFindByAsync(_itemMock.Object.Id, null);
         }
 
         private void SetupItemReturningTypes()
@@ -424,7 +406,7 @@ public class ItemModificationServiceTests
         {
             TestPropertyNotSetException.ThrowIfNull(Modification);
             TestPropertyNotSetException.ThrowIfNull(_itemMock);
-            _itemMock.SetupModifyAsync(Modification, _validatorMock.Object);
+            _itemMock.SetupModifyAsync(Modification, ValidatorMock.Object);
         }
 
         private void SetupModifiedItemTypesEqualToExisting()
@@ -484,7 +466,7 @@ public class ItemModificationServiceTests
                     .CreateMany(1)
                     .Select(s => new ShoppingListMock(s))
                     .ToList();
-                _shoppingListRepositoryMock.SetupFindByAsync(type.Id, shoppingLists.Select(s => s.Object));
+                ShoppingListRepositoryMock.SetupFindByAsync(type.Id, shoppingLists.Select(s => s.Object));
                 dict.Add(type.Id, shoppingLists);
             }
 
@@ -508,7 +490,7 @@ public class ItemModificationServiceTests
                     .Select(s => new ShoppingListMock(s))
                     .ToList();
 
-                _shoppingListRepositoryMock.SetupFindByAsync(type.Id, shoppingListMocks.Select(m => m.Object));
+                ShoppingListRepositoryMock.SetupFindByAsync(type.Id, shoppingListMocks.Select(m => m.Object));
                 dict.Add(type.Id, shoppingListMocks);
             }
 
@@ -524,7 +506,7 @@ public class ItemModificationServiceTests
             {
                 foreach (var mock in shoppingListMocks)
                 {
-                    _shoppingListRepositoryMock.SetupStoreAsync(mock.Object);
+                    ShoppingListRepositoryMock.SetupStoreAsync(mock.Object);
                 }
             }
         }
@@ -532,7 +514,7 @@ public class ItemModificationServiceTests
         private void SetupStoringItem()
         {
             TestPropertyNotSetException.ThrowIfNull(_itemMock);
-            _itemRepositoryMock.SetupStoreAsync(_itemMock.Object, _itemMock.Object);
+            ItemRepositoryMock.SetupStoreAsync(_itemMock.Object, _itemMock.Object);
         }
 
         private void SetupStoringShoppingListsOfNotExistingItemTypes()
@@ -544,7 +526,7 @@ public class ItemModificationServiceTests
             {
                 foreach (var mock in shoppingListMocks)
                 {
-                    _shoppingListRepositoryMock.SetupStoreAsync(mock.Object);
+                    ShoppingListRepositoryMock.SetupStoreAsync(mock.Object);
                 }
             }
         }
@@ -554,7 +536,7 @@ public class ItemModificationServiceTests
             TestPropertyNotSetException.ThrowIfNull(_shoppingListDict);
             foreach (var listMock in _shoppingListDict.Values.SelectMany(l => l))
             {
-                _shoppingListRepositoryMock.SetupStoreAsync(listMock.Object);
+                ShoppingListRepositoryMock.SetupStoreAsync(listMock.Object);
             }
         }
 
@@ -628,7 +610,7 @@ public class ItemModificationServiceTests
             {
                 foreach (var mock in shoppingListMocks)
                 {
-                    _shoppingListRepositoryMock.VerifyStoreAsync(mock.Object, Times.Once);
+                    ShoppingListRepositoryMock.VerifyStoreAsync(mock.Object, Times.Once);
                 }
             }
         }
@@ -642,7 +624,7 @@ public class ItemModificationServiceTests
             {
                 foreach (var mock in shoppingListMocks)
                 {
-                    _shoppingListRepositoryMock.VerifyStoreAsync(mock.Object, Times.Once);
+                    ShoppingListRepositoryMock.VerifyStoreAsync(mock.Object, Times.Once);
                 }
             }
         }
@@ -654,7 +636,7 @@ public class ItemModificationServiceTests
             {
                 foreach (var mock in shoppingListMocks)
                 {
-                    _shoppingListRepositoryMock.VerifyStoreAsync(mock.Object, Times.Never);
+                    ShoppingListRepositoryMock.VerifyStoreAsync(mock.Object, Times.Never);
                 }
             }
         }
@@ -663,13 +645,13 @@ public class ItemModificationServiceTests
         {
             TestPropertyNotSetException.ThrowIfNull(_itemMock);
             TestPropertyNotSetException.ThrowIfNull(Modification);
-            _itemMock.VerifyModifyAsync(Modification, _validatorMock.Object, Times.Once);
+            _itemMock.VerifyModifyAsync(Modification, ValidatorMock.Object, Times.Once);
         }
 
         public void VerifyStoringItem()
         {
             TestPropertyNotSetException.ThrowIfNull(_itemMock);
-            _itemRepositoryMock.VerifyStoreAsync(_itemMock.Object, Times.Once);
+            ItemRepositoryMock.VerifyStoreAsync(_itemMock.Object, Times.Once);
         }
 
         #endregion Verification
@@ -727,5 +709,212 @@ public class ItemModificationServiceTests
         }
 
         #endregion SetupAggregates
+    }
+
+    public class TransferToSectionAsync
+    {
+        private readonly TransferToSectionAsyncFixture _fixture;
+
+        public TransferToSectionAsync()
+        {
+            _fixture = new TransferToSectionAsyncFixture();
+        }
+
+        [Fact]
+        public async Task TransferToSectionAsync_WithNotFindingStore_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupSectionIds();
+            _fixture.SetupStoreContainingNewSection();
+            _fixture.SetupNotFindingStore();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
+
+            // Act
+            var func = async () =>
+                await sut.TransferToSectionAsync(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.StoreNotFound);
+        }
+
+        [Fact]
+        public async Task TransferToSectionAsync_WithStoreNotContainingNewSection_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupSectionIds();
+            _fixture.SetupStoreNotContainingNewSection();
+            _fixture.SetupFindingStore();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
+
+            // Act
+            var func = async () =>
+                await sut.TransferToSectionAsync(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.OldAndNewSectionNotInSameStore);
+        }
+
+        [Fact]
+        public async Task TransferToSectionAsync_WithValidData_ShouldTransferItem()
+        {
+            // Arrange
+            _fixture.SetupSectionIds();
+            _fixture.SetupStoreContainingNewSection();
+            _fixture.SetupFindingStore();
+            _fixture.SetupItem();
+            _fixture.SetupFindingItem();
+            _fixture.SetupStoringItem();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
+
+            // Act
+            await sut.TransferToSectionAsync(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+
+            // Assert
+            _fixture.VerifyTransferringItem();
+        }
+
+        [Fact]
+        public async Task TransferToSectionAsync_WithValidData_ShouldStoreItem()
+        {
+            // Arrange
+            _fixture.SetupSectionIds();
+            _fixture.SetupStoreContainingNewSection();
+            _fixture.SetupFindingStore();
+            _fixture.SetupItem();
+            _fixture.SetupFindingItem();
+            _fixture.SetupStoringItem();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
+
+            // Act
+            await sut.TransferToSectionAsync(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+
+            // Assert
+            _fixture.VerifyStoringItem();
+        }
+
+        private sealed class TransferToSectionAsyncFixture : ItemModificationServiceFixture
+        {
+            private StoreMock? _storeMock;
+            private ItemMock? _itemMock;
+
+            public SectionId? NewSectionId { get; set; }
+            public SectionId? OldSectionId { get; set; }
+
+            public void SetupSectionIds()
+            {
+                OldSectionId = SectionId.New;
+                NewSectionId = SectionId.New;
+            }
+
+            public void SetupStoreContainingNewSection()
+            {
+                TestPropertyNotSetException.ThrowIfNull(NewSectionId);
+
+                _storeMock = new StoreMock(MockBehavior.Strict, new StoreBuilder().Create());
+                _storeMock.SetupContainsSection(NewSectionId.Value, true);
+            }
+
+            public void SetupStoreNotContainingNewSection()
+            {
+                TestPropertyNotSetException.ThrowIfNull(NewSectionId);
+
+                _storeMock = new StoreMock(MockBehavior.Strict, new StoreBuilder().Create());
+                _storeMock.SetupContainsSection(NewSectionId.Value, false);
+            }
+
+            public void SetupFindingStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldSectionId);
+                TestPropertyNotSetException.ThrowIfNull(_storeMock);
+
+                StoreRepositoryMock.SetupFindActiveByAsync(OldSectionId.Value, _storeMock.Object);
+            }
+
+            public void SetupNotFindingStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldSectionId);
+                TestPropertyNotSetException.ThrowIfNull(_storeMock);
+
+                StoreRepositoryMock.SetupFindActiveByAsync(OldSectionId.Value, null);
+            }
+
+            public void SetupItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldSectionId);
+                TestPropertyNotSetException.ThrowIfNull(NewSectionId);
+
+                _itemMock = new ItemMock(ItemMother.Initial().Create(), MockBehavior.Strict);
+                _itemMock.SetupTransferToDefaultSection(OldSectionId.Value, NewSectionId.Value);
+            }
+
+            public void SetupFindingItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldSectionId);
+                TestPropertyNotSetException.ThrowIfNull(_itemMock);
+
+                ItemRepositoryMock.SetupFindActiveByAsync(OldSectionId.Value, _itemMock.Object.ToMonoList());
+            }
+
+            public void SetupStoringItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_itemMock);
+
+                ItemRepositoryMock.SetupStoreAsync(_itemMock.Object, _itemMock.Object);
+            }
+
+            public void VerifyTransferringItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldSectionId);
+                TestPropertyNotSetException.ThrowIfNull(NewSectionId);
+                TestPropertyNotSetException.ThrowIfNull(_itemMock);
+
+                _itemMock.VerifyTransferToDefaultSection(OldSectionId.Value, NewSectionId.Value, Times.Once);
+            }
+
+            public void VerifyStoringItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_itemMock);
+
+                ItemRepositoryMock.VerifyStoreAsync(_itemMock.Object, Times.Once);
+            }
+        }
+    }
+
+    public abstract class ItemModificationServiceFixture
+    {
+        protected readonly ItemRepositoryMock ItemRepositoryMock;
+        protected readonly ValidatorMock ValidatorMock;
+        protected readonly StoreRepositoryMock StoreRepositoryMock;
+        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
+
+        protected ItemModificationServiceFixture()
+        {
+            ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
+            ValidatorMock = new ValidatorMock(MockBehavior.Strict);
+            StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
+            ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
+        }
+
+        public ItemModificationService CreateSut()
+        {
+            return new ItemModificationService(
+                ItemRepositoryMock.Object,
+                _ => ValidatorMock.Object,
+                ShoppingListRepositoryMock.Object,
+                StoreRepositoryMock.Object,
+                default);
+        }
     }
 }
