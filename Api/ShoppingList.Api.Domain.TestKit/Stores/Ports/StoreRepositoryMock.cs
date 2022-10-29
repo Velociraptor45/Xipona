@@ -41,6 +41,12 @@ public class StoreRepositoryMock : Mock<IStoreRepository>
             .ReturnsAsync(returnValue);
     }
 
+    public void SetupStoreAsync(IStore store, IStore returnValue)
+    {
+        Setup(m => m.StoreAsync(store, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(returnValue);
+    }
+
     public void VerifyFindActiveByAsyncOnce(StoreId storeId)
     {
         Verify(i => i.FindActiveByAsync(
@@ -55,5 +61,10 @@ public class StoreRepositoryMock : Mock<IStoreRepository>
                 storeId,
                 It.IsAny<CancellationToken>()),
             Times.Once);
+    }
+
+    public void VerifyStoreAsync(IStore store, Func<Times> times)
+    {
+        Verify(m => m.StoreAsync(store, It.IsAny<CancellationToken>()), times);
     }
 }
