@@ -234,6 +234,50 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entity);
     }
 
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(SectionId sectionId, CancellationToken cancellationToken)
+    {
+        var items = await GetItemQuery()
+            .Where(item => !item.Deleted
+                           && (item.AvailableAt.Any(av => av.DefaultSectionId == sectionId.Value)
+                               || item.ItemTypes.Any(t =>
+                                   t.AvailableAt.Any(av => av.DefaultSectionId == sectionId.Value))))
+            .ToArrayAsync(cancellationToken);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        foreach (var item in items)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            item.Predecessor = await LoadPredecessorsAsync(item);
+        }
+
+        return _toModelConverter.ToDomain(items);
+    }
+
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemId> itemIds,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var rawItemIds = itemIds.Select(id => id.Value).ToArray();
+
+        var items = await GetItemQuery()
+            .Where(item => item.ItemCategoryId.HasValue
+                           && rawItemIds.Contains(item.Id)
+                           && !item.Deleted)
+            .ToArrayAsync(cancellationToken);
+
+        foreach (var item in items)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            item.Predecessor = await LoadPredecessorsAsync(item);
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return _toModelConverter.ToDomain(items);
+    }
+
     public async Task<IItem> StoreAsync(IItem item, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();

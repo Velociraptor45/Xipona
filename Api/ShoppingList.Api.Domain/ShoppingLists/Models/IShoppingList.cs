@@ -28,4 +28,6 @@ public interface IShoppingList
     IShoppingList Finish(DateTimeOffset completionDate);
 
     void AddSection(IShoppingListSection section);
+
+    void TransferItem(SectionId sectionId, ItemId itemId, ItemTypeId? itemTypeId);
 }

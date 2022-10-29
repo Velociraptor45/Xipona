@@ -7,6 +7,7 @@ public class ItemTypeAvailableAtEntityBuilder : TestBuilderBase<ItemTypeAvailabl
 {
     public ItemTypeAvailableAtEntityBuilder()
     {
+        WithoutItemType();
     }
 
     public ItemTypeAvailableAtEntityBuilder(ItemTypeAvailableAt availability)

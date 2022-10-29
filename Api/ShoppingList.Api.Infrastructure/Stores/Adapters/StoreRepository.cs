@@ -32,6 +32,22 @@ public class StoreRepository : IStoreRepository
         return _toDomainConverter.ToDomain(storeEntities);
     }
 
+    public async Task<IStore?> FindActiveByAsync(SectionId sectionId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var entity = await GetStoreQuery()
+            .Where(store => !store.Deleted)
+            .FirstOrDefaultAsync(store => store.Sections.Any(s => s.Id == sectionId.Value), cancellationToken);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (entity == null)
+            return null;
+
+        return _toDomainConverter.ToDomain(entity);
+    }
+
     public async Task<IStore?> FindActiveByAsync(StoreId id, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();

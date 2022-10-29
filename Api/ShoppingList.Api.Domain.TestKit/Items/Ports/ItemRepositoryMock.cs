@@ -49,6 +49,11 @@ public class ItemRepositoryMock : Mock<IItemRepository>
             .ReturnsAsync(returnValue);
     }
 
+    public void SetupFindActiveByAsync(SectionId sectionId, IEnumerable<IItem> returnValue)
+    {
+        Setup(m => m.FindActiveByAsync(sectionId, It.IsAny<CancellationToken>())).ReturnsAsync(returnValue);
+    }
+
     public void VerifyFindByAsync(TemporaryItemId temporaryItemId)
     {
         Verify(

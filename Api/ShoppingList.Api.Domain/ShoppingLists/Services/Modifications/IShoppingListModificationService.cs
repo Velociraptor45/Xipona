@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
 
@@ -19,4 +20,5 @@ public interface IShoppingListModificationService
         OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId);
 
     Task FinishAsync(ShoppingListId shoppingListId, DateTimeOffset completionDate);
+    Task RemoveSectionAsync(SectionId sectionId);
 }

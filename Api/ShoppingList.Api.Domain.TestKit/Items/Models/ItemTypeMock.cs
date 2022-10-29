@@ -37,7 +37,7 @@ public class ItemTypeMock : Mock<IItemType>
 
     public void SetupIsAvailableAtStore(StoreId storeId, bool returnValue)
     {
-        Setup(m => m.IsAvailableAtStore(storeId)).Returns(returnValue);
+        Setup(m => m.IsAvailableAt(storeId)).Returns(returnValue);
     }
 
     public void SetupUpdate(StoreId storeId, Price price, IItemType returnValue)

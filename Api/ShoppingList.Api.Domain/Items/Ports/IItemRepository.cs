@@ -29,5 +29,9 @@ public interface IItemRepository
 
     Task<IItem?> FindActiveByAsync(ItemId itemId, ItemTypeId? itemTypeId, CancellationToken cancellationToken);
 
+    Task<IEnumerable<IItem>> FindActiveByAsync(SectionId sectionId, CancellationToken cancellationToken);
+
+    Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken);
+
     Task<IItem> StoreAsync(IItem item, CancellationToken cancellationToken);
 }

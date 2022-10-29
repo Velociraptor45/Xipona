@@ -1,4 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
@@ -15,5 +17,7 @@ public interface IStore
 
     ISection GetDefaultSection();
 
-    void UpdateSections(IEnumerable<SectionUpdate> sectionUpdates);
+    Task UpdateSectionsAsync(IEnumerable<SectionUpdate> sectionUpdates,
+        IItemModificationService itemModificationService,
+        IShoppingListModificationService shoppingListModificationService);
 }

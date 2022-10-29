@@ -132,7 +132,26 @@ public class Item : IItem
 
     public SectionId GetDefaultSectionIdForStore(StoreId storeId)
     {
+        if (HasItemTypes)
+            throw new DomainException(new ItemWithTypesHasNoAvailabilitiesReason(Id));
+
         var availability = _availabilities.FirstOrDefault(av => av.StoreId == storeId);
+        if (availability == null)
+            throw new DomainException(new ItemAtStoreNotAvailableReason(Id, storeId));
+
+        return availability.DefaultSectionId;
+    }
+
+    public SectionId GetDefaultSectionIdForStore(StoreId storeId, ItemTypeId itemTypeId)
+    {
+        if (!HasItemTypes)
+            throw new DomainException(new ItemHasNoItemTypesReason(Id));
+
+        var type = _itemTypes!.FirstOrDefault(t => t.Id == itemTypeId);
+        if (type is null)
+            throw new DomainException(new ItemTypeNotFoundReason(Id, itemTypeId));
+
+        var availability = type.Availabilities.FirstOrDefault(av => av.StoreId == storeId);
         if (availability == null)
             throw new DomainException(new ItemAtStoreNotAvailableReason(Id, storeId));
 
@@ -274,5 +293,21 @@ public class Item : IItem
 
         newItem.SetPredecessor(this);
         return newItem;
+    }
+
+    public void TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId)
+    {
+        if (HasItemTypes)
+        {
+            _itemTypes!.TransferToDefaultSection(oldSectionId, newSectionId);
+            return;
+        }
+
+        for (int i = 0; i < _availabilities.Count; i++)
+        {
+            var availability = _availabilities[i];
+            if (availability.DefaultSectionId == oldSectionId)
+                _availabilities[i] = availability.TransferToDefaultSection(newSectionId);
+        }
     }
 }

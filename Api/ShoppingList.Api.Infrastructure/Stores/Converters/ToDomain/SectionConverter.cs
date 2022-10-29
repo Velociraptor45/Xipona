@@ -20,6 +20,7 @@ public class SectionConverter : IToDomainConverter<Section, ISection>
             new SectionId(source.Id),
             new SectionName(source.Name),
             source.SortIndex,
-            source.IsDefaultSection);
+            source.IsDefaultSection,
+            source.IsDeleted);
     }
 }

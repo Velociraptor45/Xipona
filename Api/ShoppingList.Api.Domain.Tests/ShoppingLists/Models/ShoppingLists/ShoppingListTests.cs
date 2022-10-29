@@ -4,9 +4,11 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using ProjectHermes.ShoppingList.Api.TestTools.Extensions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists;
@@ -396,4 +398,176 @@ public class ShoppingListTests
     }
 
     #endregion AddSection
+
+    public class TransferItem
+    {
+        private readonly TransferItemFixture _fixture;
+
+        public TransferItem()
+        {
+            _fixture = new TransferItemFixture();
+        }
+
+        [Fact]
+        public void TransferItem_WithoutNewSection_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupSectionIds();
+            _fixture.SetupItemIdAndItemTypeId();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+
+            // Act
+            var act = () => sut.TransferItem(_fixture.OldSectionId.Value, _fixture.ItemId.Value, _fixture.ItemTypeId);
+
+            // Assert
+            act.Should().ThrowDomainException(ErrorReasonCode.SectionNotFound);
+        }
+
+        [Fact]
+        public void TransferItem_WithoutItem_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupSectionIds();
+            _fixture.SetupItemIdAndItemTypeId();
+            _fixture.SetupOldAndNewSectionsWithoutItem();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+
+            // Act
+            var act = () => sut.TransferItem(_fixture.OldSectionId.Value, _fixture.ItemId.Value, _fixture.ItemTypeId);
+
+            // Assert
+            act.Should().ThrowDomainException(ErrorReasonCode.ItemNotOnShoppingList);
+        }
+
+        [Fact]
+        public void TransferItem_WithOldSectionEqualsNewSection_ShouldNotTransferItem()
+        {
+            // Arrange
+            _fixture.SetupSectionIds();
+            _fixture.SetupItemIdAndItemTypeId();
+            _fixture.SetupOldAndNewSections();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+
+            // Act
+            sut.TransferItem(_fixture.OldSectionId.Value, _fixture.ItemId.Value, _fixture.ItemTypeId);
+
+            // Assert
+            var oldSection = sut.Sections.First(s => s.Id == _fixture.OldSectionId.Value);
+            var newSection = sut.Sections.First(s => s.Id == _fixture.NewSectionId.Value);
+
+            oldSection.Items.Should().Contain(i =>
+                i.Id == _fixture.ItemId.Value && i.TypeId == _fixture.ItemTypeId.Value);
+            newSection.Items.Should().NotContain(i =>
+                i.Id == _fixture.ItemId.Value && i.TypeId == _fixture.ItemTypeId.Value);
+        }
+
+        [Fact]
+        public void TransferItem_WithValidData_ShouldTransferItem()
+        {
+            // Arrange
+            _fixture.SetupSectionIds();
+            _fixture.SetupItemIdAndItemTypeId();
+            _fixture.SetupOldAndNewSections();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+
+            // Act
+            sut.TransferItem(_fixture.NewSectionId.Value, _fixture.ItemId.Value, _fixture.ItemTypeId);
+
+            // Assert
+            var oldSection = sut.Sections.First(s => s.Id == _fixture.OldSectionId.Value);
+            var newSection = sut.Sections.First(s => s.Id == _fixture.NewSectionId.Value);
+
+            oldSection.Items.Should().NotContain(i =>
+                i.Id == _fixture.ItemId.Value && i.TypeId == _fixture.ItemTypeId.Value);
+            newSection.Items.Should().Contain(i =>
+                i.Id == _fixture.ItemId.Value && i.TypeId == _fixture.ItemTypeId.Value);
+        }
+
+        private class TransferItemFixture
+        {
+            private readonly ShoppingListBuilder _builder = ShoppingListMother.Initial();
+
+            public SectionId? OldSectionId { get; private set; }
+            public SectionId? NewSectionId { get; private set; }
+            public ItemId? ItemId { get; private set; }
+            public ItemTypeId? ItemTypeId { get; private set; }
+
+            public Domain.ShoppingLists.Models.ShoppingList CreateSut()
+            {
+                return _builder.Create();
+            }
+
+            public void SetupSectionIds()
+            {
+                OldSectionId = SectionId.New;
+                NewSectionId = SectionId.New;
+            }
+
+            public void SetupItemIdAndItemTypeId()
+            {
+                ItemId = Domain.Items.Models.ItemId.New;
+                ItemTypeId = Domain.Items.Models.ItemTypeId.New;
+            }
+
+            public void SetupOldAndNewSectionsWithoutItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldSectionId);
+                TestPropertyNotSetException.ThrowIfNull(NewSectionId);
+                TestPropertyNotSetException.ThrowIfNull(ItemId);
+
+                var sections = new List<IShoppingListSection>
+                {
+                    new ShoppingListSectionBuilder()
+                        .WithId(OldSectionId.Value)
+                        .Create(),
+                    new ShoppingListSectionBuilder()
+                        .WithId(NewSectionId.Value)
+                        .Create()
+                };
+
+                _builder.WithSections(sections);
+            }
+
+            public void SetupOldAndNewSections()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldSectionId);
+                TestPropertyNotSetException.ThrowIfNull(NewSectionId);
+                TestPropertyNotSetException.ThrowIfNull(ItemId);
+
+                var item = new ShoppingListItemBuilder()
+                    .WithId(ItemId.Value)
+                    .WithTypeId(ItemTypeId)
+                    .Create();
+
+                var sections = new List<IShoppingListSection>
+                {
+                    new ShoppingListSectionBuilder()
+                        .WithId(OldSectionId.Value)
+                        .WithItem(item)
+                        .Create(),
+                    new ShoppingListSectionBuilder()
+                        .WithId(NewSectionId.Value)
+                        .Create()
+                };
+
+                _builder.WithSections(sections);
+            }
+        }
+    }
 }

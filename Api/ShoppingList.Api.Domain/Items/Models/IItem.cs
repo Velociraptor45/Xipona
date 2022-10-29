@@ -30,6 +30,8 @@ public interface IItem
 
     SectionId GetDefaultSectionIdForStore(StoreId storeId);
 
+    SectionId GetDefaultSectionIdForStore(StoreId storeId, ItemTypeId itemTypeId);
+
     bool IsAvailableInStore(StoreId storeId);
 
     void MakePermanent(PermanentItem permanentItem, IEnumerable<IItemAvailability> availabilities);
@@ -54,4 +56,6 @@ public interface IItem
         IDateTimeService dateTimeService);
 
     IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService);
+
+    void TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId);
 }

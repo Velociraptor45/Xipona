@@ -28,4 +28,10 @@ public class SectionBuilder : DomainTestBuilderBase<Section>
         FillConstructorWith("isDefaultSection", isDefaultSection);
         return this;
     }
+
+    public SectionBuilder WithIsDeleted(bool isDeleted)
+    {
+        FillConstructorWith(nameof(isDeleted), isDeleted);
+        return this;
+    }
 }

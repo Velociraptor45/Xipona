@@ -39,9 +39,14 @@ public class ItemType : IItemType
         return availability.DefaultSectionId;
     }
 
-    public bool IsAvailableAtStore(StoreId storeId)
+    public bool IsAvailableAt(StoreId storeId)
     {
         return Availabilities.Any(av => av.StoreId == storeId);
+    }
+
+    public bool IsAvailableAt(SectionId sectionId)
+    {
+        return Availabilities.Any(av => av.DefaultSectionId == sectionId);
     }
 
     public async Task<IItemType> ModifyAsync(ItemTypeModification modification, IValidator validator)
@@ -91,5 +96,26 @@ public class ItemType : IItemType
         newItemType.SetPredecessor(this);
 
         return newItemType;
+    }
+
+    public IItemType TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId)
+    {
+        if (!IsAvailableAt(oldSectionId))
+            return this;
+
+        var availabilities = new List<IItemAvailability>();
+        for (int i = 0; i < Availabilities.Count; i++)
+        {
+            var availability = Availabilities.ElementAt(i);
+            if (availability.DefaultSectionId == oldSectionId)
+                availabilities.Add(availability.TransferToDefaultSection(newSectionId));
+            else
+                availabilities.Add(availability);
+        }
+
+        return new ItemType(
+            Id,
+            Name,
+            availabilities);
     }
 }

@@ -32,7 +32,8 @@ public class SectionConverterTests : ToDomainConverterTestBase<Section, ISection
             Id = destination.Id.Value,
             Name = destination.Name.Value,
             SortIndex = destination.SortingIndex,
-            IsDefaultSection = destination.IsDefaultSection
+            IsDefaultSection = destination.IsDefaultSection,
+            IsDeleted = destination.IsDeleted
         };
     }
 
