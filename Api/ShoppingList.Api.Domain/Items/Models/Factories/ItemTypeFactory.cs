@@ -3,12 +3,9 @@
 public class ItemTypeFactory : IItemTypeFactory
 {
     public IItemType Create(ItemTypeId id, ItemTypeName name, IEnumerable<IItemAvailability> availabilities,
-        IItemType? predecessor)
+        ItemTypeId? predecessorId)
     {
-        var type = new ItemType(id, name, availabilities);
-        if (predecessor != null)
-            type.SetPredecessor(predecessor);
-
+        var type = new ItemType(id, name, availabilities, predecessorId);
         return type;
     }
 
@@ -18,9 +15,9 @@ public class ItemTypeFactory : IItemTypeFactory
     }
 
     public IItemType CreateNew(ItemTypeName name, IEnumerable<IItemAvailability> availabilities,
-        IItemType? predecessor)
+        ItemTypeId? predecessorId)
     {
-        return Create(ItemTypeId.New, name, availabilities, predecessor);
+        return Create(ItemTypeId.New, name, availabilities, predecessorId);
     }
 
     public IItemType CloneWithNewId(IItemType itemType)
@@ -28,6 +25,7 @@ public class ItemTypeFactory : IItemTypeFactory
         return new ItemType(
             ItemTypeId.New,
             itemType.Name,
-            itemType.Availabilities);
+            itemType.Availabilities,
+            itemType.PredecessorId);
     }
 }

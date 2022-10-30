@@ -94,12 +94,12 @@ public class ItemTypes : IEnumerable<IItemType>
         return _itemTypes.TryGetValue(id, out itemType);
     }
 
-    public bool TryGetWithPredecessor(ItemTypeId predecessorId, out IItemType? predecessor)
+    public bool TryGetWithPredecessor(ItemTypeId predecessorId, out IItemType? itemType)
     {
-        predecessor = _itemTypes.Values
-            .SingleOrDefault(t => t.Predecessor != null && t.Predecessor.Id == predecessorId);
+        itemType = _itemTypes.Values
+            .SingleOrDefault(t => t.PredecessorId == predecessorId);
 
-        return predecessor != null;
+        return itemType != null;
     }
 
     private void Remove(ItemTypeId id)

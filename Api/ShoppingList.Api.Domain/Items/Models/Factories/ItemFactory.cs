@@ -16,7 +16,7 @@ public class ItemFactory : IItemFactory
 
     public IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
-        IItem? predecessor, IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId,
+        ItemId? predecessorId, IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId,
         DateTimeOffset? updatedOn)
     {
         var item = new Item(
@@ -30,16 +30,14 @@ public class ItemFactory : IItemFactory
             manufacturerId,
             availabilities,
             temporaryId,
-            updatedOn);
-
-        if (predecessor != null)
-            item.SetPredecessor(predecessor);
+            updatedOn,
+            predecessorId);
 
         return item;
     }
 
     public IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, ItemQuantity itemQuantity,
-        ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IItem? predecessor,
+        ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, ItemId? predecessorId,
         IEnumerable<IItemType> itemTypes, DateTimeOffset? updatedOn)
     {
         var item = new Item(
@@ -51,10 +49,8 @@ public class ItemFactory : IItemFactory
             itemCategoryId,
             manufacturerId,
             new ItemTypes(itemTypes, _itemTypeFactory),
-            updatedOn);
-
-        if (predecessor != null)
-            item.SetPredecessor(predecessor);
+            updatedOn,
+            predecessorId);
 
         return item;
     }
@@ -72,6 +68,7 @@ public class ItemFactory : IItemFactory
             itemCreation.ManufacturerId,
             itemCreation.Availabilities,
             null,
+            null,
             null);
     }
 
@@ -88,11 +85,12 @@ public class ItemFactory : IItemFactory
             null,
             model.Availability.ToMonoList(),
             new TemporaryItemId(model.ClientSideId),
+            null,
             null);
     }
 
     public IItem CreateNew(ItemName name, Comment comment, ItemQuantity itemQuantity,
-        ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, IItem? predecessor,
+        ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, ItemId? predecessorId,
         IEnumerable<IItemType> itemTypes)
     {
         var item = new Item(
@@ -104,10 +102,8 @@ public class ItemFactory : IItemFactory
             itemCategoryId,
             manufacturerId,
             new ItemTypes(itemTypes, _itemTypeFactory),
-            null);
-
-        if (predecessor != null)
-            item.SetPredecessor(predecessor);
+            null,
+            predecessorId);
 
         return item;
     }

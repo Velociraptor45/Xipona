@@ -27,10 +27,6 @@ public class ItemConverterTests : ToDomainConverterTestBase<Item, IItem>
 
     public static Item GetSource(IItem destination)
     {
-        Item? predecessor = null;
-        if (destination.Predecessor != null)
-            predecessor = GetSource(destination.Predecessor);
-
         var availabilities = destination.Availabilities
             .Select(ItemAvailabilityConverterTests.GetSource)
             .ToList();
@@ -51,8 +47,7 @@ public class ItemConverterTests : ToDomainConverterTestBase<Item, IItem>
             QuantityTypeInPacket = destination.ItemQuantity.InPacket?.Type.ToInt(),
             ItemCategoryId = destination.ItemCategoryId?.Value,
             ManufacturerId = destination.ManufacturerId?.Value,
-            PredecessorId = predecessor?.Id,
-            Predecessor = predecessor,
+            PredecessorId = destination.PredecessorId?.Value,
             AvailableAt = availabilities,
             CreatedFrom = destination.TemporaryId?.Value,
             ItemTypes = itemTypes,

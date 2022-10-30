@@ -26,8 +26,7 @@ public class ItemConverter : IToDomainConverter<Item, IItem>
 
     public IItem ToDomain(Item source)
     {
-        IItem? predecessor = source.PredecessorId is null ? null : ToDomain(source.Predecessor!);
-
+        var predecessorId = source.PredecessorId is null ? (ItemId?)null : new ItemId(source.PredecessorId.Value);
         var itemCategoryId = source.ItemCategoryId.HasValue
             ? new ItemCategoryId(source.ItemCategoryId.Value)
             : (ItemCategoryId?)null;
@@ -73,7 +72,7 @@ public class ItemConverter : IToDomainConverter<Item, IItem>
                     itemQuantityInPacket),
                 itemCategoryId.Value,
                 manufacturerId,
-                predecessor,
+                predecessorId,
                 itemTypes,
                 source.UpdatedOn);
         }
@@ -92,7 +91,7 @@ public class ItemConverter : IToDomainConverter<Item, IItem>
                 itemQuantityInPacket),
             itemCategoryId,
             manufacturerId,
-            predecessor,
+            predecessorId,
             availabilities,
             temporaryId,
             source.UpdatedOn);

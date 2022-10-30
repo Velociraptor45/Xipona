@@ -210,23 +210,21 @@ public class ItemControllerIntegrationTests
                     var types = FirstLevelPredecessor.ItemTypes
                         .Select(t =>
                         {
-                            var type = new ItemTypeBuilder().Create();
-                            type.SetPredecessor(t);
+                            var type = new ItemTypeBuilder().WithPredecessorId(t.Id).Create();
                             return type;
                         });
                     builder.WithTypes(new ItemTypes(types, factory));
                 }
 
-                CurrentItem = builder.Create();
+                CurrentItem = builder
+                    .WithPredecessorId(FirstLevelPredecessor?.Id)
+                    .Create();
                 _currentItemCategory = ItemCategoryMother.NotDeleted()
                     .WithId(CurrentItem.ItemCategoryId ?? ItemCategoryId.New)
                     .Create();
                 _currentManufacturer = ManufacturerMother.NotDeleted()
                     .WithId(CurrentItem.ManufacturerId ?? ManufacturerId.New)
                     .Create();
-
-                if (FirstLevelPredecessor is not null)
-                    CurrentItem.SetPredecessor(FirstLevelPredecessor);
 
                 await StoreAsync(CurrentItem, _currentManufacturer, _currentItemCategory);
             }
@@ -239,16 +237,15 @@ public class ItemControllerIntegrationTests
                 var types = SecondLevelPredecessor.ItemTypes
                     .Select(t =>
                     {
-                        var type = new ItemTypeBuilder().Create();
-                        type.SetPredecessor(t);
+                        var type = new ItemTypeBuilder().WithPredecessorId(t.Id).Create();
                         return type;
                     });
 
                 FirstLevelPredecessor = ItemMother.InitialWithTypes()
                     .WithIsDeleted(true)
                     .WithTypes(new ItemTypes(types, factory))
+                    .WithPredecessorId(SecondLevelPredecessor.Id)
                     .Create();
-                FirstLevelPredecessor.SetPredecessor(SecondLevelPredecessor);
                 _firstLevelItemCategory = ItemCategoryMother.NotDeleted()
                     .WithId(FirstLevelPredecessor.ItemCategoryId ?? ItemCategoryId.New)
                     .Create();

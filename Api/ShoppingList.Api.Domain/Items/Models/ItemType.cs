@@ -9,26 +9,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
 public class ItemType : IItemType
 {
-    public ItemType(ItemTypeId id, ItemTypeName name, IEnumerable<IItemAvailability> availabilities)
+    public ItemType(ItemTypeId id, ItemTypeName name, IEnumerable<IItemAvailability> availabilities,
+        ItemTypeId? predecessorId)
     {
         Id = id;
         Name = name;
+        PredecessorId = predecessorId;
         Availabilities = availabilities.ToList();
-
-        // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
-        // https://github.com/AutoFixture/AutoFixture/issues/1108
-        Predecessor = null;
     }
 
     public ItemTypeId Id { get; }
     public ItemTypeName Name { get; }
     public IReadOnlyCollection<IItemAvailability> Availabilities { get; }
-    public IItemType? Predecessor { get; private set; }
-
-    public void SetPredecessor(IItemType predecessor)
-    {
-        Predecessor = predecessor;
-    }
+    public ItemTypeId? PredecessorId { get; }
 
     public SectionId GetDefaultSectionIdForStore(StoreId storeId)
     {
@@ -56,7 +49,8 @@ public class ItemType : IItemType
         return new ItemType(
             Id,
             modification.Name,
-            modification.Availabilities);
+            modification.Availabilities,
+            PredecessorId);
     }
 
     public async Task<IItemType> UpdateAsync(ItemTypeUpdate update, IValidator validator)
@@ -66,8 +60,8 @@ public class ItemType : IItemType
         var type = new ItemType(
             ItemTypeId.New,
             update.Name,
-            update.Availabilities);
-        type.SetPredecessor(this);
+            update.Availabilities,
+            Id);
 
         return type;
     }
@@ -82,8 +76,7 @@ public class ItemType : IItemType
                 ? new ItemAvailability(storeId, price, av.DefaultSectionId)
                 : av);
 
-        var newItemType = new ItemType(ItemTypeId.New, Name, availabilities);
-        newItemType.SetPredecessor(this);
+        var newItemType = new ItemType(ItemTypeId.New, Name, availabilities, Id);
         return newItemType;
     }
 
@@ -92,8 +85,8 @@ public class ItemType : IItemType
         var newItemType = new ItemType(
             ItemTypeId.New,
             Name,
-            Availabilities);
-        newItemType.SetPredecessor(this);
+            Availabilities,
+            Id);
 
         return newItemType;
     }
@@ -116,6 +109,7 @@ public class ItemType : IItemType
         return new ItemType(
             Id,
             Name,
-            availabilities);
+            availabilities,
+            PredecessorId);
     }
 }

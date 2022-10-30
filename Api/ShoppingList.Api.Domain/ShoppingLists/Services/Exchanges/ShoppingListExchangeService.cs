@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
@@ -13,14 +14,17 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
 {
     private readonly IShoppingListRepository _shoppingListRepository;
     private readonly IAddItemToShoppingListService _addItemToShoppingListService;
+    private readonly IItemTypeReadRepository _itemTypeReadRepository;
     private readonly ILogger<ShoppingListExchangeService> _logger;
 
     public ShoppingListExchangeService(IShoppingListRepository shoppingListRepository,
         IAddItemToShoppingListService addItemToShoppingListService,
+        IItemTypeReadRepository itemTypeReadRepository,
         ILogger<ShoppingListExchangeService> logger)
     {
         _shoppingListRepository = shoppingListRepository;
         _addItemToShoppingListService = addItemToShoppingListService;
+        _itemTypeReadRepository = itemTypeReadRepository;
         _logger = logger;
     }
 
@@ -68,19 +72,22 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
         foreach (var list in shoppingLists)
         {
             var oldListItems = list.Items
-                .Where(i => i.Id == oldItemId);
+                .Where(i => i.Id == oldItemId)
+                .ToArray();
+
+            var oldListItemViolating = oldListItems.FirstOrDefault(i => i.TypeId is null);
+            if (oldListItemViolating is not null)
+                throw new DomainException(new ShoppingListItemHasNoTypeReason(list.Id, oldListItemViolating.Id));
 
             foreach (var oldListItem in oldListItems)
             {
-                if (oldListItem.TypeId == null)
-                    throw new DomainException(new ShoppingListItemHasNoTypeReason(list.Id, oldListItem.Id));
-
                 list.RemoveItem(oldItemId, oldListItem.TypeId);
-                if (!newItem.TryGetTypeWithPredecessor(oldListItem.TypeId.Value, out var itemType)
+                if (!newItem.TryGetTypeWithPredecessor(oldListItem.TypeId!.Value, out var itemType)
                     || !itemType!.IsAvailableAt(list.StoreId))
                     continue;
 
                 var sectionId = itemType.GetDefaultSectionIdForStore(list.StoreId);
+
                 await _addItemToShoppingListService.AddItemWithTypeToShoppingList(list, newItem, itemType.Id,
                     sectionId, oldListItem.Quantity, cancellationToken);
 

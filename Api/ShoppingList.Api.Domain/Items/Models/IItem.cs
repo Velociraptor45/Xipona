@@ -19,12 +19,12 @@ public interface IItem
     public ItemQuantity ItemQuantity { get; }
     ItemCategoryId? ItemCategoryId { get; }
     ManufacturerId? ManufacturerId { get; }
-    IItem? Predecessor { get; }
     TemporaryItemId? TemporaryId { get; }
     IReadOnlyCollection<IItemAvailability> Availabilities { get; }
     IReadOnlyCollection<IItemType> ItemTypes { get; }
     bool HasItemTypes { get; }
     DateTimeOffset? UpdatedOn { get; }
+    ItemId? PredecessorId { get; }
 
     void Delete();
 
@@ -39,8 +39,6 @@ public interface IItem
     void Modify(ItemModification itemChange, IEnumerable<IItemAvailability> availabilities);
 
     Task ModifyAsync(ItemWithTypesModification modification, IValidator validator);
-
-    void SetPredecessor(IItem predecessor);
 
     bool TryGetType(ItemTypeId itemTypeId, out IItemType? itemType);
 

@@ -3,10 +3,11 @@
 public interface IItemTypeFactory
 {
     IItemType Create(ItemTypeId id, ItemTypeName name, IEnumerable<IItemAvailability> availabilities,
-        IItemType? predecessor);
+        ItemTypeId? predecessorId);
 
-    IItemType CreateNew(ItemTypeName name, IEnumerable<IItemAvailability> availabilities, IItemType? predecessor);
+    IItemType CreateNew(ItemTypeName name, IEnumerable<IItemAvailability> availabilities, ItemTypeId? predecessorId);
 
     IItemType CreateNew(ItemTypeName name, IEnumerable<IItemAvailability> availabilities);
+
     IItemType CloneWithNewId(IItemType itemType);
 }

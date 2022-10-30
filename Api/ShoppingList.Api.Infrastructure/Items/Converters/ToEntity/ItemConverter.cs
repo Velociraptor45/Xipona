@@ -26,7 +26,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
             AvailableAt = source.Availabilities.Select(av => ToAvailableAt(av, source)).ToList(),
             ItemTypes = source.ItemTypes.Select(type => ToItemType(type, source)).ToList(),
             UpdatedOn = source.UpdatedOn,
-            PredecessorId = source.Predecessor?.Id.Value
+            PredecessorId = source.PredecessorId?.Value
         };
     }
 
@@ -49,7 +49,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
             ItemId = source.Id.Value,
             Name = itemType.Name.Value,
             AvailableAt = itemType.Availabilities.Select(av => ToItemTypeAvailableAt(av, itemType)).ToList(),
-            PredecessorId = itemType.Predecessor?.Id.Value
+            PredecessorId = itemType.PredecessorId?.Value
         };
     }
 

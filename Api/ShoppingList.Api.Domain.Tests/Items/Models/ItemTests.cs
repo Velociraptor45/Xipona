@@ -192,27 +192,6 @@ public class ItemTests
 
     #endregion GetDefaultSectionIdForStore
 
-    #region SetPredecessor
-
-    [Fact]
-    public void SetPredecessor_WithValidPredecessor_ShouldSetPredecessor()
-    {
-        // Arrange
-        IItem testObject = ItemMother.Initial().Create();
-        IItem predecessor = ItemMother.Initial().Create();
-
-        // Act
-        testObject.SetPredecessor(predecessor);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            testObject.Predecessor.Should().BeEquivalentTo(predecessor);
-        }
-    }
-
-    #endregion SetPredecessor
-
     public class UpdateAsync_WithTypes
     {
         private readonly UpdateAsyncFixture _fixture;
@@ -338,8 +317,8 @@ public class ItemTests
                 ExpectedItemType = new ItemTypeBuilder().Create();
                 ExpectedResult = ItemMother.InitialWithTypes()
                     .WithTypes(new ItemTypes(ExpectedItemType.ToMonoList(), _itemTypeFactoryMock.Object))
+                    .WithPredecessorId(sut.Id)
                     .Create();
-                ExpectedResult.SetPredecessor(sut);
             }
 
             public void SetupUpdatingItemType()
@@ -543,8 +522,7 @@ public class ItemTests
 
             public void SetupExpectedItem(IItem sut)
             {
-                ExpectedResult = ItemMother.Initial().Create();
-                ExpectedResult.SetPredecessor(sut);
+                ExpectedResult = ItemMother.Initial().WithPredecessorId(sut.Id).Create();
             }
 
             public void SetupItemUpdate()
@@ -836,8 +814,8 @@ public class ItemTests
                     item.ManufacturerId,
                     item.Availabilities.Select(av => new ItemAvailability(av.StoreId, Price.Value, av.DefaultSectionId)),
                     item.TemporaryId,
-                    null);
-                ExpectedResult.SetPredecessor(item);
+                    null,
+                    item.Id);
             }
 
             public void SetupExpectedResultWithAllTypesUpdated(Item item)
@@ -860,14 +838,13 @@ public class ItemTests
                                 t.Name,
                                 t.Availabilities.Select(av => av.StoreId == StoreId
                                     ? new ItemAvailability(StoreId.Value, Price.Value, av.DefaultSectionId)
-                                    : av));
-                            type.SetPredecessor(t);
+                                    : av),
+                                t.Id);
                             return type;
                         }),
                         _itemTypeFactoryMock.Object),
-                    null);
-
-                ExpectedResult.SetPredecessor(item);
+                    null,
+                    item.Id);
             }
 
             public void SetupExpectedResultWithOneTypeUpdated(Item item)
@@ -891,13 +868,13 @@ public class ItemTests
                                 t.Name,
                                 t.Availabilities.Select(av => t.Id == ItemTypeId.Value
                                     ? new ItemAvailability(StoreId.Value, Price.Value, av.DefaultSectionId)
-                                    : av));
-                            type.SetPredecessor(t);
+                                    : av),
+                                t.Id);
                             return type;
                         }),
                         _itemTypeFactoryMock.Object),
-                    null);
-                ExpectedResult.SetPredecessor(item);
+                    null,
+                    item.Id);
             }
         }
     }

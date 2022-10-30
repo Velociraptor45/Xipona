@@ -1,4 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models.Factories;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 
@@ -13,6 +15,7 @@ public static class ItemMother
             .WithIsTemporary(false)
             .WithoutTemporaryId()
             .WithoutUpdatedOn()
+            .WithoutPredecessorId()
             .AsItem();
     }
 
@@ -20,11 +23,15 @@ public static class ItemMother
     {
         builder ??= new ItemBuilder();
 
+        var types = ItemTypeMother.Initial().CreateMany(3);
+
         return builder
             .WithIsDeleted(false)
             .WithIsTemporary(false)
             .WithoutTemporaryId()
-            .WithoutUpdatedOn();
+            .WithoutUpdatedOn()
+            .WithoutPredecessorId()
+            .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object));
     }
 
     public static ItemBuilder InitialTemporary(ItemBuilder? builder = null)
@@ -38,6 +45,7 @@ public static class ItemMother
             .WithoutManufacturerId()
             .WithAvailabilities(ItemAvailabilityMother.Initial().Create().ToMonoList())
             .WithoutUpdatedOn()
+            .WithoutPredecessorId()
             .AsItem();
     }
 
@@ -51,6 +59,7 @@ public static class ItemMother
             .WithoutTemporaryId()
             .WithoutManufacturerId()
             .WithoutUpdatedOn()
+            .WithoutPredecessorId()
             .AsItem();
     }
 
