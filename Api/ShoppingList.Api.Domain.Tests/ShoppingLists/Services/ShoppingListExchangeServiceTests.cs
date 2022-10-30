@@ -8,7 +8,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models.Factories;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
@@ -1036,14 +1035,12 @@ public class ShoppingListExchangeServiceTests
         protected CommonFixture CommonFixture = new();
         protected ShoppingListRepositoryMock ShoppingListRepositoryMock;
         protected AddItemToShoppingListServiceMock AddItemToShoppingListServiceMock;
-        protected ItemTypeReadRepositoryMock ItemTypeReadRepositoryMock;
         private readonly ILogger<ShoppingListExchangeService> _logger;
 
         protected ShoppingListExchangeServiceFixture(ITestOutputHelper output)
         {
             ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
             AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(MockBehavior.Strict);
-            ItemTypeReadRepositoryMock = new ItemTypeReadRepositoryMock(MockBehavior.Strict);
             _logger = output.BuildLoggerFor<ShoppingListExchangeService>();
         }
 
@@ -1052,7 +1049,6 @@ public class ShoppingListExchangeServiceTests
             return new ShoppingListExchangeService(
                 ShoppingListRepositoryMock.Object,
                 AddItemToShoppingListServiceMock.Object,
-                ItemTypeReadRepositoryMock.Object,
                 _logger);
         }
     }

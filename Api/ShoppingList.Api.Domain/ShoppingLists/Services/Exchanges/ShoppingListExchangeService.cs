@@ -2,7 +2,6 @@
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
@@ -14,17 +13,14 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
 {
     private readonly IShoppingListRepository _shoppingListRepository;
     private readonly IAddItemToShoppingListService _addItemToShoppingListService;
-    private readonly IItemTypeReadRepository _itemTypeReadRepository;
     private readonly ILogger<ShoppingListExchangeService> _logger;
 
     public ShoppingListExchangeService(IShoppingListRepository shoppingListRepository,
         IAddItemToShoppingListService addItemToShoppingListService,
-        IItemTypeReadRepository itemTypeReadRepository,
         ILogger<ShoppingListExchangeService> logger)
     {
         _shoppingListRepository = shoppingListRepository;
         _addItemToShoppingListService = addItemToShoppingListService;
-        _itemTypeReadRepository = itemTypeReadRepository;
         _logger = logger;
     }
 
