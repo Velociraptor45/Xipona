@@ -263,8 +263,8 @@ public class AvailableTests
 
         private static IEnumerable<Section> CreateSections()
         {
-            yield return SectionMother.NotDefault().Create();
-            yield return SectionMother.Default().Create();
+            yield return SectionMother.NotDefault().WithSortingIndex(1).Create();
+            yield return SectionMother.Default().WithSortingIndex(2).Create();
         }
     }
 
