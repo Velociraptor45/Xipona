@@ -39,8 +39,6 @@ public class ItemRepository : IItemRepository
         if (itemEntity == null)
             return null;
 
-        itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
-
         return _toModelConverter.ToDomain(itemEntity);
     }
 
@@ -57,8 +55,6 @@ public class ItemRepository : IItemRepository
         if (itemEntity == null)
             return null;
 
-        itemEntity.Predecessor = await LoadPredecessorsAsync(itemEntity);
-
         return _toModelConverter.ToDomain(itemEntity);
     }
 
@@ -69,11 +65,6 @@ public class ItemRepository : IItemRepository
             .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
-
-        foreach (var item in entities)
-        {
-            item.Predecessor = await LoadPredecessorsAsync(item);
-        }
 
         return _toModelConverter.ToDomain(entities);
     }
@@ -88,11 +79,6 @@ public class ItemRepository : IItemRepository
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        foreach (var item in entities)
-        {
-            item.Predecessor = await LoadPredecessorsAsync(item);
-        }
-
         return _toModelConverter.ToDomain(entities);
     }
 
@@ -103,11 +89,6 @@ public class ItemRepository : IItemRepository
             .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
-
-        foreach (var item in entities)
-        {
-            item.Predecessor = await LoadPredecessorsAsync(item);
-        }
 
         return _toModelConverter.ToDomain(entities);
     }
@@ -126,22 +107,17 @@ public class ItemRepository : IItemRepository
             .Where(item =>
                 !item.IsTemporary
                 && itemCategoryIdLists.Contains(item.ItemCategoryId!.Value)
-                && (!item.ManufacturerId.HasValue && !manufacturerIdLists.Any()
+                && ((!item.ManufacturerId.HasValue && !manufacturerIdLists.Any())
                     || manufacturerIdLists.Contains(item.ManufacturerId!.Value)))
             .ToListAsync(cancellationToken);
 
         // filtering by store
         var filteredResultByStore = result
-            .Where(item => !item.AvailableAt.Any() && !storeIdLists.Any()
+            .Where(item => (!item.AvailableAt.Any() && !storeIdLists.Any())
                            || storeIdLists.Intersect(item.AvailableAt.Select(av => av.StoreId)).Any())
             .ToList();
 
         cancellationToken.ThrowIfCancellationRequested();
-
-        foreach (var item in filteredResultByStore)
-        {
-            item.Predecessor = await LoadPredecessorsAsync(item);
-        }
 
         return _toModelConverter.ToDomain(filteredResultByStore);
     }
@@ -160,11 +136,6 @@ public class ItemRepository : IItemRepository
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        foreach (var item in entities)
-        {
-            item.Predecessor = await LoadPredecessorsAsync(item);
-        }
-
         return _toModelConverter.ToDomain(entities);
     }
 
@@ -176,12 +147,6 @@ public class ItemRepository : IItemRepository
                 && !item.IsTemporary
                 && item.Name.Contains(searchInput))
             .ToListAsync(cancellationToken);
-
-        foreach (var item in entities)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            item.Predecessor = await LoadPredecessorsAsync(item);
-        }
 
         return _toModelConverter.ToDomain(entities);
     }
@@ -198,11 +163,6 @@ public class ItemRepository : IItemRepository
             .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
-
-        foreach (var item in entities)
-        {
-            item.Predecessor = await LoadPredecessorsAsync(item);
-        }
 
         return _toModelConverter.ToDomain(entities);
     }
@@ -229,8 +189,6 @@ public class ItemRepository : IItemRepository
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        entity.Predecessor = await LoadPredecessorsAsync(entity);
-
         return _toModelConverter.ToDomain(entity);
     }
 
@@ -244,12 +202,6 @@ public class ItemRepository : IItemRepository
             .ToArrayAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
-
-        foreach (var item in items)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            item.Predecessor = await LoadPredecessorsAsync(item);
-        }
 
         return _toModelConverter.ToDomain(items);
     }
@@ -266,12 +218,6 @@ public class ItemRepository : IItemRepository
                            && rawItemIds.Contains(item.Id)
                            && !item.Deleted)
             .ToArrayAsync(cancellationToken);
-
-        foreach (var item in items)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            item.Predecessor = await LoadPredecessorsAsync(item);
-        }
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -292,7 +238,6 @@ public class ItemRepository : IItemRepository
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             var e = GetItemQuery().First(i => i.Id == newEntity.Id);
-            e.Predecessor = await LoadPredecessorsAsync(e);
             return _toModelConverter.ToDomain(e);
         }
         else
@@ -310,7 +255,6 @@ public class ItemRepository : IItemRepository
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             var e = GetItemQuery().First(i => i.Id == updatedEntity.Id);
-            e.Predecessor = await LoadPredecessorsAsync(e);
             return _toModelConverter.ToDomain(e);
         }
     }
@@ -325,22 +269,7 @@ public class ItemRepository : IItemRepository
             .Include(item => item.AvailableAt)
             .Include(item => item.ItemTypes)
             .ThenInclude(itemType => itemType.AvailableAt)
-            .Include(item => item.ItemTypes)
-            .ThenInclude(itemType => itemType.Predecessor);
-    }
-
-    private async Task<Item?> LoadPredecessorsAsync(Item item)
-    {
-        if (item.PredecessorId == null)
-            return null;
-
-        var predecessor = await GetItemQuery()
-            .SingleOrDefaultAsync(i => i.Id == item.PredecessorId.Value);
-        if (predecessor == null)
-            return null;
-
-        predecessor.Predecessor = await LoadPredecessorsAsync(predecessor);
-        return predecessor;
+            .Include(item => item.ItemTypes);
     }
 
     private async Task<Item?> FindTrackedEntityBy(ItemId id)

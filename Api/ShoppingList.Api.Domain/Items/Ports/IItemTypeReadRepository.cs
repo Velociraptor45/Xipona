@@ -5,5 +5,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 
 public interface IItemTypeReadRepository
 {
-    Task<IEnumerable<(ItemId, ItemTypeId)>> FindActiveByAsync(string name, StoreId storeId, CancellationToken cancellationToken);
+    Task<IEnumerable<(ItemId, ItemTypeId)>> FindActiveByAsync(string name, StoreId storeId,
+        CancellationToken cancellationToken);
 }

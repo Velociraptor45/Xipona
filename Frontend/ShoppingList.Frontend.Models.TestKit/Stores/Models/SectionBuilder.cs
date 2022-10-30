@@ -10,4 +10,10 @@ public class SectionBuilder : TestBuilderBase<Section>
         FillConstructorWith(nameof(isDefaultSection), isDefaultSection);
         return this;
     }
+
+    public SectionBuilder WithSortingIndex(int sortingIndex)
+    {
+        FillConstructorWith(nameof(sortingIndex), sortingIndex);
+        return this;
+    }
 }

@@ -30,7 +30,8 @@ public class ItemTypeConverterTests : ToDomainConverterTestBase<ItemType, IItemT
         {
             Id = destination.Id.Value,
             Name = destination.Name.Value,
-            AvailableAt = availabilities
+            AvailableAt = availabilities,
+            PredecessorId = destination.PredecessorId?.Value
         };
     }
 

@@ -16,7 +16,8 @@ public class ItemTypeFactoryTests
             var item = new ItemType(
                 ItemTypeId.New,
                 expectedResult.Name,
-                expectedResult.Availabilities);
+                expectedResult.Availabilities,
+                expectedResult.PredecessorId);
             var sut = new ItemTypeFactory();
 
             // Act

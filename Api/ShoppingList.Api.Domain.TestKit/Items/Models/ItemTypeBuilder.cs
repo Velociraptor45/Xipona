@@ -40,4 +40,15 @@ public class ItemTypeBuilder : DomainTestBuilderBase<ItemType>
     {
         return WithAvailabilities(availability.ToMonoList());
     }
+
+    public ItemTypeBuilder WithPredecessorId(ItemTypeId? predecessorId)
+    {
+        FillConstructorWith(nameof(predecessorId), predecessorId);
+        return this;
+    }
+
+    public ItemTypeBuilder WithoutPredecessorId()
+    {
+        return WithPredecessorId(null);
+    }
 }

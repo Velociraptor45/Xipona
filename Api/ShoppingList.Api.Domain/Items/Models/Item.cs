@@ -19,7 +19,8 @@ public class Item : IItem
 
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
-        IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId, DateTimeOffset? updatedOn)
+        IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId, DateTimeOffset? updatedOn,
+        ItemId? predecessorId)
     {
         Id = id;
         Name = name;
@@ -31,17 +32,14 @@ public class Item : IItem
         ManufacturerId = manufacturerId;
         TemporaryId = temporaryId;
         UpdatedOn = updatedOn;
+        PredecessorId = predecessorId;
         _itemTypes = null;
         _availabilities = availabilities.ToList();
-
-        // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
-        // https://github.com/AutoFixture/AutoFixture/issues/1108
-        Predecessor = null;
     }
 
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment,
         ItemQuantity itemQuantity, ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
-        ItemTypes itemTypes, DateTimeOffset? updatedOn)
+        ItemTypes itemTypes, DateTimeOffset? updatedOn, ItemId? predecessorId)
     {
         Id = id;
         Name = name;
@@ -52,16 +50,13 @@ public class Item : IItem
         ItemCategoryId = itemCategoryId;
         ManufacturerId = manufacturerId;
         UpdatedOn = updatedOn;
+        PredecessorId = predecessorId;
         TemporaryId = null;
         _itemTypes = itemTypes;
         _availabilities = new List<IItemAvailability>();
 
         if (!_itemTypes.Any())
             throw new DomainException(new CannotCreateItemWithTypesWithoutTypesReason(Id));
-
-        // predecessor must be explicitly set via SetPredecessor(...) due to this AutoFixture bug:
-        // https://github.com/AutoFixture/AutoFixture/issues/1108
-        Predecessor = null;
     }
 
     public ItemId Id { get; }
@@ -74,7 +69,7 @@ public class Item : IItem
     public ManufacturerId? ManufacturerId { get; private set; }
     public TemporaryItemId? TemporaryId { get; }
     public DateTimeOffset? UpdatedOn { get; private set; }
-    public IItem? Predecessor { get; private set; } // todo: change this to an IItemPredecessor model to satisfy DDD
+    public ItemId? PredecessorId { get; }
 
     public IReadOnlyCollection<IItemType> ItemTypes =>
         _itemTypes?.ToList().AsReadOnly() ?? new List<IItemType>().AsReadOnly();
@@ -158,11 +153,6 @@ public class Item : IItem
         return availability.DefaultSectionId;
     }
 
-    public void SetPredecessor(IItem predecessor)
-    {
-        Predecessor = predecessor;
-    }
-
     public bool TryGetType(ItemTypeId itemTypeId, out IItemType? itemType)
     {
         if (_itemTypes is not null)
@@ -219,8 +209,8 @@ public class Item : IItem
             update.ItemCategoryId,
             update.ManufacturerId,
             types,
-            null);
-        updatedItem.SetPredecessor(this);
+            null,
+            Id);
 
         return updatedItem;
     }
@@ -259,9 +249,8 @@ public class Item : IItem
             update.ManufacturerId,
             update.Availabilities,
             null,
-            null);
-
-        newItem.SetPredecessor(this);
+            null,
+            Id);
 
         return newItem;
     }
@@ -275,7 +264,7 @@ public class Item : IItem
         {
             var itemTypes = _itemTypes!.Update(storeId, itemTypeId, price);
             newItem = new Item(ItemId.New, Name, false, Comment, ItemQuantity, ItemCategoryId!.Value, ManufacturerId,
-                itemTypes, null);
+                itemTypes, null, Id);
         }
         else
         {
@@ -288,10 +277,8 @@ public class Item : IItem
                     : av);
 
             newItem = new Item(ItemId.New, Name, false, Comment, IsTemporary, ItemQuantity, ItemCategoryId,
-                ManufacturerId, availabilities, TemporaryId, null);
+                ManufacturerId, availabilities, TemporaryId, null, Id);
         }
-
-        newItem.SetPredecessor(this);
         return newItem;
     }
 

@@ -10,9 +10,7 @@ public interface IItemType
     ItemTypeId Id { get; }
     ItemTypeName Name { get; }
     IReadOnlyCollection<IItemAvailability> Availabilities { get; }
-    IItemType? Predecessor { get; }
-
-    void SetPredecessor(IItemType predecessor);
+    ItemTypeId? PredecessorId { get; }
 
     SectionId GetDefaultSectionIdForStore(StoreId storeId);
 
@@ -27,5 +25,6 @@ public interface IItemType
     IItemType Update(StoreId storeId, Price price);
 
     IItemType Update();
+
     IItemType TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId);
 }

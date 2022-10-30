@@ -19,12 +19,12 @@ public class ItemTypeConverter : IToDomainConverter<Entities.ItemType, IItemType
 
     public IItemType ToDomain(Entities.ItemType source)
     {
-        IItemType? predecessor = source.PredecessorId is null || source.Predecessor is null
-            ? null
-            : ToDomain(source.Predecessor!);
+        var predecessorId = source.PredecessorId is null
+            ? (ItemTypeId?)null
+            : new ItemTypeId(source.PredecessorId.Value);
 
         var typeAvailabilities = _itemTypeAvailabilityConverter.ToDomain(source.AvailableAt);
         return _itemTypeFactory.Create(new ItemTypeId(source.Id), new ItemTypeName(source.Name), typeAvailabilities,
-            predecessor);
+            predecessorId);
     }
 }

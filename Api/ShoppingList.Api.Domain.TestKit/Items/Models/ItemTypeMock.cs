@@ -12,7 +12,7 @@ public class ItemTypeMock : Mock<IItemType>
         SetupId(itemType.Id);
         SetupName(itemType.Name);
         SetupAvailabilities(itemType.Availabilities);
-        SetupPredecessor(itemType.Predecessor);
+        SetupPredecessorId(itemType.PredecessorId);
     }
 
     public void SetupId(ItemTypeId id)
@@ -30,9 +30,9 @@ public class ItemTypeMock : Mock<IItemType>
         Setup(m => m.Availabilities).Returns(availabilities.ToList());
     }
 
-    public void SetupPredecessor(IItemType? predecessor)
+    public void SetupPredecessorId(ItemTypeId? predecessorId)
     {
-        Setup(m => m.Predecessor).Returns(predecessor);
+        Setup(m => m.PredecessorId).Returns(predecessorId);
     }
 
     public void SetupIsAvailableAtStore(StoreId storeId, bool returnValue)
