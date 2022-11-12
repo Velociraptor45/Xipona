@@ -116,11 +116,12 @@
         }
         else
         {
-            Model.PutInBasket();
+            Model.PutInBasket(() => State.StateChanged?.Invoke());
             await _apiService.PutItemInBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         }
         State.StateChanged?.Invoke();
     }
+
 
     private float CalculatePrice()
     {

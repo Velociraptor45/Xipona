@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
 using System;
+using System.Timers;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 {
@@ -22,6 +23,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
             Manufacturer = manufacturer;
             IsInBasket = isInBasket;
             Quantity = quantity;
+            Hide = IsInBasket;
         }
 
         public ShoppingListItemId Id { get; }
@@ -37,15 +39,34 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         public bool IsInBasket { get; set; }
         public float Quantity { get; private set; }
         public bool IsItemType => TypeId is not null;
+        public bool Hide { get; private set; }
 
-        public void PutInBasket()
+        private Timer _hideItemTimer;
+
+        public void PutInBasket(Action onHide)
         {
             IsInBasket = true;
+            if (_hideItemTimer is not null)
+                _hideItemTimer.Stop();
+
+            // this does not belong here but will be fixed in #298
+            _hideItemTimer = new(1000d);
+            _hideItemTimer.AutoReset = false;
+            _hideItemTimer.Elapsed += (_, _) =>
+            {
+                Hide = true;
+                onHide();
+            };
+            _hideItemTimer.Start();
         }
 
         public void RemoveFromBasket()
         {
             IsInBasket = false;
+            if (_hideItemTimer is not null)
+                _hideItemTimer.Stop();
+
+            Hide = false;
         }
 
         public float GetTotalPrice(IItemPriceCalculationService priceCalculationService)

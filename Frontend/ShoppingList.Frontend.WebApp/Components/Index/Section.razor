@@ -17,7 +17,7 @@
     @if (Model.IsExpanded)
     {
         <ul class="pl-3">
-            @foreach (var item in Model.Items.Where(item => State.ItemsInBasketVisible || !item.IsInBasket))
+            @foreach (var item in Model.Items.Where(item => State.ItemsInBasketVisible || !item.Hide))
             {
                 <Item State="@State"
                       Model="@item"></Item>

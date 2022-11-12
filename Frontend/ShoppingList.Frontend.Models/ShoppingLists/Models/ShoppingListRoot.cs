@@ -30,11 +30,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         public int ItemInBasketCount => Items.Count(i => i.IsInBasket);
         public int ItemNotInBasketCount => Items.Count(i => !i.IsInBasket);
 
-        public ShoppingListItem GetItemById(Guid id)
-        {
-            return Items.FirstOrDefault(item => item.Id.ActualId == id);
-        }
-
         public void Remove(ShoppingListItemId itemId, Guid? itemTypeId)
         {
             var section = _sections.FirstOrDefault(s => s.Items.Any(i => i.Id == itemId));
@@ -72,9 +67,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
             return $"{price:0.00}";
         }
 
-        public IReadOnlyCollection<ShoppingListSection> GetNonEmptySections(bool excludeWithAllItemsInBasket)
+        public IReadOnlyCollection<ShoppingListSection> GetNonEmptySections(bool excludeWithAllItemsHidden)
         {
-            return _sections.Where(s => s.Items.Any() && (!s.AllItemsInBasket || !excludeWithAllItemsInBasket)).ToList();
+            return _sections.Where(s => s.Items.Any() && (!s.AllItemsHidden || !excludeWithAllItemsHidden)).ToList();
         }
     }
 }
