@@ -3,24 +3,53 @@
 
 @typeparam TValue
 @typeparam TItem
-
-<Select Class="@Class"
-        Placeholder="@Placeholder"
-        ValueName="@ValueName"
-        LabelName="@LabelName"
-        DataSource="@_dataSource"
-        TItemValue="TValue"
-        TItem="TItem"
-        OnSelectedItemChanged="OnSelectedItemChanged"
-        AllowClear="@AllowClear"
-        DropdownRender="@OnRender"
-        IgnoreItemChanges="@IgnoreItemChanges"
-        OnDropdownVisibleChange="OnDropdownToggle"
-        OnClearSelected="() => _selectedItem = default"
-        @bind-Value="@_selectedValue">
-</Select>
+@if (EnableSearch)
+{
+    <Select OnFocus="OnFocus"
+            Class="@Class"
+            Placeholder="@Placeholder"
+            ValueName="@ValueName"
+            LabelName="@LabelName"
+            DataSource="@_dataSource"
+            TItemValue="TValue"
+            TItem="TItem"
+            OnSelectedItemChanged="OnSelectedItemChanged"
+            AllowClear="@AllowClear"
+            DropdownRender="@OnRender"
+            IgnoreItemChanges="@IgnoreItemChanges"
+            OnDropdownVisibleChange="OnDropdownToggle"
+            OnClearSelected="() => _selectedItem = default"
+            AutoClearSearchValue="@AutoClearSearchValue"
+            EnableSearch
+            OnSearch="OnSearchInput"
+            @bind-Value="@_selectedValue">
+    </Select>
+}
+else
+{
+    <Select OnFocus="OnFocus"
+            Class="@Class"
+            Placeholder="@Placeholder"
+            ValueName="@ValueName"
+            LabelName="@LabelName"
+            DataSource="@_dataSource"
+            TItemValue="TValue"
+            TItem="TItem"
+            OnSelectedItemChanged="OnSelectedItemChanged"
+            AllowClear="@AllowClear"
+            DropdownRender="@OnRender"
+            IgnoreItemChanges="@IgnoreItemChanges"
+            OnDropdownVisibleChange="OnDropdownToggle"
+            OnClearSelected="() => _selectedItem = default"
+            AutoClearSearchValue="@AutoClearSearchValue"
+            @bind-Value="@_selectedValue">
+    </Select>
+}
 
 @code {
+
+    [Parameter] public EventCallback OnFocus { get; set; }
+
     [Parameter] public string Class { get; set; }
     [Parameter] public string Placeholder { get; set; }
 
@@ -31,6 +60,8 @@
 
     [Parameter] public bool CanAddItem { get; set; } = false;
     [Parameter] public bool AllowClear { get; set; } = false;
+    [Parameter] public bool AutoClearSearchValue { get; set; } = false;
+    [Parameter] public bool EnableSearch { get; set; } = false;
 
     [Parameter] public EventCallback<TItem> OnItemChanged { get; set; }
     [Parameter] public Func<string, Task<(TItem, TValue)>> OnItemAdded { get; set; }
@@ -71,7 +102,15 @@
 
     private async void OnSelectedItemChanged(TItem item)
     {
-        _selectedItem = item;
+        if (AutoClearSearchValue)
+        {
+            _dataSource.Clear();
+        }
+        else
+        {
+            _selectedItem = item;
+        }
+
         _itemSearchInput = string.Empty;
         await OnItemChanged.InvokeAsync(item);
     }
@@ -94,7 +133,12 @@
 
     private void OnSearchInput(ChangeEventArgs args)
     {
-        if (args.Value is not string input || string.IsNullOrWhiteSpace(input))
+        OnSearchInput(args.Value as string ?? string.Empty);
+    }
+
+    private void OnSearchInput(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
         {
             _startSearchTimer?.Stop();
             _itemSearchInput = string.Empty;

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 {
@@ -11,7 +9,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         public SearchBar()
         {
             ResetInput();
-            ResetOptions();
             Active = false;
         }
 
@@ -26,18 +23,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         }
 
         public bool Active { get; set; }
-        public IEnumerable<SearchItemForShoppingListResult> Options { get; set; }
 
         public Action<string> OnInputChanged { get; set; }
 
         public void ResetInput()
         {
             Input = "";
-        }
-
-        public void ResetOptions()
-        {
-            Options = Enumerable.Empty<SearchItemForShoppingListResult>();
         }
     }
 }

@@ -344,8 +344,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task<IEnumerable<SearchItemByItemCategoryResult>> SearchItemByItemCategoryAsync(Guid itemCategoryId)
         {
             var results = await _client.SearchItemsByItemCategoryAsync(itemCategoryId);
-            return _converters
-                .ToDomain<SearchItemByItemCategoryResultContract, SearchItemByItemCategoryResult>(results);
+            return results is null
+                ? Enumerable.Empty<SearchItemByItemCategoryResult>()
+                : _converters.ToDomain<SearchItemByItemCategoryResultContract, SearchItemByItemCategoryResult>(results);
         }
 
         public async Task<Recipe> GetRecipeByIdAsync(Guid recipeId)
@@ -357,7 +358,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task<IEnumerable<RecipeSearchResult>> SearchRecipesByNameAsync(string searchInput)
         {
             var results = await _client.SearchRecipesByNameAsync(searchInput);
-            return _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
+            return results is null
+                ? Enumerable.Empty<RecipeSearchResult>()
+                : _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
         }
 
         public async Task<Recipe> CreateRecipeAsync(Recipe recipe)
@@ -376,7 +379,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task<IEnumerable<IngredientQuantityType>> GetAllIngredientQuantityTypes()
         {
             var types = await _client.GetAllIngredientQuantityTypes();
-            return _converters.ToDomain<IngredientQuantityTypeContract, IngredientQuantityType>(types);
+            return types is null
+                ? Enumerable.Empty<IngredientQuantityType>()
+                : _converters.ToDomain<IngredientQuantityTypeContract, IngredientQuantityType>(types);
         }
     }
 }
