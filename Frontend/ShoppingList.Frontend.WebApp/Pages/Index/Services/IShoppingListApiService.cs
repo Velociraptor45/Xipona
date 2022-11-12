@@ -29,8 +29,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         Task LoadAllActiveStoresAsync(IAsyncRetryFragmentCreator fragmentCreator,
             Func<IEnumerable<Store>, Task> onSuccessAction);
 
-        Task LoadItemSearchResultAsync(string input, Guid storeId, IAsyncRetryFragmentCreator fragmentCreator,
-            Action<IEnumerable<SearchItemForShoppingListResult>> onSuccessAction);
+        Task<IEnumerable<SearchItemForShoppingListResult>> LoadItemSearchResultAsync(string input, Guid storeId,
+            IAsyncRetryFragmentCreator fragmentCreator);
 
         Task CreateTemporaryItemOnShoppingListAsync(ShoppingListItem item, Guid shoppingListId,
             Guid storeId, SectionId sectionId);

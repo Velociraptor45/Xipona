@@ -24,7 +24,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 
         public Guid ItemId { get; set; }
         public Guid? ItemTypeId { get; }
-        public string Name { get; }
+        public string Name { get; set; }
         public float Price { get; }
         public int DefaultQuantity { get; }
         public string PriceLabel { get; }
@@ -32,8 +32,18 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         public string ManufacturerName { get; }
         public Guid DefaultSectionId { get; }
 
-        public string DisplayValue => string.IsNullOrWhiteSpace(ManufacturerName)
-            ? $"{Name} | {Price.ToString(_culture)}{PriceLabel}"
-            : $"{Name} | {ManufacturerName} | {Price.ToString(_culture)}{PriceLabel}";
+        public string DisplayValue
+        {
+            get => string.IsNullOrWhiteSpace(ManufacturerName)
+                ? $"{Name} | {Price.ToString(_culture)}{PriceLabel}"
+                : $"{Name} | {ManufacturerName} | {Price.ToString(_culture)}{PriceLabel}";
+            set { _ = value; }
+        }
+
+        public string SelectIdentifier
+        {
+            get => $"{ItemId}{ItemTypeId?.ToString() ?? string.Empty}";
+            set { _ = value; }
+        }
     }
 }
