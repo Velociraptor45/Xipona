@@ -24,7 +24,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 
         public Guid ItemId { get; set; }
         public Guid? ItemTypeId { get; }
-        public string Name { get; set; }
+        public string Name { get; }
         public float Price { get; }
         public int DefaultQuantity { get; }
         public string PriceLabel { get; }
