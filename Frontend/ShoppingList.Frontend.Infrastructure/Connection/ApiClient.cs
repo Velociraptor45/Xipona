@@ -48,6 +48,7 @@ using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
@@ -210,9 +211,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         }
 
         public async Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(
-            string searchInput, Guid storeId)
+            string searchInput, Guid storeId, CancellationToken cancellationToken)
         {
-            var result = await _client.SearchItemsForShoppingListAsync(storeId, searchInput);
+            var result = await _client.SearchItemsForShoppingListAsync(storeId, searchInput, cancellationToken);
             if (result is null)
                 return Enumerable.Empty<SearchItemForShoppingListResult>();
 

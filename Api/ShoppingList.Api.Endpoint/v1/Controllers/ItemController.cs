@@ -45,6 +45,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Searches;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
+using System.Threading;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
@@ -69,13 +70,13 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}")]
-    public async Task<IActionResult> GetAsync([FromRoute] Guid id)
+    public async Task<IActionResult> GetAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         var query = new ItemByIdQuery(new ItemId(id));
         ItemReadModel result;
         try
         {
-            result = await _queryDispatcher.DispatchAsync(query, default);
+            result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -95,11 +96,12 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("search")]
-    public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput)
+    public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput,
+        CancellationToken cancellationToken = default)
     {
         var query = new SearchItemQuery(searchInput);
 
-        var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+        var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
         if (!readModels.Any())
             return NoContent();
@@ -115,15 +117,15 @@ public class ItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("filter")]
     public async Task<IActionResult> SearchItemsByFilterAsync([FromQuery] IEnumerable<Guid> storeIds,
-        [FromQuery] IEnumerable<Guid> itemCategoryIds,
-        [FromQuery] IEnumerable<Guid> manufacturerIds)
+        [FromQuery] IEnumerable<Guid> itemCategoryIds, [FromQuery] IEnumerable<Guid> manufacturerIds,
+        CancellationToken cancellationToken = default)
     {
         var query = new SearchItemsByFilterQuery(
             storeIds.Select(id => new StoreId(id)),
             itemCategoryIds.Select(id => new ItemCategoryId(id)),
             manufacturerIds.Select(id => new ManufacturerId(id)));
 
-        var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+        var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
         if (!readModels.Any())
             return NoContent();
@@ -140,14 +142,14 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("search/{storeId:guid}")]
     public async Task<IActionResult> SearchItemsForShoppingListAsync([FromRoute] Guid storeId,
-        [FromQuery] string searchInput)
+        [FromQuery] string searchInput, CancellationToken cancellationToken = default)
     {
         var query = new SearchItemsForShoppingListQuery(searchInput, new StoreId(storeId));
 
         List<SearchItemForShoppingResultReadModel> readModels;
         try
         {
-            readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+            readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
         }
         catch (DomainException e)
         {
@@ -173,14 +175,15 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("search/by-item-category/{itemCategoryId:guid}")]
-    public async Task<IActionResult> SearchItemsByItemCategoryAsync([FromRoute] Guid itemCategoryId)
+    public async Task<IActionResult> SearchItemsByItemCategoryAsync([FromRoute] Guid itemCategoryId,
+        CancellationToken cancellationToken = default)
     {
         var query = new SearchItemsByItemCategoryQuery(new ItemCategoryId(itemCategoryId));
 
         List<SearchItemByItemCategoryResult> readModels;
         try
         {
-            readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+            readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
         }
         catch (DomainException e)
         {
@@ -204,10 +207,10 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<QuantityTypeContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("quantity-types")]
-    public async Task<IActionResult> GetAllQuantityTypesAsync()
+    public async Task<IActionResult> GetAllQuantityTypesAsync(CancellationToken cancellationToken = default)
     {
         var query = new AllQuantityTypesQuery();
-        var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+        var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
         if (!readModels.Any())
             return NoContent();
@@ -221,10 +224,10 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<QuantityTypeInPacketContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("quantity-types-in-packet")]
-    public async Task<IActionResult> GetAllQuantityTypesInPacketAsync()
+    public async Task<IActionResult> GetAllQuantityTypesInPacketAsync(CancellationToken cancellationToken = default)
     {
         var query = new AllQuantityTypesInPacketQuery();
-        var readModels = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+        var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
         if (!readModels.Any())
             return NoContent();
@@ -239,7 +242,8 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("without-types")]
-    public async Task<IActionResult> CreateItemAsync([FromBody] CreateItemContract contract)
+    public async Task<IActionResult> CreateItemAsync([FromBody] CreateItemContract contract,
+        CancellationToken cancellationToken = default)
     {
         if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
             || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
@@ -253,7 +257,7 @@ public class ItemController : ControllerBase
             var model = _converters.ToDomain<CreateItemContract, ItemCreation>(contract);
             var command = new CreateItemCommand(model);
 
-            var readModel = await _commandDispatcher.DispatchAsync(command, default);
+            var readModel = await _commandDispatcher.DispatchAsync(command, cancellationToken);
 
             var createdContract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
 
@@ -272,7 +276,8 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("with-types")]
-    public async Task<IActionResult> CreateItemWithTypesAsync([FromBody] CreateItemWithTypesContract contract)
+    public async Task<IActionResult> CreateItemWithTypesAsync([FromBody] CreateItemWithTypesContract contract,
+        CancellationToken cancellationToken = default)
     {
         if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
            || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
@@ -285,7 +290,7 @@ public class ItemController : ControllerBase
         {
             var model = _converters.ToDomain<CreateItemWithTypesContract, IItem>(contract);
             var command = new CreateItemWithTypesCommand(model);
-            var readModel = await _commandDispatcher.DispatchAsync(command, default);
+            var readModel = await _commandDispatcher.DispatchAsync(command, cancellationToken);
 
             var returnContract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
 
@@ -303,13 +308,14 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(ItemContract), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("temporary")]
-    public async Task<IActionResult> CreateTemporaryItemAsync([FromBody] CreateTemporaryItemContract contract)
+    public async Task<IActionResult> CreateTemporaryItemAsync([FromBody] CreateTemporaryItemContract contract,
+        CancellationToken cancellationToken = default)
     {
         var model = _converters.ToDomain<CreateTemporaryItemContract, TemporaryItemCreation>(contract);
         var command = new CreateTemporaryItemCommand(model);
         try
         {
-            var readModel = await _commandDispatcher.DispatchAsync(command, default);
+            var readModel = await _commandDispatcher.DispatchAsync(command, cancellationToken);
 
             var returnContract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
             return Ok(returnContract);
@@ -328,7 +334,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("with-types/{id:guid}/modify")]
     public async Task<IActionResult> ModifyItemWithTypesAsync([FromRoute] Guid id,
-        [FromBody] ModifyItemWithTypesContract contract)
+        [FromBody] ModifyItemWithTypesContract contract, CancellationToken cancellationToken = default)
     {
         if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
             || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
@@ -342,7 +348,7 @@ public class ItemController : ControllerBase
 
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -363,7 +369,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("without-types/{id:guid}/modify")]
     public async Task<IActionResult> ModifyItemAsync([FromRoute] Guid id,
-        [FromBody] ModifyItemContract contract)
+        [FromBody] ModifyItemContract contract, CancellationToken cancellationToken = default)
     {
         if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
             || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
@@ -376,7 +382,7 @@ public class ItemController : ControllerBase
 
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -396,7 +402,8 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("without-types/{id:guid}/update")]
-    public async Task<IActionResult> UpdateItemAsync([FromRoute] Guid id, [FromBody] UpdateItemContract contract)
+    public async Task<IActionResult> UpdateItemAsync([FromRoute] Guid id, [FromBody] UpdateItemContract contract,
+        CancellationToken cancellationToken = default)
     {
         if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
             || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
@@ -409,7 +416,7 @@ public class ItemController : ControllerBase
 
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -428,13 +435,14 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/update-price")]
-    public async Task<IActionResult> UpdateItemPriceAsync([FromRoute] Guid id, [FromBody] UpdateItemPriceContract contract)
+    public async Task<IActionResult> UpdateItemPriceAsync([FromRoute] Guid id, [FromBody] UpdateItemPriceContract contract,
+        CancellationToken cancellationToken = default)
     {
         var command = _converters.ToDomain<(Guid, UpdateItemPriceContract), UpdateItemPriceCommand>((id, contract));
 
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -455,7 +463,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("with-types/{id:guid}/update")]
     public async Task<IActionResult> UpdateItemWithTypesAsync([FromRoute] Guid id,
-        [FromBody] UpdateItemWithTypesContract contract)
+        [FromBody] UpdateItemWithTypesContract contract, CancellationToken cancellationToken = default)
     {
         if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
             || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
@@ -469,7 +477,7 @@ public class ItemController : ControllerBase
 
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -490,7 +498,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("temporary/{id:guid}")]
     public async Task<IActionResult> MakeTemporaryItemPermanentAsync([FromRoute] Guid id,
-        [FromBody] MakeTemporaryItemPermanentContract contract)
+        [FromBody] MakeTemporaryItemPermanentContract contract, CancellationToken cancellationToken = default)
     {
         if (contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null
             || contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null)
@@ -504,7 +512,7 @@ public class ItemController : ControllerBase
                 contract));
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -523,12 +531,12 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}")]
-    public async Task<IActionResult> DeleteItemAsync([FromRoute] Guid id)
+    public async Task<IActionResult> DeleteItemAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         var command = new DeleteItemCommand(new ItemId(id));
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {

@@ -10,6 +10,7 @@ using ProjectHermes.ShoppingList.Api.Domain;
 using ProjectHermes.ShoppingList.Api.Endpoint;
 using ProjectHermes.ShoppingList.Api.Infrastructure;
 using ProjectHermes.ShoppingList.Api.Vault;
+using ProjectHermes.ShoppingList.Api.WebApp.Extensions;
 using ProjectHermes.ShoppingList.Api.WebApp.Services;
 using Serilog;
 
@@ -61,6 +62,7 @@ public class Startup
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        app.UseExceptionHandling();
         if (!env.IsProduction())
         {
             app.UseDeveloperExceptionPage();
