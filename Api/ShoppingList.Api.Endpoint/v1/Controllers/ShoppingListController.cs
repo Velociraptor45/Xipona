@@ -27,6 +27,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
+using System.Threading;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
@@ -53,14 +54,15 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("active/{storeId:guid}")]
-    public async Task<IActionResult> GetActiveShoppingListByStoreIdAsync([FromRoute] Guid storeId)
+    public async Task<IActionResult> GetActiveShoppingListByStoreIdAsync([FromRoute] Guid storeId,
+        CancellationToken cancellationToken = default)
     {
         var query = new ActiveShoppingListByStoreIdQuery(new StoreId(storeId));
 
         ShoppingListReadModel readModel;
         try
         {
-            readModel = await _queryDispatcher.DispatchAsync(query, default);
+            readModel = await _queryDispatcher.DispatchAsync(query, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -83,7 +85,7 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/items")]
     public async Task<IActionResult> RemoveItemFromShoppingListAsync([FromRoute] Guid id,
-        [FromBody] RemoveItemFromShoppingListContract contract)
+        [FromBody] RemoveItemFromShoppingListContract contract, CancellationToken cancellationToken = default)
     {
         OfflineTolerantItemId tolerantItemId;
         try
@@ -106,7 +108,7 @@ public class ShoppingListController : ControllerBase
 
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -127,7 +129,7 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/items")]
     public async Task<IActionResult> AddItemToShoppingListAsync([FromRoute] Guid id,
-        [FromBody] AddItemToShoppingListContract contract)
+        [FromBody] AddItemToShoppingListContract contract, CancellationToken cancellationToken = default)
     {
         OfflineTolerantItemId itemId;
         try
@@ -147,7 +149,7 @@ public class ShoppingListController : ControllerBase
 
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -167,7 +169,8 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/items/{itemId:guid}/{itemTypeId:guid}")]
     public async Task<IActionResult> AddItemWithTypeToShoppingListAsync([FromRoute] Guid id,
-        [FromRoute] Guid itemId, [FromRoute] Guid itemTypeId, [FromBody] AddItemWithTypeToShoppingListContract contract)
+        [FromRoute] Guid itemId, [FromRoute] Guid itemTypeId, [FromBody] AddItemWithTypeToShoppingListContract contract,
+        CancellationToken cancellationToken = default)
     {
         var command = new AddItemWithTypeToShoppingListCommand(
             new ShoppingListId(id),
@@ -178,7 +181,7 @@ public class ShoppingListController : ControllerBase
 
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -199,7 +202,7 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/items/basket/add")]
     public async Task<IActionResult> PutItemInBasketAsync([FromRoute] Guid id,
-        [FromBody] PutItemInBasketContract contract)
+        [FromBody] PutItemInBasketContract contract, CancellationToken cancellationToken = default)
     {
         OfflineTolerantItemId itemId;
         try
@@ -218,7 +221,7 @@ public class ShoppingListController : ControllerBase
 
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -239,7 +242,7 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/items/basket/remove")]
     public async Task<IActionResult> RemoveItemFromBasketAsync([FromRoute] Guid id,
-        [FromBody] RemoveItemFromBasketContract contract)
+        [FromBody] RemoveItemFromBasketContract contract, CancellationToken cancellationToken = default)
     {
         OfflineTolerantItemId itemId;
         try
@@ -258,7 +261,7 @@ public class ShoppingListController : ControllerBase
 
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -279,7 +282,7 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/items/quantity")]
     public async Task<IActionResult> ChangeItemQuantityOnShoppingListAsync([FromRoute] Guid id,
-        [FromBody] ChangeItemQuantityOnShoppingListContract contract)
+        [FromBody] ChangeItemQuantityOnShoppingListContract contract, CancellationToken cancellationToken = default)
     {
         OfflineTolerantItemId itemId;
         try
@@ -299,7 +302,7 @@ public class ShoppingListController : ControllerBase
 
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -318,12 +321,13 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/finish")]
-    public async Task<IActionResult> FinishListAsync([FromRoute] Guid id, [FromQuery] DateTimeOffset? finishedAt)
+    public async Task<IActionResult> FinishListAsync([FromRoute] Guid id, [FromQuery] DateTimeOffset? finishedAt,
+        CancellationToken cancellationToken = default)
     {
         var command = new FinishShoppingListCommand(new ShoppingListId(id), finishedAt ?? DateTimeOffset.UtcNow);
         try
         {
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {

@@ -13,6 +13,7 @@ using RestEase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
@@ -168,12 +169,11 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         }
 
         public async Task<IEnumerable<SearchItemForShoppingListResult>> LoadItemSearchResultAsync(string input,
-            Guid storeId,
-            IAsyncRetryFragmentCreator fragmentCreator)
+            Guid storeId, IAsyncRetryFragmentCreator fragmentCreator, CancellationToken cancellationToken)
         {
             try
             {
-                return await _apiClient.SearchItemsForShoppingListAsync(input, storeId);
+                return await _apiClient.SearchItemsForShoppingListAsync(input, storeId, cancellationToken);
             }
             catch (ApiException e)
             {
@@ -182,13 +182,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
                     contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await LoadItemSearchResultAsync(input, storeId, fragmentCreator));
+                    await LoadItemSearchResultAsync(input, storeId, fragmentCreator, cancellationToken));
                 _notificationService.NotifyError("Searching for items failed", contract?.Message ?? e.Message, fragment);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await LoadItemSearchResultAsync(input, storeId, fragmentCreator));
+                    await LoadItemSearchResultAsync(input, storeId, fragmentCreator, cancellationToken));
                 _notificationService.NotifyError("Unknown error while searching for items", e.Message, fragment);
             }
 

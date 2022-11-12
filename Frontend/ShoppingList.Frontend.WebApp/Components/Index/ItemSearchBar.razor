@@ -3,9 +3,11 @@
 @using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
 @using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
+@using System.Threading
 
 @inject ITemporaryItemCreationService temporaryItemCreationService;
 @inject IShoppingListApiService apiService;
+@implements IDisposable
 
 <div class="mb-2 d-flex">
     <SingleSearchSelect OnFocus="OnSearchBarFocusIn"
@@ -37,6 +39,7 @@
     [Parameter] public ErrorHandler ErrorHandler { get; set; }
 
     private List<SearchItemForShoppingListResult> _dataSource = new();
+    private CancellationTokenSource _searchCancellationTokenSource;
     
     private async Task<IEnumerable<SearchItemForShoppingListResult>> OnSearchAsync(string searchInput)
     {
@@ -51,7 +54,9 @@
         }
 
         searchInput = searchInput.Trim();
-        return await apiService.LoadItemSearchResultAsync(searchInput, State.ShoppingList.Store.Id, ErrorHandler);
+        _searchCancellationTokenSource = CreateNewCancellationTokenSource();
+        return await apiService.LoadItemSearchResultAsync(searchInput, State.ShoppingList.Store.Id, ErrorHandler,
+            _searchCancellationTokenSource.Token);
     }
 
     private async Task OnSearchItemSelectedAsync(SearchItemForShoppingListResult item)
@@ -98,5 +103,21 @@
     {
         State.SearchBar.Active = true;
         StateHasChanged();
+    }
+
+    private CancellationTokenSource CreateNewCancellationTokenSource()
+    {
+        if (_searchCancellationTokenSource is not null)
+        {
+            _searchCancellationTokenSource.Cancel();
+            _searchCancellationTokenSource.Dispose();
+        }
+        return new CancellationTokenSource();
+    }
+
+    public void Dispose()
+    {
+        if(_searchCancellationTokenSource is not null)
+            _searchCancellationTokenSource.Dispose();
     }
 }

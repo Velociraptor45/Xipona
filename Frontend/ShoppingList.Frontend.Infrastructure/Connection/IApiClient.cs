@@ -11,6 +11,7 @@ using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
@@ -54,7 +55,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         Task<IEnumerable<SearchItemResult>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,
             IEnumerable<Guid> itemCategoryIds, IEnumerable<Guid> manufacturerIds);
 
-        Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(string searchInput, Guid storeId);
+        Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(string searchInput,
+            Guid storeId, CancellationToken cancellationToken);
 
         Task IsAliveAsync();
 
@@ -105,7 +107,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         Task<Recipe> CreateRecipeAsync(Recipe recipe);
 
         Task ModifyRecipeAsync(Recipe recipe);
+
         Task<IEnumerable<SearchItemByItemCategoryResult>> SearchItemByItemCategoryAsync(Guid itemCategoryId);
+
         Task<IEnumerable<IngredientQuantityType>> GetAllIngredientQuantityTypes();
     }
 }
