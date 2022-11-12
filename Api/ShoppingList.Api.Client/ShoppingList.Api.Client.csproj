@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="RestEase" Version="1.5.7" />
+    <PackageReference Include="RestEase" Version="1.6.0" />
   </ItemGroup>
 
   <ItemGroup>
