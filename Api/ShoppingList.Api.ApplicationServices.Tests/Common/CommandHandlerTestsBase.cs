@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Tests.Common.Transactions;
+using ProjectHermes.ShoppingList.Api.Repositories.Tests.Common.Transactions;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common;

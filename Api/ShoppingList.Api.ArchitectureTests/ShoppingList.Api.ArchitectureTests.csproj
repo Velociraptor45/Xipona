@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.8.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
     <PackageReference Include="NetArchTest.Rules" Version="1.3.2" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
@@ -31,7 +31,7 @@
     <ProjectReference Include="..\ShoppingList.Api.Core\ShoppingList.Api.Core.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Domain\ShoppingList.Api.Domain.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Endpoint\ShoppingList.Api.Endpoint.csproj" />
-    <ProjectReference Include="..\ShoppingList.Api.Infrastructure\ShoppingList.Api.Infrastructure.csproj" />
+    <ProjectReference Include="..\ShoppingList.Api.Repositories\ShoppingList.Api.Repositories.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Vault\ShoppingList.Api.Vault.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.WebApp\ShoppingList.Api.WebApp.csproj" />
   </ItemGroup>

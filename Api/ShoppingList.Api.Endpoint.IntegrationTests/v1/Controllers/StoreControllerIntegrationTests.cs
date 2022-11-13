@@ -12,16 +12,17 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.ShoppingLists.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Stores.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ShoppingLists.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Stores.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
 using Xunit;
+using Section = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Section;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
 
@@ -239,12 +240,12 @@ public class StoreControllerIntegrationTests
             }
 
             public UpdateStoreContract? Contract { get; private set; }
-            public Infrastructure.Stores.Entities.Store? ExistingStore { get; private set; }
-            public Infrastructure.Stores.Entities.Store? ExpectedPersistedStore { get; private set; }
+            public Repositories.Stores.Entities.Store? ExistingStore { get; private set; }
+            public Repositories.Stores.Entities.Store? ExpectedPersistedStore { get; private set; }
             public Item? ExistingItem { get; private set; }
             public Item? ExpectedItem { get; private set; }
-            public Infrastructure.ShoppingLists.Entities.ShoppingList? ExistingShoppingList { get; private set; }
-            public Infrastructure.ShoppingLists.Entities.ShoppingList? ExpectedShoppingList { get; private set; }
+            public Repositories.ShoppingLists.Entities.ShoppingList? ExistingShoppingList { get; private set; }
+            public Repositories.ShoppingLists.Entities.ShoppingList? ExpectedShoppingList { get; private set; }
 
             public void SetupContract()
             {
@@ -376,10 +377,10 @@ public class StoreControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(Contract);
                 TestPropertyNotSetException.ThrowIfNull(ExistingStore);
 
-                var sections = new List<Infrastructure.Stores.Entities.Section>();
+                var sections = new List<Section>();
                 foreach (var section in Contract.Sections)
                 {
-                    sections.Add(new Infrastructure.Stores.Entities.Section
+                    sections.Add(new Section
                     {
                         Id = section.Id!.Value,
                         Name = section.Name,
@@ -395,7 +396,7 @@ public class StoreControllerIntegrationTests
                     if (Contract.Sections.Any(s => s.Id == section.Id))
                         continue;
 
-                    sections.Add(new Infrastructure.Stores.Entities.Section
+                    sections.Add(new Section
                     {
                         Id = section.Id,
                         Name = section.Name,
@@ -406,7 +407,7 @@ public class StoreControllerIntegrationTests
                     });
                 }
 
-                ExpectedPersistedStore = new Infrastructure.Stores.Entities.Store
+                ExpectedPersistedStore = new Repositories.Stores.Entities.Store
                 {
                     Id = ExistingStore.Id,
                     Name = Contract.Name,
@@ -444,7 +445,7 @@ public class StoreControllerIntegrationTests
             return scope.ServiceProvider.GetRequiredService<IStoreRepository>();
         }
 
-        public async Task<IEnumerable<Infrastructure.Stores.Entities.Store>> LoadAllStoresAsync()
+        public async Task<IEnumerable<Repositories.Stores.Entities.Store>> LoadAllStoresAsync()
         {
             using var assertScope = CreateServiceScope();
             var storeContext = GetContextInstance<StoreContext>(assertScope);
@@ -454,7 +455,7 @@ public class StoreControllerIntegrationTests
                 .ToArrayAsync();
         }
 
-        public async Task<IEnumerable<Infrastructure.ShoppingLists.Entities.ShoppingList>> LoadAllShoppingListsAsync()
+        public async Task<IEnumerable<Repositories.ShoppingLists.Entities.ShoppingList>> LoadAllShoppingListsAsync()
         {
             using var assertScope = CreateServiceScope();
             var shoppingListContext = GetContextInstance<ShoppingListContext>(assertScope);

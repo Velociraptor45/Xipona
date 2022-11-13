@@ -11,18 +11,20 @@ using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
-using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Recipes.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.ItemCategories.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Recipes.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ItemCategories.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Recipes.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System.Text.RegularExpressions;
 using Xunit;
-using ItemCategoryEntities = ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities;
-using RecipeEntities = ProjectHermes.ShoppingList.Api.Infrastructure.Recipes.Entities;
+using Ingredient = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Ingredient;
+using PreparationStep = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.PreparationStep;
+using Recipe = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Recipe;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
 
@@ -83,7 +85,7 @@ public class RecipeControllerIntegrationTests
 
             public CreateRecipeContract? Contract { get; private set; }
             public RecipeContract? ExpectedResult { get; private set; }
-            public RecipeEntities.Recipe? ExpectedEntity { get; private set; }
+            public Recipe? ExpectedEntity { get; private set; }
 
             public async Task PrepareDatabaseAsync()
             {
@@ -95,7 +97,7 @@ public class RecipeControllerIntegrationTests
 
                 foreach (var ingredient in _model.Ingredients)
                 {
-                    var itemCategory = new TestBuilder<ItemCategoryEntities.ItemCategory>()
+                    var itemCategory = new TestBuilder<ItemCategory>()
                         .FillPropertyWith(i => i.Id, ingredient.ItemCategoryId.Value)
                         .FillPropertyWith(i => i.Deleted, false)
                         .Create();
@@ -167,11 +169,11 @@ public class RecipeControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_model);
 
-                ExpectedEntity = new RecipeEntities.Recipe
+                ExpectedEntity = new Recipe
                 {
                     Id = _model.Id.Value,
                     Name = _model.Name.Value,
-                    Ingredients = _model.Ingredients.Select(i => new RecipeEntities.Ingredient
+                    Ingredients = _model.Ingredients.Select(i => new Ingredient
                     {
                         Id = i.Id.Value,
                         ItemCategoryId = i.ItemCategoryId.Value,
@@ -181,7 +183,7 @@ public class RecipeControllerIntegrationTests
                         DefaultItemTypeId = i.DefaultItemTypeId?.Value,
                         RecipeId = _model.Id.Value
                     }).ToList(),
-                    PreparationSteps = _model.PreparationSteps.Select(p => new RecipeEntities.PreparationStep
+                    PreparationSteps = _model.PreparationSteps.Select(p => new PreparationStep
                     {
                         Id = p.Id.Value,
                         Instruction = p.Instruction.Value,
@@ -232,8 +234,8 @@ public class RecipeControllerIntegrationTests
 
         private sealed class SearchRecipesByNameAsyncFixture : RecipeControllerFixture
         {
-            private RecipeEntities.Recipe? _existingEntityToBeFound;
-            private RecipeEntities.Recipe? _existingEntityNotToBeFound;
+            private Recipe? _existingEntityToBeFound;
+            private Recipe? _existingEntityNotToBeFound;
 
             public SearchRecipesByNameAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -274,11 +276,11 @@ public class RecipeControllerIntegrationTests
             public void SetupExistingRecipe()
             {
                 var modelToBeFound = new RecipeBuilder().Create();
-                _existingEntityToBeFound = new RecipeEntities.Recipe
+                _existingEntityToBeFound = new Recipe
                 {
                     Id = modelToBeFound.Id.Value,
                     Name = modelToBeFound.Name.Value,
-                    Ingredients = modelToBeFound.Ingredients.Select(i => new RecipeEntities.Ingredient
+                    Ingredients = modelToBeFound.Ingredients.Select(i => new Ingredient
                     {
                         Id = i.Id.Value,
                         ItemCategoryId = i.ItemCategoryId.Value,
@@ -286,7 +288,7 @@ public class RecipeControllerIntegrationTests
                         QuantityType = (int)i.QuantityType,
                         RecipeId = modelToBeFound.Id.Value
                     }).ToList(),
-                    PreparationSteps = modelToBeFound.PreparationSteps.Select(p => new RecipeEntities.PreparationStep
+                    PreparationSteps = modelToBeFound.PreparationSteps.Select(p => new PreparationStep
                     {
                         Id = p.Id.Value,
                         Instruction = p.Instruction.Value,
@@ -296,11 +298,11 @@ public class RecipeControllerIntegrationTests
                 };
 
                 var modelNotToBeFound = new RecipeBuilder().Create();
-                _existingEntityNotToBeFound = new RecipeEntities.Recipe
+                _existingEntityNotToBeFound = new Recipe
                 {
                     Id = modelNotToBeFound.Id.Value,
                     Name = modelNotToBeFound.Name.Value,
-                    Ingredients = modelNotToBeFound.Ingredients.Select(i => new RecipeEntities.Ingredient
+                    Ingredients = modelNotToBeFound.Ingredients.Select(i => new Ingredient
                     {
                         Id = i.Id.Value,
                         ItemCategoryId = i.ItemCategoryId.Value,
@@ -308,7 +310,7 @@ public class RecipeControllerIntegrationTests
                         QuantityType = (int)i.QuantityType,
                         RecipeId = modelNotToBeFound.Id.Value
                     }).ToList(),
-                    PreparationSteps = modelNotToBeFound.PreparationSteps.Select(p => new RecipeEntities.PreparationStep
+                    PreparationSteps = modelNotToBeFound.PreparationSteps.Select(p => new PreparationStep
                     {
                         Id = p.Id.Value,
                         Instruction = p.Instruction.Value,
@@ -415,8 +417,8 @@ public class RecipeControllerIntegrationTests
 
         private class ModifyRecipeAsyncFixture : RecipeControllerFixture
         {
-            private RecipeEntities.Recipe? _existingRecipe;
-            private List<ItemCategoryEntities.ItemCategory>? _itemCategories;
+            private Recipe? _existingRecipe;
+            private List<ItemCategory>? _itemCategories;
             private List<Item>? _items;
 
             public ModifyRecipeAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
@@ -424,7 +426,7 @@ public class RecipeControllerIntegrationTests
             }
 
             public RecipeId? RecipeId { get; private set; }
-            public RecipeEntities.Recipe? ExpectedRecipe { get; private set; }
+            public Recipe? ExpectedRecipe { get; private set; }
             public ModifyRecipeContract? Contract { get; private set; }
 
             public void SetupRecipeId()
@@ -484,7 +486,7 @@ public class RecipeControllerIntegrationTests
                     .ToList();
             }
 
-            private IEnumerable<RecipeEntities.Ingredient> GetExpectedIngredients()
+            private IEnumerable<Ingredient> GetExpectedIngredients()
             {
                 TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
 
@@ -504,7 +506,7 @@ public class RecipeControllerIntegrationTests
                     .Create();
             }
 
-            private IEnumerable<RecipeEntities.PreparationStep> GetExpectedPreparationSteps()
+            private IEnumerable<PreparationStep> GetExpectedPreparationSteps()
             {
                 TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
 
@@ -601,7 +603,7 @@ public class RecipeControllerIntegrationTests
             yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
         }
 
-        public async Task<IEnumerable<RecipeEntities.Recipe>> LoadAllRecipesAsync()
+        public async Task<IEnumerable<Recipe>> LoadAllRecipesAsync()
         {
             using var assertScope = CreateServiceScope();
             var recipeContext = GetContextInstance<RecipeContext>(assertScope);

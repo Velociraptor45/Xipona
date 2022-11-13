@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 using ProjectHermes.ShoppingList.Api.ApplicationServices;
 using ProjectHermes.ShoppingList.Api.Core;
 using ProjectHermes.ShoppingList.Api.Domain;
-using ProjectHermes.ShoppingList.Api.Infrastructure;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
+using ProjectHermes.ShoppingList.Api.Repositories;
+using ProjectHermes.ShoppingList.Api.Repositories.Common.Transactions;
 using System;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests;
@@ -29,7 +29,7 @@ public abstract class DatabaseFixture : IDisposable
         services.AddCore();
         services.AddDomain();
         services.AddEndpointControllers();
-        services.AddInfrastructure(DockerFixture.ConnectionString);
+        services.AddRepositories(DockerFixture.ConnectionString);
         services.AddApplicationServices();
 
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
