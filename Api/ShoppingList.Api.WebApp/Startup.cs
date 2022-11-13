@@ -8,7 +8,7 @@ using ProjectHermes.ShoppingList.Api.Core;
 using ProjectHermes.ShoppingList.Api.Core.Files;
 using ProjectHermes.ShoppingList.Api.Domain;
 using ProjectHermes.ShoppingList.Api.Endpoint;
-using ProjectHermes.ShoppingList.Api.Infrastructure;
+using ProjectHermes.ShoppingList.Api.Repositories;
 using ProjectHermes.ShoppingList.Api.Vault;
 using ProjectHermes.ShoppingList.Api.WebApp.Extensions;
 using ProjectHermes.ShoppingList.Api.WebApp.Services;
@@ -55,7 +55,7 @@ public class Startup
                     builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); //todo
                 });
         });
-        services.AddInfrastructure();
+        services.AddRepositories();
         services.AddApplicationServices();
     }
 

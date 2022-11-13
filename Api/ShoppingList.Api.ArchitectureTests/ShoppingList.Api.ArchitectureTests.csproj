@@ -31,7 +31,7 @@
     <ProjectReference Include="..\ShoppingList.Api.Core\ShoppingList.Api.Core.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Domain\ShoppingList.Api.Domain.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Endpoint\ShoppingList.Api.Endpoint.csproj" />
-    <ProjectReference Include="..\ShoppingList.Api.Infrastructure\ShoppingList.Api.Infrastructure.csproj" />
+    <ProjectReference Include="..\ShoppingList.Api.Repositories\ShoppingList.Api.Repositories.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Vault\ShoppingList.Api.Vault.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.WebApp\ShoppingList.Api.WebApp.csproj" />
   </ItemGroup>

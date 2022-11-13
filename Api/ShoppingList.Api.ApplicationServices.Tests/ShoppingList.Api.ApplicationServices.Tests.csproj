@@ -32,7 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ShoppingList.Api.ApplicationServices\ShoppingList.Api.ApplicationServices.csproj" />
     <ProjectReference Include="..\ShoppingList.Api.Domain.TestKit\ShoppingList.Api.Domain.TestKit.csproj" />
-    <ProjectReference Include="..\ShoppingList.Api.Infrastructure.Tests\ShoppingList.Api.Infrastructure.Tests.csproj" />
+    <ProjectReference Include="..\ShoppingList.Api.Repositories.Tests\ShoppingList.Api.Repositories.Tests.csproj" />
   </ItemGroup>
 
   <ItemGroup>

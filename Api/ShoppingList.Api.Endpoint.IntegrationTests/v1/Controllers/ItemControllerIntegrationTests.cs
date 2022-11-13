@@ -24,24 +24,24 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
-using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Stores.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Stores.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
 using System.Text.RegularExpressions;
 using Xunit;
-using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
+using Item = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.Item;
 using ItemAvailabilityContract = ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared.ItemAvailabilityContract;
-using ItemCategoryEntities = ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities;
-using ItemType = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.ItemType;
-using Section = ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Section;
-using Store = ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Store;
+using ItemCategory = ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Entities.ItemCategory;
+using ItemType = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.ItemType;
+using Section = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Section;
+using Store = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Store;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
 
@@ -620,7 +620,7 @@ public class ItemControllerIntegrationTests
             private readonly CommonFixture _commonFixture = new();
             private Item? _itemWithItemCategory;
             private Item? _itemWithoutItemCategory;
-            private ItemCategoryEntities.ItemCategory? _itemCategory;
+            private ItemCategory? _itemCategory;
             private Store? _store;
 
             public SearchItemsByItemCategoryAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
@@ -632,7 +632,7 @@ public class ItemControllerIntegrationTests
 
             public void SetupItemCategory()
             {
-                _itemCategory = new TestBuilder<ItemCategoryEntities.ItemCategory>()
+                _itemCategory = new TestBuilder<ItemCategory>()
                     .FillPropertyWith(c => c.Deleted, false)
                     .Create();
             }

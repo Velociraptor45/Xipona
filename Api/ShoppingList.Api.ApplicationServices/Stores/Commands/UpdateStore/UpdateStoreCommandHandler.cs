@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
+using ProjectHermes.ShoppingList.Api.Repositories.Common.Transactions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.UpdateStore;
 

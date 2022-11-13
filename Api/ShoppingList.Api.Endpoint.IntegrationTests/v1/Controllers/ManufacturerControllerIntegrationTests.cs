@@ -11,12 +11,12 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Contexts;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using Xunit;
-using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
-using Manufacturer = ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities.Manufacturer;
+using Item = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.Item;
+using Manufacturer = ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Entities.Manufacturer;
 using Models = ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
