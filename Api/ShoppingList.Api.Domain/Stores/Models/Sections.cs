@@ -50,6 +50,7 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
         AddMany(newSections);
 
         ValidateDefaultSection();
+        AsSortableCollection.ValidateSortingIndexes(GetActive());
 
         foreach (var sectionId in sectionIdsToDelete)
         {
@@ -110,11 +111,6 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
 
         var updatedSection = section.Update(update);
         _sections[updatedSection.Id] = updatedSection;
-
-        var activeSections = _sections.Values.Where(s => !s.IsDeleted);
-
-        AsSortableCollection.ValidateSortingIndexes(activeSections);
-        ValidateDefaultSection();
     }
 
     private void AddMany(IEnumerable<ISection> sections)
