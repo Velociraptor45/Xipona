@@ -91,8 +91,6 @@ public static class ServiceCollectionExtensions
         options.UseMySql(connection, _sqlServerVersion);
     }
 
-#pragma warning disable S1172 // Unused method parameters should be removed
-
     private static IEnumerable<DbContext> GetAllDbContextInstances(IServiceProvider serviceProvider, Assembly assembly)
     {
         var types = GetAllDbContextTypes(assembly);
@@ -102,8 +100,6 @@ public static class ServiceCollectionExtensions
             yield return (DbContext)instance;
         }
     }
-
-#pragma warning restore S1172 // Unused method parameters should be removed
 
     private static IEnumerable<Type> GetAllDbContextTypes(Assembly assembly)
     {
