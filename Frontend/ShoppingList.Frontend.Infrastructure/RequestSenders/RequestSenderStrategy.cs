@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +21,9 @@ public class RequestSenderStrategy : IRequestSenderStrategy
     public async Task SendAsync(IApiRequest request)
     {
         var sender = _requestSenders.FirstOrDefault(s => s.RequestType == request.GetType());
+        if (sender is null)
+            throw new NotSupportedException($"No sender for request type {request.GetType().Name} registered");
+
         await sender.SendAsync(_client, request);
     }
 }
