@@ -22,15 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="..\ShoppingList.Frontend.WebApp\ShoppingList.Api.Client">
-      <HintPath>ShoppingList.Api.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="..\ShoppingList.Frontend.WebApp\ShoppingList.Api.Contracts">
-      <HintPath>ShoppingList.Api.Contracts.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
