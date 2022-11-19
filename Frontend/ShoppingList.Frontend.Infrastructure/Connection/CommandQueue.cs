@@ -1,13 +1,13 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Error;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.RequestSenders;
 using RestEase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -19,16 +19,18 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         private readonly Timer _timer;
         private readonly IApiClient _commandClient;
+        private readonly IRequestSenderStrategy _senderStrategy;
 
         private bool _connectionAlive = true;
         private readonly List<IApiRequest> _queue = new();
 
         private ICommandQueueErrorHandler _errorHandler;
 
-        public CommandQueue(IApiClient commandClient)
+        public CommandQueue(IApiClient commandClient, IRequestSenderStrategy senderStrategy)
         {
             _timer = new Timer(_connectionRetryIntervalInMilliseconds);
             _commandClient = commandClient;
+            _senderStrategy = senderStrategy;
         }
 
         public void Initialize(ICommandQueueErrorHandler errorHandler)
@@ -130,21 +132,16 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 }
                 catch (ApiException e)
                 {
-                    Console.WriteLine($"Encountered {e.GetType()} during request.");
-
-                    if (e.StatusCode is HttpStatusCode.BadRequest
-                        or HttpStatusCode.InternalServerError
-                        or HttpStatusCode.UnprocessableEntity)
-                    {
-                        throw new ApiProcessingException("An error occurred while processing the request. See inner exception for more details.", e);
-                    }
-
-                    throw new ApiConnectionException("An api error occurred while processing the request. See inner exception for more details.", e);
+                    HandleRequestFailure(e, e.StatusCode);
+                }
+                catch (HttpRequestException e)
+                {
+                    HandleRequestFailure(e, e.StatusCode);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine($"Encountered {e.GetType()} during request.");
-                    throw new ApiConnectionException("An unknown error occurred. See inner exception for more details.", e);
+                    throw;
                 }
 
                 lock (_queue)
@@ -154,35 +151,23 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             }
         }
 
+        private static void HandleRequestFailure(Exception e, HttpStatusCode? statusCode)
+        {
+            Console.WriteLine($"Encountered {e.GetType()} during request.");
+
+            if (statusCode is HttpStatusCode.BadRequest
+                or HttpStatusCode.InternalServerError
+                or HttpStatusCode.UnprocessableEntity)
+            {
+                throw new ApiProcessingException("An error occurred while processing the request. See inner exception for more details.", e);
+            }
+
+            throw new ApiConnectionException("An api error occurred while processing the request. See inner exception for more details.", e);
+        }
+
         private async Task SendRequest(IApiRequest request)
         {
-            switch (request.GetType().Name)
-            {
-                case nameof(PutItemInBasketRequest):
-                    await _commandClient.PutItemInBasketAsync((PutItemInBasketRequest)request);
-                    break;
-                case nameof(RemoveItemFromBasketRequest):
-                    await _commandClient.RemoveItemFromBasketAsync((RemoveItemFromBasketRequest)request);
-                    break;
-                case nameof(RemoveItemFromShoppingListRequest):
-                    await _commandClient.RemoveItemFromShoppingListAsync((RemoveItemFromShoppingListRequest)request);
-                    break;
-                case nameof(FinishListRequest):
-                    await _commandClient.FinishListAsync((FinishListRequest)request);
-                    break;
-                case nameof(ChangeItemQuantityOnShoppingListRequest):
-                    await _commandClient.ChangeItemQuantityOnShoppingListAsync(
-                        (ChangeItemQuantityOnShoppingListRequest)request);
-                    break;
-                case nameof(CreateTemporaryItemRequest):
-                    await _commandClient.CreateTemporaryItem(
-                        (CreateTemporaryItemRequest)request);
-                    break;
-                case nameof(AddItemToShoppingListRequest):
-                    await _commandClient.AddItemToShoppingListAsync(
-                        (AddItemToShoppingListRequest)request);
-                    break;
-            }
+            await _senderStrategy.SendAsync(request);
         }
 
         private void OnApiProcessingError()

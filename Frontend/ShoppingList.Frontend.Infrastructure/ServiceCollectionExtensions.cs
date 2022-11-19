@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.RequestSenders;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -11,10 +12,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure
         public static void AddInfrastructure(this IServiceCollection services)
         {
             services.AddConverters();
+            AddImplementationOfType(services, Assembly.GetExecutingAssembly(), typeof(IRequestSender));
+            services.AddTransient<IRequestSenderStrategy, RequestSenderStrategy>();
         }
 
         public static void AddImplementationOfGenericType(this IServiceCollection services, Assembly assembly,
-        Type type)
+            Type type)
         {
             var assemblyTypes = assembly
                 .GetTypes()
@@ -35,7 +38,22 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure
             }
         }
 
-        private static bool TypeIsInDescriptor(this ServiceDescriptor descriptor, Type serviceType, Type implementationType)
+        public static void AddImplementationOfType(this IServiceCollection services, Assembly assembly,
+            Type type)
+        {
+            var assemblyTypes = assembly
+                .GetTypes()
+                .Where(t => !t.IsAbstract && t.GetInterfaces().Any(i => i == type))
+                .ToList();
+
+            foreach (var assemblyType in assemblyTypes)
+            {
+                services.AddTransient(type, assemblyType);
+            }
+        }
+
+        private static bool TypeIsInDescriptor(this ServiceDescriptor descriptor, Type serviceType,
+            Type implementationType)
         {
             if (descriptor.ServiceType != serviceType)
                 return false;
