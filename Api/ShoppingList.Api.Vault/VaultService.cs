@@ -20,9 +20,9 @@ public class VaultService : IVaultService
 
     public VaultService(IConfiguration configuration, IFileLoadingService fileLoadingService)
     {
-        _uri = configuration["KeyVault:Uri"];
-        _connectionStringsPath = configuration["KeyVault:Paths:ConnectionStrings"];
-        _mountPoint = configuration["KeyVault:MountPoint"];
+        _uri = configuration["KeyVault:Uri"] ?? string.Empty;
+        _connectionStringsPath = configuration["KeyVault:Paths:ConnectionStrings"] ?? string.Empty;
+        _mountPoint = configuration["KeyVault:MountPoint"] ?? string.Empty;
 
         var usernameFilePath = Environment.GetEnvironmentVariable("PH_SL_VAULT_USERNAME_FILE");
         var passwordFilePath = Environment.GetEnvironmentVariable("PH_SL_VAULT_PASSWORD_FILE");
