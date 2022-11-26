@@ -25,6 +25,7 @@ public class SearchItemForShoppingListResultContractConverter :
             source.Name,
             source.DefaultQuantity,
             source.Price.Value,
+            source.PriceLabel,
             source.ItemCategory?.Name.Value ?? "",
             source.Manufacturer?.Name.Value ?? "",
             _itemSectionContractConverter.ToContract(source.DefaultSection));
