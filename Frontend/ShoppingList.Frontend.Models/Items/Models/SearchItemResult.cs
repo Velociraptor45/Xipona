@@ -1,16 +1,17 @@
-﻿using System;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+using System;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 {
-    public class SearchItemResult
+    public class SearchItemResult : ISearchResult
     {
         public SearchItemResult(Guid itemId, string name)
         {
-            ItemId = itemId;
+            Id = itemId;
             Name = name;
         }
 
-        public Guid ItemId { get; }
-        public string Name { get; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
     }
 }

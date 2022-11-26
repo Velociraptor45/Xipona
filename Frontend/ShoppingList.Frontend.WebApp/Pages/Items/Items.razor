@@ -1,85 +1,39 @@
 ﻿@page "/items"
-@page "/items/{ItemId:guid}"
 
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Filter;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Editor;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 
-@inject IItemsApiService loadingService;
+@inject IItemsApiService LoadingService;
+@inject ItemsState State
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items
 
-@if (state != null)
+@if (State != null)
 {
     <div>
-        @if (!state.IsInEditMode)
-        {
-            <ItemFilter State="@state" FragmentCreator="@errorHandler"></ItemFilter>
-        }
-        else
-        {
-            <ItemEditor State="@state" ErrorHandler="@errorHandler"></ItemEditor>
-        }
+        <ItemFilter State="@State" FragmentCreator="@errorHandler"></ItemFilter>
     </div>
 }
 
 @code {
-    [Parameter] public Guid? ItemId { get; set; }
-
-    private ItemsState state;
     private ErrorHandler errorHandler;
 
     protected override async Task OnInitializedAsync()
     {
         errorHandler = new ErrorHandler(GetButtonRenderFragment);
         await InitialLoadAsync();
-
-        await base.OnInitializedAsync();
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        if (ItemId.HasValue)
-        {
-            await OnItemClickedAsync(ItemId.Value);
-        }
-
-        await base.OnParametersSetAsync();
+        State.ClearItems();
+        State.StateChanged -= StateHasChanged;
+        State.StateChanged += StateHasChanged;
     }
 
     private async Task InitialLoadAsync()
     {
-        await loadingService.LoadInitialPageStateAsync(errorHandler, itemsState =>
-        {
-            state = itemsState;
-            SetupState();
-        });
-    }
+        if (State.Stores.Any())
+            return;
 
-    private void SetupState()
-    {
-        state.ManufacturerCreated += async () => await LoadManufacturerListAsync();
-        state.ItemCategoryCreated += async () => await LoadItemCategoryListAsync();
-
-        state.StateChanged += StateHasChanged;
-    }
-
-    private async Task LoadManufacturerListAsync()
-    {
-        await loadingService.LoadManufacturersAsync(errorHandler, 
-            manufacturers => state.UpdateManufacturers(manufacturers));
-    }
-
-    private async Task LoadItemCategoryListAsync()
-    {
-        await loadingService.LoadItemCategoriesAsync(errorHandler, 
-            itemCategories => state.UpdateItemCategories(itemCategories));
-    }
-
-    private async Task OnItemClickedAsync(Guid itemId)
-    {
-        await loadingService.LoadItemAsync(itemId, errorHandler, item => state.EnterEditor(item));
+        await LoadingService.LoadInitialPageStateAsync(State, errorHandler);
     }
 
     private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")
