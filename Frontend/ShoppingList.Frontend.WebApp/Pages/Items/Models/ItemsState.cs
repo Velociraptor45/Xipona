@@ -11,22 +11,12 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
 {
     public class ItemsState
     {
-        private readonly List<Store> _stores;
+        private List<Store> _stores = new();
         private List<ItemCategory> _itemCategories;
         private List<Manufacturer> _manufacturers;
         private List<SearchItemResult> _items = new();
-        private readonly List<QuantityType> _quantityTypes;
-        private readonly List<QuantityTypeInPacket> _quantityTypesInPacket;
-
-        public ItemsState(IEnumerable<Store> stores, IEnumerable<ItemCategory> itemCategories, IEnumerable<Manufacturer> manufacturers,
-            IEnumerable<QuantityType> quantityTypes, IEnumerable<QuantityTypeInPacket> quantityTypesInPacket)
-        {
-            _stores = stores.ToList();
-            _itemCategories = itemCategories.ToList();
-            _manufacturers = manufacturers.ToList();
-            _quantityTypes = quantityTypes.ToList();
-            _quantityTypesInPacket = quantityTypesInPacket.ToList();
-        }
+        private List<QuantityType> _quantityTypes;
+        private List<QuantityTypeInPacket> _quantityTypesInPacket;
 
         public IReadOnlyCollection<Store> Stores => _stores.AsReadOnly();
         public IReadOnlyCollection<ItemCategory> ItemCategories => _itemCategories.AsReadOnly();
@@ -40,18 +30,21 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
 
         public Action StateChanged { get; set; }
         public Item EditedItem { get; private set; }
-        public bool IsInEditMode => EditedItem != null;
 
-        public void UpdateManufacturers(IEnumerable<Manufacturer> manufacturers)
+        public void Initialize(IEnumerable<Store> stores, IEnumerable<ItemCategory> itemCategories,
+            IEnumerable<Manufacturer> manufacturers, IEnumerable<QuantityType> quantityTypes,
+            IEnumerable<QuantityTypeInPacket> quantityTypesInPacket)
         {
+            _stores = stores.ToList();
+            _itemCategories = itemCategories.ToList();
             _manufacturers = manufacturers.ToList();
-            StateChanged?.Invoke();
+            _quantityTypes = quantityTypes.ToList();
+            _quantityTypesInPacket = quantityTypesInPacket.ToList();
         }
 
-        public void UpdateItemCategories(IEnumerable<ItemCategory> itemCategories)
+        public void ClearItems()
         {
-            _itemCategories = itemCategories.ToList();
-            StateChanged?.Invoke();
+            UpdateItems(Enumerable.Empty<SearchItemResult>());
         }
 
         public void UpdateItems(IEnumerable<SearchItemResult> items)
@@ -65,7 +58,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
             return Stores.FirstOrDefault(s => s.Id == id);
         }
 
-        public void EnterEditorForNewItem()
+        public void SetNewEditedItem()
         {
             // todo: ugly
             var item =
@@ -75,18 +68,12 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
                     new List<ItemAvailability>(),
                     new List<ItemType>());
 
-            EnterEditor(item);
+            SetEditedItem(item);
         }
 
-        public void EnterEditor(Item item)
+        public void SetEditedItem(Item item)
         {
             EditedItem = item;
-            StateChanged?.Invoke();
-        }
-
-        public void LeaveEditor()
-        {
-            EditedItem = null;
             StateChanged?.Invoke();
         }
     }

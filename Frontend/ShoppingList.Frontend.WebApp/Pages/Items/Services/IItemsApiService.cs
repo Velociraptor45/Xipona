@@ -11,7 +11,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 {
     public interface IItemsApiService
     {
-        Task LoadInitialPageStateAsync(IAsyncRetryFragmentCreator fragmentCreator, Action<ItemsState> onSuccessAction);
+        Task LoadInitialPageStateAsync(ItemsState state, IAsyncRetryFragmentCreator fragmentCreator);
 
         Task LoadItemAsync(Guid itemId, IAsyncRetryFragmentCreator fragmentCreator, Action<Item> onSuccessAction);
 
