@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
@@ -16,13 +18,16 @@ public class ItemRepository : IItemRepository
     private readonly ItemContext _dbContext;
     private readonly IToDomainConverter<Item, IItem> _toModelConverter;
     private readonly IToEntityConverter<IItem, Item> _toEntityConverter;
+    private readonly Func<CancellationToken, IDomainEventDispatcher> _domainEventDispatcherDelegate;
 
     public ItemRepository(ItemContext dbContext, IToDomainConverter<Item, IItem> toModelConverter,
-        IToEntityConverter<IItem, Item> toEntityConverter)
+        IToEntityConverter<IItem, Item> toEntityConverter,
+        Func<CancellationToken, IDomainEventDispatcher> domainEventDispatcherDelegate)
     {
         _dbContext = dbContext;
         _toModelConverter = toModelConverter;
         _toEntityConverter = toEntityConverter;
+        _domainEventDispatcherDelegate = domainEventDispatcherDelegate;
     }
 
     #region public methods
@@ -230,15 +235,14 @@ public class ItemRepository : IItemRepository
 
         var existingEntity = await FindTrackedEntityBy(item.Id);
 
+        Guid entityIdToLoad;
         if (existingEntity == null)
         {
             var newEntity = _toEntityConverter.ToEntity(item);
             _dbContext.Add(newEntity);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
-
-            var e = GetItemQuery().First(i => i.Id == newEntity.Id);
-            return _toModelConverter.ToDomain(e);
+            entityIdToLoad = newEntity.Id;
         }
         else
         {
@@ -253,10 +257,14 @@ public class ItemRepository : IItemRepository
             DeleteItemTypes(existingEntity, updatedEntity);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
-
-            var e = GetItemQuery().First(i => i.Id == updatedEntity.Id);
-            return _toModelConverter.ToDomain(e);
+            entityIdToLoad = updatedEntity.Id;
         }
+
+        var dispatcher = _domainEventDispatcherDelegate(cancellationToken);
+        await ((AggregateRoot)item).DispatchDomainEvents(dispatcher);
+
+        var e = GetItemQuery().First(i => i.Id == entityIdToLoad);
+        return _toModelConverter.ToDomain(e);
     }
 
     #endregion public methods
