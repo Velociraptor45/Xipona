@@ -81,6 +81,9 @@ public class Item : AggregateRoot, IItem
 
     public void Delete()
     {
+        if (IsDeleted)
+            return;
+
         IsDeleted = true;
         PublishDomainEvent(new ItemDeletedDomainEvent(Id));
     }

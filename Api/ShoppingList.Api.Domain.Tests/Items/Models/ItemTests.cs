@@ -1,8 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.TestKit.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.DomainEvents;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.TemporaryItems;
@@ -42,10 +44,36 @@ public class ItemTests
         item.Delete();
 
         // Assert
-        using (new AssertionScope())
-        {
-            item.IsDeleted.Should().BeTrue();
-        }
+        item.IsDeleted.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Delete_WithNotDeletedItem_ShouldPublishEvent()
+    {
+        // Arrange
+        var item = ItemMother.Initial().Create();
+
+        // Act
+        item.Delete();
+
+        // Assert
+        var aggregateRootItem = (AggregateRoot)item;
+        aggregateRootItem.DomainEvents.Should().HaveCount(1);
+        aggregateRootItem.DomainEvents.First().Should().BeEquivalentTo(new ItemDeletedDomainEvent(item.Id));
+    }
+
+    [Fact]
+    public void Delete_WithDeletedItem_ShouldNotPublishEvent()
+    {
+        // Arrange
+        var item = ItemMother.Deleted().Create();
+
+        // Act
+        item.Delete();
+
+        // Assert
+        var aggregateRootItem = (AggregateRoot)item;
+        aggregateRootItem.DomainEvents.Should().BeEmpty();
     }
 
     #endregion Delete
