@@ -6,26 +6,46 @@ using System.Text.RegularExpressions;
 
 namespace ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 
-public static class EquivalencyAssertionOptionsExtensions
+public static partial class EquivalencyAssertionOptionsExtensions
 {
+    [GeneratedRegex(@"ItemTypes\[\d+\].Item")]
+    private static partial Regex ItemTypesItemCycle();
+
+    [GeneratedRegex(@"ItemTypes\[\d+\].Predecessor\b")]
+    private static partial Regex ItemTypesPredecessorCycle();
+
+    [GeneratedRegex(@"AvailableAt\[\d+\].ItemType")]
+    private static partial Regex AvailableAtItemTypeCycle();
+
+    [GeneratedRegex(@"AvailableAt\[\d+\].Item")]
+    private static partial Regex AvailableAtItemCycle();
+
     public static EquivalencyAssertionOptions<T> ExcludeItemCycleRef<T>(this EquivalencyAssertionOptions<T> options)
     {
-        return options.Excluding(info => Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Item")
-                                         || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Predecessor\b")
-                                         || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].ItemType")
-                                         || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].Item"));
+        return options.Excluding(info => ItemTypesItemCycle().IsMatch(info.Path)
+                                         || ItemTypesPredecessorCycle().IsMatch(info.Path)
+                                         || AvailableAtItemTypeCycle().IsMatch(info.Path)
+                                         || AvailableAtItemCycle().IsMatch(info.Path));
     }
+
+    [GeneratedRegex(@"ItemsOnList\[\d+\].ShoppingList")]
+    private static partial Regex ItemsOnListShoppingListCycle();
 
     public static EquivalencyAssertionOptions<T> ExcludeShoppingListCycleRef<T>(this EquivalencyAssertionOptions<T> options)
     {
-        return options.Excluding(info => Regex.IsMatch(info.Path, @"ItemsOnList\[\d+\].ShoppingList"));
+        return options.Excluding(info => ItemsOnListShoppingListCycle().IsMatch(info.Path));
     }
+
+    [GeneratedRegex(@"PreparationSteps\[\d+\].Recipe")]
+    private static partial Regex PreparationStepsRecipeCycle();
+
+    [GeneratedRegex(@"Ingredients\[\d+\].Recipe")]
+    private static partial Regex IngredientsRecipeCycle();
 
     public static EquivalencyAssertionOptions<T> ExcludeRecipeCycleRef<T>(this EquivalencyAssertionOptions<T> options)
     {
-        return options.Excluding(info => Regex.IsMatch(info.Path, @"PreparationSteps\[\d+\].Recipe")
-                                         || Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Recipe")
-                                         || Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Id"));
+        return options.Excluding(info => PreparationStepsRecipeCycle().IsMatch(info.Path)
+                                         || IngredientsRecipeCycle().IsMatch(info.Path));
     }
 
     public static EquivalencyAssertionOptions<T> UsingDateTimeOffsetWithPrecision<T>(

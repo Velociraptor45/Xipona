@@ -756,7 +756,9 @@ public class ItemControllerIntegrationTests
             var recipes = (await _fixture.LoadAllRecipesAsync(assertionServiceScope)).ToArray();
             recipes.Should().HaveCount(1);
             recipes.First().Should().BeEquivalentTo(_fixture.ExpectedRecipe,
-                opt => opt.ExcludeRecipeCycleRef());
+                opt => opt
+                .ExcludeRecipeCycleRef()
+                    .Excluding(info => Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Id")));
 
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionServiceScope)).ToArray();
             shoppingLists.Should().HaveCount(1);
