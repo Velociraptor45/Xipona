@@ -39,6 +39,18 @@ public class ShoppingList : IShoppingList
         _sections[sectionId] = section.AddItem(item);
     }
 
+    public void RemoveItemAndItsTypes(ItemId itemId)
+    {
+        var sections = _sections.Values.Where(s => s.ContainsItemOrItsTypes(itemId)).ToArray();
+        if (!sections.Any())
+            return;
+
+        foreach (var section in sections)
+        {
+            _sections[section.Id] = section.RemoveItemAndItsTypes(itemId);
+        }
+    }
+
     public void RemoveItem(ItemId itemId)
     {
         RemoveItem(itemId, null);

@@ -1,6 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.DomainEvents;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.TemporaryItems;
@@ -12,7 +14,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
-public class Item : IItem
+public class Item : AggregateRoot, IItem
 {
     private List<IItemAvailability> _availabilities;
     private readonly ItemTypes? _itemTypes;
@@ -79,7 +81,11 @@ public class Item : IItem
 
     public void Delete()
     {
+        if (IsDeleted)
+            return;
+
         IsDeleted = true;
+        PublishDomainEvent(new ItemDeletedDomainEvent(Id));
     }
 
     public bool IsAvailableInStore(StoreId storeId)

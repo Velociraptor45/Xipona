@@ -28,4 +28,31 @@ public static class StoreEntityMother
             .WithDeleted(false)
             .WithSections(sections);
     }
+
+    public static StoreEntityBuilder ValidSections(IEnumerable<Guid> sectionIds)
+    {
+        var sectionIdArray = sectionIds.ToArray();
+
+        var sections = new List<Section>();
+
+        if (!sectionIdArray.Any())
+            return new StoreEntityBuilder().WithSections(sections);
+
+        sections.Add(new SectionEntityBuilder()
+            .WithId(sectionIdArray.First())
+            .WithIsDefaultSection(true)
+            .WithIsDeleted(false)
+            .Create());
+
+        for (int i = 1; i < sectionIdArray.Length; i++)
+        {
+            sections.Add(new SectionEntityBuilder()
+                .WithId(sectionIdArray[i])
+                .WithIsDefaultSection(false)
+                .WithIsDeleted(false)
+                .Create());
+        }
+
+        return new StoreEntityBuilder().WithSections(sections);
+    }
 }

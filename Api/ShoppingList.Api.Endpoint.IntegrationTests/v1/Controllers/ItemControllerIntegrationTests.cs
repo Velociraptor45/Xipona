@@ -1,4 +1,6 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Execution;
+using Force.DeepCloner;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,10 +30,15 @@ using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Recipes.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ShoppingLists.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Stores.Entities;
+using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
 using System.Text.RegularExpressions;
@@ -355,23 +362,23 @@ public class ItemControllerIntegrationTests
             await sut.UpdateItemPriceAsync(_fixture.ItemId.Value.Value, _fixture.Contract);
 
             // Assert
-            var allStoredItems = (await _fixture.LoadAllItemEntities()).ToList();
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+
+            var allStoredItems = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToList();
             allStoredItems.Should().HaveCount(2);
             allStoredItems.Should().Contain(i => i.Id == _fixture.ExpectedOldItem.Id);
             allStoredItems.Should().Contain(i => i.Id != _fixture.ExpectedOldItem.Id);
 
             var oldItem = allStoredItems.First(i => i.Id == _fixture.ExpectedOldItem.Id);
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
-                opt => opt.Excluding(info => info.Path == "UpdatedOn"
-                                             || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].Item")));
-            oldItem.UpdatedOn.Should().NotBeNull();
-            oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
+                opt => opt.ExcludeItemCycleRef()
+                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(5)));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
-                opt => opt.Excluding(info => info.Path == "Id"
-                                             || info.Path == "Predecessor"
-                                             || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].Item")));
+                opt => opt
+                    .ExcludeItemCycleRef()
+                    .Excluding(info => info.Path == "Id"));
         }
 
         [Fact]
@@ -394,29 +401,25 @@ public class ItemControllerIntegrationTests
             await sut.UpdateItemPriceAsync(_fixture.ItemId.Value.Value, _fixture.Contract);
 
             // Assert
-            var allStoredItems = (await _fixture.LoadAllItemEntities()).ToList();
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+
+            var allStoredItems = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToList();
             allStoredItems.Should().HaveCount(2);
             allStoredItems.Should().Contain(i => i.Id == _fixture.ExpectedOldItem.Id);
             allStoredItems.Should().Contain(i => i.Id != _fixture.ExpectedOldItem.Id);
 
             var oldItem = allStoredItems.First(i => i.Id == _fixture.ExpectedOldItem.Id);
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
-                opt => opt.Excluding(info => info.Path == "UpdatedOn"
-                    || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Item")
-                    || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].ItemType")
-                    ));
-            oldItem.UpdatedOn.Should().NotBeNull();
-            oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
+                opt => opt
+                    .ExcludeItemCycleRef()
+                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(5)));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
-                opt => opt.Excluding(info => info.Path == "Id"
-                                             || info.Path == "Predecessor"
-                                             || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Id")
-                                             || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Item")
-                                             || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Predecessor\b")
-                                             || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].ItemType")
-                                             ));
+                opt => opt
+                    .ExcludeItemCycleRef()
+                    .Excluding(info => info.Path == "Id"
+                                       || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Id")));
         }
 
         private sealed class UpdateItemPriceAsyncFixture : ItemControllerFixture
@@ -504,7 +507,8 @@ public class ItemControllerIntegrationTests
                     QuantityType = _existingItem.QuantityType,
                     QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
                     PredecessorId = null,
-                    ItemTypes = new List<ItemType>()
+                    ItemTypes = new List<ItemType>(),
+                    UpdatedOn = DateTimeOffset.Now
                 };
 
                 ExpectedNewItem = new Item
@@ -550,7 +554,8 @@ public class ItemControllerIntegrationTests
                     QuantityType = _existingItem.QuantityType,
                     QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
                     PredecessorId = null,
-                    ItemTypes = _existingItem.ItemTypes
+                    ItemTypes = _existingItem.ItemTypes,
+                    UpdatedOn = DateTimeOffset.Now
                 };
 
                 ExpectedNewItem = new Item
@@ -702,6 +707,172 @@ public class ItemControllerIntegrationTests
         }
     }
 
+    [Collection(DockerCollection.Name)]
+    public sealed class DeleteItemAsync
+    {
+        private readonly DeleteItemAsyncFixture _fixture;
+
+        public DeleteItemAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new DeleteItemAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task DeleteItemAsync_WithValidData_ShouldDeleteItemAndRemoveItFromListAndRecipe()
+        {
+            // Arrange
+            _fixture.SetupItem();
+            _fixture.SetupShoppingListWithItem();
+            _fixture.SetupStoreForShoppingList();
+            _fixture.SetupRecipeWithItem();
+            await _fixture.PrepareDatabaseAsync();
+            _fixture.SetupExpectedItem();
+            _fixture.SetupExpectedRecipe();
+            _fixture.SetupExpectedShoppingList();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
+
+            // Act
+            var result = await sut.DeleteItemAsync(_fixture.Item.Id);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkResult>();
+
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            using var assertionScope = new AssertionScope();
+
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().HaveCount(1);
+            items.First().Should().BeEquivalentTo(_fixture.ExpectedItem,
+                opt => opt
+                    .ExcludeItemCycleRef()
+                    .UsingDateTimeOffsetWithPrecision());
+
+            var recipes = (await _fixture.LoadAllRecipesAsync(assertionServiceScope)).ToArray();
+            recipes.Should().HaveCount(1);
+            recipes.First().Should().BeEquivalentTo(_fixture.ExpectedRecipe,
+                opt => opt
+                .ExcludeRecipeCycleRef()
+                    .Excluding(info => Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Id")));
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionServiceScope)).ToArray();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
+                opt => opt.ExcludeShoppingListCycleRef());
+        }
+
+        private sealed class DeleteItemAsyncFixture : ItemControllerFixture
+        {
+            private Repositories.ShoppingLists.Entities.ShoppingList? _shoppingList;
+            private Store? _store;
+            private Recipe? _recipe;
+
+            public DeleteItemAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public Item? Item { get; private set; }
+            public Item? ExpectedItem { get; private set; }
+            public Repositories.ShoppingLists.Entities.ShoppingList? ExpectedShoppingList { get; private set; }
+            public Recipe? ExpectedRecipe { get; private set; }
+
+            public void SetupItem()
+            {
+                Item = ItemEntityMother.Initial().Create();
+            }
+
+            public void SetupExpectedItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Item);
+
+                ExpectedItem = Item.DeepClone();
+                ExpectedItem.Deleted = true;
+            }
+
+            public void SetupShoppingListWithItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Item);
+
+                _shoppingList = ShoppingListEntityMother.InitialWithTwoItems(Item.Id, null, Guid.NewGuid()).Create();
+            }
+
+            public void SetupExpectedShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                TestPropertyNotSetException.ThrowIfNull(Item);
+
+                ExpectedShoppingList = _shoppingList.DeepClone();
+                ExpectedShoppingList.ItemsOnList =
+                    ExpectedShoppingList.ItemsOnList.Where(map => map.ItemId != Item.Id).ToArray();
+            }
+
+            public void SetupStoreForShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+
+                var sectionIds = _shoppingList.ItemsOnList.Select(x => x.SectionId).ToArray();
+
+                _store = StoreEntityMother
+                    .ValidSections(sectionIds)
+                    .WithId(_shoppingList.StoreId)
+                    .Create();
+            }
+
+            public void SetupRecipeWithItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Item);
+
+                var ingredients = new IngredientEntityBuilder()
+                    .WithDefaultItemId(Item.Id)
+                    .WithoutDefaultItemTypeId()
+                    .CreateMany(1)
+                    .ToArray();
+
+                _recipe = new RecipeEntityBuilder()
+                    .WithIngredients(ingredients)
+                    .Create();
+            }
+
+            public void SetupExpectedRecipe()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipe);
+
+                ExpectedRecipe = _recipe.DeepClone();
+                ExpectedRecipe.Ingredients.First().DefaultItemId = null;
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Item);
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_recipe);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+                await using var storeContext = GetContextInstance<StoreContext>(ArrangeScope);
+                await using var shoppingListContext = GetContextInstance<ShoppingListContext>(ArrangeScope);
+                await using var recipeContext = GetContextInstance<RecipeContext>(ArrangeScope);
+
+                itemContext.Add(Item);
+                storeContext.Add(_store);
+                shoppingListContext.Add(_shoppingList);
+                recipeContext.Add(_recipe);
+
+                await itemContext.SaveChangesAsync();
+                await storeContext.SaveChangesAsync();
+                await shoppingListContext.SaveChangesAsync();
+                await recipeContext.SaveChangesAsync();
+            }
+        }
+    }
+
     private class ItemControllerFixture : DatabaseFixture
     {
         protected ItemControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
@@ -718,6 +889,7 @@ public class ItemControllerIntegrationTests
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
             yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
             yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
+            yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
         }
 
         public ItemController CreateSut()

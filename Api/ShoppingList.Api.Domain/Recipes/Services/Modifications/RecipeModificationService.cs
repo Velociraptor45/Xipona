@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
@@ -29,5 +30,16 @@ public class RecipeModificationService : IRecipeModificationService
         await recipe.ModifyAsync(modification, _validator);
 
         await _recipeRepository.StoreAsync(recipe);
+    }
+
+    public async Task RemoveDefaultItemAsync(ItemId itemId)
+    {
+        var recipes = await _recipeRepository.FindByAsync(itemId);
+
+        foreach (var recipe in recipes)
+        {
+            recipe.RemoveDefaultItem(itemId);
+            await _recipeRepository.StoreAsync(recipe);
+        }
     }
 }

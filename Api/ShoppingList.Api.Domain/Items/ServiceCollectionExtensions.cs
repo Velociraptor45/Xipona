@@ -106,9 +106,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IItemDeletionService>>(provider =>
         {
             var itemRepository = provider.GetRequiredService<IItemRepository>();
-            var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
             return cancellationToken =>
-                new ItemDeletionService(itemRepository, shoppingListRepository, cancellationToken);
+                new ItemDeletionService(itemRepository, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IItemQueryService>>(provider =>
