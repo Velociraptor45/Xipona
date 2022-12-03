@@ -26,7 +26,7 @@ public class QueryDispatcher : IQueryDispatcher
         var method = serviceType.GetMethod("HandleAsync");
 
         if (method is null)
-            throw new InvalidOperationException($"Method 'HandleAsync' not found in service {service.GetType().Name}");
+            throw new InvalidOperationException($"Method 'HandleAsync' not found in service type {serviceType.Name}");
 
         var result = method.Invoke(service, new object[] { query, cancellationToken });
 

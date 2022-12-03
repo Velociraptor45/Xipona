@@ -19,6 +19,17 @@ public class ShoppingListSection : IShoppingListSection
 
     public IReadOnlyCollection<IShoppingListItem> Items => _shoppingListItems.Values.ToList().AsReadOnly();
 
+    public IShoppingListSection RemoveItemAndItsTypes(ItemId itemId)
+    {
+        if (!ContainsItemOrItsTypes(itemId))
+            return this;
+
+        var relevantItems = _shoppingListItems.Where(i => i.Key.Item1 != itemId);
+        var items = new Dictionary<(ItemId, ItemTypeId?), IShoppingListItem>(relevantItems);
+
+        return new ShoppingListSection(Id, items.Values);
+    }
+
     public IShoppingListSection RemoveItem(ItemId itemId)
     {
         return RemoveItem(itemId, null);
@@ -33,6 +44,11 @@ public class ShoppingListSection : IShoppingListSection
         items.Remove((itemId, itemTypeId));
 
         return new ShoppingListSection(Id, items.Values);
+    }
+
+    public bool ContainsItemOrItsTypes(ItemId itemId)
+    {
+        return _shoppingListItems.Keys.Any(k => k.Item1 == itemId);
     }
 
     public bool ContainsItem(ItemId itemId)

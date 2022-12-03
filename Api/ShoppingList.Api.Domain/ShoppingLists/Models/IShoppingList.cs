@@ -30,4 +30,6 @@ public interface IShoppingList
     void AddSection(IShoppingListSection section);
 
     void TransferItem(SectionId sectionId, ItemId itemId, ItemTypeId? itemTypeId);
+
+    void RemoveItemAndItsTypes(ItemId itemId);
 }

@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
@@ -26,5 +27,10 @@ public class Recipe : IRecipe
         Name = modification.Name;
         await _ingredients.ModifyManyAsync(modification.IngredientModifications, validator);
         _steps.ModifyMany(modification.PreparationStepModifications);
+    }
+
+    public void RemoveDefaultItem(ItemId defaultItemId)
+    {
+        _ingredients.RemoveDefaultItem(defaultItemId);
     }
 }

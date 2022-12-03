@@ -68,6 +68,20 @@ public class ShoppingListModificationService : IShoppingListModificationService
         await _shoppingListRepository.StoreAsync(list, _cancellationToken);
     }
 
+    public async Task RemoveItemAndItsTypesFromCurrentListAsync(ItemId itemId)
+    {
+        var listsWithItem = (await _shoppingListRepository.FindActiveByAsync(itemId, _cancellationToken)).ToList();
+
+        foreach (var list in listsWithItem)
+        {
+            _cancellationToken.ThrowIfCancellationRequested();
+
+            list.RemoveItemAndItsTypes(itemId);
+
+            await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+        }
+    }
+
     public async Task RemoveItemAsync(ShoppingListId shoppingListId, OfflineTolerantItemId offlineTolerantItemId,
         ItemTypeId? itemTypeId)
     {

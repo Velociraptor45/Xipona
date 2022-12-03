@@ -20,5 +20,8 @@ public interface IShoppingListModificationService
         OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId);
 
     Task FinishAsync(ShoppingListId shoppingListId, DateTimeOffset completionDate);
+
     Task RemoveSectionAsync(SectionId sectionId);
+
+    Task RemoveItemAndItsTypesFromCurrentListAsync(ItemId itemId);
 }

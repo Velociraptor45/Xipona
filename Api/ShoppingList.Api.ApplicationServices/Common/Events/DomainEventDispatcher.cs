@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Events;
 
@@ -13,24 +14,22 @@ public class DomainEventDispatcher : IDomainEventDispatcher
         _cancellationToken = cancellationToken;
     }
 
-    public Task DispatchAsync(IDomainEvent domainEvent)
+    public async Task DispatchAsync(IDomainEvent domainEvent)
     {
         var serviceType = typeof(IDomainEventHandler<>).MakeGenericType(domainEvent.GetType());
-        var service = _serviceProvider.GetService(serviceType);
+        var services = _serviceProvider.GetServices(serviceType).ToArray();
 
-        if (service is null)
+        if (!services.Any())
             throw new InvalidOperationException($"No domain event handler for type {serviceType.Name} found");
 
         var method = serviceType.GetMethod("HandleAsync");
 
         if (method is null)
-            throw new InvalidOperationException($"Method 'HandleAsync' not found in service {service.GetType().Name}");
+            throw new InvalidOperationException($"Method 'HandleAsync' not found in service type {serviceType.Name}");
 
-        var result = method.Invoke(service, new object[] { domainEvent, _cancellationToken });
-
-        if (result is not Task typedResult)
-            throw new InvalidOperationException($"Return type of service is not as expected ({result?.GetType().Name})");
-
-        return typedResult;
+        foreach (var service in services)
+        {
+            await (Task)method.Invoke(service, new object[] { domainEvent, _cancellationToken })!;
+        }
     }
 }

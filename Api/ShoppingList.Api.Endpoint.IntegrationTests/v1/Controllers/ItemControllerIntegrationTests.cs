@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Force.DeepCloner;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,9 +29,13 @@ using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Recipes.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ShoppingLists.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Stores.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
@@ -702,6 +707,172 @@ public class ItemControllerIntegrationTests
         }
     }
 
+    [Collection(DockerCollection.Name)]
+    public sealed class DeleteItemAsync
+    {
+        private readonly DeleteItemAsyncFixture _fixture;
+
+        public DeleteItemAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new DeleteItemAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task DeleteItemAsync_WithValidData_ShouldDeleteItemAndRemoveItFromListAndRecipe()
+        {
+            // Arrange
+            _fixture.SetupItem();
+            _fixture.SetupShoppingListWithItem();
+            _fixture.SetupStoreForShoppingList();
+            _fixture.SetupRecipeWithItem();
+            await _fixture.PrepareDatabaseAsync();
+            _fixture.SetupExpectedItem();
+            _fixture.SetupExpectedRecipe();
+            _fixture.SetupExpectedShoppingList();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
+
+            // Act
+            var result = await sut.DeleteItemAsync(_fixture.Item.Id);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkResult>();
+
+            using var assertionScope = _fixture.CreateServiceScope();
+
+            var items = (await _fixture.LoadAllItemsAsync(assertionScope)).ToArray();
+            items.Should().HaveCount(1);
+            items.First().Should().BeEquivalentTo(_fixture.ExpectedItem,
+                opt => opt
+                    .Excluding(info => Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].Item"))
+                    .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1)))
+                    .WhenTypeIs<DateTimeOffset>());
+
+            var recipes = (await _fixture.LoadAllRecipesAsync(assertionScope)).ToArray();
+            recipes.Should().HaveCount(1);
+            recipes.First().Should().BeEquivalentTo(_fixture.ExpectedRecipe,
+                opt => opt.Excluding(info => Regex.IsMatch(info.Path, @"PreparationSteps\[\d+\].Recipe")
+                                             || Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Recipe")
+                                             || Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Id")));
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionScope)).ToArray();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
+                opt => opt.Excluding(info => Regex.IsMatch(info.Path, @"ItemsOnList\[\d+\].ShoppingList")));
+        }
+
+        private sealed class DeleteItemAsyncFixture : ItemControllerFixture
+        {
+            private Repositories.ShoppingLists.Entities.ShoppingList? _shoppingList;
+            private Store? _store;
+            private Recipe? _recipe;
+
+            public DeleteItemAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public Item? Item { get; private set; }
+            public Item? ExpectedItem { get; private set; }
+            public Repositories.ShoppingLists.Entities.ShoppingList? ExpectedShoppingList { get; private set; }
+            public Recipe? ExpectedRecipe { get; private set; }
+
+            public void SetupItem()
+            {
+                Item = ItemEntityMother.Initial().Create();
+            }
+
+            public void SetupExpectedItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Item);
+
+                ExpectedItem = Item.DeepClone();
+                ExpectedItem.Deleted = true;
+            }
+
+            public void SetupShoppingListWithItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Item);
+
+                _shoppingList = ShoppingListEntityMother.InitialWithTwoItems(Item.Id, null, Guid.NewGuid()).Create();
+            }
+
+            public void SetupExpectedShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                TestPropertyNotSetException.ThrowIfNull(Item);
+
+                ExpectedShoppingList = _shoppingList.DeepClone();
+                ExpectedShoppingList.ItemsOnList =
+                    ExpectedShoppingList.ItemsOnList.Where(map => map.ItemId != Item.Id).ToArray();
+            }
+
+            public void SetupStoreForShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+
+                var sectionIds = _shoppingList.ItemsOnList.Select(x => x.SectionId).ToArray();
+
+                _store = StoreEntityMother
+                    .ValidSections(sectionIds)
+                    .WithId(_shoppingList.StoreId)
+                    .Create();
+            }
+
+            public void SetupRecipeWithItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Item);
+
+                var ingredients = new IngredientEntityBuilder()
+                    .WithDefaultItemId(Item.Id)
+                    .WithoutDefaultItemTypeId()
+                    .CreateMany(1)
+                    .ToArray();
+
+                _recipe = new RecipeEntityBuilder()
+                    .WithIngredients(ingredients)
+                    .Create();
+            }
+
+            public void SetupExpectedRecipe()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipe);
+
+                ExpectedRecipe = _recipe.DeepClone();
+                ExpectedRecipe.Ingredients.First().DefaultItemId = null;
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Item);
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_recipe);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+                await using var storeContext = GetContextInstance<StoreContext>(ArrangeScope);
+                await using var shoppingListContext = GetContextInstance<ShoppingListContext>(ArrangeScope);
+                await using var recipeContext = GetContextInstance<RecipeContext>(ArrangeScope);
+
+                itemContext.Add(Item);
+                storeContext.Add(_store);
+                shoppingListContext.Add(_shoppingList);
+                recipeContext.Add(_recipe);
+
+                await itemContext.SaveChangesAsync();
+                await storeContext.SaveChangesAsync();
+                await shoppingListContext.SaveChangesAsync();
+                await recipeContext.SaveChangesAsync();
+            }
+        }
+    }
+
     private class ItemControllerFixture : DatabaseFixture
     {
         protected ItemControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
@@ -718,6 +889,7 @@ public class ItemControllerIntegrationTests
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
             yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
             yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
+            yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
         }
 
         public ItemController CreateSut()

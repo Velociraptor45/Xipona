@@ -27,4 +27,8 @@ public interface IShoppingListSection
     IShoppingListSection RemoveItemsInBasket();
 
     IShoppingListSection RemoveItemsNotInBasket();
+
+    bool ContainsItemOrItsTypes(ItemId itemId);
+
+    IShoppingListSection RemoveItemAndItsTypes(ItemId itemId);
 }
