@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Execution;
 using Force.DeepCloner;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,7 @@ using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Recipes.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ShoppingLists.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Stores.Entities;
+using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
 using System.Text.RegularExpressions;
@@ -360,23 +362,23 @@ public class ItemControllerIntegrationTests
             await sut.UpdateItemPriceAsync(_fixture.ItemId.Value.Value, _fixture.Contract);
 
             // Assert
-            var allStoredItems = (await _fixture.LoadAllItemEntities()).ToList();
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+
+            var allStoredItems = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToList();
             allStoredItems.Should().HaveCount(2);
             allStoredItems.Should().Contain(i => i.Id == _fixture.ExpectedOldItem.Id);
             allStoredItems.Should().Contain(i => i.Id != _fixture.ExpectedOldItem.Id);
 
             var oldItem = allStoredItems.First(i => i.Id == _fixture.ExpectedOldItem.Id);
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
-                opt => opt.Excluding(info => info.Path == "UpdatedOn"
-                                             || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].Item")));
-            oldItem.UpdatedOn.Should().NotBeNull();
-            oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
+                opt => opt.ExcludeItemCycleRef()
+                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(5)));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
-                opt => opt.Excluding(info => info.Path == "Id"
-                                             || info.Path == "Predecessor"
-                                             || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].Item")));
+                opt => opt
+                    .ExcludeItemCycleRef()
+                    .Excluding(info => info.Path == "Id"));
         }
 
         [Fact]
@@ -399,29 +401,25 @@ public class ItemControllerIntegrationTests
             await sut.UpdateItemPriceAsync(_fixture.ItemId.Value.Value, _fixture.Contract);
 
             // Assert
-            var allStoredItems = (await _fixture.LoadAllItemEntities()).ToList();
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+
+            var allStoredItems = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToList();
             allStoredItems.Should().HaveCount(2);
             allStoredItems.Should().Contain(i => i.Id == _fixture.ExpectedOldItem.Id);
             allStoredItems.Should().Contain(i => i.Id != _fixture.ExpectedOldItem.Id);
 
             var oldItem = allStoredItems.First(i => i.Id == _fixture.ExpectedOldItem.Id);
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
-                opt => opt.Excluding(info => info.Path == "UpdatedOn"
-                    || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Item")
-                    || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].ItemType")
-                    ));
-            oldItem.UpdatedOn.Should().NotBeNull();
-            oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
+                opt => opt
+                    .ExcludeItemCycleRef()
+                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(5)));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
-                opt => opt.Excluding(info => info.Path == "Id"
-                                             || info.Path == "Predecessor"
-                                             || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Id")
-                                             || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Item")
-                                             || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Predecessor\b")
-                                             || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].ItemType")
-                                             ));
+                opt => opt
+                    .ExcludeItemCycleRef()
+                    .Excluding(info => info.Path == "Id"
+                                       || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Id")));
         }
 
         private sealed class UpdateItemPriceAsyncFixture : ItemControllerFixture
@@ -509,7 +507,8 @@ public class ItemControllerIntegrationTests
                     QuantityType = _existingItem.QuantityType,
                     QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
                     PredecessorId = null,
-                    ItemTypes = new List<ItemType>()
+                    ItemTypes = new List<ItemType>(),
+                    UpdatedOn = DateTimeOffset.Now
                 };
 
                 ExpectedNewItem = new Item
@@ -555,7 +554,8 @@ public class ItemControllerIntegrationTests
                     QuantityType = _existingItem.QuantityType,
                     QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
                     PredecessorId = null,
-                    ItemTypes = _existingItem.ItemTypes
+                    ItemTypes = _existingItem.ItemTypes,
+                    UpdatedOn = DateTimeOffset.Now
                 };
 
                 ExpectedNewItem = new Item
@@ -743,27 +743,25 @@ public class ItemControllerIntegrationTests
             result.Should().NotBeNull();
             result.Should().BeOfType<OkResult>();
 
-            using var assertionScope = _fixture.CreateServiceScope();
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            using var assertionScope = new AssertionScope();
 
-            var items = (await _fixture.LoadAllItemsAsync(assertionScope)).ToArray();
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
             items.Should().HaveCount(1);
             items.First().Should().BeEquivalentTo(_fixture.ExpectedItem,
                 opt => opt
-                    .Excluding(info => Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].Item"))
-                    .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1)))
-                    .WhenTypeIs<DateTimeOffset>());
+                    .ExcludeItemCycleRef()
+                    .UsingDateTimeOffsetWithPrecision());
 
-            var recipes = (await _fixture.LoadAllRecipesAsync(assertionScope)).ToArray();
+            var recipes = (await _fixture.LoadAllRecipesAsync(assertionServiceScope)).ToArray();
             recipes.Should().HaveCount(1);
             recipes.First().Should().BeEquivalentTo(_fixture.ExpectedRecipe,
-                opt => opt.Excluding(info => Regex.IsMatch(info.Path, @"PreparationSteps\[\d+\].Recipe")
-                                             || Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Recipe")
-                                             || Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Id")));
+                opt => opt.ExcludeRecipeCycleRef());
 
-            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionScope)).ToArray();
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionServiceScope)).ToArray();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
-                opt => opt.Excluding(info => Regex.IsMatch(info.Path, @"ItemsOnList\[\d+\].ShoppingList")));
+                opt => opt.ExcludeShoppingListCycleRef());
         }
 
         private sealed class DeleteItemAsyncFixture : ItemControllerFixture
