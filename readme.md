@@ -60,6 +60,7 @@ If you don't want to use the key vault, you can skip this section.
 - Move the vault.hcl file from *Docker/Files/* into the root directory of the (prd/dev)-ph-shoppinglist-vault-**config** volume
 - Move the vault certificate files (vault-cert.pem & vault-key.pem) into the root directory of the (prd/dev)-ph-shoppinglist-vault-**tls** volume
 - Make sure your root certificat has the file ending .crt and move it to */usr/local/share/ca-certificates/*. This will allow the api container at startup to trust your root certificate and call the key vault over https.
+- Set the vault address in the api's appsettings files (*Api/ShoppingList.Api.WebApp/appsettings.\*.json*)
 
 ### Api
 Copy the api certificate files (shoppinglist-api.crt & shoppinglist-api.key) into the root directory of the (prd/dev)-ph-shoppinglist-api-**tls** volume.
