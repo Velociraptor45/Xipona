@@ -30,7 +30,7 @@ services:
     command: server
 
   Api:
-    image: <insert-your-image-here>
+    image: velociraptor45/ph-shoppinglist-api:0.9.0
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       PH_SL_VAULT_USERNAME_FILE: /run/secrets/prd-ph-shoppinglist-vault-api-username
@@ -44,6 +44,7 @@ services:
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
       - prd-ph-shoppinglist-api-tls:/app/ssl
       - prd-ph-shoppinglist-api-logs:/app/logs
+      - prd-ph-shoppinglist-api-config:/app/config
     networks: 
       - prd-ph-shoppinglist
     secrets:
@@ -51,14 +52,17 @@ services:
       - prd-ph-shoppinglist-vault-api-username
 
   Frontend:
-    image: <insert-your-image-here>
+    image: velociraptor45/ph-shoppinglist-frontend:0.9.0
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
     ports: 
       - "14000:443"
     depends_on:
       - Api
     volumes:
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
-      - prd-ph-shoppinglist-frontend-config:/etc/nginx/conf.d/
+      - prd-ph-shoppinglist-frontend-config:/etc/nginx/conf.d
+      - prd-ph-shoppinglist-frontend-config:/app/wwwroot
       - prd-ph-shoppinglist-frontend-tls:/etc/nginx/ssl
     networks: 
       - prd-ph-shoppinglist
@@ -71,6 +75,8 @@ volumes:
   prd-ph-shoppinglist-api-tls:
     external: true
   prd-ph-shoppinglist-api-logs:
+    external: true
+  prd-ph-shoppinglist-api-config:
     external: true
   prd-ph-shoppinglist-database:
     external: true
