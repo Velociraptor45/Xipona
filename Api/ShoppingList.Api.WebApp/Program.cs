@@ -46,10 +46,15 @@ public static class Program
 
     private static IConfiguration GetConfiguration()
     {
+        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        var basePath = env == "Local"
+            ? Directory.GetCurrentDirectory()
+            : Path.Combine(Directory.GetCurrentDirectory(), "config");
+
         return new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
+            .SetBasePath(basePath)
             .AddEnvironmentVariables()
-            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json",
+            .AddJsonFile($"appsettings.{env}.json",
                 optional: true, reloadOnChange: true)
             .Build();
     }

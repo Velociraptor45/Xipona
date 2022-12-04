@@ -37,6 +37,7 @@ Prepare the following things:
   - Api
     - (prd/dev)-ph-shoppinglist-api-tls
     - (prd/dev)-ph-shoppinglist-api-logs
+    - (prd/dev)-ph-shoppinglist-api-config
   - Frontend
     - (prd/dev)-ph-shoppinglist-frontend-config
     - (prd/dev)-ph-shoppinglist-frontend-tls
@@ -59,22 +60,21 @@ If you don't want to use the key vault, you can skip this section.
 - Move the vault.hcl file from *Docker/Files/* into the root directory of the (prd/dev)-ph-shoppinglist-vault-**config** volume
 - Move the vault certificate files (vault-cert.pem & vault-key.pem) into the root directory of the (prd/dev)-ph-shoppinglist-vault-**tls** volume
 - Make sure your root certificat has the file ending .crt and move it to */usr/local/share/ca-certificates/*. This will allow the api container at startup to trust your root certificate and call the key vault over https.
+- Set the vault address in the api's appsettings files (*Api/ShoppingList.Api.WebApp/appsettings.\*.json*)
 
 ### Api
 Copy the api certificate files (shoppinglist-api.crt & shoppinglist-api.key) into the root directory of the (prd/dev)-ph-shoppinglist-api-**tls** volume.
+The appsettings file (*Api/ShoppingList.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the (prd/dev)-ph-shoppinglist-api-**config** volume.
 
 ### Frontend
 Copy the api certificate files (shoppinglist-frontend.crt & shoppinglist-frontend.key) into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**tls** volume.
-Configure the webserver address in shoppinglist.conf under *Frontend/Docker* and copy it into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**config**. Also, make sure your root certificate is inside your host's */usr/local/share/ca-certificates/* directory so that the frontend will be able to verify the api's certificate.
+Configure the webserver address in shoppinglist.conf under *Frontend/Docker* and copy it into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**config**. Copy the appsettings file (*Frontend/ShoppingList.Frontend.WebApp/wwwroot/appsettings.\*.json*) there as well and set the api's address in it. <br/> Also, make sure your root certificate is inside your host's */usr/local/share/ca-certificates/* directory so that the frontend will be able to verify the api's certificate.
 
 ### Images
 There are currently no Docker images for api and frontend provided (but are planned for the future), so you have to build them yourself. Before you do that, you have to configure some things.
 
 #### URIs
 Configure the correct api's URI in in the frontend's appsettings (under *Frontend/ShoppingList.Frontend.WebApp/wwwroot/*) and, if you're using the key vault, the correct key vault URI in the api's appsettings (under *Api/ShoppingList.Api.WebApp/*).
-
-#### Blazor WASM setup
-Blazor WASM is not able to load appsettings based on the environment it runs in (like the api). Thus, you have to specify the environment before building the application. The place to do this is in the index.html under *Frontend/ShoppingList.Frontend.WebApp/wwwroot/*. Change the environment in `'blazor-environment': 'Local'` to `'Development'` or `'Production'`, depending on your needs.
 
 ### yml files
 Under *Docker/Compose/* are yml files for development and production. You have to 
