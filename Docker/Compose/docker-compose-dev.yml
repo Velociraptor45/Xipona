@@ -44,6 +44,7 @@ services:
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
       - dev-ph-shoppinglist-api-tls:/app/ssl
       - dev-ph-shoppinglist-api-logs:/app/logs
+      - dev-ph-shoppinglist-api-config:/app/config
     networks:
       - dev-ph-shoppinglist
     secrets:
@@ -52,6 +53,8 @@ services:
 
   Frontend:
     image: <insert-your-image-here>
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
     ports:
       - "13997:443"
     depends_on:
@@ -59,6 +62,7 @@ services:
     volumes:
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
       - dev-ph-shoppinglist-frontend-config:/etc/nginx/conf.d/
+      - dev-ph-shoppinglist-frontend-config/appsettings.Development.json:/app/wwwroot/appsettings.Development.json
       - dev-ph-shoppinglist-frontend-tls:/etc/nginx/ssl
     networks:
       - dev-ph-shoppinglist
@@ -71,6 +75,8 @@ volumes:
   dev-ph-shoppinglist-api-tls:
     external: true
   dev-ph-shoppinglist-api-logs:
+    external: true
+  dev-ph-shoppinglist-api-config:
     external: true
   dev-ph-shoppinglist-database:
     external: true
