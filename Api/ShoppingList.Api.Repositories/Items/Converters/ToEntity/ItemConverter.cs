@@ -20,7 +20,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
             QuantityType = source.ItemQuantity.Type.ToInt(),
             QuantityInPacket = source.ItemQuantity.InPacket?.Quantity.Value,
             QuantityTypeInPacket = source.ItemQuantity.InPacket?.Type.ToInt(),
-            ItemCategoryId = source.ItemCategoryId?.Value,
+            ItemCategoryId = source.ItemCategoryId,
             ManufacturerId = source.ManufacturerId?.Value,
             CreatedFrom = source.TemporaryId?.Value,
             AvailableAt = source.Availabilities.Select(av => ToAvailableAt(av, source)).ToList(),

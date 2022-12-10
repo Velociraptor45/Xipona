@@ -163,7 +163,7 @@ public class ItemRepository : IItemRepository
 
         var entities = await GetItemQuery()
             .Where(item => item.ItemCategoryId.HasValue
-                           && item.ItemCategoryId == itemCategoryId.Value
+                           && item.ItemCategoryId == itemCategoryId
                            && !item.Deleted)
             .ToListAsync(cancellationToken);
 

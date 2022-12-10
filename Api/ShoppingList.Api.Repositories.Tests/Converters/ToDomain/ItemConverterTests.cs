@@ -45,7 +45,7 @@ public class ItemConverterTests : ToDomainConverterTestBase<Item, IItem>
             QuantityType = destination.ItemQuantity.Type.ToInt(),
             QuantityInPacket = destination.ItemQuantity.InPacket?.Quantity.Value,
             QuantityTypeInPacket = destination.ItemQuantity.InPacket?.Type.ToInt(),
-            ItemCategoryId = destination.ItemCategoryId?.Value,
+            ItemCategoryId = destination.ItemCategoryId,
             ManufacturerId = destination.ManufacturerId?.Value,
             PredecessorId = destination.PredecessorId?.Value,
             AvailableAt = availabilities,

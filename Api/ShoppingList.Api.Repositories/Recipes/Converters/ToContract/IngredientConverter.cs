@@ -15,7 +15,7 @@ public class IngredientConverter : IToContractConverter<(RecipeId, IIngredient),
         {
             Id = ingredient.Id.Value,
             RecipeId = recipeId.Value,
-            ItemCategoryId = ingredient.ItemCategoryId.Value,
+            ItemCategoryId = ingredient.ItemCategoryId,
             Quantity = ingredient.Quantity.Value,
             QuantityType = ingredient.QuantityType.ToInt(),
             DefaultItemId = ingredient.DefaultItemId?.Value,

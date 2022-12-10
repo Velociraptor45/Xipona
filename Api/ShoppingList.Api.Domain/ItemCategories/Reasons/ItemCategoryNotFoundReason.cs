@@ -7,7 +7,7 @@ public class ItemCategoryNotFoundReason : IReason
 {
     public ItemCategoryNotFoundReason(ItemCategoryId id)
     {
-        Message = $"Item category {id.Value} not found.";
+        Message = $"Item category {id} not found.";
     }
 
     public string Message { get; }

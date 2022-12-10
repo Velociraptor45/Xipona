@@ -16,7 +16,7 @@ public class RecipeContractConverter : IToContractConverter<IRecipe, RecipeContr
 
         var ingredients = source.Ingredients.Select(i => new IngredientContract(
             i.Id.Value,
-            i.ItemCategoryId.Value,
+            i.ItemCategoryId,
             i.QuantityType.ToInt(),
             i.Quantity.Value,
             i.DefaultItemId?.Value,

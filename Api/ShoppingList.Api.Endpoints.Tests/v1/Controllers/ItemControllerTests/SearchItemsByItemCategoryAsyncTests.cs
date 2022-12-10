@@ -68,7 +68,7 @@ public class SearchItemsByItemCategoryAsyncTests : ControllerEnumerableQueryTest
 
         public override async Task<IActionResult> ExecuteTestMethod(ItemController sut)
         {
-            return await sut.SearchItemsByItemCategoryAsync(_itemCategoryId.Value);
+            return await sut.SearchItemsByItemCategoryAsync(_itemCategoryId);
         }
 
         public override void SetupParameters()

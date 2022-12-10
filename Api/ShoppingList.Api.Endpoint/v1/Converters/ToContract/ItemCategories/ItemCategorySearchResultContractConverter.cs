@@ -9,6 +9,6 @@ public class ItemCategorySearchResultContractConverter :
 {
     public ItemCategorySearchResultContract ToContract(ItemCategorySearchResultReadModel source)
     {
-        return new ItemCategorySearchResultContract(source.Id.Value, source.Name.Value);
+        return new ItemCategorySearchResultContract(source.Id, source.Name.Value);
     }
 }

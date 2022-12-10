@@ -98,7 +98,7 @@ public class RecipeControllerIntegrationTests
                 foreach (var ingredient in _model.Ingredients)
                 {
                     var itemCategory = new TestBuilder<ItemCategory>()
-                        .FillPropertyWith(i => i.Id, ingredient.ItemCategoryId.Value)
+                        .FillPropertyWith(i => i.Id, ingredient.ItemCategoryId)
                         .FillPropertyWith(i => i.Deleted, false)
                         .Create();
 
@@ -135,7 +135,7 @@ public class RecipeControllerIntegrationTests
                 Contract = new CreateRecipeContract(
                     _model.Name.Value,
                     _model.Ingredients.Select(i => new CreateIngredientContract(
-                        i.ItemCategoryId.Value,
+                        i.ItemCategoryId,
                         (int)i.QuantityType,
                         i.Quantity.Value,
                         i.DefaultItemId?.Value,
@@ -154,7 +154,7 @@ public class RecipeControllerIntegrationTests
                     _model.Name.Value,
                     _model.Ingredients.Select(i => new IngredientContract(
                         i.Id.Value,
-                        i.ItemCategoryId.Value,
+                        i.ItemCategoryId,
                         (int)i.QuantityType,
                         i.Quantity.Value,
                         i.DefaultItemId?.Value,
@@ -176,7 +176,7 @@ public class RecipeControllerIntegrationTests
                     Ingredients = _model.Ingredients.Select(i => new Ingredient
                     {
                         Id = i.Id.Value,
-                        ItemCategoryId = i.ItemCategoryId.Value,
+                        ItemCategoryId = i.ItemCategoryId,
                         Quantity = i.Quantity.Value,
                         QuantityType = (int)i.QuantityType,
                         DefaultItemId = i.DefaultItemId?.Value,
@@ -283,7 +283,7 @@ public class RecipeControllerIntegrationTests
                     Ingredients = modelToBeFound.Ingredients.Select(i => new Ingredient
                     {
                         Id = i.Id.Value,
-                        ItemCategoryId = i.ItemCategoryId.Value,
+                        ItemCategoryId = i.ItemCategoryId,
                         Quantity = i.Quantity.Value,
                         QuantityType = (int)i.QuantityType,
                         RecipeId = modelToBeFound.Id.Value
@@ -305,7 +305,7 @@ public class RecipeControllerIntegrationTests
                     Ingredients = modelNotToBeFound.Ingredients.Select(i => new Ingredient
                     {
                         Id = i.Id.Value,
-                        ItemCategoryId = i.ItemCategoryId.Value,
+                        ItemCategoryId = i.ItemCategoryId,
                         Quantity = i.Quantity.Value,
                         QuantityType = (int)i.QuantityType,
                         RecipeId = modelNotToBeFound.Id.Value
