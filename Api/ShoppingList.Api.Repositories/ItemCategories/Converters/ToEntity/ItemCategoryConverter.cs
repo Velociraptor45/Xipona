@@ -10,7 +10,7 @@ public class ItemCategoryConverter : IToEntityConverter<IItemCategory, Entities.
         return new Entities.ItemCategory()
         {
             Id = source.Id,
-            Name = source.Name.Value,
+            Name = source.Name,
             Deleted = source.IsDeleted
         };
     }

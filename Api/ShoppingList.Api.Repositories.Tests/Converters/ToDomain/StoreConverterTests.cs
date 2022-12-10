@@ -34,7 +34,7 @@ public class StoreConverterTests : ToDomainConverterTestBase<Store, IStore>
         return new Store
         {
             Id = destination.Id.Value,
-            Name = destination.Name.Value,
+            Name = destination.Name,
             Deleted = destination.IsDeleted,
             Sections = sections
         };

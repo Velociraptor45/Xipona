@@ -24,7 +24,7 @@ public class RecipeContractConverter : IToContractConverter<IRecipe, RecipeContr
 
         return new RecipeContract(
             source.Id.Value,
-            source.Name.Value,
+            source.Name,
             ingredients,
             steps);
     }

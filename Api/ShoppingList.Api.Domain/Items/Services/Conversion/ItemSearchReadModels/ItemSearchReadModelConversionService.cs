@@ -49,7 +49,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                 return new SearchItemForShoppingResultReadModel(
                     item.Id,
                     null,
-                    item.Name.Value,
+                    item.Name,
                     item.ItemQuantity.Type.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                     storeAvailability.Price,
                     item.ItemQuantity.Type.GetAttribute<PriceLabelAttribute>().PriceLabel,

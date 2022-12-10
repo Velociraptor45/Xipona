@@ -13,7 +13,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
         return new Item
         {
             Id = source.Id.Value,
-            Name = source.Name.Value,
+            Name = source.Name,
             Deleted = source.IsDeleted,
             Comment = source.Comment.Value,
             IsTemporary = source.IsTemporary,
@@ -47,7 +47,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
         {
             Id = itemType.Id.Value,
             ItemId = source.Id.Value,
-            Name = itemType.Name.Value,
+            Name = itemType.Name,
             AvailableAt = itemType.Availabilities.Select(av => ToItemTypeAvailableAt(av, itemType)).ToList(),
             PredecessorId = itemType.PredecessorId?.Value
         };

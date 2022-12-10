@@ -47,7 +47,7 @@ public class ItemContractConverter :
 
         return new ItemContract(
             source.Id.Value,
-            source.Name.Value,
+            source.Name,
             source.IsDeleted,
             source.Comment.Value,
             source.IsTemporary,

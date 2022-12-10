@@ -19,7 +19,7 @@ public class ItemStoreContractConverter :
     {
         return new ItemStoreContract(
             source.Id.Value,
-            source.Name.Value,
+            source.Name,
             _itemSectionContractConverter.ToContract(source.Sections));
     }
 }

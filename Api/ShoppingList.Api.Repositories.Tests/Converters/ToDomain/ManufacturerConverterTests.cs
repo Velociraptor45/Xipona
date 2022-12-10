@@ -31,7 +31,7 @@ public class ManufacturerConverterTests : ToDomainConverterTestBase<Manufacturer
         {
             Id = destination.Id,
             Deleted = destination.IsDeleted,
-            Name = destination.Name.Value
+            Name = destination.Name
         };
     }
 

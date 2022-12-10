@@ -26,8 +26,8 @@ public class SearchItemForShoppingListResultContractConverter :
             source.DefaultQuantity,
             source.Price.Value,
             source.PriceLabel,
-            source.ItemCategory?.Name.Value ?? "",
-            source.Manufacturer?.Name.Value ?? "",
+            source.ItemCategory?.Name ?? "",
+            source.Manufacturer?.Name ?? "",
             _itemSectionContractConverter.ToContract(source.DefaultSection));
     }
 }

@@ -13,7 +13,7 @@ public class SectionContractConverter :
     {
         return new SectionContract(
             source.Id.Value,
-            source.Name.Value,
+            source.Name,
             source.SortingIndex,
             source.IsDefaultSection);
     }
@@ -22,7 +22,7 @@ public class SectionContractConverter :
     {
         return new SectionContract(
             source.Id.Value,
-            source.Name.Value,
+            source.Name,
             source.SortingIndex,
             source.IsDefaultSection);
     }

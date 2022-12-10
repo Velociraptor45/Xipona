@@ -86,7 +86,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
                 else
                 {
                     price = item.Availabilities.First(av => av.StoreId == store.Id).Price;
-                    name = item.Name.Value;
+                    name = item.Name;
                 }
 
                 var itemQuantityInPacket = item.ItemQuantity.InPacket;

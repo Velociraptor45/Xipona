@@ -133,7 +133,7 @@ public class RecipeControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(_model);
 
                 Contract = new CreateRecipeContract(
-                    _model.Name.Value,
+                    _model.Name,
                     _model.Ingredients.Select(i => new CreateIngredientContract(
                         i.ItemCategoryId,
                         (int)i.QuantityType,
@@ -151,7 +151,7 @@ public class RecipeControllerIntegrationTests
 
                 ExpectedResult = new RecipeContract(
                     _model.Id.Value,
-                    _model.Name.Value,
+                    _model.Name,
                     _model.Ingredients.Select(i => new IngredientContract(
                         i.Id.Value,
                         i.ItemCategoryId,
@@ -172,7 +172,7 @@ public class RecipeControllerIntegrationTests
                 ExpectedEntity = new Recipe
                 {
                     Id = _model.Id.Value,
-                    Name = _model.Name.Value,
+                    Name = _model.Name,
                     Ingredients = _model.Ingredients.Select(i => new Ingredient
                     {
                         Id = i.Id.Value,
@@ -279,7 +279,7 @@ public class RecipeControllerIntegrationTests
                 _existingEntityToBeFound = new Recipe
                 {
                     Id = modelToBeFound.Id.Value,
-                    Name = modelToBeFound.Name.Value,
+                    Name = modelToBeFound.Name,
                     Ingredients = modelToBeFound.Ingredients.Select(i => new Ingredient
                     {
                         Id = i.Id.Value,
@@ -301,7 +301,7 @@ public class RecipeControllerIntegrationTests
                 _existingEntityNotToBeFound = new Recipe
                 {
                     Id = modelNotToBeFound.Id.Value,
-                    Name = modelNotToBeFound.Name.Value,
+                    Name = modelNotToBeFound.Name,
                     Ingredients = modelNotToBeFound.Ingredients.Select(i => new Ingredient
                     {
                         Id = i.Id.Value,

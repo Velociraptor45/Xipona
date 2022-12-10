@@ -30,7 +30,7 @@ public class SectionConverterTests : ToDomainConverterTestBase<Section, ISection
         return new Section()
         {
             Id = destination.Id.Value,
-            Name = destination.Name.Value,
+            Name = destination.Name,
             SortIndex = destination.SortingIndex,
             IsDefaultSection = destination.IsDefaultSection,
             IsDeleted = destination.IsDeleted

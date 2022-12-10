@@ -25,7 +25,7 @@ public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
         return new Item
         {
             Id = source.Id.Value,
-            Name = source.Name.Value,
+            Name = source.Name,
             Deleted = source.IsDeleted,
             Comment = source.Comment.Value,
             IsTemporary = source.IsTemporary,

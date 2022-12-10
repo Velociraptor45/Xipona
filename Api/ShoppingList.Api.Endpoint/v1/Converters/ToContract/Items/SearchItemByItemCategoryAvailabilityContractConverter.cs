@@ -11,7 +11,7 @@ public class SearchItemByItemCategoryAvailabilityContractConverter :
     {
         return new SearchItemByItemCategoryAvailabilityContract(
             source.Store.Id.Value,
-            source.Store.Name.Value,
+            source.Store.Name,
             source.Price.Value);
     }
 }

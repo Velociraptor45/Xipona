@@ -38,7 +38,7 @@ public class ItemConverterTests : ToDomainConverterTestBase<Item, IItem>
         return new Item
         {
             Id = destination.Id.Value,
-            Name = destination.Name.Value,
+            Name = destination.Name,
             Deleted = destination.IsDeleted,
             Comment = destination.Comment.Value,
             IsTemporary = destination.IsTemporary,
