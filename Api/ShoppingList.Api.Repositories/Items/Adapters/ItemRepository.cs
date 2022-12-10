@@ -37,7 +37,7 @@ public class ItemRepository : IItemRepository
         cancellationToken.ThrowIfCancellationRequested();
 
         var itemEntity = await GetItemQuery()
-            .FirstOrDefaultAsync(item => item.Id == itemId.Value, cancellationToken);
+            .FirstOrDefaultAsync(item => item.Id == itemId, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -179,13 +179,13 @@ public class ItemRepository : IItemRepository
 
         var query = GetItemQuery()
             .Where(item => item.ItemCategoryId.HasValue
-                           && item.Id == itemId.Value
+                           && item.Id == itemId
                            && !item.Deleted);
 
         if (itemTypeId is null)
             query = query.Where(i => !i.ItemTypes.Any());
         else
-            query = query.Where(i => i.ItemTypes.Any(t => t.Id == itemTypeId.Value.Value));
+            query = query.Where(i => i.ItemTypes.Any(t => t.Id == itemTypeId.Value));
 
         var entity = await query.FirstOrDefaultAsync(cancellationToken);
 
@@ -286,7 +286,7 @@ public class ItemRepository : IItemRepository
             .Include(item => item.AvailableAt)
             .Include(item => item.ItemTypes)
             .ThenInclude(itemType => itemType.AvailableAt)
-            .FirstOrDefaultAsync(i => i.Id == id.Value);
+            .FirstOrDefaultAsync(i => i.Id == id);
     }
 
     private void UpdateOrAddAvailabilities(Item existing, Item updated)

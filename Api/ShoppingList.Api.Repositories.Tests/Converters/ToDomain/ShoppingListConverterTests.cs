@@ -35,8 +35,8 @@ public class ShoppingListConverterTests : ToDomainConverterTestBase<Repositories
                 var map = new ItemsOnList
                 {
                     SectionId = section.Id.Value,
-                    ItemId = item.Id.Value,
-                    ItemTypeId = item.TypeId?.Value,
+                    ItemId = item.Id,
+                    ItemTypeId = item.TypeId,
                     InBasket = item.IsInBasket,
                     Quantity = item.Quantity.Value
                 };

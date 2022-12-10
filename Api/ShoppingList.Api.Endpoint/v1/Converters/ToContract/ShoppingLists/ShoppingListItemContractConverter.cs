@@ -44,8 +44,8 @@ public class ShoppingListItemContractConverter : IToContractConverter<ShoppingLi
             : _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket);
 
         return new ShoppingListItemContract(
-            source.Id.Value,
-            source.TypeId?.Value,
+            source.Id,
+            source.TypeId,
             source.Name,
             source.IsDeleted,
             source.Comment.Value,

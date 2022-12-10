@@ -46,7 +46,7 @@ public class ItemContractConverter :
             manufacturerContract = _manufacturerContractConverter.ToContract(source.Manufacturer);
 
         return new ItemContract(
-            source.Id.Value,
+            source.Id,
             source.Name,
             source.IsDeleted,
             source.Comment.Value,

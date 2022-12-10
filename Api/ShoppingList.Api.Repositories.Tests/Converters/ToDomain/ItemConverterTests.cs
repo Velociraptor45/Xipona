@@ -37,7 +37,7 @@ public class ItemConverterTests : ToDomainConverterTestBase<Item, IItem>
 
         return new Item
         {
-            Id = destination.Id.Value,
+            Id = destination.Id,
             Name = destination.Name,
             Deleted = destination.IsDeleted,
             Comment = destination.Comment.Value,
@@ -47,7 +47,7 @@ public class ItemConverterTests : ToDomainConverterTestBase<Item, IItem>
             QuantityTypeInPacket = destination.ItemQuantity.InPacket?.Type.ToInt(),
             ItemCategoryId = destination.ItemCategoryId,
             ManufacturerId = destination.ManufacturerId,
-            PredecessorId = destination.PredecessorId?.Value,
+            PredecessorId = destination.PredecessorId,
             AvailableAt = availabilities,
             CreatedFrom = destination.TemporaryId?.Value,
             ItemTypes = itemTypes,

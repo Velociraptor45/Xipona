@@ -24,7 +24,7 @@ public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
     {
         return new Item
         {
-            Id = source.Id.Value,
+            Id = source.Id,
             Name = source.Name,
             Deleted = source.IsDeleted,
             Comment = source.Comment.Value,
@@ -41,10 +41,10 @@ public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
                     {
                         StoreId = av.StoreId.Value,
                         Price = av.Price.Value,
-                        ItemId = source.Id.Value,
+                        ItemId = source.Id,
                         DefaultSectionId = av.DefaultSectionId.Value
                     }).ToList(),
-            PredecessorId = source.PredecessorId?.Value,
+            PredecessorId = source.PredecessorId,
             ItemTypes = new List<ItemType>(),
             UpdatedOn = source.UpdatedOn
         };

@@ -12,7 +12,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
     {
         return new Item
         {
-            Id = source.Id.Value,
+            Id = source.Id,
             Name = source.Name,
             Deleted = source.IsDeleted,
             Comment = source.Comment.Value,
@@ -26,7 +26,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
             AvailableAt = source.Availabilities.Select(av => ToAvailableAt(av, source)).ToList(),
             ItemTypes = source.ItemTypes.Select(type => ToItemType(type, source)).ToList(),
             UpdatedOn = source.UpdatedOn,
-            PredecessorId = source.PredecessorId?.Value
+            PredecessorId = source.PredecessorId
         };
     }
 
@@ -36,7 +36,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
         {
             StoreId = availability.StoreId.Value,
             Price = availability.Price.Value,
-            ItemId = source.Id.Value,
+            ItemId = source.Id,
             DefaultSectionId = availability.DefaultSectionId.Value
         };
     }
@@ -45,11 +45,11 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
     {
         return new Entities.ItemType
         {
-            Id = itemType.Id.Value,
-            ItemId = source.Id.Value,
+            Id = itemType.Id,
+            ItemId = source.Id,
             Name = itemType.Name,
             AvailableAt = itemType.Availabilities.Select(av => ToItemTypeAvailableAt(av, itemType)).ToList(),
-            PredecessorId = itemType.PredecessorId?.Value
+            PredecessorId = itemType.PredecessorId
         };
     }
 
@@ -59,7 +59,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
         {
             StoreId = availability.StoreId.Value,
             Price = availability.Price.Value,
-            ItemTypeId = itemType.Id.Value,
+            ItemTypeId = itemType.Id,
             DefaultSectionId = availability.DefaultSectionId.Value
         };
     }

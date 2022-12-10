@@ -30,8 +30,8 @@ public class ShoppingListConverterTests : ToEntityConverterTestBase<IShoppingLis
                     new ItemsOnList()
                     {
                         ShoppingListId = source.Id.Value,
-                        ItemId = item.Id.Value,
-                        ItemTypeId = item.TypeId?.Value,
+                        ItemId = item.Id,
+                        ItemTypeId = item.TypeId,
                         InBasket = item.IsInBasket,
                         Quantity = item.Quantity.Value,
                         SectionId = section.Id.Value

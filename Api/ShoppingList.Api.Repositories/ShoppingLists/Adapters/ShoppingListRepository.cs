@@ -61,7 +61,7 @@ public class ShoppingListRepository : IShoppingListRepository
         CancellationToken cancellationToken)
     {
         List<Entities.ShoppingList> entities = await GetShoppingListQuery()
-            .Where(l => l.ItemsOnList.Any(i => i.ItemId == itemId.Value))
+            .Where(l => l.ItemsOnList.Any(i => i.ItemId == itemId))
             .ToListAsync(cancellationToken: cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -73,7 +73,7 @@ public class ShoppingListRepository : IShoppingListRepository
         CancellationToken cancellationToken)
     {
         var entities = await GetShoppingListQuery()
-            .Where(l => l.ItemsOnList.Any(i => i.ItemTypeId.HasValue && i.ItemTypeId == typeId.Value))
+            .Where(l => l.ItemsOnList.Any(i => i.ItemTypeId.HasValue && i.ItemTypeId == typeId))
             .ToListAsync(cancellationToken);
 
         return _toDomainConverter.ToDomain(entities);
@@ -83,7 +83,7 @@ public class ShoppingListRepository : IShoppingListRepository
         CancellationToken cancellationToken)
     {
         List<Entities.ShoppingList> entities = await GetShoppingListQuery()
-            .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == itemId.Value) != null
+            .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == itemId) != null
                         && l.CompletionDate == null)
             .ToListAsync(cancellationToken: cancellationToken);
 

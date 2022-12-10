@@ -26,8 +26,8 @@ public class ShoppingListConverter : IToEntityConverter<IShoppingList, Entities.
                 yield return new ItemsOnList()
                 {
                     ShoppingListId = source.Id.Value,
-                    ItemId = item.Id.Value,
-                    ItemTypeId = item.TypeId?.Value,
+                    ItemId = item.Id,
+                    ItemTypeId = item.TypeId,
                     InBasket = item.IsInBasket,
                     Quantity = item.Quantity.Value,
                     SectionId = section.Id.Value

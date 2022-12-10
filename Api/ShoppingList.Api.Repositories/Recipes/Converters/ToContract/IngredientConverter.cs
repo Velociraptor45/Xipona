@@ -18,8 +18,8 @@ public class IngredientConverter : IToContractConverter<(RecipeId, IIngredient),
             ItemCategoryId = ingredient.ItemCategoryId,
             Quantity = ingredient.Quantity.Value,
             QuantityType = ingredient.QuantityType.ToInt(),
-            DefaultItemId = ingredient.DefaultItemId?.Value,
-            DefaultItemTypeId = ingredient.DefaultItemTypeId?.Value
+            DefaultItemId = ingredient.DefaultItemId,
+            DefaultItemTypeId = ingredient.DefaultItemTypeId
         };
     }
 }

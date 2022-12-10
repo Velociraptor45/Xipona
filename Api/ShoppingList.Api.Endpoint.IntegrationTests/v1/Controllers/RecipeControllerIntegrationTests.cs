@@ -105,11 +105,11 @@ public class RecipeControllerIntegrationTests
                     itemCategoryContext.Add(itemCategory);
 
                     var item = new ItemEntityBuilder()
-                        .WithId(ingredient.DefaultItemId!.Value.Value)
+                        .WithId(ingredient.DefaultItemId!.Value)
                         .WithDeleted(false)
                         .WithIsTemporary(false)
                         .WithItemTypes(new ItemTypeEntityBuilder()
-                            .WithId(ingredient.DefaultItemTypeId!.Value.Value)
+                            .WithId(ingredient.DefaultItemTypeId!.Value)
                             .WithoutItem()
                             .WithEmptyAvailableAt()
                             .WithoutPredecessorId()
@@ -138,8 +138,8 @@ public class RecipeControllerIntegrationTests
                         i.ItemCategoryId,
                         (int)i.QuantityType,
                         i.Quantity.Value,
-                        i.DefaultItemId?.Value,
-                        i.DefaultItemTypeId?.Value)),
+                        i.DefaultItemId,
+                        i.DefaultItemTypeId)),
                     _model.PreparationSteps.Select(p => new CreatePreparationStepContract(
                         p.Instruction.Value,
                         p.SortingIndex)));
@@ -157,8 +157,8 @@ public class RecipeControllerIntegrationTests
                         i.ItemCategoryId,
                         (int)i.QuantityType,
                         i.Quantity.Value,
-                        i.DefaultItemId?.Value,
-                        i.DefaultItemTypeId?.Value)),
+                        i.DefaultItemId,
+                        i.DefaultItemTypeId)),
                     _model.PreparationSteps.Select(p => new PreparationStepContract(
                         p.Id.Value,
                         p.Instruction.Value,
@@ -179,8 +179,8 @@ public class RecipeControllerIntegrationTests
                         ItemCategoryId = i.ItemCategoryId,
                         Quantity = i.Quantity.Value,
                         QuantityType = (int)i.QuantityType,
-                        DefaultItemId = i.DefaultItemId?.Value,
-                        DefaultItemTypeId = i.DefaultItemTypeId?.Value,
+                        DefaultItemId = i.DefaultItemId,
+                        DefaultItemTypeId = i.DefaultItemTypeId,
                         RecipeId = _model.Id.Value
                     }).ToList(),
                     PreparationSteps = _model.PreparationSteps.Select(p => new PreparationStep
