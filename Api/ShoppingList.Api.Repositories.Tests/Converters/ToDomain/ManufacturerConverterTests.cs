@@ -29,7 +29,7 @@ public class ManufacturerConverterTests : ToDomainConverterTestBase<Manufacturer
     {
         return new Manufacturer()
         {
-            Id = destination.Id.Value,
+            Id = destination.Id,
             Deleted = destination.IsDeleted,
             Name = destination.Name.Value
         };

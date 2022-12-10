@@ -15,4 +15,9 @@ public readonly record struct ManufacturerId
     public static ManufacturerId New => new(Guid.NewGuid());
 
     public Guid Value { get; }
+
+    public static implicit operator Guid(ManufacturerId manufacturerId)
+    {
+        return manufacturerId.Value;
+    }
 }

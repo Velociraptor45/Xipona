@@ -33,7 +33,7 @@ public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
             QuantityInPacket = source.ItemQuantity.InPacket?.Quantity.Value,
             QuantityTypeInPacket = source.ItemQuantity.InPacket?.Type.ToInt(),
             ItemCategoryId = source.ItemCategoryId,
-            ManufacturerId = source.ManufacturerId?.Value,
+            ManufacturerId = source.ManufacturerId,
             CreatedFrom = source.TemporaryId?.Value,
             AvailableAt = source.Availabilities
                 .Select(av =>

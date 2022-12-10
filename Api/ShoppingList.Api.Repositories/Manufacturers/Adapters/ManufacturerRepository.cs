@@ -41,7 +41,7 @@ public class ManufacturerRepository : IManufacturerRepository
         CancellationToken cancellationToken)
     {
         var entity = await _dbContext.Manufacturers.AsNoTracking()
-            .FirstOrDefaultAsync(m => m.Id == id.Value, cancellationToken);
+            .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -103,6 +103,6 @@ public class ManufacturerRepository : IManufacturerRepository
     private async Task<Entities.Manufacturer?> FindTrackedEntityById(ManufacturerId id, CancellationToken cancellationToken)
     {
         return await _dbContext.Manufacturers
-            .FirstOrDefaultAsync(i => i.Id == id.Value, cancellationToken);
+            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 }

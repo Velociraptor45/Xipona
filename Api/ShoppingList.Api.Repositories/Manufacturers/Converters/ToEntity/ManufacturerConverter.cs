@@ -9,7 +9,7 @@ public class ManufacturerConverter : IToEntityConverter<IManufacturer, Entities.
     {
         return new Entities.Manufacturer()
         {
-            Id = source.Id.Value,
+            Id = source.Id,
             Name = source.Name.Value,
             Deleted = source.IsDeleted
         };

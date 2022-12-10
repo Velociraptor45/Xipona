@@ -11,11 +11,11 @@ public class ManufacturerContractConverter :
 {
     public ManufacturerContract ToContract(ManufacturerReadModel source)
     {
-        return new ManufacturerContract(source.Id.Value, source.Name.Value, source.IsDeleted);
+        return new ManufacturerContract(source.Id, source.Name.Value, source.IsDeleted);
     }
 
     public ManufacturerContract ToContract(IManufacturer source)
     {
-        return new ManufacturerContract(source.Id.Value, source.Name.Value, source.IsDeleted);
+        return new ManufacturerContract(source.Id, source.Name.Value, source.IsDeleted);
     }
 }
