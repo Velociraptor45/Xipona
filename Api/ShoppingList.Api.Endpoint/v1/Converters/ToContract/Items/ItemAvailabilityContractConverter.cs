@@ -22,7 +22,7 @@ public class ItemAvailabilityContractConverter :
     {
         return new ItemAvailabilityContract(
             _itemStoreContractConverter.ToContract(source.Store),
-            source.Price.Value,
+            source.Price,
             _sectionContractConverter.ToContract(source.DefaultSection));
     }
 }

@@ -30,7 +30,7 @@ public class ItemAvailabilityConverterTests : ToDomainConverterTestBase<Availabl
         return new AvailableAt
         {
             StoreId = destination.StoreId.Value,
-            Price = destination.Price.Value,
+            Price = destination.Price,
             DefaultSectionId = destination.DefaultSectionId.Value
         };
     }

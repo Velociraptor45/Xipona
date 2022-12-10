@@ -50,7 +50,7 @@ public class ShoppingListItemContractConverter : IToContractConverter<ShoppingLi
             source.IsDeleted,
             source.Comment.Value,
             source.IsTemporary,
-            source.PricePerQuantity.Value,
+            source.PricePerQuantity,
             quantityTypeContract,
             source.QuantityInPacket?.Value,
             quantityTypeInPacketContract,

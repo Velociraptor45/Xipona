@@ -24,7 +24,7 @@ public class SearchItemForShoppingListResultContractConverter :
             source.TypeId,
             source.Name,
             source.DefaultQuantity,
-            source.Price.Value,
+            source.Price,
             source.PriceLabel,
             source.ItemCategory?.Name ?? "",
             source.Manufacturer?.Name ?? "",

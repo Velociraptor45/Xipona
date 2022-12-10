@@ -119,7 +119,7 @@ public class ItemControllerIntegrationTests
                     entityType.AvailableAt.Should().Contain(eav =>
                         eav.ItemTypeId == type.Id
                         && eav.StoreId == av.StoreId.Value
-                        && Math.Abs(eav.Price - av.Price.Value) < 0.01f
+                        && Math.Abs(eav.Price - av.Price) < 0.01f
                         && eav.DefaultSectionId == av.DefaultSectionId.Value);
                 }
             }
@@ -139,7 +139,7 @@ public class ItemControllerIntegrationTests
                     entityType.AvailableAt.Should().Contain(eav =>
                         eav.ItemTypeId == type.Id
                         && eav.StoreId == av.StoreId.Value
-                        && Math.Abs(eav.Price - av.Price.Value) < 0.01f
+                        && Math.Abs(eav.Price - av.Price) < 0.01f
                         && eav.DefaultSectionId == av.DefaultSectionId.Value);
                 }
             }
@@ -159,7 +159,7 @@ public class ItemControllerIntegrationTests
                     entityType.AvailableAt.Should().Contain(eav =>
                         eav.ItemTypeId == type.Id
                         && eav.StoreId == av.StoreId.Value
-                        && Math.Abs(eav.Price - av.Price.Value) < 0.01f
+                        && Math.Abs(eav.Price - av.Price) < 0.01f
                         && eav.DefaultSectionId == av.DefaultSectionId.Value);
                 }
             }
@@ -445,7 +445,7 @@ public class ItemControllerIntegrationTests
                 var price = new DomainTestBuilder<Price>().Create();
                 Contract = new TestBuilder<UpdateItemPriceContract>()
                     .FillPropertyWith(c => c.ItemTypeId, null)
-                    .FillPropertyWith(c => c.Price, price.Value)
+                    .FillPropertyWith(c => c.Price, price)
                     .Create();
             }
 
