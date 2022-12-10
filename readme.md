@@ -67,8 +67,10 @@ Copy the api certificate files (shoppinglist-api.crt & shoppinglist-api.key) int
 The appsettings file (*Api/ShoppingList.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the (prd/dev)-ph-shoppinglist-api-**config** volume.
 
 ### Frontend
-Copy the api certificate files (shoppinglist-frontend.crt & shoppinglist-frontend.key) into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**tls** volume.
-Configure the webserver address in shoppinglist.conf under *Frontend/Docker* and copy it into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**config**. Copy the appsettings file (*Frontend/ShoppingList.Frontend.WebApp/wwwroot/appsettings.\*.json*) there as well and set the api's address in it. <br/> Also, make sure your root certificate is inside your host's */usr/local/share/ca-certificates/* directory so that the frontend will be able to verify the api's certificate.
+- Copy the api certificate files (shoppinglist-frontend.crt & shoppinglist-frontend.key) into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**tls** volume.
+Configure the webserver address & the frontend's environment in shoppinglist.conf under *Frontend/Docker* and copy it into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**config**.
+- Copy the appsettings file (*Frontend/ShoppingList.Frontend.WebApp/wwwroot/appsettings.\*.json*) into a directory of your choice on your host and set the api's address in the files. Then, set the absolute path of said directory in the *Docker/Compose/.env* file
+- Make sure your root certificate is inside your host's */usr/local/share/ca-certificates/* directory so that the frontend will be able to verify the api's certificate.
 
 ### Images
 There are currently no Docker images for api and frontend provided (but are planned for the future), so you have to build them yourself. Before you do that, you have to configure some things.
