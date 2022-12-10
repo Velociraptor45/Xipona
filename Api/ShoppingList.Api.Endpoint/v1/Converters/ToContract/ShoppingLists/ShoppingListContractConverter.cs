@@ -20,7 +20,7 @@ public class ShoppingListContractConverter : IToContractConverter<ShoppingListRe
     public ShoppingListContract ToContract(ShoppingListReadModel source)
     {
         return new ShoppingListContract(
-            source.Id.Value,
+            source.Id,
             _shoppingListStoreContractConverter.ToContract(source.Store),
             _shoppingListSectionContractConverter.ToContract(source.Sections),
             source.CompletionDate);

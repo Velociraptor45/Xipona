@@ -22,14 +22,14 @@ public class ShoppingListConverterTests : ToEntityConverterTestBase<IShoppingLis
     {
         return new Repositories.ShoppingLists.Entities.ShoppingList()
         {
-            Id = source.Id.Value,
+            Id = source.Id,
             CompletionDate = source.CompletionDate,
             StoreId = source.StoreId.Value,
             ItemsOnList = source.Sections.SelectMany(section =>
                 section.Items.Select(item =>
                     new ItemsOnList()
                     {
-                        ShoppingListId = source.Id.Value,
+                        ShoppingListId = source.Id,
                         ItemId = item.Id,
                         ItemTypeId = item.TypeId,
                         InBasket = item.IsInBasket,

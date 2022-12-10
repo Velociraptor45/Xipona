@@ -10,7 +10,7 @@ public class ShoppingListConverter : IToEntityConverter<IShoppingList, Entities.
     {
         return new Entities.ShoppingList()
         {
-            Id = source.Id.Value,
+            Id = source.Id,
             CompletionDate = source.CompletionDate,
             StoreId = source.StoreId.Value,
             ItemsOnList = CreateItemsOnListMap(source).ToList()
@@ -25,7 +25,7 @@ public class ShoppingListConverter : IToEntityConverter<IShoppingList, Entities.
             {
                 yield return new ItemsOnList()
                 {
-                    ShoppingListId = source.Id.Value,
+                    ShoppingListId = source.Id,
                     ItemId = item.Id,
                     ItemTypeId = item.TypeId,
                     InBasket = item.IsInBasket,

@@ -47,7 +47,7 @@ public class ShoppingListRepository : IShoppingListRepository
     public async Task<IShoppingList?> FindByAsync(ShoppingListId id, CancellationToken cancellationToken)
     {
         var entity = await GetShoppingListQuery()
-            .FirstOrDefaultAsync(list => list.Id == id.Value, cancellationToken);
+            .FirstOrDefaultAsync(list => list.Id == id, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -165,7 +165,7 @@ public class ShoppingListRepository : IShoppingListRepository
     private async Task<Entities.ShoppingList?> FindEntityByIdAsync(ShoppingListId id)
     {
         return await GetShoppingListQuery()
-            .FirstOrDefaultAsync(list => list.Id == id.Value);
+            .FirstOrDefaultAsync(list => list.Id == id);
     }
 
     private IQueryable<Entities.ShoppingList> GetShoppingListQuery()
