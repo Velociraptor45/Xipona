@@ -52,7 +52,7 @@ public class ItemContractConverter :
             source.Comment.Value,
             source.IsTemporary,
             _quantityTypeContractConverter.ToContract(source.QuantityType),
-            source.QuantityInPacket?.Value,
+            source.QuantityInPacket,
             source.QuantityTypeInPacket is null
                 ? null
                 : _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket),

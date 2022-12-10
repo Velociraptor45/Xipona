@@ -30,11 +30,11 @@ public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
             Comment = source.Comment.Value,
             IsTemporary = source.IsTemporary,
             QuantityType = source.ItemQuantity.Type.ToInt(),
-            QuantityInPacket = source.ItemQuantity.InPacket?.Quantity.Value,
+            QuantityInPacket = source.ItemQuantity.InPacket?.Quantity,
             QuantityTypeInPacket = source.ItemQuantity.InPacket?.Type.ToInt(),
             ItemCategoryId = source.ItemCategoryId,
             ManufacturerId = source.ManufacturerId,
-            CreatedFrom = source.TemporaryId?.Value,
+            CreatedFrom = source.TemporaryId,
             AvailableAt = source.Availabilities
                 .Select(av =>
                     new AvailableAt

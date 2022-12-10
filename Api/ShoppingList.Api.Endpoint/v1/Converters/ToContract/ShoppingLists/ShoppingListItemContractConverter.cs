@@ -52,7 +52,7 @@ public class ShoppingListItemContractConverter : IToContractConverter<ShoppingLi
             source.IsTemporary,
             source.PricePerQuantity,
             quantityTypeContract,
-            source.QuantityInPacket?.Value,
+            source.QuantityInPacket,
             quantityTypeInPacketContract,
             itemCategoryContract,
             manufacturerContract,

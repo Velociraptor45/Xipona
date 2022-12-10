@@ -291,7 +291,7 @@ public class ItemControllerIntegrationTests
                 Contract = new TestBuilder<UpdateItemWithTypesContract>()
                     .AfterCreation(c => c.QuantityType = CurrentItem.ItemQuantity.Type.ToInt())
                     .AfterCreation(c => c.QuantityTypeInPacket = CurrentItem.ItemQuantity.InPacket?.Type.ToInt())
-                    .AfterCreation(c => c.QuantityInPacket = CurrentItem.ItemQuantity.InPacket?.Quantity.Value)
+                    .AfterCreation(c => c.QuantityInPacket = CurrentItem.ItemQuantity.InPacket?.Quantity)
                     .AfterCreation(c => c.ItemTypes = itemTypes)
                     .Create();
 

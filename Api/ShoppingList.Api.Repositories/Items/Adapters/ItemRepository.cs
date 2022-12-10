@@ -52,7 +52,7 @@ public class ItemRepository : IItemRepository
         cancellationToken.ThrowIfCancellationRequested();
 
         var itemEntity = await GetItemQuery()
-            .FirstOrDefaultAsync(item => item.CreatedFrom.HasValue && item.CreatedFrom == temporaryItemId.Value,
+            .FirstOrDefaultAsync(item => item.CreatedFrom.HasValue && item.CreatedFrom == temporaryItemId,
                 cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();

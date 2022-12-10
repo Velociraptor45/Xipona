@@ -43,13 +43,13 @@ public class ItemConverterTests : ToDomainConverterTestBase<Item, IItem>
             Comment = destination.Comment.Value,
             IsTemporary = destination.IsTemporary,
             QuantityType = destination.ItemQuantity.Type.ToInt(),
-            QuantityInPacket = destination.ItemQuantity.InPacket?.Quantity.Value,
+            QuantityInPacket = destination.ItemQuantity.InPacket?.Quantity,
             QuantityTypeInPacket = destination.ItemQuantity.InPacket?.Type.ToInt(),
             ItemCategoryId = destination.ItemCategoryId,
             ManufacturerId = destination.ManufacturerId,
             PredecessorId = destination.PredecessorId,
             AvailableAt = availabilities,
-            CreatedFrom = destination.TemporaryId?.Value,
+            CreatedFrom = destination.TemporaryId,
             ItemTypes = itemTypes,
             UpdatedOn = destination.UpdatedOn
         };
