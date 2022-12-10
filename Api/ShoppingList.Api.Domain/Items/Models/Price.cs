@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models;
@@ -18,4 +19,9 @@ public record struct Price
     }
 
     public float Value { get; }
+
+    public static implicit operator float(Price price)
+    {
+        return price.Value;
+    }
 }

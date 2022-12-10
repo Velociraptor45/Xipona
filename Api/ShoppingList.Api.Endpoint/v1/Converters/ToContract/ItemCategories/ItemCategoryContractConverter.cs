@@ -11,11 +11,11 @@ public class ItemCategoryContractConverter :
 {
     public ItemCategoryContract ToContract(ItemCategoryReadModel source)
     {
-        return new ItemCategoryContract(source.Id.Value, source.Name.Value, source.IsDeleted);
+        return new ItemCategoryContract(source.Id, source.Name, source.IsDeleted);
     }
 
     public ItemCategoryContract ToContract(IItemCategory source)
     {
-        return new ItemCategoryContract(source.Id.Value, source.Name.Value, source.IsDeleted);
+        return new ItemCategoryContract(source.Id, source.Name, source.IsDeleted);
     }
 }

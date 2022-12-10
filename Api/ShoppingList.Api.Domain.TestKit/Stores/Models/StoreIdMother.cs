@@ -10,6 +10,6 @@ public static class StoreIdMother
     public static StoreIdBuilder OneFrom(IEnumerable<IItemAvailability> availabilities)
     {
         var id = _commonFixture.ChooseRandom(availabilities).StoreId;
-        return new StoreIdBuilder().WithValue(id.Value);
+        return new StoreIdBuilder().WithValue(id);
     }
 }

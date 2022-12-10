@@ -29,9 +29,9 @@ public class ItemCategoryConverterTests : ToDomainConverterTestBase<ItemCategory
     {
         return new ItemCategory()
         {
-            Id = destination.Id.Value,
+            Id = destination.Id,
             Deleted = destination.IsDeleted,
-            Name = destination.Name.Value
+            Name = destination.Name
         };
     }
 

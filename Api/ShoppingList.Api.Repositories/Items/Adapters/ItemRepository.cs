@@ -37,7 +37,7 @@ public class ItemRepository : IItemRepository
         cancellationToken.ThrowIfCancellationRequested();
 
         var itemEntity = await GetItemQuery()
-            .FirstOrDefaultAsync(item => item.Id == itemId.Value, cancellationToken);
+            .FirstOrDefaultAsync(item => item.Id == itemId, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -52,7 +52,7 @@ public class ItemRepository : IItemRepository
         cancellationToken.ThrowIfCancellationRequested();
 
         var itemEntity = await GetItemQuery()
-            .FirstOrDefaultAsync(item => item.CreatedFrom.HasValue && item.CreatedFrom == temporaryItemId.Value,
+            .FirstOrDefaultAsync(item => item.CreatedFrom.HasValue && item.CreatedFrom == temporaryItemId,
                 cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -66,7 +66,7 @@ public class ItemRepository : IItemRepository
     public async Task<IEnumerable<IItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
     {
         var entities = await GetItemQuery()
-            .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId.Value) != null)
+            .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId) != null)
             .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -135,8 +135,8 @@ public class ItemRepository : IItemRepository
                 !item.Deleted
                 && !item.IsTemporary
                 && item.Name.Contains(searchInput)
-                && (item.AvailableAt.Any(map => map.StoreId == storeId.Value)
-                    || item.ItemTypes.Any(t => t.AvailableAt.Any(av => av.StoreId == storeId.Value))))
+                && (item.AvailableAt.Any(map => map.StoreId == storeId)
+                    || item.ItemTypes.Any(t => t.AvailableAt.Any(av => av.StoreId == storeId))))
             .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -163,7 +163,7 @@ public class ItemRepository : IItemRepository
 
         var entities = await GetItemQuery()
             .Where(item => item.ItemCategoryId.HasValue
-                           && item.ItemCategoryId == itemCategoryId.Value
+                           && item.ItemCategoryId == itemCategoryId
                            && !item.Deleted)
             .ToListAsync(cancellationToken);
 
@@ -179,13 +179,13 @@ public class ItemRepository : IItemRepository
 
         var query = GetItemQuery()
             .Where(item => item.ItemCategoryId.HasValue
-                           && item.Id == itemId.Value
+                           && item.Id == itemId
                            && !item.Deleted);
 
         if (itemTypeId is null)
             query = query.Where(i => !i.ItemTypes.Any());
         else
-            query = query.Where(i => i.ItemTypes.Any(t => t.Id == itemTypeId.Value.Value));
+            query = query.Where(i => i.ItemTypes.Any(t => t.Id == itemTypeId.Value));
 
         var entity = await query.FirstOrDefaultAsync(cancellationToken);
 
@@ -201,9 +201,9 @@ public class ItemRepository : IItemRepository
     {
         var items = await GetItemQuery()
             .Where(item => !item.Deleted
-                           && (item.AvailableAt.Any(av => av.DefaultSectionId == sectionId.Value)
+                           && (item.AvailableAt.Any(av => av.DefaultSectionId == sectionId)
                                || item.ItemTypes.Any(t =>
-                                   t.AvailableAt.Any(av => av.DefaultSectionId == sectionId.Value))))
+                                   t.AvailableAt.Any(av => av.DefaultSectionId == sectionId))))
             .ToArrayAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -286,7 +286,7 @@ public class ItemRepository : IItemRepository
             .Include(item => item.AvailableAt)
             .Include(item => item.ItemTypes)
             .ThenInclude(itemType => itemType.AvailableAt)
-            .FirstOrDefaultAsync(i => i.Id == id.Value);
+            .FirstOrDefaultAsync(i => i.Id == id);
     }
 
     private void UpdateOrAddAvailabilities(Item existing, Item updated)

@@ -18,8 +18,8 @@ public class ItemTypeContractConverter : IToContractConverter<ItemTypeReadModel,
     public ItemTypeContract ToContract(ItemTypeReadModel source)
     {
         return new ItemTypeContract(
-            source.Id.Value,
-            source.Name.Value,
+            source.Id,
+            source.Name,
             _itemAvailabilityContractConverter.ToContract(source.Availabilities));
     }
 }

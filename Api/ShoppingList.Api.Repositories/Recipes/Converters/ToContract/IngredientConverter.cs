@@ -13,13 +13,13 @@ public class IngredientConverter : IToContractConverter<(RecipeId, IIngredient),
 
         return new Ingredient
         {
-            Id = ingredient.Id.Value,
-            RecipeId = recipeId.Value,
-            ItemCategoryId = ingredient.ItemCategoryId.Value,
+            Id = ingredient.Id,
+            RecipeId = recipeId,
+            ItemCategoryId = ingredient.ItemCategoryId,
             Quantity = ingredient.Quantity.Value,
             QuantityType = ingredient.QuantityType.ToInt(),
-            DefaultItemId = ingredient.DefaultItemId?.Value,
-            DefaultItemTypeId = ingredient.DefaultItemTypeId?.Value
+            DefaultItemId = ingredient.DefaultItemId,
+            DefaultItemTypeId = ingredient.DefaultItemTypeId
         };
     }
 }

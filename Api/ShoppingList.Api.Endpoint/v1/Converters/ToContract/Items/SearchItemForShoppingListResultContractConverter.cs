@@ -20,14 +20,14 @@ public class SearchItemForShoppingListResultContractConverter :
     public SearchItemForShoppingListResultContract ToContract(SearchItemForShoppingResultReadModel source)
     {
         return new SearchItemForShoppingListResultContract(
-            source.Id.Value,
-            source.TypeId?.Value,
+            source.Id,
+            source.TypeId,
             source.Name,
             source.DefaultQuantity,
-            source.Price.Value,
+            source.Price,
             source.PriceLabel,
-            source.ItemCategory?.Name.Value ?? "",
-            source.Manufacturer?.Name.Value ?? "",
+            source.ItemCategory?.Name ?? "",
+            source.Manufacturer?.Name ?? "",
             _itemSectionContractConverter.ToContract(source.DefaultSection));
     }
 }

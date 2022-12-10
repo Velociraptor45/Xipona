@@ -34,9 +34,9 @@ public class ShoppingListConverterTests : ToDomainConverterTestBase<Repositories
             {
                 var map = new ItemsOnList
                 {
-                    SectionId = section.Id.Value,
-                    ItemId = item.Id.Value,
-                    ItemTypeId = item.TypeId?.Value,
+                    SectionId = section.Id,
+                    ItemId = item.Id,
+                    ItemTypeId = item.TypeId,
                     InBasket = item.IsInBasket,
                     Quantity = item.Quantity.Value
                 };
@@ -46,8 +46,8 @@ public class ShoppingListConverterTests : ToDomainConverterTestBase<Repositories
 
         return new Repositories.ShoppingLists.Entities.ShoppingList
         {
-            Id = destination.Id.Value,
-            StoreId = destination.StoreId.Value,
+            Id = destination.Id,
+            StoreId = destination.StoreId,
             ItemsOnList = itemsOnListMap,
             CompletionDate = destination.CompletionDate
         };

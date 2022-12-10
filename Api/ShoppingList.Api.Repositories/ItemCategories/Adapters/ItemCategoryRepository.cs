@@ -40,7 +40,7 @@ public class ItemCategoryRepository : IItemCategoryRepository
     public async Task<IItemCategory?> FindByAsync(ItemCategoryId id, CancellationToken cancellationToken)
     {
         var entity = await _dbContext.ItemCategories.AsNoTracking()
-            .FirstOrDefaultAsync(category => category.Id == id.Value, cancellationToken);
+            .FirstOrDefaultAsync(category => category.Id == id, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -101,6 +101,6 @@ public class ItemCategoryRepository : IItemCategoryRepository
     private async Task<Entities.ItemCategory?> FindTrackedEntityById(ItemCategoryId id, CancellationToken cancellationToken)
     {
         return await _dbContext.ItemCategories
-            .FirstOrDefaultAsync(i => i.Id == id.Value, cancellationToken);
+            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 }

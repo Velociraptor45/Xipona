@@ -12,8 +12,8 @@ public class PreparationStepConverter : IToContractConverter<(RecipeId, IPrepara
 
         return new PreparationStep
         {
-            Id = preparationStep.Id.Value,
-            RecipeId = recipeId.Value,
+            Id = preparationStep.Id,
+            RecipeId = recipeId,
             Instruction = preparationStep.Instruction.Value,
             SortingIndex = preparationStep.SortingIndex
         };

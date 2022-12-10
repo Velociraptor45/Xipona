@@ -203,7 +203,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             var listItem = new ShoppingListItemReadModel(
                 item.Id,
                 null,
-                item.Name.Value,
+                item.Name,
                 item.IsDeleted,
                 item.Comment,
                 item.IsTemporary,

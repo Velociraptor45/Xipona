@@ -23,7 +23,7 @@ public class ItemTypeReadRepository : IItemTypeReadRepository
             .Where(type =>
                 !type.Item.Deleted
                 && type.Name.Contains(name)
-                && type.AvailableAt.Any(av => av.StoreId == storeId.Value))
+                && type.AvailableAt.Any(av => av.StoreId == storeId))
             .Select(type => new { type.ItemId, type.Id })
             .ToListAsync(cancellationToken);
 

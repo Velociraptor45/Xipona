@@ -24,27 +24,27 @@ public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
     {
         return new Item
         {
-            Id = source.Id.Value,
-            Name = source.Name.Value,
+            Id = source.Id,
+            Name = source.Name,
             Deleted = source.IsDeleted,
             Comment = source.Comment.Value,
             IsTemporary = source.IsTemporary,
             QuantityType = source.ItemQuantity.Type.ToInt(),
-            QuantityInPacket = source.ItemQuantity.InPacket?.Quantity.Value,
+            QuantityInPacket = source.ItemQuantity.InPacket?.Quantity,
             QuantityTypeInPacket = source.ItemQuantity.InPacket?.Type.ToInt(),
-            ItemCategoryId = source.ItemCategoryId?.Value,
-            ManufacturerId = source.ManufacturerId?.Value,
-            CreatedFrom = source.TemporaryId?.Value,
+            ItemCategoryId = source.ItemCategoryId,
+            ManufacturerId = source.ManufacturerId,
+            CreatedFrom = source.TemporaryId,
             AvailableAt = source.Availabilities
                 .Select(av =>
                     new AvailableAt
                     {
-                        StoreId = av.StoreId.Value,
-                        Price = av.Price.Value,
-                        ItemId = source.Id.Value,
-                        DefaultSectionId = av.DefaultSectionId.Value
+                        StoreId = av.StoreId,
+                        Price = av.Price,
+                        ItemId = source.Id,
+                        DefaultSectionId = av.DefaultSectionId
                     }).ToList(),
-            PredecessorId = source.PredecessorId?.Value,
+            PredecessorId = source.PredecessorId,
             ItemTypes = new List<ItemType>(),
             UpdatedOn = source.UpdatedOn
         };

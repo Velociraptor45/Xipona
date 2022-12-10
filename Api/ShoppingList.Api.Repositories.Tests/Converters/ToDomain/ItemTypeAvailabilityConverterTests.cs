@@ -22,9 +22,9 @@ internal class ItemTypeAvailabilityConverterTests : ToDomainConverterTestBase<It
     {
         return new ItemTypeAvailableAt
         {
-            StoreId = destination.StoreId.Value,
-            Price = destination.Price.Value,
-            DefaultSectionId = destination.DefaultSectionId.Value
+            StoreId = destination.StoreId,
+            Price = destination.Price,
+            DefaultSectionId = destination.DefaultSectionId
         };
     }
 

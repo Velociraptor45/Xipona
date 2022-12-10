@@ -9,6 +9,6 @@ public class ManufacturerSearchResultContractConverter :
 {
     public ManufacturerSearchResultContract ToContract(ManufacturerSearchResultReadModel source)
     {
-        return new ManufacturerSearchResultContract(source.Id.Value, source.Name.Value);
+        return new ManufacturerSearchResultContract(source.Id, source.Name);
     }
 }

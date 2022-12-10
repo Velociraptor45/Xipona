@@ -9,8 +9,8 @@ public class ManufacturerConverter : IToEntityConverter<IManufacturer, Entities.
     {
         return new Entities.Manufacturer()
         {
-            Id = source.Id.Value,
-            Name = source.Name.Value,
+            Id = source.Id,
+            Name = source.Name,
             Deleted = source.IsDeleted
         };
     }

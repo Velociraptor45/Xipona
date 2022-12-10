@@ -38,7 +38,7 @@ public class StoreRepository : IStoreRepository
 
         var entity = await GetStoreQuery()
             .Where(store => !store.Deleted)
-            .FirstOrDefaultAsync(store => store.Sections.Any(s => s.Id == sectionId.Value), cancellationToken);
+            .FirstOrDefaultAsync(store => store.Sections.Any(s => s.Id == sectionId), cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -54,7 +54,7 @@ public class StoreRepository : IStoreRepository
 
         var entity = await GetStoreQuery()
             .Where(store => !store.Deleted)
-            .FirstOrDefaultAsync(store => store.Id == id.Value, cancellationToken);
+            .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -75,7 +75,7 @@ public class StoreRepository : IStoreRepository
         cancellationToken.ThrowIfCancellationRequested();
 
         var entity = await GetStoreQuery()
-            .FirstOrDefaultAsync(store => store.Id == id.Value, cancellationToken);
+            .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -106,7 +106,7 @@ public class StoreRepository : IStoreRepository
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var existingEntity = await FindEntityById(store.Id.Value, cancellationToken);
+        var existingEntity = await FindEntityById(store.Id, cancellationToken);
 
         if (existingEntity is null)
         {

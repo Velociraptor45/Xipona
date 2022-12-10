@@ -17,8 +17,8 @@ public class StoreConverter : IToEntityConverter<IStore, Entities.Store>
     {
         return new Entities.Store()
         {
-            Id = source.Id.Value,
-            Name = source.Name.Value,
+            Id = source.Id,
+            Name = source.Name,
             Deleted = source.IsDeleted,
             Sections = _sectionConverter.ToEntity(source.Sections).ToList()
         };

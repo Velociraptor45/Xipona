@@ -12,8 +12,8 @@ public class SectionContractConverter :
     public SectionContract ToContract(SectionReadModel source)
     {
         return new SectionContract(
-            source.Id.Value,
-            source.Name.Value,
+            source.Id,
+            source.Name,
             source.SortingIndex,
             source.IsDefaultSection);
     }
@@ -21,8 +21,8 @@ public class SectionContractConverter :
     public SectionContract ToContract(ISection source)
     {
         return new SectionContract(
-            source.Id.Value,
-            source.Name.Value,
+            source.Id,
+            source.Name,
             source.SortingIndex,
             source.IsDefaultSection);
     }

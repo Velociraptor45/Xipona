@@ -82,27 +82,27 @@ public class ItemControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var response = await sut.UpdateItemWithTypesAsync(_fixture.CurrentItem.Id.Value, _fixture.Contract);
+            var response = await sut.UpdateItemWithTypesAsync(_fixture.CurrentItem.Id, _fixture.Contract);
 
             // Assert
             response.Should().BeOfType<OkResult>();
             var allEntities = (await _fixture.LoadAllItemEntities()).ToList();
 
-            allEntities.Should().Contain(e => e.Id == _fixture.SecondLevelPredecessor.Id.Value);
-            allEntities.Should().Contain(e => e.Id == _fixture.FirstLevelPredecessor.Id.Value);
-            allEntities.Should().Contain(e => e.Id == _fixture.CurrentItem.Id.Value);
+            allEntities.Should().Contain(e => e.Id == _fixture.SecondLevelPredecessor.Id);
+            allEntities.Should().Contain(e => e.Id == _fixture.FirstLevelPredecessor.Id);
+            allEntities.Should().Contain(e => e.Id == _fixture.CurrentItem.Id);
             allEntities.Should().Contain(e =>
-                e.Id != _fixture.SecondLevelPredecessor.Id.Value
-                && e.Id != _fixture.FirstLevelPredecessor.Id.Value
-                && e.Id != _fixture.CurrentItem.Id.Value);
+                e.Id != _fixture.SecondLevelPredecessor.Id
+                && e.Id != _fixture.FirstLevelPredecessor.Id
+                && e.Id != _fixture.CurrentItem.Id);
 
-            var secondLevelEntity = allEntities.Single(e => e.Id == _fixture.SecondLevelPredecessor.Id.Value);
-            var firstLevelEntity = allEntities.Single(e => e.Id == _fixture.FirstLevelPredecessor.Id.Value);
-            var currentEntity = allEntities.Single(e => e.Id == _fixture.CurrentItem.Id.Value);
+            var secondLevelEntity = allEntities.Single(e => e.Id == _fixture.SecondLevelPredecessor.Id);
+            var firstLevelEntity = allEntities.Single(e => e.Id == _fixture.FirstLevelPredecessor.Id);
+            var currentEntity = allEntities.Single(e => e.Id == _fixture.CurrentItem.Id);
             var newEntity = allEntities.Single(e =>
-                e.Id != _fixture.SecondLevelPredecessor.Id.Value
-                && e.Id != _fixture.FirstLevelPredecessor.Id.Value
-                && e.Id != _fixture.CurrentItem.Id.Value);
+                e.Id != _fixture.SecondLevelPredecessor.Id
+                && e.Id != _fixture.FirstLevelPredecessor.Id
+                && e.Id != _fixture.CurrentItem.Id);
 
             // second level item should not be altered
             secondLevelEntity.Deleted.Should().BeTrue();
@@ -111,16 +111,16 @@ public class ItemControllerIntegrationTests
             secondLevelEntity.ItemTypes.Should().HaveCount(_fixture.SecondLevelPredecessor.ItemTypes.Count);
             foreach (var type in _fixture.SecondLevelPredecessor.ItemTypes)
             {
-                secondLevelEntity.ItemTypes.Should().Contain(e => e.Id == type.Id.Value);
-                var entityType = secondLevelEntity.ItemTypes.Single(e => e.Id == type.Id.Value);
+                secondLevelEntity.ItemTypes.Should().Contain(e => e.Id == type.Id);
+                var entityType = secondLevelEntity.ItemTypes.Single(e => e.Id == type.Id);
                 foreach (var av in type.Availabilities)
                 {
                     entityType.AvailableAt.Should().HaveCount(type.Availabilities.Count);
                     entityType.AvailableAt.Should().Contain(eav =>
-                        eav.ItemTypeId == type.Id.Value
-                        && eav.StoreId == av.StoreId.Value
-                        && Math.Abs(eav.Price - av.Price.Value) < 0.01f
-                        && eav.DefaultSectionId == av.DefaultSectionId.Value);
+                        eav.ItemTypeId == type.Id
+                        && eav.StoreId == av.StoreId
+                        && Math.Abs(eav.Price - av.Price) < 0.01f
+                        && eav.DefaultSectionId == av.DefaultSectionId);
                 }
             }
 
@@ -131,16 +131,16 @@ public class ItemControllerIntegrationTests
             firstLevelEntity.ItemTypes.Should().HaveCount(_fixture.FirstLevelPredecessor.ItemTypes.Count);
             foreach (var type in _fixture.FirstLevelPredecessor.ItemTypes)
             {
-                firstLevelEntity.ItemTypes.Should().Contain(e => e.Id == type.Id.Value);
-                var entityType = firstLevelEntity.ItemTypes.Single(e => e.Id == type.Id.Value);
+                firstLevelEntity.ItemTypes.Should().Contain(e => e.Id == type.Id);
+                var entityType = firstLevelEntity.ItemTypes.Single(e => e.Id == type.Id);
                 foreach (var av in type.Availabilities)
                 {
                     entityType.AvailableAt.Should().HaveCount(type.Availabilities.Count);
                     entityType.AvailableAt.Should().Contain(eav =>
-                        eav.ItemTypeId == type.Id.Value
-                        && eav.StoreId == av.StoreId.Value
-                        && Math.Abs(eav.Price - av.Price.Value) < 0.01f
-                        && eav.DefaultSectionId == av.DefaultSectionId.Value);
+                        eav.ItemTypeId == type.Id
+                        && eav.StoreId == av.StoreId
+                        && Math.Abs(eav.Price - av.Price) < 0.01f
+                        && eav.DefaultSectionId == av.DefaultSectionId);
                 }
             }
 
@@ -151,16 +151,16 @@ public class ItemControllerIntegrationTests
             currentEntity.ItemTypes.Should().HaveCount(_fixture.CurrentItem.ItemTypes.Count);
             foreach (var type in _fixture.CurrentItem.ItemTypes)
             {
-                currentEntity.ItemTypes.Should().Contain(e => e.Id == type.Id.Value);
-                var entityType = currentEntity.ItemTypes.Single(e => e.Id == type.Id.Value);
+                currentEntity.ItemTypes.Should().Contain(e => e.Id == type.Id);
+                var entityType = currentEntity.ItemTypes.Single(e => e.Id == type.Id);
                 foreach (var av in type.Availabilities)
                 {
                     entityType.AvailableAt.Should().HaveCount(type.Availabilities.Count);
                     entityType.AvailableAt.Should().Contain(eav =>
-                        eav.ItemTypeId == type.Id.Value
-                        && eav.StoreId == av.StoreId.Value
-                        && Math.Abs(eav.Price - av.Price.Value) < 0.01f
-                        && eav.DefaultSectionId == av.DefaultSectionId.Value);
+                        eav.ItemTypeId == type.Id
+                        && eav.StoreId == av.StoreId
+                        && Math.Abs(eav.Price - av.Price) < 0.01f
+                        && eav.DefaultSectionId == av.DefaultSectionId);
                 }
             }
 
@@ -284,14 +284,14 @@ public class ItemControllerIntegrationTests
 
                 var itemTypes = CurrentItem.ItemTypes
                     .Select(t => new TestBuilder<UpdateItemTypeContract>()
-                        .AfterCreation(c => c.OldId = t.Id.Value)
+                        .AfterCreation(c => c.OldId = t.Id)
                         .Create())
                     .ToList();
 
                 Contract = new TestBuilder<UpdateItemWithTypesContract>()
                     .AfterCreation(c => c.QuantityType = CurrentItem.ItemQuantity.Type.ToInt())
                     .AfterCreation(c => c.QuantityTypeInPacket = CurrentItem.ItemQuantity.InPacket?.Type.ToInt())
-                    .AfterCreation(c => c.QuantityInPacket = CurrentItem.ItemQuantity.InPacket?.Quantity.Value)
+                    .AfterCreation(c => c.QuantityInPacket = CurrentItem.ItemQuantity.InPacket?.Quantity)
                     .AfterCreation(c => c.ItemTypes = itemTypes)
                     .Create();
 
@@ -359,7 +359,7 @@ public class ItemControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
 
             // Act
-            await sut.UpdateItemPriceAsync(_fixture.ItemId.Value.Value, _fixture.Contract);
+            await sut.UpdateItemPriceAsync(_fixture.ItemId.Value, _fixture.Contract);
 
             // Assert
             using var assertionServiceScope = _fixture.CreateServiceScope();
@@ -398,7 +398,7 @@ public class ItemControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
 
             // Act
-            await sut.UpdateItemPriceAsync(_fixture.ItemId.Value.Value, _fixture.Contract);
+            await sut.UpdateItemPriceAsync(_fixture.ItemId.Value, _fixture.Contract);
 
             // Assert
             using var assertionServiceScope = _fixture.CreateServiceScope();
@@ -445,7 +445,7 @@ public class ItemControllerIntegrationTests
                 var price = new DomainTestBuilder<Price>().Create();
                 Contract = new TestBuilder<UpdateItemPriceContract>()
                     .FillPropertyWith(c => c.ItemTypeId, null)
-                    .FillPropertyWith(c => c.Price, price.Value)
+                    .FillPropertyWith(c => c.Price, price)
                     .Create();
             }
 
@@ -455,7 +455,7 @@ public class ItemControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(ItemId);
 
                 _existingItem = ItemEntityMother.InitialForStore(Contract.StoreId)
-                    .WithId(ItemId.Value.Value)
+                    .WithId(ItemId.Value)
                     .Create();
             }
 
@@ -468,7 +468,7 @@ public class ItemControllerIntegrationTests
                     .CreateMany(1)
                     .ToList();
                 _existingItem = ItemEntityMother.InitialWithTypes()
-                    .WithId(ItemId.Value.Value)
+                    .WithId(ItemId.Value)
                     .WithItemTypes(itemTypes)
                     .Create();
             }

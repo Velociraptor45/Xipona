@@ -12,21 +12,21 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
     {
         return new Item
         {
-            Id = source.Id.Value,
-            Name = source.Name.Value,
+            Id = source.Id,
+            Name = source.Name,
             Deleted = source.IsDeleted,
             Comment = source.Comment.Value,
             IsTemporary = source.IsTemporary,
             QuantityType = source.ItemQuantity.Type.ToInt(),
-            QuantityInPacket = source.ItemQuantity.InPacket?.Quantity.Value,
+            QuantityInPacket = source.ItemQuantity.InPacket?.Quantity,
             QuantityTypeInPacket = source.ItemQuantity.InPacket?.Type.ToInt(),
-            ItemCategoryId = source.ItemCategoryId?.Value,
-            ManufacturerId = source.ManufacturerId?.Value,
-            CreatedFrom = source.TemporaryId?.Value,
+            ItemCategoryId = source.ItemCategoryId,
+            ManufacturerId = source.ManufacturerId,
+            CreatedFrom = source.TemporaryId,
             AvailableAt = source.Availabilities.Select(av => ToAvailableAt(av, source)).ToList(),
             ItemTypes = source.ItemTypes.Select(type => ToItemType(type, source)).ToList(),
             UpdatedOn = source.UpdatedOn,
-            PredecessorId = source.PredecessorId?.Value
+            PredecessorId = source.PredecessorId
         };
     }
 
@@ -34,10 +34,10 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
     {
         return new AvailableAt
         {
-            StoreId = availability.StoreId.Value,
-            Price = availability.Price.Value,
-            ItemId = source.Id.Value,
-            DefaultSectionId = availability.DefaultSectionId.Value
+            StoreId = availability.StoreId,
+            Price = availability.Price,
+            ItemId = source.Id,
+            DefaultSectionId = availability.DefaultSectionId
         };
     }
 
@@ -45,11 +45,11 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
     {
         return new Entities.ItemType
         {
-            Id = itemType.Id.Value,
-            ItemId = source.Id.Value,
-            Name = itemType.Name.Value,
+            Id = itemType.Id,
+            ItemId = source.Id,
+            Name = itemType.Name,
             AvailableAt = itemType.Availabilities.Select(av => ToItemTypeAvailableAt(av, itemType)).ToList(),
-            PredecessorId = itemType.PredecessorId?.Value
+            PredecessorId = itemType.PredecessorId
         };
     }
 
@@ -57,10 +57,10 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
     {
         return new ItemTypeAvailableAt
         {
-            StoreId = availability.StoreId.Value,
-            Price = availability.Price.Value,
-            ItemTypeId = itemType.Id.Value,
-            DefaultSectionId = availability.DefaultSectionId.Value
+            StoreId = availability.StoreId,
+            Price = availability.Price,
+            ItemTypeId = itemType.Id,
+            DefaultSectionId = availability.DefaultSectionId
         };
     }
 }

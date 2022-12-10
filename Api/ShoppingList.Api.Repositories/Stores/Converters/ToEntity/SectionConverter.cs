@@ -10,8 +10,8 @@ public class SectionConverter : IToEntityConverter<ISection, Entities.Section>
     {
         return new Section
         {
-            Id = source.Id.Value,
-            Name = source.Name.Value,
+            Id = source.Id,
+            Name = source.Name,
             SortIndex = source.SortingIndex,
             IsDefaultSection = source.IsDefaultSection,
             IsDeleted = source.IsDeleted

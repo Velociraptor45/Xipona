@@ -15,4 +15,9 @@ public readonly record struct ItemCategoryId
     public static ItemCategoryId New => new(Guid.NewGuid());
 
     public Guid Value { get; }
+
+    public static implicit operator Guid(ItemCategoryId itemCategoryId)
+    {
+        return itemCategoryId.Value;
+    }
 }

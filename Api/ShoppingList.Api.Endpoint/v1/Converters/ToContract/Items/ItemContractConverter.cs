@@ -46,13 +46,13 @@ public class ItemContractConverter :
             manufacturerContract = _manufacturerContractConverter.ToContract(source.Manufacturer);
 
         return new ItemContract(
-            source.Id.Value,
-            source.Name.Value,
+            source.Id,
+            source.Name,
             source.IsDeleted,
             source.Comment.Value,
             source.IsTemporary,
             _quantityTypeContractConverter.ToContract(source.QuantityType),
-            source.QuantityInPacket?.Value,
+            source.QuantityInPacket,
             source.QuantityTypeInPacket is null
                 ? null
                 : _quantityTypeInPacketContractConverter.ToContract(source.QuantityTypeInPacket),

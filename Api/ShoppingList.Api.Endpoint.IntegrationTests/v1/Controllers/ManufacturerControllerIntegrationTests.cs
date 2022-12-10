@@ -42,7 +42,7 @@ public class ManufacturerControllerIntegrationTests
             var sut = _fixture.CreateSut();
 
             // Act
-            var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value.Value);
+            var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
 
             // Assert
             response.Should().BeOfType<OkResult>();
@@ -57,7 +57,7 @@ public class ManufacturerControllerIntegrationTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value.Value);
+            await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
 
             // Assert
             var manufacturers = await _fixture.LoadPersistedManufacturersAsync();
@@ -76,7 +76,7 @@ public class ManufacturerControllerIntegrationTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value.Value);
+            await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
 
             // Assert
             var items = await _fixture.LoadPersistedItemsAsync();
@@ -98,7 +98,7 @@ public class ManufacturerControllerIntegrationTests
             var sut = _fixture.CreateSut();
 
             // Act
-            var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value.Value);
+            var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
 
             // Assert
             response.Should().BeOfType<NotFoundObjectResult>();
