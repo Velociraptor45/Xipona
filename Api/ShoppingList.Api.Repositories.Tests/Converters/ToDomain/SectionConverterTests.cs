@@ -29,7 +29,7 @@ public class SectionConverterTests : ToDomainConverterTestBase<Section, ISection
     {
         return new Section()
         {
-            Id = destination.Id.Value,
+            Id = destination.Id,
             Name = destination.Name,
             SortIndex = destination.SortingIndex,
             IsDefaultSection = destination.IsDefaultSection,

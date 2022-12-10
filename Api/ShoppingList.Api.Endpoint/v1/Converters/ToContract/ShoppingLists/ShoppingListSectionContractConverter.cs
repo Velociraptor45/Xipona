@@ -18,7 +18,7 @@ public class ShoppingListSectionContractConverter :
     public ShoppingListSectionContract ToContract(ShoppingListSectionReadModel source)
     {
         return new ShoppingListSectionContract(
-            source.Id.Value,
+            source.Id,
             source.Name,
             source.SortingIndex,
             source.IsDefaultSection,

@@ -37,7 +37,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
             StoreId = availability.StoreId.Value,
             Price = availability.Price,
             ItemId = source.Id,
-            DefaultSectionId = availability.DefaultSectionId.Value
+            DefaultSectionId = availability.DefaultSectionId
         };
     }
 
@@ -60,7 +60,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
             StoreId = availability.StoreId.Value,
             Price = availability.Price,
             ItemTypeId = itemType.Id,
-            DefaultSectionId = availability.DefaultSectionId.Value
+            DefaultSectionId = availability.DefaultSectionId
         };
     }
 }

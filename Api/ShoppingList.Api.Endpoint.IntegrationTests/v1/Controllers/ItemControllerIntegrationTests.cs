@@ -120,7 +120,7 @@ public class ItemControllerIntegrationTests
                         eav.ItemTypeId == type.Id
                         && eav.StoreId == av.StoreId.Value
                         && Math.Abs(eav.Price - av.Price) < 0.01f
-                        && eav.DefaultSectionId == av.DefaultSectionId.Value);
+                        && eav.DefaultSectionId == av.DefaultSectionId);
                 }
             }
 
@@ -140,7 +140,7 @@ public class ItemControllerIntegrationTests
                         eav.ItemTypeId == type.Id
                         && eav.StoreId == av.StoreId.Value
                         && Math.Abs(eav.Price - av.Price) < 0.01f
-                        && eav.DefaultSectionId == av.DefaultSectionId.Value);
+                        && eav.DefaultSectionId == av.DefaultSectionId);
                 }
             }
 
@@ -160,7 +160,7 @@ public class ItemControllerIntegrationTests
                         eav.ItemTypeId == type.Id
                         && eav.StoreId == av.StoreId.Value
                         && Math.Abs(eav.Price - av.Price) < 0.01f
-                        && eav.DefaultSectionId == av.DefaultSectionId.Value);
+                        && eav.DefaultSectionId == av.DefaultSectionId);
                 }
             }
 

@@ -30,7 +30,7 @@ public class ShoppingListConverter : IToEntityConverter<IShoppingList, Entities.
                     ItemTypeId = item.TypeId,
                     InBasket = item.IsInBasket,
                     Quantity = item.Quantity.Value,
-                    SectionId = section.Id.Value
+                    SectionId = section.Id
                 };
             }
         }

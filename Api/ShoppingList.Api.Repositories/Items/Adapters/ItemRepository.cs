@@ -201,9 +201,9 @@ public class ItemRepository : IItemRepository
     {
         var items = await GetItemQuery()
             .Where(item => !item.Deleted
-                           && (item.AvailableAt.Any(av => av.DefaultSectionId == sectionId.Value)
+                           && (item.AvailableAt.Any(av => av.DefaultSectionId == sectionId)
                                || item.ItemTypes.Any(t =>
-                                   t.AvailableAt.Any(av => av.DefaultSectionId == sectionId.Value))))
+                                   t.AvailableAt.Any(av => av.DefaultSectionId == sectionId))))
             .ToArrayAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();

@@ -38,7 +38,7 @@ public class StoreRepository : IStoreRepository
 
         var entity = await GetStoreQuery()
             .Where(store => !store.Deleted)
-            .FirstOrDefaultAsync(store => store.Sections.Any(s => s.Id == sectionId.Value), cancellationToken);
+            .FirstOrDefaultAsync(store => store.Sections.Any(s => s.Id == sectionId), cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 

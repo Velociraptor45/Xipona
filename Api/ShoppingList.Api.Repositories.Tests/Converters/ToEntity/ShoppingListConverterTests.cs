@@ -34,7 +34,7 @@ public class ShoppingListConverterTests : ToEntityConverterTestBase<IShoppingLis
                         ItemTypeId = item.TypeId,
                         InBasket = item.IsInBasket,
                         Quantity = item.Quantity.Value,
-                        SectionId = section.Id.Value
+                        SectionId = section.Id
                     })).ToList()
         };
     }

@@ -42,7 +42,7 @@ public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
                         StoreId = av.StoreId.Value,
                         Price = av.Price,
                         ItemId = source.Id,
-                        DefaultSectionId = av.DefaultSectionId.Value
+                        DefaultSectionId = av.DefaultSectionId
                     }).ToList(),
             PredecessorId = source.PredecessorId,
             ItemTypes = new List<ItemType>(),
