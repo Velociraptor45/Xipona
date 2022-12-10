@@ -1,4 +1,6 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 public readonly record struct IngredientId
 {
     public IngredientId()
@@ -14,4 +16,9 @@ public readonly record struct IngredientId
     public static IngredientId New => new(Guid.NewGuid());
 
     public Guid Value { get; }
+
+    public static implicit operator Guid(IngredientId ingredientId)
+    {
+        return ingredientId.Value;
+    }
 }

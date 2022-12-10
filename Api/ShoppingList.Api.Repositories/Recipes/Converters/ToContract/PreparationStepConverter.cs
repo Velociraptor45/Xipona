@@ -12,7 +12,7 @@ public class PreparationStepConverter : IToContractConverter<(RecipeId, IPrepara
 
         return new PreparationStep
         {
-            Id = preparationStep.Id.Value,
+            Id = preparationStep.Id,
             RecipeId = recipeId.Value,
             Instruction = preparationStep.Instruction.Value,
             SortingIndex = preparationStep.SortingIndex

@@ -153,14 +153,14 @@ public class RecipeControllerIntegrationTests
                     _model.Id.Value,
                     _model.Name,
                     _model.Ingredients.Select(i => new IngredientContract(
-                        i.Id.Value,
+                        i.Id,
                         i.ItemCategoryId,
                         (int)i.QuantityType,
                         i.Quantity.Value,
                         i.DefaultItemId,
                         i.DefaultItemTypeId)),
                     _model.PreparationSteps.Select(p => new PreparationStepContract(
-                        p.Id.Value,
+                        p.Id,
                         p.Instruction.Value,
                         p.SortingIndex)));
             }
@@ -175,7 +175,7 @@ public class RecipeControllerIntegrationTests
                     Name = _model.Name,
                     Ingredients = _model.Ingredients.Select(i => new Ingredient
                     {
-                        Id = i.Id.Value,
+                        Id = i.Id,
                         ItemCategoryId = i.ItemCategoryId,
                         Quantity = i.Quantity.Value,
                         QuantityType = (int)i.QuantityType,
@@ -185,7 +185,7 @@ public class RecipeControllerIntegrationTests
                     }).ToList(),
                     PreparationSteps = _model.PreparationSteps.Select(p => new PreparationStep
                     {
-                        Id = p.Id.Value,
+                        Id = p.Id,
                         Instruction = p.Instruction.Value,
                         SortingIndex = p.SortingIndex,
                         RecipeId = _model.Id.Value
@@ -282,7 +282,7 @@ public class RecipeControllerIntegrationTests
                     Name = modelToBeFound.Name,
                     Ingredients = modelToBeFound.Ingredients.Select(i => new Ingredient
                     {
-                        Id = i.Id.Value,
+                        Id = i.Id,
                         ItemCategoryId = i.ItemCategoryId,
                         Quantity = i.Quantity.Value,
                         QuantityType = (int)i.QuantityType,
@@ -290,7 +290,7 @@ public class RecipeControllerIntegrationTests
                     }).ToList(),
                     PreparationSteps = modelToBeFound.PreparationSteps.Select(p => new PreparationStep
                     {
-                        Id = p.Id.Value,
+                        Id = p.Id,
                         Instruction = p.Instruction.Value,
                         SortingIndex = p.SortingIndex,
                         RecipeId = modelToBeFound.Id.Value
@@ -304,7 +304,7 @@ public class RecipeControllerIntegrationTests
                     Name = modelNotToBeFound.Name,
                     Ingredients = modelNotToBeFound.Ingredients.Select(i => new Ingredient
                     {
-                        Id = i.Id.Value,
+                        Id = i.Id,
                         ItemCategoryId = i.ItemCategoryId,
                         Quantity = i.Quantity.Value,
                         QuantityType = (int)i.QuantityType,
@@ -312,7 +312,7 @@ public class RecipeControllerIntegrationTests
                     }).ToList(),
                     PreparationSteps = modelNotToBeFound.PreparationSteps.Select(p => new PreparationStep
                     {
-                        Id = p.Id.Value,
+                        Id = p.Id,
                         Instruction = p.Instruction.Value,
                         SortingIndex = p.SortingIndex,
                         RecipeId = modelNotToBeFound.Id.Value

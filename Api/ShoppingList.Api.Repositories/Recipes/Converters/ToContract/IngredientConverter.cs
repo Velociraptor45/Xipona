@@ -13,7 +13,7 @@ public class IngredientConverter : IToContractConverter<(RecipeId, IIngredient),
 
         return new Ingredient
         {
-            Id = ingredient.Id.Value,
+            Id = ingredient.Id,
             RecipeId = recipeId.Value,
             ItemCategoryId = ingredient.ItemCategoryId,
             Quantity = ingredient.Quantity.Value,

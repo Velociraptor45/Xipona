@@ -10,12 +10,12 @@ public class RecipeContractConverter : IToContractConverter<IRecipe, RecipeContr
     public RecipeContract ToContract(IRecipe source)
     {
         var steps = source.PreparationSteps.Select(s => new PreparationStepContract(
-            s.Id.Value,
+            s.Id,
             s.Instruction.Value,
             s.SortingIndex));
 
         var ingredients = source.Ingredients.Select(i => new IngredientContract(
-            i.Id.Value,
+            i.Id,
             i.ItemCategoryId,
             i.QuantityType.ToInt(),
             i.Quantity.Value,
