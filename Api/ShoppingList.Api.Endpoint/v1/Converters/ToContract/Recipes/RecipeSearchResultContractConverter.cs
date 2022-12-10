@@ -8,6 +8,6 @@ public class RecipeSearchResultContractConverter : IToContractConverter<RecipeSe
 {
     public RecipeSearchResultContract ToContract(RecipeSearchResult source)
     {
-        return new RecipeSearchResultContract(source.Id.Value, source.Name);
+        return new RecipeSearchResultContract(source.Id, source.Name);
     }
 }

@@ -43,7 +43,7 @@ public class RecipeRepository : IRecipeRepository
     public async Task<IRecipe?> FindByAsync(RecipeId recipeId)
     {
         var entity = await GetRecipeQuery()
-            .FirstOrDefaultAsync(r => r.Id == recipeId.Value, _cancellationToken);
+            .FirstOrDefaultAsync(r => r.Id == recipeId, _cancellationToken);
 
         return entity is null ? null : _toModelConverter.ToDomain(entity);
     }
@@ -79,7 +79,7 @@ public class RecipeRepository : IRecipeRepository
         }
 
         await _dbContext.SaveChangesAsync(_cancellationToken);
-        var entity = await GetRecipeQuery().FirstAsync(r => r.Id == recipe.Id.Value, _cancellationToken);
+        var entity = await GetRecipeQuery().FirstAsync(r => r.Id == recipe.Id, _cancellationToken);
         return _toModelConverter.ToDomain(entity);
     }
 
@@ -88,7 +88,7 @@ public class RecipeRepository : IRecipeRepository
         return await _dbContext.Recipes
             .Include(r => r.Ingredients)
             .Include(r => r.PreparationSteps)
-            .FirstOrDefaultAsync(r => r.Id == id.Value, _cancellationToken);
+            .FirstOrDefaultAsync(r => r.Id == id, _cancellationToken);
     }
 
     private IQueryable<Recipe> GetRecipeQuery()

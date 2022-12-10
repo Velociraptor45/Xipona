@@ -150,7 +150,7 @@ public class RecipeControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(_model);
 
                 ExpectedResult = new RecipeContract(
-                    _model.Id.Value,
+                    _model.Id,
                     _model.Name,
                     _model.Ingredients.Select(i => new IngredientContract(
                         i.Id,
@@ -171,7 +171,7 @@ public class RecipeControllerIntegrationTests
 
                 ExpectedEntity = new Recipe
                 {
-                    Id = _model.Id.Value,
+                    Id = _model.Id,
                     Name = _model.Name,
                     Ingredients = _model.Ingredients.Select(i => new Ingredient
                     {
@@ -181,14 +181,14 @@ public class RecipeControllerIntegrationTests
                         QuantityType = (int)i.QuantityType,
                         DefaultItemId = i.DefaultItemId,
                         DefaultItemTypeId = i.DefaultItemTypeId,
-                        RecipeId = _model.Id.Value
+                        RecipeId = _model.Id
                     }).ToList(),
                     PreparationSteps = _model.PreparationSteps.Select(p => new PreparationStep
                     {
                         Id = p.Id,
                         Instruction = p.Instruction.Value,
                         SortingIndex = p.SortingIndex,
-                        RecipeId = _model.Id.Value
+                        RecipeId = _model.Id
                     }).ToList()
                 };
             }
@@ -278,7 +278,7 @@ public class RecipeControllerIntegrationTests
                 var modelToBeFound = new RecipeBuilder().Create();
                 _existingEntityToBeFound = new Recipe
                 {
-                    Id = modelToBeFound.Id.Value,
+                    Id = modelToBeFound.Id,
                     Name = modelToBeFound.Name,
                     Ingredients = modelToBeFound.Ingredients.Select(i => new Ingredient
                     {
@@ -286,21 +286,21 @@ public class RecipeControllerIntegrationTests
                         ItemCategoryId = i.ItemCategoryId,
                         Quantity = i.Quantity.Value,
                         QuantityType = (int)i.QuantityType,
-                        RecipeId = modelToBeFound.Id.Value
+                        RecipeId = modelToBeFound.Id
                     }).ToList(),
                     PreparationSteps = modelToBeFound.PreparationSteps.Select(p => new PreparationStep
                     {
                         Id = p.Id,
                         Instruction = p.Instruction.Value,
                         SortingIndex = p.SortingIndex,
-                        RecipeId = modelToBeFound.Id.Value
+                        RecipeId = modelToBeFound.Id
                     }).ToList()
                 };
 
                 var modelNotToBeFound = new RecipeBuilder().Create();
                 _existingEntityNotToBeFound = new Recipe
                 {
-                    Id = modelNotToBeFound.Id.Value,
+                    Id = modelNotToBeFound.Id,
                     Name = modelNotToBeFound.Name,
                     Ingredients = modelNotToBeFound.Ingredients.Select(i => new Ingredient
                     {
@@ -308,14 +308,14 @@ public class RecipeControllerIntegrationTests
                         ItemCategoryId = i.ItemCategoryId,
                         Quantity = i.Quantity.Value,
                         QuantityType = (int)i.QuantityType,
-                        RecipeId = modelNotToBeFound.Id.Value
+                        RecipeId = modelNotToBeFound.Id
                     }).ToList(),
                     PreparationSteps = modelNotToBeFound.PreparationSteps.Select(p => new PreparationStep
                     {
                         Id = p.Id,
                         Instruction = p.Instruction.Value,
                         SortingIndex = p.SortingIndex,
-                        RecipeId = modelNotToBeFound.Id.Value
+                        RecipeId = modelNotToBeFound.Id
                     }).ToList()
                 };
             }
@@ -358,7 +358,7 @@ public class RecipeControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.ModifyRecipeAsync(_fixture.RecipeId.Value.Value, _fixture.Contract);
+            var result = await sut.ModifyRecipeAsync(_fixture.RecipeId.Value, _fixture.Contract);
 
             // Assert
             result.Should().BeOfType<OkResult>();
@@ -438,7 +438,7 @@ public class RecipeControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(RecipeId);
 
-                var recipeId = RecipeId.Value.Value;
+                var recipeId = RecipeId.Value;
                 _existingRecipe = new RecipeEntityBuilder()
                     .WithId(recipeId)
                     .WithIngredients(new IngredientEntityBuilder().WithRecipeId(recipeId).CreateMany(3).ToList())
@@ -451,7 +451,7 @@ public class RecipeControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
                 TestPropertyNotSetException.ThrowIfNull(RecipeId);
 
-                var recipeId = RecipeId.Value.Value;
+                var recipeId = RecipeId.Value;
                 var ingredients = GetExpectedIngredients().ToList();
                 var steps = GetExpectedPreparationSteps().ToList();
 

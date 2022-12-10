@@ -23,7 +23,7 @@ public class RecipeContractConverter : IToContractConverter<IRecipe, RecipeContr
             i.DefaultItemTypeId));
 
         return new RecipeContract(
-            source.Id.Value,
+            source.Id,
             source.Name,
             ingredients,
             steps);
