@@ -12,7 +12,7 @@ public class ShoppingListConverter : IToEntityConverter<IShoppingList, Entities.
         {
             Id = source.Id,
             CompletionDate = source.CompletionDate,
-            StoreId = source.StoreId.Value,
+            StoreId = source.StoreId,
             ItemsOnList = CreateItemsOnListMap(source).ToList()
         };
     }

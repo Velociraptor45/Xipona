@@ -97,7 +97,7 @@ public class ShoppingListRepository : IShoppingListRepository
         var entity = await GetShoppingListQuery()
             .FirstOrDefaultAsync(list =>
                     list.CompletionDate == null
-                    && list.StoreId == storeId.Value,
+                    && list.StoreId == storeId,
                 cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();

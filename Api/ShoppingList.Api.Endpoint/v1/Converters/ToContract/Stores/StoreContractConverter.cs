@@ -17,6 +17,6 @@ public class StoreContractConverter : IToContractConverter<IStore, StoreContract
     public StoreContract ToContract(IStore source)
     {
         var sections = _sectionConverter.ToContract(source.Sections);
-        return new StoreContract(source.Id.Value, source.Name, sections);
+        return new StoreContract(source.Id, source.Name, sections);
     }
 }

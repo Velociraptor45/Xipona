@@ -10,7 +10,7 @@ public class SearchItemByItemCategoryAvailabilityContractConverter :
     public SearchItemByItemCategoryAvailabilityContract ToContract(ItemAvailabilityReadModel source)
     {
         return new SearchItemByItemCategoryAvailabilityContract(
-            source.Store.Id.Value,
+            source.Store.Id,
             source.Store.Name,
             source.Price);
     }

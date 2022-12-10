@@ -118,7 +118,7 @@ public class ItemControllerIntegrationTests
                     entityType.AvailableAt.Should().HaveCount(type.Availabilities.Count);
                     entityType.AvailableAt.Should().Contain(eav =>
                         eav.ItemTypeId == type.Id
-                        && eav.StoreId == av.StoreId.Value
+                        && eav.StoreId == av.StoreId
                         && Math.Abs(eav.Price - av.Price) < 0.01f
                         && eav.DefaultSectionId == av.DefaultSectionId);
                 }
@@ -138,7 +138,7 @@ public class ItemControllerIntegrationTests
                     entityType.AvailableAt.Should().HaveCount(type.Availabilities.Count);
                     entityType.AvailableAt.Should().Contain(eav =>
                         eav.ItemTypeId == type.Id
-                        && eav.StoreId == av.StoreId.Value
+                        && eav.StoreId == av.StoreId
                         && Math.Abs(eav.Price - av.Price) < 0.01f
                         && eav.DefaultSectionId == av.DefaultSectionId);
                 }
@@ -158,7 +158,7 @@ public class ItemControllerIntegrationTests
                     entityType.AvailableAt.Should().HaveCount(type.Availabilities.Count);
                     entityType.AvailableAt.Should().Contain(eav =>
                         eav.ItemTypeId == type.Id
-                        && eav.StoreId == av.StoreId.Value
+                        && eav.StoreId == av.StoreId
                         && Math.Abs(eav.Price - av.Price) < 0.01f
                         && eav.DefaultSectionId == av.DefaultSectionId);
                 }

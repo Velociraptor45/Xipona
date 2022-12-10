@@ -24,7 +24,7 @@ public class ShoppingListConverterTests : ToEntityConverterTestBase<IShoppingLis
         {
             Id = source.Id,
             CompletionDate = source.CompletionDate,
-            StoreId = source.StoreId.Value,
+            StoreId = source.StoreId,
             ItemsOnList = source.Sections.SelectMany(section =>
                 section.Items.Select(item =>
                     new ItemsOnList()

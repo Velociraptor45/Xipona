@@ -27,7 +27,7 @@ public class StoreQueryService : IStoreQueryService
 
         foreach (var store in activeStores)
         {
-            var storeId = new StoreId(store.Id.Value);
+            var storeId = new StoreId(store.Id);
             var items = (await _itemRepository.FindByAsync(storeId, _cancellationToken)).ToList();
 
             itemCountPerStoreDict.Add(storeId, items.Count);

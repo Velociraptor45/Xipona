@@ -18,7 +18,7 @@ public class ActiveStoreContractConverter : IToContractConverter<StoreReadModel,
     public ActiveStoreContract ToContract(StoreReadModel source)
     {
         return new ActiveStoreContract(
-            source.Id.Value,
+            source.Id,
             source.Name,
             source.ItemCount,
             _sectionContractConverter.ToContract(source.Sections));

@@ -39,7 +39,7 @@ public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
                 .Select(av =>
                     new AvailableAt
                     {
-                        StoreId = av.StoreId.Value,
+                        StoreId = av.StoreId,
                         Price = av.Price,
                         ItemId = source.Id,
                         DefaultSectionId = av.DefaultSectionId

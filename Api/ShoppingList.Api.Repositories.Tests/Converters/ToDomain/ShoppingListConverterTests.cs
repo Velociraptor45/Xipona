@@ -47,7 +47,7 @@ public class ShoppingListConverterTests : ToDomainConverterTestBase<Repositories
         return new Repositories.ShoppingLists.Entities.ShoppingList
         {
             Id = destination.Id,
-            StoreId = destination.StoreId.Value,
+            StoreId = destination.StoreId,
             ItemsOnList = itemsOnListMap,
             CompletionDate = destination.CompletionDate
         };

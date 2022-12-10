@@ -66,7 +66,7 @@ public class ItemRepository : IItemRepository
     public async Task<IEnumerable<IItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
     {
         var entities = await GetItemQuery()
-            .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId.Value) != null)
+            .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId) != null)
             .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -135,8 +135,8 @@ public class ItemRepository : IItemRepository
                 !item.Deleted
                 && !item.IsTemporary
                 && item.Name.Contains(searchInput)
-                && (item.AvailableAt.Any(map => map.StoreId == storeId.Value)
-                    || item.ItemTypes.Any(t => t.AvailableAt.Any(av => av.StoreId == storeId.Value))))
+                && (item.AvailableAt.Any(map => map.StoreId == storeId)
+                    || item.ItemTypes.Any(t => t.AvailableAt.Any(av => av.StoreId == storeId))))
             .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();

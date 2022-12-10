@@ -33,7 +33,7 @@ public class StoreConverterTests : ToDomainConverterTestBase<Store, IStore>
 
         return new Store
         {
-            Id = destination.Id.Value,
+            Id = destination.Id,
             Name = destination.Name,
             Deleted = destination.IsDeleted,
             Sections = sections
