@@ -67,19 +67,15 @@ Copy the api certificate files (shoppinglist-api.crt & shoppinglist-api.key) int
 The appsettings file (*Api/ShoppingList.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the (prd/dev)-ph-shoppinglist-api-**config** volume.
 
 ### Frontend
-Copy the api certificate files (shoppinglist-frontend.crt & shoppinglist-frontend.key) into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**tls** volume.
-Configure the webserver address in shoppinglist.conf under *Frontend/Docker* and copy it into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**config**. Copy the appsettings file (*Frontend/ShoppingList.Frontend.WebApp/wwwroot/appsettings.\*.json*) there as well and set the api's address in it. <br/> Also, make sure your root certificate is inside your host's */usr/local/share/ca-certificates/* directory so that the frontend will be able to verify the api's certificate.
-
-### Images
-There are currently no Docker images for api and frontend provided (but are planned for the future), so you have to build them yourself. Before you do that, you have to configure some things.
-
-#### URIs
-Configure the correct api's URI in in the frontend's appsettings (under *Frontend/ShoppingList.Frontend.WebApp/wwwroot/*) and, if you're using the key vault, the correct key vault URI in the api's appsettings (under *Api/ShoppingList.Api.WebApp/*).
+- Copy the api certificate files (shoppinglist-frontend.crt & shoppinglist-frontend.key) into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**tls** volume.
+Configure the webserver address & the frontend's environment in shoppinglist.conf under *Frontend/Docker* and copy it into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**config**.
+- Copy the appsettings file (*Frontend/ShoppingList.Frontend.WebApp/wwwroot/appsettings.\*.json*) into a directory of your choice on your host and set the api's address in the files.
+- Make sure your root certificate is inside your host's */usr/local/share/ca-certificates/* directory so that the frontend will be able to verify the api's certificate.
 
 ### yml files
 Under *Docker/Compose/* are yml files for development and production. You have to 
-- specify the frontend and API's Docker images that you built with the respective Dockerfiles in *Api/* and *Frontend/*
 - set the DB root password
+- replace the `{CONFIG_FOLDER_PATH}` placeholder with the absolute path of the directory where your frontend's appsettings-files are
 
 Now start the containers via e.g. `docker stack deploy --compose-file docker-compose-prd.yml prd-ph-shoppinglist`. Your Api container will probably fail because the key vault hasn't been initialized yet. This will be done in the [General Setup](#general-setup) section.
 
@@ -123,6 +119,6 @@ After that, click on "Policies" in the toolbar, open the default policy, click "
 This will allow authenticated users to access the engine you just created. Now the Api will be able to connect the key vault.
 
 ### Database migration
-The API follows the **code first** approach, which means that you have to deploy the provided migrations to your database. Under *Api/Scripts/* are two shell scripts that deploy the migrations to the respective database. Before you execute them, open the files and check if the PH_SL_VAULT_USERNAME_FILE and PH_SL_VAULT_PASSWORD_FILE paths are set correctly (if you're using the key vault) or the PH_SL_DB_CONNECTION_STRING_FILE is set correctly (if you're not using the key vault).
+The API follows the **code first** approach, which means that you have to deploy the provided migrations to your database. Under *Api/Scripts/* are two shell scripts that deploy the migrations to the respective database. Before you execute them, open the `set-env-variables-(prd/dev).sh` file and check if the PH_SL_VAULT_USERNAME_FILE and PH_SL_VAULT_PASSWORD_FILE paths are set correctly (if you're using the key vault) or the PH_SL_DB_CONNECTION_STRING_FILE is set correctly (if you're not using the key vault). Execute the respective `set-env-variables-(prd/dev).sh` before the `database-update-(prd/dev).sh`.
 
 And now you're done. Happy shopping!

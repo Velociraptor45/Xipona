@@ -53,8 +53,6 @@ services:
 
   Frontend:
     image: velociraptor45/ph-shoppinglist-frontend:0.9.0
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
     ports:
       - "13997:443"
     depends_on:
@@ -62,7 +60,7 @@ services:
     volumes:
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
       - dev-ph-shoppinglist-frontend-config:/etc/nginx/conf.d
-      - dev-ph-shoppinglist-frontend-config:/app/wwwroot
+      - {CONFIG_FOLDER_PATH}/appsettings.Development.json:/usr/share/nginx/html/wwwroot/appsettings.Development.json
       - dev-ph-shoppinglist-frontend-tls:/etc/nginx/ssl
     networks:
       - dev-ph-shoppinglist
