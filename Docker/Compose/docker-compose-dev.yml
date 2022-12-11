@@ -60,7 +60,7 @@ services:
     volumes:
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
       - dev-ph-shoppinglist-frontend-config:/etc/nginx/conf.d
-      - ${CONFIG_FOLDER_PATH}/appsettings.Development.json:/usr/share/nginx/html/wwwroot/appsettings.Development.json
+      - {CONFIG_FOLDER_PATH}/appsettings.Development.json:/usr/share/nginx/html/wwwroot/appsettings.Development.json
       - dev-ph-shoppinglist-frontend-tls:/etc/nginx/ssl
     networks:
       - dev-ph-shoppinglist
