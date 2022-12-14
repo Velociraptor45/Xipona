@@ -14,7 +14,7 @@ public static class ApplicationBuilderExtensions
         {
             app.Run(async ctx =>
             {
-                var logger = ctx.RequestServices.GetRequiredService<ILogger<Startup>>();
+                var logger = ctx.RequestServices.GetRequiredService<ILogger<Program>>();
                 var handler =
                     ctx.Features.Get<IExceptionHandlerPathFeature>();
 
