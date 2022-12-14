@@ -1,27 +1,27 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Repositories.Common.Transactions;
 
-namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.UpdateStore;
+namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.ModifyStore;
 
-public class UpdateStoreCommandHandler : ICommandHandler<UpdateStoreCommand, bool>
+public class ModifyStoreCommandHandler : ICommandHandler<ModifyStoreCommand, bool>
 {
-    private readonly Func<CancellationToken, IStoreUpdateService> _storeUpdateServiceDelegate;
+    private readonly Func<CancellationToken, IStoreModificationService> _storeUpdateServiceDelegate;
     private readonly ITransactionGenerator _transactionGenerator;
 
-    public UpdateStoreCommandHandler(Func<CancellationToken, IStoreUpdateService> storeUpdateServiceDelegate,
+    public ModifyStoreCommandHandler(Func<CancellationToken, IStoreModificationService> storeUpdateServiceDelegate,
         ITransactionGenerator transactionGenerator)
     {
         _storeUpdateServiceDelegate = storeUpdateServiceDelegate;
         _transactionGenerator = transactionGenerator;
     }
 
-    public async Task<bool> HandleAsync(UpdateStoreCommand command, CancellationToken cancellationToken)
+    public async Task<bool> HandleAsync(ModifyStoreCommand command, CancellationToken cancellationToken)
     {
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _storeUpdateServiceDelegate(cancellationToken);
-        await service.UpdateAsync(command.StoreUpdate);
+        await service.ModifyAsync(command.StoreUpdate);
 
         await transaction.CommitAsync(cancellationToken);
 

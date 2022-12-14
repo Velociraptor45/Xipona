@@ -1,10 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
 
-public class SectionUpdate
+public class SectionModification
 {
-    public SectionUpdate(SectionId? id, SectionName name, int sortingIndex, bool isDefaultSection)
+    public SectionModification(SectionId? id, SectionName name, int sortingIndex, bool isDefaultSection)
     {
         Id = id;
         Name = name;

@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.CreateStore;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
@@ -74,10 +74,10 @@ public class StoreController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("")]
-    public async Task<IActionResult> UpdateStoreAsync([FromBody] UpdateStoreContract updateStoreContract,
+    public async Task<IActionResult> ModifyStoreAsync([FromBody] ModifyStoreContract modifyStoreContract,
         CancellationToken cancellationToken = default)
     {
-        var command = _converters.ToDomain<UpdateStoreContract, UpdateStoreCommand>(updateStoreContract);
+        var command = _converters.ToDomain<ModifyStoreContract, ModifyStoreCommand>(modifyStoreContract);
 
         try
         {

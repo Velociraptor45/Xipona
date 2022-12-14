@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
@@ -19,13 +19,13 @@ public class Section : ISection
     public bool IsDefaultSection { get; }
     public bool IsDeleted { get; }
 
-    public ISection Update(SectionUpdate update)
+    public ISection Modify(SectionModification modification)
     {
         return new Section(
             Id,
-            update.Name,
-            update.SortingIndex,
-            update.IsDefaultSection,
+            modification.Name,
+            modification.SortingIndex,
+            modification.IsDefaultSection,
             IsDeleted);
     }
 

@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Shared.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
@@ -24,15 +24,15 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
 
     private ISortableCollection<ISection> AsSortableCollection => this;
 
-    public async Task UpdateManyAsync(IEnumerable<SectionUpdate> updates,
+    public async Task ModifyManyAsync(IEnumerable<SectionModification> modifications,
         IItemModificationService itemModificationService,
         IShoppingListModificationService shoppingListModificationService)
     {
-        var updatesList = updates.ToList();
+        var modificationsList = modifications.ToList();
 
-        var sectionsToUpdate = updatesList.Where(s => s.Id.HasValue).ToDictionary(update => update.Id!.Value);
-        var sectionsToCreate = updatesList.Where(s => !s.Id.HasValue);
-        var sectionIdsToDelete = _sections.Keys.Where(id => !sectionsToUpdate.ContainsKey(id)).ToArray();
+        var sectionsToModify = modificationsList.Where(s => s.Id.HasValue).ToDictionary(modification => modification.Id!.Value);
+        var sectionsToCreate = modificationsList.Where(s => !s.Id.HasValue);
+        var sectionIdsToDelete = _sections.Keys.Where(id => !sectionsToModify.ContainsKey(id)).ToArray();
         var newSections = sectionsToCreate
             .Select(section => _sectionFactory.CreateNew(section.Name, section.SortingIndex, section.IsDefaultSection))
             .ToList();
@@ -42,9 +42,9 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
             Delete(sectionId);
         }
 
-        foreach (var section in sectionsToUpdate.Values)
+        foreach (var section in sectionsToModify.Values)
         {
-            Update(section);
+            Modify(section);
         }
 
         AddMany(newSections);
@@ -99,18 +99,18 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
         _sections[id] = section.Delete();
     }
 
-    private void Update(SectionUpdate update)
+    private void Modify(SectionModification modification)
     {
-        if (!update.Id.HasValue)
+        if (!modification.Id.HasValue)
             throw new ArgumentException("Id mustn't be null.");
 
-        if (!_sections.TryGetValue(update.Id.Value, out var section))
+        if (!_sections.TryGetValue(modification.Id.Value, out var section))
         {
-            throw new DomainException(new SectionNotFoundReason(update.Id.Value));
+            throw new DomainException(new SectionNotFoundReason(modification.Id.Value));
         }
 
-        var updatedSection = section.Update(update);
-        _sections[updatedSection.Id] = updatedSection;
+        var modifiedSection = section.Modify(modification);
+        _sections[modifiedSection.Id] = modifiedSection;
     }
 
     private void AddMany(IEnumerable<ISection> sections)

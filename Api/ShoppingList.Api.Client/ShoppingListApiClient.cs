@@ -32,7 +32,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItem
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
 using RestEase;
@@ -237,10 +237,10 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.CreateStoreAsync(createStoreContract, cancellationToken);
         }
 
-        public async Task UpdateStoreAsync(UpdateStoreContract updateStoreContract,
+        public async Task ModifyStoreAsync(ModifyStoreContract modifyStoreContract,
             CancellationToken cancellationToken = default)
         {
-            await _apiClient.UpdateStoreAsync(updateStoreContract, cancellationToken);
+            await _apiClient.ModifyStoreAsync(modifyStoreContract, cancellationToken);
         }
 
         #endregion StoreController

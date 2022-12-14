@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
@@ -166,7 +166,7 @@ public class StoreControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
 
             // Act
-            var response = await sut.UpdateStoreAsync(_fixture.Contract!);
+            var response = await sut.ModifyStoreAsync(_fixture.Contract!);
 
             // Assert
             response.Should().BeOfType<OkResult>();
@@ -209,7 +209,7 @@ public class StoreControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
 
             // Act
-            var response = await sut.UpdateStoreAsync(_fixture.Contract!);
+            var response = await sut.ModifyStoreAsync(_fixture.Contract!);
 
             // Assert
             response.Should().BeOfType<OkResult>();
@@ -239,7 +239,7 @@ public class StoreControllerIntegrationTests
             {
             }
 
-            public UpdateStoreContract? Contract { get; private set; }
+            public ModifyStoreContract? Contract { get; private set; }
             public Repositories.Stores.Entities.Store? ExistingStore { get; private set; }
             public Repositories.Stores.Entities.Store? ExpectedPersistedStore { get; private set; }
             public Item? ExistingItem { get; private set; }
@@ -251,7 +251,7 @@ public class StoreControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(ExistingStore);
 
-                Contract = new UpdateStoreContract(ExistingStore.Id, "MyStore", new List<UpdateSectionContract>()
+                Contract = new ModifyStoreContract(ExistingStore.Id, "MyStore", new List<ModifySectionContract>()
                 {
                     new(ExistingStore.Sections.First().Id, "mySection", 0, true)
                 });
