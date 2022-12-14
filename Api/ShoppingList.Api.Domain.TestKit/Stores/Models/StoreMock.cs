@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 
@@ -45,11 +45,11 @@ public class StoreMock : Mock<IStore>
         Setup(m => m.ContainsSection(sectionId)).Returns(returnValue);
     }
 
-    public void SetupUpdateSectionsAsync(IEnumerable<SectionUpdate> sectionUpdates,
+    public void SetupModifySectionsAsync(IEnumerable<SectionModification> sectionUpdates,
         IItemModificationService itemModificationService,
         IShoppingListModificationService shoppingListModificationService)
     {
-        Setup(m => m.UpdateSectionsAsync(sectionUpdates, itemModificationService, shoppingListModificationService))
+        Setup(m => m.ModifySectionsAsync(sectionUpdates, itemModificationService, shoppingListModificationService))
             .Returns(Task.CompletedTask);
     }
 
@@ -58,11 +58,11 @@ public class StoreMock : Mock<IStore>
         Verify(m => m.ChangeName(name), times);
     }
 
-    public void VerifyUpdateSectionsAsync(IEnumerable<SectionUpdate> sectionUpdates,
+    public void VerifyModifySectionsAsync(IEnumerable<SectionModification> sectionUpdates,
         IItemModificationService itemModificationService,
         IShoppingListModificationService shoppingListModificationService, Func<Times> times)
     {
-        Verify(m => m.UpdateSectionsAsync(sectionUpdates, itemModificationService, shoppingListModificationService),
+        Verify(m => m.ModifySectionsAsync(sectionUpdates, itemModificationService, shoppingListModificationService),
             times);
     }
 }

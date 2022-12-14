@@ -31,7 +31,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItem
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ItemCategories;
@@ -286,7 +286,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task ModifyStoreAsync(ModifyStoreRequest request)
         {
-            await _client.UpdateStoreAsync(_converters.ToContract<ModifyStoreRequest, UpdateStoreContract>(request));
+            await _client.ModifyStoreAsync(_converters.ToContract<ModifyStoreRequest, ModifyStoreContract>(request));
         }
 
         public async Task<IEnumerable<ManufacturerSearchResult>> GetManufacturerSearchResultsAsync(string searchInput)

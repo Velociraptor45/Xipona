@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Shared.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
@@ -10,7 +10,7 @@ public interface ISection : ISortable
     bool IsDefaultSection { get; }
     bool IsDeleted { get; }
 
-    ISection Update(SectionUpdate update);
+    ISection Modify(SectionModification update);
 
     ISection Delete();
 }

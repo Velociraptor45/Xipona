@@ -4,16 +4,16 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
 
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
+namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
 
-public class StoreUpdateService : IStoreUpdateService
+public class StoreModificationService : IStoreModificationService
 {
     private readonly IStoreRepository _storeRepository;
     private readonly CancellationToken _cancellationToken;
     private readonly IItemModificationService _itemModificationService;
     private readonly IShoppingListModificationService _shoppingListModificationService;
 
-    public StoreUpdateService(
+    public StoreModificationService(
         IStoreRepository storeRepository,
         Func<CancellationToken, IItemModificationService> itemModificationServiceDelegate,
         Func<CancellationToken, IShoppingListModificationService> shoppingListModificationServiceDelegate,
@@ -25,14 +25,14 @@ public class StoreUpdateService : IStoreUpdateService
         _cancellationToken = cancellationToken;
     }
 
-    public async Task UpdateAsync(StoreUpdate update)
+    public async Task ModifyAsync(StoreModification update)
     {
         var store = await _storeRepository.FindByAsync(update.Id, _cancellationToken);
         if (store == null)
             throw new DomainException(new StoreNotFoundReason(update.Id));
 
         store.ChangeName(update.Name);
-        await store.UpdateSectionsAsync(update.Sections, _itemModificationService, _shoppingListModificationService);
+        await store.ModifySectionsAsync(update.Sections, _itemModificationService, _shoppingListModificationService);
 
         _cancellationToken.ThrowIfCancellationRequested();
 

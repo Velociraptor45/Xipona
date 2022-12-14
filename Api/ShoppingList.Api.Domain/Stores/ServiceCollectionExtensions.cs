@@ -7,8 +7,8 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Updates;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores;
 
@@ -32,7 +32,7 @@ public static class ServiceCollectionExtensions
                     cancellationToken);
         });
 
-        services.AddTransient<Func<CancellationToken, IStoreUpdateService>>(provider =>
+        services.AddTransient<Func<CancellationToken, IStoreModificationService>>(provider =>
         {
             var storeRepository = provider.GetRequiredService<IStoreRepository>();
             var itemModificationServiceDelegate =
@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions
             var shoppingListModificationServiceDelegate =
                 provider.GetRequiredService<Func<CancellationToken, IShoppingListModificationService>>();
             return cancellationToken =>
-                new StoreUpdateService(storeRepository, itemModificationServiceDelegate,
+                new StoreModificationService(storeRepository, itemModificationServiceDelegate,
                     shoppingListModificationServiceDelegate, cancellationToken);
         });
 
