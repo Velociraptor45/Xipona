@@ -47,7 +47,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
                 throw new InvalidOperationException("The Connection:Uri section in the appsettings is missing");
 
             var uri = new Uri(uriString);
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = uri });
+            builder.Services.AddScoped(_ => new HttpClient { BaseAddress = uri });
         }
 
         private static void AddDependencies(WebAssemblyHostBuilder builder)
