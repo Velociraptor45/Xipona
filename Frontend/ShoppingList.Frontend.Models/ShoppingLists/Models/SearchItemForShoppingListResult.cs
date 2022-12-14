@@ -36,7 +36,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
         {
             get => string.IsNullOrWhiteSpace(ManufacturerName)
                 ? $"{Name} | {Price.ToString("0.00", _culture)}{PriceLabel}"
-                : $"{Name} | {ManufacturerName} | {Price.ToString(_culture)}{PriceLabel}";
+                : $"{Name} | {ManufacturerName} | {Price.ToString("0.00", _culture)}{PriceLabel}";
             set { _ = value; }
         }
 
