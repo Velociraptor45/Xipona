@@ -2,6 +2,7 @@
 
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
+@using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models
 
 @inject NavigationManager _navigationManager;
 @inject RecipesState _state;
@@ -41,6 +42,12 @@
 
     private async Task OnLoadButtonClickedAsync()
     {
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            _state.RegisterSearchResults(Enumerable.Empty<RecipeSearchResult>());
+            return;
+        }
+
         var results = await _apiService.SearchAsync(input);
         _state.RegisterSearchResults(results);
     }

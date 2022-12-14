@@ -11,5 +11,11 @@ public enum IngredientQuantityType
     Weight = 1,
 
     [QuantityLabel("ml")]
-    Fluid = 2
+    Fluid = 2,
+
+    [QuantityLabel("T")]
+    Tablespoon,
+
+    [QuantityLabel("tsp")]
+    Teaspoon
 }

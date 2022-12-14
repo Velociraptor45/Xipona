@@ -25,8 +25,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
             _notificationService = notificationService;
         }
 
-        public async Task LoadInitialPageStateAsync(IAsyncRetryFragmentCreator fragmentCreator,
-            Action<ItemsState> onSuccessAction)
+        public async Task LoadInitialPageStateAsync(ItemsState state, IAsyncRetryFragmentCreator fragmentCreator)
         {
             try
             {
@@ -36,27 +35,25 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
                 var quantityTypes = await _apiClient.GetAllQuantityTypesAsync();
                 var quantityTypesInPacket = await _apiClient.GetAllQuantityTypesInPacketAsync();
 
-                var state = new ItemsState(
+                state.Initialize(
                     stores,
                     itemCategories,
                     manufacturers,
                     quantityTypes,
                     quantityTypesInPacket);
-
-                onSuccessAction(state);
             }
             catch (ApiException e)
             {
                 var contract = e.DeserializeContent<ErrorContract>();
 
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await LoadInitialPageStateAsync(fragmentCreator, onSuccessAction));
+                    await LoadInitialPageStateAsync(state, fragmentCreator));
                 _notificationService.NotifyError("Page loading failed", contract.Message, fragment);
             }
             catch (Exception e)
             {
                 var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await LoadInitialPageStateAsync(fragmentCreator, onSuccessAction));
+                    await LoadInitialPageStateAsync(state, fragmentCreator));
                 _notificationService.NotifyError("Unknown error while loading page", e.Message, fragment);
             }
         }

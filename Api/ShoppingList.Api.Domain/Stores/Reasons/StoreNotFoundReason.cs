@@ -10,6 +10,11 @@ public class StoreNotFoundReason : IReason
         Message = $"Store {id.Value} not found.";
     }
 
+    public StoreNotFoundReason(SectionId sectionId)
+    {
+        Message = $"No store for section {sectionId.Value} found.";
+    }
+
     public string Message { get; }
 
     public ErrorReasonCode ErrorCode => ErrorReasonCode.StoreNotFound;

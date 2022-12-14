@@ -120,6 +120,11 @@ public class ItemMock : Mock<IItem>
             .ReturnsAsync(returnValue);
     }
 
+    public void SetupTransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId)
+    {
+        Setup(m => m.TransferToDefaultSection(oldSectionId, newSectionId));
+    }
+
     #region Verify
 
     public void VerifyDeleteOnce()
@@ -163,6 +168,11 @@ public class ItemMock : Mock<IItem>
         Func<Times> times)
     {
         Verify(m => m.UpdateAsync(update, validator, dateTimeService), times);
+    }
+
+    public void VerifyTransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId, Func<Times> times)
+    {
+        Verify(m => m.TransferToDefaultSection(oldSectionId, newSectionId), times);
     }
 
     #endregion Verify

@@ -19,6 +19,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
+using System.Threading;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
@@ -43,12 +44,12 @@ public class RecipeController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}")]
-    public async Task<IActionResult> GetAsync([FromRoute] Guid id)
+    public async Task<IActionResult> GetAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
             var query = new RecipeByIdQuery(new RecipeId(id));
-            var result = await _queryDispatcher.DispatchAsync(query, default);
+            var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
 
             var contract = _converters.ToContract<IRecipe, RecipeContract>(result);
 
@@ -70,7 +71,8 @@ public class RecipeController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("")]
-    public async Task<IActionResult> SearchRecipesByNameAsync([FromQuery] string searchInput)
+    public async Task<IActionResult> SearchRecipesByNameAsync([FromQuery] string searchInput,
+        CancellationToken cancellationToken = default)
     {
         searchInput = searchInput.Trim();
         if (string.IsNullOrEmpty(searchInput))
@@ -81,7 +83,7 @@ public class RecipeController : ControllerBase
         try
         {
             var query = new SearchRecipesByNameQuery(searchInput);
-            var results = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+            var results = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
             if (!results.Any())
                 return NoContent();
@@ -101,10 +103,10 @@ public class RecipeController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<IngredientQuantityTypeContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("ingredient-quantity-types")]
-    public async Task<IActionResult> GetAllIngredientQuantityTypes()
+    public async Task<IActionResult> GetAllIngredientQuantityTypes(CancellationToken cancellationToken = default)
     {
         var query = new AllIngredientQuantityTypesQuery();
-        var results = (await _queryDispatcher.DispatchAsync(query, default)).ToList();
+        var results = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
         if (!results.Any())
             return NoContent();
@@ -118,13 +120,14 @@ public class RecipeController : ControllerBase
     [ProducesResponseType(typeof(RecipeContract), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("")]
-    public async Task<IActionResult> CreateRecipeAsync([FromBody] CreateRecipeContract createRecipeContract)
+    public async Task<IActionResult> CreateRecipeAsync([FromBody] CreateRecipeContract createRecipeContract,
+        CancellationToken cancellationToken = default)
     {
         try
         {
             var command = _converters.ToDomain<CreateRecipeContract, CreateRecipeCommand>(createRecipeContract);
 
-            var model = await _commandDispatcher.DispatchAsync(command, default);
+            var model = await _commandDispatcher.DispatchAsync(command, cancellationToken);
 
             var contract = _converters.ToContract<IRecipe, RecipeContract>(model);
 
@@ -143,13 +146,14 @@ public class RecipeController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/modify")]
-    public async Task<IActionResult> ModifyRecipeAsync([FromRoute] Guid id, [FromBody] ModifyRecipeContract contract)
+    public async Task<IActionResult> ModifyRecipeAsync([FromRoute] Guid id, [FromBody] ModifyRecipeContract contract,
+        CancellationToken cancellationToken = default)
     {
         try
         {
             var command = _converters.ToDomain<(Guid, ModifyRecipeContract), ModifyRecipeCommand>((id, contract));
 
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
 
             return Ok();
         }

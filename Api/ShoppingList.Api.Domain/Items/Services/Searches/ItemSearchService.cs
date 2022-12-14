@@ -92,7 +92,7 @@ public class ItemSearchService : IItemSearchService
             results.Add(new SearchItemByItemCategoryResult(
                 item.Id,
                 null,
-                item.Name.Value,
+                item.Name,
                 availabilitiesDict[(item.Id, null)]));
         }
 

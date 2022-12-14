@@ -107,4 +107,15 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
     {
         return WithUpdatedOn(null);
     }
+
+    public ItemBuilder WithPredecessorId(ItemId? predecessorId)
+    {
+        FillConstructorWith(nameof(predecessorId), predecessorId);
+        return this;
+    }
+
+    public ItemBuilder WithoutPredecessorId()
+    {
+        return WithPredecessorId(null);
+    }
 }

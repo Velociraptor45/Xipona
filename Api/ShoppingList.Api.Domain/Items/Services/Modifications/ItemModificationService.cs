@@ -5,6 +5,9 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 
@@ -12,16 +15,19 @@ public class ItemModificationService : IItemModificationService
 {
     private readonly IItemRepository _itemRepository;
     private readonly IShoppingListRepository _shoppingListRepository;
+    private readonly IStoreRepository _storeRepository;
     private readonly IValidator _validator;
     private readonly CancellationToken _cancellationToken;
 
     public ItemModificationService(IItemRepository itemRepository,
         Func<CancellationToken, IValidator> validatorDelegate,
         IShoppingListRepository shoppingListRepository,
+        IStoreRepository storeRepository,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
         _shoppingListRepository = shoppingListRepository;
+        _storeRepository = storeRepository;
         _validator = validatorDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
     }
@@ -104,6 +110,23 @@ public class ItemModificationService : IItemModificationService
             // remove items from all shopping lists where item is not available anymore
             list.RemoveItem(item.Id);
             await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+        }
+    }
+
+    public async Task TransferToSectionAsync(SectionId oldSectionId, SectionId newSectionId)
+    {
+        var store = await _storeRepository.FindActiveByAsync(oldSectionId, _cancellationToken);
+        if (store is null)
+            throw new DomainException(new StoreNotFoundReason(oldSectionId));
+        if (!store.ContainsSection(newSectionId))
+            throw new DomainException(new OldAndNewSectionNotInSameStoreReason(oldSectionId, newSectionId));
+
+        var items = await _itemRepository.FindActiveByAsync(oldSectionId, _cancellationToken);
+
+        foreach (var item in items)
+        {
+            item.TransferToDefaultSection(oldSectionId, newSectionId);
+            await _itemRepository.StoreAsync(item, _cancellationToken);
         }
     }
 

@@ -94,12 +94,12 @@ public class ItemTypes : IEnumerable<IItemType>
         return _itemTypes.TryGetValue(id, out itemType);
     }
 
-    public bool TryGetWithPredecessor(ItemTypeId predecessorId, out IItemType? predecessor)
+    public bool TryGetWithPredecessor(ItemTypeId predecessorId, out IItemType? itemType)
     {
-        predecessor = _itemTypes.Values
-            .SingleOrDefault(t => t.Predecessor != null && t.Predecessor.Id == predecessorId);
+        itemType = _itemTypes.Values
+            .SingleOrDefault(t => t.PredecessorId == predecessorId);
 
-        return predecessor != null;
+        return itemType != null;
     }
 
     private void Remove(ItemTypeId id)
@@ -138,9 +138,20 @@ public class ItemTypes : IEnumerable<IItemType>
     {
         return new ItemTypes(
             _itemTypes.Values.Select(t =>
-                t.IsAvailableAtStore(storeId) && (itemTypeId is null || t.Id == itemTypeId.Value)
+                t.IsAvailableAt(storeId) && (itemTypeId is null || t.Id == itemTypeId.Value)
                     ? t.Update(storeId, price)
                     : t.Update()),
             _itemTypeFactory);
+    }
+
+    public void TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId)
+    {
+        foreach (var itemType in _itemTypes.Values)
+        {
+            if (!itemType.IsAvailableAt(oldSectionId))
+                continue;
+
+            _itemTypes[itemType.Id] = itemType.TransferToDefaultSection(oldSectionId, newSectionId);
+        }
     }
 }

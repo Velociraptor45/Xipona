@@ -74,4 +74,9 @@ public abstract class Name : IEqualityComparer<Name>, IEquatable<Name>
     {
         return Value;
     }
+
+    public static implicit operator string(Name name)
+    {
+        return name.Value;
+    }
 }

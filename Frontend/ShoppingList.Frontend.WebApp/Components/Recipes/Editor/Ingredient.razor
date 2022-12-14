@@ -28,7 +28,7 @@
                                 SearchForItemsAsync="_itemCategoryApiService.SearchAsync"
                                 CanAddItem="true">
             </SingleSearchSelect>
-            @if (Model.ItemCategoryId != Guid.Empty)
+            @if (Model.ItemCategoryId != Guid.Empty && _itemDataSource.Any())
             {
                 <SingleSelect Class="mt-1 min-w-150"
                               TItem="SearchItemByItemCategoryResult"
@@ -106,6 +106,7 @@
             return;
         _itemDataSource.Clear();
         _itemDataSource.AddRange(await _itemsApiService.SearchItemsByItemCategoryAsync(itemCategoryId));
+        StateHasChanged();
     }
 
     private async void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)

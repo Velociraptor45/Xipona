@@ -11,12 +11,12 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Contexts;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using Xunit;
-using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
-using Manufacturer = ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Entities.Manufacturer;
+using Item = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.Item;
+using Manufacturer = ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Entities.Manufacturer;
 using Models = ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
@@ -42,7 +42,7 @@ public class ManufacturerControllerIntegrationTests
             var sut = _fixture.CreateSut();
 
             // Act
-            var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value.Value);
+            var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
 
             // Assert
             response.Should().BeOfType<OkResult>();
@@ -57,7 +57,7 @@ public class ManufacturerControllerIntegrationTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value.Value);
+            await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
 
             // Assert
             var manufacturers = await _fixture.LoadPersistedManufacturersAsync();
@@ -76,7 +76,7 @@ public class ManufacturerControllerIntegrationTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value.Value);
+            await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
 
             // Assert
             var items = await _fixture.LoadPersistedItemsAsync();
@@ -98,7 +98,7 @@ public class ManufacturerControllerIntegrationTests
             var sut = _fixture.CreateSut();
 
             // Act
-            var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value.Value);
+            var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
 
             // Assert
             response.Should().BeOfType<NotFoundObjectResult>();
@@ -145,14 +145,12 @@ public class ManufacturerControllerIntegrationTests
                 var itemRepository = CreateItemRepository(SetupScope);
                 var items = new List<IItem>()
                 {
-                    new ItemBuilder()
+                    ItemMother.Initial()
                         .WithManufacturerId(ManufacturerId)
-                        .WithIsDeleted(false)
                         .AsItem()
                         .Create(),
-                    new ItemBuilder()
+                    ItemMother.InitialWithTypes()
                         .WithManufacturerId(ManufacturerId)
-                        .WithIsDeleted(false)
                         .Create()
                 };
 

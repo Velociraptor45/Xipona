@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
@@ -29,8 +30,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         Task LoadAllActiveStoresAsync(IAsyncRetryFragmentCreator fragmentCreator,
             Func<IEnumerable<Store>, Task> onSuccessAction);
 
-        Task LoadItemSearchResultAsync(string input, Guid storeId, IAsyncRetryFragmentCreator fragmentCreator,
-            Action<IEnumerable<SearchItemForShoppingListResult>> onSuccessAction);
+        Task<IEnumerable<SearchItemForShoppingListResult>> LoadItemSearchResultAsync(string input, Guid storeId,
+            IAsyncRetryFragmentCreator fragmentCreator, CancellationToken cancellationToken);
 
         Task CreateTemporaryItemOnShoppingListAsync(ShoppingListItem item, Guid shoppingListId,
             Guid storeId, SectionId sectionId);

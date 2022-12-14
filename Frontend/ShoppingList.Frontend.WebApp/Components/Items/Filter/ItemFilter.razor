@@ -4,7 +4,7 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 
-@inject IItemsApiService loadingService;
+@inject NavigationManager NavigationManager;
 
 <div class="d-flex">
     <div class="h4">Items</div>
@@ -26,9 +26,7 @@
     <!-- result item list -->
     @foreach (var item in State.Items.ToList())
     {
-        <FilterResult State="@State"
-                      FragmentCreator="@FragmentCreator"
-                      Item="@item"></FilterResult>
+        <SearchResult Model="item" RedirectPageName="items"></SearchResult>
     }
 </div>
 
@@ -38,6 +36,7 @@
 
     private void OnCreateItemButtonClicked()
     {
-        State.EnterEditorForNewItem();
+        State.SetNewEditedItem();
+        NavigationManager.NavigateTo($"items/{Guid.Empty}");
     }
 }

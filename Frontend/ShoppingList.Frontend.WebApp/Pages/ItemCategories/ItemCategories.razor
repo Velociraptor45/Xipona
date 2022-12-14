@@ -1,8 +1,8 @@
 ﻿@page "/item-categories"
 
-@*@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.ItemCategories;*@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services
+@using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
 
 @inject NavigationManager _navigationManager;
 @inject ItemCategoriesState _state;
@@ -42,6 +42,12 @@
 
     private async Task OnLoadButtonClickedAsync()
     {
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            _state.RegisterSearchResults(Enumerable.Empty<ItemCategorySearchResult>());
+            return;
+        }
+
         var results = await _apiService.SearchAsync(input);
         _state.RegisterSearchResults(results);
     }

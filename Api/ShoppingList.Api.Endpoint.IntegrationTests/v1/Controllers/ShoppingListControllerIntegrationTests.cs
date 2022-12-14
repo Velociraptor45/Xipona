@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
-using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.ShoppingLists.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ShoppingLists.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
 using Xunit;
@@ -78,7 +78,7 @@ public class ShoppingListControllerIntegrationTests
 
         private sealed class FinishListAsyncFixture : ShoppingListControllerFixture
         {
-            private Infrastructure.ShoppingLists.Entities.ShoppingList? _existingShoppingList;
+            private Repositories.ShoppingLists.Entities.ShoppingList? _existingShoppingList;
 
             public FinishListAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -149,7 +149,7 @@ public class ShoppingListControllerIntegrationTests
             yield return scope.ServiceProvider.GetRequiredService<ShoppingListContext>();
         }
 
-        public async Task<IEnumerable<Infrastructure.ShoppingLists.Entities.ShoppingList>> LoadAllShoppingLists()
+        public async Task<IEnumerable<Repositories.ShoppingLists.Entities.ShoppingList>> LoadAllShoppingLists()
         {
             using var assertScope = CreateServiceScope();
             var dbContext = assertScope.ServiceProvider.GetRequiredService<ShoppingListContext>();

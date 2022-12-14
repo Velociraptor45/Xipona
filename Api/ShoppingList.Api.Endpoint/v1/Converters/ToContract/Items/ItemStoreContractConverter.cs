@@ -18,8 +18,8 @@ public class ItemStoreContractConverter :
     public ItemStoreContract ToContract(ItemStoreReadModel source)
     {
         return new ItemStoreContract(
-            source.Id.Value,
-            source.Name.Value,
+            source.Id,
+            source.Name,
             _itemSectionContractConverter.ToContract(source.Sections));
     }
 }

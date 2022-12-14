@@ -1,0 +1,166 @@
+﻿@page "/items/{ItemId:guid}"
+
+@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEditor
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Editor;
+
+@inject IItemEditorApiService ApiService;
+@inject IItemsApiService LoadingService;
+@inject ItemsState State;
+@inject NavigationManager NavigationManager;
+
+@if (State?.EditedItem != null)
+{
+    <div class="px-2">
+        <div class="d-flex">
+            <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+                <Icon Type="arrow-left"></Icon>
+            </Button>
+            <div class="mx-3">
+                <Input @bind-Value="@State.EditedItem.Name"/>
+            </div>
+            @if (State.EditedItem.Id != Guid.Empty)
+            {
+                <Button Danger="true"
+                        Class="ml-auto"
+                        OnClick="@OnDeleteButtonClickedAsync">
+                    Delete
+                </Button>
+            }
+        </div>
+        <Divider Class="my-3"></Divider>
+        <div class="d-flex pb-2">
+            <ItemCategorySelect State="@State"
+                                FragmentCreator="@_errorHandler"></ItemCategorySelect>
+            <ManufacturerSelect State="@State"
+                                FragmentCreator="@_errorHandler"></ManufacturerSelect>
+        </div>
+        <Quantity State="@State"></Quantity>
+        @if (State.EditedItem.ItemMode == ItemMode.WithoutTypes
+             || (!State.EditedItem.ItemTypes.Any() && State.EditedItem.ItemMode == ItemMode.NotDefined))
+        {
+            <Availabilities State="@State"
+                            Available="@State.EditedItem"></Availabilities>
+        }
+        @if (State.EditedItem.ItemMode == ItemMode.WithTypes
+             || (!State.EditedItem.Availabilities.Any() && State.EditedItem.ItemMode == ItemMode.NotDefined))
+        {
+            <ItemTypes State="State"></ItemTypes>
+        }
+        <div class="pb-2 pt-4">
+            <TextArea Placeholder="Comment" MinRows="2" @bind-Value="@State.EditedItem.Comment"></TextArea>
+        </div>
+        <div class="d-flex justify-content-end">
+            @if (State.EditedItem.Id == Guid.Empty)
+            {
+                <Button OnClick="@OnCreateButtonClickedAsync">Create</Button>
+            }
+            else if (State.EditedItem.IsTemporary)
+            {
+                <Button OnClick="@OnMakePermanentButtonClickedAsync">Make Permanent</Button>
+            }
+            else
+            {
+                <Button Disabled="@ShouldDisableChangeButton()" OnClick="@OnUpdateButtonClickedAsync">Update</Button>
+                <Button Disabled="@ShouldDisableChangeButton()" Class="ml-2" OnClick="@OnModifyButtonClickedAsync">Modify</Button>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public Guid ItemId { get; set; }
+
+    private ErrorHandler _errorHandler;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitialLoadAsync();
+        _errorHandler = new ErrorHandler(GetButtonRenderFragment);
+
+        if (ItemId == Guid.Empty)
+        {
+            State.SetNewEditedItem();
+            return;
+        }
+
+        await LoadingService.LoadItemAsync(ItemId, _errorHandler, item => State.SetEditedItem(item));
+    }
+
+    private async Task InitialLoadAsync()
+    {
+        if (State.Stores.Any())
+            return;
+
+        await LoadingService.LoadInitialPageStateAsync(State, _errorHandler);
+    }
+
+    private async Task OnUpdateButtonClickedAsync()
+    {
+        if(State.EditedItem.ItemTypes.Any())
+        {
+            await ApiService.UpdateItemWithTypesAsync(State.EditedItem, _errorHandler, 
+                LeaveEditor);
+            return;
+        }
+
+        await ApiService.UpdateItemAsync(State.EditedItem, _errorHandler, LeaveEditor);
+    }
+
+    private async Task OnModifyButtonClickedAsync()
+    {
+        if(State.EditedItem.ItemTypes.Any())
+        {
+            await ApiService.ModifyItemWithTypesAsync(State.EditedItem, _errorHandler, LeaveEditor);
+            return;
+        }
+
+        await ApiService.ModifyItemAsync(State.EditedItem, _errorHandler, LeaveEditor);
+    }
+
+    private async Task OnCreateButtonClickedAsync()
+    {
+        if (State.EditedItem.ItemTypes.Any())
+        {
+            await ApiService.CreateItemWithTypesAsync(State.EditedItem, _errorHandler, LeaveEditor);
+            return;
+        }
+
+        await ApiService.CreateItemAsync(State.EditedItem, _errorHandler, LeaveEditor);
+    }
+
+    private async Task OnMakePermanentButtonClickedAsync()
+    {
+        if (!State.EditedItem.ItemCategoryId.HasValue)
+            return;
+
+        await ApiService.MakeTemporaryItemPermanentAsync(State.EditedItem, _errorHandler, LeaveEditor);
+    }
+
+    private async Task OnDeleteButtonClickedAsync()
+    {
+        await ApiService.DeleteItemAsync(State.EditedItem.Id, _errorHandler, LeaveEditor);
+    }
+
+    private bool ShouldDisableChangeButton()
+    {
+        return State.EditedItem.IsItemWithTypes && !State.EditedItem.ItemTypes.Any();
+    }
+
+    private void OnBackButtonClicked()
+    {
+        LeaveEditor();
+    }
+
+    private void LeaveEditor()
+    {
+        NavigationManager.NavigateTo("items");
+    }
+
+    private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")
+    {
+        return @<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
+    }
+}

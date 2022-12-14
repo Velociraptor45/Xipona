@@ -13,5 +13,8 @@ public interface IIngredient
     IngredientQuantity Quantity { get; }
     ItemId? DefaultItemId { get; }
     ItemTypeId? DefaultItemTypeId { get; }
+
     Task<IIngredient> ModifyAsync(IngredientModification modification, IValidator validator);
+
+    IIngredient RemoveDefaultItem();
 }

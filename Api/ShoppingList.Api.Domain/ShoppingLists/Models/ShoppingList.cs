@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
@@ -36,6 +37,18 @@ public class ShoppingList : IShoppingList
 
         var section = _sections[sectionId];
         _sections[sectionId] = section.AddItem(item);
+    }
+
+    public void RemoveItemAndItsTypes(ItemId itemId)
+    {
+        var sections = _sections.Values.Where(s => s.ContainsItemOrItsTypes(itemId)).ToArray();
+        if (!sections.Any())
+            return;
+
+        foreach (var section in sections)
+        {
+            _sections[section.Id] = section.RemoveItemAndItsTypes(itemId);
+        }
     }
 
     public void RemoveItem(ItemId itemId)
@@ -111,5 +124,23 @@ public class ShoppingList : IShoppingList
         }
 
         return new ShoppingList(ShoppingListId.New, StoreId, null, notInBasketSections.Values);
+    }
+
+    public void TransferItem(SectionId sectionId, ItemId itemId, ItemTypeId? itemTypeId)
+    {
+        if (!_sections.TryGetValue(sectionId, out var newSection))
+            throw new DomainException(new SectionNotFoundReason(sectionId));
+
+        var oldSection = _sections.FirstOrDefault(s => s.Value.ContainsItem(itemId, itemTypeId)).Value;
+        if (oldSection is null)
+            throw new DomainException(new ItemNotOnShoppingListReason(Id, itemId, itemTypeId));
+
+        if (oldSection.Id == sectionId)
+            return;
+
+        var item = oldSection.Items.First(i => i.Id == itemId && i.TypeId == itemTypeId);
+
+        _sections[oldSection.Id] = oldSection.RemoveItem(itemId, itemTypeId);
+        _sections[newSection.Id] = newSection.AddItem(item);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Creations;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Common.Transactions;
+using ProjectHermes.ShoppingList.Api.Repositories.Common.Transactions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ItemCategories.Commands.CreateItemCategory;
 

@@ -1,4 +1,6 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
 public readonly record struct TemporaryItemId
 {
@@ -15,4 +17,9 @@ public readonly record struct TemporaryItemId
     public static TemporaryItemId New => new(Guid.NewGuid());
 
     public Guid Value { get; }
+
+    public static implicit operator Guid(TemporaryItemId temporaryItemId)
+    {
+        return temporaryItemId.Value;
+    }
 }

@@ -1,32 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
     <RootNamespace>ProjectHermes.ShoppingList.Frontend.WebApp</RootNamespace>
-    <Version>0.8.0</Version>
+    <Version>0.9.0</Version>
+    <PublishTrimmed>false</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AntDesign" Version="0.12.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.9" PrivateAssets="all" />
-    <PackageReference Include="RestEase" Version="1.5.7" />
-    <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
+    <PackageReference Include="AntDesign" Version="0.12.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.0" PrivateAssets="all" />
+    <PackageReference Include="RestEase" Version="1.6.0" />
+    <PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ShoppingList.Frontend.Infrastructure\ShoppingList.Frontend.Infrastructure.csproj" />
     <ProjectReference Include="..\ShoppingList.Frontend.Models\ShoppingList.Frontend.Models.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="..\ShoppingList.Frontend.WebApp\ShoppingList.Api.Client">
-      <HintPath>ShoppingList.Api.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="..\ShoppingList.Frontend.WebApp\ShoppingList.Api.Contracts">
-      <HintPath>ShoppingList.Api.Contracts.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

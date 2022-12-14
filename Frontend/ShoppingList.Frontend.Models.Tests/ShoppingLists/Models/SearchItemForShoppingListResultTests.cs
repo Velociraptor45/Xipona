@@ -15,8 +15,8 @@ public class SearchItemForShoppingListResultTests
     }
 
     [Theory]
-    [InlineData("Melon", 32.1f, "€", "Melon | 32,1€")]
-    [InlineData("Cheese", 6f, "€", "Cheese | 6€")]
+    [InlineData("Melon", 32.1f, "€", "Melon | 32,10€")]
+    [InlineData("Cheese", 6f, "€", "Cheese | 6,00€")]
     public void DisplayValue_WithManufacturerNameEmpty_ShouldReturnExpectedValue(string name, float price,
         string priceLabel, string expected)
     {
@@ -35,8 +35,8 @@ public class SearchItemForShoppingListResultTests
     }
 
     [Theory]
-    [InlineData("Butter", "MyMan", 13.5f, "€", "Butter | MyMan | 13,5€")]
-    [InlineData("Bread", "AnotherMan", 1f, "€", "Bread | AnotherMan | 1€")]
+    [InlineData("Butter", "MyMan", 13.5f, "€", "Butter | MyMan | 13,50€")]
+    [InlineData("Bread", "AnotherMan", 1f, "€", "Bread | AnotherMan | 1,00€")]
     public void DisplayValue_WithManufacturerName_ShouldReturnExpectedValue(string name, string manufacturerName,
         float price, string priceLabel, string expected)
     {

@@ -888,7 +888,7 @@ public class ItemSearchServiceTests
                 ExpectedResults.Add(new SearchItemByItemCategoryResult(
                     _foundItem.Id,
                     null,
-                    _foundItem.Name.Value,
+                    _foundItem.Name,
                     _convertedAvailabilities[(_foundItem.Id, null)]));
             }
 

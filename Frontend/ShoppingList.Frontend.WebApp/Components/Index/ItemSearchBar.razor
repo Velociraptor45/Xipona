@@ -3,24 +3,28 @@
 @using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
 @using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
+@using System.Threading
 
 @inject ITemporaryItemCreationService temporaryItemCreationService;
 @inject IShoppingListApiService apiService;
+@implements IDisposable
 
 <div class="mb-2 d-flex">
-    <Select OnFocus="OnSearchBarFocusIn"
-            Class="@(State.SearchBar.Active ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
-            DataSource="State.SearchBar.Options"
-            TItem="@SearchItemForShoppingListResult"
-            TItemValue="@Guid"
-            ValueName="@nameof(SearchItemForShoppingListResult.ItemId)"
-            LabelName="@nameof(SearchItemForShoppingListResult.DisplayValue)"
-            AutoClearSearchValue="true"
-            AllowClear="true"
-            OnSearch="s => OnSearchAsync(s)"
-            EnableSearch
-            OnSelectedItemChanged="item => OnSearchItemSelectedAsync(item)">
-    </Select>
+    <SingleSearchSelect OnFocus="OnSearchBarFocusIn"
+                        Class="@(State.SearchBar.Active ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
+                        TItem="SearchItemForShoppingListResult"
+                        TValue="string"
+                        DataSource="_dataSource"
+                        ValueName="@nameof(SearchItemForShoppingListResult.SelectIdentifier)"
+                        LabelName="@nameof(SearchItemForShoppingListResult.DisplayValue)"
+                        OnItemChanged="@OnSearchItemSelectedAsync"
+                        Placeholder="Search for item..."
+                        SearchForItemsAsync="OnSearchAsync"
+                        CanAddItem="false"
+                        AutoClearSearchValue="true"
+                        AllowClear="true"
+                        EnableSearch="true">
+    </SingleSearchSelect>
 
     @if (State.SearchBar.Active)
     {
@@ -33,28 +37,26 @@
     [Parameter] public Func<Task> ReloadShoppingListAsync { get; set; }
     [Parameter] public ShoppingListState State { get; set; }
     [Parameter] public ErrorHandler ErrorHandler { get; set; }
+
+    private List<SearchItemForShoppingListResult> _dataSource = new();
+    private CancellationTokenSource _searchCancellationTokenSource;
     
-    private async Task OnSearchAsync(string searchInput)
+    private async Task<IEnumerable<SearchItemForShoppingListResult>> OnSearchAsync(string searchInput)
     {
         if (State.ShoppingList.Store == null)
-            return;
+            return Enumerable.Empty<SearchItemForShoppingListResult>();
 
         State.SearchBar.Input = searchInput;
 
         if (string.IsNullOrWhiteSpace(searchInput))
         {
-            State.SearchBar.ResetOptions();
-            StateHasChanged();
-            return;
+            return Enumerable.Empty<SearchItemForShoppingListResult>();
         }
 
         searchInput = searchInput.Trim();
-        await apiService.LoadItemSearchResultAsync(searchInput, State.ShoppingList.Store.Id, ErrorHandler, 
-            searchResult =>
-            {
-                State.SearchBar.Options = searchResult;
-                StateHasChanged();
-            });
+        _searchCancellationTokenSource = CreateNewCancellationTokenSource();
+        return await apiService.LoadItemSearchResultAsync(searchInput, State.ShoppingList.Store.Id, ErrorHandler,
+            _searchCancellationTokenSource.Token);
     }
 
     private async Task OnSearchItemSelectedAsync(SearchItemForShoppingListResult item)
@@ -65,7 +67,6 @@
         async Task OnSuccessAction()
         {
             State.SearchBar.ResetInput();
-            State.SearchBar.ResetOptions();
             await State.RequestReloadAsync();
         }
 
@@ -102,5 +103,21 @@
     {
         State.SearchBar.Active = true;
         StateHasChanged();
+    }
+
+    private CancellationTokenSource CreateNewCancellationTokenSource()
+    {
+        if (_searchCancellationTokenSource is not null)
+        {
+            _searchCancellationTokenSource.Cancel();
+            _searchCancellationTokenSource.Dispose();
+        }
+        return new CancellationTokenSource();
+    }
+
+    public void Dispose()
+    {
+        if(_searchCancellationTokenSource is not null)
+            _searchCancellationTokenSource.Dispose();
     }
 }

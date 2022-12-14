@@ -49,9 +49,10 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                 return new SearchItemForShoppingResultReadModel(
                     item.Id,
                     null,
-                    item.Name.Value,
+                    item.Name,
                     item.ItemQuantity.Type.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                     storeAvailability.Price,
+                    item.ItemQuantity.Type.GetAttribute<PriceLabelAttribute>().PriceLabel,
                     manufacturer is null ?
                         null :
                         new ManufacturerReadModel(manufacturer),
@@ -96,6 +97,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                     $"{item.Name} {type.Name}",
                     item.ItemQuantity.Type.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                     storeAvailability.Price,
+                    item.ItemQuantity.Type.GetAttribute<PriceLabelAttribute>().PriceLabel,
                     manufacturer is null ?
                         null :
                         new ManufacturerReadModel(manufacturer),

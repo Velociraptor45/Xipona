@@ -795,11 +795,17 @@ public class ShoppingListExchangeServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
                 TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem.TypeId);
+
+                ExpectedNewSection = SectionId.New;
+
                 var availability = ItemAvailabilityMother.Initial()
                     .WithStoreId(storeId)
+                    .WithDefaultSectionId(ExpectedNewSection.Value)
                     .CreateMany(1);
-                var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1).ToList();
-                type.First().SetPredecessor(new ItemTypeBuilder().WithId(OldShoppingListItem.TypeId.Value).Create());
+                var type = new ItemTypeBuilder()
+                    .WithAvailabilities(availability)
+                    .WithPredecessorId(OldShoppingListItem.TypeId.Value)
+                    .CreateMany(1).ToList();
                 var itemTypes = new ItemTypes(type, _itemTypeFactoryMock.Object);
                 NewItem = new ItemBuilder().WithTypes(itemTypes).Create();
             }
@@ -842,10 +848,10 @@ public class ShoppingListExchangeServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
                 TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
                 TestPropertyNotSetException.ThrowIfNull(NewItem);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedNewSection);
                 var type = NewItem.ItemTypes.First();
-                var sectionId = type.GetDefaultSectionIdForStore(ShoppingListMock.Object.StoreId);
                 AddItemToShoppingListServiceMock.SetupAddItemWithTypeToShoppingList(ShoppingListMock.Object, NewItem,
-                    type.Id, sectionId, OldShoppingListItem.Quantity);
+                    type.Id, ExpectedNewSection.Value, OldShoppingListItem.Quantity);
             }
 
             #region Verify
@@ -862,10 +868,10 @@ public class ShoppingListExchangeServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
                 TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
                 TestPropertyNotSetException.ThrowIfNull(NewItem);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedNewSection);
                 var type = NewItem.ItemTypes.First();
-                var sectionId = type.GetDefaultSectionIdForStore(ShoppingListMock.Object.StoreId);
                 AddItemToShoppingListServiceMock.VerifyAddItemWithTypeToShoppingList(ShoppingListMock.Object, NewItem,
-                    type.Id, sectionId, OldShoppingListItem.Quantity, Times.Once);
+                    type.Id, ExpectedNewSection.Value, OldShoppingListItem.Quantity, Times.Once);
             }
 
             public override void VerifyPutItemInBasketNever()
@@ -930,6 +936,7 @@ public class ShoppingListExchangeServiceTests
     public abstract class ExchangeItemAsyncFixture : ShoppingListExchangeServiceFixture
     {
         protected ShoppingListMock? ShoppingListMock;
+        protected SectionId? ExpectedNewSection;
 
         protected ExchangeItemAsyncFixture(ITestOutputHelper output) : base(output)
         {

@@ -9,6 +9,6 @@ public class ItemSectionContractConverter :
 {
     public ItemSectionContract ToContract(ItemSectionReadModel source)
     {
-        return new ItemSectionContract(source.Id.Value, source.Name.Value, source.SortingIndex);
+        return new ItemSectionContract(source.Id, source.Name, source.SortingIndex);
     }
 }

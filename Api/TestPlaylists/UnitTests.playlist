@@ -1538,24 +1538,24 @@
           </Rule>
         </Rule>
         <Rule Match="All">
-          <Property Name="Project" Value="ShoppingList.Api.Infrastructure.Tests" />
+          <Property Name="Project" Value="ShoppingList.Api.Repositories.Tests" />
           <Rule Match="Any">
             <Rule Match="All">
-              <Property Name="Namespace" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain" />
+              <Property Name="Namespace" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain" />
               <Rule Match="Any">
                 <Rule Match="All">
                   <Property Name="Class" Value="ItemCategoryConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ItemCategoryConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ItemCategoryConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ItemCategoryConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ItemCategoryConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ItemCategoryConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ItemCategoryConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ItemCategoryConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ItemCategoryConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -1564,15 +1564,15 @@
                   <Property Name="Class" Value="ItemTypeConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ItemTypeConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ItemTypeConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ItemTypeConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ItemTypeConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ItemTypeConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ItemTypeConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ItemTypeConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ItemTypeConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -1581,15 +1581,15 @@
                   <Property Name="Class" Value="ManufacturerConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ManufacturerConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ManufacturerConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ManufacturerConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ManufacturerConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ManufacturerConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ManufacturerConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ManufacturerConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ManufacturerConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -1598,15 +1598,15 @@
                   <Property Name="Class" Value="ShoppingListConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ShoppingListConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ShoppingListConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ShoppingListConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ShoppingListConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ShoppingListConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ShoppingListConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.ShoppingListConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.ShoppingListConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -1615,15 +1615,15 @@
                   <Property Name="Class" Value="StoreConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -1632,15 +1632,15 @@
                   <Property Name="Class" Value="StoreItemAvailabilityConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreItemAvailabilityConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreItemAvailabilityConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreItemAvailabilityConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreItemAvailabilityConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreItemAvailabilityConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreItemAvailabilityConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreItemAvailabilityConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreItemAvailabilityConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -1649,15 +1649,15 @@
                   <Property Name="Class" Value="StoreItemConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreItemConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreItemConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreItemConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreItemConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreItemConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreItemConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreItemConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreItemConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -1666,15 +1666,15 @@
                   <Property Name="Class" Value="StoreSectionConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreSectionConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreSectionConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreSectionConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreSectionConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreSectionConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreSectionConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToDomain.StoreSectionConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToDomain.StoreSectionConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -1682,21 +1682,21 @@
               </Rule>
             </Rule>
             <Rule Match="All">
-              <Property Name="Namespace" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity" />
+              <Property Name="Namespace" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity" />
               <Rule Match="Any">
                 <Rule Match="All">
                   <Property Name="Class" Value="ItemCategoryConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ItemCategoryConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ItemCategoryConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ItemCategoryConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ItemCategoryConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ItemCategoryConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ItemCategoryConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ItemCategoryConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ItemCategoryConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -1705,15 +1705,15 @@
                   <Property Name="Class" Value="ItemConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ItemConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ItemConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ItemConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ItemConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ItemConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ItemConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ItemConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ItemConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -1722,15 +1722,15 @@
                   <Property Name="Class" Value="ManufacturerConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ManufacturerConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ManufacturerConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ManufacturerConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ManufacturerConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ManufacturerConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ManufacturerConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ManufacturerConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ManufacturerConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -1739,15 +1739,15 @@
                   <Property Name="Class" Value="SectionConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.SectionConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.SectionConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.SectionConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.SectionConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.SectionConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.SectionConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.SectionConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.SectionConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -1756,15 +1756,15 @@
                   <Property Name="Class" Value="ShoppingListConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ShoppingListConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ShoppingListConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ShoppingListConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ShoppingListConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ShoppingListConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ShoppingListConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.ShoppingListConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.ShoppingListConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -1773,15 +1773,15 @@
                   <Property Name="Class" Value="StoreConverterTests" />
                   <Rule Match="Any">
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.StoreConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.StoreConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.StoreConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.StoreConverterTests.ToDomain_WithSourceIsNull_ShouldThrowArgumentNullException" />
                       </Rule>
                     </Rule>
                     <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.StoreConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.StoreConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       <Rule Match="Any">
-                        <Property Name="DisplayName" Value="ShoppingList.Api.Infrastructure.Tests.Converters.ToEntity.StoreConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
+                        <Property Name="DisplayName" Value="ShoppingList.Api.Repositories.Tests.Converters.ToEntity.StoreConverterTests.ToDomain_WithValidSourceObject_ShouldConvertToDestinationObject" />
                       </Rule>
                     </Rule>
                   </Rule>

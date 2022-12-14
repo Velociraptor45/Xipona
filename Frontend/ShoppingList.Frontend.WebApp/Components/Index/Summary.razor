@@ -56,7 +56,7 @@
 
     private async Task OnFinishListButtonClicked()
     {
-        var finalFinishedAt = new DateTimeOffset(_finishedAt!.Value, DateTimeOffset.Now.Offset);
+        var finalFinishedAt = new DateTimeOffset(_finishedAt!.Value.ToUniversalTime(), TimeSpan.Zero);
         _loading = true;
         await _apiService.FinishListAsync(State.ShoppingList.Id, finalFinishedAt, FragmentCreator, async () =>
         {

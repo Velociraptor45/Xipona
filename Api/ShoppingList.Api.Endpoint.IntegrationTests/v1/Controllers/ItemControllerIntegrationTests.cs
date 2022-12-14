@@ -1,4 +1,6 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Execution;
+using Force.DeepCloner;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,24 +26,29 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
-using ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Manufacturers.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.ShoppingLists.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Contexts;
-using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Items.Entities;
-using ProjectHermes.ShoppingList.Api.Infrastructure.TestKit.Stores.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Recipes.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ShoppingLists.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Stores.Entities;
+using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
 using System.Text.RegularExpressions;
 using Xunit;
-using Item = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.Item;
+using Item = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.Item;
 using ItemAvailabilityContract = ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared.ItemAvailabilityContract;
-using ItemCategoryEntities = ProjectHermes.ShoppingList.Api.Infrastructure.ItemCategories.Entities;
-using ItemType = ProjectHermes.ShoppingList.Api.Infrastructure.Items.Entities.ItemType;
-using Section = ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Section;
-using Store = ProjectHermes.ShoppingList.Api.Infrastructure.Stores.Entities.Store;
+using ItemCategory = ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Entities.ItemCategory;
+using ItemType = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.ItemType;
+using Section = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Section;
+using Store = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Store;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
 
@@ -75,27 +82,27 @@ public class ItemControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var response = await sut.UpdateItemWithTypesAsync(_fixture.CurrentItem.Id.Value, _fixture.Contract);
+            var response = await sut.UpdateItemWithTypesAsync(_fixture.CurrentItem.Id, _fixture.Contract);
 
             // Assert
             response.Should().BeOfType<OkResult>();
             var allEntities = (await _fixture.LoadAllItemEntities()).ToList();
 
-            allEntities.Should().Contain(e => e.Id == _fixture.SecondLevelPredecessor.Id.Value);
-            allEntities.Should().Contain(e => e.Id == _fixture.FirstLevelPredecessor.Id.Value);
-            allEntities.Should().Contain(e => e.Id == _fixture.CurrentItem.Id.Value);
+            allEntities.Should().Contain(e => e.Id == _fixture.SecondLevelPredecessor.Id);
+            allEntities.Should().Contain(e => e.Id == _fixture.FirstLevelPredecessor.Id);
+            allEntities.Should().Contain(e => e.Id == _fixture.CurrentItem.Id);
             allEntities.Should().Contain(e =>
-                e.Id != _fixture.SecondLevelPredecessor.Id.Value
-                && e.Id != _fixture.FirstLevelPredecessor.Id.Value
-                && e.Id != _fixture.CurrentItem.Id.Value);
+                e.Id != _fixture.SecondLevelPredecessor.Id
+                && e.Id != _fixture.FirstLevelPredecessor.Id
+                && e.Id != _fixture.CurrentItem.Id);
 
-            var secondLevelEntity = allEntities.Single(e => e.Id == _fixture.SecondLevelPredecessor.Id.Value);
-            var firstLevelEntity = allEntities.Single(e => e.Id == _fixture.FirstLevelPredecessor.Id.Value);
-            var currentEntity = allEntities.Single(e => e.Id == _fixture.CurrentItem.Id.Value);
+            var secondLevelEntity = allEntities.Single(e => e.Id == _fixture.SecondLevelPredecessor.Id);
+            var firstLevelEntity = allEntities.Single(e => e.Id == _fixture.FirstLevelPredecessor.Id);
+            var currentEntity = allEntities.Single(e => e.Id == _fixture.CurrentItem.Id);
             var newEntity = allEntities.Single(e =>
-                e.Id != _fixture.SecondLevelPredecessor.Id.Value
-                && e.Id != _fixture.FirstLevelPredecessor.Id.Value
-                && e.Id != _fixture.CurrentItem.Id.Value);
+                e.Id != _fixture.SecondLevelPredecessor.Id
+                && e.Id != _fixture.FirstLevelPredecessor.Id
+                && e.Id != _fixture.CurrentItem.Id);
 
             // second level item should not be altered
             secondLevelEntity.Deleted.Should().BeTrue();
@@ -104,16 +111,16 @@ public class ItemControllerIntegrationTests
             secondLevelEntity.ItemTypes.Should().HaveCount(_fixture.SecondLevelPredecessor.ItemTypes.Count);
             foreach (var type in _fixture.SecondLevelPredecessor.ItemTypes)
             {
-                secondLevelEntity.ItemTypes.Should().Contain(e => e.Id == type.Id.Value);
-                var entityType = secondLevelEntity.ItemTypes.Single(e => e.Id == type.Id.Value);
+                secondLevelEntity.ItemTypes.Should().Contain(e => e.Id == type.Id);
+                var entityType = secondLevelEntity.ItemTypes.Single(e => e.Id == type.Id);
                 foreach (var av in type.Availabilities)
                 {
                     entityType.AvailableAt.Should().HaveCount(type.Availabilities.Count);
                     entityType.AvailableAt.Should().Contain(eav =>
-                        eav.ItemTypeId == type.Id.Value
-                        && eav.StoreId == av.StoreId.Value
-                        && Math.Abs(eav.Price - av.Price.Value) < 0.01f
-                        && eav.DefaultSectionId == av.DefaultSectionId.Value);
+                        eav.ItemTypeId == type.Id
+                        && eav.StoreId == av.StoreId
+                        && Math.Abs(eav.Price - av.Price) < 0.01f
+                        && eav.DefaultSectionId == av.DefaultSectionId);
                 }
             }
 
@@ -124,16 +131,16 @@ public class ItemControllerIntegrationTests
             firstLevelEntity.ItemTypes.Should().HaveCount(_fixture.FirstLevelPredecessor.ItemTypes.Count);
             foreach (var type in _fixture.FirstLevelPredecessor.ItemTypes)
             {
-                firstLevelEntity.ItemTypes.Should().Contain(e => e.Id == type.Id.Value);
-                var entityType = firstLevelEntity.ItemTypes.Single(e => e.Id == type.Id.Value);
+                firstLevelEntity.ItemTypes.Should().Contain(e => e.Id == type.Id);
+                var entityType = firstLevelEntity.ItemTypes.Single(e => e.Id == type.Id);
                 foreach (var av in type.Availabilities)
                 {
                     entityType.AvailableAt.Should().HaveCount(type.Availabilities.Count);
                     entityType.AvailableAt.Should().Contain(eav =>
-                        eav.ItemTypeId == type.Id.Value
-                        && eav.StoreId == av.StoreId.Value
-                        && Math.Abs(eav.Price - av.Price.Value) < 0.01f
-                        && eav.DefaultSectionId == av.DefaultSectionId.Value);
+                        eav.ItemTypeId == type.Id
+                        && eav.StoreId == av.StoreId
+                        && Math.Abs(eav.Price - av.Price) < 0.01f
+                        && eav.DefaultSectionId == av.DefaultSectionId);
                 }
             }
 
@@ -144,16 +151,16 @@ public class ItemControllerIntegrationTests
             currentEntity.ItemTypes.Should().HaveCount(_fixture.CurrentItem.ItemTypes.Count);
             foreach (var type in _fixture.CurrentItem.ItemTypes)
             {
-                currentEntity.ItemTypes.Should().Contain(e => e.Id == type.Id.Value);
-                var entityType = currentEntity.ItemTypes.Single(e => e.Id == type.Id.Value);
+                currentEntity.ItemTypes.Should().Contain(e => e.Id == type.Id);
+                var entityType = currentEntity.ItemTypes.Single(e => e.Id == type.Id);
                 foreach (var av in type.Availabilities)
                 {
                     entityType.AvailableAt.Should().HaveCount(type.Availabilities.Count);
                     entityType.AvailableAt.Should().Contain(eav =>
-                        eav.ItemTypeId == type.Id.Value
-                        && eav.StoreId == av.StoreId.Value
-                        && Math.Abs(eav.Price - av.Price.Value) < 0.01f
-                        && eav.DefaultSectionId == av.DefaultSectionId.Value);
+                        eav.ItemTypeId == type.Id
+                        && eav.StoreId == av.StoreId
+                        && Math.Abs(eav.Price - av.Price) < 0.01f
+                        && eav.DefaultSectionId == av.DefaultSectionId);
                 }
             }
 
@@ -210,23 +217,21 @@ public class ItemControllerIntegrationTests
                     var types = FirstLevelPredecessor.ItemTypes
                         .Select(t =>
                         {
-                            var type = new ItemTypeBuilder().Create();
-                            type.SetPredecessor(t);
+                            var type = new ItemTypeBuilder().WithPredecessorId(t.Id).Create();
                             return type;
                         });
                     builder.WithTypes(new ItemTypes(types, factory));
                 }
 
-                CurrentItem = builder.Create();
+                CurrentItem = builder
+                    .WithPredecessorId(FirstLevelPredecessor?.Id)
+                    .Create();
                 _currentItemCategory = ItemCategoryMother.NotDeleted()
                     .WithId(CurrentItem.ItemCategoryId ?? ItemCategoryId.New)
                     .Create();
                 _currentManufacturer = ManufacturerMother.NotDeleted()
                     .WithId(CurrentItem.ManufacturerId ?? ManufacturerId.New)
                     .Create();
-
-                if (FirstLevelPredecessor is not null)
-                    CurrentItem.SetPredecessor(FirstLevelPredecessor);
 
                 await StoreAsync(CurrentItem, _currentManufacturer, _currentItemCategory);
             }
@@ -239,16 +244,15 @@ public class ItemControllerIntegrationTests
                 var types = SecondLevelPredecessor.ItemTypes
                     .Select(t =>
                     {
-                        var type = new ItemTypeBuilder().Create();
-                        type.SetPredecessor(t);
+                        var type = new ItemTypeBuilder().WithPredecessorId(t.Id).Create();
                         return type;
                     });
 
                 FirstLevelPredecessor = ItemMother.InitialWithTypes()
                     .WithIsDeleted(true)
                     .WithTypes(new ItemTypes(types, factory))
+                    .WithPredecessorId(SecondLevelPredecessor.Id)
                     .Create();
-                FirstLevelPredecessor.SetPredecessor(SecondLevelPredecessor);
                 _firstLevelItemCategory = ItemCategoryMother.NotDeleted()
                     .WithId(FirstLevelPredecessor.ItemCategoryId ?? ItemCategoryId.New)
                     .Create();
@@ -280,14 +284,14 @@ public class ItemControllerIntegrationTests
 
                 var itemTypes = CurrentItem.ItemTypes
                     .Select(t => new TestBuilder<UpdateItemTypeContract>()
-                        .AfterCreation(c => c.OldId = t.Id.Value)
+                        .AfterCreation(c => c.OldId = t.Id)
                         .Create())
                     .ToList();
 
                 Contract = new TestBuilder<UpdateItemWithTypesContract>()
                     .AfterCreation(c => c.QuantityType = CurrentItem.ItemQuantity.Type.ToInt())
                     .AfterCreation(c => c.QuantityTypeInPacket = CurrentItem.ItemQuantity.InPacket?.Type.ToInt())
-                    .AfterCreation(c => c.QuantityInPacket = CurrentItem.ItemQuantity.InPacket?.Quantity.Value)
+                    .AfterCreation(c => c.QuantityInPacket = CurrentItem.ItemQuantity.InPacket?.Quantity)
                     .AfterCreation(c => c.ItemTypes = itemTypes)
                     .Create();
 
@@ -355,26 +359,26 @@ public class ItemControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
 
             // Act
-            await sut.UpdateItemPriceAsync(_fixture.ItemId.Value.Value, _fixture.Contract);
+            await sut.UpdateItemPriceAsync(_fixture.ItemId.Value, _fixture.Contract);
 
             // Assert
-            var allStoredItems = (await _fixture.LoadAllItemEntities()).ToList();
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+
+            var allStoredItems = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToList();
             allStoredItems.Should().HaveCount(2);
             allStoredItems.Should().Contain(i => i.Id == _fixture.ExpectedOldItem.Id);
             allStoredItems.Should().Contain(i => i.Id != _fixture.ExpectedOldItem.Id);
 
             var oldItem = allStoredItems.First(i => i.Id == _fixture.ExpectedOldItem.Id);
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
-                opt => opt.Excluding(info => info.Path == "UpdatedOn"
-                                             || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].Item")));
-            oldItem.UpdatedOn.Should().NotBeNull();
-            oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
+                opt => opt.ExcludeItemCycleRef()
+                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(5)));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
-                opt => opt.Excluding(info => info.Path == "Id"
-                                             || info.Path == "Predecessor"
-                                             || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].Item")));
+                opt => opt
+                    .ExcludeItemCycleRef()
+                    .Excluding(info => info.Path == "Id"));
         }
 
         [Fact]
@@ -394,32 +398,28 @@ public class ItemControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
 
             // Act
-            await sut.UpdateItemPriceAsync(_fixture.ItemId.Value.Value, _fixture.Contract);
+            await sut.UpdateItemPriceAsync(_fixture.ItemId.Value, _fixture.Contract);
 
             // Assert
-            var allStoredItems = (await _fixture.LoadAllItemEntities()).ToList();
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+
+            var allStoredItems = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToList();
             allStoredItems.Should().HaveCount(2);
             allStoredItems.Should().Contain(i => i.Id == _fixture.ExpectedOldItem.Id);
             allStoredItems.Should().Contain(i => i.Id != _fixture.ExpectedOldItem.Id);
 
             var oldItem = allStoredItems.First(i => i.Id == _fixture.ExpectedOldItem.Id);
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
-                opt => opt.Excluding(info => info.Path == "UpdatedOn"
-                    || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Item")
-                    || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].ItemType")
-                    ));
-            oldItem.UpdatedOn.Should().NotBeNull();
-            oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
+                opt => opt
+                    .ExcludeItemCycleRef()
+                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(5)));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
-                opt => opt.Excluding(info => info.Path == "Id"
-                                             || info.Path == "Predecessor"
-                                             || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Id")
-                                             || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Item")
-                                             || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Predecessor\b")
-                                             || Regex.IsMatch(info.Path, @"AvailableAt\[\d+\].ItemType")
-                                             ));
+                opt => opt
+                    .ExcludeItemCycleRef()
+                    .Excluding(info => info.Path == "Id"
+                                       || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Id")));
         }
 
         private sealed class UpdateItemPriceAsyncFixture : ItemControllerFixture
@@ -445,7 +445,7 @@ public class ItemControllerIntegrationTests
                 var price = new DomainTestBuilder<Price>().Create();
                 Contract = new TestBuilder<UpdateItemPriceContract>()
                     .FillPropertyWith(c => c.ItemTypeId, null)
-                    .FillPropertyWith(c => c.Price, price.Value)
+                    .FillPropertyWith(c => c.Price, price)
                     .Create();
             }
 
@@ -455,7 +455,7 @@ public class ItemControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(ItemId);
 
                 _existingItem = ItemEntityMother.InitialForStore(Contract.StoreId)
-                    .WithId(ItemId.Value.Value)
+                    .WithId(ItemId.Value)
                     .Create();
             }
 
@@ -468,7 +468,7 @@ public class ItemControllerIntegrationTests
                     .CreateMany(1)
                     .ToList();
                 _existingItem = ItemEntityMother.InitialWithTypes()
-                    .WithId(ItemId.Value.Value)
+                    .WithId(ItemId.Value)
                     .WithItemTypes(itemTypes)
                     .Create();
             }
@@ -507,7 +507,8 @@ public class ItemControllerIntegrationTests
                     QuantityType = _existingItem.QuantityType,
                     QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
                     PredecessorId = null,
-                    ItemTypes = new List<ItemType>()
+                    ItemTypes = new List<ItemType>(),
+                    UpdatedOn = DateTimeOffset.Now
                 };
 
                 ExpectedNewItem = new Item
@@ -553,7 +554,8 @@ public class ItemControllerIntegrationTests
                     QuantityType = _existingItem.QuantityType,
                     QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
                     PredecessorId = null,
-                    ItemTypes = _existingItem.ItemTypes
+                    ItemTypes = _existingItem.ItemTypes,
+                    UpdatedOn = DateTimeOffset.Now
                 };
 
                 ExpectedNewItem = new Item
@@ -623,7 +625,7 @@ public class ItemControllerIntegrationTests
             private readonly CommonFixture _commonFixture = new();
             private Item? _itemWithItemCategory;
             private Item? _itemWithoutItemCategory;
-            private ItemCategoryEntities.ItemCategory? _itemCategory;
+            private ItemCategory? _itemCategory;
             private Store? _store;
 
             public SearchItemsByItemCategoryAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
@@ -635,7 +637,7 @@ public class ItemControllerIntegrationTests
 
             public void SetupItemCategory()
             {
-                _itemCategory = new TestBuilder<ItemCategoryEntities.ItemCategory>()
+                _itemCategory = new TestBuilder<ItemCategory>()
                     .FillPropertyWith(c => c.Deleted, false)
                     .Create();
             }
@@ -705,6 +707,172 @@ public class ItemControllerIntegrationTests
         }
     }
 
+    [Collection(DockerCollection.Name)]
+    public sealed class DeleteItemAsync
+    {
+        private readonly DeleteItemAsyncFixture _fixture;
+
+        public DeleteItemAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new DeleteItemAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task DeleteItemAsync_WithValidData_ShouldDeleteItemAndRemoveItFromListAndRecipe()
+        {
+            // Arrange
+            _fixture.SetupItem();
+            _fixture.SetupShoppingListWithItem();
+            _fixture.SetupStoreForShoppingList();
+            _fixture.SetupRecipeWithItem();
+            await _fixture.PrepareDatabaseAsync();
+            _fixture.SetupExpectedItem();
+            _fixture.SetupExpectedRecipe();
+            _fixture.SetupExpectedShoppingList();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
+
+            // Act
+            var result = await sut.DeleteItemAsync(_fixture.Item.Id);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkResult>();
+
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            using var assertionScope = new AssertionScope();
+
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().HaveCount(1);
+            items.First().Should().BeEquivalentTo(_fixture.ExpectedItem,
+                opt => opt
+                    .ExcludeItemCycleRef()
+                    .UsingDateTimeOffsetWithPrecision());
+
+            var recipes = (await _fixture.LoadAllRecipesAsync(assertionServiceScope)).ToArray();
+            recipes.Should().HaveCount(1);
+            recipes.First().Should().BeEquivalentTo(_fixture.ExpectedRecipe,
+                opt => opt
+                .ExcludeRecipeCycleRef()
+                    .Excluding(info => Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Id")));
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionServiceScope)).ToArray();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
+                opt => opt.ExcludeShoppingListCycleRef());
+        }
+
+        private sealed class DeleteItemAsyncFixture : ItemControllerFixture
+        {
+            private Repositories.ShoppingLists.Entities.ShoppingList? _shoppingList;
+            private Store? _store;
+            private Recipe? _recipe;
+
+            public DeleteItemAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public Item? Item { get; private set; }
+            public Item? ExpectedItem { get; private set; }
+            public Repositories.ShoppingLists.Entities.ShoppingList? ExpectedShoppingList { get; private set; }
+            public Recipe? ExpectedRecipe { get; private set; }
+
+            public void SetupItem()
+            {
+                Item = ItemEntityMother.Initial().Create();
+            }
+
+            public void SetupExpectedItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Item);
+
+                ExpectedItem = Item.DeepClone();
+                ExpectedItem.Deleted = true;
+            }
+
+            public void SetupShoppingListWithItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Item);
+
+                _shoppingList = ShoppingListEntityMother.InitialWithTwoItems(Item.Id, null, Guid.NewGuid()).Create();
+            }
+
+            public void SetupExpectedShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                TestPropertyNotSetException.ThrowIfNull(Item);
+
+                ExpectedShoppingList = _shoppingList.DeepClone();
+                ExpectedShoppingList.ItemsOnList =
+                    ExpectedShoppingList.ItemsOnList.Where(map => map.ItemId != Item.Id).ToArray();
+            }
+
+            public void SetupStoreForShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+
+                var sectionIds = _shoppingList.ItemsOnList.Select(x => x.SectionId).ToArray();
+
+                _store = StoreEntityMother
+                    .ValidSections(sectionIds)
+                    .WithId(_shoppingList.StoreId)
+                    .Create();
+            }
+
+            public void SetupRecipeWithItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Item);
+
+                var ingredients = new IngredientEntityBuilder()
+                    .WithDefaultItemId(Item.Id)
+                    .WithoutDefaultItemTypeId()
+                    .CreateMany(1)
+                    .ToArray();
+
+                _recipe = new RecipeEntityBuilder()
+                    .WithIngredients(ingredients)
+                    .Create();
+            }
+
+            public void SetupExpectedRecipe()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipe);
+
+                ExpectedRecipe = _recipe.DeepClone();
+                ExpectedRecipe.Ingredients.First().DefaultItemId = null;
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Item);
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_recipe);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+                await using var storeContext = GetContextInstance<StoreContext>(ArrangeScope);
+                await using var shoppingListContext = GetContextInstance<ShoppingListContext>(ArrangeScope);
+                await using var recipeContext = GetContextInstance<RecipeContext>(ArrangeScope);
+
+                itemContext.Add(Item);
+                storeContext.Add(_store);
+                shoppingListContext.Add(_shoppingList);
+                recipeContext.Add(_recipe);
+
+                await itemContext.SaveChangesAsync();
+                await storeContext.SaveChangesAsync();
+                await shoppingListContext.SaveChangesAsync();
+                await recipeContext.SaveChangesAsync();
+            }
+        }
+    }
+
     private class ItemControllerFixture : DatabaseFixture
     {
         protected ItemControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
@@ -721,6 +889,7 @@ public class ItemControllerIntegrationTests
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
             yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
             yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
+            yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
         }
 
         public ItemController CreateSut()

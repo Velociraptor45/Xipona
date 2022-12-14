@@ -4,12 +4,16 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+
 using DomainModels = ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Services.ShoppingListModifications;
@@ -137,7 +141,7 @@ public class ShoppingListModificationServiceTests
             }
         }
 
-        private sealed class ChangeItemQuantityAsyncFixture : LocalFixture
+        private sealed class ChangeItemQuantityAsyncFixture : ShoppingListModificationServiceFixture
         {
             private ShoppingListMock? _shoppingListMock;
             private IItem? _item;
@@ -402,7 +406,7 @@ public class ShoppingListModificationServiceTests
             }
         }
 
-        private sealed class RemoveItemAsyncFixture : LocalFixture
+        private sealed class RemoveItemAsyncFixture : ShoppingListModificationServiceFixture
         {
             public ShoppingListId ShoppingListId { get; private set; }
             public ItemTypeId? ItemTypeId { get; private set; }
@@ -705,7 +709,7 @@ public class ShoppingListModificationServiceTests
 
         #endregion WithValidOfflineId
 
-        private sealed class RemoveItemFromBasketAsyncFixture : LocalFixture
+        private sealed class RemoveItemFromBasketAsyncFixture : ShoppingListModificationServiceFixture
         {
             private IItem? _item;
             private ShoppingListMock? _shoppingListMock;
@@ -960,7 +964,7 @@ public class ShoppingListModificationServiceTests
             }
         }
 
-        private sealed class PutItemInBasketAsyncFixture : LocalFixture
+        private sealed class PutItemInBasketAsyncFixture : ShoppingListModificationServiceFixture
         {
             private ShoppingListMock? _shoppingListMock;
             private IItem? _item;
@@ -1135,7 +1139,7 @@ public class ShoppingListModificationServiceTests
             }
         }
 
-        private sealed class FinishAsyncFixture : LocalFixture
+        private sealed class FinishAsyncFixture : ShoppingListModificationServiceFixture
         {
             private ShoppingListMock? _shoppingListMock;
             private ShoppingListMock? _createdShoppingListMock;
@@ -1216,15 +1220,103 @@ public class ShoppingListModificationServiceTests
         }
     }
 
-    private abstract class LocalFixture
+    public class RemoveSectionAsyncTests
+    {
+        private readonly RemoveSectionAsyncFixture _fixture;
+
+        public RemoveSectionAsyncTests()
+        {
+            _fixture = new RemoveSectionAsyncFixture();
+        }
+
+        [Fact]
+        public async Task RemoveSectionAsync_WithNotFindingStore_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupSectionId();
+            _fixture.SetupNotFindingStore();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.SectionId);
+
+            // Act
+            var func = async () => await sut.RemoveSectionAsync(_fixture.SectionId.Value);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.StoreNotFound);
+        }
+
+        [Fact]
+        public async Task RemoveSectionAsync_WithNotFindingShoppingList_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupSectionId();
+            _fixture.SetupStore();
+            _fixture.SetupFindingStore();
+            _fixture.SetupNotFindingShoppingList();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.SectionId);
+
+            // Act
+            var func = async () => await sut.RemoveSectionAsync(_fixture.SectionId.Value);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListNotFound);
+        }
+
+        private sealed class RemoveSectionAsyncFixture : ShoppingListModificationServiceFixture
+        {
+            private StoreMock? _storeMock;
+            public SectionId? SectionId { get; set; }
+
+            public void SetupSectionId()
+            {
+                SectionId = Domain.Stores.Models.SectionId.New;
+            }
+
+            public void SetupStore()
+            {
+                _storeMock = new StoreMock(MockBehavior.Strict, new StoreBuilder().Create());
+            }
+
+            public void SetupNotFindingStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(SectionId);
+
+                StoreRepositoryMock.SetupFindActiveByAsync(SectionId.Value, null);
+            }
+
+            public void SetupFindingStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(SectionId);
+                TestPropertyNotSetException.ThrowIfNull(_storeMock);
+
+                StoreRepositoryMock.SetupFindActiveByAsync(SectionId.Value, _storeMock.Object);
+            }
+
+            public void SetupNotFindingShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_storeMock);
+
+                ShoppingListRepositoryMock.SetupFindActiveByAsync(_storeMock.Object.Id, null);
+            }
+        }
+    }
+
+    private abstract class ShoppingListModificationServiceFixture
     {
         protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
         protected readonly ItemRepositoryMock ItemRepositoryMock;
+        protected readonly StoreRepositoryMock StoreRepositoryMock;
+        protected readonly ShoppingListSectionFactoryMock ShoppingListSectionFactoryMock;
 
-        protected LocalFixture()
+        protected ShoppingListModificationServiceFixture()
         {
             ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
             ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
+            StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
+            ShoppingListSectionFactoryMock = new ShoppingListSectionFactoryMock(MockBehavior.Strict);
         }
 
         public ShoppingListModificationService CreateSut()
@@ -1232,6 +1324,8 @@ public class ShoppingListModificationServiceTests
             return new ShoppingListModificationService(
                 ShoppingListRepositoryMock.Object,
                 ItemRepositoryMock.Object,
+                StoreRepositoryMock.Object,
+                ShoppingListSectionFactoryMock.Object,
                 default);
         }
     }

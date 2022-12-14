@@ -7,6 +7,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.Sh
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Exchanges;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists;
 
@@ -27,8 +28,11 @@ public static class ServiceCollectionExtensions
         {
             var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
             var itemRepository = provider.GetRequiredService<IItemRepository>();
+            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            var shoppingListSectionFactory = provider.GetRequiredService<IShoppingListSectionFactory>();
             return cancellationToken =>
-                new ShoppingListModificationService(shoppingListRepository, itemRepository, cancellationToken);
+                new ShoppingListModificationService(shoppingListRepository, itemRepository, storeRepository,
+                    shoppingListSectionFactory, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IShoppingListQueryService>>(provider =>

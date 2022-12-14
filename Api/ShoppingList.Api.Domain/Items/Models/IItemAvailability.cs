@@ -7,4 +7,5 @@ public interface IItemAvailability
     StoreId StoreId { get; }
     Price Price { get; }
     SectionId DefaultSectionId { get; }
+    IItemAvailability TransferToDefaultSection(SectionId sectionId);
 }

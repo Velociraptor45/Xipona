@@ -31,7 +31,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItem
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.UpdateStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ItemCategories;
@@ -48,6 +48,7 @@ using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
@@ -210,9 +211,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         }
 
         public async Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(
-            string searchInput, Guid storeId)
+            string searchInput, Guid storeId, CancellationToken cancellationToken)
         {
-            var result = await _client.SearchItemsForShoppingListAsync(storeId, searchInput);
+            var result = await _client.SearchItemsForShoppingListAsync(storeId, searchInput, cancellationToken);
             if (result is null)
                 return Enumerable.Empty<SearchItemForShoppingListResult>();
 
@@ -285,7 +286,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task ModifyStoreAsync(ModifyStoreRequest request)
         {
-            await _client.UpdateStoreAsync(_converters.ToContract<ModifyStoreRequest, UpdateStoreContract>(request));
+            await _client.ModifyStoreAsync(_converters.ToContract<ModifyStoreRequest, ModifyStoreContract>(request));
         }
 
         public async Task<IEnumerable<ManufacturerSearchResult>> GetManufacturerSearchResultsAsync(string searchInput)
@@ -344,8 +345,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task<IEnumerable<SearchItemByItemCategoryResult>> SearchItemByItemCategoryAsync(Guid itemCategoryId)
         {
             var results = await _client.SearchItemsByItemCategoryAsync(itemCategoryId);
-            return _converters
-                .ToDomain<SearchItemByItemCategoryResultContract, SearchItemByItemCategoryResult>(results);
+            return results is null
+                ? Enumerable.Empty<SearchItemByItemCategoryResult>()
+                : _converters.ToDomain<SearchItemByItemCategoryResultContract, SearchItemByItemCategoryResult>(results);
         }
 
         public async Task<Recipe> GetRecipeByIdAsync(Guid recipeId)
@@ -357,7 +359,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task<IEnumerable<RecipeSearchResult>> SearchRecipesByNameAsync(string searchInput)
         {
             var results = await _client.SearchRecipesByNameAsync(searchInput);
-            return _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
+            return results is null
+                ? Enumerable.Empty<RecipeSearchResult>()
+                : _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
         }
 
         public async Task<Recipe> CreateRecipeAsync(Recipe recipe)
@@ -376,7 +380,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         public async Task<IEnumerable<IngredientQuantityType>> GetAllIngredientQuantityTypes()
         {
             var types = await _client.GetAllIngredientQuantityTypes();
-            return _converters.ToDomain<IngredientQuantityTypeContract, IngredientQuantityType>(types);
+            return types is null
+                ? Enumerable.Empty<IngredientQuantityType>()
+                : _converters.ToDomain<IngredientQuantityTypeContract, IngredientQuantityType>(types);
         }
     }
 }

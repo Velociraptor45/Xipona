@@ -8,6 +8,7 @@ using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEditor;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models;
@@ -40,13 +41,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
         private static void ConfigureHttpClient(WebAssemblyHostBuilder builder)
         {
-            var uriString = builder.Configuration["Connection:Uri"];
+            var uriString = builder.Configuration["Connection:ApiUri"];
 
             if (uriString is null)
                 throw new InvalidOperationException("The Connection:Uri section in the appsettings is missing");
 
             var uri = new Uri(uriString);
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = uri });
+            builder.Services.AddScoped(_ => new HttpClient { BaseAddress = uri });
         }
 
         private static void AddDependencies(WebAssemblyHostBuilder builder)
@@ -61,6 +62,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddScoped<IItemPriceCalculationService, ItemPriceCalculationService>();
 
             builder.Services.AddTransient<IShoppingListApiService, ShoppingListApiService>();
+
+            builder.Services.AddSingleton(new ItemsState());
             builder.Services.AddTransient<IItemsApiService, ItemsApiService>();
             builder.Services.AddTransient<IStoresApiService, StoresApiService>();
 

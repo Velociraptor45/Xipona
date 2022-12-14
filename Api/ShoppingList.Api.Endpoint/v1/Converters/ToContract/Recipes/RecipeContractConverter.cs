@@ -10,21 +10,21 @@ public class RecipeContractConverter : IToContractConverter<IRecipe, RecipeContr
     public RecipeContract ToContract(IRecipe source)
     {
         var steps = source.PreparationSteps.Select(s => new PreparationStepContract(
-            s.Id.Value,
+            s.Id,
             s.Instruction.Value,
             s.SortingIndex));
 
         var ingredients = source.Ingredients.Select(i => new IngredientContract(
-            i.Id.Value,
-            i.ItemCategoryId.Value,
+            i.Id,
+            i.ItemCategoryId,
             i.QuantityType.ToInt(),
             i.Quantity.Value,
-            i.DefaultItemId?.Value,
-            i.DefaultItemTypeId?.Value));
+            i.DefaultItemId,
+            i.DefaultItemTypeId));
 
         return new RecipeContract(
-            source.Id.Value,
-            source.Name.Value,
+            source.Id,
+            source.Name,
             ingredients,
             steps);
     }

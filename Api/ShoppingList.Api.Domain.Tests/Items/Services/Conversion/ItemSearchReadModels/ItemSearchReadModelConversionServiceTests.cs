@@ -155,9 +155,10 @@ public class ItemSearchReadModelConversionServiceTests
 
         public LocalFixture()
         {
-        _itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
-        _manufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
-    }
+            _itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
+            _manufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
+        }
+
         public List<IItem>? Items { get; private set; }
         public IStore? Store { get; private set; }
 
@@ -291,9 +292,10 @@ public class ItemSearchReadModelConversionServiceTests
                 yield return new SearchItemForShoppingResultReadModel(
                     item.Id,
                     null,
-                    item.Name.Value,
+                    item.Name,
                     item.ItemQuantity.Type.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                     availability.Price,
+                    item.ItemQuantity.Type.GetAttribute<PriceLabelAttribute>().PriceLabel,
                     manufacturerReadModel,
                     itemCategoryReadModel,
                     sectionReadModel);

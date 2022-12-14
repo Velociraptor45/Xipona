@@ -39,4 +39,15 @@ public class Ingredient : IIngredient
         return new Ingredient(Id, modification.ItemCategoryId, modification.QuantityType, modification.Quantity,
             modification.DefaultItemId, modification.DefaultItemTypeId);
     }
+
+    public IIngredient RemoveDefaultItem()
+    {
+        return new Ingredient(
+            IngredientId.New,
+            ItemCategoryId,
+            QuantityType,
+            Quantity,
+            null,
+            null);
+    }
 }

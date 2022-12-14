@@ -68,19 +68,22 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
         foreach (var list in shoppingLists)
         {
             var oldListItems = list.Items
-                .Where(i => i.Id == oldItemId);
+                .Where(i => i.Id == oldItemId)
+                .ToArray();
+
+            var oldListItemViolating = oldListItems.FirstOrDefault(i => i.TypeId is null);
+            if (oldListItemViolating is not null)
+                throw new DomainException(new ShoppingListItemHasNoTypeReason(list.Id, oldListItemViolating.Id));
 
             foreach (var oldListItem in oldListItems)
             {
-                if (oldListItem.TypeId == null)
-                    throw new DomainException(new ShoppingListItemHasNoTypeReason(list.Id, oldListItem.Id));
-
                 list.RemoveItem(oldItemId, oldListItem.TypeId);
-                if (!newItem.TryGetTypeWithPredecessor(oldListItem.TypeId.Value, out var itemType)
-                    || !itemType!.IsAvailableAtStore(list.StoreId))
+                if (!newItem.TryGetTypeWithPredecessor(oldListItem.TypeId!.Value, out var itemType)
+                    || !itemType!.IsAvailableAt(list.StoreId))
                     continue;
 
                 var sectionId = itemType.GetDefaultSectionIdForStore(list.StoreId);
+
                 await _addItemToShoppingListService.AddItemWithTypeToShoppingList(list, newItem, itemType.Id,
                     sectionId, oldListItem.Quantity, cancellationToken);
 

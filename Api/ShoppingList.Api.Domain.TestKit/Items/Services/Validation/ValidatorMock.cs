@@ -41,6 +41,11 @@ public class ValidatorMock : Mock<IValidator>
         return Setup(m => m.ValidateAsync(itemCategoryId));
     }
 
+    public ISetup<IValidator, Task> SetupValidateAsyncAnd(IEnumerable<IItemAvailability> availabilities)
+    {
+        return Setup(m => m.ValidateAsync(availabilities));
+    }
+
     public ISetup<IValidator, Task> SetupValidateAsyncAnd(ItemId itemId, ItemTypeId? itemTypeId)
     {
         return Setup(m => m.ValidateAsync(itemId, itemTypeId));

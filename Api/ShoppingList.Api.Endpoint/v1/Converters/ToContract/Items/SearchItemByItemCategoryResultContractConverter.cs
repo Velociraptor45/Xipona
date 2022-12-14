@@ -21,8 +21,8 @@ public class SearchItemByItemCategoryResultContractConverter :
     public SearchItemByItemCategoryResultContract ToContract(SearchItemByItemCategoryResult source)
     {
         return new SearchItemByItemCategoryResultContract(
-            source.Id.Value,
-            source.ItemTypeId?.Value,
+            source.Id,
+            source.ItemTypeId,
             source.Name,
             source.Availabilities.Select(_availabilityConverter.ToContract));
     }

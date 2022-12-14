@@ -18,6 +18,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
+using System.Threading;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
@@ -42,13 +43,14 @@ public class ItemCategoryController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}")]
-    public async Task<IActionResult> GetItemCategoryByIdAsync([FromRoute] Guid id)
+    public async Task<IActionResult> GetItemCategoryByIdAsync([FromRoute] Guid id,
+        CancellationToken cancellationToken = default)
     {
         try
         {
             var query = new ItemCategoryByIdQuery(new ItemCategoryId(id));
 
-            var result = await _queryDispatcher.DispatchAsync(query, default);
+            var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
 
             var contract = _converters.ToContract<IItemCategory, ItemCategoryContract>(result);
 
@@ -71,7 +73,7 @@ public class ItemCategoryController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [Route("")]
     public async Task<IActionResult> SearchItemCategoriesByNameAsync([FromQuery] string searchInput,
-        [FromQuery] bool includeDeleted = false)
+        [FromQuery] bool includeDeleted = false, CancellationToken cancellationToken = default)
     {
         searchInput = searchInput.Trim();
         if (string.IsNullOrEmpty(searchInput))
@@ -80,7 +82,7 @@ public class ItemCategoryController : ControllerBase
         }
 
         var query = new ItemCategorySearchQuery(searchInput, includeDeleted);
-        var itemCategoryReadModels = await _queryDispatcher.DispatchAsync(query, default);
+        var itemCategoryReadModels = await _queryDispatcher.DispatchAsync(query, cancellationToken);
 
         if (!itemCategoryReadModels.Any())
             return NoContent();
@@ -96,10 +98,10 @@ public class ItemCategoryController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<ItemCategoryContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("active")]
-    public async Task<IActionResult> GetAllActiveItemCategoriesAsync()
+    public async Task<IActionResult> GetAllActiveItemCategoriesAsync(CancellationToken cancellationToken = default)
     {
         var query = new AllActiveItemCategoriesQuery();
-        var readModels = await _queryDispatcher.DispatchAsync(query, default);
+        var readModels = await _queryDispatcher.DispatchAsync(query, cancellationToken);
 
         if (!readModels.Any())
             return NoContent();
@@ -114,12 +116,13 @@ public class ItemCategoryController : ControllerBase
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("")]
-    public async Task<IActionResult> ModifyItemCategoryAsync([FromBody] ModifyItemCategoryContract contract)
+    public async Task<IActionResult> ModifyItemCategoryAsync([FromBody] ModifyItemCategoryContract contract,
+        CancellationToken cancellationToken = default)
     {
         try
         {
             var command = _converters.ToDomain<ModifyItemCategoryContract, ModifyItemCategoryCommand>(contract);
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
@@ -137,10 +140,11 @@ public class ItemCategoryController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [Route("")]
-    public async Task<IActionResult> CreateItemCategoryAsync([FromQuery] string name)
+    public async Task<IActionResult> CreateItemCategoryAsync([FromQuery] string name,
+        CancellationToken cancellationToken = default)
     {
         var command = new CreateItemCategoryCommand(new ItemCategoryName(name));
-        var model = await _commandDispatcher.DispatchAsync(command, default);
+        var model = await _commandDispatcher.DispatchAsync(command, cancellationToken);
 
         var contract = _converters.ToContract<IItemCategory, ItemCategoryContract>(model);
 
@@ -152,12 +156,13 @@ public class ItemCategoryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [Route("{id}")]
-    public async Task<IActionResult> DeleteItemCategoryAsync([FromRoute] Guid id)
+    public async Task<IActionResult> DeleteItemCategoryAsync([FromRoute] Guid id,
+        CancellationToken cancellationToken = default)
     {
         try
         {
             var command = new DeleteItemCategoryCommand(new ItemCategoryId(id));
-            await _commandDispatcher.DispatchAsync(command, default);
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
