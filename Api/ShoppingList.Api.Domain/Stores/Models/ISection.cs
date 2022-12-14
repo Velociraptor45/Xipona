@@ -10,7 +10,7 @@ public interface ISection : ISortable
     bool IsDefaultSection { get; }
     bool IsDeleted { get; }
 
-    ISection Modify(SectionModification update);
+    ISection Modify(SectionModification modification);
 
     ISection Delete();
 }
