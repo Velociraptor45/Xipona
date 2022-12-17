@@ -11,14 +11,6 @@ public class ItemRepositoryMock : Mock<IItemRepository>
     {
     }
 
-    public void SetupFindByAsync(ItemId itemId, IItem? returnValue)
-    {
-        Setup(i => i.FindByAsync(
-                It.Is<ItemId>(id => id == itemId),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(returnValue);
-    }
-
     public void SetupFindByAsync(IEnumerable<ItemId> itemIds, IEnumerable<IItem> returnValue)
     {
         Setup(i => i.FindByAsync(
@@ -27,10 +19,26 @@ public class ItemRepositoryMock : Mock<IItemRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindByAsync(TemporaryItemId temporaryItemId, IItem? returnValue)
+    public void SetupFindActiveByAsync(IEnumerable<ItemId> itemIds, IEnumerable<IItem> returnValue)
     {
-        Setup(i => i.FindByAsync(
-                It.Is<TemporaryItemId>(id => id == temporaryItemId),
+        Setup(i => i.FindActiveByAsync(
+                It.Is<IEnumerable<ItemId>>(ids => ids.SequenceEqual(itemIds)),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupFindActiveByAsync(TemporaryItemId temporaryItemId, IItem? returnValue)
+    {
+        Setup(i => i.FindActiveByAsync(
+                temporaryItemId,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupFindActiveByAsync(ItemId itemId, IItem? returnValue)
+    {
+        Setup(i => i.FindActiveByAsync(
+                itemId,
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);
     }
@@ -57,7 +65,7 @@ public class ItemRepositoryMock : Mock<IItemRepository>
     public void VerifyFindByAsync(TemporaryItemId temporaryItemId)
     {
         Verify(
-            i => i.FindByAsync(
+            i => i.FindActiveByAsync(
                 It.Is<TemporaryItemId>(id => id == temporaryItemId),
                 It.IsAny<CancellationToken>()),
             Times.Once);

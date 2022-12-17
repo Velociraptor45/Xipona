@@ -215,7 +215,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var itemId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(itemId, _item);
+                ItemRepositoryMock.SetupFindActiveByAsync(itemId, _item);
             }
 
             public void SetupNotFindingTemporaryItem()
@@ -223,7 +223,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var itemId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(itemId, null);
+                ItemRepositoryMock.SetupFindActiveByAsync(itemId, null);
             }
 
             #endregion Fixture Setup
@@ -469,7 +469,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.ActualId);
                 TestPropertyNotSetException.ThrowIfNull(_itemMock);
-                ItemRepositoryMock.SetupFindByAsync(new ItemId(OfflineTolerantItemId.ActualId.Value),
+                ItemRepositoryMock.SetupFindActiveByAsync(new ItemId(OfflineTolerantItemId.ActualId.Value),
                     _itemMock.Object);
             }
 
@@ -477,7 +477,7 @@ public class ShoppingListModificationServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.ActualId);
-                ItemRepositoryMock.SetupFindByAsync(new ItemId(OfflineTolerantItemId.ActualId.Value), null);
+                ItemRepositoryMock.SetupFindActiveByAsync(new ItemId(OfflineTolerantItemId.ActualId.Value), null);
             }
 
             public void SetupFindingItemByTemporaryId()
@@ -485,7 +485,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 TestPropertyNotSetException.ThrowIfNull(_itemMock);
-                ItemRepositoryMock.SetupFindByAsync(new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value),
+                ItemRepositoryMock.SetupFindActiveByAsync(new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value),
                     _itemMock.Object);
             }
 
@@ -493,7 +493,7 @@ public class ShoppingListModificationServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
-                ItemRepositoryMock.SetupFindByAsync(new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value),
+                ItemRepositoryMock.SetupFindActiveByAsync(new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value),
                     null);
             }
 
@@ -777,7 +777,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var tempId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(tempId, _item);
+                ItemRepositoryMock.SetupFindActiveByAsync(tempId, _item);
             }
 
             public void SetupFindingNoItemByOfflineId()
@@ -785,7 +785,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var tempId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(tempId, null);
+                ItemRepositoryMock.SetupFindActiveByAsync(tempId, null);
             }
 
             #endregion Mock Setup
@@ -1032,7 +1032,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var itemId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(itemId, _item);
+                ItemRepositoryMock.SetupFindActiveByAsync(itemId, _item);
             }
 
             public void SetupItemRepositoryFindingNoItem()
@@ -1040,7 +1040,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var itemId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(itemId, null);
+                ItemRepositoryMock.SetupFindActiveByAsync(itemId, null);
             }
 
             #endregion Fixture Setup

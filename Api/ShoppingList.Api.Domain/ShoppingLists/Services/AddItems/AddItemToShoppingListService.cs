@@ -104,7 +104,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
 
     private async Task<IItem> LoadItemAsync(ItemId itemId, CancellationToken cancellationToken)
     {
-        IItem? item = await _itemRepository.FindByAsync(itemId, cancellationToken);
+        IItem? item = await _itemRepository.FindActiveByAsync(itemId, cancellationToken);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(itemId));
 
@@ -113,7 +113,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
 
     private async Task<IItem> LoadItemAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
     {
-        IItem? item = await _itemRepository.FindByAsync(temporaryItemId, cancellationToken);
+        IItem? item = await _itemRepository.FindActiveByAsync(temporaryItemId, cancellationToken);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(temporaryItemId));
 

@@ -191,7 +191,7 @@ public class ItemSearchService : IItemSearchService
             .ToList();
 
         var itemIds = itemTypeIdGroups.Select(group => group.Key);
-        var itemsDict = (await _itemRepository.FindByAsync(itemIds, _cancellationToken))
+        var itemsDict = (await _itemRepository.FindActiveByAsync(itemIds, _cancellationToken))
             .ToDictionary(i => i.Id);
 
         var result = new List<ItemWithMatchingItemTypeIds>();

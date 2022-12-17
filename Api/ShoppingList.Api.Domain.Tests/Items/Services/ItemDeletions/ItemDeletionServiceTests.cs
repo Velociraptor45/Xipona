@@ -1,7 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Deletions;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
@@ -20,7 +18,7 @@ public class ItemDeletionServiceTests
         }
 
         [Fact]
-        public async Task DeleteAsync_WithInvalidItemId_ShouldThrowDomainException()
+        public async Task DeleteAsync_WithInvalidItemId_ShouldNotThrow()
         {
             // Arrange
             _fixture.SetupItemId();
@@ -34,7 +32,7 @@ public class ItemDeletionServiceTests
             // Assert
             using (new AssertionScope())
             {
-                await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemNotFound);
+                await func.Should().NotThrowAsync();
             }
         }
 
@@ -88,12 +86,12 @@ public class ItemDeletionServiceTests
         public void SetupFindingItem()
         {
             TestPropertyNotSetException.ThrowIfNull(_itemMock);
-            ItemRepositoryMock.SetupFindByAsync(ItemId, _itemMock.Object);
+            ItemRepositoryMock.SetupFindActiveByAsync(ItemId, _itemMock.Object);
         }
 
         public void SetupFindingNoItem()
         {
-            ItemRepositoryMock.SetupFindByAsync(ItemId, null);
+            ItemRepositoryMock.SetupFindActiveByAsync(ItemId, null);
         }
 
         public void SetupStoringItem()

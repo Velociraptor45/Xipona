@@ -33,7 +33,7 @@ public class ItemUpdateService : IItemUpdateService
 
     public async Task UpdateAsync(ItemWithTypesUpdate update)
     {
-        var oldItem = await _itemRepository.FindByAsync(update.OldId, _cancellationToken);
+        var oldItem = await _itemRepository.FindActiveByAsync(update.OldId, _cancellationToken);
         if (oldItem == null)
             throw new DomainException(new ItemNotFoundReason(update.OldId));
 
@@ -50,7 +50,7 @@ public class ItemUpdateService : IItemUpdateService
 
     public async Task UpdateAsync(ItemUpdate update)
     {
-        IItem? oldItem = await _itemRepository.FindByAsync(update.OldId, _cancellationToken);
+        IItem? oldItem = await _itemRepository.FindActiveByAsync(update.OldId, _cancellationToken);
         if (oldItem == null)
             throw new DomainException(new ItemNotFoundReason(update.OldId));
 
@@ -67,7 +67,7 @@ public class ItemUpdateService : IItemUpdateService
 
     public async Task UpdateAsync(ItemId itemId, ItemTypeId? itemTypeId, StoreId storeId, Price price)
     {
-        IItem? oldItem = await _itemRepository.FindByAsync(itemId, _cancellationToken);
+        IItem? oldItem = await _itemRepository.FindActiveByAsync(itemId, _cancellationToken);
         if (oldItem == null)
             throw new DomainException(new ItemNotFoundReason(itemId));
         if (oldItem.IsTemporary)

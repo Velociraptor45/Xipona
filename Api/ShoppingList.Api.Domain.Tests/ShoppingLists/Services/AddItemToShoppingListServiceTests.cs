@@ -400,14 +400,14 @@ public class AddItemToShoppingListServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(Item);
                 TestPropertyNotSetException.ThrowIfNull(Item.TemporaryId);
-                ItemRepositoryMock.SetupFindByAsync(Item.TemporaryId.Value, null);
+                ItemRepositoryMock.SetupFindActiveByAsync(Item.TemporaryId.Value, null);
             }
 
             public void SetupFindingItemWithTemporaryId()
             {
                 TestPropertyNotSetException.ThrowIfNull(Item);
                 TestPropertyNotSetException.ThrowIfNull(Item.TemporaryId);
-                ItemRepositoryMock.SetupFindByAsync(Item.TemporaryId.Value, Item);
+                ItemRepositoryMock.SetupFindActiveByAsync(Item.TemporaryId.Value, Item);
             }
 
             #endregion Mock Setup
@@ -963,26 +963,16 @@ public class AddItemToShoppingListServiceTests
     private abstract class LocalFixture
     {
         protected readonly CommonFixture CommonFixture = new();
-        private readonly ShoppingListSectionFactoryMock _shoppingListSectionFactoryMock;
-        private readonly StoreRepositoryMock _storeRepositoryMock;
-        private readonly SectionFactoryMock _sectionFactoryMock;
-        protected readonly ItemRepositoryMock ItemRepositoryMock;
-        protected readonly ShoppingListItemFactoryMock ShoppingListItemFactoryMock;
-        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
+        private readonly ShoppingListSectionFactoryMock _shoppingListSectionFactoryMock = new(MockBehavior.Strict);
+        private readonly StoreRepositoryMock _storeRepositoryMock = new(MockBehavior.Strict);
+        private readonly SectionFactoryMock _sectionFactoryMock = new(MockBehavior.Strict);
+        protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ShoppingListItemFactoryMock ShoppingListItemFactoryMock = new(MockBehavior.Strict);
+        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock = new(MockBehavior.Strict);
 
         private IStore? _store;
         private IShoppingListSection? _shoppingListSection;
         protected IItemAvailability? Availability;
-
-        protected LocalFixture()
-        {
-            _shoppingListSectionFactoryMock = new ShoppingListSectionFactoryMock(MockBehavior.Strict);
-            _storeRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
-            ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
-            ShoppingListItemFactoryMock = new ShoppingListItemFactoryMock(MockBehavior.Strict);
-            ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
-            _sectionFactoryMock = new SectionFactoryMock(MockBehavior.Strict);
-        }
 
         public ShoppingListMock? ShoppingListMock { get; protected set; }
         public SectionId? SectionId { get; private set; }
@@ -1101,13 +1091,13 @@ public class AddItemToShoppingListServiceTests
         public void SetupFindingItem()
         {
             TestPropertyNotSetException.ThrowIfNull(Item);
-            ItemRepositoryMock.SetupFindByAsync(Item.Id, Item);
+            ItemRepositoryMock.SetupFindActiveByAsync(Item.Id, Item);
         }
 
         public void SetupNotFindingItem()
         {
             TestPropertyNotSetException.ThrowIfNull(Item);
-            ItemRepositoryMock.SetupFindByAsync(Item.Id, null);
+            ItemRepositoryMock.SetupFindActiveByAsync(Item.Id, null);
         }
 
         #endregion Mock Setup

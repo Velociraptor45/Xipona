@@ -488,17 +488,17 @@ public class ItemSearchServiceTests
 
             public void SetupFindingItemsFromTypeMapping()
             {
-                ItemRepositoryMock.SetupFindByAsync(_itemsFromTypeMapping.Select(i => i.Id), _itemsFromTypeMapping);
+                ItemRepositoryMock.SetupFindActiveByAsync(_itemsFromTypeMapping.Select(i => i.Id), _itemsFromTypeMapping);
             }
 
             public void SetupFindingNoItemsFromTypeMapping()
             {
-                ItemRepositoryMock.SetupFindByAsync(_itemsFromTypeMapping.Select(i => i.Id), Enumerable.Empty<IItem>());
+                ItemRepositoryMock.SetupFindActiveByAsync(_itemsFromTypeMapping.Select(i => i.Id), Enumerable.Empty<IItem>());
             }
 
             public void SetupFindingNoItemsFromTypeMappingWithEmptyInput()
             {
-                ItemRepositoryMock.SetupFindByAsync(Enumerable.Empty<ItemId>(), Enumerable.Empty<IItem>());
+                ItemRepositoryMock.SetupFindActiveByAsync(Enumerable.Empty<ItemId>(), Enumerable.Empty<IItem>());
             }
 
             public void SetupFindingShoppingListWithItemWithoutTypes(bool containsItem)
@@ -944,27 +944,18 @@ public class ItemSearchServiceTests
         protected readonly Fixture Fixture;
         protected readonly CommonFixture CommonFixture = new();
 
-        protected readonly ItemRepositoryMock ItemRepositoryMock;
-        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
-        protected readonly StoreRepositoryMock StoreRepositoryMock;
-        protected readonly ItemTypeReadRepositoryMock ItemTypeReadRepositoryMock;
-        protected readonly ItemSearchReadModelConversionServiceMock ConversionServiceMock;
-        protected readonly ItemTypeFactoryMock ItemTypeFactoryMock;
-        protected readonly ItemAvailabilityReadModelConversionServiceMock AvailabilityConversionServiceMock;
-        protected readonly ValidatorMock ValidatorMock;
+        protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock = new(MockBehavior.Strict);
+        protected readonly StoreRepositoryMock StoreRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ItemTypeReadRepositoryMock ItemTypeReadRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ItemSearchReadModelConversionServiceMock ConversionServiceMock = new(MockBehavior.Strict);
+        protected readonly ItemTypeFactoryMock ItemTypeFactoryMock = new(MockBehavior.Strict);
+        protected readonly ItemAvailabilityReadModelConversionServiceMock AvailabilityConversionServiceMock = new(MockBehavior.Strict);
+        protected readonly ValidatorMock ValidatorMock = new(MockBehavior.Strict);
 
         protected ItemSearchServiceFixture()
         {
             Fixture = CommonFixture.GetNewFixture();
-
-            ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
-            ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
-            StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
-            ItemTypeReadRepositoryMock = new ItemTypeReadRepositoryMock(MockBehavior.Strict);
-            ConversionServiceMock = new ItemSearchReadModelConversionServiceMock(MockBehavior.Strict);
-            ItemTypeFactoryMock = new ItemTypeFactoryMock(MockBehavior.Strict);
-            AvailabilityConversionServiceMock = new(MockBehavior.Strict);
-            ValidatorMock = new ValidatorMock(MockBehavior.Strict);
         }
 
         public ItemSearchService CreateSut()

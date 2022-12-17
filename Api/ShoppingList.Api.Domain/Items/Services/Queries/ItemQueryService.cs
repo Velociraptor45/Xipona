@@ -26,7 +26,7 @@ public class ItemQueryService : IItemQueryService
     {
         _cancellationToken.ThrowIfCancellationRequested();
 
-        var item = await _itemRepository.FindByAsync(itemId, _cancellationToken);
+        var item = await _itemRepository.FindActiveByAsync(itemId, _cancellationToken);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(itemId));
 
