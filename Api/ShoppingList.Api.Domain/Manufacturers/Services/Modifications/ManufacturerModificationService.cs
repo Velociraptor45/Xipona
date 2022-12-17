@@ -19,7 +19,7 @@ public class ManufacturerModificationService : IManufacturerModificationService
 
     public async Task ModifyAsync(ManufacturerModification modification)
     {
-        var manufacturer = await _manufacturerRepository.FindByAsync(modification.Id, _cancellationToken);
+        var manufacturer = await _manufacturerRepository.FindActiveByAsync(modification.Id, _cancellationToken);
         if (manufacturer is null)
             throw new DomainException(new ManufacturerNotFoundReason(modification.Id));
 

@@ -1,8 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Deletions;
 
@@ -24,9 +22,9 @@ public class ManufacturerDeletionService : IManufacturerDeletionService
 
     public async Task DeleteAsync(ManufacturerId manufacturerId)
     {
-        var manufacturer = await _manufacturerRepository.FindByAsync(manufacturerId, _cancellationToken);
+        var manufacturer = await _manufacturerRepository.FindActiveByAsync(manufacturerId, _cancellationToken);
         if (manufacturer == null)
-            throw new DomainException(new ManufacturerNotFoundReason(manufacturerId));
+            return;
 
         var items = await _itemRepository.FindByAsync(manufacturerId, _cancellationToken);
 

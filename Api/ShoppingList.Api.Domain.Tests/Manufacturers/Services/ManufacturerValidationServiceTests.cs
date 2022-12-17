@@ -85,13 +85,13 @@ public class ManufacturerValidationServiceTests
         public void SetupFindingManufacturer()
         {
             TestPropertyNotSetException.ThrowIfNull(Manufacturer);
-            ManufacturerRepositoryMock.SetupFindByAsync(Manufacturer.Id, Manufacturer);
+            ManufacturerRepositoryMock.SetupFindActiveByAsync(Manufacturer.Id, Manufacturer);
         }
 
         public void SetupFindingNoManufacturer()
         {
             TestPropertyNotSetException.ThrowIfNull(Manufacturer);
-            ManufacturerRepositoryMock.SetupFindByAsync(Manufacturer.Id, null);
+            ManufacturerRepositoryMock.SetupFindActiveByAsync(Manufacturer.Id, null);
         }
 
         #endregion Mock Setup

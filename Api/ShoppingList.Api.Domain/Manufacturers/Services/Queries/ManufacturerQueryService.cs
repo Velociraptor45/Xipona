@@ -21,7 +21,7 @@ public class ManufacturerQueryService : IManufacturerQueryService
 
     public async Task<IEnumerable<ManufacturerReadModel>> GetAllActiveAsync()
     {
-        var manufacturers = await _manufacturerRepository.FindByAsync(false, _cancellationToken);
+        var manufacturers = await _manufacturerRepository.FindActiveByAsync(_cancellationToken);
 
         return manufacturers.Select(m => new ManufacturerReadModel(m));
     }
@@ -42,7 +42,7 @@ public class ManufacturerQueryService : IManufacturerQueryService
 
     public async Task<IManufacturer> GetAsync(ManufacturerId manufacturerId)
     {
-        var manufacturer = await _manufacturerRepository.FindByAsync(manufacturerId, _cancellationToken);
+        var manufacturer = await _manufacturerRepository.FindActiveByAsync(manufacturerId, _cancellationToken);
 
         if (manufacturer is null)
             throw new DomainException(new ManufacturerNotFoundReason(manufacturerId));

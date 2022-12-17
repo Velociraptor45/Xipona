@@ -37,8 +37,7 @@ public class ManufacturerRepository : IManufacturerRepository
         return _toModelConverter.ToDomain(manufacturerEntities);
     }
 
-    public async Task<IManufacturer?> FindByAsync(ManufacturerId id,
-        CancellationToken cancellationToken)
+    public async Task<IManufacturer?> FindByAsync(ManufacturerId id, CancellationToken cancellationToken)
     {
         var entity = await _dbContext.Manufacturers.AsNoTracking()
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
@@ -67,16 +66,28 @@ public class ManufacturerRepository : IManufacturerRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IManufacturer>> FindByAsync(bool includeDeleted,
-        CancellationToken cancellationToken)
+    public async Task<IEnumerable<IManufacturer>> FindActiveByAsync(CancellationToken cancellationToken)
     {
         var entities = await _dbContext.Manufacturers.AsNoTracking()
-            .Where(m => !m.Deleted || includeDeleted)
+            .Where(m => !m.Deleted)
             .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
         return _toModelConverter.ToDomain(entities);
+    }
+
+    public async Task<IManufacturer?> FindActiveByAsync(ManufacturerId id, CancellationToken cancellationToken)
+    {
+        var entity = await _dbContext.Manufacturers.AsNoTracking()
+            .FirstOrDefaultAsync(m => !m.Deleted && m.Id == id, cancellationToken);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (entity == null)
+            return null;
+
+        return _toModelConverter.ToDomain(entity);
     }
 
     public async Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken)

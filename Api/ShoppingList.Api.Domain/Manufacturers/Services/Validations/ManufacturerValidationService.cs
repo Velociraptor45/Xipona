@@ -17,7 +17,7 @@ public class ManufacturerValidationService : IManufacturerValidationService
     public async Task ValidateAsync(ManufacturerId manufacturerId, CancellationToken cancellationToken)
     {
         IManufacturer? manufacturer = await _manufacturerRepository
-            .FindByAsync(manufacturerId, cancellationToken);
+            .FindActiveByAsync(manufacturerId, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
