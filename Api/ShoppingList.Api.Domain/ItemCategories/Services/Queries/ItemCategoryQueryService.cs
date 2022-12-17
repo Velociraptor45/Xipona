@@ -33,7 +33,7 @@ public class ItemCategoryQueryService : IItemCategoryQueryService
 
     public async Task<IItemCategory> GetAsync(ItemCategoryId itemCategoryId)
     {
-        var itemCategory = await _itemCategoryRepository.FindByAsync(itemCategoryId, _cancellationToken);
+        var itemCategory = await _itemCategoryRepository.FindActiveByAsync(itemCategoryId, _cancellationToken);
         if (itemCategory is null)
             throw new DomainException(new ItemCategoryNotFoundReason(itemCategoryId));
 

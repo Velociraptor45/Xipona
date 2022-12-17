@@ -77,6 +77,20 @@ public class ItemCategoryRepository : IItemCategoryRepository
         return _toModelConverter.ToDomain(entities);
     }
 
+    public async Task<IItemCategory?> FindActiveByAsync(ItemCategoryId id, CancellationToken cancellationToken)
+    {
+        var entity = await _dbContext.ItemCategories
+            .AsNoTracking()
+            .FirstOrDefaultAsync(category => !category.Deleted && category.Id == id, cancellationToken);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (entity == null)
+            return null;
+
+        return _toModelConverter.ToDomain(entity);
+    }
+
     public async Task<IItemCategory> StoreAsync(IItemCategory model, CancellationToken cancellationToken)
     {
         var convertedEntity = _toEntityConverter.ToEntity(model);

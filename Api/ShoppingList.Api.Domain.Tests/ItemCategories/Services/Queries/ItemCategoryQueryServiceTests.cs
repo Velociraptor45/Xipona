@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAsse
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+
 using DomainModels = ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Services.Queries;
@@ -26,7 +27,7 @@ public class ItemCategoryQueryServiceTests
             // Arrange
             _fixture.SetupItemCategoryId();
             _fixture.SetupExpectedResult();
-            _fixture.SetupFindingItemCategory();
+            _fixture.SetupFindingActiveItemCategory();
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCategoryId);
@@ -71,19 +72,19 @@ public class ItemCategoryQueryServiceTests
                 ExpectedResult = new ItemCategoryBuilder().Create();
             }
 
-            public void SetupFindingItemCategory()
+            public void SetupFindingActiveItemCategory()
             {
                 TestPropertyNotSetException.ThrowIfNull(ItemCategoryId);
                 TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
 
-                SetupFindingItemCategory(ItemCategoryId.Value, ExpectedResult);
+                SetupFindingActiveItemCategory(ItemCategoryId.Value, ExpectedResult);
             }
 
             public void SetupNotFindingItemCategory()
             {
                 TestPropertyNotSetException.ThrowIfNull(ItemCategoryId);
 
-                SetupNotFindingItemCategory(ItemCategoryId.Value);
+                SetupNotFindingActiveItemCategory(ItemCategoryId.Value);
             }
         }
     }
@@ -97,14 +98,14 @@ public class ItemCategoryQueryServiceTests
             return new ItemCategoryQueryService(_itemCategoryRepositoryMock.Object, default);
         }
 
-        public void SetupFindingItemCategory(ItemCategoryId itemCategoryId, IItemCategory itemCategory)
+        public void SetupFindingActiveItemCategory(ItemCategoryId itemCategoryId, IItemCategory itemCategory)
         {
-            _itemCategoryRepositoryMock.SetupFindByAsync(itemCategoryId, itemCategory);
+            _itemCategoryRepositoryMock.SetupFindActiveByAsync(itemCategoryId, itemCategory);
         }
 
-        public void SetupNotFindingItemCategory(ItemCategoryId itemCategoryId)
+        public void SetupNotFindingActiveItemCategory(ItemCategoryId itemCategoryId)
         {
-            _itemCategoryRepositoryMock.SetupFindByAsync(itemCategoryId, null);
+            _itemCategoryRepositoryMock.SetupFindActiveByAsync(itemCategoryId, null);
         }
     }
 }

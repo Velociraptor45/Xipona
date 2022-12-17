@@ -18,7 +18,7 @@ public class ItemCategoryModificationService : IItemCategoryModificationService
 
     public async Task ModifyAsync(ItemCategoryModification modification)
     {
-        var itemCategory = await _itemCategoryRepository.FindByAsync(modification.Id, _cancellationToken);
+        var itemCategory = await _itemCategoryRepository.FindActiveByAsync(modification.Id, _cancellationToken);
         if (itemCategory is null)
             throw new DomainException(new ItemCategoryNotFoundReason(modification.Id));
 

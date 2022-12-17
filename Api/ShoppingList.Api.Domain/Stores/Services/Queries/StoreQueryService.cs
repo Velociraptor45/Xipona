@@ -22,13 +22,13 @@ public class StoreQueryService : IStoreQueryService
 
     public async Task<IEnumerable<StoreReadModel>> GetActiveAsync()
     {
-        var activeStores = (await _storeRepository.GetAsync(_cancellationToken)).ToList();
+        var activeStores = (await _storeRepository.GetActiveAsync(_cancellationToken)).ToList();
         var itemCountPerStoreDict = new Dictionary<StoreId, int>();
 
         foreach (var store in activeStores)
         {
             var storeId = new StoreId(store.Id);
-            var items = (await _itemRepository.FindByAsync(storeId, _cancellationToken)).ToList();
+            var items = (await _itemRepository.FindActiveByAsync(storeId, _cancellationToken)).ToList();
 
             itemCountPerStoreDict.Add(storeId, items.Count);
         }

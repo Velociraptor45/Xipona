@@ -485,7 +485,7 @@ public class StoreControllerIntegrationTests
 
             using (await CreateTransactionAsync(scope))
             {
-                return (await repo.GetAsync(default)).ToList();
+                return (await repo.GetActiveAsync(default)).ToList();
             }
         }
 

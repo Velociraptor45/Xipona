@@ -53,7 +53,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
                 throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
 
             var temporaryId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
-            var item = await _itemRepository.FindByAsync(temporaryId, _cancellationToken);
+            var item = await _itemRepository.FindActiveByAsync(temporaryId, _cancellationToken);
 
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryId));
@@ -96,7 +96,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
         {
             ItemId itemId = new ItemId(offlineTolerantItemId.ActualId!.Value);
 
-            item = await _itemRepository.FindByAsync(itemId, _cancellationToken);
+            item = await _itemRepository.FindActiveByAsync(itemId, _cancellationToken);
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(itemId));
         }
@@ -107,7 +107,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
             TemporaryItemId itemId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
 
-            item = await _itemRepository.FindByAsync(itemId, _cancellationToken);
+            item = await _itemRepository.FindActiveByAsync(itemId, _cancellationToken);
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(itemId));
         }
@@ -144,7 +144,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
                 throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
 
             var temporaryId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
-            IItem? item = await _itemRepository.FindByAsync(temporaryId, _cancellationToken);
+            IItem? item = await _itemRepository.FindActiveByAsync(temporaryId, _cancellationToken);
 
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryId));
@@ -175,7 +175,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
                 throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
 
             var temporaryId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
-            IItem? item = await _itemRepository.FindByAsync(temporaryId, _cancellationToken);
+            IItem? item = await _itemRepository.FindActiveByAsync(temporaryId, _cancellationToken);
 
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryId));

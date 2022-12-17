@@ -204,13 +204,13 @@ public class TemporaryItemServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(PermanentItem);
                 TestPropertyNotSetException.ThrowIfNull(ItemMock);
-                ItemRepositoryMock.SetupFindByAsync(PermanentItem.Id, ItemMock.Object);
+                ItemRepositoryMock.SetupFindActiveByAsync(PermanentItem.Id, ItemMock.Object);
             }
 
             public void SetupNotFindingItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(PermanentItem);
-                ItemRepositoryMock.SetupFindByAsync(PermanentItem.Id, null);
+                ItemRepositoryMock.SetupFindActiveByAsync(PermanentItem.Id, null);
             }
 
             #region Verify

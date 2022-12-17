@@ -191,7 +191,7 @@ public class ItemSearchService : IItemSearchService
             .ToList();
 
         var itemIds = itemTypeIdGroups.Select(group => group.Key);
-        var itemsDict = (await _itemRepository.FindByAsync(itemIds, _cancellationToken))
+        var itemsDict = (await _itemRepository.FindActiveByAsync(itemIds, _cancellationToken))
             .ToDictionary(i => i.Id);
 
         var result = new List<ItemWithMatchingItemTypeIds>();
@@ -218,7 +218,7 @@ public class ItemSearchService : IItemSearchService
 
     private async Task<IStore> LoadStoreAsync(StoreId storeId)
     {
-        var store = await _storeRepository.FindByAsync(storeId, _cancellationToken);
+        var store = await _storeRepository.FindActiveByAsync(storeId, _cancellationToken);
         if (store == null)
             throw new DomainException(new StoreNotFoundReason(storeId));
 

@@ -32,48 +32,6 @@ public class ItemRepository : IItemRepository
 
     #region public methods
 
-    public async Task<IItem?> FindByAsync(ItemId itemId, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var itemEntity = await GetItemQuery()
-            .FirstOrDefaultAsync(item => item.Id == itemId, cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (itemEntity == null)
-            return null;
-
-        return _toModelConverter.ToDomain(itemEntity);
-    }
-
-    public async Task<IItem?> FindByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var itemEntity = await GetItemQuery()
-            .FirstOrDefaultAsync(item => item.CreatedFrom.HasValue && item.CreatedFrom == temporaryItemId,
-                cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (itemEntity == null)
-            return null;
-
-        return _toModelConverter.ToDomain(itemEntity);
-    }
-
-    public async Task<IEnumerable<IItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken)
-    {
-        var entities = await GetItemQuery()
-            .Where(item => item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId) != null)
-            .ToListAsync(cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        return _toModelConverter.ToDomain(entities);
-    }
-
     public async Task<IEnumerable<IItem>> FindByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken)
     {
         var idList = itemIds.Select(id => id.Value).ToList();
@@ -111,6 +69,7 @@ public class ItemRepository : IItemRepository
         var result = await GetItemQuery()
             .Where(item =>
                 !item.IsTemporary
+                && !item.Deleted
                 && itemCategoryIdLists.Contains(item.ItemCategoryId!.Value)
                 && ((!item.ManufacturerId.HasValue && !manufacturerIdLists.Any())
                     || manufacturerIdLists.Contains(item.ManufacturerId!.Value)))
@@ -144,6 +103,34 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
+    {
+        var entities = await GetItemQuery()
+            .Where(item => !item.Deleted && item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId) != null)
+            .ToListAsync(cancellationToken);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return _toModelConverter.ToDomain(entities);
+    }
+
+    public async Task<IItem?> FindActiveByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var itemEntity = await GetItemQuery()
+            .FirstOrDefaultAsync(item => 
+                    !item.Deleted && item.CreatedFrom.HasValue && item.CreatedFrom == temporaryItemId,
+                cancellationToken);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (itemEntity == null)
+            return null;
+
+        return _toModelConverter.ToDomain(itemEntity);
+    }
+
     public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, CancellationToken cancellationToken)
     {
         var entities = await GetItemQuery()
@@ -170,6 +157,19 @@ public class ItemRepository : IItemRepository
         cancellationToken.ThrowIfCancellationRequested();
 
         return _toModelConverter.ToDomain(entities);
+    }
+
+    public async Task<IItem?> FindActiveByAsync(ItemId itemId, CancellationToken cancellationToken)
+    {
+        var itemEntity = await GetItemQuery()
+            .FirstOrDefaultAsync(item => !item.Deleted && item.Id == itemId, cancellationToken);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (itemEntity == null)
+            return null;
+
+        return _toModelConverter.ToDomain(itemEntity);
     }
 
     public async Task<IItem?> FindActiveByAsync(ItemId itemId, ItemTypeId? itemTypeId,

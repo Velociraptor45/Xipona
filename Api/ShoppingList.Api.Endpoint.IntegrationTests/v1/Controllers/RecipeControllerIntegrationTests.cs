@@ -462,7 +462,7 @@ public class RecipeControllerIntegrationTests
                     .Create();
 
                 _itemCategories = ingredients
-                        .Select(i => new ItemCategoryEntityBuilder().WithId(i.ItemCategoryId).Create())
+                        .Select(i => new ItemCategoryEntityBuilder().WithDeleted(false).WithId(i.ItemCategoryId).Create())
                         .ToList();
 
                 _items = ingredients

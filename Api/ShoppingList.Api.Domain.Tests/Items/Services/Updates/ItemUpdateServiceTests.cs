@@ -597,7 +597,7 @@ public class ItemUpdateServiceTests
 
         protected void SetupFindingItem(ItemId itemId, IItem? item)
         {
-            _itemRepositoryMock.SetupFindByAsync(itemId, item);
+            _itemRepositoryMock.SetupFindActiveByAsync(itemId, item);
         }
 
         protected void SetupStoringItem(IItem item, IItem returnedItem)

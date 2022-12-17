@@ -173,14 +173,14 @@ public class AvailabilityValidationServiceTests
         {
             TestPropertyNotSetException.ThrowIfNull(Availabilities);
             var storeIds = Availabilities.Select(av => av.StoreId);
-            _storeRepositoryMock.SetupFindByAsync(storeIds, true, _stores);
+            _storeRepositoryMock.SetupFindActiveByAsync(storeIds,  _stores);
         }
 
         public void SetupFindingNoStores()
         {
             TestPropertyNotSetException.ThrowIfNull(Availabilities);
             var storeIds = Availabilities.Select(av => av.StoreId);
-            _storeRepositoryMock.SetupFindByAsync(storeIds, true, Enumerable.Empty<IStore>());
+            _storeRepositoryMock.SetupFindActiveByAsync(storeIds, Enumerable.Empty<IStore>());
         }
 
         #endregion Mock Setup

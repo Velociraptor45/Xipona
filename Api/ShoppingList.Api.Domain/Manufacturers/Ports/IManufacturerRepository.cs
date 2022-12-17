@@ -11,7 +11,9 @@ public interface IManufacturerRepository
 
     Task<IEnumerable<IManufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids, CancellationToken cancellationToken);
 
-    Task<IEnumerable<IManufacturer>> FindByAsync(bool includeDeleted, CancellationToken cancellationToken);
+    Task<IEnumerable<IManufacturer>> FindActiveByAsync(CancellationToken cancellationToken);
+
+    Task<IManufacturer?> FindActiveByAsync(ManufacturerId id, CancellationToken cancellationToken);
 
     Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken);
 }

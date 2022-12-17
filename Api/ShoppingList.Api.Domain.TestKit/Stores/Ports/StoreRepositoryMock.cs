@@ -11,7 +11,7 @@ public class StoreRepositoryMock : Mock<IStoreRepository>
 
     public void SetupGetAsync(IEnumerable<IStore> returnValue)
     {
-        Setup(i => i.GetAsync(
+        Setup(i => i.GetActiveAsync(
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);
     }
@@ -24,11 +24,10 @@ public class StoreRepositoryMock : Mock<IStoreRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindByAsync(IEnumerable<StoreId> storeIds, bool onlyActives, IEnumerable<IStore> returnValue)
+    public void SetupFindActiveByAsync(IEnumerable<StoreId> storeIds, IEnumerable<IStore> returnValue)
     {
-        Setup(i => i.FindByAsync(
+        Setup(i => i.FindActiveByAsync(
                 It.Is<IEnumerable<StoreId>>(ids => ids.SequenceEqual(storeIds)),
-                onlyActives,
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);
     }

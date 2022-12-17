@@ -34,7 +34,7 @@ public class ItemModificationService : IItemModificationService
 
     public async Task ModifyItemWithTypesAsync(ItemWithTypesModification modification)
     {
-        var item = await _itemRepository.FindByAsync(modification.Id, _cancellationToken);
+        var item = await _itemRepository.FindActiveByAsync(modification.Id, _cancellationToken);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(modification.Id));
         if (!item.HasItemTypes)
@@ -70,7 +70,7 @@ public class ItemModificationService : IItemModificationService
 
     public async Task Modify(ItemModification modification)
     {
-        var item = await _itemRepository.FindByAsync(modification.Id, _cancellationToken);
+        var item = await _itemRepository.FindActiveByAsync(modification.Id, _cancellationToken);
 
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(modification.Id));
