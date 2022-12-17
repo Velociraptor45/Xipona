@@ -13,7 +13,7 @@ public class ItemCategory : IItemCategory
 
     public ItemCategoryId Id { get; }
     public ItemCategoryName Name { get; private set; }
-    public bool IsDeleted { get; set; }
+    public bool IsDeleted { get; private set; }
 
     public void Delete()
     {

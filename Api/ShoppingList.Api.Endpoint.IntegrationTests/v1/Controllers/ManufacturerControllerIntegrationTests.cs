@@ -89,7 +89,7 @@ public class ManufacturerControllerIntegrationTests
         }
 
         [Fact]
-        public async Task DeleteManufacturerAsync_WithManufacturerNotExisting_ShouldReturnNotFound()
+        public async Task DeleteManufacturerAsync_WithManufacturerNotExisting_ShouldReturnOk()
         {
             // Arrange
             _fixture.SetupManufacturerId();
@@ -101,9 +101,7 @@ public class ManufacturerControllerIntegrationTests
             var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
 
             // Assert
-            response.Should().BeOfType<NotFoundObjectResult>();
-            var notFoundResult = response as NotFoundObjectResult;
-            notFoundResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedNotFoundContract);
+            response.Should().BeOfType<OkResult>();
         }
 
         private class DeleteManufacturerAsyncFixture : ManufacturerControllerFixture

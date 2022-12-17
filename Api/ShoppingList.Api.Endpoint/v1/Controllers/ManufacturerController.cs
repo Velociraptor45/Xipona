@@ -168,9 +168,6 @@ public class ManufacturerController : ControllerBase
         {
             var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
 
-            if (e.Reason.ErrorCode == ErrorReasonCode.ManufacturerNotFound)
-                return NotFound(errorContract);
-
             return UnprocessableEntity(errorContract);
         }
 
