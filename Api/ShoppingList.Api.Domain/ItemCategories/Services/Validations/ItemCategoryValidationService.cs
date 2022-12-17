@@ -17,7 +17,7 @@ public class ItemCategoryValidationService : IItemCategoryValidationService
     public async Task ValidateAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken)
     {
         IItemCategory? itemCategory = await _itemCategoryRepository
-            .FindByAsync(itemCategoryId, cancellationToken);
+            .FindActiveByAsync(itemCategoryId, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 

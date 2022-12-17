@@ -25,6 +25,14 @@ public class ItemCategoryRepositoryMock : Mock<IItemCategoryRepository>
             .ReturnsAsync(returnValue);
     }
 
+    public void SetupFindActiveByAsync(ItemCategoryId itemCategoryId, IItemCategory? returnValue)
+    {
+        Setup(i => i.FindActiveByAsync(
+                itemCategoryId,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(returnValue);
+    }
+
     public void VerifyStoreAsyncOnce(IItemCategory itemCategory)
     {
         Verify(i => i.StoreAsync(

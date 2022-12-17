@@ -1,7 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 
@@ -28,9 +26,9 @@ public class ItemCategoryDeletionService : IItemCategoryDeletionService
 
     public async Task DeleteAsync(ItemCategoryId itemCategoryId)
     {
-        var category = await _itemCategoryRepository.FindByAsync(itemCategoryId, _cancellationToken);
+        var category = await _itemCategoryRepository.FindActiveByAsync(itemCategoryId, _cancellationToken);
         if (category == null)
-            throw new DomainException(new ItemCategoryNotFoundReason(itemCategoryId));
+            return;
 
         category.Delete();
 

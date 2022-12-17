@@ -81,13 +81,13 @@ public class ItemCategoryValidationServiceTests
         public void SetupFindingItemCategory()
         {
             TestPropertyNotSetException.ThrowIfNull(ItemCategory);
-            ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategory.Id, ItemCategory);
+            ItemCategoryRepositoryMock.SetupFindActiveByAsync(ItemCategory.Id, ItemCategory);
         }
 
         public void SetupFindingNoItemCategory()
         {
             TestPropertyNotSetException.ThrowIfNull(ItemCategory);
-            ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategory.Id, null);
+            ItemCategoryRepositoryMock.SetupFindActiveByAsync(ItemCategory.Id, null);
         }
     }
 }
