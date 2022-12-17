@@ -370,7 +370,7 @@ public class ItemReadModelConversionServiceTests
         public void SetupFindingStore()
         {
             TestPropertyNotSetException.ThrowIfNull(_store);
-            _storeRepositoryMock.SetupFindByAsync(_store.Id.ToMonoList(), true, _store.ToMonoList());
+            _storeRepositoryMock.SetupFindActiveByAsync(_store.Id.ToMonoList(), _store.ToMonoList());
         }
 
         #endregion Mock Setup

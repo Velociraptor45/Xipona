@@ -164,12 +164,12 @@ public class StoreModificationServiceTests
 
         protected void SetupFindingStore(StoreId storeId, IStore store)
         {
-            _storeRepositoryMock.SetupFindByAsync(storeId, store);
+            _storeRepositoryMock.SetupFindActiveByAsync(storeId, store);
         }
 
         protected void SetupNotFindingStore(StoreId storeId)
         {
-            _storeRepositoryMock.SetupFindByAsync(storeId, null);
+            _storeRepositoryMock.SetupFindActiveByAsync(storeId, null);
         }
 
         protected void SetupStoringStore(IStore store, IStore returnValue)

@@ -1047,13 +1047,13 @@ public class AddItemToShoppingListServiceTests
         public void SetupFindingStore()
         {
             TestPropertyNotSetException.ThrowIfNull(_store);
-            _storeRepositoryMock.SetupFindByAsync(_store.Id, _store);
+            _storeRepositoryMock.SetupFindActiveByAsync(_store.Id, _store);
         }
 
         public void SetupNotFindingStore()
         {
             TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
-            _storeRepositoryMock.SetupFindByAsync(ShoppingListMock.Object.StoreId, null);
+            _storeRepositoryMock.SetupFindActiveByAsync(ShoppingListMock.Object.StoreId, null);
         }
 
         public void SetupStoringShoppingList()

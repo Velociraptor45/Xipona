@@ -24,7 +24,7 @@ public class AvailabilityValidationService : IAvailabilityValidationService
         if (!storeIds.SequenceEqual(storeIds.Distinct()))
             throw new DomainException(new MultipleAvailabilitiesForStoreReason());
 
-        var storesDict = (await _storeRepository.FindByAsync(storeIds, true, cancellationToken))
+        var storesDict = (await _storeRepository.FindActiveByAsync(storeIds, cancellationToken))
             .ToDictionary(s => s.Id);
 
         foreach (var availability in availabilitiesList)

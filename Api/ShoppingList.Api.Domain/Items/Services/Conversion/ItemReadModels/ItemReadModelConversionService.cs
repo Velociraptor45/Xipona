@@ -49,7 +49,7 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
 
         var storeIds = item.Availabilities.Select(av => av.StoreId).ToList();
         storeIds.AddRange(item.ItemTypes.SelectMany(t => t.Availabilities.Select(av => av.StoreId)));
-        var storeDict = (await _storeRepository.FindByAsync(storeIds, true, cancellationToken))
+        var storeDict = (await _storeRepository.FindActiveByAsync(storeIds, cancellationToken))
             .ToDictionary(store => store.Id);
 
         return ToReadModel(item, itemCategory, manufacturer, storeDict);

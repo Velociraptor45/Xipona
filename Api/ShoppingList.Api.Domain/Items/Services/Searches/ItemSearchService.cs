@@ -218,7 +218,7 @@ public class ItemSearchService : IItemSearchService
 
     private async Task<IStore> LoadStoreAsync(StoreId storeId)
     {
-        var store = await _storeRepository.FindByAsync(storeId, _cancellationToken);
+        var store = await _storeRepository.FindActiveByAsync(storeId, _cancellationToken);
         if (store == null)
             throw new DomainException(new StoreNotFoundReason(storeId));
 

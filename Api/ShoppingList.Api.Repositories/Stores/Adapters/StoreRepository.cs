@@ -21,7 +21,19 @@ public class StoreRepository : IStoreRepository
         _toEntityConverter = toEntityConverter;
     }
 
-    public async Task<IEnumerable<IStore>> GetAsync(CancellationToken cancellationToken)
+    public async Task<IStore?> FindByAsync(StoreId id, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var entity = await GetStoreQuery()
+            .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return entity == null ? null : _toDomainConverter.ToDomain(entity);
+    }
+
+    public async Task<IEnumerable<IStore>> GetActiveAsync(CancellationToken cancellationToken)
     {
         var storeEntities = await GetStoreQuery()
             .Where(store => !store.Deleted)
@@ -67,33 +79,12 @@ public class StoreRepository : IStoreRepository
     public async Task<IEnumerable<IStore>> FindActiveByAsync(IEnumerable<StoreId> ids,
         CancellationToken cancellationToken)
     {
-        return await FindByAsync(ids, true, cancellationToken);
-    }
-
-    public async Task<IStore?> FindByAsync(StoreId id, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var entity = await GetStoreQuery()
-            .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        return entity == null ? null : _toDomainConverter.ToDomain(entity);
-    }
-
-    public async Task<IEnumerable<IStore>> FindByAsync(IEnumerable<StoreId> ids, bool onlyActives,
-        CancellationToken cancellationToken)
-    {
         cancellationToken.ThrowIfCancellationRequested();
 
         var idsList = ids.Select(id => id.Value).ToList();
 
         var query = GetStoreQuery()
-            .Where(store => idsList.Contains(store.Id));
-
-        if (onlyActives)
-            query = query.Where(s => !s.Deleted);
+            .Where(store => !store.Deleted && idsList.Contains(store.Id));
 
         var entities = await query.ToListAsync(cancellationToken);
 

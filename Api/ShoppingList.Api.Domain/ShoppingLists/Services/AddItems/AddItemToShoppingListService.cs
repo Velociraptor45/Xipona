@@ -176,7 +176,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     internal async Task AddItemToShoppingListAsync(IShoppingList shoppingList, IShoppingListItem item,
         SectionId sectionId, CancellationToken cancellationToken)
     {
-        var store = await _storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
+        var store = await _storeRepository.FindActiveByAsync(shoppingList.StoreId, cancellationToken);
         if (store == null)
             throw new DomainException(new StoreNotFoundReason(shoppingList.StoreId));
 

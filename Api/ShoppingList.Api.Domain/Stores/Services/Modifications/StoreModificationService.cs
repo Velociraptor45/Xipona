@@ -27,7 +27,7 @@ public class StoreModificationService : IStoreModificationService
 
     public async Task ModifyAsync(StoreModification update)
     {
-        var store = await _storeRepository.FindByAsync(update.Id, _cancellationToken);
+        var store = await _storeRepository.FindActiveByAsync(update.Id, _cancellationToken);
         if (store == null)
             throw new DomainException(new StoreNotFoundReason(update.Id));
 

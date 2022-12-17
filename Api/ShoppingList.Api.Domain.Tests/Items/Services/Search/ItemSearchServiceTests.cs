@@ -582,12 +582,12 @@ public class ItemSearchServiceTests
             public void SetupFindingStore()
             {
                 _store = StoreMother.Sections(1).WithId(StoreId).Create();
-                StoreRepositoryMock.SetupFindByAsync(StoreId, _store);
+                StoreRepositoryMock.SetupFindActiveByAsync(StoreId, _store);
             }
 
             public void SetupNotFindingStore()
             {
-                StoreRepositoryMock.SetupFindByAsync(StoreId, null);
+                StoreRepositoryMock.SetupFindActiveByAsync(StoreId, null);
             }
 
             public void SetupFindingNoItemTypeMapping()
