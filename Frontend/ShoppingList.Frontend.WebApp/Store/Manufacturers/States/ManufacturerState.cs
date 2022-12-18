@@ -5,8 +5,8 @@ using System.Collections.Generic;
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Store.Manufacturers.States;
 
 public record ManufacturerState(
-    bool IsLoadingSearchResults,
-    IList<ManufacturerSearchResult> SearchResults);
+    ManufacturerSearch Search,
+    ManufacturerEditor Editor);
 
 public class ManufacturerFeatureState : Feature<ManufacturerState>
 {
@@ -17,6 +17,14 @@ public class ManufacturerFeatureState : Feature<ManufacturerState>
 
     protected override ManufacturerState GetInitialState()
     {
-        return new ManufacturerState(false, new List<ManufacturerSearchResult>());
+        return new ManufacturerState(
+            new ManufacturerSearch(
+                false,
+                new List<ManufacturerSearchResult>()),
+            new ManufacturerEditor(
+                null,
+                false,
+                false,
+                false));
     }
 }

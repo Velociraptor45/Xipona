@@ -3,6 +3,7 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
 @using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Store.Recipes.Actions
 
 @inject NavigationManager _navigationManager;
 @inject RecipesState _state;
@@ -26,7 +27,7 @@
     <div>
         @foreach (var searchResult in _state.SearchResults)
         {
-            <SearchResult Model="searchResult" RedirectPageName="recipes"></SearchResult>
+            <SearchResult Model="searchResult" TAction="EditRecipeAction"></SearchResult>
         }
     </div>
 </div>

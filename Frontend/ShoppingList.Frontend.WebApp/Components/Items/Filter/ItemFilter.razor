@@ -3,6 +3,7 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Store.Items.Actions
 
 @inject NavigationManager NavigationManager;
 
@@ -26,7 +27,7 @@
     <!-- result item list -->
     @foreach (var item in State.Items.ToList())
     {
-        <SearchResult Model="item" RedirectPageName="items"></SearchResult>
+        <SearchResult Model="item" TAction="EditItemAction"></SearchResult>
     }
 </div>
 
