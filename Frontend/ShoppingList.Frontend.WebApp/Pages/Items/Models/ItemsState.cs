@@ -6,19 +6,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using StoreModels = ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
 {
     public class ItemsState
     {
-        private List<Store> _stores = new();
+        private List<StoreModels.Store> _stores = new();
         private List<ItemCategory> _itemCategories;
         private List<Manufacturer> _manufacturers;
         private List<SearchItemResult> _items = new();
         private List<QuantityType> _quantityTypes;
         private List<QuantityTypeInPacket> _quantityTypesInPacket;
 
-        public IReadOnlyCollection<Store> Stores => _stores.AsReadOnly();
+        public IReadOnlyCollection<StoreModels.Store> Stores => _stores.AsReadOnly();
         public IReadOnlyCollection<ItemCategory> ItemCategories => _itemCategories.AsReadOnly();
         public IReadOnlyCollection<Manufacturer> Manufacturers => _manufacturers.AsReadOnly();
         public IReadOnlyCollection<SearchItemResult> Items => _items.AsReadOnly();
@@ -31,7 +32,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
         public Action StateChanged { get; set; }
         public Item EditedItem { get; private set; }
 
-        public void Initialize(IEnumerable<Store> stores, IEnumerable<ItemCategory> itemCategories,
+        public void Initialize(IEnumerable<StoreModels.Store> stores, IEnumerable<ItemCategory> itemCategories,
             IEnumerable<Manufacturer> manufacturers, IEnumerable<QuantityType> quantityTypes,
             IEnumerable<QuantityTypeInPacket> quantityTypesInPacket)
         {
@@ -53,7 +54,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
             StateChanged?.Invoke();
         }
 
-        public Store GetStore(Guid id)
+        public StoreModels.Store GetStore(Guid id)
         {
             return Stores.FirstOrDefault(s => s.Id == id);
         }

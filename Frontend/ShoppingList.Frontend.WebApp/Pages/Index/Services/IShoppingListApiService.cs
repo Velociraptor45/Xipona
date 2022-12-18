@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using StoreModels = ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 {
@@ -28,7 +29,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             Action<ShoppingListRoot> onSuccessAction);
 
         Task LoadAllActiveStoresAsync(IAsyncRetryFragmentCreator fragmentCreator,
-            Func<IEnumerable<Store>, Task> onSuccessAction);
+            Func<IEnumerable<StoreModels.Store>, Task> onSuccessAction);
 
         Task<IEnumerable<SearchItemForShoppingListResult>> LoadItemSearchResultAsync(string input, Guid storeId,
             IAsyncRetryFragmentCreator fragmentCreator, CancellationToken cancellationToken);

@@ -8,6 +8,7 @@ using RestEase;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using StoreModels = ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
 {
@@ -22,7 +23,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
             _notificationService = notificationService;
         }
 
-        public async Task SaveStoreAsync(Store store, IAsyncRetryFragmentCreator fragmentCreator,
+        public async Task SaveStoreAsync(StoreModels.Store store, IAsyncRetryFragmentCreator fragmentCreator,
             Func<Task> onSuccessAction)
         {
             var request = new ModifyStoreRequest(Guid.NewGuid(), store.Id, store.Name, store.Sections);
@@ -42,7 +43,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
             await onSuccessAction();
         }
 
-        public async Task CreateStoreAsync(Store store, IAsyncRetryFragmentCreator fragmentCreator,
+        public async Task CreateStoreAsync(StoreModels.Store store, IAsyncRetryFragmentCreator fragmentCreator,
             Func<Task> onSuccessAction)
         {
             var request = new CreateStoreRequest(Guid.NewGuid(), store);
@@ -63,9 +64,9 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
         }
 
         public async Task LoadStores(IAsyncRetryFragmentCreator fragmentCreator,
-            Action<IEnumerable<Store>> onSuccessAction)
+            Action<IEnumerable<StoreModels.Store>> onSuccessAction)
         {
-            IEnumerable<Store> stores;
+            IEnumerable<StoreModels.Store> stores;
 
             try
             {

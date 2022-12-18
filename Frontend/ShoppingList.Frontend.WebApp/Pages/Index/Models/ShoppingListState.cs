@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
+using StoreModels = ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
 {
@@ -15,7 +16,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
         public AvailableStores AvailableStores { get; private set; }
         public bool ItemsInBasketVisible { get; private set; }
         public bool ItemsInEditMode { get; private set; }
-        public Store SelectedStore => AvailableStores?.SelectedStore;
+        public StoreModels.Store SelectedStore => AvailableStores?.SelectedStore;
 
         public SearchBar SearchBar { get; } = new();
 

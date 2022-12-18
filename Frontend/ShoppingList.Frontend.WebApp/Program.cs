@@ -1,3 +1,4 @@
+using Fluxor;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,7 @@ using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using System;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp
@@ -82,6 +84,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddTransient<IRecipesApiService, RecipesApiService>();
 
             builder.Services.AddInfrastructure();
+
+            builder.Services.AddFluxor(config =>
+            {
+                config
+                    .ScanAssemblies(Assembly.GetExecutingAssembly())
+                    .UseReduxDevTools(); //todo change only to dev
+            });
         }
     }
 }

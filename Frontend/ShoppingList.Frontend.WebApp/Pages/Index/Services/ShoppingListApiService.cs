@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using StoreModels = ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 {
@@ -273,9 +274,9 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         }
 
         public async Task LoadAllActiveStoresAsync(IAsyncRetryFragmentCreator fragmentCreator,
-            Func<IEnumerable<Store>, Task> onSuccessAction)
+            Func<IEnumerable<StoreModels.Store>, Task> onSuccessAction)
         {
-            IEnumerable<Store> result;
+            IEnumerable<StoreModels.Store> result;
 
             try
             {
