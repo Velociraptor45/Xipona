@@ -53,6 +53,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using SharedStates = ShoppingList.Frontend.Redux.Shared.States;
+
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 {
     public class ApiClient : IApiClient
@@ -251,20 +253,20 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return _converters.ToDomain<ItemContract, Item>(result);
         }
 
-        public async Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync()
+        public async Task<IEnumerable<SharedStates.QuantityType>> GetAllQuantityTypesAsync()
         {
             var result = await _client.GetAllQuantityTypesAsync();
             return result is null ?
-                Enumerable.Empty<QuantityType>() :
-                result.Select(_converters.ToDomain<QuantityTypeContract, QuantityType>);
+                Enumerable.Empty<SharedStates.QuantityType>() :
+                result.Select(_converters.ToDomain<QuantityTypeContract, SharedStates.QuantityType>);
         }
 
-        public async Task<IEnumerable<QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync()
+        public async Task<IEnumerable<SharedStates.QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync()
         {
             var result = await _client.GetAllQuantityTypesInPacketAsync();
             return result is null ?
-                Enumerable.Empty<QuantityTypeInPacket>() :
-                result.Select(_converters.ToDomain<QuantityTypeInPacketContract, QuantityTypeInPacket>);
+                Enumerable.Empty<SharedStates.QuantityTypeInPacket>() :
+                result.Select(_converters.ToDomain<QuantityTypeInPacketContract, SharedStates.QuantityTypeInPacket>);
         }
 
         public async Task CreateTemporaryItem(CreateTemporaryItemRequest request)

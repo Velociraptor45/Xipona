@@ -1,16 +1,24 @@
 ﻿@page "/"
 
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification.IShoppingListNotificationService _notificationService;
 @inject IItemPriceCalculationService _itemPriceCalculationService;
 @inject Services.IShoppingListApiService _apiService;
 @inject IWebAssemblyHostEnvironment _env;
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common;
 @using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
+@using Fluxor
+@using global::ShoppingList.Frontend.Redux.ShoppingList.Actions
+
+@inject IState<ShoppingListState> State
+@inject IDispatcher Dispatcher
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index
 
@@ -72,8 +80,11 @@
     {
         await base.OnInitializedAsync();
 
-        var quantityTypes = await _apiService.GetAllQuantityTypesAsync();
-        _itemPriceCalculationService.Initialize(quantityTypes);
+        //var quantityTypes = await _apiService.GetAllQuantityTypesAsync();
+        Dispatcher.Dispatch(new LoadQuantityTypesAction());
+        Dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
+
+        _itemPriceCalculationService.Initialize(new List<QuantityType>()); // todo
 
         _errorHandler.StateChanged += StateHasChanged;
         _errorHandler.QueueProcessed += async () => await ReloadShoppingListAsync();

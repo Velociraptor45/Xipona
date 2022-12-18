@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using StoreModels = ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
@@ -55,7 +56,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
         public Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync()
         {
-            return _apiClient.GetAllQuantityTypesAsync();
+            return null; // todo remove
         }
 
         public async Task UpdateItemPriceAsync(Guid itemId, Guid? itemTypeId, Guid storeId, float updatedPrice,

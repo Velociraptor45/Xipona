@@ -11,6 +11,8 @@ using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Stores;
 
+using SharedStates = ShoppingList.Frontend.Redux.Shared.States;
+
 namespace ShoppingList.Frontend.Redux.Shared.Ports
 {
     public interface IApiClient
@@ -41,9 +43,9 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
 
         Task<IEnumerable<Store>> GetAllActiveStoresAsync();
 
-        Task<IEnumerable<QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync();
+        Task<IEnumerable<SharedStates.QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync();
 
-        Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync();
+        Task<IEnumerable<SharedStates.QuantityType>> GetAllQuantityTypesAsync();
 
         Task<Item> GetItemByIdAsync(Guid itemId);
 

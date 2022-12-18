@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
@@ -33,15 +32,15 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
                 var stores = await _apiClient.GetAllActiveStoresAsync();
                 var manufacturers = await _apiClient.GetAllActiveManufacturersAsync();
                 var itemCategories = await _apiClient.GetAllActiveItemCategoriesAsync();
-                var quantityTypes = await _apiClient.GetAllQuantityTypesAsync();
-                var quantityTypesInPacket = await _apiClient.GetAllQuantityTypesInPacketAsync();
+                //var quantityTypes = await _apiClient.GetAllQuantityTypesAsync();
+                //var quantityTypesInPacket = await _apiClient.GetAllQuantityTypesInPacketAsync();
 
                 state.Initialize(
                     stores,
                     itemCategories,
                     manufacturers,
-                    quantityTypes,
-                    quantityTypesInPacket);
+                    new List<QuantityType>(),
+                    new List<QuantityTypeInPacket>());
             }
             catch (ApiException e)
             {
