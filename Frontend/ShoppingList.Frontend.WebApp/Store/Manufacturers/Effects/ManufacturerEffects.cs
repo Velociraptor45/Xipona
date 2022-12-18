@@ -84,6 +84,10 @@ public class ManufacturerEffects
         {
             await _client.ModifyManufacturerAsync(
                 new ModifyManufacturerRequest(manufacturer.Manufacturer.Id, manufacturer.Manufacturer.Name));
+            var updateAction = new UpdateSearchResultsAfterSaveAction(
+                manufacturer.Manufacturer.Id,
+                manufacturer.Manufacturer.Name);
+            dispatcher.Dispatch(updateAction);
         }
 
         dispatcher.Dispatch(new SavingManufacturerFinishedAction());

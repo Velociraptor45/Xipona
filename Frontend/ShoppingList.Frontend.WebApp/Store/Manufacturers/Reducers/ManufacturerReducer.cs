@@ -1,7 +1,10 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Store.Manufacturers.Actions;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Store.Manufacturers.States;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Store.Manufacturers.Reducers;
 
@@ -143,6 +146,27 @@ public static class ManufacturerReducer
             Editor = state.Editor with
             {
                 Manufacturer = new EditedManufacturer(Guid.Empty, "")
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ManufacturerState OnUpdateSearchResultsAfterSave(ManufacturerState state,
+        UpdateSearchResultsAfterSaveAction action)
+    {
+        var manufacturer = state.Search.SearchResults.FirstOrDefault(r => r.Id == action.Id);
+        if (manufacturer == null)
+            return state;
+
+        var index = state.Search.SearchResults.IndexOf(manufacturer);
+        var results = new List<ManufacturerSearchResult>(state.Search.SearchResults);
+        results[index] = new ManufacturerSearchResult(action.Id, action.Name);
+
+        return state with
+        {
+            Search = state.Search with
+            {
+                SearchResults = results
             }
         };
     }
