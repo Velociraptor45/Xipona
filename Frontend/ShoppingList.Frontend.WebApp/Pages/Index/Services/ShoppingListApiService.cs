@@ -1,7 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Error;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
@@ -52,11 +51,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
         {
             var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), shoppingListId, itemId, itemTypeId);
             await EnqueueAsync(request);
-        }
-
-        public Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync()
-        {
-            return null; // todo remove
         }
 
         public async Task UpdateItemPriceAsync(Guid itemId, Guid? itemTypeId, Guid storeId, float updatedPrice,

@@ -1,54 +1,29 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models;
-@using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
-@using global::ShoppingList.Frontend.Redux.ShoppingList.States
-@using ShoppingListState = ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models.ShoppingListState
-@using AvailableStores = ProjectHermes.ShoppingList.Frontend.Models.Stores.Models.AvailableStores
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject IShoppingListApiService apiService;
+@using Fluxor
+@using global::ShoppingList.Frontend.Redux.ShoppingList.States
+@using global::ShoppingList.Frontend.Redux.ShoppingList.Actions
+
+@inject IState<ShoppingListState> State
+@inject IDispatcher Dispatcher
 
 <Select Class="min-w-100 max-w-200 mr-3"
-        DataSource="availableStores.Stores"
-        @bind-Value="availableStores.SelectedStoreId"
-        ValueName="@nameof(Store.Id)"
-        LabelName="@nameof(Store.Name)"
+        DataSource="State.Value.Stores.Stores"
+        Value="State.Value.SelectedStoreId"
+        ValueName="@nameof(ShoppingListStore.Id)"
+        LabelName="@nameof(ShoppingListStore.Name)"
         TItemValue="Guid"
-        TItem="Store"
-        OnSelectedItemChanged="OnSelectionChanged">
+        TItem="ShoppingListStore"
+        OnSelectedItemChanged="OnSelectionChanged"
+        IgnoreItemChanges="false">
 </Select>
 
 @code {
-    [Parameter] public ShoppingListState Page { get; set; }
-    [Parameter] public ErrorHandler ErrorHandler { get; set; }
-
-    private AvailableStores availableStores = new(Enumerable.Empty<Store>(), Guid.Empty);
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadAvailableStoresAsync();
-
-        await base.OnInitializedAsync();
-    }
-
-    private async Task LoadAvailableStoresAsync()
-    {
-        await apiService.LoadAllActiveStoresAsync(ErrorHandler,
-            async stores =>
-            {
-                var storesList = stores.ToList();
-
-                availableStores = new AvailableStores(storesList, storesList.FirstOrDefault()?.Id ?? Guid.Empty);
-                Page.RegisterAvailableStores(availableStores);
-                await Page.ReloadRequestedAsync?.Invoke(availableStores.SelectedStoreId);
-            });
-    }
-
-    private async void OnSelectionChanged(Store store)
+    private void OnSelectionChanged(ShoppingListStore store)
     {
         if (store == null)
             return;
 
-        await Page.ChangeStoreAsync(store.Id);
+        Dispatcher.Dispatch(new SelectedStoreChangedAction(store.Id));
     }
 }

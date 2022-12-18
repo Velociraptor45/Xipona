@@ -1,22 +1,21 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain
 {
     public class ShoppingListItemConverter : IToDomainConverter<ShoppingListItemContract, ShoppingListItem>
     {
-        private readonly IToDomainConverter<QuantityTypeContract, QuantityType> _quantityTypeConverter;
-        private readonly IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> _quantityTypeInPacketConverter;
+        //private readonly IToDomainConverter<QuantityTypeContract, QuantityType> _quantityTypeConverter;
+        //private readonly IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> _quantityTypeInPacketConverter;
 
         public ShoppingListItemConverter(
-            IToDomainConverter<QuantityTypeContract, QuantityType> quantityTypeConverter,
-            IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> quantityTypeInPacketConverter)
+            //IToDomainConverter<QuantityTypeContract, QuantityType> quantityTypeConverter,
+            //IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> quantityTypeInPacketConverter
+            )
         {
-            _quantityTypeConverter = quantityTypeConverter;
-            _quantityTypeInPacketConverter = quantityTypeInPacketConverter;
+            //_quantityTypeConverter = quantityTypeConverter;
+            //_quantityTypeInPacketConverter = quantityTypeInPacketConverter;
         }
 
         public ShoppingListItem ToDomain(ShoppingListItemContract source)
@@ -27,11 +26,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
                     source.Name,
                     source.IsTemporary,
                     source.PricePerQuantity,
-                    _quantityTypeConverter.ToDomain(source.QuantityType),
+                    null, //_quantityTypeConverter.ToDomain(source.QuantityType), // todo
                     source.QuantityInPacket,
-                    source.QuantityTypeInPacket is null ?
-                        null :
-                        _quantityTypeInPacketConverter.ToDomain(source.QuantityTypeInPacket),
+                    null,
+                    //source.QuantityTypeInPacket is null ?
+                    //    null :
+                    //    _quantityTypeInPacketConverter.ToDomain(source.QuantityTypeInPacket),
                     source.ItemCategory?.Name ?? "",
                     source.Manufacturer?.Name ?? "",
                     source.IsInBasket,

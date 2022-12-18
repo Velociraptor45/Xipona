@@ -19,4 +19,18 @@ public static class ShoppingListReducer
     {
         return state with { QuantityTypesInPacket = action.QuantityTypesInPacket.ToList() };
     }
+
+    [ReducerMethod]
+    public static ShoppingListState OnLoadAllActiveStoresFinished(ShoppingListState state,
+        LoadAllActiveStoresFinishedAction action)
+    {
+        return state with { Stores = action.Stores };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnSelectedStoreChanged(ShoppingListState state,
+        SelectedStoreChangedAction action)
+    {
+        return state with { SelectedStoreId = action.StoreId };
+    }
 }

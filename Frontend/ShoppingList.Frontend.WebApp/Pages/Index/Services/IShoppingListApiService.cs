@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Error;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
@@ -7,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+
 using StoreModels = ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
@@ -45,8 +45,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
             float quantity);
 
         Task RemoveItemFromShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId);
-
-        Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync();
 
         Task UpdateItemPriceAsync(Guid itemId, Guid? itemTypeId, Guid storeId, float updatedPrice,
             Func<Task> onSuccessAction);

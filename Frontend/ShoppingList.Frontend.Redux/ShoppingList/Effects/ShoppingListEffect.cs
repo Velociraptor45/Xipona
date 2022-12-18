@@ -29,4 +29,15 @@ public class ShoppingListEffects
         var quantityTypes = await _client.GetAllQuantityTypesInPacketAsync();
         dispatcher.Dispatch(new LoadQuantityTypesInPacketFinishedAction(quantityTypes));
     }
+
+    [EffectMethod(typeof(LoadAllActiveStoresAction))]
+    public async Task HandleLoadAllActiveStoresAction(IDispatcher dispatcher)
+    {
+        var stores = await _client.GetAllActiveStoresForShoppingListAsync();
+        var finishAction = new LoadAllActiveStoresFinishedAction(new AllActiveStores(stores.ToList()));
+        dispatcher.Dispatch(finishAction);
+
+        if (stores.Any())
+            dispatcher.Dispatch(new SelectedStoreChangedAction(stores.First().Id));
+    }
 }

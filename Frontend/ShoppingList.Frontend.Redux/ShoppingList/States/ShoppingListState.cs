@@ -6,7 +6,8 @@ namespace ShoppingList.Frontend.Redux.ShoppingList.States;
 public record ShoppingListState(
     IReadOnlyCollection<QuantityType> QuantityTypes,
     IReadOnlyCollection<QuantityTypeInPacket> QuantityTypesInPacket,
-    AvailableStores Stores);
+    AllActiveStores Stores,
+    Guid SelectedStoreId);
 
 public class ShoppingListFeatureState : Feature<ShoppingListState>
 {
@@ -20,6 +21,7 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
         return new ShoppingListState(
             new List<QuantityType>(),
             new List<QuantityTypeInPacket>(),
-            new AvailableStores(new List<ShoppingListStore>()));
+            new AllActiveStores(new List<ShoppingListStore>()),
+            Guid.Empty);
     }
 }

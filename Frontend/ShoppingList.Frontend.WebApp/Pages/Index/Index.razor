@@ -4,11 +4,10 @@
 
 @inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification.IShoppingListNotificationService _notificationService;
 @inject IItemPriceCalculationService _itemPriceCalculationService;
-@inject Services.IShoppingListApiService _apiService;
+@inject IShoppingListApiService _apiService;
 @inject IWebAssemblyHostEnvironment _env;
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common;
 @using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
@@ -16,8 +15,10 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
 @using Fluxor
 @using global::ShoppingList.Frontend.Redux.ShoppingList.Actions
+@using ShoppingListReduxState = global::ShoppingList.Frontend.Redux.ShoppingList.States
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
-@inject IState<ShoppingListState> State
+@inject IState<ShoppingListReduxState.ShoppingListState> State
 @inject IDispatcher Dispatcher
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index
@@ -31,7 +32,7 @@
         }
         <div class="mb-1 d-flex justify-content-end align-items-center">
             <DebugSwitch DebugHandler="@_errorHandler"></DebugSwitch>
-            <StoreSelect Page="@_state" ErrorHandler="@_errorHandler"></StoreSelect>
+            <StoreSelect></StoreSelect>
             <ItemVisiblityButton State="@_state"></ItemVisiblityButton>
             <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
                     Disabled="@(_state.ShoppingList?.Store == null)">
@@ -79,13 +80,11 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
-        //var quantityTypes = await _apiService.GetAllQuantityTypesAsync();
+        
         Dispatcher.Dispatch(new LoadQuantityTypesAction());
         Dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
-
-        _itemPriceCalculationService.Initialize(new List<QuantityType>()); // todo
-
+        Dispatcher.Dispatch(new LoadAllActiveStoresAction());
+        
         _errorHandler.StateChanged += StateHasChanged;
         _errorHandler.QueueProcessed += async () => await ReloadShoppingListAsync();
         _state.StateChanged += StateHasChanged;

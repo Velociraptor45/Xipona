@@ -54,6 +54,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using SharedStates = ShoppingList.Frontend.Redux.Shared.States;
+using ShoppingListStore = ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListStore;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 {
@@ -184,6 +185,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         {
             var list = await _client.GetActiveShoppingListByStoreIdAsync(storeId);
             return _converters.ToDomain<ShoppingListContract, ShoppingListRoot>(list);
+        }
+
+        public async Task<IEnumerable<ShoppingListStore>> GetAllActiveStoresForShoppingListAsync()
+        {
+            var contracts = await _client.GetAllActiveStoresAsync(); //todo write endpoint
+
+            return contracts is null ?
+                Enumerable.Empty<ShoppingListStore>() :
+                contracts.Select(_converters.ToDomain<ActiveStoreContract, ShoppingListStore>);
         }
 
         public async Task<IEnumerable<Store>> GetAllActiveStoresAsync()
