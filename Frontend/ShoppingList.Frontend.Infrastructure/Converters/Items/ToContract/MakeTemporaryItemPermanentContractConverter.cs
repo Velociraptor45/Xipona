@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract

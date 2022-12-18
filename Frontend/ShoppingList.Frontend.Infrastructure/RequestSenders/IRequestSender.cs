@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests;
+using ShoppingList.Frontend.Redux.Shared.Ports;
+using ShoppingList.Frontend.Redux.Shared.Ports.Requests;
 using System;
 using System.Threading.Tasks;
 

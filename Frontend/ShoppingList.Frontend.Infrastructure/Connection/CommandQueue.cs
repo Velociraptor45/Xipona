@@ -1,8 +1,9 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Error;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.RequestSenders;
 using RestEase;
+using ShoppingList.Frontend.Redux.Shared.Ports;
+using ShoppingList.Frontend.Redux.Shared.Ports.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;

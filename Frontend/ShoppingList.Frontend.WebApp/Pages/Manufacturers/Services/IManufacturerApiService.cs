@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
+using ShoppingList.Frontend.Redux.Manufacturers.States;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using RestEase;
+using ShoppingList.Frontend.Redux.Shared.Ports;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

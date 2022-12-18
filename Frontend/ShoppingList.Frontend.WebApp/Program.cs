@@ -17,6 +17,8 @@ using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
+using ShoppingList.Frontend.Redux;
+using ShoppingList.Frontend.Redux.Shared.Ports;
 using System;
 using System.Net.Http;
 using System.Reflection;
@@ -82,12 +84,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
             builder.Services.AddInfrastructure();
 
-            builder.Services.AddFluxor(config =>
-            {
-                config
-                    .ScanAssemblies(Assembly.GetExecutingAssembly())
-                    .UseReduxDevTools(); //todo change only to dev
-            });
+            builder.Services.AddRedux();
         }
     }
 }

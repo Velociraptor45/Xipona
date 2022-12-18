@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores;
+using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Stores;
 using System;
 using System.Linq;
 
