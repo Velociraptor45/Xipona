@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ShoppingList.Frontend.Models.TestKit\ShoppingList.Frontend.Models.TestKit.csproj" />
+    <ProjectReference Include="..\ShoppingList.Frontend.WebApp\ShoppingList.Frontend.WebApp.csproj" />
   </ItemGroup>
 
   <ItemGroup>

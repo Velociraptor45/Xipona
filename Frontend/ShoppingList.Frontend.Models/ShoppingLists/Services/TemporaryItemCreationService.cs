@@ -8,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
     {
         public ShoppingListItem Create(string name, float price)
         {
-            // ugly
+            // todo remove
             var quantityType = new QuantityType(0, "", 1, "€", "x", 1);
             var quantityTypeInPacket = new QuantityTypeInPacket(0, "", "");
             var offlineId = ShoppingListItemId.FromOfflineId(Guid.NewGuid());

@@ -10,7 +10,6 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common;
-@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
 @using Fluxor
@@ -33,19 +32,16 @@
         <div class="mb-1 d-flex justify-content-end align-items-center">
             <DebugSwitch DebugHandler="@_errorHandler"></DebugSwitch>
             <StoreSelect></StoreSelect>
-            <ItemVisiblityButton State="@_state"></ItemVisiblityButton>
+            <ItemVisiblityButton></ItemVisiblityButton>
             <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
                     Disabled="@(_state.ShoppingList?.Store == null)">
                 <Icon Type="edit" />
             </Button>
         </div>
-        <ItemSearchBar ReloadShoppingListAsync="@ReloadShoppingListAsync"
-                       ErrorHandler="@_errorHandler"
-                       State="@_state"></ItemSearchBar>
+        <ItemSearchBar></ItemSearchBar>
         @if (State.Value.ShoppingList is not null)
         {
             <div>
-                @*@foreach (var section in GetSections())*@
                 @foreach(var section in State.Value.GetSectionsToDisplay())
                 {
                     <Section Model="section"></Section>
@@ -123,12 +119,7 @@
     }
 
     #endregion
-
-    private IEnumerable<ShoppingListSection> GetSections()
-    {
-        return _state.ShoppingList?.GetNonEmptySections(!_state.ItemsInBasketVisible) ?? Enumerable.Empty<ShoppingListSection>();
-    }
-
+    
     #region Callbacks
 
     private void OnEditModeButtonClicked()

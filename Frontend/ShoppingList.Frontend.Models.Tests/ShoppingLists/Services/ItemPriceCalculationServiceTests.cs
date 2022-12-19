@@ -1,8 +1,11 @@
 ﻿using FluentAssertions;
+using Fluxor;
+using Moq;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Frontend.Models.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.TestTools.AutoFixture.Builder;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
+using ShoppingList.Frontend.Redux.ShoppingList.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,8 +65,9 @@ public class ItemPriceCalculationServiceTests
 
         public ItemPriceCalculationService CreateSut()
         {
-            var sut = new ItemPriceCalculationService();
-            sut.Initialize(QuantityTypes);
+            var mock = new Mock<IState<ShoppingListState>>(MockBehavior.Strict);
+            var sut = new ItemPriceCalculationService(mock.Object);
+            //sut.Initialize(QuantityTypes);
             return sut;
         }
 

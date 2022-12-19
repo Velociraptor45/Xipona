@@ -44,6 +44,211 @@ public static class ShoppingListReducer
     }
 
     [ReducerMethod]
+    public static ShoppingListState OnToggleItemsInBasketVisible(ShoppingListState state,
+        ToggleItemsInBasketVisibleAction action)
+    {
+        return state with { ItemsInBasketVisible = !state.ItemsInBasketVisible };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnItemForShoppingListSearchInputChanged(ShoppingListState state,
+        ItemForShoppingListSearchInputChangedAction action)
+    {
+        var input = action.Input.Trim();
+        return state with
+        {
+            SearchBar = state.SearchBar with
+            {
+                Input = input,
+                Results = input == string.Empty
+                    ? new List<OldModels.SearchItemForShoppingListResult>()
+                    : state.SearchBar.Results
+            },
+            TemporaryItemCreator = state.TemporaryItemCreator with
+            {
+                IsButtonEnabled = !string.IsNullOrEmpty(input)
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnSearchItemForShoppingListFinished(ShoppingListState state,
+        SearchItemForShoppingListFinishedAction action)
+    {
+        return state with
+        {
+            SearchBar = state.SearchBar with
+            {
+                Results = action.Results.ToList()
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnItemForShoppingListSearchResultSelected(ShoppingListState state,
+        ItemForShoppingListSearchResultSelectedAction action)
+    {
+        return state with
+        {
+            SearchBar = state.SearchBar with
+            {
+                Input = string.Empty,
+                Results = new List<OldModels.SearchItemForShoppingListResult>()
+            },
+            TemporaryItemCreator = state.TemporaryItemCreator with
+            {
+                ItemName = string.Empty
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnTemporaryItemNameChanged(ShoppingListState state,
+        TemporaryItemNameChangedAction action)
+    {
+        return state with
+        {
+            TemporaryItemCreator = state.TemporaryItemCreator with
+            {
+                ItemName = action.ItemName
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnTemporaryItemPriceChanged(ShoppingListState state,
+        TemporaryItemPriceChangedAction action)
+    {
+        return state with
+        {
+            TemporaryItemCreator = state.TemporaryItemCreator with
+            {
+                Price = action.Price
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnTemporaryItemSelectedSectionChanged(ShoppingListState state,
+        TemporaryItemSelectedSectionChangedAction action)
+    {
+        return state with
+        {
+            TemporaryItemCreator = state.TemporaryItemCreator with
+            {
+                Section = action.Section
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnOpenTemporaryItemCreator(ShoppingListState state,
+        OpenTemporaryItemCreatorAction action)
+    {
+        return state with
+        {
+            TemporaryItemCreator = state.TemporaryItemCreator with
+            {
+                ItemName = state.SearchBar.Input,
+                IsOpen = true,
+                IsSaving = false
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnCloseTemporaryItemCreator(ShoppingListState state,
+        CloseTemporaryItemCreatorAction action)
+    {
+        return state with
+        {
+            SearchBar = state.SearchBar with
+            {
+                Input = string.Empty
+            },
+            TemporaryItemCreator = state.TemporaryItemCreator with
+            {
+                ItemName = string.Empty,
+                IsOpen = false
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnSaveTemporaryItemStarted(ShoppingListState state,
+        SaveTemporaryItemStartedAction action)
+    {
+        return state with
+        {
+            TemporaryItemCreator = state.TemporaryItemCreator with
+            {
+                IsSaving = true
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnSaveTemporaryItemFinished(ShoppingListState state,
+        SaveTemporaryItemFinishedAction action)
+    {
+        var sections = state.ShoppingList!.Sections.ToList();
+        var section = sections.FirstOrDefault(s => s.Id == action.Section.Id);
+        if (section is null)
+        {
+            section = new ShoppingListSection(
+                action.Section.Id,
+                action.Section.Name,
+                action.Section.SortingIndex,
+                true,
+                new List<ShoppingListItem> { action.Item });
+            sections.Add(section);
+        }
+        else
+        {
+            var index = sections.IndexOf(section);
+            var items = section.Items.ToList();
+            items.Add(action.Item);
+            sections[index] = section with { Items = items };
+        }
+
+        return state with
+        {
+            ShoppingList = state.ShoppingList with
+            {
+                Sections = new SortedSet<ShoppingListSection>(sections, new SortingIndexComparer())
+            },
+            TemporaryItemCreator = state.TemporaryItemCreator with
+            {
+                IsSaving = false
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnSetSearchBarActive(ShoppingListState state, SetSearchBarActiveAction action)
+    {
+        return state with
+        {
+            SearchBar = state.SearchBar with
+            {
+                IsActive = true
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnSetSearchBarInactive(ShoppingListState state, SetSearchBarInactiveAction action)
+    {
+        return state with
+        {
+            SearchBar = state.SearchBar with
+            {
+                IsActive = false
+            }
+        };
+    }
+
+    [ReducerMethod]
     public static ShoppingListState OnToggleShoppingListSectionExpansion(ShoppingListState state,
         ToggleShoppingListSectionExpansionAction action)
     {

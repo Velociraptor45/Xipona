@@ -104,7 +104,6 @@
 </Modal>
 
 @code{
-    //[Parameter] public ShoppingListState State { get; set; }
     [Parameter] public ShoppingListItem Model { get; set; }
 
     private bool _updatePriceModalVisible = false;
@@ -112,7 +111,7 @@
     private float _updatedPricePerQuantity = 0.01f;
     private bool _updatePriceForAllOtherItemTypes = true;
 
-    private async Task OnItemClickedAsync()
+    private void OnItemClickedAsync()
     {
         if (State.Value.EditModeActive)
             return;
@@ -120,16 +119,11 @@
         if (Model.IsInBasket)
         {
             Dispatcher.Dispatch(new RemoveItemFromBasketAction(Model.Id, Model.TypeId));
-            //Model.RemoveFromBasket();
-            //await _apiService.RemoveItemFromBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         }
         else
         {
             Dispatcher.Dispatch(new PutItemInBasketAction(Model.Id, Model.TypeId));
-            //Model.PutInBasket(() => State.StateChanged?.Invoke());
-            //await _apiService.PutItemInBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         }
-        //State.StateChanged?.Invoke();
     }
 
 
@@ -138,47 +132,29 @@
         return _itemPriceCalculationService.CalculatePrice(Model.QuantityType.Id, Model.PricePerQuantity, Model.Quantity);
     }
 
-    private async Task OnQuantityInputValueChangedAsync(float quantity)
+    private void OnQuantityInputValueChangedAsync(float quantity)
     {
         Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, quantity));
-        //Model.SetQuantity(quantity);
-        //await SendQuantityChangedRequestAsync();
-        //State.StateChanged?.Invoke();
     }
 
-    private async Task OnRemoveItemButtonClickedAsync()
+    private void OnRemoveItemButtonClickedAsync()
     {
         Dispatcher.Dispatch(new RemoveItemFromShoppingListAction(Model.Id, Model.TypeId));
-        //State.ShoppingList.Remove(Model.Id, Model.TypeId);
-        //await _apiService.RemoveItemFromShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
-        //State.StateChanged?.Invoke();
     }
 
-    private async Task OnIncrementQuantityButtonClickedAsync()
+    private void OnIncrementQuantityButtonClickedAsync()
     {
         Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, Model.QuantityType.DefaultQuantity));
-        //Model.ChangeQuantity(Model.QuantityType.DefaultQuantity);
-        //await SendQuantityChangedRequestAsync();
-        //State.StateChanged?.Invoke();
     }
 
-    private async Task OnDecrementQuantityButtonClickedAsync()
+    private void OnDecrementQuantityButtonClickedAsync()
     {
         Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, -Model.QuantityType.DefaultQuantity));
-        //Model.ChangeQuantity(-Model.QuantityType.DefaultQuantity);
-        //await SendQuantityChangedRequestAsync();
-        //State.StateChanged?.Invoke();
     }
-
-    //private async Task SendQuantityChangedRequestAsync()
-    //{
-    //    await _apiService.ChangeItemQuantityOnShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId, 
-    //        Model.Quantity);
-    //}
 
     private void OnMakeItemPermanentButtonClicked()
     {
-        _navigationManager.NavigateTo($"items/{Model.Id.ActualId!.Value}");
+        Dispatcher.Dispatch(new MakeItemPermanentAction(Model.Id.ActualId!.Value));
     }
 
     private void OnOpenUpdatePriceClicked()

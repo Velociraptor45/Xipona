@@ -16,4 +16,4 @@ public record ShoppingListItem(
     string Manufacturer,
     bool IsInBasket,
     float Quantity,
-    bool Hide);
+    bool Hidden);

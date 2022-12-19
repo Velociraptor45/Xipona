@@ -1,10 +1,8 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
 @using Fluxor
 @using global::ShoppingList.Frontend.Redux.ShoppingList.Actions
 @using global::ShoppingList.Frontend.Redux.ShoppingList.States
-@using ShoppingListState = global::ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListState
 
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
@@ -24,7 +22,7 @@
     @if (Model.IsExpanded)
     {
         <ul class="pl-3">
-            @foreach (var item in Model.Items.Where(item => State.Value.ItemsInBasketVisible || !item.Hide))
+            @foreach (var item in Model.Items.Where(item => State.Value.ItemsInBasketVisible || !item.Hidden))
             {
                 <Item Model="@item"></Item>
             }
@@ -33,15 +31,10 @@
 </div>
 
 @code {
-    //[Parameter] public ShoppingListState State { get; set; }
     [Parameter] public ShoppingListSection Model { get; set; }
 
     private void OnSectionClicked()
     {
-        //if (Model.IsExpanded)
-        //    Model.Close();
-        //else
-        //    Model.Expand();
         Dispatcher.Dispatch(new ToggleShoppingListSectionExpansionAction(Model.Id));
     }
 
@@ -49,7 +42,7 @@
     {
         if (Model.AllItemsInBasket)
             return "green-bg";
-        if (Model.SomeItemsInBasket)
+        if (Model.AnyItemsInBasket)
             return "warning-bg";
 
         return "red-bg";
@@ -57,7 +50,7 @@
 
     private string GetFontColor()
     {
-        if (Model.AllItemsInBasket || !Model.SomeItemsInBasket)
+        if (Model.AllItemsInBasket || !Model.AnyItemsInBasket)
             return "white";
 
         return "warning-tx";

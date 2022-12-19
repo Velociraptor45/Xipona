@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ShoppingList.Frontend.Redux.Shared.States;
 
 namespace ShoppingList.Frontend.Redux.ShoppingList.States;
@@ -10,13 +11,17 @@ public record ShoppingListState(
     Guid SelectedStoreId,
     bool ItemsInBasketVisible,
     bool EditModeActive,
-    ShoppingListModel? ShoppingList)
+    ShoppingListModel? ShoppingList,
+    SearchBar SearchBar,
+    TemporaryItemCreator TemporaryItemCreator)
 {
     public IEnumerable<ShoppingListSection> GetSectionsToDisplay()
     {
         return ShoppingList.Sections.AsEnumerable()
-            .Where(s => s.Items.Any() && (!s.AllItemsInBasket || ItemsInBasketVisible)); // todo change to AllItemsHiden
+            .Where(s => s.Items.Any() && (!s.AllItemsHidden || ItemsInBasketVisible));
     }
+
+    public ShoppingListStore? SelectedStore => Stores.Stores.FirstOrDefault(s => s.Id == SelectedStoreId);
 }
 
 public class ShoppingListFeatureState : Feature<ShoppingListState>
@@ -35,6 +40,8 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
             Guid.Empty,
             true,
             false,
-            null);
+            null,
+            new SearchBar(string.Empty, false, new List<SearchItemForShoppingListResult>()),
+            new TemporaryItemCreator(string.Empty, null, 1f, false, false, false));
     }
 }
