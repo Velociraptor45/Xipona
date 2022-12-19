@@ -7,7 +7,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 {
     public class ShoppingListItem
     {
-        public ShoppingListItem(ShoppingListItemId id, Guid? typeId, string name, bool isTemporary, float pricePerQuantity, QuantityType quantityType,
+        public ShoppingListItem(ShoppingListItemId id, Guid? typeId, string name, bool isTemporary,
+            float pricePerQuantity, QuantityType quantityType,
             float? quantityInPacket, QuantityTypeInPacket quantityInPacketType, string itemCategory,
             string manufacturer, bool isInBasket, float quantity)
         {

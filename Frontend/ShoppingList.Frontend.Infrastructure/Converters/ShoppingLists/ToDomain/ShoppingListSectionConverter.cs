@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
+using ShoppingList.Frontend.Redux.ShoppingList.States;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain
@@ -21,7 +21,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
                 source.Id,
                 source.Name,
                 source.SortingIndex,
-                source.IsDefaultSection,
+                true,
                 source.Items.Select(_itemConverter.ToDomain));
         }
     }

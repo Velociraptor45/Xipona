@@ -10,7 +10,7 @@ using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Stores;
-
+using ShoppingList.Frontend.Redux.ShoppingList.States;
 using SharedStates = ShoppingList.Frontend.Redux.Shared.States;
 using ShoppingListStore = ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListStore;
 
@@ -112,5 +112,8 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
 
         Task<IEnumerable<IngredientQuantityType>> GetAllIngredientQuantityTypes();
         Task<IEnumerable<ShoppingListStore>> GetAllActiveStoresForShoppingListAsync();
+
+        Task<ShoppingListModel> GetActiveShoppingListByStoreIdAsyncNew(Guid storeId) // todo name
+            ;
     }
 }

@@ -23,7 +23,7 @@
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index
 
-@if (_state != null)
+@if (State != null && _state != null)
 {
     <div>
         @if (_errorHandler.ApiHasProcessingError)
@@ -42,14 +42,17 @@
         <ItemSearchBar ReloadShoppingListAsync="@ReloadShoppingListAsync"
                        ErrorHandler="@_errorHandler"
                        State="@_state"></ItemSearchBar>
-        <div>
-            @foreach (var section in GetSections())
-            {
-                <Section State="@_state"
-                         Model="section"></Section>
-            }
-        </div>
-        @if (_state.ShoppingList != null)
+        @if (State.Value.ShoppingList is not null)
+        {
+            <div>
+                @*@foreach (var section in GetSections())*@
+                @foreach(var section in State.Value.GetSectionsToDisplay())
+                {
+                    <Section Model="section"></Section>
+                }
+            </div>
+        }
+        @if (State.Value.ShoppingList != null && _state.ShoppingList != null)
         {
             <div class="d-flex align-items-end flex-column px-2">
                 <div class="d-flex border-top pt-1">

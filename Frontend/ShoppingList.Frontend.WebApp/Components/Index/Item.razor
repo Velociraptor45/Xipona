@@ -1,16 +1,24 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 @using ProjectHermes.ShoppingList.Frontend.Models
-@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
 @using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
 @using System.Text.RegularExpressions
+@using Fluxor
+@using global::ShoppingList.Frontend.Redux.ShoppingList.Actions
+@using global::ShoppingList.Frontend.Redux.ShoppingList.States
+@using ShoppingListState = global::ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListState
 
 @inject NavigationManager _navigationManager;
 @inject IItemPriceCalculationService _itemPriceCalculationService;
 @inject IShoppingListApiService _apiService;
 
+@inject IState<ShoppingListState> State
+@inject IDispatcher Dispatcher
+
 <li class="item py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
-    @if (State.ItemsInEditMode)
+    @if (State.Value.EditModeActive)
     {
         <div class="d-flex flex-column ml-2">
             <div class="d-flex">
@@ -85,7 +93,7 @@
                            Class="price-update-input"
                            @bind-value="@_updatedPricePerQuantity"
                            Min="0.01f"></AntDesign.InputNumber>
-    @if (Model.IsItemType)
+    @if (Model.TypeId is not null)
     {
         <div class="pt-3">
             <Checkbox @bind-Checked="@_updatePriceForAllOtherItemTypes">
@@ -96,7 +104,7 @@
 </Modal>
 
 @code{
-    [Parameter] public ShoppingListState State { get; set; }
+    //[Parameter] public ShoppingListState State { get; set; }
     [Parameter] public ShoppingListItem Model { get; set; }
 
     private bool _updatePriceModalVisible = false;
@@ -106,20 +114,22 @@
 
     private async Task OnItemClickedAsync()
     {
-        if (State.ItemsInEditMode)
+        if (State.Value.EditModeActive)
             return;
 
         if (Model.IsInBasket)
         {
-            Model.RemoveFromBasket();
-            await _apiService.RemoveItemFromBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
+            Dispatcher.Dispatch(new RemoveItemFromBasketAction(Model.Id, Model.TypeId));
+            //Model.RemoveFromBasket();
+            //await _apiService.RemoveItemFromBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         }
         else
         {
-            Model.PutInBasket(() => State.StateChanged?.Invoke());
-            await _apiService.PutItemInBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
+            Dispatcher.Dispatch(new PutItemInBasketAction(Model.Id, Model.TypeId));
+            //Model.PutInBasket(() => State.StateChanged?.Invoke());
+            //await _apiService.PutItemInBasketAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
         }
-        State.StateChanged?.Invoke();
+        //State.StateChanged?.Invoke();
     }
 
 
@@ -130,38 +140,41 @@
 
     private async Task OnQuantityInputValueChangedAsync(float quantity)
     {
-        Model.SetQuantity(quantity);
-        await SendQuantityChangedRequestAsync();
-        State.StateChanged?.Invoke();
+        Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, quantity));
+        //Model.SetQuantity(quantity);
+        //await SendQuantityChangedRequestAsync();
+        //State.StateChanged?.Invoke();
     }
 
     private async Task OnRemoveItemButtonClickedAsync()
     {
-        State.ShoppingList.Remove(Model.Id, Model.TypeId);
-        await _apiService.RemoveItemFromShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
-        State.StateChanged?.Invoke();
+        Dispatcher.Dispatch(new RemoveItemFromShoppingListAction(Model.Id, Model.TypeId));
+        //State.ShoppingList.Remove(Model.Id, Model.TypeId);
+        //await _apiService.RemoveItemFromShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId);
+        //State.StateChanged?.Invoke();
     }
 
     private async Task OnIncrementQuantityButtonClickedAsync()
     {
-        Model.ChangeQuantity(Model.QuantityType.DefaultQuantity);
-        await SendQuantityChangedRequestAsync();
-        State.StateChanged?.Invoke();
+        Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, Model.QuantityType.DefaultQuantity));
+        //Model.ChangeQuantity(Model.QuantityType.DefaultQuantity);
+        //await SendQuantityChangedRequestAsync();
+        //State.StateChanged?.Invoke();
     }
 
     private async Task OnDecrementQuantityButtonClickedAsync()
     {
-        Model.ChangeQuantity(-Model.QuantityType.DefaultQuantity);
-        
-        await SendQuantityChangedRequestAsync();
-        State.StateChanged?.Invoke();
+        Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, -Model.QuantityType.DefaultQuantity));
+        //Model.ChangeQuantity(-Model.QuantityType.DefaultQuantity);
+        //await SendQuantityChangedRequestAsync();
+        //State.StateChanged?.Invoke();
     }
 
-    private async Task SendQuantityChangedRequestAsync()
-    {
-        await _apiService.ChangeItemQuantityOnShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId, 
-            Model.Quantity);
-    }
+    //private async Task SendQuantityChangedRequestAsync()
+    //{
+    //    await _apiService.ChangeItemQuantityOnShoppingListAsync(State.ShoppingList.Id, Model.Id, Model.TypeId, 
+    //        Model.Quantity);
+    //}
 
     private void OnMakeItemPermanentButtonClicked()
     {
@@ -205,11 +218,11 @@
     private async Task OnUpdatePriceButtonClicked()
     {
         _modalLoading = true;
-        var itemTypeId = Model.IsItemType && !_updatePriceForAllOtherItemTypes ? Model.TypeId : null;
-        await _apiService.UpdateItemPriceAsync(Model.Id.ActualId!.Value, itemTypeId, State.SelectedStore.Id,
+        var itemTypeId = Model.TypeId is not null && !_updatePriceForAllOtherItemTypes ? Model.TypeId : null;
+        await _apiService.UpdateItemPriceAsync(Model.Id.ActualId!.Value, itemTypeId, State.Value.SelectedStoreId,
             _updatedPricePerQuantity, async () =>
             {
-                await State.RequestReloadAsync();
+                //await State.RequestReloadAsync();
                 _updatePriceModalVisible = false;
             });
         _modalLoading = false;

@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Error;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
@@ -36,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
         public void InitializeCommandQueue(ICommandQueueErrorHandler errorHandler)
         {
-            _commandQueue.Initialize(errorHandler);
+            //_commandQueue.Initialize(errorHandler); //todo
         }
 
         public async Task ChangeItemQuantityOnShoppingListAsync(Guid shoppingListId, ShoppingListItemId itemId, Guid? itemTypeId,

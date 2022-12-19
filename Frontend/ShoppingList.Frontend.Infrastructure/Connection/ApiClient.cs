@@ -47,6 +47,7 @@ using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Stores;
+using ShoppingList.Frontend.Redux.ShoppingList.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -179,6 +180,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
         {
             var result = await _client.CreateItemCategoryAsync(name);
             return _converters.ToDomain<ItemCategoryContract, ItemCategory>(result);
+        }
+
+        public async Task<ShoppingListModel> GetActiveShoppingListByStoreIdAsyncNew(Guid storeId) // todo name
+        {
+            var list = await _client.GetActiveShoppingListByStoreIdAsync(storeId);
+            return _converters.ToDomain<ShoppingListContract, ShoppingListModel>(list);
         }
 
         public async Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(Guid storeId)

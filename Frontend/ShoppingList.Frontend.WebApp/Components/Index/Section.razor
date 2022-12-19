@@ -1,6 +1,13 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models;
-@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
+@using Fluxor
+@using global::ShoppingList.Frontend.Redux.ShoppingList.Actions
+@using global::ShoppingList.Frontend.Redux.ShoppingList.States
+@using ShoppingListState = global::ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListState
+
+@inject IState<ShoppingListState> State
+@inject IDispatcher Dispatcher
 
 <div>
     <div class="py-2 mb-1 pl-1 d-flex align-items-center section @GetBackgroundColor() @GetFontColor()" @onclick="OnSectionClicked">
@@ -17,25 +24,25 @@
     @if (Model.IsExpanded)
     {
         <ul class="pl-3">
-            @foreach (var item in Model.Items.Where(item => State.ItemsInBasketVisible || !item.Hide))
+            @foreach (var item in Model.Items.Where(item => State.Value.ItemsInBasketVisible || !item.Hide))
             {
-                <Item State="@State"
-                      Model="@item"></Item>
+                <Item Model="@item"></Item>
             }
         </ul>
     }
 </div>
 
 @code {
-    [Parameter] public ShoppingListState State { get; set; }
+    //[Parameter] public ShoppingListState State { get; set; }
     [Parameter] public ShoppingListSection Model { get; set; }
 
     private void OnSectionClicked()
     {
-        if (Model.IsExpanded)
-            Model.Close();
-        else
-            Model.Expand();
+        //if (Model.IsExpanded)
+        //    Model.Close();
+        //else
+        //    Model.Expand();
+        Dispatcher.Dispatch(new ToggleShoppingListSectionExpansionAction(Model.Id));
     }
 
     private string GetBackgroundColor()
