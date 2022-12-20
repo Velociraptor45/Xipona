@@ -70,6 +70,27 @@
             OnFinishList="async () => await ReloadShoppingListAsync()"></Summary>
         <ErrorStack ErrorHandler="@_errorHandler"></ErrorStack>
     </div>
+    <Modal Title="@GetTitle()"
+           Visible="State.Value.PriceUpdate.IsOpen"
+           OnCancel="@OnCloseUpdatePriceModalButtonClicked"
+           ConfirmLoading="State.Value.PriceUpdate.IsSaving"
+           Footer="@GetFooter()">
+        <AntDesign.InputNumber Formatter="FormatUpdatePrice"
+                               Parser="ParseUpdatePrice"
+                               Class="price-update-input"
+                               TValue="float"
+                               Value="State.Value.PriceUpdate.Price"
+                               ValueChanged="OnPriceChanged"
+                               Min="0.01f"></AntDesign.InputNumber>
+        @if (State.Value.PriceUpdate.Item?.TypeId is not null)
+        {
+            <div class="pt-3">
+                <Checkbox Checked="State.Value.PriceUpdate.UpdatePriceForAllTypes" ValueChanged="OnUpdatePriceForAllTypes">
+                    Update for all types
+                </Checkbox>
+            </div>
+        }
+    </Modal>
 }
 
 @code{
@@ -78,12 +99,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
         
         Dispatcher.Dispatch(new LoadQuantityTypesAction());
         Dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
         Dispatcher.Dispatch(new LoadAllActiveStoresAction());
         
+        await base.OnInitializedAsync();
         //_errorHandler.StateChanged += StateHasChanged;
         //_errorHandler.QueueProcessed += async () => await ReloadShoppingListAsync();
         //_state.StateChanged += StateHasChanged;
@@ -125,7 +146,6 @@
     private void OnEditModeButtonClicked()
     {
         Dispatcher.Dispatch(new ToggleEditModeAction());
-        //_state.ToggleItemEditMode();
     }
     #endregion
 
@@ -154,5 +174,56 @@
     private RenderFragment GetAsyncButtonRenderFragment(Func<Task> callback, string label = "Retry")
     {
         return @<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
+    }
+
+    private void OnCloseUpdatePriceModalButtonClicked()
+    {
+        Dispatcher.Dispatch(new CloseUpdatePriceAction());
+    }
+
+    private void OnPriceChanged(float price)
+    {
+        Dispatcher.Dispatch(new PriceOnPriceUpdateChangedAction(price));
+    }
+
+    private void OnUpdatePriceForAllTypes(bool @checked)
+    {
+        Dispatcher.Dispatch(new UpdatePriceForAllTypesOnPriceUpdateChangedAction(@checked));
+    }
+
+    private string GetTitle()
+    {
+        return $"Update price - {State.Value.PriceUpdate.Item?.Name ?? string.Empty}";
+    }
+
+    private RenderFragment GetFooter()
+    {
+        return 
+            @<Template>
+                <div class="d-flex">
+                    <Button Class="ml-auto"
+                        OnClick="OnUpdatePriceButtonClicked"
+                            @key="@("submit")"
+                        Type="@ButtonType.Primary"
+                        Loading="State.Value.PriceUpdate.IsSaving">
+                        Update
+                    </Button>
+                </div>
+            </Template>;
+    }
+
+    private void OnUpdatePriceButtonClicked()
+    {
+        Dispatcher.Dispatch(new SavePriceUpdateAction());
+    }
+
+    private string FormatUpdatePrice(float value)
+    {
+        return $"{value:n2} {State.Value.PriceUpdate.Item?.QuantityType.PriceLabel}";
+    }
+
+    private string ParseUpdatePrice(string value)
+    {
+        return value.Replace(State.Value.PriceUpdate.Item?.QuantityType.PriceLabel, string.Empty);
     }
 }

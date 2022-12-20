@@ -173,6 +173,29 @@ public class ShoppingListEffects : IDisposable
         dispatcher.Dispatch(new CloseTemporaryItemCreatorAction());
     }
 
+    [EffectMethod(typeof(SavePriceUpdateAction))]
+    public async Task HandleSavePriceUpdateAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new SavePriceUpdateStartedAction());
+
+        var typeId = _state.Value.PriceUpdate.UpdatePriceForAllTypes ? null : _state.Value.PriceUpdate.Item!.TypeId;
+
+        var request = new UpdateItemPriceRequest(
+            _state.Value.PriceUpdate.Item!.Id.ActualId!.Value,
+            typeId,
+            _state.Value.SelectedStoreId,
+            _state.Value.PriceUpdate.Price);
+
+        await _client.UpdateItemPriceAsync(request);
+
+        dispatcher.Dispatch(new SavePriceUpdateFinishedAction(
+            _state.Value.PriceUpdate.Item.Id.ActualId!.Value,
+            _state.Value.PriceUpdate.Item.TypeId,
+            _state.Value.PriceUpdate.Price));
+
+        dispatcher.Dispatch(new CloseUpdatePriceAction());
+    }
+
     [EffectMethod]
     public Task HandleItemForShoppingListSearchInputChangedAction(ItemForShoppingListSearchInputChangedAction action,
         IDispatcher dispatcher)

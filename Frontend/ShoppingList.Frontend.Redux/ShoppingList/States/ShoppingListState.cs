@@ -13,7 +13,8 @@ public record ShoppingListState(
     bool EditModeActive,
     ShoppingListModel? ShoppingList,
     SearchBar SearchBar,
-    TemporaryItemCreator TemporaryItemCreator)
+    TemporaryItemCreator TemporaryItemCreator,
+    PriceUpdate PriceUpdate)
 {
     public IEnumerable<ShoppingListSection> GetSectionsToDisplay()
     {
@@ -42,6 +43,7 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
             false,
             null,
             new SearchBar(string.Empty, false, new List<SearchItemForShoppingListResult>()),
-            new TemporaryItemCreator(string.Empty, null, 1f, false, false, false));
+            new TemporaryItemCreator(string.Empty, null, 1f, false, false, false),
+            new PriceUpdate(null, 1f, true, false, false));
     }
 }
