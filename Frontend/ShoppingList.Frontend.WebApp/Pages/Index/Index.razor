@@ -34,7 +34,7 @@
             <StoreSelect></StoreSelect>
             <ItemVisiblityButton></ItemVisiblityButton>
             <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
-                    Disabled="@(_state.ShoppingList?.Store == null)">
+                    Disabled="@(State.Value.ShoppingList is null)">
                 <Icon Type="edit" />
             </Button>
         </div>
@@ -84,14 +84,14 @@
         Dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
         Dispatcher.Dispatch(new LoadAllActiveStoresAction());
         
-        _errorHandler.StateChanged += StateHasChanged;
-        _errorHandler.QueueProcessed += async () => await ReloadShoppingListAsync();
-        _state.StateChanged += StateHasChanged;
-        _state.ReloadRequestedAsync += async storeId => await LoadShoppingListAsync(storeId);
+        //_errorHandler.StateChanged += StateHasChanged;
+        //_errorHandler.QueueProcessed += async () => await ReloadShoppingListAsync();
+        //_state.StateChanged += StateHasChanged;
+        //_state.ReloadRequestedAsync += async storeId => await LoadShoppingListAsync(storeId);
 
-        _apiService.InitializeCommandQueue(_errorHandler);
+        //_apiService.InitializeCommandQueue(_errorHandler);
 
-        StateHasChanged();
+        //StateHasChanged();
     }
 
     public override Task SetParametersAsync(ParameterView parameters)
@@ -124,7 +124,8 @@
 
     private void OnEditModeButtonClicked()
     {
-        _state.ToggleItemEditMode();
+        Dispatcher.Dispatch(new ToggleEditModeAction());
+        //_state.ToggleItemEditMode();
     }
     #endregion
 

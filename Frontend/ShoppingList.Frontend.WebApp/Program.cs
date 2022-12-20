@@ -1,4 +1,3 @@
-using Fluxor;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +20,6 @@ using ShoppingList.Frontend.Redux;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using System;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp
@@ -59,8 +57,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddTransient<IShoppingListNotificationService, ShoppingListNotificationService>();
             builder.Services.AddTransient<IApiClient, ApiClient>();
             builder.Services.AddScoped<ICommandQueue, CommandQueue>();
-
-            builder.Services.AddTransient<ITemporaryItemCreationService, TemporaryItemCreationService>();
 
             builder.Services.AddScoped<IItemPriceCalculationService, ItemPriceCalculationService>();
 

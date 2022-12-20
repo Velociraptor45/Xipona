@@ -38,7 +38,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
                     source.Manufacturer?.Name ?? "",
                     source.IsInBasket,
                     source.Quantity,
-                    false);
+                    Hidden: source.IsInBasket);
         }
     }
 }

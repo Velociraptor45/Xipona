@@ -1,7 +1,6 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
@@ -21,19 +20,18 @@ public class ShoppingListEffects : IDisposable
     private readonly ICommandQueue _commandQueue;
     private readonly IState<ShoppingListState> _state;
     private readonly NavigationManager _navigationManager;
-    private readonly ITemporaryItemCreationService _temporaryItemCreationService;
 
-    private Timer _startSearchTimer;
+    private Timer? _startSearchTimer;
+    private Timer? _hideItemsTimer;
     private CancellationTokenSource _searchCancellationTokenSource;
 
     public ShoppingListEffects(IApiClient client, ICommandQueue commandQueue, IState<ShoppingListState> state,
-        NavigationManager navigationManager, ITemporaryItemCreationService temporaryItemCreationService)
+        NavigationManager navigationManager)
     {
         _client = client;
         _commandQueue = commandQueue;
         _state = state;
         _navigationManager = navigationManager;
-        _temporaryItemCreationService = temporaryItemCreationService;
     }
 
     [EffectMethod(typeof(LoadQuantityTypesAction))]
@@ -75,6 +73,7 @@ public class ShoppingListEffects : IDisposable
         var request = new PutItemInBasketRequest(Guid.NewGuid(), _state.Value.ShoppingList!.Id, action.ItemId,
             action.ItemTypeId);
         await _commandQueue.Enqueue(request);
+        RestartHideItemsTimer(dispatcher);
     }
 
     [EffectMethod]
@@ -83,14 +82,34 @@ public class ShoppingListEffects : IDisposable
         var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), _state.Value.ShoppingList!.Id,
             action.ItemId, action.ItemTypeId);
         await _commandQueue.Enqueue(request);
+        RestartHideItemsTimer(dispatcher);
     }
 
     [EffectMethod]
     public async Task HandleChangeItemQuantityAction(ChangeItemQuantityAction action, IDispatcher dispatcher)
     {
+        var item = _state.Value.ShoppingList!.Sections
+            .SelectMany(s => s.Items)
+            .FirstOrDefault(i => i.Id.ActualId == action.ItemId.ActualId
+                                    && i.Id.OfflineId == action.ItemId.OfflineId
+                                    && i.TypeId == action.ItemTypeId);
+        if (item is null)
+            return;
+
+        var newQuantity = action.Type switch
+        {
+            ChangeItemQuantityAction.ChangeType.Diff => item.Quantity + action.Quantity,
+            ChangeItemQuantityAction.ChangeType.Absolute => action.Quantity,
+            _ => throw new ArgumentOutOfRangeException($"Handling of change type {action.Type} not implemented")
+        };
+        if (newQuantity < 1)
+            newQuantity = 1;
+
         var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), _state.Value.ShoppingList!.Id,
-            action.ItemId, action.ItemTypeId, action.Quantity);
+            action.ItemId, action.ItemTypeId, newQuantity);
         await _commandQueue.Enqueue(request);
+
+        dispatcher.Dispatch(new ChangeItemQuantityFinishedAction(item.Id, item.TypeId, newQuantity));
     }
 
     [EffectMethod]
@@ -232,9 +251,28 @@ public class ShoppingListEffects : IDisposable
         return new CancellationTokenSource();
     }
 
+    private void RestartHideItemsTimer(IDispatcher dispatcher)
+    {
+        if (_hideItemsTimer is not null)
+        {
+            _hideItemsTimer.Stop();
+            _hideItemsTimer.Dispose();
+        }
+
+        _hideItemsTimer = new(1000d);
+        _hideItemsTimer.AutoReset = false;
+        _hideItemsTimer.Elapsed += (_, _) =>
+        {
+            dispatcher.Dispatch(new HideItemsInBasketAction());
+        };
+        _hideItemsTimer.Start();
+    }
+
     public void Dispose()
     {
         if (_searchCancellationTokenSource is not null)
             _searchCancellationTokenSource.Dispose();
+        if (_hideItemsTimer is not null)
+            _hideItemsTimer.Dispose();
     }
 }

@@ -40,7 +40,12 @@ public static class ShoppingListReducer
     public static ShoppingListState OnLoadShoppingListFinished(ShoppingListState state,
         LoadShoppingListFinishedAction action)
     {
-        return state with { ShoppingList = action.ShoppingList };
+        return state with
+        {
+            EditModeActive = false,
+            ItemsInBasketVisible = true,
+            ShoppingList = action.ShoppingList
+        };
     }
 
     [ReducerMethod]
@@ -48,6 +53,13 @@ public static class ShoppingListReducer
         ToggleItemsInBasketVisibleAction action)
     {
         return state with { ItemsInBasketVisible = !state.ItemsInBasketVisible };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnToggleEditMode(ShoppingListState state,
+        ToggleEditModeAction action)
+    {
+        return state with { EditModeActive = !state.EditModeActive };
     }
 
     [ReducerMethod]
@@ -303,22 +315,45 @@ public static class ShoppingListReducer
     }
 
     [ReducerMethod]
-    public static ShoppingListState OnChangeItemQuantity(ShoppingListState state,
-        ChangeItemQuantityAction action)
+    public static ShoppingListState OnChangeItemQuantityFinished(ShoppingListState state,
+        ChangeItemQuantityFinishedAction action)
     {
         var sections = new List<ShoppingListSection>(state.ShoppingList!.Sections);
-        foreach (var section in sections)
+        for (int i = 0; i < sections.Count; i++)
         {
+            var section = sections[i];
             var items = section.Items.ToList();
-            for (int i = 0; i < items.Count; i++)
+            for (int ii = 0; ii < items.Count; ii++)
             {
-                var item = items[i];
-                if ((item.Id.ActualId == action.ItemId.ActualId || item.Id.OfflineId == action.ItemId.OfflineId)
-                    && item.TypeId == action.ItemTypeId)
+                var item = items[ii];
+                if (item.Id.ActualId == action.ItemId.ActualId && item.Id.OfflineId == action.ItemId.OfflineId
+                                                               && item.TypeId == action.ItemTypeId)
                 {
-                    items[i] = item with { Quantity = action.Quantity };
+                    items[ii] = item with { Quantity = action.NewQuantity };
                 }
             }
+
+            sections[i] = section with { Items = items };
+        }
+
+        return state with
+        {
+            ShoppingList = state.ShoppingList with
+            {
+                Sections = new SortedSet<ShoppingListSection>(sections, new SortingIndexComparer())
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(HideItemsInBasketAction))]
+    public static ShoppingListState OnHideItemsInBasket(ShoppingListState state)
+    {
+        var sections = new List<ShoppingListSection>(state.ShoppingList!.Sections);
+        for (int i = 0; i < sections.Count; i++)
+        {
+            var section = sections[i];
+            var items = section.Items.Select(item => item with { Hidden = item.IsInBasket }).ToList();
+            sections[i] = section with { Items = items };
         }
 
         return state with
@@ -342,8 +377,8 @@ public static class ShoppingListReducer
 
             var itemToRemove = items
                 .FirstOrDefault(item =>
-                    (item.Id.ActualId == action.ItemId.ActualId || item.Id.OfflineId == action.ItemId.OfflineId)
-                    && item.TypeId == action.ItemTypeId);
+                    item.Id.ActualId == action.ItemId.ActualId && item.Id.OfflineId == action.ItemId.OfflineId
+                                                               && item.TypeId == action.ItemTypeId);
             if (itemToRemove is null)
                 continue;
 
@@ -376,7 +411,11 @@ public static class ShoppingListReducer
                 if ((item.Id.ActualId == itemId.ActualId && item.Id.OfflineId == itemId.OfflineId)
                     && item.TypeId == itemTypeId)
                 {
-                    items[ii] = item with { IsInBasket = inBasket };
+                    items[ii] = item with
+                    {
+                        IsInBasket = inBasket,
+                        Hidden = false
+                    };
                     sectionsList[i] = section with { Items = items };
                     return sectionsList;
                 }

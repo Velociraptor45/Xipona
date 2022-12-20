@@ -2,4 +2,12 @@
 
 namespace ShoppingList.Frontend.Redux.ShoppingList.Actions;
 
-public record ChangeItemQuantityAction(ShoppingListItemId ItemId, Guid? ItemTypeId, float Quantity);
+public record ChangeItemQuantityAction(ShoppingListItemId ItemId, Guid? ItemTypeId, float Quantity,
+    ChangeItemQuantityAction.ChangeType Type)
+{
+    public enum ChangeType
+    {
+        Absolute,
+        Diff
+    }
+}

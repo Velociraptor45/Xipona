@@ -17,7 +17,7 @@
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
-<li class="item py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClickedAsync">
+<li class="item py-2 mb-1 @(Model.IsInBasket ? "green-bg" : "red-bg") white" @onclick="OnItemClicked">
     @if (State.Value.EditModeActive)
     {
         <div class="d-flex flex-column ml-2">
@@ -27,23 +27,23 @@
                 <Button Danger="true"
                         Icon="close"
                         Class="mr-2 ml-auto d-flex align-items-center justify-content-center"
-                        OnClick="@OnRemoveItemButtonClickedAsync"></Button>
+                        OnClick="@OnRemoveItemButtonClicked"></Button>
             </div>
             <div>
                 <!-- lower row -->
                 <div class="d-flex">
                     <div class="d-flex">
                         <div class="d-flex mr-3">
-                            <AntDesign.InputNumber Value="@Model.Quantity" Min="1f"
-                                                   ValueChanged="@(async (float d) => await OnQuantityInputValueChangedAsync(d))">
+                            <AntDesign.InputNumber TValue="float" Value="@Model.Quantity" Min="1f"
+                                                   ValueChanged="OnQuantityInputValueChanged">
                             </AntDesign.InputNumber>
                             <span class="align-self-center">@Model.QuantityType.QuantityLabel</span>
                         </div>
                         <div class="d-flex">
                             <Button Class="d-flex align-items-center justify-content-center" Icon="plus"
-                                    OnClick="OnIncrementQuantityButtonClickedAsync"></Button>
+                                    OnClick="OnIncrementQuantityButtonClicked"></Button>
                             <Button Class="d-flex align-items-center justify-content-center" Icon="minus"
-                                    OnClick="OnDecrementQuantityButtonClickedAsync"></Button>
+                                    OnClick="OnDecrementQuantityButtonClicked"></Button>
                         </div>
                     </div>
                     @if (Model.IsTemporary)
@@ -111,7 +111,7 @@
     private float _updatedPricePerQuantity = 0.01f;
     private bool _updatePriceForAllOtherItemTypes = true;
 
-    private void OnItemClickedAsync()
+    private void OnItemClicked()
     {
         if (State.Value.EditModeActive)
             return;
@@ -132,24 +132,27 @@
         return _itemPriceCalculationService.CalculatePrice(Model.QuantityType.Id, Model.PricePerQuantity, Model.Quantity);
     }
 
-    private void OnQuantityInputValueChangedAsync(float quantity)
+    private void OnQuantityInputValueChanged(float quantity)
     {
-        Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, quantity));
+        Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, quantity,
+            ChangeItemQuantityAction.ChangeType.Absolute));
     }
 
-    private void OnRemoveItemButtonClickedAsync()
+    private void OnRemoveItemButtonClicked()
     {
         Dispatcher.Dispatch(new RemoveItemFromShoppingListAction(Model.Id, Model.TypeId));
     }
 
-    private void OnIncrementQuantityButtonClickedAsync()
+    private void OnIncrementQuantityButtonClicked()
     {
-        Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, Model.QuantityType.DefaultQuantity));
+        Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, Model.QuantityType.DefaultQuantity,
+            ChangeItemQuantityAction.ChangeType.Diff));
     }
 
-    private void OnDecrementQuantityButtonClickedAsync()
+    private void OnDecrementQuantityButtonClicked()
     {
-        Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, -Model.QuantityType.DefaultQuantity));
+        Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, -Model.QuantityType.DefaultQuantity,
+            ChangeItemQuantityAction.ChangeType.Diff));
     }
 
     private void OnMakeItemPermanentButtonClicked()
