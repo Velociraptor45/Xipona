@@ -1,5 +1,4 @@
 ﻿using Fluxor;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
 using System;
 using System.Linq;
@@ -24,5 +23,34 @@ public class ItemPriceCalculationService : IItemPriceCalculationService
         float price = (quantity / type.QuantityNormalizer) * pricePerQuantity;
 
         return (float)Math.Round(price * 100, MidpointRounding.AwayFromZero) / 100;
+    }
+
+    public float CalculatePrice(ShoppingListItem item)
+    {
+        float price = (item.Quantity / item.QuantityType.QuantityNormalizer) * item.PricePerQuantity;
+
+        return (float)Math.Round(price * 100, MidpointRounding.AwayFromZero) / 100;
+    }
+
+    public float GetInBasketPrice(ShoppingListModel shoppingList)
+    {
+        var items = shoppingList.Items.Where(i => i.IsInBasket).ToList();
+        var sum = 0f;
+        foreach (var item in items)
+        {
+            sum += CalculatePrice(item);
+        }
+        return sum;
+    }
+
+    public float GetTotalPrice(ShoppingListModel shoppingList)
+    {
+        var items = shoppingList.Items.ToList();
+        var sum = 0f;
+        foreach (var item in items)
+        {
+            sum += CalculatePrice(item);
+        }
+        return sum;
     }
 }

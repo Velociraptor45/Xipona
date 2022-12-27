@@ -264,6 +264,24 @@ public class ShoppingListEffects : IDisposable
         dispatcher.Dispatch(new SelectedStoreChangedAction(_state.Value.SelectedStoreId));
     }
 
+    [EffectMethod(typeof(FinishShoppingListAction))]
+    public async Task HandleFinishShoppingListAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new FinishShoppingListStartedAction());
+
+        var finishedAt = new DateTimeOffset(_state.Value.Summary.FinishedAt.ToUniversalTime(),
+            TimeSpan.Zero);
+
+        var request = new FinishListRequest(
+            Guid.NewGuid(),
+            _state.Value.ShoppingList!.Id,
+            finishedAt);
+        await _client.FinishListAsync(request);
+
+        dispatcher.Dispatch(new FinishShoppingListFinishedAction());
+        dispatcher.Dispatch(new SelectedStoreChangedAction(_state.Value.SelectedStoreId));
+    }
+
     private CancellationTokenSource CreateNewCancellationTokenSource()
     {
         if (_searchCancellationTokenSource is not null)

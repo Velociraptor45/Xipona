@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
 using System;
 using System.Timers;
 
@@ -68,11 +67,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
                 _hideItemTimer.Stop();
 
             Hide = false;
-        }
-
-        public float GetTotalPrice(IItemPriceCalculationService priceCalculationService)
-        {
-            return priceCalculationService.CalculatePrice(QuantityType.Id, PricePerQuantity, Quantity);
         }
 
         public void ChangeQuantity(float difference)

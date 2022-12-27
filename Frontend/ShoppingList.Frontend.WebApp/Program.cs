@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services;

@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Comparer;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System;
 using System.Collections.Generic;
@@ -49,22 +48,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
             }
 
             section.AddItem(item);
-        }
-
-        public float GetTotalPrice(IItemPriceCalculationService priceCalculationService)
-        {
-            return Sections.Sum(s => s.GetTotalPrice(priceCalculationService));
-        }
-
-        public float GetInBasketPrice(IItemPriceCalculationService priceCalculationService)
-        {
-            return Sections.Sum(s => s.GetInBasketPrice(priceCalculationService));
-        }
-
-        public string GetFormattedInBasketPrice(IItemPriceCalculationService priceCalculationService)
-        {
-            var price = GetInBasketPrice(priceCalculationService);
-            return $"{price:0.00}";
         }
 
         public IReadOnlyCollection<ShoppingListSection> GetNonEmptySections(bool excludeWithAllItemsHidden)

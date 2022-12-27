@@ -10,7 +10,6 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common;
-@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
 @using Fluxor
 @using global::ShoppingList.Frontend.Redux.ShoppingList.Actions
@@ -64,10 +63,7 @@
                 </div>
             </div>
         }
-        <Summary 
-            State="@_state"
-            FragmentCreator="@_errorHandler"
-            OnFinishList="async () => await ReloadShoppingListAsync()"></Summary>
+        <Summary FragmentCreator="@_errorHandler"></Summary>
         <ErrorStack ErrorHandler="@_errorHandler"></ErrorStack>
     </div>
     <Modal Title="@GetTitle()"
@@ -99,11 +95,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        
+
         Dispatcher.Dispatch(new LoadQuantityTypesAction());
         Dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
         Dispatcher.Dispatch(new LoadAllActiveStoresAction());
-        
+
         await base.OnInitializedAsync();
         //_errorHandler.StateChanged += StateHasChanged;
         //_errorHandler.QueueProcessed += async () => await ReloadShoppingListAsync();
@@ -140,7 +136,7 @@
     }
 
     #endregion
-    
+
     #region Callbacks
 
     private void OnEditModeButtonClicked()
@@ -151,13 +147,14 @@
 
     private string GetTotalListPrice()
     {
-        var price = _state.ShoppingList.GetTotalPrice(_itemPriceCalculationService);
+        var price = _itemPriceCalculationService.GetTotalPrice(State.Value.ShoppingList!);
         return $"{price:0.00}";
     }
 
     private string GetInBasketPrice()
     {
-        return _state.ShoppingList.GetFormattedInBasketPrice(_itemPriceCalculationService);
+        var price = _itemPriceCalculationService.GetInBasketPrice(State.Value.ShoppingList!);
+        return $"{price:0.00}";
     }
 
     private async Task ReloadAfterProcessingErrorAsync()

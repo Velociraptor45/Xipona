@@ -14,7 +14,8 @@ public record ShoppingListState(
     ShoppingListModel? ShoppingList,
     SearchBar SearchBar,
     TemporaryItemCreator TemporaryItemCreator,
-    PriceUpdate PriceUpdate)
+    PriceUpdate PriceUpdate,
+    Summary Summary)
 {
     public IEnumerable<ShoppingListSection> GetSectionsToDisplay()
     {
@@ -44,6 +45,7 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
             null,
             new SearchBar(string.Empty, false, new List<SearchItemForShoppingListResult>()),
             new TemporaryItemCreator(string.Empty, null, 1f, false, false, false),
-            new PriceUpdate(null, 1f, true, false, false));
+            new PriceUpdate(null, 1f, true, false, false),
+            new Summary(false, false, DateTime.MinValue, false));
     }
 }
