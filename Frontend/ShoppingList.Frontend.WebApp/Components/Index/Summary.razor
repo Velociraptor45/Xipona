@@ -1,12 +1,10 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject IShoppingListApiService _apiService;
 @inject IItemPriceCalculationService _priceCalculationService;
 
 @using Fluxor;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
 @using System.Text
 @using ShoppingListReduxState = global::ShoppingList.Frontend.Redux.ShoppingList.States
 @using System.Globalization;
@@ -36,8 +34,6 @@
 </div>
 
 @code {
-    [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
-
     private string Title => $"Finish shopping at {State.Value.SelectedStore?.Name}";
 
     private void OnSummaryButtonClicked()

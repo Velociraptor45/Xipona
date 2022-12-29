@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ShoppingList.Frontend.Redux.Shared.States;
 
@@ -15,7 +16,8 @@ public record ShoppingListState(
     SearchBar SearchBar,
     TemporaryItemCreator TemporaryItemCreator,
     PriceUpdate PriceUpdate,
-    Summary Summary)
+    Summary Summary,
+    ProcessingErrors Errors)
 {
     public IEnumerable<ShoppingListSection> GetSectionsToDisplay()
     {
@@ -28,6 +30,13 @@ public record ShoppingListState(
 
 public class ShoppingListFeatureState : Feature<ShoppingListState>
 {
+    private readonly IWebAssemblyHostEnvironment _environment;
+
+    public ShoppingListFeatureState(IWebAssemblyHostEnvironment environment)
+    {
+        _environment = environment;
+    }
+
     public override string GetName()
     {
         return nameof(ShoppingListState);
@@ -46,6 +55,7 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
             new SearchBar(string.Empty, false, new List<SearchItemForShoppingListResult>()),
             new TemporaryItemCreator(string.Empty, null, 1f, false, false, false),
             new PriceUpdate(null, 1f, true, false, false),
-            new Summary(false, false, DateTime.MinValue, false));
+            new Summary(false, false, DateTime.MinValue, false),
+            new ProcessingErrors(!_environment.IsProduction(), false, new List<string>()));
     }
 }

@@ -2,15 +2,10 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification.IShoppingListNotificationService _notificationService;
 @inject IItemPriceCalculationService _itemPriceCalculationService;
-@inject IShoppingListApiService _apiService;
-@inject IWebAssemblyHostEnvironment _env;
 
-@using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
 @using Fluxor
 @using global::ShoppingList.Frontend.Redux.ShoppingList.Actions
 @using ShoppingListReduxState = global::ShoppingList.Frontend.Redux.ShoppingList.States
@@ -21,15 +16,15 @@
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index
 
-@if (State != null && _state != null)
+@if (State != null)
 {
     <div>
-        @if (_errorHandler.ApiHasProcessingError)
+        @if (State.Value.Errors.HasErrors)
         {
-            <ProcessingError ReloadCallback="@ReloadAfterProcessingErrorAsync"></ProcessingError>
+            <ProcessingError></ProcessingError>
         }
         <div class="mb-1 d-flex justify-content-end align-items-center">
-            <DebugSwitch DebugHandler="@_errorHandler"></DebugSwitch>
+            <DebugSwitch></DebugSwitch>
             <StoreSelect></StoreSelect>
             <ItemVisiblityButton></ItemVisiblityButton>
             <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
@@ -47,7 +42,7 @@
                 }
             </div>
         }
-        @if (State.Value.ShoppingList != null && _state.ShoppingList != null)
+        @if (State.Value.ShoppingList != null)
         {
             <div class="d-flex align-items-end flex-column px-2">
                 <div class="d-flex border-top pt-1">
@@ -63,8 +58,8 @@
                 </div>
             </div>
         }
-        <Summary FragmentCreator="@_errorHandler"></Summary>
-        <ErrorStack ErrorHandler="@_errorHandler"></ErrorStack>
+        <Summary></Summary>
+        <ErrorStack></ErrorStack>
     </div>
     <Modal Title="@GetTitle()"
            Visible="State.Value.PriceUpdate.IsOpen"
@@ -90,53 +85,15 @@
 }
 
 @code{
-    private ShoppingListState _state;
-    private ErrorHandler _errorHandler;
-
     protected override async Task OnInitializedAsync()
     {
-
         Dispatcher.Dispatch(new LoadQuantityTypesAction());
         Dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
         Dispatcher.Dispatch(new LoadAllActiveStoresAction());
 
         await base.OnInitializedAsync();
-        //_errorHandler.StateChanged += StateHasChanged;
-        //_errorHandler.QueueProcessed += async () => await ReloadShoppingListAsync();
-        //_state.StateChanged += StateHasChanged;
-        //_state.ReloadRequestedAsync += async storeId => await LoadShoppingListAsync(storeId);
-
-        //_apiService.InitializeCommandQueue(_errorHandler);
-
-        //StateHasChanged();
     }
-
-    public override Task SetParametersAsync(ParameterView parameters)
-    {
-        _state = new ShoppingListState(null, true, false);
-        _errorHandler = new ErrorHandler(
-            _env.IsDevelopment(),
-            GetButtonRenderFragment,
-            GetAsyncButtonRenderFragment,
-            _notificationService);
-
-        return base.SetParametersAsync(parameters);
-    }
-
-    #region Loading
-
-    private async Task ReloadShoppingListAsync()
-    {
-        await LoadShoppingListAsync(_state.ShoppingList.Store.Id);
-    }
-
-    private async Task LoadShoppingListAsync(Guid storeId)
-    {
-        await _apiService.LoadActiveShoppingListAsync(storeId, _errorHandler, list => _state.ChangeList(list));
-    }
-
-    #endregion
-
+    
     #region Callbacks
 
     private void OnEditModeButtonClicked()
@@ -156,23 +113,7 @@
         var price = _itemPriceCalculationService.GetInBasketPrice(State.Value.ShoppingList!);
         return $"{price:0.00}";
     }
-
-    private async Task ReloadAfterProcessingErrorAsync()
-    {
-        _errorHandler.ResolveProcessingError();
-        await ReloadShoppingListAsync();
-    }
-
-    private RenderFragment GetButtonRenderFragment(Action callback, string label = "Retry")
-    {
-        return @<Button Type="@ButtonType.Primary" OnClick="callback">@label</Button>;
-    }
-
-    private RenderFragment GetAsyncButtonRenderFragment(Func<Task> callback, string label = "Retry")
-    {
-        return @<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
-    }
-
+    
     private void OnCloseUpdatePriceModalButtonClicked()
     {
         Dispatcher.Dispatch(new CloseUpdatePriceAction());
@@ -221,6 +162,9 @@
 
     private string ParseUpdatePrice(string value)
     {
-        return value.Replace(State.Value.PriceUpdate.Item?.QuantityType.PriceLabel, string.Empty);
+        if (State.Value.PriceUpdate.Item is null)
+            return value;
+
+        return value.Replace(State.Value.PriceUpdate.Item.QuantityType.PriceLabel, string.Empty);
     }
 }

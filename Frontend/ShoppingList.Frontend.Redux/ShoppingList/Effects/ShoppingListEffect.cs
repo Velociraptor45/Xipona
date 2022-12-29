@@ -23,7 +23,7 @@ public class ShoppingListEffects : IDisposable
 
     private Timer? _startSearchTimer;
     private Timer? _hideItemsTimer;
-    private CancellationTokenSource _searchCancellationTokenSource;
+    private CancellationTokenSource? _searchCancellationTokenSource;
 
     public ShoppingListEffects(IApiClient client, ICommandQueue commandQueue, IState<ShoppingListState> state,
         NavigationManager navigationManager)

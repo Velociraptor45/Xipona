@@ -59,8 +59,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
             builder.Services.AddScoped<IItemPriceCalculationService, ItemPriceCalculationService>();
 
-            builder.Services.AddTransient<IShoppingListApiService, ShoppingListApiService>();
-
             builder.Services.AddSingleton(new ItemsState());
             builder.Services.AddTransient<IItemsApiService, ItemsApiService>();
             builder.Services.AddTransient<IStoresApiService, StoresApiService>();

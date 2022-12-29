@@ -1,7 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using RestEase;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Shared.Ports;

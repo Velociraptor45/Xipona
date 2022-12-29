@@ -1,6 +1,5 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 @using ProjectHermes.ShoppingList.Frontend.Models
 @using System.Text.RegularExpressions
@@ -11,7 +10,6 @@
 
 @inject NavigationManager _navigationManager;
 @inject IItemPriceCalculationService _itemPriceCalculationService;
-@inject IShoppingListApiService _apiService;
 
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher

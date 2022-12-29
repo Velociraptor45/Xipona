@@ -1,10 +1,22 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using global::ShoppingList.Frontend.Redux.ShoppingList.Actions.Processing
+@using global::ShoppingList.Frontend.Redux.ShoppingList.States
+
+@inject IState<ShoppingListState> State
+@inject IDispatcher Dispatcher
 
 <div class="pr-2">
-    <Switch Checked="@DebugHandler.IsDebug" CheckedChildren="Dbg" UnCheckedChildren="Dbg" OnChange="() => DebugHandler.ToggleDebugState()" />
+    <Switch Checked="@State.Value.Errors.IsDebug" 
+            CheckedChildren="Dbg" 
+            UnCheckedChildren="Dbg" 
+            OnChange="OnToggle" />
 </div>
 
 @code {
-    [Parameter] public IDebugHandler DebugHandler { get; set; }
-
+    private void OnToggle()
+    {
+        Dispatcher.Dispatch(new ToggleDebugAction());
+    }
 }
