@@ -16,7 +16,6 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Exchanges;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items;
@@ -60,12 +59,11 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IItemUpdateService>>(provider =>
         {
             var itemRepository = provider.GetRequiredService<IItemRepository>();
-            var shoppingListUpdateService = provider.GetRequiredService<IShoppingListExchangeService>();
             var dateTimeService = provider.GetRequiredService<IDateTimeService>();
             var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
 
             return cancellationToken => new ItemUpdateService(itemRepository, validatorDelegate,
-                shoppingListUpdateService, dateTimeService, cancellationToken);
+                dateTimeService, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IItemSearchService>>(provider =>

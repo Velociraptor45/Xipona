@@ -5,7 +5,6 @@ using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
 {
@@ -24,9 +23,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
         public IReadOnlyCollection<SearchItemResult> Items => _items.AsReadOnly();
         public IReadOnlyCollection<QuantityType> QuantityTypes => _quantityTypes.AsReadOnly();
         public IReadOnlyCollection<QuantityTypeInPacket> QuantityTypesInPacket => _quantityTypesInPacket.AsReadOnly();
-
-        public Func<Task> ManufacturerCreated { get; set; }
-        public Func<Task> ItemCategoryCreated { get; set; }
 
         public Action StateChanged { get; set; }
         public Item EditedItem { get; private set; }
