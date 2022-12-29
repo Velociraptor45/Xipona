@@ -193,9 +193,6 @@ public class Item : AggregateRoot, IItem
         if (!HasItemTypes)
             throw new DomainException(new CannotUpdateItemAsItemWithTypesReason(update.OldId));
 
-        Delete();
-        UpdatedOn = dateTimeService.UtcNow;
-
         await validator.ValidateAsync(update.ItemCategoryId);
 
         if (update.ManufacturerId != null)
@@ -218,6 +215,10 @@ public class Item : AggregateRoot, IItem
             null,
             Id);
 
+        PublishDomainEvent(new ItemUpdatedDomainEvent(Id, updatedItem));
+        Delete();
+        UpdatedOn = dateTimeService.UtcNow;
+
         return updatedItem;
     }
 
@@ -227,9 +228,6 @@ public class Item : AggregateRoot, IItem
             throw new DomainException(new TemporaryItemNotUpdateableReason(update.OldId));
         if (HasItemTypes)
             throw new DomainException(new CannotUpdateItemWithTypesAsItemReason(update.OldId));
-
-        Delete();
-        UpdatedOn = dateTimeService.UtcNow;
 
         var itemCategoryId = update.ItemCategoryId;
         var manufacturerId = update.ManufacturerId;
@@ -258,13 +256,15 @@ public class Item : AggregateRoot, IItem
             null,
             Id);
 
+        PublishDomainEvent(new ItemUpdatedDomainEvent(Id, newItem));
+        Delete();
+        UpdatedOn = dateTimeService.UtcNow;
+
         return newItem;
     }
 
     public IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService)
     {
-        Delete();
-        UpdatedOn = dateTimeService.UtcNow;
         IItem newItem;
         if (HasItemTypes)
         {
@@ -285,6 +285,11 @@ public class Item : AggregateRoot, IItem
             newItem = new Item(ItemId.New, Name, false, Comment, IsTemporary, ItemQuantity, ItemCategoryId,
                 ManufacturerId, availabilities, TemporaryId, null, Id);
         }
+
+        PublishDomainEvent(new ItemUpdatedDomainEvent(Id, newItem));
+        Delete();
+        UpdatedOn = dateTimeService.UtcNow;
+
         return newItem;
     }
 
