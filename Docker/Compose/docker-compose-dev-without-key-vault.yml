@@ -14,7 +14,7 @@ services:
       - dev-ph-shoppinglist-database:/var/lib/mysql
 
   Api:
-    image: velocir4ptor/ph-shoppinglist-api:0.9.0-arm32v7
+    image: velocir4ptor/ph-shoppinglist-api:0.9.1-arm32v7
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       PH_SL_DB_CONNECTION_STRING_FILE: /run/secrets/dev-ph-shoppinglist-db-connection-string
@@ -32,7 +32,7 @@ services:
       - dev-ph-shoppinglist-db-connection-string
 
   Frontend:
-    image: velocir4ptor/ph-shoppinglist-frontend:0.9.0-arm32v7
+    image: velocir4ptor/ph-shoppinglist-frontend:0.9.1-arm32v7
     ports:
       - "13997:443"
     depends_on:

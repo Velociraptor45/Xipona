@@ -7,7 +7,6 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Exchanges;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
@@ -48,26 +47,6 @@ public class ItemUpdateServiceTests
 
             // Assert
             _fixture.VerifyUpdatingItem();
-        }
-
-        [Theory]
-        [MemberData(nameof(GetItemTypeIds))]
-        public async Task UpdateAsync_WithValidItemId_ShouldExchangeItemsOnShoppingLists(ItemTypeId? itemTypeId)
-        {
-            // Arrange
-            _fixture.SetupWithValidItemId(itemTypeId);
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.OldItemId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Price);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
-
-            // Act
-            await sut.UpdateAsync(_fixture.OldItemId.Value, _fixture.ItemTypeId, _fixture.StoreId.Value,
-                _fixture.Price.Value);
-
-            // Assert
-            _fixture.VerifyExchangingItems();
         }
 
         [Theory]
@@ -210,7 +189,6 @@ public class ItemUpdateServiceTests
                 SetupFindingOldItem();
                 SetupStoringOldItem();
                 SetupStoringNewItem();
-                SetupExchangingItems();
                 SetupUpdatingItem();
             }
         }
@@ -291,22 +269,6 @@ public class ItemUpdateServiceTests
             _fixture.VerifyStoringNewItem();
         }
 
-        [Fact]
-        public async Task UpdateAsync_WithValidItemId_ShouldExchangeItems()
-        {
-            // Arrange
-            _fixture.SetupWithValidItemId();
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemWithTypesUpdate);
-
-            // Act
-            await sut.UpdateAsync(_fixture.ItemWithTypesUpdate);
-
-            // Assert
-            _fixture.VerifyExchangingItems();
-        }
-
         private sealed class UpdateAsyncWithTypesFixture : UpdateAsyncFixture
         {
             public ItemWithTypesUpdate? ItemWithTypesUpdate { get; private set; }
@@ -346,7 +308,6 @@ public class ItemUpdateServiceTests
                 SetupUpdatingItem();
                 SetupStoringOldItem();
                 SetupStoringNewItem();
-                SetupExchangingItems();
             }
         }
     }
@@ -426,22 +387,6 @@ public class ItemUpdateServiceTests
             _fixture.VerifyStoringNewItem();
         }
 
-        [Fact]
-        public async Task UpdateAsync_WithValidItemId_ShouldExchangeItems()
-        {
-            // Arrange
-            _fixture.SetupWithValidItemId();
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemUpdate);
-
-            // Act
-            await sut.UpdateAsync(_fixture.ItemUpdate);
-
-            // Assert
-            _fixture.VerifyExchangingItems();
-        }
-
         private sealed class UpdateAsyncWithoutTypesFixture : UpdateAsyncFixture
         {
             public ItemUpdate? ItemUpdate { get; private set; }
@@ -480,7 +425,6 @@ public class ItemUpdateServiceTests
                 SetupUpdatingItem();
                 SetupStoringOldItem();
                 SetupStoringNewItem();
-                SetupExchangingItems();
             }
         }
     }
@@ -518,14 +462,6 @@ public class ItemUpdateServiceTests
             NewItem = ItemMother.Initial().Create();
         }
 
-        protected void SetupExchangingItems()
-        {
-            TestPropertyNotSetException.ThrowIfNull(NewItem);
-            TestPropertyNotSetException.ThrowIfNull(OldItemId);
-
-            ShoppingListExchangeServiceMock.SetupExchangeItemAsync(OldItemId.Value, NewItem);
-        }
-
         public void SetupFindingOldItem()
         {
             TestPropertyNotSetException.ThrowIfNull(OldItemMock);
@@ -555,14 +491,6 @@ public class ItemUpdateServiceTests
             SetupStoringItem(NewItem, NewItem);
         }
 
-        public void VerifyExchangingItems()
-        {
-            TestPropertyNotSetException.ThrowIfNull(NewItem);
-            TestPropertyNotSetException.ThrowIfNull(OldItemId);
-
-            ShoppingListExchangeServiceMock.VerifyExchangeItemAsync(OldItemId.Value, NewItem, Times.Once);
-        }
-
         public void VerifyStoringOldItem()
         {
             TestPropertyNotSetException.ThrowIfNull(OldItemMock);
@@ -581,7 +509,6 @@ public class ItemUpdateServiceTests
     private abstract class ItemUpdateServiceFixture
     {
         private readonly ItemRepositoryMock _itemRepositoryMock = new(MockBehavior.Strict);
-        protected readonly ShoppingListExchangeServiceMock ShoppingListExchangeServiceMock = new(MockBehavior.Strict);
         protected readonly DateTimeServiceMock DateTimeServiceMock = new(MockBehavior.Strict);
         protected readonly ValidatorMock ValidatorMock = new(MockBehavior.Strict);
 
@@ -590,7 +517,6 @@ public class ItemUpdateServiceTests
             return new ItemUpdateService(
                 _itemRepositoryMock.Object,
                 _ => ValidatorMock.Object,
-                ShoppingListExchangeServiceMock.Object,
                 DateTimeServiceMock.Object,
                 default);
         }

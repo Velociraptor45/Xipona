@@ -56,7 +56,6 @@
         if(newItemCategory == null)
             return (null, Guid.Empty);
 
-        await State.ItemCategoryCreated();
         return (new ItemCategorySearchResult(newItemCategory.Id, newItemCategory.Name), newItemCategory.Id);
     }
 }
