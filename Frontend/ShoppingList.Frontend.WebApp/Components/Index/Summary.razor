@@ -81,6 +81,7 @@
                        <div class="summary-price font-weight-bold align-self-center">@GetInBasketPrice()€</div>
                        <Button Class="ml-auto"
                                OnClick="OnFinishListButtonClicked"
+                               Disabled="State.Value.Summary.IsEditingFinishedAt"
                                @key="@("submit")"
                                Type="@ButtonType.Primary"
                                Loading="@State.Value.Summary.IsSaving">

@@ -550,7 +550,8 @@ public static class ShoppingListReducer
         {
             Summary = state.Summary with
             {
-                IsSaving = false
+                IsSaving = false,
+                IsOpen = false
             }
         };
     }
