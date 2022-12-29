@@ -5,6 +5,8 @@
 @using System.Text.RegularExpressions
 @using Fluxor
 @using global::ShoppingList.Frontend.Redux.ShoppingList.Actions
+@using global::ShoppingList.Frontend.Redux.ShoppingList.Actions.Items
+@using global::ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater
 @using global::ShoppingList.Frontend.Redux.ShoppingList.States
 @using ShoppingListState = global::ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListState
 
@@ -135,6 +137,6 @@
 
     private void OnOpenUpdatePriceClicked()
     {
-        Dispatcher.Dispatch(new OpenUpdatePriceAction(Model));
+        Dispatcher.Dispatch(new OpenPriceUpdaterAction(Model));
     }
 }

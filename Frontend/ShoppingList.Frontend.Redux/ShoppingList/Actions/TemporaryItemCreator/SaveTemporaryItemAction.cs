@@ -1,0 +1,2 @@
+﻿namespace ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
+public record SaveTemporaryItemAction;

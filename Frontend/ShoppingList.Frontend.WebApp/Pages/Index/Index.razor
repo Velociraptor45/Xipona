@@ -8,6 +8,7 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common;
 @using Fluxor
 @using global::ShoppingList.Frontend.Redux.ShoppingList.Actions
+@using global::ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater
 @using ShoppingListReduxState = global::ShoppingList.Frontend.Redux.ShoppingList.States
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 
@@ -116,17 +117,17 @@
     
     private void OnCloseUpdatePriceModalButtonClicked()
     {
-        Dispatcher.Dispatch(new CloseUpdatePriceAction());
+        Dispatcher.Dispatch(new ClosePriceUpdaterAction());
     }
 
     private void OnPriceChanged(float price)
     {
-        Dispatcher.Dispatch(new PriceOnPriceUpdateChangedAction(price));
+        Dispatcher.Dispatch(new PriceOnPriceUpdaterChangedAction(price));
     }
 
     private void OnUpdatePriceForAllTypes(bool @checked)
     {
-        Dispatcher.Dispatch(new UpdatePriceForAllTypesOnPriceUpdateChangedAction(@checked));
+        Dispatcher.Dispatch(new UpdatePriceForAllTypesOnPriceUpdaterChangedAction(@checked));
     }
 
     private string GetTitle()

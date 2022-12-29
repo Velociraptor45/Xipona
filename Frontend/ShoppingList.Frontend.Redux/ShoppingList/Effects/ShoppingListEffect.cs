@@ -6,6 +6,11 @@ using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ShoppingList.Frontend.Redux.Shared.States;
 using ShoppingList.Frontend.Redux.ShoppingList.Actions;
+using ShoppingList.Frontend.Redux.ShoppingList.Actions.Items;
+using ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
+using ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar;
+using ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary;
+using ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
 using ShoppingListItem = ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListItem;
 using Timer = System.Timers.Timer;
@@ -193,7 +198,7 @@ public class ShoppingListEffects : IDisposable
             _state.Value.PriceUpdate.Item.TypeId,
             _state.Value.PriceUpdate.Price));
 
-        dispatcher.Dispatch(new CloseUpdatePriceAction());
+        dispatcher.Dispatch(new ClosePriceUpdaterAction());
     }
 
     [EffectMethod]
