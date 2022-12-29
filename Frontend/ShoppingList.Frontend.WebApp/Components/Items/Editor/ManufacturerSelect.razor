@@ -56,7 +56,6 @@
         if (newManufacturer == null)
             return (null, Guid.Empty);
 
-        await State.ManufacturerCreated();
         return (new ManufacturerSearchResult(newManufacturer.Id, newManufacturer.Name), newManufacturer.Id);
     }
 }

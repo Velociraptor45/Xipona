@@ -26,9 +26,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
         public IReadOnlyCollection<QuantityType> QuantityTypes => _quantityTypes.AsReadOnly();
         public IReadOnlyCollection<QuantityTypeInPacket> QuantityTypesInPacket => _quantityTypesInPacket.AsReadOnly();
 
-        public Func<Task> ManufacturerCreated { get; set; }
-        public Func<Task> ItemCategoryCreated { get; set; }
-
         public Action StateChanged { get; set; }
         public Item EditedItem { get; private set; }
 
