@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
+﻿using ShoppingList.Frontend.Redux.ShoppingList.States;
 
 namespace ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar;
 

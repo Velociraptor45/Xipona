@@ -1,6 +1,5 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ShoppingList.Frontend.Redux.Shared.States;
 
 namespace ShoppingList.Frontend.Redux.ShoppingList.States;
@@ -21,6 +20,9 @@ public record ShoppingListState(
 {
     public IEnumerable<ShoppingListSection> GetSectionsToDisplay()
     {
+        if(ShoppingList is null)
+            return Enumerable.Empty<ShoppingListSection>();
+
         return ShoppingList.Sections.AsEnumerable()
             .Where(s => s.Items.Any() && (!s.AllItemsHidden || ItemsInBasketVisible));
     }

@@ -2,7 +2,6 @@
 using ShoppingList.Frontend.Redux.ShoppingList.Actions.Items;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
 using ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
-using OldModels = ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 
 namespace ShoppingList.Frontend.Redux.ShoppingList.Reducers;
 
@@ -124,7 +123,7 @@ public static class ShoppingListItemReducer
         };
     }
 
-    private static IEnumerable<ShoppingListSection> SetBasketStatus(OldModels.ShoppingListItemId itemId,
+    private static IEnumerable<ShoppingListSection> SetBasketStatus(ShoppingListItemId itemId,
         Guid? itemTypeId, bool inBasket, IEnumerable<ShoppingListSection> sections)
     {
         var sectionsList = sections.ToList();

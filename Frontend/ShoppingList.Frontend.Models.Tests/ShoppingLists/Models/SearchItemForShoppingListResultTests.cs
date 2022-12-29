@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
+using ShoppingList.Frontend.Redux.ShoppingList.States;
 using Xunit;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Tests.ShoppingLists.Models;

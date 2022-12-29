@@ -1,5 +1,4 @@
 ﻿using Fluxor;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ShoppingList.Frontend.Redux.ShoppingList.Actions;

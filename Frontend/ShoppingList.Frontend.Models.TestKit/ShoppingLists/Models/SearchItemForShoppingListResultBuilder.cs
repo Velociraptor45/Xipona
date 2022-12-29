@@ -1,5 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.TestKit.Common;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.TestKit.Common;
+using ShoppingList.Frontend.Redux.ShoppingList.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
 

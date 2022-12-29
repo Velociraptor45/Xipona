@@ -38,7 +38,6 @@ using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Shared.Ports;
@@ -182,16 +181,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return _converters.ToDomain<ItemCategoryContract, ItemCategory>(result);
         }
 
-        public async Task<ShoppingListModel> GetActiveShoppingListByStoreIdAsyncNew(Guid storeId) // todo name
+        public async Task<ShoppingListModel> GetActiveShoppingListByStoreIdAsync(Guid storeId)
         {
             var list = await _client.GetActiveShoppingListByStoreIdAsync(storeId);
             return _converters.ToDomain<ShoppingListContract, ShoppingListModel>(list);
-        }
-
-        public async Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(Guid storeId)
-        {
-            var list = await _client.GetActiveShoppingListByStoreIdAsync(storeId);
-            return _converters.ToDomain<ShoppingListContract, ShoppingListRoot>(list);
         }
 
         public async Task<IEnumerable<ShoppingListStore>> GetAllActiveStoresForShoppingListAsync()

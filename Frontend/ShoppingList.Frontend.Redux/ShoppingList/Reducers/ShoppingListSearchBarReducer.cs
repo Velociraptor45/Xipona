@@ -1,7 +1,6 @@
 ﻿using Fluxor;
 using ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
-using OldModels = ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 
 namespace ShoppingList.Frontend.Redux.ShoppingList.Reducers;
 
@@ -18,7 +17,7 @@ public static class ShoppingListSearchBarReducer
             {
                 Input = input,
                 Results = input == string.Empty
-                    ? new List<OldModels.SearchItemForShoppingListResult>()
+                    ? new List<SearchItemForShoppingListResult>()
                     : state.SearchBar.Results
             },
             TemporaryItemCreator = state.TemporaryItemCreator with
@@ -49,7 +48,7 @@ public static class ShoppingListSearchBarReducer
             SearchBar = state.SearchBar with
             {
                 Input = string.Empty,
-                Results = new List<OldModels.SearchItemForShoppingListResult>()
+                Results = new List<SearchItemForShoppingListResult>()
             },
             TemporaryItemCreator = state.TemporaryItemCreator with
             {

@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ShoppingList.Frontend.Redux.Shared.States;
+using ShoppingList.Frontend.Redux.ShoppingList.States;
 using ShoppingListItem = ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListItem;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain

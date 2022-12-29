@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
+using ShoppingList.Frontend.Redux.ShoppingList.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
 

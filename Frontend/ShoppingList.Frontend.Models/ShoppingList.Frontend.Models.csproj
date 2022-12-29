@@ -5,8 +5,4 @@
     <RootNamespace>ProjectHermes.ShoppingList.Frontend.Models</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="ShoppingLists\Services\" />
-  </ItemGroup>
-
 </Project>

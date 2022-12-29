@@ -1,5 +1,4 @@
 ﻿using Fluxor;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
@@ -54,7 +53,7 @@ public class ShoppingListEffects
     [EffectMethod]
     public async Task HandleSelectedStoreChangedAction(SelectedStoreChangedAction action, IDispatcher dispatcher)
     {
-        var shoppingList = await _client.GetActiveShoppingListByStoreIdAsyncNew(action.StoreId);
+        var shoppingList = await _client.GetActiveShoppingListByStoreIdAsync(action.StoreId);
 
         dispatcher.Dispatch(new LoadShoppingListFinishedAction(shoppingList));
     }
