@@ -40,6 +40,7 @@ using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
+using ShoppingList.Frontend.Redux.Items.States;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
@@ -53,7 +54,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
+using ItemStore = ShoppingList.Frontend.Redux.Items.States.ItemStore;
 using SharedStates = ShoppingList.Frontend.Redux.Shared.States;
 using ShoppingListStore = ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListStore;
 
@@ -190,11 +191,20 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task<IEnumerable<ShoppingListStore>> GetAllActiveStoresForShoppingListAsync()
         {
-            var contracts = await _client.GetAllActiveStoresAsync(); //todo write endpoint
+            var contracts = await _client.GetAllActiveStoresAsync(); //todo write endpoint #298
 
             return contracts is null ?
                 Enumerable.Empty<ShoppingListStore>() :
                 contracts.Select(_converters.ToDomain<ActiveStoreContract, ShoppingListStore>);
+        }
+
+        public async Task<IEnumerable<ItemStore>> GetAllActiveStoresForItemAsync()
+        {
+            var contracts = await _client.GetAllActiveStoresAsync(); // todo write endpoint #298
+
+            return contracts is null ?
+                Enumerable.Empty<ItemStore>() :
+                contracts.Select(_converters.ToDomain<ActiveStoreContract, ItemStore>);
         }
 
         public async Task<IEnumerable<Store>> GetAllActiveStoresAsync()
@@ -236,13 +246,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 .Select(_converters.ToDomain<SearchItemForShoppingListResultContract, SearchItemForShoppingListResult>);
         }
 
-        public async Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput)
+        public async Task<IEnumerable<ItemSearchResult>> SearchItemsAsync(string searchInput)
         {
             var result = await _client.SearchItemsAsync(searchInput);
 
             return result is null ?
-                Enumerable.Empty<SearchItemResult>() :
-                result.Select(_converters.ToDomain<SearchItemResultContract, SearchItemResult>);
+                Enumerable.Empty<ItemSearchResult>() :
+                result.Select(_converters.ToDomain<SearchItemResultContract, ItemSearchResult>);
         }
 
         public async Task<IEnumerable<SearchItemResult>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,

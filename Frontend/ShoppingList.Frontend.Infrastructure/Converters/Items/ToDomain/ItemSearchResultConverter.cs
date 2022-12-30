@@ -1,14 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ShoppingList.Frontend.Redux.Items.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToDomain
 {
-    public class SearchItemResultConverter : IToDomainConverter<SearchItemResultContract, SearchItemResult>
+    public class ItemSearchResultConverter : IToDomainConverter<SearchItemResultContract, ItemSearchResult>
     {
-        public SearchItemResult ToDomain(SearchItemResultContract contract)
+        public ItemSearchResult ToDomain(SearchItemResultContract contract)
         {
-            return new SearchItemResult(
+            return new ItemSearchResult(
                 contract.ItemId,
                 contract.ItemName);
         }

@@ -1,16 +1,6 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models
-@using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
-@using ProjectHermes.ShoppingList.Frontend.Models.Items
-@using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models
-@using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
-
-@inject IItemsApiService loadingService;
-
+﻿
 <div>
-    <div class="d-flex py-1">
+    @*<div class="d-flex py-1">
         <div class="mr-2 align-self-center">
             Store
         </div>
@@ -46,25 +36,25 @@
                 LabelName="@nameof(Manufacturer.Name)"
                 @ref="@manufacturersSelectRef"></Select>
     </div>
-    <Button @onclick="@OnLoadButtonClickedAsync">Load</Button>
+    <Button @onclick="@OnLoadButtonClickedAsync">Load</Button>*@
+    Coming back soon
 </div>
 
 @code {
-    [Parameter] public ItemsState State { get; set; }
-    [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
+    //[Parameter] public ItemsState State { get; set; }
+    //[Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
 
-    private Select<Guid, Store> storeSelectRef;
-    private Select<Guid, ItemCategory> itemCategoriesSelectRef;
-    private Select<Guid, Manufacturer> manufacturersSelectRef;
+    //private Select<Guid, Store> storeSelectRef;
+    //private Select<Guid, ItemCategory> itemCategoriesSelectRef;
+    //private Select<Guid, Manufacturer> manufacturersSelectRef;
 
-    private async Task OnLoadButtonClickedAsync()
-    {
-        var storeIds = storeSelectRef.Values;
-        var itemCategoryIds = itemCategoriesSelectRef.Values;
-        var manufacturerIds = manufacturersSelectRef.Values;
+    //private async Task OnLoadButtonClickedAsync()
+    //{
+    //    var storeIds = storeSelectRef.Values;
+    //    var itemCategoryIds = itemCategoriesSelectRef.Values;
+    //    var manufacturerIds = manufacturersSelectRef.Values;
 
-        await loadingService.SearchItemsAsync(storeIds, itemCategoryIds, manufacturerIds, FragmentCreator, 
-            items => State.UpdateItems(items));
-    }
-
+    //    await loadingService.SearchItemsAsync(storeIds, itemCategoryIds, manufacturerIds, FragmentCreator, 
+    //        items => State.UpdateItems(items));
+    //}
 }

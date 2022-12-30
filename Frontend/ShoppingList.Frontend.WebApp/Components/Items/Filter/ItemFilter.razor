@@ -1,11 +1,12 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models;
-@using ProjectHermes.ShoppingList.Frontend.Models.Items;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
-@using global::ShoppingList.Frontend.Redux.Items.Actions
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject NavigationManager NavigationManager;
+@using Fluxor
+@using global::ShoppingList.Frontend.Redux.Items.Actions.Editor
+@using global::ShoppingList.Frontend.Redux.Items.Actions.Search
+@using global::ShoppingList.Frontend.Redux.Items.States
+
+@inject IState<ItemState> State
+@inject IDispatcher Dispatcher
 
 <div class="d-flex">
     <div class="h4">Items</div>
@@ -16,28 +17,27 @@
 <div class="mb-2">
     <Tabs>
         <TabPane Tab="Search" Key="1">
-            <ItemSearchTab State="State" FragmentCreator="FragmentCreator"></ItemSearchTab>
+            <ItemSearchTab></ItemSearchTab>
         </TabPane>
         <TabPane Tab="Filter" Key="2">
-            <ItemFilterTab State="State" FragmentCreator="FragmentCreator"></ItemFilterTab>
+            <ItemFilterTab></ItemFilterTab>
         </TabPane>
     </Tabs>
 </div>
 <div>
     <!-- result item list -->
-    @foreach (var item in State.Items.ToList())
+    @foreach (var item in State.Value.Search.SearchResults)
     {
         <SearchResult Model="item" TAction="EditItemAction"></SearchResult>
     }
 </div>
 
 @code {
-    [Parameter] public ItemsState State { get; set; }
-    [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
-
     private void OnCreateItemButtonClicked()
     {
-        State.SetNewEditedItem();
-        NavigationManager.NavigateTo($"items/{Guid.Empty}");
+        Dispatcher.Dispatch(new EditItemAction
+        {
+            Id = Guid.Empty
+        });
     }
 }

@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
+using ShoppingList.Frontend.Redux.Items.States;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
@@ -11,6 +12,7 @@ using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Stores;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
+using ItemStore = ShoppingList.Frontend.Redux.Items.States.ItemStore;
 using SharedStates = ShoppingList.Frontend.Redux.Shared.States;
 using ShoppingListStore = ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListStore;
 
@@ -48,7 +50,7 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
 
         Task<Item> GetItemByIdAsync(Guid itemId);
 
-        Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput);
+        Task<IEnumerable<ItemSearchResult>> SearchItemsAsync(string searchInput);
 
         Task<IEnumerable<SearchItemResult>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,
             IEnumerable<Guid> itemCategoryIds, IEnumerable<Guid> manufacturerIds);
@@ -113,5 +115,7 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
         Task<IEnumerable<ShoppingListStore>> GetAllActiveStoresForShoppingListAsync();
 
         Task<ShoppingListModel> GetActiveShoppingListByStoreIdAsync(Guid storeId); // todo name
+
+        Task<IEnumerable<ItemStore>> GetAllActiveStoresForItemAsync();
     }
 }

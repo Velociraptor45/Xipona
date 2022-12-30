@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Stores.ToDomain
 {
-    public class ActiveStoreConverter : IToDomainConverter<ActiveStoreContract, ShoppingListStore> // todo rename
+    public class ShoppingListStoreConverter : IToDomainConverter<ActiveStoreContract, ShoppingListStore>
     {
         public ShoppingListStore ToDomain(ActiveStoreContract contract)
         {

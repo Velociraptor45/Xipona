@@ -1,6 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using System;
@@ -14,19 +12,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
         Task LoadInitialPageStateAsync(ItemsState state, IAsyncRetryFragmentCreator fragmentCreator);
 
         Task LoadItemAsync(Guid itemId, IAsyncRetryFragmentCreator fragmentCreator, Action<Item> onSuccessAction);
-
-        Task LoadItemCategoriesAsync(IAsyncRetryFragmentCreator fragmentCreator,
-            Action<IEnumerable<ItemCategory>> onSuccessAction);
-
-        Task SearchItemsAsync(IEnumerable<Guid> storeIds, IEnumerable<Guid> itemCategoryIds,
-            IEnumerable<Guid> manufacturerIds, IAsyncRetryFragmentCreator fragmentCreator,
-            Action<IEnumerable<SearchItemResult>> onSuccessAction);
-
-        Task SearchItemsAsync(string searchInput, IAsyncRetryFragmentCreator fragmentCreator,
-            Action<IEnumerable<SearchItemResult>> onSuccessAction);
-
-        Task LoadManufacturersAsync(IAsyncRetryFragmentCreator fragmentCreator,
-            Action<IEnumerable<Manufacturer>> onSuccessAction);
 
         Task<IEnumerable<SearchItemByItemCategoryResult>> SearchItemsByItemCategoryAsync(Guid itemCategoryId);
     }

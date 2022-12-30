@@ -12,13 +12,11 @@ public class ItemCategoryEffects
 
     private readonly IApiClient _client;
     private readonly NavigationManager _navigationManager;
-    private readonly IState<ItemCategoryState> _state;
 
-    public ItemCategoryEffects(IApiClient client, NavigationManager navigationManager, IState<ItemCategoryState> state)
+    public ItemCategoryEffects(IApiClient client, NavigationManager navigationManager)
     {
         _client = client;
         _navigationManager = navigationManager;
-        _state = state;
     }
 
     [EffectMethod]
