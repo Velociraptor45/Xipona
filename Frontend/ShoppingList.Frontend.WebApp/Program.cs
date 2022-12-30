@@ -5,7 +5,6 @@ using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services;
@@ -67,8 +66,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
             builder.Services.AddTransient<IManufacturerApiService, ManufacturerApiService>();
 
-            var itemCategoryState = new ItemCategoriesState();
-            builder.Services.AddSingleton(itemCategoryState);
             builder.Services.AddTransient<IItemCategoryApiService, ItemCategoryApiService>();
 
             var recipeState = new RecipesState();

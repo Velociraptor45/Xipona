@@ -1,101 +1,83 @@
 ﻿@page "/item-categories/{ItemCategoryId:guid}"
 
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Models
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject NavigationManager _navigationManager;
-@inject ItemCategoriesState _state;
-@inject IItemCategoryApiService _apiService
+@using Fluxor
+@using global::ShoppingList.Frontend.Redux.ItemCategories.Actions
+@using global::ShoppingList.Frontend.Redux.ItemCategories.States
+
+@inject IState<ItemCategoryState> State
+@inject IDispatcher Dispatcher
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories
 
-<div>
-    <div class="d-flex">
-        <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
-            <Icon Type="arrow-left"></Icon>
-        </Button>
-        @if (_state.EditedItemCategory is not null)
-        {
+@if (State.Value.Editor?.ItemCategory is not null)
+{
+    <div>
+        <div class="d-flex">
+            <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+                <Icon Type="arrow-left"></Icon>
+            </Button>
             <div class="mx-3">
-                <Input @bind-Value="@_state.EditedItemCategory.Name" />
+                <Input Placeholder="Name ..."
+                       TValue="string"
+                       Value="@State.Value.Editor.ItemCategory.Name"
+                       OnChange="OnNameChanged"/>
             </div>
-            @if (_state.EditedItemCategory.Id != Guid.Empty)
+            @if (State.Value.Editor.ItemCategory.Id != Guid.Empty)
             {
                 <Button Danger="true"
                         Class="ml-auto"
-                        OnClick="@OnDeleteButtonClickedAsync">
+                        OnClick="@OnDeleteButtonClicked">
                     Delete
                 </Button>
             }
-        }
-    </div>
-    @if (_state.EditedItemCategory is not null)
-    {
+        </div>
         <div class="d-flex justify-content-end mt-2">
-            
-            @if (_state.EditedItemCategory.Id == Guid.Empty)
+
+            @if (State.Value.Editor.ItemCategory.Id == Guid.Empty)
             {
-                <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
+                <Button @onclick="@OnSaveButtonClicked">Create</Button>
             }
             else
             {
-                <Button @onclick="@OnModifyButtonClickedAsync">Save</Button>
+                <Button @onclick="@OnSaveButtonClicked">Save</Button>
             }
         </div>
-        }
-</div>
+    </div>
+}
 
 @code {
     [Parameter] public Guid ItemCategoryId { get; set; }
 
-
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await base.OnInitializedAsync();
+        base.OnInitialized();
 
-        if (ItemCategoryId == Guid.Empty)
-        {
-            _state.SetNewEditedItemCategory();
-            return;
-        }
-
-        var result = await _apiService.GetAsync(ItemCategoryId);
-        if (result is null)
-            return;
-
-        _state.SetEditedItemCategory(result);
+        if(ItemCategoryId == Guid.Empty)
+            Dispatcher.Dispatch(new SetNewItemCategoryAction());
+        else
+            Dispatcher.Dispatch(new LoadItemCategoryForEditingAction(ItemCategoryId));
     }
-
+    
     private void OnBackButtonClicked()
     {
-        _navigationManager.NavigateTo("item-categories");
+        Dispatcher.Dispatch(new LeaveItemCategoryEditorAction());
     }
 
-    private async Task OnCreateButtonClickedAsync()
+    private void OnNameChanged(string name)
     {
-        var newItemCategory = await _apiService.CreateAsync(_state.EditedItemCategory);
-        if (newItemCategory is null)
-            return;
-        _navigationManager.NavigateTo($"item-categories/{newItemCategory.Id}");
+        Dispatcher.Dispatch(new EditedItemCategoryNameChangedAction(name));
     }
 
-    private async Task OnModifyButtonClickedAsync()
+    private void OnSaveButtonClicked()
     {
-        var successful = await _apiService.ModifyAsync(_state.EditedItemCategory);
-        if (successful)
-        {
-            _state.UpdateItemCategorySearchResultName(_state.EditedItemCategory.Id, _state.EditedItemCategory.Name);
-            _navigationManager.NavigateTo("item-categories");
-        }
+        Dispatcher.Dispatch(new SaveItemCategoryAction());
     }
 
-    private async Task OnDeleteButtonClickedAsync()
+
+    private void OnDeleteButtonClicked()
     {
-        var successful = await _apiService.DeleteAsync(_state.EditedItemCategory.Id);
-        if (successful)
-        {
-            _state.RemoveFromSearchResultsIfExists(_state.EditedItemCategory.Id);
-            _navigationManager.NavigateTo("item-categories");
-        }
+        Dispatcher.Dispatch(new DeleteItemCategoryAction());
     }
 }

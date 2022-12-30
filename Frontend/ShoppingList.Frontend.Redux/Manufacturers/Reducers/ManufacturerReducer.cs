@@ -155,8 +155,10 @@ public static class ManufacturerReducer
             return state;
 
         var index = state.Search.SearchResults.IndexOf(manufacturer);
-        var results = new List<ManufacturerSearchResult>(state.Search.SearchResults);
-        results[index] = new ManufacturerSearchResult(action.Id, action.Name);
+        var results = new List<ManufacturerSearchResult>(state.Search.SearchResults)
+        {
+            [index] = new(action.Id, action.Name)
+        };
 
         return state with
         {

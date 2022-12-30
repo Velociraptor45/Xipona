@@ -70,18 +70,18 @@ public class ManufacturerEffects
     {
         dispatcher.Dispatch(new SavingManufacturerStartedAction());
 
-        var manufacturer = _state.Value.Editor;
-        if (manufacturer.Manufacturer!.Id == Guid.Empty)
+        var editor = _state.Value.Editor;
+        if (editor.Manufacturer!.Id == Guid.Empty)
         {
-            await _client.CreateManufacturerAsync(manufacturer.Manufacturer.Name);
+            await _client.CreateManufacturerAsync(editor.Manufacturer.Name);
         }
         else
         {
             await _client.ModifyManufacturerAsync(
-                new ModifyManufacturerRequest(manufacturer.Manufacturer.Id, manufacturer.Manufacturer.Name));
+                new ModifyManufacturerRequest(editor.Manufacturer.Id, editor.Manufacturer.Name));
             var updateAction = new UpdateSearchResultsAfterSaveAction(
-                manufacturer.Manufacturer.Id,
-                manufacturer.Manufacturer.Name);
+                editor.Manufacturer.Id,
+                editor.Manufacturer.Name);
             dispatcher.Dispatch(updateAction);
         }
 

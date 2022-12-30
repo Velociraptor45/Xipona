@@ -39,6 +39,7 @@ using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
+using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
@@ -336,7 +337,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return _converters.ToDomain<ItemCategoryContract, ItemCategory>(result);
         }
 
-        public async Task<IEnumerable<ItemCategorySearchResult>> GetItemCategoriesSearchResultsAsync(string searchInput)
+        public async Task<IEnumerable<ItemCategorySearchResult>> GetItemCategorySearchResultsAsync(string searchInput)
         {
             var results = await _client.SearchItemCategoriesByNameAsync(searchInput, false);
 

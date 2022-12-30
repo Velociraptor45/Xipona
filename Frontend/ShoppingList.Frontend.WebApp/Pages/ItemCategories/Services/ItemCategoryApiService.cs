@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
 using RestEase;
+using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Shared.Ports;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -22,7 +22,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Servic
 
         public async Task<IEnumerable<ItemCategorySearchResult>> SearchAsync(string searchInput)
         {
-            return await _client.GetItemCategoriesSearchResultsAsync(searchInput);
+            return await _client.GetItemCategorySearchResultsAsync(searchInput);
         }
 
         public async Task<ItemCategory> GetAsync(Guid itemCategoryId)
@@ -40,27 +40,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Servic
             return null;
         }
 
-        public async Task<bool> DeleteAsync(Guid itemCategoryId)
-        {
-            try
-            {
-                await _client.DeleteItemCategoryAsync(itemCategoryId);
-                return true;
-            }
-            catch (ApiException e)
-            {
-                var contract = e.DeserializeContent<ErrorContract>();
-                _notificationService.NotifyError("Deleting item category failed", contract.Message);
-            }
-
-            return false;
-        }
-
-        public async Task<ItemCategory> CreateAsync(ItemCategory itemCategory)
-        {
-            return await CreateAsync(itemCategory.Name);
-        }
-
         public async Task<ItemCategory> CreateAsync(string itemCategoryName)
         {
             try
@@ -74,24 +53,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Servic
             }
 
             return null;
-        }
-
-        public async Task<bool> ModifyAsync(ItemCategory itemCategory)
-        {
-            var request = new ModifyItemCategoryRequest(itemCategory.Id, itemCategory.Name);
-
-            try
-            {
-                await _client.ModifyItemCategoryAsync(request);
-                return true;
-            }
-            catch (ApiException e)
-            {
-                var contract = e.DeserializeContent<ErrorContract>();
-                _notificationService.NotifyError("Modifying item category failed", contract.Message);
-            }
-
-            return false;
         }
     }
 }

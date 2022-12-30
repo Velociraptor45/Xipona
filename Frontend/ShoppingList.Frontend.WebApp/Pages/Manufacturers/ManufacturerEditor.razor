@@ -19,7 +19,10 @@
                 <Icon Type="arrow-left"></Icon>
             </Button>
             <div class="mx-3">
-                <Input TValue="string" Value="@State.Value.Editor.Manufacturer.Name" OnChange="OnNameChanged"/>
+                <Input Placeholder="Name ..."
+                       TValue="string"
+                       Value="@State.Value.Editor.Manufacturer.Name"
+                       OnChange="OnNameChanged" />
             </div>
             @if (State.Value.Editor.Manufacturer.Id != Guid.Empty)
             {
@@ -48,14 +51,14 @@
     [Parameter] public Guid ManufacturerId { get; set; }
 
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
+        base.OnInitialized();
+
         if (ManufacturerId == Guid.Empty)
             Dispatcher.Dispatch(new SetNewManufacturerAction());
         else
             Dispatcher.Dispatch(new LoadManufacturerForEditingAction(ManufacturerId));
-
-        await base.OnInitializedAsync();
     }
 
     private void OnNameChanged(string name)
