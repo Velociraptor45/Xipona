@@ -268,10 +268,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 result.Select(_converters.ToDomain<SearchItemResultContract, SearchItemResult>);
         }
 
-        public async Task<Item> GetItemByIdAsync(Guid itemId)
+        public async Task<EditedItem> GetItemByIdAsync(Guid itemId)
         {
             var result = await _client.GetAsync(itemId);
-            return _converters.ToDomain<ItemContract, Item>(result);
+            return _converters.ToDomain<ItemContract, EditedItem>(result);
         }
 
         public async Task<IEnumerable<SharedStates.QuantityType>> GetAllQuantityTypesAsync()

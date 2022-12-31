@@ -48,7 +48,7 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
 
         Task<IEnumerable<SharedStates.QuantityType>> GetAllQuantityTypesAsync();
 
-        Task<Item> GetItemByIdAsync(Guid itemId);
+        Task<EditedItem> GetItemByIdAsync(Guid itemId);
 
         Task<IEnumerable<ItemSearchResult>> SearchItemsAsync(string searchInput);
 

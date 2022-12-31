@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 {
-    public class Item : IAvailable
+    public class Item
     {
         public Item(Guid id, string name, bool isDeleted, string comment, bool isTemporary,
             QuantityType quantityType, float? quantityInPacket, QuantityTypeInPacket quantityInPacketType,
@@ -37,7 +37,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items.Models
         public Guid? ItemCategoryId { get; set; }
         public Guid? ManufacturerId { get; set; }
         public List<ItemType> ItemTypes { get; set; }
-        public List<ItemAvailability> Availabilities { get; set; }
+        public IReadOnlyCollection<ItemAvailability> Availabilities { get; set; }
         public ItemMode ItemMode { get; private set; }
 
         public bool IsItemWithTypes => ItemMode == ItemMode.WithTypes;

@@ -10,7 +10,7 @@ public class ItemStoreConverter : IToDomainConverter<ActiveStoreContract, ItemSt
     public ItemStore ToDomain(ActiveStoreContract source)
     {
         var sections = source.Sections
-            .Select(s => new ItemStoreSection(s.Id, s.Name))
+            .Select(s => new ItemStoreSection(s.Id, s.Name, s.IsDefaultSection))
             .ToList();
 
         return new ItemStore(source.Id, source.Name, sections);

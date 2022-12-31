@@ -16,7 +16,7 @@ public record EditedItem(
     Guid? ItemCategoryId,
     Guid? ManufacturerId,
     IReadOnlyCollection<EditedItemAvailability> Availabilities,
-    IReadOnlyCollection<EditedItemType> ItemTypes)
+    IReadOnlyCollection<EditedItemType> ItemTypes) : IAvailable
 {
     public ItemMode ItemMode
     {

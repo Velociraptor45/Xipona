@@ -20,8 +20,7 @@ public static class ItemReducer
     }
 
     [ReducerMethod]
-    public static ItemState OnSearchItemFinished(ItemState state,
-        SearchItemsFinishedAction action)
+    public static ItemState OnSearchItemFinished(ItemState state, SearchItemsFinishedAction action)
     {
         return state with
         {

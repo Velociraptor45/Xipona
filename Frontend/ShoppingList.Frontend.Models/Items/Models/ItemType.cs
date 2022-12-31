@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 {
-    public class ItemType : IAvailable
+    public class ItemType
     {
         public ItemType(Guid id, string name, IEnumerable<ItemAvailability> availabilities)
         {
@@ -15,6 +15,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 
         public Guid Id { get; }
         public string Name { get; set; }
-        public List<ItemAvailability> Availabilities { get; }
+        public IReadOnlyCollection<ItemAvailability> Availabilities { get; }
     }
 }

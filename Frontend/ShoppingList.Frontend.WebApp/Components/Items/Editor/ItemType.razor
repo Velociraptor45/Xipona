@@ -1,11 +1,22 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using global::ShoppingList.Frontend.Redux.Items.Actions
+@using global::ShoppingList.Frontend.Redux.Items.Actions.Editor
+@using global::ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities
+@using global::ShoppingList.Frontend.Redux.Items.States
+
+@inject IState<ItemState> State
+@inject IDispatcher Dispatcher
+
+@using ProjectHermes.ShoppingList.Frontend.Models.Items;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
 @using Models = ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 
 <div class="itemType p-2 mt-2">
     <div class="d-flex">
         <div class="name">
-            <Input @bind-Value="@itemType.Name"></Input>
+            <Input TValue="string" Value="@Model.Name" ValueChanged="OnNameChanged"></Input>
         </div>
         <div class="ml-2 ml-auto">
             <Button Class="d-flex align-items-center"
@@ -16,26 +27,31 @@
         </div>
     </div>
     <div class="availabilities">
-        <Availabilities State="State"
-                        Available="@itemType"></Availabilities>
+        <Availabilities Available="@Model"></Availabilities>
     </div>
 </div>
 
 @code {
-    [Parameter] public ItemsState State { get; set; }
-    [Parameter] public int ComponentIndex { get; set; }
+    //[Parameter] public ItemsState State { get; set; }
+    [Parameter] public EditedItemType Model { get; set; }
 
-    private Models.ItemType itemType;
+    //private Models.ItemType itemType;
 
-    protected override void OnInitialized()
+    //protected override void OnInitialized()
+    //{
+    //    base.OnInitialized();
+    //    itemType = State.EditedItem.ItemTypes[ComponentIndex];
+    //}
+
+    private void OnNameChanged(string name)
     {
-        base.OnInitialized();
-        itemType = State.EditedItem.ItemTypes[ComponentIndex];
+        Dispatcher.Dispatch(new ItemTypeNameChangedAction(Model, name));
     }
 
     private void OnRemoveItemTypeButtonClicked()
     {
-        State.EditedItem.ItemTypes.RemoveAt(ComponentIndex);
-        State.StateChanged();
+        //State.EditedItem.ItemTypes.RemoveAt(ComponentIndex);
+        //State.StateChanged();
+        Dispatcher.Dispatch(new ItemTypeRemovedAction(Model));
     }
 }
