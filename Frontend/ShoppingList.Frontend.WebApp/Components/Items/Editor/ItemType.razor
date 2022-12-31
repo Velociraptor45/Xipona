@@ -9,14 +9,11 @@
 @inject IState<ItemState> State
 @inject IDispatcher Dispatcher
 
-@using ProjectHermes.ShoppingList.Frontend.Models.Items;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
-@using Models = ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-
 <div class="itemType p-2 mt-2">
     <div class="d-flex">
         <div class="name">
-            <Input TValue="string" Value="@Model.Name" ValueChanged="OnNameChanged"></Input>
+            <Input TValue="string" Value="@Model.Name"
+                   ValueChanged="OnNameChanged" Placeholder="Type name ..."></Input>
         </div>
         <div class="ml-2 ml-auto">
             <Button Class="d-flex align-items-center"
@@ -32,16 +29,7 @@
 </div>
 
 @code {
-    //[Parameter] public ItemsState State { get; set; }
     [Parameter] public EditedItemType Model { get; set; }
-
-    //private Models.ItemType itemType;
-
-    //protected override void OnInitialized()
-    //{
-    //    base.OnInitialized();
-    //    itemType = State.EditedItem.ItemTypes[ComponentIndex];
-    //}
 
     private void OnNameChanged(string name)
     {
@@ -50,8 +38,6 @@
 
     private void OnRemoveItemTypeButtonClicked()
     {
-        //State.EditedItem.ItemTypes.RemoveAt(ComponentIndex);
-        //State.StateChanged();
         Dispatcher.Dispatch(new ItemTypeRemovedAction(Model));
     }
 }

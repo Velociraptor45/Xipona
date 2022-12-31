@@ -1,2 +1,2 @@
 ﻿namespace ShoppingList.Frontend.Redux.Items.Actions.Editor;
-public record ItemNameChangedAction(string Name);
+public record ItemNameChangedAction(string? Name);

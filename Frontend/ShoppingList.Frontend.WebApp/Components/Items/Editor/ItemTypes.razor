@@ -29,21 +29,8 @@
 </div>
 
 @code {
-    //[Parameter] public ItemsState State { get; set; }
-
-    //protected override void OnInitialized()
-    //{
-    //    base.OnInitialized();
-    //    State.StateChanged += StateHasChanged;
-    //}
-
     private void OnAddItemTypeButtonClicked()
     {
-        //State.EditedItem.ItemTypes.Add(
-        //    new Frontend.Models.Items.Models.ItemType(Guid.Empty, "New type", Enumerable.Empty<ItemAvailability>()));
-
-        //State.StateChanged();
-
         Dispatcher.Dispatch(new ItemTypeAddedAction());
     }
 }

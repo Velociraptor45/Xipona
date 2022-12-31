@@ -9,17 +9,10 @@
 @inject IState<ItemState> State
 @inject IDispatcher Dispatcher
 
-@using ProjectHermes.ShoppingList.Frontend.Models.Items;
-@using ProjectHermes.ShoppingList.Frontend.Models;
-@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
-@using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
-@using Microsoft.AspNetCore.Components
-
 <div class="availability d-flex">
     <div class="data">
         <Select Class="mr-2 store"
-                DataSource="Available.CreateAvailabilityStores(Model, State.Value.Stores.Stores)"
+                DataSource="Available.CreateAvailabilityStores(Model, State.Value.Stores.Stores).ToList()"
                 TItem="EditedItemAvailabilityStore"
                 TItemValue="Guid"
                 DefaultValue="Model.StoreId"
@@ -34,7 +27,7 @@
                 <div class="price-input">
                     <Input TValue="float" Value="@Model.PricePerQuantity" ValueChanged="OnPriceChanged"/>
                 </div>
-                <div class="mr-2">@(State.Value.Editor.Item.QuantityType.PriceLabel)</div>
+                <div class="mr-2">@(State.Value.Editor.Item!.QuantityType.PriceLabel)</div>
             </div>
             @*// todo convert to Select*@
             <SingleSelect Class="ml-2"
@@ -44,6 +37,7 @@
                           ValueName="@nameof(ItemStoreSection.Id)"
                           LabelName="@nameof(ItemStoreSection.Name)"
                           OnItemChanged="OnDefaultSectionChanged"
+                          IgnoreItemChanges="false"
                           DefaultValue="@Model.DefaultSectionId"></SingleSelect>
         </div>
     </div>
@@ -55,35 +49,21 @@
 </div>
 
 @code {
-    //[Parameter] public EditedItemsState State { get; set; }
     [Parameter] public IAvailable Available { get; set; }
     [Parameter] public EditedItemAvailability Model { get; set; }
-    //[Parameter] public List<EditedItemAvailabilityStore> Stores { get; set; }
-    //[Parameter] public int Index { get; set; }
-    //[Parameter] public Action<int> OnRemove { get; set; }
-    //[Parameter] public Action OnSelectedStoreChanged { get; set; }
-    
+
     private void OnStoreChanged(EditedItemAvailabilityStore store)
     {
-        //var store = State.GetStore(availabilityStore.Id);
-        //Model.Store = store.AsItemStore();
-
-        //var defaultSection = store.Sections.Single(s => s.IsDefaultSection);
-        //Model.ChangeDefaultSectionId(defaultSection.Id.BackendId);
-        //OnSelectedStoreChanged?.Invoke();
-
         Dispatcher.Dispatch(new ChangeStoreAction(Available, Model, store.Id));
     }
 
     private void OnRemoveStoreButtonClicked()
     {
-        //OnRemove(Index);
         Dispatcher.Dispatch(new RemoveStoreAction(Available, Model));
     }
 
     private void OnDefaultSectionChanged(ItemStoreSection section)
     {
-        //Model.ChangeDefaultSectionId(section.Id);
         Dispatcher.Dispatch(new ChangeDefaultSectionAction(Available, Model, section.Id));
     }
 

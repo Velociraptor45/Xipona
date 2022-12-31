@@ -8,6 +8,21 @@ namespace ShoppingList.Frontend.Redux.Items.Reducers;
 public static class ItemEditorReducer
 {
     [ReducerMethod]
+    public static ItemState OnItemNameChanged(ItemState state, ItemNameChangedAction action)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Item = state.Editor.Item! with
+                {
+                    Name = action.Name ?? string.Empty
+                }
+            }
+        };
+    }
+
+    [ReducerMethod]
     public static ItemState OnQuantityTypeInPacketChanged(ItemState state, QuantityTypeInPacketChangedAction action)
     {
         return state with
@@ -190,6 +205,11 @@ public static class ItemEditorReducer
 
         var store = availableStores.First();
         availabilities.Add(new EditedItemAvailability(store.Id, store.DefaultSectionId, 1f));
+
+        for (int i = 0; i < availabilities.Count; i++)
+        {
+            availabilities[i] = availabilities[i] with { PricePerQuantity = 1f };
+        }
 
         var itemType = action.ItemType with { Availabilities = availabilities };
         types[typeIndex] = itemType;
@@ -433,7 +453,7 @@ public static class ItemEditorReducer
         if (typeIndex == -1)
             return state;
 
-        types[typeIndex] = action.ItemType with { Name = action.Name };
+        types[typeIndex] = action.ItemType with { Name = action.Name ?? string.Empty };
 
         return state with
         {

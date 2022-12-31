@@ -13,11 +13,6 @@
 @using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Editor;
 
-@*@inject IItemEditorApiService ApiService;
-@inject IItemsApiService LoadingService;
-@inject ItemsState State;
-@inject NavigationManager NavigationManager;*@
-
 @if (State.Value.Editor.Item != null)
 {
     <div class="px-2">
@@ -26,7 +21,8 @@
                 <Icon Type="arrow-left"></Icon>
             </Button>
             <div class="mx-3">
-                <Input TValue="string" Value="@State.Value.Editor.Item.Name" OnChange="OnNameChanged" />
+                <Input TValue="string" Value="@State.Value.Editor.Item.Name"
+                       OnChange="OnNameChanged" Placeholder="Name ..."/>
             </div>
             @if (State.Value.Editor.Item.Id != Guid.Empty)
             {
@@ -38,10 +34,10 @@
             }
         </div>
         <Divider Class="my-3"></Divider>
-        <div class="d-flex pb-2">
+        @*<div class="d-flex pb-2">
             <ItemCategorySelect></ItemCategorySelect>
             <ManufacturerSelect></ManufacturerSelect>
-        </div>
+        </div>*@
         <Quantity></Quantity>
         @if (State.Value.Editor.Item.ItemMode == ItemMode.WithoutTypes
              || (!State.Value.Editor.Item.ItemTypes.Any() && State.Value.Editor.Item.ItemMode == ItemMode.NotDefined))
@@ -81,8 +77,6 @@
 @code {
     [Parameter] public Guid ItemId { get; set; }
 
-    //private ErrorHandler _errorHandler;
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -96,28 +90,6 @@
         else
             Dispatcher.Dispatch(new LoadItemForEditingAction(ItemId));
     }
-
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    await InitialLoadAsync();
-    //    _errorHandler = new ErrorHandler(GetButtonRenderFragment);
-
-    //    if (ItemId == Guid.Empty)
-    //    {
-    //        State.SetNewEditedItem();
-    //        return;
-    //    }
-
-    //    await LoadingService.LoadItemAsync(ItemId, _errorHandler, item => State.SetEditedItem(item));
-    //}
-
-    //private async Task InitialLoadAsync()
-    //{
-    //    if (State.Stores.Any())
-    //        return;
-
-    //    await LoadingService.LoadInitialPageStateAsync(State, _errorHandler);
-    //}
 
     private void OnCreateButtonClicked()
     {
@@ -144,62 +116,9 @@
         Dispatcher.Dispatch(new DeleteItemAction());
     }
 
-    //private async Task OnUpdateButtonClickedAsync()
-    //{
-    //    if(State.EditedItem.ItemTypes.Any())
-    //    {
-    //        await ApiService.UpdateItemWithTypesAsync(State.EditedItem, _errorHandler, 
-    //            LeaveEditor);
-    //        return;
-    //    }
-
-    //    await ApiService.UpdateItemAsync(State.EditedItem, _errorHandler, LeaveEditor);
-    //}
-
-    //private async Task OnModifyButtonClickedAsync()
-    //{
-    //    if(State.EditedItem.ItemTypes.Any())
-    //    {
-    //        await ApiService.ModifyItemWithTypesAsync(State.EditedItem, _errorHandler, LeaveEditor);
-    //        return;
-    //    }
-
-    //    await ApiService.ModifyItemAsync(State.EditedItem, _errorHandler, LeaveEditor);
-    //}
-
-    //private async Task OnCreateButtonClickedAsync()
-    //{
-    //    if (State.EditedItem.ItemTypes.Any())
-    //    {
-    //        await ApiService.CreateItemWithTypesAsync(State.EditedItem, _errorHandler, LeaveEditor);
-    //        return;
-    //    }
-
-    //    await ApiService.CreateItemAsync(State.EditedItem, _errorHandler, LeaveEditor);
-    //}
-
-    //private async Task OnMakePermanentButtonClickedAsync()
-    //{
-    //    if (!State.EditedItem.ItemCategoryId.HasValue)
-    //        return;
-
-    //    await ApiService.MakeTemporaryItemPermanentAsync(State.EditedItem, _errorHandler, LeaveEditor);
-    //}
-
-    //private async Task OnDeleteButtonClickedAsync()
-    //{
-    //    await ApiService.DeleteItemAsync(State.EditedItem.Id, _errorHandler, LeaveEditor);
-    //}
-
-    //private bool ShouldDisableChangeButton()
-    //{
-    //    return State.EditedItem.IsItemWithTypes && !State.EditedItem.ItemTypes.Any();
-    //}
-
     private void OnBackButtonClicked()
     {
         Dispatcher.Dispatch(new LeaveItemEditorAction());
-        //LeaveEditor();
     }
 
     private void OnNameChanged(string name)
@@ -211,14 +130,4 @@
     {
         Dispatcher.Dispatch(new ItemCommentChangedAction(comment));
     }
-
-    //private void LeaveEditor()
-    //{
-    //    NavigationManager.NavigateTo("items");
-    //}
-
-    //private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")
-    //{
-    //    return @<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
-    //}
 }

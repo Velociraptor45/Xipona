@@ -18,7 +18,7 @@
             return storesList.Where(s => availableStoreIds.Contains(s.Id));
         }
 
-        public IReadOnlyCollection<EditedItemAvailabilityStore> CreateAvailabilityStores(
+        IEnumerable<EditedItemAvailabilityStore> CreateAvailabilityStores(
             EditedItemAvailability availability, IEnumerable<ItemStore> stores)
         {
             var allOccupiedStoreIds = Availabilities.Select(av => av.StoreId).ToArray();
