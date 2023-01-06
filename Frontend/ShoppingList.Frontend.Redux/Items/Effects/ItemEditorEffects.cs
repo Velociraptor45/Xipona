@@ -2,17 +2,20 @@
 using ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
 using ShoppingList.Frontend.Redux.Items.States;
+using ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 
 namespace ShoppingList.Frontend.Redux.Items.Effects;
 
-public class ItemEditorEffects
+public sealed class ItemEditorEffects
 {
     private readonly IApiClient _client;
+    private readonly IState<ItemState> _state;
 
-    public ItemEditorEffects(IApiClient client)
+    public ItemEditorEffects(IApiClient client, IState<ItemState> state)
     {
         _client = client;
+        _state = state;
     }
 
     [EffectMethod]
@@ -76,5 +79,16 @@ public class ItemEditorEffects
             dispatcher.Dispatch(new StoreOfItemTypeRemovedAction(itemType, action.Availability));
 
         return Task.CompletedTask;
+    }
+
+    [EffectMethod(typeof(LoadInitialManufacturerAction))]
+    public async Task HandleLoadInitialManufacturerAction(IDispatcher dispatcher)
+    {
+        if (_state.Value.Editor.Item?.ManufacturerId is null)
+            return;
+
+        var itemCategory = await _client.GetManufacturerByIdAsync(_state.Value.Editor.Item!.ManufacturerId!.Value);
+        var result = new ManufacturerSearchResult(itemCategory.Id, itemCategory.Name);
+        dispatcher.Dispatch(new LoadInitialManufacturerFinishedAction(result));
     }
 }

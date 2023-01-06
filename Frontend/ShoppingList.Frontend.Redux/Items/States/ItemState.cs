@@ -1,4 +1,6 @@
 ﻿using Fluxor;
+using ShoppingList.Frontend.Redux.ItemCategories.States;
+using ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Shared.States;
 
 namespace ShoppingList.Frontend.Redux.Items.States;
@@ -27,6 +29,8 @@ public class ItemFeatureState : Feature<ItemState>
                 new List<ItemSearchResult>()),
             new ItemEditor(
                 null,
+                new ItemCategorySelector(new List<ItemCategorySearchResult>(), string.Empty),
+                new List<ManufacturerSearchResult>(),
                 false,
                 false,
                 false));

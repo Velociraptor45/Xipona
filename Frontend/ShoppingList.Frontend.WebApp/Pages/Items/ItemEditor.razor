@@ -34,10 +34,10 @@
             }
         </div>
         <Divider Class="my-3"></Divider>
-        @*<div class="d-flex pb-2">
+        <div class="d-flex pb-2">
             <ItemCategorySelect></ItemCategorySelect>
-            <ManufacturerSelect></ManufacturerSelect>
-        </div>*@
+            @*<ManufacturerSelect></ManufacturerSelect>*@
+        </div>
         <Quantity></Quantity>
         @if (State.Value.Editor.Item.ItemMode == ItemMode.WithoutTypes
              || (!State.Value.Editor.Item.ItemTypes.Any() && State.Value.Editor.Item.ItemMode == ItemMode.NotDefined))

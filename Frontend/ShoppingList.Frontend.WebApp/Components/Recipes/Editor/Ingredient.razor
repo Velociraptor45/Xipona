@@ -14,7 +14,7 @@
 <div class="ingredient">
     <div class="d-flex align-items-start">
         <div class="item-select">
-            <SingleSearchSelect Class="min-w-150"
+            @*<SingleSearchSelect Class="min-w-150" todo
                                 TItem="ItemCategorySearchResult"
                                 TValue="Guid"
                                 DataSource="_itemCategoryDataSource"
@@ -26,7 +26,7 @@
                                 DefaultValue="@Model.ItemCategoryId"
                                 SearchForItemsAsync="_itemCategoryApiService.SearchAsync"
                                 CanAddItem="true">
-            </SingleSearchSelect>
+            </SingleSearchSelect>*@
             @if (Model.ItemCategoryId != Guid.Empty && _itemDataSource.Any())
             {
                 <SingleSelect Class="mt-1 min-w-150"
