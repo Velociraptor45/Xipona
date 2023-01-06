@@ -1,6 +1,5 @@
 ﻿using Fluxor;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
-using ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor.ItemCategorySelectors;
 using ShoppingList.Frontend.Redux.Items.States;
 

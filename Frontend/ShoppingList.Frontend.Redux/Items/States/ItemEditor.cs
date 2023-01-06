@@ -1,11 +1,9 @@
-﻿using ShoppingList.Frontend.Redux.Manufacturers.States;
-
-namespace ShoppingList.Frontend.Redux.Items.States;
+﻿namespace ShoppingList.Frontend.Redux.Items.States;
 
 public record ItemEditor(
     EditedItem? Item,
     ItemCategorySelector ItemCategorySelector,
-    IReadOnlyCollection<ManufacturerSearchResult> Manufacturers,
+    ManufacturerSelector ManufacturerSelector,
     bool IsLoadingEditedItem,
     bool IsSaving,
     bool IsDeleting)

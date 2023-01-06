@@ -2,7 +2,6 @@
 using ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
 using ShoppingList.Frontend.Redux.Items.States;
-using ShoppingList.Frontend.Redux.Manufacturers.States;
 
 namespace ShoppingList.Frontend.Redux.Items.Reducers;
 
@@ -500,19 +499,6 @@ public static class ItemEditorReducer
                 {
                     ItemTypes = types
                 }
-            }
-        };
-    }
-
-    [ReducerMethod]
-    public static ItemState OnLoadInitialManufacturerFinished(ItemState state,
-        LoadInitialManufacturerFinishedAction action)
-    {
-        return state with
-        {
-            Editor = state.Editor with
-            {
-                Manufacturers = new List<ManufacturerSearchResult> { action.Manufacturer }
             }
         };
     }

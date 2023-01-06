@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
+using ShoppingList.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
 using ShoppingList.Frontend.Redux.Items.States;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Shared.Ports;

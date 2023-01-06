@@ -30,7 +30,7 @@ public class ItemFeatureState : Feature<ItemState>
             new ItemEditor(
                 null,
                 new ItemCategorySelector(new List<ItemCategorySearchResult>(), string.Empty),
-                new List<ManufacturerSearchResult>(),
+                new ManufacturerSelector(new List<ManufacturerSearchResult>(), string.Empty),
                 false,
                 false,
                 false));
