@@ -59,8 +59,7 @@ public class ManufacturerEffects
 
         var manufacturer = await _client.GetManufacturerByIdAsync(action.Id);
 
-        var finishAction =
-            new LoadManufacturerForEditingFinishedAction(new EditedManufacturer(manufacturer.Id, manufacturer.Name));
+        var finishAction = new LoadManufacturerForEditingFinishedAction(manufacturer);
         dispatcher.Dispatch(finishAction);
     }
 

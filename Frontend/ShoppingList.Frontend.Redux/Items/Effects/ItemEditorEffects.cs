@@ -93,8 +93,8 @@ public sealed class ItemEditorEffects
         if (_state.Value.Editor.Item?.ManufacturerId is null)
             return;
 
-        var itemCategory = await _client.GetManufacturerByIdAsync(_state.Value.Editor.Item!.ManufacturerId!.Value);
-        var result = new ManufacturerSearchResult(itemCategory.Id, itemCategory.Name);
+        var manufacturer = await _client.GetManufacturerByIdAsync(_state.Value.Editor.Item!.ManufacturerId!.Value);
+        var result = new ManufacturerSearchResult(manufacturer.Id, manufacturer.Name);
         dispatcher.Dispatch(new LoadInitialManufacturerFinishedAction(result));
     }
 

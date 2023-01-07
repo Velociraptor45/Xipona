@@ -34,7 +34,7 @@ public sealed class ManufacturerSelectorEffects
     [EffectMethod]
     public async Task HandleCreateNewManufacturerAction(CreateNewManufacturerAction action, IDispatcher dispatcher)
     {
-        var result = await _client.CreateManufacturerAsync(_state.Value.Editor.ManufacturerSelector.Input); //todo change return type #298
+        var result = await _client.CreateManufacturerAsync(_state.Value.Editor.ManufacturerSelector.Input);
         dispatcher.Dispatch(
             new CreateNewManufacturerFinishedAction(new ManufacturerSearchResult(result.Id, result.Name)));
     }

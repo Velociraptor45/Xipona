@@ -36,7 +36,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
@@ -171,10 +170,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             await _client.DeleteItemAsync(request.ItemId);
         }
 
-        public async Task<Manufacturer> CreateManufacturerAsync(string name)
+        public async Task<EditedManufacturer> CreateManufacturerAsync(string name)
         {
             var result = await _client.CreateManufacturerAsync(name);
-            return _converters.ToDomain<ManufacturerContract, Manufacturer>(result);
+            return _converters.ToDomain<ManufacturerContract, EditedManufacturer>(result);
         }
 
         public async Task<ItemCategory> CreateItemCategoryAsync(string name)
@@ -291,11 +290,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 : result.Select(_converters.ToDomain<ManufacturerSearchResultContract, ManufacturerSearchResult>);
         }
 
-        public async Task<Manufacturer> GetManufacturerByIdAsync(Guid id)
+        public async Task<EditedManufacturer> GetManufacturerByIdAsync(Guid id)
         {
             var result = await _client.GetManufacturerByIdAsync(id);
 
-            return _converters.ToDomain<ManufacturerContract, Manufacturer>(result);
+            return _converters.ToDomain<ManufacturerContract, EditedManufacturer>(result);
         }
 
         public async Task DeleteManufacturerAsync(Guid id)
