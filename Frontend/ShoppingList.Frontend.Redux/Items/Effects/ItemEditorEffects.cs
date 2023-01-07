@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Microsoft.AspNetCore.Components;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
@@ -10,13 +11,17 @@ namespace ShoppingList.Frontend.Redux.Items.Effects;
 
 public sealed class ItemEditorEffects
 {
+    private const string ItemPageName = "items";
+
     private readonly IApiClient _client;
     private readonly IState<ItemState> _state;
+    private readonly NavigationManager _navigationManager;
 
-    public ItemEditorEffects(IApiClient client, IState<ItemState> state)
+    public ItemEditorEffects(IApiClient client, IState<ItemState> state, NavigationManager navigationManager)
     {
         _client = client;
         _state = state;
+        _navigationManager = navigationManager;
     }
 
     [EffectMethod]
@@ -91,5 +96,12 @@ public sealed class ItemEditorEffects
         var itemCategory = await _client.GetManufacturerByIdAsync(_state.Value.Editor.Item!.ManufacturerId!.Value);
         var result = new ManufacturerSearchResult(itemCategory.Id, itemCategory.Name);
         dispatcher.Dispatch(new LoadInitialManufacturerFinishedAction(result));
+    }
+
+    [EffectMethod(typeof(LeaveItemEditorAction))]
+    public Task HandleLeaveItemEditorAction(IDispatcher dispatcher)
+    {
+        _navigationManager.NavigateTo(ItemPageName);
+        return Task.CompletedTask;
     }
 }

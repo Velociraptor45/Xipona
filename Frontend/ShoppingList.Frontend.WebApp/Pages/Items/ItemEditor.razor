@@ -118,7 +118,7 @@
 
     private void OnBackButtonClicked()
     {
-        Dispatcher.Dispatch(new LeaveItemEditorAction());
+        Dispatcher.Dispatch(new LeaveItemEditorAction()); //todo this doesn't work
     }
 
     private void OnNameChanged(string name)
