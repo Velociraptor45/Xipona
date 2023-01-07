@@ -126,8 +126,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task UpdateItemAsync(UpdateItemRequest request)
         {
-            var contract = _converters.ToContract<Item, UpdateItemContract>(request.StoreItem);
-            await _client.UpdateItemAsync(request.StoreItem.Id, contract);
+            var contract = _converters.ToContract<EditedItem, UpdateItemContract>(request.Item);
+            await _client.UpdateItemAsync(request.Item.Id, contract);
         }
 
         public async Task UpdateItemPriceAsync(UpdateItemPriceRequest request)
@@ -138,31 +138,31 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request)
         {
-            var contract = _converters.ToContract<Item, UpdateItemWithTypesContract>(request.StoreItem);
-            await _client.UpdateItemWithTypesAsync(request.StoreItem.Id, contract);
+            var contract = _converters.ToContract<EditedItem, UpdateItemWithTypesContract>(request.Item);
+            await _client.UpdateItemWithTypesAsync(request.Item.Id, contract);
         }
 
         public async Task ModifyItemAsync(ModifyItemRequest request)
         {
-            var contract = _converters.ToContract<Item, ModifyItemContract>(request.StoreItem);
-            await _client.ModifyItemAsync(request.StoreItem.Id, contract);
+            var contract = _converters.ToContract<EditedItem, ModifyItemContract>(request.Item);
+            await _client.ModifyItemAsync(request.Item.Id, contract);
         }
 
         public async Task ModifyItemWithTypesAsync(ModifyItemWithTypesRequest request)
         {
             var contract = _converters.ToContract<ModifyItemWithTypesRequest, ModifyItemWithTypesContract>(request);
-            await _client.ModifyItemWithTypesAsync(request.StoreItem.Id, contract);
+            await _client.ModifyItemWithTypesAsync(request.Item.Id, contract);
         }
 
         public async Task CreateItemAsync(CreateItemRequest request)
         {
-            var contract = _converters.ToContract<Item, CreateItemContract>(request.StoreItem);
+            var contract = _converters.ToContract<EditedItem, CreateItemContract>(request.Item);
             await _client.CreateItemAsync(contract);
         }
 
         public async Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request)
         {
-            var contract = _converters.ToContract<Item, CreateItemWithTypesContract>(request.StoreItem);
+            var contract = _converters.ToContract<EditedItem, CreateItemWithTypesContract>(request.Item);
             await _client.CreateItemWithTypesAsync(contract);
         }
 

@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ShoppingList.Frontend.Redux.Items.States;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using System.Linq;
 
@@ -10,10 +10,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
     public class MakeTemporaryItemPermanentContractConverter :
         IToContractConverter<MakeTemporaryItemPermanentRequest, MakeTemporaryItemPermanentContract>
     {
-        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> _availabilityConverter;
+        private readonly IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> _availabilityConverter;
 
         public MakeTemporaryItemPermanentContractConverter(
-            IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter)
+            IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> availabilityConverter)
         {
             _availabilityConverter = availabilityConverter;
         }

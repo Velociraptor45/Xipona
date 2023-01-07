@@ -25,6 +25,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
 
         public EditedItem ToDomain(ItemContract source)
         {
+            var types = source.ItemTypes.Select(CreateItemType).ToList();
+
             return new EditedItem(
                 source.Id,
                 source.Name,
@@ -39,7 +41,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
                 source.ItemCategory?.Id,
                 source.Manufacturer?.Id,
                 source.Availabilities.Select(_availabilityConverter.ToDomain).ToList(),
-                source.ItemTypes.Select(CreateItemType).ToList());
+                types,
+                types.Count > 0 ? ItemMode.WithTypes : ItemMode.WithoutTypes);
         }
 
         private EditedItemType CreateItemType(ItemTypeContract contract)

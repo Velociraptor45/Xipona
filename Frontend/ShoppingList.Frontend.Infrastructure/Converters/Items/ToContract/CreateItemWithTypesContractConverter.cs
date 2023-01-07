@@ -1,25 +1,25 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ShoppingList.Frontend.Redux.Items.States;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract
 {
     public class CreateItemWithTypesContractConverter :
-        IToContractConverter<Item, CreateItemWithTypesContract>
+        IToContractConverter<EditedItem, CreateItemWithTypesContract>
     {
-        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> _availabilityConverter;
+        private readonly IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> _availabilityConverter;
 
         public CreateItemWithTypesContractConverter(
-            IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter)
+            IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> availabilityConverter)
         {
             _availabilityConverter = availabilityConverter;
         }
 
-        public CreateItemWithTypesContract ToContract(Item source)
+        public CreateItemWithTypesContract ToContract(EditedItem source)
         {
-            return new CreateItemWithTypesContract()
+            return new CreateItemWithTypesContract
             {
                 Name = source.Name,
                 Comment = source.Comment,
@@ -32,9 +32,9 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
             };
         }
 
-        private CreateItemTypeContract ToCreateItemTypeContract(ItemType itemType)
+        private CreateItemTypeContract ToCreateItemTypeContract(EditedItemType itemType)
         {
-            return new CreateItemTypeContract()
+            return new CreateItemTypeContract
             {
                 Name = itemType.Name,
                 Availabilities = itemType.Availabilities.Select(_availabilityConverter.ToContract)

@@ -1,23 +1,23 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ShoppingList.Frontend.Redux.Items.States;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract
 {
     public class UpdateItemWithTypesContractConverter :
-        IToContractConverter<Item, UpdateItemWithTypesContract>
+        IToContractConverter<EditedItem, UpdateItemWithTypesContract>
     {
-        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> _availabilityConverter;
+        private readonly IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> _availabilityConverter;
 
         public UpdateItemWithTypesContractConverter(
-            IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter)
+            IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> availabilityConverter)
         {
             _availabilityConverter = availabilityConverter;
         }
 
-        public UpdateItemWithTypesContract ToContract(Item source)
+        public UpdateItemWithTypesContract ToContract(EditedItem source)
         {
             return new UpdateItemWithTypesContract(
                 source.Name,
@@ -30,7 +30,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
                 source.ItemTypes.Select(ToUpdateItemTypeContract));
         }
 
-        public UpdateItemTypeContract ToUpdateItemTypeContract(ItemType itemType)
+        public UpdateItemTypeContract ToUpdateItemTypeContract(EditedItemType itemType)
         {
             return new UpdateItemTypeContract(
                 itemType.Id,

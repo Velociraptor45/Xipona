@@ -1,14 +1,12 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+﻿using ShoppingList.Frontend.Redux.Items.States;
 
 namespace ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items
 {
     public class MakeTemporaryItemPermanentRequest
     {
-        private readonly IEnumerable<ItemAvailability> _availabilities;
-
         public MakeTemporaryItemPermanentRequest(Guid itemId, string name, string comment, int quantityType,
             float? quantityInPacket, int? quantityTypeInPacket, Guid itemCategoryId, Guid? manufacturerId,
-            IEnumerable<ItemAvailability> availabilities)
+            IReadOnlyCollection<EditedItemAvailability> availabilities)
         {
             ItemId = itemId;
             Name = name;
@@ -18,7 +16,7 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items
             QuantityTypeInPacket = quantityTypeInPacket;
             ItemCategoryId = itemCategoryId;
             ManufacturerId = manufacturerId;
-            _availabilities = availabilities;
+            Availabilities = availabilities;
         }
 
         public Guid ItemId { get; }
@@ -29,7 +27,6 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items
         public int? QuantityTypeInPacket { get; }
         public Guid ItemCategoryId { get; }
         public Guid? ManufacturerId { get; }
-
-        public IReadOnlyCollection<ItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
+        public IReadOnlyCollection<EditedItemAvailability> Availabilities { get; }
     }
 }

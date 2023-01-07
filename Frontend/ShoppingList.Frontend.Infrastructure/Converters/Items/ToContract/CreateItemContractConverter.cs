@@ -1,23 +1,23 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ShoppingList.Frontend.Redux.Items.States;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract
 {
     public class CreateItemContractConverter :
-        IToContractConverter<Item, CreateItemContract>
+        IToContractConverter<EditedItem, CreateItemContract>
     {
-        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> _availabilityConverter;
+        private readonly IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> _availabilityConverter;
 
         public CreateItemContractConverter(
-            IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter)
+            IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> availabilityConverter)
         {
             _availabilityConverter = availabilityConverter;
         }
 
-        public CreateItemContract ToContract(Item source)
+        public CreateItemContract ToContract(EditedItem source)
         {
             return new CreateItemContract
             {

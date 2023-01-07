@@ -1,16 +1,16 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+﻿using ShoppingList.Frontend.Redux.Items.States;
 
 namespace ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items
 {
     public class ModifyItemRequest : IApiRequest
     {
-        public ModifyItemRequest(Guid requestId, Item storeItem)
+        public ModifyItemRequest(Guid requestId, EditedItem item)
         {
             RequestId = requestId;
-            StoreItem = storeItem;
+            Item = item;
         }
 
         public Guid RequestId { get; }
-        public Item StoreItem { get; }
+        public EditedItem Item { get; }
     }
 }

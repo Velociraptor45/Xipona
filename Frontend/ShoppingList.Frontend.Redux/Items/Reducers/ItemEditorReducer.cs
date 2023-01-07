@@ -1,8 +1,10 @@
 ﻿using Fluxor;
+using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Items.Actions;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
 using ShoppingList.Frontend.Redux.Items.States;
+using ShoppingList.Frontend.Redux.Manufacturers.States;
 
 namespace ShoppingList.Frontend.Redux.Items.Reducers;
 
@@ -128,12 +130,21 @@ public static class ItemEditorReducer
                     "",
                     false,
                     state.QuantityTypes.First(),
-                    null,
-                    null,
+                    1,
+                    state.QuantityTypesInPacket.First(),
                     null,
                     null,
                     new List<EditedItemAvailability>(),
-                    new List<EditedItemType>())
+                    new List<EditedItemType>(),
+                    ItemMode.NotDefined),
+                ItemCategorySelector = state.Editor.ItemCategorySelector with
+                {
+                    ItemCategories = new List<ItemCategorySearchResult>(0)
+                },
+                ManufacturerSelector = state.Editor.ManufacturerSelector with
+                {
+                    Manufacturers = new List<ManufacturerSearchResult>(0)
+                }
             }
         };
     }
@@ -512,6 +523,126 @@ public static class ItemEditorReducer
             Editor = state.Editor with
             {
                 Item = null
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CreateItemStartedAction))]
+    public static ItemState OnCreateItemStarted(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CreateItemFinishedAction))]
+    public static ItemState OnCreateItemFinished(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(UpdateItemStartedAction))]
+    public static ItemState OnUpdateItemStarted(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(UpdateItemFinishedAction))]
+    public static ItemState OnUpdateItemFinished(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(ModifyItemStartedAction))]
+    public static ItemState OnModifyItemStarted(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(ModifyItemFinishedAction))]
+    public static ItemState OnModifyItemFinished(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(MakeItemPermanentStartedAction))]
+    public static ItemState OnMakeItemPermanentStarted(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(MakeItemPermanentFinishedAction))]
+    public static ItemState OnMakeItemPermanentFinished(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(DeleteItemStartedAction))]
+    public static ItemState OnDeleteItemStarted(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleting = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(DeleteItemFinishedAction))]
+    public static ItemState OnDeleteItemFinished(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleting = false
             }
         };
     }

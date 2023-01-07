@@ -7,6 +7,7 @@ using ShoppingList.Frontend.Redux.Items.States;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Shared.Constants;
 using ShoppingList.Frontend.Redux.Shared.Ports;
+using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 
 namespace ShoppingList.Frontend.Redux.Items.Effects;
 
@@ -102,5 +103,100 @@ public sealed class ItemEditorEffects
     {
         _navigationManager.NavigateTo(PageRoutes.Items);
         return Task.CompletedTask;
+    }
+
+    [EffectMethod(typeof(CreateItemAction))]
+    public async Task HandleCreateItemAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new CreateItemStartedAction());
+
+        var item = _state.Value.Editor.Item!;
+        if (item.IsItemWithTypes || (item.ItemMode is ItemMode.NotDefined && item.ItemTypes.Count > 0))
+        {
+            var request = new CreateItemWithTypesRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+            await _client.CreateItemWithTypesAsync(request);
+        }
+        else
+        {
+            var request = new CreateItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+            await _client.CreateItemAsync(request);
+        }
+
+        dispatcher.Dispatch(new CreateItemFinishedAction());
+        dispatcher.Dispatch(new LeaveItemEditorAction());
+    }
+
+    [EffectMethod(typeof(UpdateItemAction))]
+    public async Task HandleUpdateItemAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new UpdateItemStartedAction());
+
+        if (_state.Value.Editor.Item!.IsItemWithTypes)
+        {
+            var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+            await _client.UpdateItemWithTypesAsync(request);
+        }
+        else
+        {
+            var request = new UpdateItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+            await _client.UpdateItemAsync(request);
+        }
+
+        dispatcher.Dispatch(new UpdateItemFinishedAction());
+        dispatcher.Dispatch(new LeaveItemEditorAction());
+    }
+
+    [EffectMethod(typeof(ModifyItemAction))]
+    public async Task HandleModifyItemAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new ModifyItemStartedAction());
+
+        if (_state.Value.Editor.Item!.IsItemWithTypes)
+        {
+            var request = new ModifyItemWithTypesRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+            await _client.ModifyItemWithTypesAsync(request);
+        }
+        else
+        {
+            var request = new ModifyItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+            await _client.ModifyItemAsync(request);
+        }
+
+        dispatcher.Dispatch(new ModifyItemFinishedAction());
+        dispatcher.Dispatch(new LeaveItemEditorAction());
+    }
+
+    [EffectMethod(typeof(MakeItemPermanentAction))]
+    public async Task HandleMakeItemPermanentAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new MakeItemPermanentStartedAction());
+
+        var item = _state.Value.Editor.Item!;
+        var request = new MakeTemporaryItemPermanentRequest(
+            item.Id,
+            item.Name,
+            item.Comment,
+            item.QuantityType.Id,
+            item.QuantityInPacket,
+            item.QuantityInPacketType?.Id,
+            item.ItemCategoryId!.Value,
+            item.ManufacturerId,
+            item.Availabilities);
+        await _client.MakeTemporaryItemPermanent(request);
+
+        dispatcher.Dispatch(new MakeItemPermanentFinishedAction());
+        dispatcher.Dispatch(new LeaveItemEditorAction());
+    }
+
+    [EffectMethod(typeof(DeleteItemAction))]
+    public async Task HandleDeleteItemAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new DeleteItemStartedAction());
+
+        var request = new DeleteItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!.Id);
+        await _client.DeleteItemAsync(request);
+
+        dispatcher.Dispatch(new DeleteItemFinishedAction());
+        dispatcher.Dispatch(new LeaveItemEditorAction());
     }
 }
