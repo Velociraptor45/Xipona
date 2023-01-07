@@ -5,14 +5,13 @@ using ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
 using ShoppingList.Frontend.Redux.Items.States;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
+using ShoppingList.Frontend.Redux.Shared.Constants;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 
 namespace ShoppingList.Frontend.Redux.Items.Effects;
 
 public sealed class ItemEditorEffects
 {
-    private const string ItemPageName = "items";
-
     private readonly IApiClient _client;
     private readonly IState<ItemState> _state;
     private readonly NavigationManager _navigationManager;
@@ -101,7 +100,7 @@ public sealed class ItemEditorEffects
     [EffectMethod(typeof(LeaveItemEditorAction))]
     public Task HandleLeaveItemEditorAction(IDispatcher dispatcher)
     {
-        _navigationManager.NavigateTo(ItemPageName);
+        _navigationManager.NavigateTo(PageRoutes.Items);
         return Task.CompletedTask;
     }
 }

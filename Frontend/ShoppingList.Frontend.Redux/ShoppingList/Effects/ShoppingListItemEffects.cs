@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
+using ShoppingList.Frontend.Redux.Shared.Constants;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ShoppingList.Frontend.Redux.ShoppingList.Actions.Items;
@@ -10,8 +11,6 @@ namespace ShoppingList.Frontend.Redux.ShoppingList.Effects;
 
 public sealed class ShoppingListItemEffects : IDisposable
 {
-    private const string ItemsPageName = "items";
-
     private readonly ICommandQueue _commandQueue;
     private readonly IState<ShoppingListState> _state;
     private readonly NavigationManager _navigationManager;
@@ -83,7 +82,7 @@ public sealed class ShoppingListItemEffects : IDisposable
     [EffectMethod]
     public Task HandleMakeItemPermanentAction(MakeItemPermanentAction action, IDispatcher dispatcher)
     {
-        _navigationManager.NavigateTo($"{ItemsPageName}/{action.ItemId}");
+        _navigationManager.NavigateTo($"{PageRoutes.Items}/{action.ItemId}");
         return Task.CompletedTask;
     }
 

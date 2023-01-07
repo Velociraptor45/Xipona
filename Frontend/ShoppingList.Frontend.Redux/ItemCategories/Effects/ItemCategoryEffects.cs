@@ -2,14 +2,13 @@
 using Microsoft.AspNetCore.Components;
 using ShoppingList.Frontend.Redux.ItemCategories.Actions;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
+using ShoppingList.Frontend.Redux.Shared.Constants;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 
 namespace ShoppingList.Frontend.Redux.ItemCategories.Effects;
 
 public class ItemCategoryEffects
 {
-    private const string ItemCategoryPageName = "item-categories";
-
     private readonly IApiClient _client;
     private readonly NavigationManager _navigationManager;
 
@@ -39,7 +38,7 @@ public class ItemCategoryEffects
     [EffectMethod]
     public Task HandleEditItemCategoryAction(EditItemCategoryAction action, IDispatcher dispatcher)
     {
-        _navigationManager.NavigateTo($"{ItemCategoryPageName}/{action.Id}");
+        _navigationManager.NavigateTo($"{PageRoutes.ItemCategories}/{action.Id}");
         return Task.CompletedTask;
     }
 }

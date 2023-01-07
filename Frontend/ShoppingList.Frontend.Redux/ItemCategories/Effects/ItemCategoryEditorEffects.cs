@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using ShoppingList.Frontend.Redux.ItemCategories.Actions;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
+using ShoppingList.Frontend.Redux.Shared.Constants;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
 
@@ -9,8 +10,6 @@ namespace ShoppingList.Frontend.Redux.ItemCategories.Effects;
 
 public class ItemCategoryEditorEffects
 {
-    private const string ItemCategoryPageName = "item-categories";
-
     private readonly IApiClient _client;
     private readonly NavigationManager _navigationManager;
     private readonly IState<ItemCategoryState> _state;
@@ -26,7 +25,7 @@ public class ItemCategoryEditorEffects
     [EffectMethod(typeof(LeaveItemCategoryEditorAction))]
     public Task HandleLeaveItemCategoryEditorAction(IDispatcher dispatcher)
     {
-        _navigationManager.NavigateTo(ItemCategoryPageName);
+        _navigationManager.NavigateTo(PageRoutes.ItemCategories);
         return Task.CompletedTask;
     }
 

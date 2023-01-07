@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using ShoppingList.Frontend.Redux.Manufacturers.Actions;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
+using ShoppingList.Frontend.Redux.Shared.Constants;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 
@@ -9,8 +10,6 @@ namespace ShoppingList.Frontend.Redux.Manufacturers.Effects;
 
 public class ManufacturerEffects
 {
-    private const string ManufacturerPageName = "manufacturers";
-
     private readonly IApiClient _client;
     private readonly NavigationManager _navigationManager;
     private readonly IState<ManufacturerState> _state;
@@ -42,14 +41,14 @@ public class ManufacturerEffects
     [EffectMethod]
     public Task HandleEditManufacturerAction(EditManufacturerAction action, IDispatcher dispatcher)
     {
-        _navigationManager.NavigateTo($"{ManufacturerPageName}/{action.Id}");
+        _navigationManager.NavigateTo($"{PageRoutes.Manufacturers}/{action.Id}");
         return Task.CompletedTask;
     }
 
     [EffectMethod(typeof(LeaveManufacturerEditorAction))]
     public Task HandleLeaveManufacturerEditorAction(IDispatcher dispatcher)
     {
-        _navigationManager.NavigateTo(ManufacturerPageName);
+        _navigationManager.NavigateTo(PageRoutes.Manufacturers);
         return Task.CompletedTask;
     }
 
