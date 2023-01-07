@@ -18,10 +18,7 @@
 @code {
     protected override void OnInitialized()
     {
-        Dispatcher.Dispatch(new LoadQuantityTypesAction());
-        Dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
-        Dispatcher.Dispatch(new LoadActiveStoresAction());
-
+        Dispatcher.Dispatch(new EnterItemSearchPageAction());
         base.OnInitialized();
     }
 }

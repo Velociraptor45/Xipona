@@ -23,6 +23,16 @@ public class ItemEffects
         _state = state;
     }
 
+    [EffectMethod(typeof(EnterItemSearchPageAction))]
+    public Task HandleEnterItemSearchPageAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new LoadQuantityTypesAction());
+        dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
+        dispatcher.Dispatch(new LoadActiveStoresAction());
+
+        return Task.CompletedTask;
+    }
+
     [EffectMethod]
     public async Task HandleSearchItemsAction(SearchItemsAction action, IDispatcher dispatcher)
     {

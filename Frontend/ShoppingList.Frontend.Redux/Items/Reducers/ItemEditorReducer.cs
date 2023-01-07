@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using ShoppingList.Frontend.Redux.Items.Actions;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
 using ShoppingList.Frontend.Redux.Items.States;
@@ -499,6 +500,18 @@ public static class ItemEditorReducer
                 {
                     ItemTypes = types
                 }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(EnterItemSearchPageAction))]
+    public static ItemState OnEnterItemSearchPage(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Item = null
             }
         };
     }
