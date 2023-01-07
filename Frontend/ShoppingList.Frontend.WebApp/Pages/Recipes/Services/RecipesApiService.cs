@@ -24,10 +24,10 @@ public class RecipesApiService : IRecipesApiService
         return await _client.GetAllIngredientQuantityTypes();
     }
 
-    public async Task<IEnumerable<RecipeSearchResult>> SearchAsync(string searchInput)
-    {
-        return await _client.SearchRecipesByNameAsync(searchInput);
-    }
+    //public async Task<IEnumerable<RecipeSearchResult>> SearchAsync(string searchInput)
+    //{
+    //    return await _client.SearchRecipesByNameAsync(searchInput);
+    //}
 
     public async Task<Recipe> GetAsync(Guid recipeId)
     {

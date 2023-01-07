@@ -1,13 +1,21 @@
 ﻿@page "/recipes"
 
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using global::ShoppingList.Frontend.Redux.Recipes.Actions
+@using global::ShoppingList.Frontend.Redux.Recipes.States
+
+@inject IDispatcher Dispatcher
+@inject IState<RecipeState> State
+
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
-@using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models
-@using global::ShoppingList.Frontend.Redux.Recipes.Actions
-
+@*@using RecipeSearchResult = ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models.RecipeSearchResult*@
+@*
 @inject NavigationManager _navigationManager;
 @inject RecipesState _state;
-@inject IRecipesApiService _apiService
+@inject IRecipesApiService _apiService*@
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes
 
@@ -20,12 +28,12 @@
     </div>
     <div>
         <Input TValue="string" @bind-value="@input" 
-               OnPressEnter="@OnLoadButtonClickedAsync" 
+               OnPressEnter="@OnLoadButtonClicked" 
                Placeholder="Recipe name ..."></Input>
-        <Button @onclick="@OnLoadButtonClickedAsync" Class="mt-2">Load</Button>
+        <Button @onclick="@OnLoadButtonClicked" Class="mt-2">Load</Button>
     </div>
     <div>
-        @foreach (var searchResult in _state.SearchResults)
+        @foreach (var searchResult in State.Value.Search.SearchResults)
         {
             <SearchResult Model="searchResult" TAction="EditRecipeAction"></SearchResult>
         }
@@ -38,23 +46,29 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        _state.ResetEditedRecipe();
+        Dispatcher.Dispatch(new EnterRecipeSearchPageAction());
+        //_state.ResetEditedRecipe();
     }
 
-    private async Task OnLoadButtonClickedAsync()
+    private void OnLoadButtonClicked()
     {
-        if (string.IsNullOrWhiteSpace(input))
-        {
-            _state.RegisterSearchResults(Enumerable.Empty<RecipeSearchResult>());
-            return;
-        }
+        //if (string.IsNullOrWhiteSpace(input))
+        //{
+        //    _state.RegisterSearchResults(Enumerable.Empty<RecipeSearchResult>());
+        //    return;
+        //}
 
-        var results = await _apiService.SearchAsync(input);
-        _state.RegisterSearchResults(results);
+        //var results = await _apiService.SearchAsync(input);
+        //_state.RegisterSearchResults(results);
+        Dispatcher.Dispatch(new SearchRecipeAction(input));
     }
 
     private void OnCreateRecipeButtonClicked()
     {
-        _navigationManager.NavigateTo($"recipes/{Guid.Empty}");
+        //_navigationManager.NavigateTo($"recipes/{Guid.Empty}");
+        Dispatcher.Dispatch(new EditRecipeAction
+        {
+            Id = Guid.Empty
+        });
     }
 }

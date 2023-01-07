@@ -7,22 +7,10 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
 
 public class RecipesState
 {
-    private List<RecipeSearchResult> _searchResults;
     private List<IngredientQuantityType> _ingredientQuantityTypes;
 
-    public RecipesState()
-    {
-        _searchResults = new List<RecipeSearchResult>();
-    }
-
-    public IReadOnlyCollection<RecipeSearchResult> SearchResults => _searchResults;
     public IReadOnlyCollection<IngredientQuantityType> IngredientQuantityTypes => _ingredientQuantityTypes;
     public Recipe EditedRecipe { get; private set; }
-
-    public void RegisterSearchResults(IEnumerable<RecipeSearchResult> searchResults)
-    {
-        _searchResults = searchResults.ToList();
-    }
 
     public void SetEditedRecipe(Recipe manufacturer)
     {
@@ -47,10 +35,10 @@ public class RecipesState
 
     public void UpdateRecipeSearchResultName(Guid recipeId, string recipeName)
     {
-        var recipe = _searchResults.FirstOrDefault(r => r.Id == recipeId);
-        if (recipe is null)
-            return;
+        //var recipe = _searchResults.FirstOrDefault(r => r.Id == recipeId);
+        //if (recipe is null)
+        //    return;
 
-        recipe.ChangeName(recipeName);
+        //recipe.ChangeName(recipeName);
     }
 }

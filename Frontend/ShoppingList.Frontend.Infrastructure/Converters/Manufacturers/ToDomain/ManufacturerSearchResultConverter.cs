@@ -1,6 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
 using System;
 
