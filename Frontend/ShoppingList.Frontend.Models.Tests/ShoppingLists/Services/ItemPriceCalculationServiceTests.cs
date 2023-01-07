@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
 using Fluxor;
 using Moq;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.TestTools.AutoFixture.Builder;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
+using ShoppingList.Frontend.Redux.Shared.States;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
 using System;
 using System.Collections.Generic;

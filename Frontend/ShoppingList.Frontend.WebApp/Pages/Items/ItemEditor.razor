@@ -6,12 +6,10 @@
 @using global::ShoppingList.Frontend.Redux.Items.Actions
 @using global::ShoppingList.Frontend.Redux.Items.Actions.Editor
 @using global::ShoppingList.Frontend.Redux.Items.States
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Editor;
 
 @inject IState<ItemState> State
 @inject IDispatcher Dispatcher
-
-@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Editor;
 
 @if (State.Value.Editor.Item != null)
 {

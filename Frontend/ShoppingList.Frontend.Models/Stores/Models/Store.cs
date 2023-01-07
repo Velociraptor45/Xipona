@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 using ProjectHermes.ShoppingList.Frontend.Models.Shared.Comparer;
 using System;
 using System.Collections.Generic;
@@ -88,11 +87,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
         public void Remove(Section model)
         {
             Sections.Remove(model);
-        }
-
-        public ItemStore AsItemStore()
-        {
-            return new ItemStore(Id, Name, Sections.Select(s => s.AsItemSection()));
         }
     }
 }

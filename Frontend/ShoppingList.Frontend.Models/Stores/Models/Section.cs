@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
 {
@@ -26,11 +25,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
         public void SetSortingIndex(int index)
         {
             SortingIndex = index;
-        }
-
-        public ItemSection AsItemSection()
-        {
-            return new ItemSection(Id.BackendId, Name, SortingIndex);
         }
     }
 }
