@@ -38,10 +38,6 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
 
         Task FinishListAsync(FinishListRequest request);
 
-        Task<IEnumerable<ItemCategory>> GetAllActiveItemCategoriesAsync();
-
-        Task<IEnumerable<Manufacturer>> GetAllActiveManufacturersAsync();
-
         Task<IEnumerable<Store>> GetAllActiveStoresAsync();
 
         Task<IEnumerable<SharedStates.QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync();
@@ -51,9 +47,6 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
         Task<EditedItem> GetItemByIdAsync(Guid itemId);
 
         Task<IEnumerable<ItemSearchResult>> SearchItemsAsync(string searchInput);
-
-        Task<IEnumerable<SearchItemResult>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,
-            IEnumerable<Guid> itemCategoryIds, IEnumerable<Guid> manufacturerIds);
 
         Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(string searchInput,
             Guid storeId, CancellationToken cancellationToken);
@@ -114,7 +107,7 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
 
         Task<IEnumerable<ShoppingListStore>> GetAllActiveStoresForShoppingListAsync();
 
-        Task<ShoppingListModel> GetActiveShoppingListByStoreIdAsync(Guid storeId); // todo name
+        Task<ShoppingListModel> GetActiveShoppingListByStoreIdAsync(Guid storeId); // todo name #298
 
         Task<IEnumerable<ItemStore>> GetAllActiveStoresForItemAsync();
     }

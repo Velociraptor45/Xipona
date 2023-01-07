@@ -20,39 +20,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
             _notificationService = notificationService;
         }
 
-        //public async Task LoadInitialPageStateAsync(ItemsState state, IAsyncRetryFragmentCreator fragmentCreator)
-        //{
-        //    try
-        //    {
-        //        var stores = await _apiClient.GetAllActiveStoresAsync();
-        //        var manufacturers = await _apiClient.GetAllActiveManufacturersAsync();
-        //        var itemCategories = await _apiClient.GetAllActiveItemCategoriesAsync();
-        //        //var quantityTypes = await _apiClient.GetAllQuantityTypesAsync();
-        //        //var quantityTypesInPacket = await _apiClient.GetAllQuantityTypesInPacketAsync();
-
-        //        state.Initialize(
-        //            stores,
-        //            itemCategories,
-        //            manufacturers,
-        //            new List<QuantityType>(),
-        //            new List<QuantityTypeInPacket>());
-        //    }
-        //    catch (ApiException e)
-        //    {
-        //        var contract = e.DeserializeContent<ErrorContract>();
-
-        //        var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-        //            await LoadInitialPageStateAsync(state, fragmentCreator));
-        //        _notificationService.NotifyError("Page loading failed", contract.Message, fragment);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-        //            await LoadInitialPageStateAsync(state, fragmentCreator));
-        //        _notificationService.NotifyError("Unknown error while loading page", e.Message, fragment);
-        //    }
-        //}
-
         public async Task<IEnumerable<SearchItemByItemCategoryResult>> SearchItemsByItemCategoryAsync(
             Guid itemCategoryId)
         {
@@ -72,29 +39,5 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 
             return Enumerable.Empty<SearchItemByItemCategoryResult>();
         }
-
-        //public async Task LoadItemAsync(Guid itemId, IAsyncRetryFragmentCreator fragmentCreator,
-        //    Action<Item> onSuccessAction)
-        //{
-        //    try
-        //    {
-        //        var result = await _apiClient.GetItemByIdAsync(itemId);
-        //        onSuccessAction(result);
-        //    }
-        //    catch (ApiException e)
-        //    {
-        //        var contract = e.DeserializeContent<ErrorContract>();
-
-        //        var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-        //            await LoadItemAsync(itemId, fragmentCreator, onSuccessAction));
-        //        _notificationService.NotifyError("Loading item failed", contract.Message, fragment);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-        //            await LoadItemAsync(itemId, fragmentCreator, onSuccessAction));
-        //        _notificationService.NotifyError("Unknown error while loading item", e.Message, fragment);
-        //    }
-        //}
     }
 }

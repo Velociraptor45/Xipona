@@ -1,10 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
 using RestEase;
-using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services
@@ -18,11 +16,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Servic
         {
             _client = client;
             _notificationService = notificationService;
-        }
-
-        public async Task<IEnumerable<ItemCategorySearchResult>> SearchAsync(string searchInput)
-        {
-            return await _client.GetItemCategorySearchResultsAsync(searchInput);
         }
 
         public async Task<ItemCategory> GetAsync(Guid itemCategoryId)

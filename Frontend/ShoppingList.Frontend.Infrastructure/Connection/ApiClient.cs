@@ -216,25 +216,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 contracts.Select(_converters.ToDomain<ActiveStoreContract, Store>);
         }
 
-        public async Task<IEnumerable<Manufacturer>> GetAllActiveManufacturersAsync()
-        {
-            var manufacturers = await _client.GetAllActiveManufacturersAsync();
-
-            return manufacturers is null ?
-                Enumerable.Empty<Manufacturer>() :
-                manufacturers.Select(_converters.ToDomain<ManufacturerContract, Manufacturer>);
-        }
-
-        public async Task<IEnumerable<ItemCategory>> GetAllActiveItemCategoriesAsync()
-        {
-            var itemCategories = await _client.GetAllActiveItemCategoriesAsync();
-
-            if (itemCategories is null)
-                return Enumerable.Empty<ItemCategory>();
-
-            return itemCategories.Select(_converters.ToDomain<ItemCategoryContract, ItemCategory>);
-        }
-
         public async Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(
             string searchInput, Guid storeId, CancellationToken cancellationToken)
         {
@@ -253,19 +234,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return result is null ?
                 Enumerable.Empty<ItemSearchResult>() :
                 result.Select(_converters.ToDomain<SearchItemResultContract, ItemSearchResult>);
-        }
-
-        public async Task<IEnumerable<SearchItemResult>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,
-            IEnumerable<Guid> itemCategoryIds, IEnumerable<Guid> manufacturerIds)
-        {
-            var result = await _client.SearchItemsByFilterAsync(
-                storeIds,
-                itemCategoryIds,
-                manufacturerIds);
-
-            return result is null ?
-                Enumerable.Empty<SearchItemResult>() :
-                result.Select(_converters.ToDomain<SearchItemResultContract, SearchItemResult>);
         }
 
         public async Task<EditedItem> GetItemByIdAsync(Guid itemId)

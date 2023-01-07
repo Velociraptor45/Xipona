@@ -7,10 +7,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 {
     public interface IItemsApiService
     {
-        //Task LoadInitialPageStateAsync(ItemsState state, IAsyncRetryFragmentCreator fragmentCreator);
-
-        //Task LoadItemAsync(Guid itemId, IAsyncRetryFragmentCreator fragmentCreator, Action<Item> onSuccessAction);
-
         Task<IEnumerable<SearchItemByItemCategoryResult>> SearchItemsByItemCategoryAsync(Guid itemCategoryId);
     }
 }

@@ -6,10 +6,7 @@ using ProjectHermes.ShoppingList.Frontend.Infrastructure;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEditor;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services;
@@ -58,13 +55,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
             builder.Services.AddScoped<IItemPriceCalculationService, ItemPriceCalculationService>();
 
-            builder.Services.AddSingleton(new ItemsState());
             builder.Services.AddTransient<IItemsApiService, ItemsApiService>();
             builder.Services.AddTransient<IStoresApiService, StoresApiService>();
-
-            builder.Services.AddTransient<IItemEditorApiService, ItemEditorApiService>();
-
-            builder.Services.AddTransient<IManufacturerApiService, ManufacturerApiService>();
 
             builder.Services.AddTransient<IItemCategoryApiService, ItemCategoryApiService>();
 
