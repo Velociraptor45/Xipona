@@ -5,7 +5,6 @@ using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Recipes.States;
 using ShoppingList.Frontend.Redux.Shared.Constants;
 using ShoppingList.Frontend.Redux.Shared.Ports;
-using LoadInitialItemCategoryAction = ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.LoadInitialItemCategoryAction;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Effects;
 
@@ -48,6 +47,33 @@ public class RecipeEditorEffects
     {
         var itemCategory = await _client.GetItemCategoryByIdAsync(action.Ingredient.ItemCategoryId);
         var result = new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name);
-        dispatcher.Dispatch(new LoadInitialItemCategoryFinishedAction(action.Ingredient, result));
+        dispatcher.Dispatch(new LoadInitialItemCategoryFinishedAction(action.Ingredient.Id, result));
+    }
+
+    [EffectMethod]
+    public Task HandleLoadInitialItemsAction(LoadInitialItemsAction action, IDispatcher dispatcher)
+    {
+        if (action.Ingredient.ItemCategoryId != Guid.Empty)
+            dispatcher.Dispatch(
+                new LoadItemsForItemCategoryAction(action.Ingredient, action.Ingredient.ItemCategoryId));
+
+        return Task.CompletedTask;
+    }
+
+    [EffectMethod]
+    public Task HandleSelectedItemCategoryChangedAction(SelectedItemCategoryChangedAction action,
+        IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new LoadItemsForItemCategoryAction(action.Ingredient, action.ItemCategoryId));
+        return Task.CompletedTask;
+    }
+
+    [EffectMethod]
+    public async Task HandleLoadItemsForItemCategoryAction(LoadItemsForItemCategoryAction action,
+        IDispatcher dispatcher)
+    {
+        var result = await _client.SearchItemByItemCategoryAsync(action.ItemCategoryId);
+
+        dispatcher.Dispatch(new LoadItemsForItemCategoryFinishedAction(result.ToList(), action.Ingredient.Id));
     }
 }

@@ -40,9 +40,22 @@
                 OnDropdownClosed="OnItemCategoryDropdownClosed"
                 CanAddItem="true">
             </SingleSearchSelect>
-            @if (Model.ItemCategoryId != Guid.Empty && _itemDataSource.Any())
+            @if (Model.ItemCategoryId != Guid.Empty && Model.ItemSelector.Items.Any())
             {
-                <SingleSelect Class="mt-1 min-w-150"
+                <Select Class="mt-1 min-w-150"
+                        Placeholder="Default item"
+                        ValueName="@nameof(SearchItemByItemCategoryResult.SelectIdentifier)"
+                        LabelName="@nameof(SearchItemByItemCategoryResult.Name)"
+                        DataSource="@Model.ItemSelector.Items"
+                        TItemValue="string"
+                        TItem="SearchItemByItemCategoryResult"
+                        OnSelectedItemChanged="OnItemChanged"
+                        AllowClear="true"
+                        IgnoreItemChanges="false"
+                        Value="@($"{Model.DefaultItemId?.ToString() ?? string.Empty}{Model.DefaultItemTypeId?.ToString() ?? string.Empty}")">
+                </Select>
+
+                @*<SingleSelect Class="mt-1 min-w-150"
                               TItem="SearchItemByItemCategoryResult"
                               TValue="string"
                               DataSource="_itemDataSource"
@@ -53,7 +66,7 @@
                               DefaultValue="@($"{Model.DefaultItemId?.ToString() ?? string.Empty}{Model.DefaultItemTypeId?.ToString() ?? string.Empty}")"
                               CanAddItem="false"
                               AllowClear="true">
-                </SingleSelect>
+                </SingleSelect>*@
             }
         </div>
         <div>
@@ -96,32 +109,32 @@
     //public Action<ShoppingList.Frontend.Models.Recipes.Models.Ingredient> OnRemove { get; set; }
 
     //private List<ItemCategorySearchResult> _itemCategoryDataSource = new();
-    private List<SearchItemByItemCategoryResult> _itemDataSource = new();
+    //private List<SearchItemByItemCategoryResult> _itemDataSource = new();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        if (Model.ItemCategoryId != Guid.Empty)
-        {
-            //var itemCategory = await _itemCategoryApiService.GetAsync(Model.ItemCategoryId);
-            //if (itemCategory is not null)
-            //    _itemCategoryDataSource.Add(new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name));
+        //if (Model.ItemCategoryId != Guid.Empty)
+        //{
+        //    //var itemCategory = await _itemCategoryApiService.GetAsync(Model.ItemCategoryId);
+        //    //if (itemCategory is not null)
+        //    //    _itemCategoryDataSource.Add(new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name));
 
-            await LoadItemsAsync(Model.ItemCategoryId);
-        }
-
+        //    await LoadItemsAsync(Model.ItemCategoryId);
+        //}
+        Dispatcher.Dispatch(new LoadInitialItemsAction(Model));
         Dispatcher.Dispatch(new LoadInitialItemCategoryAction(Model));
     }
 
-    private async Task LoadItemsAsync(Guid itemCategoryId)
-    {
-        if (itemCategoryId == Guid.Empty)
-            return;
-        _itemDataSource.Clear();
-        _itemDataSource.AddRange(await _itemsApiService.SearchItemsByItemCategoryAsync(itemCategoryId));
-        StateHasChanged();
-    }
+    //private async Task LoadItemsAsync(Guid itemCategoryId)
+    //{
+    //    if (itemCategoryId == Guid.Empty)
+    //        return;
+    //    _itemDataSource.Clear();
+    //    _itemDataSource.AddRange(await _itemsApiService.SearchItemsByItemCategoryAsync(itemCategoryId));
+    //    StateHasChanged();
+    //}
 
     //private async void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
     //{

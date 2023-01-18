@@ -37,10 +37,10 @@
                     </div>
                     @foreach (var ingredient in State.Value.Editor.Recipe.Ingredients)
                     {
-                    <Ingredient
-                        @key="ingredient.Id == default ? Guid.NewGuid() : ingredient.Id"
-                        Model="@ingredient"></Ingredient>
-                    <hr/>
+                        <Ingredient
+                            @key="ingredient.Id == default ? Guid.NewGuid() : ingredient.Id"
+                            Model="@ingredient"></Ingredient>
+                        <hr/>
                     }
                 </div>
                 @*<div id="preparation-steps" class="pt-4">
