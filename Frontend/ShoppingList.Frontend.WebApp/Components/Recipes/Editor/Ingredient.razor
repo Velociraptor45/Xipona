@@ -1,10 +1,20 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
-@using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.Editor
+@using global::ShoppingList.Frontend.Redux.Recipes.States
+
+@inject IState<RecipeState> State
+@inject IDispatcher Dispatcher
+
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services
 @using global::ShoppingList.Frontend.Redux.ItemCategories.States
+@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 
 @inject IItemCategoryApiService _itemCategoryApiService;
 @inject IItemsApiService _itemsApiService;
@@ -14,19 +24,22 @@
 <div class="ingredient">
     <div class="d-flex align-items-start">
         <div class="item-select">
-            @*<SingleSearchSelect Class="min-w-150" todo
-                                TItem="ItemCategorySearchResult"
-                                TValue="Guid"
-                                DataSource="_itemCategoryDataSource"
-                                ValueName="@nameof(ItemCategorySearchResult.Id)"
-                                LabelName="@nameof(ItemCategorySearchResult.Name)"
-                                OnItemAdded="@OnNewItemCategoryCreatedAsync"
-                                OnItemChanged="@OnItemCategoryChanged"
-                                Placeholder="Item Category"
-                                DefaultValue="@Model.ItemCategoryId"
-                                SearchForItemsAsync="_itemCategoryApiService.SearchAsync"
-                                CanAddItem="true">
-            </SingleSearchSelect>*@
+            <SingleSearchSelect 
+                Class="min-w-150"
+                TItem="ItemCategorySearchResult"
+                TValue="Guid"
+                DataSource="@Model.ItemCategorySelector.ItemCategories"
+                ValueName="@nameof(ItemCategorySearchResult.Id)"
+                LabelName="@nameof(ItemCategorySearchResult.Name)"
+                OnItemChanged="@OnItemCategoryChanged"
+                OnItemAdded="@OnNewItemCategoryCreatedAsync"
+                OnInputChanged="OnItemCategoryInputChanged"
+                Placeholder="Item Category"
+                Value="@Model.ItemCategoryId"
+                SearchInput="@Model.ItemCategorySelector.Input"
+                OnDropdownClosed="OnItemCategoryDropdownClosed"
+                CanAddItem="true">
+            </SingleSearchSelect>
             @if (Model.ItemCategoryId != Guid.Empty && _itemDataSource.Any())
             {
                 <SingleSelect Class="mt-1 min-w-150"
@@ -53,21 +66,21 @@
                 <!-- Quantity -->
                 <AntDesign.InputNumber
                     Class="ml-4 mr-1 w-75"
-                    @bind-value="@Model.Quantity"
                     TValue="float"
+                    Value="@Model.Quantity"
+                    ValueChanged="OnQuantityChanged"
                     Min="1f"
                     Step="1"></AntDesign.InputNumber>
                 <!-- Quantity Type -->
                 <div class="ingredient-quantity-type-select">
                     <SingleSelect
-                        Class=""
                         TItem="IngredientQuantityType"
                         TValue="int"
                         ValueName="@nameof(IngredientQuantityType.Id)"
                         LabelName="@nameof(IngredientQuantityType.QuantityLabel)"
                         Placeholder="QuantityInPacketType"
-                        DefaultValue="@Model.QuantityType"
-                        DataSource="@_state.IngredientQuantityTypes.ToList()"
+                        DefaultValue="@Model.QuantityTypeId"
+                        DataSource="@State.Value.IngredientQuantityTypes.ToList()"
                         OnItemChanged="@OnIngredientQuantityTypeChanged">
                     </SingleSelect>
                 </div>
@@ -78,11 +91,11 @@
 
 @code {
     [Parameter]
-    public ShoppingList.Frontend.Models.Recipes.Models.Ingredient Model { get; set; }
-    [Parameter]
-    public Action<ShoppingList.Frontend.Models.Recipes.Models.Ingredient> OnRemove { get; set; }
+    public EditedIngredient Model { get; set; }
+    //[Parameter]
+    //public Action<ShoppingList.Frontend.Models.Recipes.Models.Ingredient> OnRemove { get; set; }
 
-    private List<ItemCategorySearchResult> _itemCategoryDataSource = new();
+    //private List<ItemCategorySearchResult> _itemCategoryDataSource = new();
     private List<SearchItemByItemCategoryResult> _itemDataSource = new();
 
     protected override async Task OnInitializedAsync()
@@ -91,12 +104,14 @@
 
         if (Model.ItemCategoryId != Guid.Empty)
         {
-            var itemCategory = await _itemCategoryApiService.GetAsync(Model.ItemCategoryId);
-            if (itemCategory is not null)
-                _itemCategoryDataSource.Add(new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name));
+            //var itemCategory = await _itemCategoryApiService.GetAsync(Model.ItemCategoryId);
+            //if (itemCategory is not null)
+            //    _itemCategoryDataSource.Add(new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name));
 
             await LoadItemsAsync(Model.ItemCategoryId);
         }
+
+        Dispatcher.Dispatch(new LoadInitialItemCategoryAction(Model));
     }
 
     private async Task LoadItemsAsync(Guid itemCategoryId)
@@ -108,16 +123,16 @@
         StateHasChanged();
     }
 
-    private async void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
-    {
-        if(Model.ItemCategoryId == itemCategory?.Id)
-            return;
+    //private async void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
+    //{
+    //    if(Model.ItemCategoryId == itemCategory?.Id)
+    //        return;
 
-        Model.ItemCategoryId = itemCategory?.Id ?? Guid.Empty;
-        Model.DefaultItemId = null;
-        Model.DefaultItemTypeId = null;
-        await LoadItemsAsync(Model.ItemCategoryId);
-    }
+    //    Model.ItemCategoryId = itemCategory?.Id ?? Guid.Empty;
+    //    Model.DefaultItemId = null;
+    //    Model.DefaultItemTypeId = null;
+    //    await LoadItemsAsync(Model.ItemCategoryId);
+    //}
 
     private async Task<(ItemCategorySearchResult, Guid)> OnNewItemCategoryCreatedAsync(string name)
     {
@@ -129,19 +144,47 @@
         return (new ItemCategorySearchResult(newItemCategory.Id, newItemCategory.Name), newItemCategory.Id);
     }
 
-    private void OnItemChanged(SearchItemByItemCategoryResult itemSearchResult)
+    private void OnItemChanged(SearchItemByItemCategoryResult? itemSearchResult)
     {
-        Model.DefaultItemId = itemSearchResult?.ItemId;
-        Model.DefaultItemTypeId = itemSearchResult?.ItemTypeId;
+        //Model.DefaultItemId = itemSearchResult?.ItemId;
+        //Model.DefaultItemTypeId = itemSearchResult?.ItemTypeId;
+        Dispatcher.Dispatch(new SelectedItemChangedAction(Model, itemSearchResult));
     }
 
     private void OnIngredientQuantityTypeChanged(IngredientQuantityType quantityType)
     {
-        Model.QuantityType = quantityType.Id;
+        //Model.QuantityType = quantityType.Id;
+        Dispatcher.Dispatch(new IngredientQuantityTypeChangedAction(Model, quantityType));
+    }
+
+    private void OnQuantityChanged(float quantity)
+    {
+        Dispatcher.Dispatch(new IngredientQuantityChangedAction(Model, quantity));
     }
 
     private void OnRemoveIngredientButtonClicked()
     {
-        OnRemove(Model);
+        //OnRemove(Model);
+        Dispatcher.Dispatch(new IngredientRemovedAction(Model));
+    }
+
+    private void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
+    {
+        Dispatcher.Dispatch(new SelectedItemCategoryChangedAction(Model, itemCategory.Id));
+    }
+
+    private void OnNewItemCategoryCreatedAsync()
+    {
+        Dispatcher.Dispatch(new CreateNewItemCategoryAction()); // todo implement #298
+    }
+
+    private void OnItemCategoryInputChanged(string input)
+    {
+        Dispatcher.Dispatch(new ItemCategoryInputChangedAction(Model, input));
+    }
+
+    private void OnItemCategoryDropdownClosed()
+    {
+        Dispatcher.Dispatch(new ItemCategoryDropdownClosedAction(Model));
     }
 }

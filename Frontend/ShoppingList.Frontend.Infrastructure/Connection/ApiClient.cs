@@ -54,7 +54,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using IngredientQuantityType = ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models.IngredientQuantityType;
+using IngredientQuantityType = global::ShoppingList.Frontend.Redux.Recipes.States.IngredientQuantityType;
 using ItemStore = ShoppingList.Frontend.Redux.Items.States.ItemStore;
 using SharedStates = ShoppingList.Frontend.Redux.Shared.States;
 using ShoppingListStore = ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListStore;
@@ -344,10 +344,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 : _converters.ToDomain<SearchItemByItemCategoryResultContract, SearchItemByItemCategoryResult>(results);
         }
 
-        public async Task<Recipe> GetRecipeByIdAsync(Guid recipeId)
+        public async Task<EditedRecipe> GetRecipeByIdAsync(Guid recipeId)
         {
             var result = await _client.GetRecipeByIdAsync(recipeId);
-            return _converters.ToDomain<RecipeContract, Recipe>(result);
+            return _converters.ToDomain<RecipeContract, EditedRecipe>(result);
         }
 
         public async Task<IEnumerable<RecipeSearchResult>> SearchRecipesByNameAsync(string searchInput)

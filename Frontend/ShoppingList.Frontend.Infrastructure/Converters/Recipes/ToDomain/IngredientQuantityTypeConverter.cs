@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
+using ShoppingList.Frontend.Redux.Recipes.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Recipes.ToDomain;
 

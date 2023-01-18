@@ -27,67 +27,67 @@ public class Recipe : ISortable<PreparationStep>
     public int MinSortingIndex => _preparationSteps.Any() ? _preparationSteps.Min(s => s.SortingIndex) : 0;
     public int MaxSortingIndex => _preparationSteps.Any() ? _preparationSteps.Max(s => s.SortingIndex) : 0;
 
-    public void AddIngredient()
-    {
-        _ingredients.Add(Ingredient.New);
-    }
+    //public void AddIngredient()
+    //{
+    //    _ingredients.Add(Ingredient.New);
+    //}
 
-    public void RemoveIngredient(Ingredient ingredient)
-    {
-        _ingredients.Remove(ingredient);
-    }
+    //public void RemoveIngredient(Ingredient ingredient)
+    //{
+    //    _ingredients.Remove(ingredient);
+    //}
 
-    public void AddPreparationStep()
-    {
-        var nextSortingIndex = MaxSortingIndex + 1;
+    //public void AddPreparationStep()
+    //{
+    //    var nextSortingIndex = MaxSortingIndex + 1;
 
-        _preparationSteps.Add(new PreparationStep(Guid.Empty, "", nextSortingIndex));
-    }
+    //    _preparationSteps.Add(new PreparationStep(Guid.Empty, "", nextSortingIndex));
+    //}
 
-    public void Remove(PreparationStep preparationStep)
-    {
-        _preparationSteps.Remove(preparationStep);
-    }
+    //public void Remove(PreparationStep preparationStep)
+    //{
+    //    _preparationSteps.Remove(preparationStep);
+    //}
 
-    public void Increment(PreparationStep model)
-    {
-        var steps = _preparationSteps.ToList();
+    //public void Increment(PreparationStep model)
+    //{
+    //    var steps = _preparationSteps.ToList();
 
-        int sectionIndex = steps.IndexOf(model);
-        if (sectionIndex == -1 || sectionIndex >= steps.Count - 1)
-            return;
+    //    int sectionIndex = steps.IndexOf(model);
+    //    if (sectionIndex == -1 || sectionIndex >= steps.Count - 1)
+    //        return;
 
-        var tmp = steps[sectionIndex + 1];
-        steps[sectionIndex + 1] = model;
-        steps[sectionIndex] = tmp;
+    //    var tmp = steps[sectionIndex + 1];
+    //    steps[sectionIndex + 1] = model;
+    //    steps[sectionIndex] = tmp;
 
-        UpdateSortingIndexes(steps);
+    //    UpdateSortingIndexes(steps);
 
-        _preparationSteps = new SortedSet<PreparationStep>(steps, new SortingIndexComparer());
-    }
+    //    _preparationSteps = new SortedSet<PreparationStep>(steps, new SortingIndexComparer());
+    //}
 
-    public void Decrement(PreparationStep model)
-    {
-        var steps = _preparationSteps.ToList();
+    //public void Decrement(PreparationStep model)
+    //{
+    //    var steps = _preparationSteps.ToList();
 
-        int sectionIndex = steps.IndexOf(model);
-        if (sectionIndex is -1 or <= 0)
-            return;
+    //    int sectionIndex = steps.IndexOf(model);
+    //    if (sectionIndex is -1 or <= 0)
+    //        return;
 
-        var tmp = steps[sectionIndex - 1];
-        steps[sectionIndex - 1] = model;
-        steps[sectionIndex] = tmp;
+    //    var tmp = steps[sectionIndex - 1];
+    //    steps[sectionIndex - 1] = model;
+    //    steps[sectionIndex] = tmp;
 
-        UpdateSortingIndexes(steps);
+    //    UpdateSortingIndexes(steps);
 
-        _preparationSteps = new SortedSet<PreparationStep>(steps, new SortingIndexComparer());
-    }
+    //    _preparationSteps = new SortedSet<PreparationStep>(steps, new SortingIndexComparer());
+    //}
 
-    private static void UpdateSortingIndexes(IList<PreparationStep> steps)
-    {
-        for (int i = 0; i < steps.Count; i++)
-        {
-            steps[i].SetSortingIndex(i);
-        }
-    }
+    //private static void UpdateSortingIndexes(IList<PreparationStep> steps)
+    //{
+    //    for (int i = 0; i < steps.Count; i++)
+    //    {
+    //        steps[i].SetSortingIndex(i);
+    //    }
+    //}
 }

@@ -1,14 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Recipes.ToDomain;
 
-public class PreparationStepConverter : IToDomainConverter<PreparationStepContract, PreparationStep>
+public class EditedPreparationStepConverter : IToDomainConverter<PreparationStepContract, EditedPreparationStep>
 {
-    public PreparationStep ToDomain(PreparationStepContract source)
+    public EditedPreparationStep ToDomain(PreparationStepContract source)
     {
-        return new PreparationStep(
+        return new EditedPreparationStep(
             source.Id,
             source.Instruction,
             source.SortingIndex);

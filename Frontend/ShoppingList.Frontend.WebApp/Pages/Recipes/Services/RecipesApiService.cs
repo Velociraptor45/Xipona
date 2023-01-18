@@ -2,8 +2,6 @@
 using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
 using RestEase;
 using ShoppingList.Frontend.Redux.Shared.Ports;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
@@ -19,30 +17,30 @@ public class RecipesApiService : IRecipesApiService
         _notificationService = notificationService;
     }
 
-    public async Task<IEnumerable<IngredientQuantityType>> GetAllIngredientQuantityTypes()
-    {
-        return await _client.GetAllIngredientQuantityTypes();
-    }
+    //public async Task<IEnumerable<IngredientQuantityType>> GetAllIngredientQuantityTypes()
+    //{
+    //    return await _client.GetAllIngredientQuantityTypes();
+    //}
 
     //public async Task<IEnumerable<RecipeSearchResult>> SearchAsync(string searchInput)
     //{
     //    return await _client.SearchRecipesByNameAsync(searchInput);
     //}
 
-    public async Task<Recipe> GetAsync(Guid recipeId)
-    {
-        try
-        {
-            return await _client.GetRecipeByIdAsync(recipeId);
-        }
-        catch (ApiException e)
-        {
-            var contract = e.DeserializeContent<ErrorContract>();
-            _notificationService.NotifyError("Loading recipe failed", contract.Message);
-        }
+    //public async Task<Recipe> GetAsync(Guid recipeId)
+    //{
+    //    try
+    //    {
+    //        return await _client.GetRecipeByIdAsync(recipeId);
+    //    }
+    //    catch (ApiException e)
+    //    {
+    //        var contract = e.DeserializeContent<ErrorContract>();
+    //        _notificationService.NotifyError("Loading recipe failed", contract.Message);
+    //    }
 
-        return null;
-    }
+    //    return null;
+    //}
 
     public async Task<Recipe> CreateAsync(Recipe recipe)
     {

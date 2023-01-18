@@ -1,31 +1,33 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models.Shared
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using ProjectHermes.ShoppingList.Frontend.Models.Shared
 
 @typeparam T where T : class, ISortableItem
 
 <div class="my-1 d-flex">
     <div class="d-flex mr-2">
         <Button Icon="up" Class="align-items-center justify-content-center d-flex"
-                OnClick="@OnDecrementSortingIndexButtonClicked"
+                OnClick="() => OnDecrement?.Invoke(Model)"
                 Disabled="@(Model.SortingIndex == State.MinSortingIndex)"></Button>
         <Button Icon="down" Class="align-items-center justify-content-center d-flex"
-                OnClick="@OnIncrementSortingIndexButtonClicked"
+                OnClick="() => OnIncrement?.Invoke(Model)"
                 Disabled="@(Model.SortingIndex == State.MaxSortingIndex)"></Button>
     </div>
     <div class="@_textContentClasses text-content">
         @if (IsTextArea)
         {
-            <TextArea MinRows="4" @bind-value="Model.Name"></TextArea>
+            <TextArea MinRows="4" Value="Model.Name" ValueChanged="OnTextChanged"></TextArea>
         }
         else
         {
-            <Input @bind-Value="@Model.Name"/>
+            <Input TValue="string" Value="@Model.Name" ValueChanged="OnTextChanged"/>
         }
     </div>
     <div class="ml-2">
         <Button Icon="close"
                 Class="align-items-center justify-content-center d-flex"
                 Danger="true"
-                OnClick="@OnRemoveButtonClicked"></Button>
+                OnClick="() => OnRemove?.Invoke(Model)"></Button>
     </div>
 </div>
 
@@ -35,9 +37,16 @@
     [Parameter]
     public T Model { get; set; }
     [Parameter]
-    public Action OnChanged { get; set; }
-    [Parameter]
     public bool IsTextArea { get; set; } = false;
+
+    [Parameter]
+    public Action<string> OnTextChanged { get; set; }
+    [Parameter]
+    public Action<T> OnRemove { get; set; }
+    [Parameter]
+    public Action<T> OnIncrement { get; set; }
+    [Parameter]
+    public Action<T> OnDecrement { get; set; }
 
     private string _textContentClasses = string.Empty;
 
@@ -48,21 +57,21 @@
             _textContentClasses = "area";
     }
 
-    public void OnRemoveButtonClicked()
-    {
-        State.Remove(Model);
-        OnChanged?.Invoke();
-    }
+    //public void OnRemoveButtonClicked()
+    //{
+    //    //State.Remove(Model);
+    //    //OnChanged?.Invoke();
+    //}
 
-    public void OnIncrementSortingIndexButtonClicked()
-    {
-        State.Increment(Model);
-        OnChanged?.Invoke();
-    }
+    //public void OnIncrementSortingIndexButtonClicked()
+    //{
+    //    //State.Increment(Model);
+    //    //OnChanged?.Invoke();
+    //}
 
-    public void OnDecrementSortingIndexButtonClicked()
-    {
-        State.Decrement(Model);
-        OnChanged?.Invoke();
-    }
+    //public void OnDecrementSortingIndexButtonClicked()
+    //{
+    //    //State.Decrement(Model);
+    //    //OnChanged?.Invoke();
+    //}
 }

@@ -1,3 +1,4 @@
 ﻿namespace ShoppingList.Frontend.Redux.Recipes.States;
 
-public record RecipeEditor(EditedRecipe? Recipe);
+public record RecipeEditor(
+    EditedRecipe? Recipe);

@@ -1,17 +1,19 @@
 ﻿@page "/recipes/{RecipeId:guid}"
 
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.Editor
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services
-@using Ingredient = ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models.Ingredient;
-@using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject NavigationManager _navigationManager;
-@inject RecipesState _state;
-@inject IRecipesApiService _apiService
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.Editor
+@using global::ShoppingList.Frontend.Redux.Recipes.States
+
+@inject IState<RecipeState> State
+@inject IDispatcher Dispatcher
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes
-@if (_state.EditedRecipe is not null)
+
+@if (State.Value.Editor.Recipe is not null)
 {
     <div class="recipe-editor">
         <div class="d-flex">
@@ -19,7 +21,7 @@
                 <Icon Type="arrow-left"></Icon>
             </Button>
             <div class="mx-3">
-                <Input @bind-Value="@_state.EditedRecipe.Name"/>
+                <Input TValue="string" Value="@State.Value.Editor.Recipe.Name" ValueChanged="OnNameChanged"/>
             </div>
         </div>
         <div class="recipe-editor-main">
@@ -27,43 +29,44 @@
                 <div id="ingredients" class="pt-4">
                     <div class="d-flex align-items-center mb-3">
                         <h4 class="mb-0 pr-2">Ingredients</h4>
-                        <Button class="d-flex align-items-center" 
-                                Size="@AntSizeLDSType.Small" 
+                        <Button class="d-flex align-items-center"
+                                Size="@AntSizeLDSType.Small"
                                 OnClick="OnAddIngredientButtonClicked">
                             <Icon Type="plus"></Icon>
                         </Button>
                     </div>
-                    @foreach (var ingredient in _state.EditedRecipe.Ingredients)
+                    @foreach (var ingredient in State.Value.Editor.Recipe.Ingredients)
                     {
-                        <Ingredient
-                            @key="ingredient.Id == default ? Guid.NewGuid() : ingredient.Id"
-                            Model="@ingredient"
-                            OnRemove="OnRemoveIngredient"></Ingredient>
-                        <hr/>
+                    <Ingredient
+                        @key="ingredient.Id == default ? Guid.NewGuid() : ingredient.Id"
+                        Model="@ingredient"></Ingredient>
+                    <hr/>
                     }
                 </div>
-                <div id="preparation-steps" class="pt-4">
-                    <div class="d-flex align-items-center mb-3">
-                        <h4 class="mb-0 pr-2">Steps</h4>
-                        <Button class="d-flex align-items-center" 
-                                Size="@AntSizeLDSType.Small" 
-                                OnClick="OnAddPreparationStepButtonClicked">
-                            <Icon Type="plus"></Icon>
-                        </Button>
-                    </div>
-                    @foreach (var step in _state.EditedRecipe.PreparationSteps)
-                    {
-                        <SortableListItem
-                            T="PreparationStep"
-                            State="_state.EditedRecipe"
-                            Model="step"
-                            IsTextArea="true"
-                            OnChanged="() => StateHasChanged()"></SortableListItem>
-                    }
+                @*<div id="preparation-steps" class="pt-4">
+                <div class="d-flex align-items-center mb-3">
+                    <h4 class="mb-0 pr-2">Steps</h4>
+                    <Button class="d-flex align-items-center" 
+                            Size="@AntSizeLDSType.Small" 
+                            OnClick="OnAddPreparationStepButtonClicked">
+                        <Icon Type="plus"></Icon>
+                    </Button>
                 </div>
+                @foreach (var step in State.Value.Editor.Recipe.PreparationSteps)
+                {
+                    <SortableListItem
+                        T="EditedPreparationStep"
+                        State="State.Value.Editor.Recipe"
+                        Model="step"
+                        IsTextArea="true"
+                        OnDecrement="OnDecrementPreparationStep"
+                        OnIncrement="OnIncrementPreparationStep"
+                        OnRemove="OnRemovePreparationStep"></SortableListItem>
+                }
+            </div>*@
             </div>
             <div class="d-flex justify-content-end mt-2">
-                @if (_state.EditedRecipe.Id == Guid.Empty)
+                @if (State.Value.Editor.Recipe.Id == Guid.Empty)
                 {
                     <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
                 }
@@ -80,61 +83,93 @@
 @code {
     [Parameter] public Guid RecipeId { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await base.OnInitializedAsync();
-        var ingredientQuantityTypes = await _apiService.GetAllIngredientQuantityTypes();
-        _state.RegisterIngredientQuantityTypes(ingredientQuantityTypes);
+        base.OnInitialized();
+        //var ingredientQuantityTypes = await _apiService.GetAllIngredientQuantityTypes();
+        //_state.RegisterIngredientQuantityTypes(ingredientQuantityTypes);
 
-        if (RecipeId == Guid.Empty)
-        {
-            _state.SetNewEditedRecipe();
-            return;
-        }
+        Dispatcher.Dispatch(new LoadIngredientQuantityTypesAction());
 
-        var result = await _apiService.GetAsync(RecipeId);
-        if (result is null)
-            return;
+        //if (RecipeId == Guid.Empty)
+        //{
+        //    _state.SetNewEditedRecipe();
+        //    return;
+        //}
 
-        _state.SetEditedRecipe(result);
+        //var result = await _apiService.GetAsync(RecipeId);
+        //if (result is null)
+        //    return;
+
+        //_state.SetEditedRecipe(result);
+
+        if(RecipeId == Guid.Empty)
+            Dispatcher.Dispatch(new SetNewRecipeAction());
+        else
+            Dispatcher.Dispatch(new LoadRecipeForEditingAction(RecipeId));
+    }
+
+    private void OnNameChanged(string name)
+    {
+        Dispatcher.Dispatch(new RecipeNameChangedAction(name)); // todo implement #298
     }
 
     private void OnBackButtonClicked()
     {
-        _navigationManager.NavigateTo("recipes");
+        //_navigationManager.NavigateTo("recipes");
+        Dispatcher.Dispatch(new LeaveRecipeEditorAction());
     }
 
-    private async Task OnCreateButtonClickedAsync()
+    private void OnCreateButtonClickedAsync()
     {
-        var newRecipe = await _apiService.CreateAsync(_state.EditedRecipe);
-        if (newRecipe is null)
-            return;
-        _navigationManager.NavigateTo("recipes");
+        //var newRecipe = await _apiService.CreateAsync(_state.EditedRecipe);
+        //if (newRecipe is null)
+        //    return;
+        //_navigationManager.NavigateTo("recipes");
+        Dispatcher.Dispatch(new CreateRecipeAction()); // todo implement #298
     }
 
-    private async Task OnModifyButtonClickedAsync()
+    private void OnModifyButtonClickedAsync()
     {
-        var successful = await _apiService.ModifyAsync(_state.EditedRecipe);
-        if (successful)
-        {
-            _state.UpdateRecipeSearchResultName(_state.EditedRecipe.Id, _state.EditedRecipe.Name);
-            _navigationManager.NavigateTo("recipes");
-        }
+        //var successful = await _apiService.ModifyAsync(_state.EditedRecipe);
+        //if (successful)
+        //{
+        //    _state.UpdateRecipeSearchResultName(_state.EditedRecipe.Id, _state.EditedRecipe.Name);
+        //    _navigationManager.NavigateTo("recipes");
+        //}
+        Dispatcher.Dispatch(new ModifyRecipeAction()); // todo implement #298
     }
 
     private void OnAddIngredientButtonClicked()
     {
-        _state.EditedRecipe.AddIngredient();
+        //_state.EditedRecipe.AddIngredient();
+        Dispatcher.Dispatch(new IngredientAddedAction()); // todo implement #298
     }
 
-    private void OnRemoveIngredient(Ingredient ingredient)
+    private void OnRemoveIngredient(EditedIngredient ingredient)
     {
-        _state.EditedRecipe.RemoveIngredient(ingredient);
-        StateHasChanged();
+        //_state.EditedRecipe.RemoveIngredient(ingredient);
+        //StateHasChanged();
     }
     
     private void OnAddPreparationStepButtonClicked()
     {
-        _state.EditedRecipe.AddPreparationStep();
+        //_state.EditedRecipe.AddPreparationStep();
+        Dispatcher.Dispatch(new PreparationStepAddedAction()); // todo implement #298
+    }
+
+    private void OnDecrementPreparationStep(EditedPreparationStep step)
+    {
+        Dispatcher.Dispatch(new DecrementPreparationStepAction(step));
+    }
+
+    private void OnIncrementPreparationStep(EditedPreparationStep step)
+    {
+        Dispatcher.Dispatch(new IncrementPreparationStepAction(step));
+    }
+
+    private void OnRemovePreparationStep(EditedPreparationStep step)
+    {
+        Dispatcher.Dispatch(new PreparationStepRemovedAction(step));
     }
 }
