@@ -1,25 +1,28 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @using Fluxor
+@using global::ShoppingList.Frontend.Redux.ItemCategories.States
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.Editor
 @using global::ShoppingList.Frontend.Redux.Recipes.States
+@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
 
 @inject IState<RecipeState> State
 @inject IDispatcher Dispatcher
 
+@*
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services
 @using global::ShoppingList.Frontend.Redux.ItemCategories.States
-@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
-
+@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models*@
+@*
 @inject IItemCategoryApiService _itemCategoryApiService;
 @inject IItemsApiService _itemsApiService;
 @inject IRecipesApiService _recipesApiService;
-@inject RecipesState _state;
+@inject RecipesState _state;*@
 
 <div class="ingredient">
     <div class="d-flex align-items-start">
@@ -147,14 +150,15 @@
     //    await LoadItemsAsync(Model.ItemCategoryId);
     //}
 
-    private async Task<(ItemCategorySearchResult, Guid)> OnNewItemCategoryCreatedAsync(string name)
+    private void OnNewItemCategoryCreatedAsync(string name)
     {
-        var newItemCategory = await _itemCategoryApiService.CreateAsync(name);
+        //var newItemCategory = await _itemCategoryApiService.CreateAsync(name);
 
-        if (newItemCategory == null)
-            return (null, Guid.Empty);
+        //if (newItemCategory == null)
+        //    return (null, Guid.Empty);
             
-        return (new ItemCategorySearchResult(newItemCategory.Id, newItemCategory.Name), newItemCategory.Id);
+        //return (new ItemCategorySearchResult(newItemCategory.Id, newItemCategory.Name), newItemCategory.Id);
+        // todo
     }
 
     private void OnItemChanged(SearchItemByItemCategoryResult? itemSearchResult)

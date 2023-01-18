@@ -351,4 +351,48 @@ public static class RecipeEditorReducer
             }
         };
     }
+
+    [ReducerMethod]
+    public static RecipeState OnSearchItemCategoriesFinished(RecipeState state, SearchItemCategoriesFinishedAction action)
+    {
+        var ingredients = state.Editor.Recipe.Ingredients.ToList();
+        var ingredient = ingredients.FirstOrDefault(i => i.Id == action.IngredientId);
+        if (ingredient is null)
+            return state;
+
+        var ingredientIndex = ingredients.IndexOf(ingredient);
+        if (ingredientIndex < 0)
+            return state;
+
+        var results = action.ItemCategories
+            .OrderBy(r => r.Name)
+            .ToList();
+
+        var currentlySelected = ingredient.ItemCategorySelector.ItemCategories
+            .FirstOrDefault(cat => cat.Id == ingredient.ItemCategoryId);
+
+        if (currentlySelected != null && results.All(r => r.Id != currentlySelected.Id))
+            results.Insert(0, currentlySelected);
+
+        ingredients[ingredientIndex] = ingredient with
+        {
+            ItemCategorySelector = ingredient.ItemCategorySelector with
+            {
+                ItemCategories = results
+            }
+        };
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Recipe = state.Editor.Recipe with
+                {
+                    Ingredients = ingredients
+                }
+            }
+        };
+    }
+
+    // todo clear item category select on category selected
 }
