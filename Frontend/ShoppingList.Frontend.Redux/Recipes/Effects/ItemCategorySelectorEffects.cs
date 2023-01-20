@@ -36,7 +36,7 @@ public sealed class ItemCategorySelectorEffects : IDisposable
     public async Task HandleSearchItemCategoriesAction(SearchItemCategoriesAction action, IDispatcher dispatcher)
     {
         var ingredient = _state.Value.Editor.Recipe.Ingredients.FirstOrDefault(i => i.Id == action.IngredientId);
-        if (ingredient is null)
+        if (ingredient is null || string.IsNullOrWhiteSpace(ingredient.ItemCategorySelector.Input))
             return;
 
         var results = await _client.GetItemCategorySearchResultsAsync(ingredient.ItemCategorySelector.Input);
@@ -91,7 +91,7 @@ public sealed class ItemCategorySelectorEffects : IDisposable
             .FirstOrDefault(i => i.Id == action.IngredientId)?
             .ItemCategorySelector.Input;
 
-        if (name == null)
+        if (string.IsNullOrWhiteSpace(name))
             return;
 
         var itemCategory = await _client.CreateItemCategoryAsync(name);
