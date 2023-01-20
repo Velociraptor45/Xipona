@@ -16,11 +16,11 @@
     <div class="@_textContentClasses text-content">
         @if (IsTextArea)
         {
-            <TextArea MinRows="4" Value="Model.Name" ValueChanged="OnTextChanged"></TextArea>
+            <TextArea MinRows="4" Value="@Model.Name" ValueChanged="OnChanged"></TextArea>
         }
         else
         {
-            <Input TValue="string" Value="@Model.Name" ValueChanged="OnTextChanged"/>
+            <Input TValue="string" Value="@Model.Name" ValueChanged="OnChanged"/>
         }
     </div>
     <div class="ml-2">
@@ -40,7 +40,7 @@
     public bool IsTextArea { get; set; } = false;
 
     [Parameter]
-    public Action<string> OnTextChanged { get; set; }
+    public Action<T, string> OnTextChanged { get; set; }
     [Parameter]
     public Action<T> OnRemove { get; set; }
     [Parameter]
@@ -55,6 +55,11 @@
         base.OnParametersSet();
         if (!IsTextArea)
             _textContentClasses = "area";
+    }
+
+    private void OnChanged(string text)
+    {
+        OnTextChanged?.Invoke(Model, text);
     }
 
     //public void OnRemoveButtonClicked()

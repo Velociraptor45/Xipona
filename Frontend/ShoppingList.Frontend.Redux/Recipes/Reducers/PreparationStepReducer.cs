@@ -73,4 +73,27 @@ public static class PreparationStepReducer
             }
         };
     }
+
+    [ReducerMethod]
+    public static RecipeState OnPreparationStepTextChanged(RecipeState state, PreparationStepTextChangedAction action)
+    {
+        var steps = state.Editor.Recipe!.PreparationSteps.ToList();
+        var step = steps.FirstOrDefault(s => s.Key == action.PreparationStepKey);
+        if (step is null)
+            return state;
+
+        var stepIndex = steps.IndexOf(step);
+        steps[stepIndex] = step with { Name = action.Text };
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Recipe = state.Editor.Recipe with
+                {
+                    PreparationSteps = steps
+                }
+            }
+        };
+    }
 }
