@@ -24,6 +24,9 @@ public sealed class ItemCategorySelectorEffects : IDisposable
     [EffectMethod]
     public async Task HandleLoadInitialItemCategoryAction(LoadInitialItemCategoryAction action, IDispatcher dispatcher)
     {
+        if (action.Ingredient.ItemCategoryId == Guid.Empty)
+            return;
+
         var itemCategory = await _client.GetItemCategoryByIdAsync(action.Ingredient.ItemCategoryId);
         var result = new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name);
         dispatcher.Dispatch(new LoadInitialItemCategoryFinishedAction(action.Ingredient.Id, result));

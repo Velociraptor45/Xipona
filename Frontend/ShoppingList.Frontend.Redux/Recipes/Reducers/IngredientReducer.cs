@@ -1,5 +1,8 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Recipes.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Reducers;
@@ -13,6 +16,34 @@ public static class IngredientReducer
         return state with
         {
             IngredientQuantityTypes = action.QuantityTypes
+        };
+    }
+
+    [ReducerMethod(typeof(IngredientAddedAction))]
+    public static RecipeState OnIngredientAdded(RecipeState state)
+    {
+        var ingredients = state.Editor.Recipe!.Ingredients.ToList();
+        ingredients.Add(new EditedIngredient(
+            Guid.Empty,
+            Guid.Empty,
+            state.IngredientQuantityTypes.First().Id,
+            1,
+            null,
+            null,
+            new ItemCategorySelector(
+                new List<ItemCategorySearchResult>(0),
+                string.Empty),
+            new ItemSelector(new List<SearchItemByItemCategoryResult>(0))));
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Recipe = state.Editor.Recipe with
+                {
+                    Ingredients = ingredients
+                }
+            }
         };
     }
 

@@ -39,9 +39,7 @@
                     </div>
                     @foreach (var ingredient in State.Value.Editor.Recipe.Ingredients)
                     {
-                        <Ingredient
-                            @key="ingredient.Id == default ? Guid.NewGuid() : ingredient.Id"
-                            Model="@ingredient"></Ingredient>
+                        <Ingredient Model="@ingredient"></Ingredient>
                         <hr/>
                     }
                 </div>
@@ -145,7 +143,7 @@
     private void OnAddIngredientButtonClicked()
     {
         //_state.EditedRecipe.AddIngredient();
-        Dispatcher.Dispatch(new IngredientAddedAction()); // todo implement #298
+        Dispatcher.Dispatch(new IngredientAddedAction());
     }
 
     private void OnRemoveIngredient(EditedIngredient ingredient)
