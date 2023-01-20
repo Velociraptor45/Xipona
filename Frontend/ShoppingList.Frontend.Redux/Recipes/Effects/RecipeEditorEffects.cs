@@ -115,6 +115,22 @@ public sealed class RecipeEditorEffects : IDisposable
         return Task.CompletedTask;
     }
 
+    [EffectMethod]
+    public async Task HandleCreateNewItemCategoryAction(CreateNewItemCategoryAction action, IDispatcher dispatcher)
+    {
+        var name = _state.Value.Editor.Recipe.Ingredients
+            .FirstOrDefault(i => i.Id == action.IngredientId)?
+            .ItemCategorySelector.Input;
+
+        if (name == null)
+            return;
+
+        var itemCategory = await _client.CreateItemCategoryAsync(name);
+        var searchResult = new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name);
+        dispatcher.Dispatch(new CreateNewItemCategoryFinishedAction(action.IngredientId, searchResult));
+        dispatcher.Dispatch(new LoadItemsForItemCategoryAction(action.IngredientId, searchResult.Id));
+    }
+
     public void Dispose()
     {
         _startSearchTimer?.Dispose();

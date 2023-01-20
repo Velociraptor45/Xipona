@@ -150,16 +150,15 @@
     //    await LoadItemsAsync(Model.ItemCategoryId);
     //}
 
-    private void OnNewItemCategoryCreatedAsync(string name)
-    {
+    //private void OnNewItemCategoryCreatedAsync(string name)
+    //{
         //var newItemCategory = await _itemCategoryApiService.CreateAsync(name);
 
         //if (newItemCategory == null)
         //    return (null, Guid.Empty);
             
         //return (new ItemCategorySearchResult(newItemCategory.Id, newItemCategory.Name), newItemCategory.Id);
-        // todo
-    }
+    //}
 
     private void OnItemChanged(SearchItemByItemCategoryResult? itemSearchResult)
     {
@@ -192,7 +191,7 @@
 
     private void OnNewItemCategoryCreatedAsync()
     {
-        Dispatcher.Dispatch(new CreateNewItemCategoryAction()); // todo implement #298
+        Dispatcher.Dispatch(new CreateNewItemCategoryAction(Model.Id));
     }
 
     private void OnItemCategoryInputChanged(string input)

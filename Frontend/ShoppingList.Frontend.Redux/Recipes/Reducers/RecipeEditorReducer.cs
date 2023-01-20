@@ -403,4 +403,39 @@ public static class RecipeEditorReducer
             }
         };
     }
+
+    [ReducerMethod]
+    public static RecipeState OnCreateNewItemCategoryFinished(RecipeState state,
+        CreateNewItemCategoryFinishedAction action)
+    {
+        var ingredients = state.Editor.Recipe.Ingredients.ToList();
+        var ingredient = ingredients.FirstOrDefault(i => i.Id == action.IngredientId);
+        if (ingredient is null)
+            return state;
+
+        var ingredientIndex = ingredients.IndexOf(ingredient);
+        if (ingredientIndex < 0)
+            return state;
+
+        ingredients[ingredientIndex] = ingredient with
+        {
+            ItemCategoryId = action.SearchResult.Id,
+            ItemCategorySelector = ingredient.ItemCategorySelector with
+            {
+                ItemCategories = new List<ItemCategorySearchResult> { action.SearchResult },
+                Input = string.Empty
+            }
+        };
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Recipe = state.Editor.Recipe with
+                {
+                    Ingredients = ingredients
+                }
+            }
+        };
+    }
 }
