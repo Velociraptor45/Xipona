@@ -67,7 +67,7 @@ public static class ItemCategorySelectorReducer
     public static RecipeState OnSelectedItemCategoryChanged(RecipeState state, SelectedItemCategoryChangedAction action)
     {
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
-        var ingredient = ingredients.FirstOrDefault(i => i.Id == action.IngredientId);
+        var ingredient = ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
         if (ingredient is null)
             return state;
         var ingredientIndex = ingredients.IndexOf(ingredient);
@@ -103,7 +103,7 @@ public static class ItemCategorySelectorReducer
         LoadInitialItemCategoryFinishedAction action)
     {
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
-        var ingredient = ingredients.FirstOrDefault(i => i.Id == action.IngredientId);
+        var ingredient = ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
         if (ingredient is null)
             return state;
 
@@ -135,7 +135,7 @@ public static class ItemCategorySelectorReducer
     public static RecipeState OnSearchItemCategoriesFinished(RecipeState state, SearchItemCategoriesFinishedAction action)
     {
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
-        var ingredient = ingredients.FirstOrDefault(i => i.Id == action.IngredientId);
+        var ingredient = ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
         if (ingredient is null)
             return state;
 
@@ -178,7 +178,7 @@ public static class ItemCategorySelectorReducer
         CreateNewItemCategoryFinishedAction action)
     {
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
-        var ingredient = ingredients.FirstOrDefault(i => i.Id == action.IngredientId);
+        var ingredient = ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
         if (ingredient is null)
             return state;
 

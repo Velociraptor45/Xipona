@@ -188,12 +188,12 @@
 
     private void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
     {
-        Dispatcher.Dispatch(new SelectedItemCategoryChangedAction(Model.Id, itemCategory.Id));
+        Dispatcher.Dispatch(new SelectedItemCategoryChangedAction(Model.Key, itemCategory.Id));
     }
 
     private void OnNewItemCategoryCreatedAsync()
     {
-        Dispatcher.Dispatch(new CreateNewItemCategoryAction(Model.Id));
+        Dispatcher.Dispatch(new CreateNewItemCategoryAction(Model.Key));
     }
 
     private void OnItemCategoryInputChanged(string input)

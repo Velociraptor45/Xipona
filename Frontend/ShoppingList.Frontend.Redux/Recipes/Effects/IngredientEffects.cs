@@ -25,7 +25,7 @@ public class IngredientEffects
     {
         if (action.Ingredient.ItemCategoryId != Guid.Empty)
             dispatcher.Dispatch(
-                new LoadItemsForItemCategoryAction(action.Ingredient.Id, action.Ingredient.ItemCategoryId));
+                new LoadItemsForItemCategoryAction(action.Ingredient.Key, action.Ingredient.ItemCategoryId));
 
         return Task.CompletedTask;
     }

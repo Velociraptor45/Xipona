@@ -29,25 +29,25 @@ public sealed class ItemCategorySelectorEffects : IDisposable
 
         var itemCategory = await _client.GetItemCategoryByIdAsync(action.Ingredient.ItemCategoryId);
         var result = new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name);
-        dispatcher.Dispatch(new LoadInitialItemCategoryFinishedAction(action.Ingredient.Id, result));
+        dispatcher.Dispatch(new LoadInitialItemCategoryFinishedAction(action.Ingredient.Key, result));
     }
 
     [EffectMethod]
     public async Task HandleSearchItemCategoriesAction(SearchItemCategoriesAction action, IDispatcher dispatcher)
     {
-        var ingredient = _state.Value.Editor.Recipe.Ingredients.FirstOrDefault(i => i.Id == action.IngredientId);
+        var ingredient = _state.Value.Editor.Recipe.Ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
         if (ingredient is null || string.IsNullOrWhiteSpace(ingredient.ItemCategorySelector.Input))
             return;
 
         var results = await _client.GetItemCategorySearchResultsAsync(ingredient.ItemCategorySelector.Input);
-        dispatcher.Dispatch(new SearchItemCategoriesFinishedAction(results.ToList(), action.IngredientId));
+        dispatcher.Dispatch(new SearchItemCategoriesFinishedAction(results.ToList(), action.IngredientKey));
     }
 
     [EffectMethod]
     public Task HandleSelectedItemCategoryChangedAction(SelectedItemCategoryChangedAction action,
         IDispatcher dispatcher)
     {
-        dispatcher.Dispatch(new LoadItemsForItemCategoryAction(action.IngredientId, action.ItemCategoryId));
+        dispatcher.Dispatch(new LoadItemsForItemCategoryAction(action.IngredientKey, action.ItemCategoryId));
         return Task.CompletedTask;
     }
 
@@ -57,7 +57,7 @@ public sealed class ItemCategorySelectorEffects : IDisposable
     {
         var result = await _client.SearchItemByItemCategoryAsync(action.ItemCategoryId);
 
-        dispatcher.Dispatch(new LoadItemsForItemCategoryFinishedAction(result.ToList(), action.IngredientId));
+        dispatcher.Dispatch(new LoadItemsForItemCategoryFinishedAction(result.ToList(), action.IngredientKey));
     }
 
     [EffectMethod]
@@ -72,13 +72,13 @@ public sealed class ItemCategorySelectorEffects : IDisposable
         if (string.IsNullOrWhiteSpace(action.Input))
         {
             dispatcher.Dispatch(new SearchItemCategoriesFinishedAction(new List<ItemCategorySearchResult>(),
-                action.Ingredient.Id));
+                action.Ingredient.Key));
             return Task.CompletedTask;
         }
 
         _startSearchTimer = new(300d);
         _startSearchTimer.AutoReset = false;
-        _startSearchTimer.Elapsed += (_, _) => dispatcher.Dispatch(new SearchItemCategoriesAction(action.Ingredient.Id));
+        _startSearchTimer.Elapsed += (_, _) => dispatcher.Dispatch(new SearchItemCategoriesAction(action.Ingredient.Key));
         _startSearchTimer.Start();
 
         return Task.CompletedTask;
@@ -88,7 +88,7 @@ public sealed class ItemCategorySelectorEffects : IDisposable
     public async Task HandleCreateNewItemCategoryAction(CreateNewItemCategoryAction action, IDispatcher dispatcher)
     {
         var name = _state.Value.Editor.Recipe.Ingredients
-            .FirstOrDefault(i => i.Id == action.IngredientId)?
+            .FirstOrDefault(i => i.Key == action.IngredientKey)?
             .ItemCategorySelector.Input;
 
         if (string.IsNullOrWhiteSpace(name))
@@ -96,8 +96,8 @@ public sealed class ItemCategorySelectorEffects : IDisposable
 
         var itemCategory = await _client.CreateItemCategoryAsync(name);
         var searchResult = new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name);
-        dispatcher.Dispatch(new CreateNewItemCategoryFinishedAction(action.IngredientId, searchResult));
-        dispatcher.Dispatch(new LoadItemsForItemCategoryAction(action.IngredientId, searchResult.Id));
+        dispatcher.Dispatch(new CreateNewItemCategoryFinishedAction(action.IngredientKey, searchResult));
+        dispatcher.Dispatch(new LoadItemsForItemCategoryAction(action.IngredientKey, searchResult.Id));
     }
 
     public void Dispose()

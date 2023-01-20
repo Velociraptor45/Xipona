@@ -24,6 +24,7 @@ public static class IngredientReducer
     {
         var ingredients = state.Editor.Recipe!.Ingredients.ToList();
         ingredients.Add(new EditedIngredient(
+            Guid.NewGuid(),
             Guid.Empty,
             Guid.Empty,
             state.IngredientQuantityTypes.First().Id,
@@ -141,7 +142,7 @@ public static class IngredientReducer
         LoadItemsForItemCategoryFinishedAction action)
     {
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
-        var ingredient = ingredients.FirstOrDefault(i => i.Id == action.IngredientId);
+        var ingredient = ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
         if (ingredient is null)
             return state;
 

@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Recipes.States;
+using System;
 using System.Collections.Generic;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Recipes.ToDomain;
@@ -13,6 +14,7 @@ public class EditedIngredientConverter : IToDomainConverter<IngredientContract, 
     public EditedIngredient ToDomain(IngredientContract source)
     {
         return new EditedIngredient(
+            Guid.NewGuid(),
             source.Id,
             source.ItemCategoryId,
             source.QuantityType,
