@@ -265,13 +265,23 @@ public static class RecipeEditorReducer
     public static RecipeState OnSelectedItemCategoryChanged(RecipeState state, SelectedItemCategoryChangedAction action)
     {
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
-        var ingredientIndex = ingredients.IndexOf(action.Ingredient);
+        var ingredient = ingredients.FirstOrDefault(i => i.Id == action.IngredientId);
+        if (ingredient is null)
+            return state;
+        var ingredientIndex = ingredients.IndexOf(ingredient);
         if (ingredientIndex < 0)
             return state;
 
-        ingredients[ingredientIndex] = action.Ingredient with
+        ingredients[ingredientIndex] = ingredient with
         {
-            ItemCategoryId = action.ItemCategoryId
+            ItemCategoryId = action.ItemCategoryId,
+            ItemCategorySelector = ingredient.ItemCategorySelector with
+            {
+                ItemCategories = ingredient.ItemCategorySelector.ItemCategories
+                    .Where(i => i.Id == action.ItemCategoryId)
+                    .ToList(),
+                Input = string.Empty
+            }
         };
 
         return state with
@@ -393,6 +403,4 @@ public static class RecipeEditorReducer
             }
         };
     }
-
-    // todo clear item category select on category selected
 }

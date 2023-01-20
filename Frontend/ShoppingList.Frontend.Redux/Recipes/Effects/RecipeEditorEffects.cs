@@ -69,7 +69,7 @@ public sealed class RecipeEditorEffects : IDisposable
     {
         if (action.Ingredient.ItemCategoryId != Guid.Empty)
             dispatcher.Dispatch(
-                new LoadItemsForItemCategoryAction(action.Ingredient, action.Ingredient.ItemCategoryId));
+                new LoadItemsForItemCategoryAction(action.Ingredient.Id, action.Ingredient.ItemCategoryId));
 
         return Task.CompletedTask;
     }
@@ -78,7 +78,7 @@ public sealed class RecipeEditorEffects : IDisposable
     public Task HandleSelectedItemCategoryChangedAction(SelectedItemCategoryChangedAction action,
         IDispatcher dispatcher)
     {
-        dispatcher.Dispatch(new LoadItemsForItemCategoryAction(action.Ingredient, action.ItemCategoryId));
+        dispatcher.Dispatch(new LoadItemsForItemCategoryAction(action.IngredientId, action.ItemCategoryId));
         return Task.CompletedTask;
     }
 
@@ -88,7 +88,7 @@ public sealed class RecipeEditorEffects : IDisposable
     {
         var result = await _client.SearchItemByItemCategoryAsync(action.ItemCategoryId);
 
-        dispatcher.Dispatch(new LoadItemsForItemCategoryFinishedAction(result.ToList(), action.Ingredient.Id));
+        dispatcher.Dispatch(new LoadItemsForItemCategoryFinishedAction(result.ToList(), action.IngredientId));
     }
 
     [EffectMethod]

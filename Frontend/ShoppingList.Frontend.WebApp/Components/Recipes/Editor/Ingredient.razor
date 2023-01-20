@@ -187,7 +187,7 @@
 
     private void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
     {
-        Dispatcher.Dispatch(new SelectedItemCategoryChangedAction(Model, itemCategory.Id));
+        Dispatcher.Dispatch(new SelectedItemCategoryChangedAction(Model.Id, itemCategory.Id));
     }
 
     private void OnNewItemCategoryCreatedAsync()
