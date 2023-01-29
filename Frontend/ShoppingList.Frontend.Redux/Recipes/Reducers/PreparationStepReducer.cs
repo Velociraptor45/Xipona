@@ -107,7 +107,7 @@ public static class PreparationStepReducer
     public static RecipeState OnPreparationStepAdded(RecipeState state)
     {
         var steps = state.Editor.Recipe!.PreparationSteps.ToList();
-        var maxSortingIndex = steps.Max(s => s.SortingIndex);
+        var maxSortingIndex = steps.Any() ? steps.Max(s => s.SortingIndex) : 0;
         steps.Add(new EditedPreparationStep(Guid.NewGuid(), Guid.Empty, "", maxSortingIndex + 1));
 
         return state with
