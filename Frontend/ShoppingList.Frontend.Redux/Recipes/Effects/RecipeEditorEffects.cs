@@ -40,5 +40,17 @@ public sealed class RecipeEditorEffects
         dispatcher.Dispatch(new ModifyRecipeStartedAction());
         await _client.ModifyRecipeAsync(_state.Value.Editor.Recipe!);
         dispatcher.Dispatch(new ModifyRecipeFinishedAction());
+
+        dispatcher.Dispatch(new LeaveRecipeEditorAction());
+    }
+
+    [EffectMethod(typeof(CreateRecipeAction))]
+    public async Task HandleCreateRecipeAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new CreateRecipeStartedAction());
+        await _client.CreateRecipeAsync(_state.Value.Editor.Recipe!);
+        dispatcher.Dispatch(new CreateRecipeFinishedAction());
+
+        dispatcher.Dispatch(new LeaveRecipeEditorAction());
     }
 }
