@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.PreparationSteps;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ShoppingList.Frontend.Redux.Recipes.States;
+using ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Reducers;
 
@@ -26,7 +27,7 @@ public static class PreparationStepReducer
             {
                 Recipe = state.Editor.Recipe with
                 {
-                    PreparationSteps = steps
+                    PreparationSteps = new SortedSet<EditedPreparationStep>(steps, new SortingIndexComparer())
                 }
             }
         };
@@ -51,7 +52,7 @@ public static class PreparationStepReducer
             {
                 Recipe = state.Editor.Recipe with
                 {
-                    PreparationSteps = steps
+                    PreparationSteps = new SortedSet<EditedPreparationStep>(steps, new SortingIndexComparer())
                 }
             }
         };
@@ -69,7 +70,7 @@ public static class PreparationStepReducer
             {
                 Recipe = state.Editor.Recipe with
                 {
-                    PreparationSteps = steps
+                    PreparationSteps = new SortedSet<EditedPreparationStep>(steps, new SortingIndexComparer())
                 }
             }
         };
@@ -92,7 +93,7 @@ public static class PreparationStepReducer
             {
                 Recipe = state.Editor.Recipe with
                 {
-                    PreparationSteps = steps
+                    PreparationSteps = new SortedSet<EditedPreparationStep>(steps, new SortingIndexComparer())
                 }
             }
         };
@@ -111,7 +112,7 @@ public static class PreparationStepReducer
             {
                 Recipe = state.Editor.Recipe with
                 {
-                    PreparationSteps = steps
+                    PreparationSteps = new SortedSet<EditedPreparationStep>(steps, new SortingIndexComparer())
                 }
             }
         };

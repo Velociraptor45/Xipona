@@ -14,7 +14,7 @@ public static class RecipeEditorReducer
             Guid.Empty,
             string.Empty,
             new List<EditedIngredient>(0),
-            new List<EditedPreparationStep>(0));
+            new SortedSet<EditedPreparationStep>());
 
         return state with
         {
