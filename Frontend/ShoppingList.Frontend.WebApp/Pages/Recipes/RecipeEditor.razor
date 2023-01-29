@@ -111,7 +111,7 @@
 
     private void OnNameChanged(string name)
     {
-        Dispatcher.Dispatch(new RecipeNameChangedAction(name)); // todo implement #298
+        Dispatcher.Dispatch(new RecipeNameChangedAction(name));
     }
 
     private void OnBackButtonClicked()
@@ -137,7 +137,7 @@
         //    _state.UpdateRecipeSearchResultName(_state.EditedRecipe.Id, _state.EditedRecipe.Name);
         //    _navigationManager.NavigateTo("recipes");
         //}
-        Dispatcher.Dispatch(new ModifyRecipeAction()); // todo implement #298
+        Dispatcher.Dispatch(new ModifyRecipeAction());
     }
 
     private void OnAddIngredientButtonClicked()

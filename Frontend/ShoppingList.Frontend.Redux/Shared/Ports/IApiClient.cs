@@ -1,6 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Items.States;
@@ -98,9 +97,9 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
 
         Task<IEnumerable<RecipeSearchResult>> SearchRecipesByNameAsync(string searchInput);
 
-        Task<Recipe> CreateRecipeAsync(Recipe recipe);
+        Task<EditedRecipe> CreateRecipeAsync(EditedRecipe recipe);
 
-        Task ModifyRecipeAsync(Recipe recipe);
+        Task ModifyRecipeAsync(EditedRecipe recipe);
 
         Task<IEnumerable<SearchItemByItemCategoryResult>> SearchItemByItemCategoryAsync(Guid itemCategoryId);
 

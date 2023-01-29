@@ -1,8 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
-using RestEase;
-using ShoppingList.Frontend.Redux.Shared.Ports;
-using System.Threading.Tasks;
+﻿using ShoppingList.Frontend.Redux.Shared.Ports;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
 
@@ -42,34 +38,34 @@ public class RecipesApiService : IRecipesApiService
     //    return null;
     //}
 
-    public async Task<Recipe> CreateAsync(Recipe recipe)
-    {
-        try
-        {
-            return await _client.CreateRecipeAsync(recipe);
-        }
-        catch (ApiException e)
-        {
-            var contract = e.DeserializeContent<ErrorContract>();
-            _notificationService.NotifyError("Creating recipe failed", contract.Message);
-        }
+    //public async Task<Recipe> CreateAsync(Recipe recipe)
+    //{
+    //    try
+    //    {
+    //        return await _client.CreateRecipeAsync(recipe);
+    //    }
+    //    catch (ApiException e)
+    //    {
+    //        var contract = e.DeserializeContent<ErrorContract>();
+    //        _notificationService.NotifyError("Creating recipe failed", contract.Message);
+    //    }
 
-        return null;
-    }
+    //    return null;
+    //}
 
-    public async Task<bool> ModifyAsync(Recipe recipe)
-    {
-        try
-        {
-            await _client.ModifyRecipeAsync(recipe);
-            return true;
-        }
-        catch (ApiException e)
-        {
-            var contract = e.DeserializeContent<ErrorContract>();
-            _notificationService.NotifyError("Modifying recipe failed", contract.Message);
-        }
+    //public async Task<bool> ModifyAsync(Recipe recipe)
+    //{
+    //    try
+    //    {
+    //        await _client.ModifyRecipeAsync(recipe);
+    //        return true;
+    //    }
+    //    catch (ApiException e)
+    //    {
+    //        var contract = e.DeserializeContent<ErrorContract>();
+    //        _notificationService.NotifyError("Modifying recipe failed", contract.Message);
+    //    }
 
-        return false;
-    }
+    //    return false;
+    //}
 }

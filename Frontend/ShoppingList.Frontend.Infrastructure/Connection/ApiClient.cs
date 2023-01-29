@@ -36,7 +36,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Items.States;
@@ -358,16 +357,16 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 : _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
         }
 
-        public async Task<Recipe> CreateRecipeAsync(Recipe recipe)
+        public async Task<EditedRecipe> CreateRecipeAsync(EditedRecipe recipe)
         {
-            var contract = _converters.ToContract<Recipe, CreateRecipeContract>(recipe);
+            var contract = _converters.ToContract<EditedRecipe, CreateRecipeContract>(recipe);
             var result = await _client.CreateRecipeAsync(contract);
-            return _converters.ToDomain<RecipeContract, Recipe>(result);
+            return _converters.ToDomain<RecipeContract, EditedRecipe>(result);
         }
 
-        public async Task ModifyRecipeAsync(Recipe recipe)
+        public async Task ModifyRecipeAsync(EditedRecipe recipe)
         {
-            var contract = _converters.ToContract<Recipe, ModifyRecipeContract>(recipe);
+            var contract = _converters.ToContract<EditedRecipe, ModifyRecipeContract>(recipe);
             await _client.ModifyRecipeAsync(recipe.Id, contract);
         }
 
