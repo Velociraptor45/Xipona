@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.StoreById;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
@@ -36,6 +37,33 @@ public class StoreController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(StoreContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [Route("{id:guid}")]
+    public async Task<IActionResult> GetStoreByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var query = new GetStoreByIdQuery(new StoreId(id));
+
+        IStore model;
+        try
+        {
+            model = await _queryDispatcher.DispatchAsync(query, cancellationToken);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.StoreNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+
+        var contract = _converters.ToContract<IStore, StoreContract>(model);
+
+        return Ok(contract);
+    }
+
+    [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<StoreContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("active")]
@@ -63,8 +91,7 @@ public class StoreController : ControllerBase
 
         var contract = _converters.ToContract<IStore, StoreContract>(model);
 
-        //todo: change to CreatedAtAction
-        return Created("", contract);
+        return CreatedAtAction(nameof(GetStoreByIdAsync), contract);
     }
 
     [HttpPut]

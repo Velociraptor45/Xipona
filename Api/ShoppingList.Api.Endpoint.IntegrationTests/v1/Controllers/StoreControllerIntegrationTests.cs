@@ -30,6 +30,120 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 public class StoreControllerIntegrationTests
 {
     [Collection(DockerCollection.Name)]
+    public class GetStoreByIdAsync
+    {
+        private readonly GetStoreByIdAsyncFixture _fixture;
+
+        public GetStoreByIdAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new GetStoreByIdAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task GetStoreByIdAsync_WithValidId_ShouldReturnStore()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupExistingStoreWithStoreId();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.GetStoreByIdAsync(_fixture.StoreId.Value);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+
+            var okResult = result as OkObjectResult;
+            okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task GetStoreByIdAsync_WithInvalidId_ShouldReturnNotFound()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupExistingStoreWithRandomStoreId();
+            await _fixture.PrepareDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+
+            // Act
+            var result = await sut.GetStoreByIdAsync(_fixture.StoreId.Value);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<NotFoundObjectResult>();
+        }
+
+        private sealed class GetStoreByIdAsyncFixture : LocalFixture
+        {
+            private Repositories.Stores.Entities.Store? _existingStore;
+
+            public GetStoreByIdAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public StoreId? StoreId { get; private set; }
+            public StoreContract? ExpectedResult { get; private set; }
+
+            public void SetupStoreId()
+            {
+                StoreId = Domain.Stores.Models.StoreId.New;
+            }
+
+            public void SetupExistingStoreWithStoreId()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                _existingStore = StoreEntityMother
+                    .Initial()
+                    .WithId(StoreId.Value)
+                    .Create();
+            }
+
+            public void SetupExistingStoreWithRandomStoreId()
+            {
+                _existingStore = StoreEntityMother
+                    .Initial()
+                    .Create();
+            }
+
+            public void SetupExpectedResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStore);
+
+                ExpectedResult = new StoreContract(
+                    _existingStore.Id,
+                    _existingStore.Name,
+                    _existingStore.Sections.Select(s =>
+                        new SectionContract(s.Id, s.Name, s.SortIndex, s.IsDefaultSection)));
+            }
+
+            public override async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStore);
+
+                await ApplyMigrationsAsync(SetupScope);
+
+                using var transaction = await CreateTransactionAsync(SetupScope);
+                await using var dbContext = GetContextInstance<StoreContext>(SetupScope);
+
+                await dbContext.AddAsync(_existingStore);
+                await dbContext.SaveChangesAsync();
+
+                await transaction.CommitAsync(default);
+            }
+        }
+    }
+
+    [Collection(DockerCollection.Name)]
     public class CreateStoreAsync
     {
         private readonly CreateStoreAsyncFixture _fixture;
@@ -52,8 +166,8 @@ public class StoreControllerIntegrationTests
             var result = await sut.CreateStoreAsync(_fixture.Contract!);
 
             // Assert
-            result.Should().BeOfType<CreatedResult>();
-            var createdResult = result as CreatedResult;
+            result.Should().BeOfType<CreatedAtActionResult>();
+            var createdResult = result as CreatedAtActionResult;
             createdResult!.Value.Should().BeOfType<StoreContract>();
             createdResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResultValue!,
                 opts => opts.Excluding(x => x.Path.EndsWith("Id")));

@@ -224,6 +224,11 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region StoreController
 
+        public async Task<StoreContract> GetStoreByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.GetStoreByIdAsync(id, cancellationToken);
+        }
+
         public async Task<IEnumerable<StoreContract>> GetAllActiveStoresAsync(
             CancellationToken cancellationToken = default)
         {
