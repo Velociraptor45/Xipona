@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.PreparationSteps;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ShoppingList.Frontend.Redux.Recipes.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Reducers;
@@ -84,6 +85,25 @@ public static class PreparationStepReducer
 
         var stepIndex = steps.IndexOf(step);
         steps[stepIndex] = step with { Name = action.Text };
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Recipe = state.Editor.Recipe with
+                {
+                    PreparationSteps = steps
+                }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(PreparationStepAddedAction))]
+    public static RecipeState OnPreparationStepAdded(RecipeState state)
+    {
+        var steps = state.Editor.Recipe!.PreparationSteps.ToList();
+        var maxSortingIndex = steps.Max(s => s.SortingIndex);
+        steps.Add(new EditedPreparationStep(Guid.NewGuid(), Guid.Empty, "", maxSortingIndex + 1));
 
         return state with
         {
