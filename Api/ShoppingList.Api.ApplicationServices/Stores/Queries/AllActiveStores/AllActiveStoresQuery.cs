@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.AllActiveStores;
 
-public class AllActiveStoresQuery : IQuery<IEnumerable<StoreReadModel>>
+public class AllActiveStoresQuery : IQuery<IEnumerable<IStore>>
 {
 }

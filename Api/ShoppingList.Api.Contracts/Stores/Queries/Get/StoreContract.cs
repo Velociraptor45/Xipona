@@ -3,21 +3,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores
+namespace ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Get
 {
-    public class ActiveStoreContract
+    public class StoreContract
     {
-        public ActiveStoreContract(Guid id, string name, int itemCount, IEnumerable<SectionContract> sections)
+        public StoreContract(Guid id, string name, IEnumerable<SectionContract> sections)
         {
             Id = id;
             Name = name;
-            ItemCount = itemCount;
             Sections = sections.ToList().AsReadOnly();
         }
 
         public Guid Id { get; }
         public string Name { get; }
-        public int ItemCount { get; }
         public IReadOnlyCollection<SectionContract> Sections { get; }
     }
 }
