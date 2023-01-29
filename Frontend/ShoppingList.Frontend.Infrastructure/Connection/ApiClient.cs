@@ -34,7 +34,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
@@ -177,10 +176,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return _converters.ToDomain<ManufacturerContract, EditedManufacturer>(result);
         }
 
-        public async Task<ItemCategory> CreateItemCategoryAsync(string name)
+        public async Task<EditedItemCategory> CreateItemCategoryAsync(string name)
         {
             var result = await _client.CreateItemCategoryAsync(name);
-            return _converters.ToDomain<ItemCategoryContract, ItemCategory>(result);
+            return _converters.ToDomain<ItemCategoryContract, EditedItemCategory>(result);
         }
 
         public async Task<ShoppingListModel> GetActiveShoppingListByStoreIdAsync(Guid storeId)
@@ -309,10 +308,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             await _client.ModifyManufacturerAsync(contract);
         }
 
-        public async Task<ItemCategory> GetItemCategoryByIdAsync(Guid id)
+        public async Task<EditedItemCategory> GetItemCategoryByIdAsync(Guid id)
         {
             var result = await _client.GetItemCategoryByIdAsync(id);
-            return _converters.ToDomain<ItemCategoryContract, ItemCategory>(result);
+            return _converters.ToDomain<ItemCategoryContract, EditedItemCategory>(result);
         }
 
         public async Task<IEnumerable<ItemCategorySearchResult>> GetItemCategorySearchResultsAsync(string searchInput)

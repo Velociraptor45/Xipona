@@ -36,8 +36,7 @@ public class ItemCategoryEditorEffects
 
         var itemCategory = await _client.GetItemCategoryByIdAsync(action.ItemCategoryId);
 
-        var finishAction =
-            new LoadItemCategoryForEditingFinishedAction(new EditedItemCategory(itemCategory.Id, itemCategory.Name));
+        var finishAction = new LoadItemCategoryForEditingFinishedAction(itemCategory);
         dispatcher.Dispatch(finishAction);
     }
 

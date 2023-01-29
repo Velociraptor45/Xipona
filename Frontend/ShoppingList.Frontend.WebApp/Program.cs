@@ -5,10 +5,6 @@ using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using ShoppingList.Frontend.Redux;
@@ -55,14 +51,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
             builder.Services.AddScoped<IItemPriceCalculationService, ItemPriceCalculationService>();
 
-            builder.Services.AddTransient<IItemsApiService, ItemsApiService>();
             builder.Services.AddTransient<IStoresApiService, StoresApiService>();
-
-            builder.Services.AddTransient<IItemCategoryApiService, ItemCategoryApiService>();
-
-            var recipeState = new RecipesState();
-            builder.Services.AddSingleton(recipeState);
-            builder.Services.AddTransient<IRecipesApiService, RecipesApiService>();
 
             builder.Services.AddInfrastructure();
 

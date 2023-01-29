@@ -9,13 +9,6 @@
 @inject IDispatcher Dispatcher
 @inject IState<RecipeState> State
 
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
-@*@using RecipeSearchResult = ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models.RecipeSearchResult*@
-@*
-@inject NavigationManager _navigationManager;
-@inject RecipesState _state;
-@inject IRecipesApiService _apiService*@
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes
 
@@ -47,25 +40,15 @@
     {
         base.OnInitialized();
         Dispatcher.Dispatch(new EnterRecipeSearchPageAction());
-        //_state.ResetEditedRecipe();
     }
 
     private void OnLoadButtonClicked()
     {
-        //if (string.IsNullOrWhiteSpace(input))
-        //{
-        //    _state.RegisterSearchResults(Enumerable.Empty<RecipeSearchResult>());
-        //    return;
-        //}
-
-        //var results = await _apiService.SearchAsync(input);
-        //_state.RegisterSearchResults(results);
         Dispatcher.Dispatch(new SearchRecipeAction(input));
     }
 
     private void OnCreateRecipeButtonClicked()
     {
-        //_navigationManager.NavigateTo($"recipes/{Guid.Empty}");
         Dispatcher.Dispatch(new EditRecipeAction
         {
             Id = Guid.Empty

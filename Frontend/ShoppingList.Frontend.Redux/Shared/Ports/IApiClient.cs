@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+﻿using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
 using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Items.States;
@@ -28,7 +27,7 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
 
         Task CreateItemAsync(CreateItemRequest request);
 
-        Task<ItemCategory> CreateItemCategoryAsync(string name);
+        Task<EditedItemCategory> CreateItemCategoryAsync(string name);
 
         Task<EditedManufacturer> CreateManufacturerAsync(string name);
 
@@ -83,7 +82,7 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
 
         Task ModifyManufacturerAsync(ModifyManufacturerRequest request);
 
-        Task<ItemCategory> GetItemCategoryByIdAsync(Guid id);
+        Task<EditedItemCategory> GetItemCategoryByIdAsync(Guid id);
 
         Task<IEnumerable<ItemCategorySearchResult>> GetItemCategorySearchResultsAsync(string searchInput);
 

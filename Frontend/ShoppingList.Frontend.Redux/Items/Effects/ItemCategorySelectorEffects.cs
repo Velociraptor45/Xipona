@@ -31,10 +31,10 @@ public sealed class ItemCategorySelectorEffects : IDisposable
         dispatcher.Dispatch(new LoadInitialItemCategoryFinishedAction(result));
     }
 
-    [EffectMethod]
-    public async Task HandleCreateNewItemCategoryAction(CreateNewItemCategoryAction action, IDispatcher dispatcher)
+    [EffectMethod(typeof(CreateNewItemCategoryAction))]
+    public async Task HandleCreateNewItemCategoryAction(IDispatcher dispatcher)
     {
-        var result = await _client.CreateItemCategoryAsync(_state.Value.Editor.ItemCategorySelector.Input); //todo change return type #298
+        var result = await _client.CreateItemCategoryAsync(_state.Value.Editor.ItemCategorySelector.Input);
         dispatcher.Dispatch(
             new CreateNewItemCategoryFinishedAction(new ItemCategorySearchResult(result.Id, result.Name)));
     }
