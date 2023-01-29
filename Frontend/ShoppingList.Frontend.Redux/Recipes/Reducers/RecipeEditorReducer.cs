@@ -36,4 +36,19 @@ public static class RecipeEditorReducer
             }
         };
     }
+
+    [ReducerMethod]
+    public static RecipeState OnRecipeNameChanged(RecipeState state, RecipeNameChangedAction action)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Recipe = state.Editor.Recipe with
+                {
+                    Name = action.Name
+                }
+            }
+        };
+    }
 }
