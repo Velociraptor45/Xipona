@@ -1,7 +1,6 @@
 ﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.PreparationSteps;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
-using ShoppingList.Frontend.Redux.Recipes.States;
 using ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Reducers;

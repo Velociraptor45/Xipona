@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
 
-namespace ShoppingList.Frontend.Redux.Recipes.States;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 
 public class RecipeSearchResult : ISearchResult
 {

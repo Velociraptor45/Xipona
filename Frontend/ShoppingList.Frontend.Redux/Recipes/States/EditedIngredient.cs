@@ -1,6 +1,4 @@
-﻿using ShoppingList.Frontend.Redux.Recipes.States;
-
-namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 public record EditedIngredient(
     Guid Key,
     Guid Id,

@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToDomain;
@@ -14,7 +14,8 @@ public class SearchItemByItemCategoryResultConverter :
             source.ItemId,
             source.ItemTypeId,
             source.Name,
-            source.Availabilities.Select(av =>
-                new SearchItemByItemCategoryAvailability(av.StoreId, av.StoreName, av.Price)));
+            source.Availabilities
+                .Select(av => new SearchItemByItemCategoryAvailability(av.StoreId, av.StoreName, av.Price))
+                .ToList());
     }
 }

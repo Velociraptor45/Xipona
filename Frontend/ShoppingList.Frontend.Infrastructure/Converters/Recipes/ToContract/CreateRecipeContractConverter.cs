@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ShoppingList.Frontend.Redux.Recipes.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Recipes.ToContract;

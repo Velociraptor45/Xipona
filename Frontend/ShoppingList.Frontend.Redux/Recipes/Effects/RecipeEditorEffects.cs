@@ -1,7 +1,7 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor;
-using ShoppingList.Frontend.Redux.Recipes.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ShoppingList.Frontend.Redux.Shared.Constants;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 

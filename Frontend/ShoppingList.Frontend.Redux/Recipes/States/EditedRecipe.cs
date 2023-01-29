@@ -1,7 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
-using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 
-namespace ShoppingList.Frontend.Redux.Recipes.States;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 public record EditedRecipe(Guid Id, string Name, IReadOnlyCollection<EditedIngredient> Ingredients,
     SortedSet<EditedPreparationStep> PreparationSteps) : ISortable<EditedPreparationStep>
 {

@@ -1,7 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
-using ShoppingList.Frontend.Redux.Recipes.States;
 using ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
 using System.Collections.Generic;
 using System.Linq;
