@@ -17,9 +17,11 @@ public static class PreparationStepReducer
         if (sectionIndex == -1 || sectionIndex >= steps.Count - 1)
             return state;
 
-        var tmp = steps[sectionIndex + 1];
-        steps[sectionIndex + 1] = action.PreparationStep;
-        steps[sectionIndex] = tmp;
+        var incremented = steps[sectionIndex];
+        var decremented = steps[sectionIndex + 1];
+
+        steps[sectionIndex + 1] = decremented with { SortingIndex = incremented.SortingIndex };
+        steps[sectionIndex] = incremented with { SortingIndex = decremented.SortingIndex };
 
         return state with
         {
@@ -42,9 +44,11 @@ public static class PreparationStepReducer
         if (sectionIndex is -1 or <= 0)
             return state;
 
-        var tmp = steps[sectionIndex - 1];
-        steps[sectionIndex - 1] = action.PreparationStep;
-        steps[sectionIndex] = tmp;
+        var decremented = steps[sectionIndex];
+        var incremented = steps[sectionIndex - 1];
+
+        steps[sectionIndex - 1] = incremented with { SortingIndex = decremented.SortingIndex };
+        steps[sectionIndex] = decremented with { SortingIndex = incremented.SortingIndex };
 
         return state with
         {
