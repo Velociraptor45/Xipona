@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Items\States\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ShoppingList.Frontend.Redux\ShoppingList.Frontend.Redux.csproj" />
+    <ProjectReference Include="..\ShoppingList.Frontend.TestTools\ShoppingList.Frontend.TestTools.csproj" />
+  </ItemGroup>
+
+</Project>
