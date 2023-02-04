@@ -1,8 +1,8 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ShoppingList.Frontend.Redux.Shared.States;
 using ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
 using ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary;

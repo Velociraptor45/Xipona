@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ShoppingList.Frontend.Redux.Shared.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToDomain
 {

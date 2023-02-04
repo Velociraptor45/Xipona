@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 public record EditedRecipe(Guid Id, string Name, IReadOnlyCollection<EditedIngredient> Ingredients,

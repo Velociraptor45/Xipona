@@ -1,5 +1,5 @@
-﻿using QuantityType = ShoppingList.Frontend.Redux.Shared.States.QuantityType;
-using QuantityTypeInPacket = ShoppingList.Frontend.Redux.Shared.States.QuantityTypeInPacket;
+﻿using QuantityType = ProjectHermes.ShoppingList.Frontend.Redux.Shared.States.QuantityType;
+using QuantityTypeInPacket = ProjectHermes.ShoppingList.Frontend.Redux.Shared.States.QuantityTypeInPacket;
 
 namespace ShoppingList.Frontend.Redux.Items.States;
 

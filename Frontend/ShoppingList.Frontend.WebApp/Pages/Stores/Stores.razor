@@ -10,8 +10,6 @@
 @inject IDispatcher Dispatcher
 @inject IState<StoreState> State
 
-@*@inject Services.IStoresApiService apiService;*@
-
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores
 
 <div class="d-flex">
@@ -25,23 +23,11 @@
         @foreach (var searchResult in State.Value.SearchResults)
         {
             <SearchResult Model="searchResult" TAction="EditStoreAction"></SearchResult>
-            @*<StoreListItem State="@state" Store="@store"></StoreListItem>*@
         }
     </ol>
 </div>
 
 @code {
-    //private StoresState state;
-    //private ErrorHandler errorHandler;
-
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    errorHandler = new ErrorHandler(GetButtonRenderFragment);
-    //    await CreatePageState();
-
-    //    await base.OnInitializedAsync();
-    //}
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -49,35 +35,11 @@
         Dispatcher.Dispatch(new LoadStoresOverviewAction());
     }
 
-    //private async Task CreatePageState()
-    //{
-
-    //    //await apiService.LoadStores(errorHandler, stores =>
-    //    //{
-    //    //    state = new StoresState(stores);
-    //    //    state.StoreChanged += async () => await ReloadStores();
-    //    //    state.StateChanged += StateHasChanged;
-
-    //    //    StateHasChanged();
-    //    //});
-    //}
-
     private void OnCreateStoreButtonClicked()
     {
-        //state.EnterEditorForNewStore();
         Dispatcher.Dispatch(new EditStoreAction
         {
             Id = Guid.Empty
         });
     }
-
-    //private async Task ReloadStores()
-    //{
-    //    await apiService.LoadStores(errorHandler, stores => state.UpdateStores(stores));
-    //}
-
-    //private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")
-    //{
-    //    return @<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
-    //}
 }

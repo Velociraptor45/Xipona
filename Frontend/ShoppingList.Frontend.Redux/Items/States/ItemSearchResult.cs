@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 
 namespace ShoppingList.Frontend.Redux.Items.States;
 

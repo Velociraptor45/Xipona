@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.ShoppingList.Frontend.Models.Shared;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 
 public interface ISortableItem
 {

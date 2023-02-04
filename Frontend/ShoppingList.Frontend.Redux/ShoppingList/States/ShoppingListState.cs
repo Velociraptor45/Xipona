@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using ShoppingList.Frontend.Redux.Shared.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 
 namespace ShoppingList.Frontend.Redux.ShoppingList.States;
 

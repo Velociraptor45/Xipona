@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ShoppingList.Frontend.Redux.Items.States;
-using ShoppingList.Frontend.Redux.Shared.States;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToDomain

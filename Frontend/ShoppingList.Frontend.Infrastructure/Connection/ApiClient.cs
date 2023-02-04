@@ -38,6 +38,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresFor
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Items.States;
@@ -55,7 +56,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using IngredientQuantityType = global::ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States.IngredientQuantityType;
 using ItemStore = ShoppingList.Frontend.Redux.Items.States.ItemStore;
-using SharedStates = ShoppingList.Frontend.Redux.Shared.States;
 using ShoppingListStore = ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListStore;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
@@ -249,20 +249,20 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             return _converters.ToDomain<ItemContract, EditedItem>(result);
         }
 
-        public async Task<IEnumerable<SharedStates.QuantityType>> GetAllQuantityTypesAsync()
+        public async Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync()
         {
             var result = await _client.GetAllQuantityTypesAsync();
             return result is null ?
-                Enumerable.Empty<SharedStates.QuantityType>() :
-                result.Select(_converters.ToDomain<QuantityTypeContract, SharedStates.QuantityType>);
+                Enumerable.Empty<QuantityType>() :
+                result.Select(_converters.ToDomain<QuantityTypeContract, QuantityType>);
         }
 
-        public async Task<IEnumerable<SharedStates.QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync()
+        public async Task<IEnumerable<QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync()
         {
             var result = await _client.GetAllQuantityTypesInPacketAsync();
             return result is null ?
-                Enumerable.Empty<SharedStates.QuantityTypeInPacket>() :
-                result.Select(_converters.ToDomain<QuantityTypeInPacketContract, SharedStates.QuantityTypeInPacket>);
+                Enumerable.Empty<QuantityTypeInPacket>() :
+                result.Select(_converters.ToDomain<QuantityTypeInPacketContract, QuantityTypeInPacket>);
         }
 
         public async Task CreateTemporaryItem(CreateTemporaryItemRequest request)

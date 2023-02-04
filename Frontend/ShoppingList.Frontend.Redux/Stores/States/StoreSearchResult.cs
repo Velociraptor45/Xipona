@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Shared;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
 public record StoreSearchResult : ISearchResult

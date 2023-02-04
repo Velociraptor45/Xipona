@@ -13,8 +13,4 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ShoppingList.Frontend.Models\ShoppingList.Frontend.Models.csproj" />
-  </ItemGroup>
-
 </Project>

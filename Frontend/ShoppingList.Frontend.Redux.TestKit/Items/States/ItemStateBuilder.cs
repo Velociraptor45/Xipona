@@ -1,6 +1,6 @@
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.TestTools;
 using ShoppingList.Frontend.Redux.Items.States;
-using ShoppingList.Frontend.Redux.Shared.States;
 using System.Collections.Generic;
 
 namespace ShoppingList.Frontend.Redux.TestKit.Items.States;

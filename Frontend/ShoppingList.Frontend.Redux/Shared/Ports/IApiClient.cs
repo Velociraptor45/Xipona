@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Items.States;
@@ -10,7 +11,6 @@ using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
 using IngredientQuantityType = global::ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States.IngredientQuantityType;
 using ItemStore = ShoppingList.Frontend.Redux.Items.States.ItemStore;
-using SharedStates = ShoppingList.Frontend.Redux.Shared.States;
 using ShoppingListStore = ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListStore;
 
 namespace ShoppingList.Frontend.Redux.Shared.Ports
@@ -35,9 +35,9 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
 
         Task FinishListAsync(FinishListRequest request);
 
-        Task<IEnumerable<SharedStates.QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync();
+        Task<IEnumerable<QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync();
 
-        Task<IEnumerable<SharedStates.QuantityType>> GetAllQuantityTypesAsync();
+        Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync();
 
         Task<EditedItem> GetItemByIdAsync(Guid itemId);
 
