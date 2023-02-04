@@ -2,12 +2,12 @@
 using Fluxor;
 using Moq;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.TestTools.AutoFixture.Builder;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
-using ShoppingList.Frontend.Redux.TestKit.ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Tests.ShoppingLists.Services;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests;
 
 public class ItemPriceCalculationServiceTests
 {

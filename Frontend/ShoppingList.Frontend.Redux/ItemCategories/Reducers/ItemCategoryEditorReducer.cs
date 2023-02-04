@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using ShoppingList.Frontend.Redux.ItemCategories.Actions;
-using ShoppingList.Frontend.Redux.ItemCategories.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Actions;
+using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 
-namespace ShoppingList.Frontend.Redux.ItemCategories.Reducers;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Reducers;
 
 public static class ItemCategoryEditorReducer
 {

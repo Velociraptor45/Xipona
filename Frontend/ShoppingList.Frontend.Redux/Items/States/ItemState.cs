@@ -1,6 +1,6 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
-using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
 
 namespace ShoppingList.Frontend.Redux.Items.States;

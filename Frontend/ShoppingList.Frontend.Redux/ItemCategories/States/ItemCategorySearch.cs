@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Frontend.Redux.ItemCategories.States;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 public record ItemCategorySearch(
     bool IsLoadingSearchResults,
     IList<ItemCategorySearchResult> SearchResults);

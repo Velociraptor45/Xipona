@@ -1,9 +1,8 @@
 ﻿using FluentAssertions;
-using ProjectHermes.ShoppingList.Frontend.Models.TestKit.Stores.Models;
+using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Items.States;
 using ShoppingList.Frontend.Redux.Items.States;
-using ShoppingList.Frontend.Redux.TestKit.Items.States;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Tests.Items.Models;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.Items.States;
 
 public class AvailableTests
 {

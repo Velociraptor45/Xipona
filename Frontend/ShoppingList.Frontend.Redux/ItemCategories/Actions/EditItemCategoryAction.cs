@@ -1,6 +1,6 @@
 ﻿using ShoppingList.Frontend.Redux.Shared.Actions;
 
-namespace ShoppingList.Frontend.Redux.ItemCategories.Actions;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Actions;
 
 public record EditItemCategoryAction : ISearchResultTriggerAction
 {

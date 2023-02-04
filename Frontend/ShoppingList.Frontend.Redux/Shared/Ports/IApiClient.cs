@@ -1,7 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
-using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Items.States;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;

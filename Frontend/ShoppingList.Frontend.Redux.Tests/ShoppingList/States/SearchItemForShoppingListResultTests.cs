@@ -1,9 +1,8 @@
 ﻿using FluentAssertions;
-using ProjectHermes.ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.ShoppingList.States;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
-using Xunit;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.Tests.ShoppingLists.Models;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.ShoppingList.States;
 
 public class SearchItemForShoppingListResultTests
 {

@@ -1,7 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.TestTools;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.TestKit.Common;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 
 public class DomainTestBuilderBase<TModel> : TestBuilderBase<TModel>
 {

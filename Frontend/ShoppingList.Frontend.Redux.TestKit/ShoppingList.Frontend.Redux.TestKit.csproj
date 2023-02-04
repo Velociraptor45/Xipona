@@ -4,6 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RootNamespace>ProjectHermes.ShoppingList.Frontend.Redux.TestKit</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

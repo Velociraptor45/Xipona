@@ -1,7 +1,7 @@
 using ProjectHermes.ShoppingList.Frontend.TestTools;
 using ShoppingList.Frontend.Redux.Items.States;
 
-namespace ShoppingList.Frontend.Redux.TestKit.Items.States;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Items.States;
 public class ItemStoreBuilder : TestBuilderBase<ItemStore>
 {
     public ItemStoreBuilder WithId(Guid id)

@@ -1,9 +1,8 @@
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.TestTools;
 using ShoppingList.Frontend.Redux.Items.States;
-using System.Collections.Generic;
 
-namespace ShoppingList.Frontend.Redux.TestKit.Items.States;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Items.States;
 public class ItemStateBuilder : TestBuilderBase<ItemState>
 {
     public ItemStateBuilder WithQuantityTypes(IReadOnlyCollection<QuantityType> quantityTypes)

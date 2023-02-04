@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 
-namespace ShoppingList.Frontend.Redux.ItemCategories.States;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 public record ItemCategoryState(
     ItemCategorySearch Search,
     ItemCategoryEditor Editor);

@@ -2,7 +2,7 @@
 using AutoFixture.Kernel;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.TestKit.ShoppingList.States;
 
 public class ShoppingListItemIdCustomization : ICustomization
 {

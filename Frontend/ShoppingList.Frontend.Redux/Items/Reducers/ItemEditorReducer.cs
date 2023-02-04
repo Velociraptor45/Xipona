@@ -1,5 +1,5 @@
 ﻿using Fluxor;
-using ShoppingList.Frontend.Redux.ItemCategories.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Items.Actions;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;

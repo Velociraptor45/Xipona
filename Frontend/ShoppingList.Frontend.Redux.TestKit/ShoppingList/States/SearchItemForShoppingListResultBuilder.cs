@@ -1,7 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.TestKit.Common;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.ShoppingList.Frontend.Models.TestKit.ShoppingLists.Models;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.TestKit.ShoppingList.States;
 
 public class SearchItemForShoppingListResultBuilder : DomainTestBuilderBase<SearchItemForShoppingListResult>
 {

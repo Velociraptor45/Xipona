@@ -1,8 +1,7 @@
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.TestTools;
-using System;
 
-namespace ShoppingList.Frontend.Redux.TestKit.ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.States;
 public class QuantityTypeBuilder : TestBuilderBase<QuantityType>
 {
     public QuantityTypeBuilder WithId(int id)

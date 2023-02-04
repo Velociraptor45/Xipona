@@ -1,11 +1,11 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
-using ShoppingList.Frontend.Redux.ItemCategories.Actions;
-using ShoppingList.Frontend.Redux.ItemCategories.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Actions;
+using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Shared.Constants;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 
-namespace ShoppingList.Frontend.Redux.ItemCategories.Effects;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Effects;
 
 public class ItemCategoryEffects
 {

@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 
-namespace ShoppingList.Frontend.Redux.ItemCategories.States;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 
 public class ItemCategorySearchResult : ISearchResult
 {

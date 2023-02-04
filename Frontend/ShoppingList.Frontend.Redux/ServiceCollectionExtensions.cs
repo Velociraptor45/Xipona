@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace ShoppingList.Frontend.Redux;
+namespace ProjectHermes.ShoppingList.Frontend.Redux;
 public static class ServiceCollectionExtensions
 {
     public static void AddRedux(this IServiceCollection services)

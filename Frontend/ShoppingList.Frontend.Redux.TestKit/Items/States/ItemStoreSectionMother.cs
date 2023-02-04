@@ -1,6 +1,4 @@
-﻿using ShoppingList.Frontend.Redux.TestKit.Items.States;
-
-namespace ProjectHermes.ShoppingList.Frontend.Models.TestKit.Stores.Models;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Items.States;
 
 public static class ItemStoreSectionMother
 {

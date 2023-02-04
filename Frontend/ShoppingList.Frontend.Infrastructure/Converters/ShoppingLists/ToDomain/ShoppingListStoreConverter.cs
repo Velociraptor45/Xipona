@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Stores.ToDomain
+namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain
 {
     public class ShoppingListStoreConverter : IToDomainConverter<StoreForShoppingContract, ShoppingListStore>
     {

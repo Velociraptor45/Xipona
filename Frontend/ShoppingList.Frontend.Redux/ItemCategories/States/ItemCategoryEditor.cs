@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Frontend.Redux.ItemCategories.States;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 public record ItemCategoryEditor(
     EditedItemCategory? ItemCategory,
     bool IsLoadingEditedItemCategory,

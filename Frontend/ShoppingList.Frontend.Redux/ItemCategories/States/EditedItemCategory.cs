@@ -1,2 +1,2 @@
-﻿namespace ShoppingList.Frontend.Redux.ItemCategories.States;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 public record EditedItemCategory(Guid Id, string Name);
