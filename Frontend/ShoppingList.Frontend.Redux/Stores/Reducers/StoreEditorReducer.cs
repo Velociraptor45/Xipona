@@ -1,6 +1,8 @@
 ﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor.Sections;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
+using ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Stores.Reducers;
 
@@ -16,7 +18,7 @@ public static class StoreEditorReducer
                 Store = new EditedStore(
                     Guid.Empty,
                     string.Empty,
-                    new List<EditedSection>(0))
+                    new SortedSet<EditedSection>())
             }
         };
     }
@@ -68,6 +70,107 @@ public static class StoreEditorReducer
             Editor = state.Editor with
             {
                 IsSaving = false
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static StoreState OnSectionDecremented(StoreState state, SectionDecrementedAction action)
+    {
+        var sections = state.Editor.Store.Sections.ToList();
+        var section = sections.FirstOrDefault(s => s.Key == action.SectionKey);
+        if (section is null)
+            return state;
+
+        int sectionIndex = sections.IndexOf(section);
+        if (sectionIndex is -1 or <= 0)
+            return state;
+
+        var decremented = sections[sectionIndex];
+        var incremented = sections[sectionIndex - 1];
+
+        sections[sectionIndex - 1] = incremented with { SortingIndex = decremented.SortingIndex };
+        sections[sectionIndex] = decremented with { SortingIndex = incremented.SortingIndex };
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Store = state.Editor.Store with
+                {
+                    Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                }
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static StoreState OnSectionIncremented(StoreState state, SectionIncrementedAction action)
+    {
+        var sections = state.Editor.Store.Sections.ToList();
+        var section = sections.FirstOrDefault(s => s.Key == action.SectionKey);
+        if (section is null)
+            return state;
+
+        int sectionIndex = sections.IndexOf(section);
+        if (sectionIndex == -1 || sectionIndex >= sections.Count - 1)
+            return state;
+
+        var incremented = sections[sectionIndex];
+        var decremented = sections[sectionIndex + 1];
+
+        sections[sectionIndex + 1] = decremented with { SortingIndex = incremented.SortingIndex };
+        sections[sectionIndex] = incremented with { SortingIndex = decremented.SortingIndex };
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Store = state.Editor.Store with
+                {
+                    Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                }
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static StoreState OnSectionRemoved(StoreState state, SectionRemovedAction action)
+    {
+        var sections = state.Editor.Store!.Sections.ToList();
+        sections.Remove(action.Section);
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Store = state.Editor.Store with
+                {
+                    Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                }
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static StoreState OnPreparationStepTextChanged(StoreState state, SectionTextChangedAction action)
+    {
+        var sections = state.Editor.Store!.Sections.ToList();
+        var step = sections.FirstOrDefault(s => s.Key == action.SectionKey);
+        if (step is null)
+            return state;
+
+        var stepIndex = sections.IndexOf(step);
+        sections[stepIndex] = step with { Name = action.Text };
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Store = state.Editor.Store with
+                {
+                    Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                }
             }
         };
     }

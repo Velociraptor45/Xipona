@@ -1,5 +1,15 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models;
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States
+
+@inject IDispatcher Dispatcher
+@inject IState<StoreState> State
+
+@using ProjectHermes.ShoppingList.Frontend.Models;
 @using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
+@using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor.Sections
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Models;
 
 <div class="my-3">
@@ -13,38 +23,61 @@
                     OnClick="@OnAddSectionButtonClicked"></Button>
         </div>
     </div>
-    @foreach (var section in State.EditedStore.Sections)
+    @foreach (var section in State.Value.Editor.Store!.Sections)
     {
-        @*<SortableListItem
-            T="Section"
-            State="State.EditedStore"
+        <SortableListItem
+            T="EditedSection"
+            State="State.Value.Editor.Store"
             Model="section"
-            OnChanged="() => StateHasChanged()"></SortableListItem>*@
+            OnIncrement="OnIncrementSection"
+            OnDecrement="OnDecrementSection"
+            OnRemove="OnRemoveSection"
+            OnTextChanged="OnSectionTextChanged"></SortableListItem>
     }
 </div>
 
 <div>
     Default Section:
-    <SingleSelect TItem="Section"
+    @*<SingleSelect TItem="Section"
                   TValue="SectionId"
                   ValueName="@nameof(Section.Id)"
                   LabelName="@nameof(Section.Name)"
-                  DefaultValue="@State.EditedStore.Sections.First(s => s.IsDefaultSection).Id"
-                  DataSource="@State.EditedStore.Sections.ToList()"
+                  DefaultValue="@State.Value.Editor.Store!.Sections.First(s => s.IsDefaultSection).Id"
+                  DataSource="@State.Value.Editor.Store!.Sections.ToList()"
                   IgnoreItemChanges="false"
-                  OnItemChanged="OnDefaultSectionChanged"></SingleSelect>
+                  OnItemChanged="OnDefaultSectionChanged"></SingleSelect>*@
 </div>
 
 @code {
-    [Parameter] public StoresState State { get; set; }
+    //[Parameter] public StoresState State { get; set; }
 
     private void OnDefaultSectionChanged(Section section)
     {
-        State.EditedStore.ChangeDefaultSection(section.Id.FrontendId);
+        //State.EditedStore.ChangeDefaultSection(section.Id.FrontendId);
     }
 
     private void OnAddSectionButtonClicked()
     {
-        State.EditedStore.AddSection();
+        //State.EditedStore.AddSection();
+    }
+
+    private void OnIncrementSection(EditedSection section)
+    {
+        Dispatcher.Dispatch(new SectionIncrementedAction(section.Key));
+    }
+
+    private void OnDecrementSection(EditedSection section)
+    {
+        Dispatcher.Dispatch(new SectionDecrementedAction(section.Key));
+    }
+
+    private void OnRemoveSection(EditedSection section)
+    {
+        Dispatcher.Dispatch(new SectionRemovedAction(section));
+    }
+
+    private void OnSectionTextChanged(EditedSection section, string text)
+    {
+        Dispatcher.Dispatch(new SectionTextChangedAction(section.Key, text));
     }
 }

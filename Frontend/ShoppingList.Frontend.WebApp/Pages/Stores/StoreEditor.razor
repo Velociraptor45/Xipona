@@ -5,6 +5,7 @@
 @using Fluxor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Stores
 
 @inject IDispatcher Dispatcher
 @inject IState<StoreState> State
@@ -21,7 +22,7 @@
             </div>
         </div>
 
-        @*<Sections></Sections>*@
+        <Sections></Sections>
 
         <div class="d-flex justify-content-end mt-2">
             @if (State.Value.Editor.Store.Id == Guid.Empty)
