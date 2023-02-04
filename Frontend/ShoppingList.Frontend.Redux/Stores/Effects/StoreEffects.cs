@@ -25,6 +25,7 @@ public class StoreEffects
         dispatcher.Dispatch(new LoadStoresOverviewFinishedAction(searchResults.OrderBy(s => s.Name).ToList()));
     }
 
+    [EffectMethod]
     public Task HandleSelectStoreAction(EditStoreAction action, IDispatcher dispatcher)
     {
         _navigationManager.NavigateTo($"{PageRoutes.Stores}/{action.Id}");
