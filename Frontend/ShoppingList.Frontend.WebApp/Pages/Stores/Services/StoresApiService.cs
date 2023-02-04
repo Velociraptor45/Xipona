@@ -1,10 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.Common;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
-using RestEase;
+﻿using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Stores;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using StoreModels = ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 
@@ -61,35 +58,35 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
             await onSuccessAction();
         }
 
-        public async Task LoadStores(IAsyncRetryFragmentCreator fragmentCreator,
-            Action<IEnumerable<StoreModels.Store>> onSuccessAction)
-        {
-            IEnumerable<StoreModels.Store> stores;
+        //public async Task LoadStores(IAsyncRetryFragmentCreator fragmentCreator,
+        //    Action<IEnumerable<StoreModels.Store>> onSuccessAction)
+        //{
+        //    IEnumerable<StoreModels.Store> stores;
 
-            try
-            {
-                stores = null;//await _apiClient.GetAllActiveStoresAsync();
-            }
-            catch (ApiException e)
-            {
-                var contract = e.DeserializeContent<ErrorContract>();
+        //    try
+        //    {
+        //        stores = null;//await _apiClient.GetAllActiveStoresAsync();
+        //    }
+        //    catch (ApiException e)
+        //    {
+        //        var contract = e.DeserializeContent<ErrorContract>();
 
-                var fragment =
-                    fragmentCreator.CreateAsyncRetryFragment(async () =>
-                        await LoadStores(fragmentCreator, onSuccessAction));
-                _notificationService.NotifyError("Loading stores failed", contract.Message, fragment);
-                return;
-            }
-            catch (Exception e)
-            {
-                var fragment =
-                    fragmentCreator.CreateAsyncRetryFragment(async () =>
-                        await LoadStores(fragmentCreator, onSuccessAction));
-                _notificationService.NotifyError("Unknown error while loading stores", e.Message, fragment);
-                return;
-            }
+        //        var fragment =
+        //            fragmentCreator.CreateAsyncRetryFragment(async () =>
+        //                await LoadStores(fragmentCreator, onSuccessAction));
+        //        _notificationService.NotifyError("Loading stores failed", contract.Message, fragment);
+        //        return;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        var fragment =
+        //            fragmentCreator.CreateAsyncRetryFragment(async () =>
+        //                await LoadStores(fragmentCreator, onSuccessAction));
+        //        _notificationService.NotifyError("Unknown error while loading stores", e.Message, fragment);
+        //        return;
+        //    }
 
-            onSuccessAction(stores);
-        }
+        //    onSuccessAction(stores);
+        //}
     }
 }

@@ -1,0 +1,71 @@
+﻿@page "/stores/{StoreId:guid}"
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States
+
+@inject IDispatcher Dispatcher
+@inject IState<StoreState> State
+
+@if (State.Value.Editor.Store is not null)
+{
+    <div class="px-2">
+        <div class="d-flex">
+            <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClickedAsync">
+                <Icon Type="arrow-left"></Icon>
+            </Button>
+            <div class="mx-3">
+                <Input Value="@State.Value.Editor.Store.Name" OnChange="OnNameChanged"/>
+            </div>
+        </div>
+
+        <Sections></Sections>
+
+        <div class="d-flex justify-content-end mt-2">
+            @if (State.Value.Editor.Store.Id == Guid.Empty)
+            {
+                <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
+            }
+            else
+            {
+                <Button @onclick="@OnSaveButtonClickedAsync">Save</Button>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public Guid StoreId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (StoreId == Guid.Empty)
+            Dispatcher.Dispatch(new SetNewStoreAction());
+        else
+            Dispatcher.Dispatch(new LoadStoreForEditingAction(StoreId));
+    }
+
+    private void OnBackButtonClickedAsync()
+    {
+        Dispatcher.Dispatch(new LeaveStoreEditorAction());
+    }
+
+    private void OnNameChanged()
+    {
+
+    }
+
+    private void OnCreateButtonClickedAsync()
+    {
+        
+    }
+
+    private void OnSaveButtonClickedAsync()
+    {
+        
+    }
+}
