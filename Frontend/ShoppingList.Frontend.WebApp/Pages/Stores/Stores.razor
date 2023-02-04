@@ -1,75 +1,81 @@
-﻿@page "/Stores"
+﻿@page "/stores"
 
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Stores;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Models;
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject Services.IStoresApiService apiService;
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions
+@using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States
+
+@inject IDispatcher Dispatcher
+@inject IState<StoreState> State
+
+@*@inject Services.IStoresApiService apiService;*@
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores
 
-@if (state != null)
-{
-    <div>
-        @if (!state.IsInEditMode)
+<div class="d-flex">
+    <div class="h4">Stores</div>
+    <Button @onclick="@OnCreateStoreButtonClicked" Class="d-flex align-items-center ml-auto">
+        <Icon Type="plus"></Icon>
+    </Button>
+</div>
+<div>
+    <ol class="pl-0">
+        @foreach (var searchResult in State.Value.SearchResults)
         {
-            <div class="d-flex">
-                <div class="h4">Stores</div>
-                <Button @onclick="@OnCreateStoreButtonClicked" Class="d-flex align-items-center ml-auto">
-                    <Icon Type="plus"></Icon>
-                </Button>
-            </div>
-            <div>
-                <ol class="pl-0">
-                    @foreach (var store in state.Stores.OrderBy(s => s.Name))
-                    {
-                        <StoreListItem State="@state" Store="@store"></StoreListItem>
-                    }
-                </ol>
-            </div>
+            <SearchResult Model="searchResult" TAction="EditStoreAction"></SearchResult>
+            @*<StoreListItem State="@state" Store="@store"></StoreListItem>*@
         }
-        else
-        {
-            <StoreEditor State="@state" FragmentCreator="@errorHandler"></StoreEditor>
-        }
-    </div>
-}
+    </ol>
+</div>
 
 @code {
-    private StoresState state;
-    private ErrorHandler errorHandler;
+    //private StoresState state;
+    //private ErrorHandler errorHandler;
 
-    protected override async Task OnInitializedAsync()
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    errorHandler = new ErrorHandler(GetButtonRenderFragment);
+    //    await CreatePageState();
+
+    //    await base.OnInitializedAsync();
+    //}
+
+    protected override void OnInitialized()
     {
-        errorHandler = new ErrorHandler(GetButtonRenderFragment);
-        await CreatePageState();
-
-        await base.OnInitializedAsync();
+        base.OnInitialized();
+        Dispatcher.Dispatch(new LoadStoresOverviewAction());
     }
 
-    private async Task CreatePageState()
-    {
-        await apiService.LoadStores(errorHandler, stores =>
-        {
-            state = new StoresState(stores);
-            state.StoreChanged += async () => await ReloadStores();
-            state.StateChanged += StateHasChanged;
+    //private async Task CreatePageState()
+    //{
 
-            StateHasChanged();
-        });
-    }
+    //    //await apiService.LoadStores(errorHandler, stores =>
+    //    //{
+    //    //    state = new StoresState(stores);
+    //    //    state.StoreChanged += async () => await ReloadStores();
+    //    //    state.StateChanged += StateHasChanged;
+
+    //    //    StateHasChanged();
+    //    //});
+    //}
 
     private void OnCreateStoreButtonClicked()
     {
-        state.EnterEditorForNewStore();
+        //state.EnterEditorForNewStore();
+        Dispatcher.Dispatch(new EditStoreAction
+        {
+            Id = Guid.Empty
+        });
     }
 
-    private async Task ReloadStores()
-    {
-        await apiService.LoadStores(errorHandler, stores => state.UpdateStores(stores));
-    }
+    //private async Task ReloadStores()
+    //{
+    //    await apiService.LoadStores(errorHandler, stores => state.UpdateStores(stores));
+    //}
 
-    private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")
-    {
-        return @<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
-    }
+    //private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")
+    //{
+    //    return @<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
+    //}
 }
