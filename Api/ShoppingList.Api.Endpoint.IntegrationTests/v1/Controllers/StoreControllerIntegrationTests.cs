@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
@@ -136,6 +137,93 @@ public class StoreControllerIntegrationTests
                 await using var dbContext = GetContextInstance<StoreContext>(SetupScope);
 
                 await dbContext.AddAsync(_existingStore);
+                await dbContext.SaveChangesAsync();
+
+                await transaction.CommitAsync(default);
+            }
+        }
+    }
+
+    [Collection(DockerCollection.Name)]
+    public class GetActiveStoresForShoppingAsync
+    {
+        private readonly GetActiveStoresForShoppingAsyncFixture _fixture;
+
+        public GetActiveStoresForShoppingAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new GetActiveStoresForShoppingAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task GetActiveStoresForShoppingAsync_WithDeletedStore_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupExistingStores();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.GetActiveStoresForShoppingAsync();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+
+            var okResult = result as OkObjectResult;
+            okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class GetActiveStoresForShoppingAsyncFixture : LocalFixture
+        {
+            private IList<Repositories.Stores.Entities.Store>? _existingStores;
+
+            public GetActiveStoresForShoppingAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public IReadOnlyCollection<StoreForShoppingContract>? ExpectedResult { get; private set; }
+
+            public void SetupExistingStores()
+            {
+                _existingStores = new List<Repositories.Stores.Entities.Store>
+                {
+                    StoreEntityMother.Initial().Create(),
+                    StoreEntityMother.Initial().Create(),
+                    StoreEntityMother.Deleted().Create()
+                };
+            }
+
+            public void SetupExpectedResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStores);
+
+                ExpectedResult = _existingStores
+                    .Where(s => !s.Deleted)
+                    .Select(s => new StoreForShoppingContract(
+                        s.Id,
+                        s.Name,
+                        s.Sections.Select(sc =>
+                            new SectionForShoppingContract(sc.Id, sc.Name, sc.IsDefaultSection, sc.SortIndex))))
+                    .ToList();
+            }
+
+            public override async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStores);
+
+                await ApplyMigrationsAsync(SetupScope);
+
+                using var transaction = await CreateTransactionAsync(SetupScope);
+                await using var dbContext = GetContextInstance<StoreContext>(SetupScope);
+
+                foreach (var existingStore in _existingStores)
+                {
+                    dbContext.Add(existingStore);
+                }
+
                 await dbContext.SaveChangesAsync();
 
                 await transaction.CommitAsync(default);

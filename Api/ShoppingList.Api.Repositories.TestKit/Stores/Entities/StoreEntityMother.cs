@@ -55,4 +55,10 @@ public static class StoreEntityMother
 
         return new StoreEntityBuilder().WithSections(sections);
     }
+
+    public static StoreEntityBuilder Deleted()
+    {
+        return Initial()
+            .WithDeleted(true);
+    }
 }

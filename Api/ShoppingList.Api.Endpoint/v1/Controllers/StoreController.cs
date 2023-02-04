@@ -5,11 +5,13 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.StoreById;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -60,6 +62,22 @@ public class StoreController : ControllerBase
 
         var contract = _converters.ToContract<IStore, StoreContract>(model);
 
+        return Ok(contract);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<StoreForShoppingContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [Route("active-for-shopping")]
+    public async Task<IActionResult> GetActiveStoresForShoppingAsync(CancellationToken cancellationToken = default)
+    {
+        var query = new GetActiveStoresForShoppingQuery();
+        var models = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
+
+        if (!models.Any())
+            return NoContent();
+
+        var contract = _converters.ToContract<IStore, StoreForShoppingContract>(models);
         return Ok(contract);
     }
 
