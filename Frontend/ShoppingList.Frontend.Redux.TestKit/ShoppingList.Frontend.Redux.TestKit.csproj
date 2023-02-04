@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Items\States\" />
+    <Folder Include="Shared\States\" />
   </ItemGroup>
 
   <ItemGroup>

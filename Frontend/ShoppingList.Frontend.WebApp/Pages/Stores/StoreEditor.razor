@@ -55,7 +55,7 @@
         Dispatcher.Dispatch(new LeaveStoreEditorAction());
     }
 
-    private void OnNameChanged(string? name)
+    private void OnNameChanged(string name)
     {
         Dispatcher.Dispatch(new StoreNameChangedAction(name ?? string.Empty));
     }

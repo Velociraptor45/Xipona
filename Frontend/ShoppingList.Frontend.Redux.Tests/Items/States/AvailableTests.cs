@@ -1,9 +1,7 @@
 ﻿using FluentAssertions;
 using ProjectHermes.ShoppingList.Frontend.Models.TestKit.Stores.Models;
 using ShoppingList.Frontend.Redux.Items.States;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
+using ShoppingList.Frontend.Redux.TestKit.Items.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Models.Tests.Items.Models;
 
@@ -88,10 +86,10 @@ public class AvailableTests
             Stores = new List<ItemStore>
             {
                 new ItemStoreBuilder()
-                    .WithSections(CreateSections())
+                    .WithSections(CreateSections().ToList())
                     .Create(),
                 new ItemStoreBuilder()
-                    .WithSections(CreateSections())
+                    .WithSections(CreateSections().ToList())
                     .Create()
             };
         }
