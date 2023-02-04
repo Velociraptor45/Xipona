@@ -38,22 +38,23 @@
 
 <div>
     Default Section:
-    @*<SingleSelect TItem="Section"
-                  TValue="SectionId"
-                  ValueName="@nameof(Section.Id)"
-                  LabelName="@nameof(Section.Name)"
-                  DefaultValue="@State.Value.Editor.Store!.Sections.First(s => s.IsDefaultSection).Id"
+    <SingleSelect TItem="EditedSection"
+                  TValue="Guid"
+                  ValueName="@nameof(EditedSection.Key)"
+                  LabelName="@nameof(EditedSection.Name)"
+                  DefaultValue="@State.Value.Editor.Store!.Sections.First(s => s.IsDefaultSection).Key"
                   DataSource="@State.Value.Editor.Store!.Sections.ToList()"
                   IgnoreItemChanges="false"
-                  OnItemChanged="OnDefaultSectionChanged"></SingleSelect>*@
+                  OnItemChanged="OnDefaultSectionChanged"></SingleSelect>
 </div>
 
 @code {
     //[Parameter] public StoresState State { get; set; }
 
-    private void OnDefaultSectionChanged(Section section)
+    private void OnDefaultSectionChanged(EditedSection section)
     {
         //State.EditedStore.ChangeDefaultSection(section.Id.FrontendId);
+        Dispatcher.Dispatch(new DefaultSectionChangedAction(section.Key));
     }
 
     private void OnAddSectionButtonClicked()

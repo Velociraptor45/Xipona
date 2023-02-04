@@ -174,4 +174,26 @@ public static class StoreEditorReducer
             }
         };
     }
+
+    [ReducerMethod]
+    public static StoreState OnDefaultSectionChanged(StoreState state, DefaultSectionChangedAction action)
+    {
+        if (state.Editor.Store!.Sections.All(s => s.Key != action.SectionKey))
+            return state;
+
+        var sections = state.Editor.Store!.Sections
+            .Select(s => s with { IsDefaultSection = s.Key == action.SectionKey })
+            .ToList();
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Store = state.Editor.Store with
+                {
+                    Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                }
+            }
+        };
+    }
 }
