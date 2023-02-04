@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Manufacturers.Commands;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 using System;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Manufacturers.ToContract

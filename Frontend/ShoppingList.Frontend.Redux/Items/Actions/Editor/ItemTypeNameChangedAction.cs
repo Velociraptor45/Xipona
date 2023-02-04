@@ -1,4 +1,4 @@
-﻿using ShoppingList.Frontend.Redux.Items.States;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 
-namespace ShoppingList.Frontend.Redux.Items.Actions.Editor;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
 public record ItemTypeNameChangedAction(EditedItemType ItemType, string? Name);

@@ -1,4 +1,4 @@
-﻿using ShoppingList.Frontend.Redux.Shared.Ports.Requests;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.RequestSenders;

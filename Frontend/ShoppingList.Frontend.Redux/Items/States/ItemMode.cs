@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Frontend.Redux.Items.States
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.States
 {
     public enum ItemMode
     {

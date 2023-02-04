@@ -1,9 +1,9 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
-using ShoppingList.Frontend.Redux.Shared.Ports;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;

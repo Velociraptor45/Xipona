@@ -1,8 +1,8 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Processing;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
-using ShoppingList.Frontend.Redux.Shared.Ports;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
 

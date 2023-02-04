@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers
 {
     public class ModifyManufacturerRequest : IApiRequest
     {

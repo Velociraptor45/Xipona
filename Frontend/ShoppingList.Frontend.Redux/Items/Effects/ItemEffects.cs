@@ -1,13 +1,13 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
-using ShoppingList.Frontend.Redux.Items.Actions;
-using ShoppingList.Frontend.Redux.Items.Actions.Editor;
-using ShoppingList.Frontend.Redux.Items.Actions.Search;
-using ShoppingList.Frontend.Redux.Items.States;
-using ShoppingList.Frontend.Redux.Shared.Constants;
-using ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Search;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 
-namespace ShoppingList.Frontend.Redux.Items.Effects;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
 
 public class ItemEffects
 {

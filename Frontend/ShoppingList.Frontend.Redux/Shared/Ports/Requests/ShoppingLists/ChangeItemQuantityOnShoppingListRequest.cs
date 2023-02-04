@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 
-namespace ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists
 {
     public class ChangeItemQuantityOnShoppingListRequest : IApiRequest
     {

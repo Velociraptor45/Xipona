@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace ShoppingList.Frontend.Redux.Shared.Ports
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports
 {
     public interface IShoppingListNotificationService
     {

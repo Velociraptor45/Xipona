@@ -1,8 +1,7 @@
 ﻿@using Fluxor
-@using global::ShoppingList.Frontend.Redux.Shared.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
 
-@typeparam TAction where TAction : ISearchResultTriggerAction, new()
+@typeparam TAction where TAction : ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions.ISearchResultTriggerAction, new()
 
 @inject NavigationManager _navigationManager
 @inject IDispatcher Dispatcher

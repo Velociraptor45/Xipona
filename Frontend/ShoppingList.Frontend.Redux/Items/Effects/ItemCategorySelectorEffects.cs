@@ -1,11 +1,11 @@
 ﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
-using ShoppingList.Frontend.Redux.Items.Actions.Editor.ItemCategorySelectors;
-using ShoppingList.Frontend.Redux.Items.States;
-using ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.ItemCategorySelectors;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using Timer = System.Timers.Timer;
 
-namespace ShoppingList.Frontend.Redux.Items.Effects;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
 
 public sealed class ItemCategorySelectorEffects : IDisposable
 {

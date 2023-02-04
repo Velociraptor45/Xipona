@@ -1,4 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 
-namespace ShoppingList.Frontend.Redux.Items.Actions;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions;
 public record LoadQuantityTypesInPacketFinishedAction(IReadOnlyCollection<QuantityTypeInPacket> QuantityTypesInPacket);

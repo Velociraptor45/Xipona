@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
-using ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Effects;
 

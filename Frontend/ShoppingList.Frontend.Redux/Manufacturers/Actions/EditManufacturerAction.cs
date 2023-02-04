@@ -1,4 +1,4 @@
-﻿using ShoppingList.Frontend.Redux.Shared.Actions;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Actions;
 

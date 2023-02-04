@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Frontend.Redux.Shared.Constants;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 
 public static class PageRoutes
 {

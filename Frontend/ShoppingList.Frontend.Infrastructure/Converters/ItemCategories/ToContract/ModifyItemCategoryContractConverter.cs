@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ItemCategories.ToContract
 {

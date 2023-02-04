@@ -1,2 +1,2 @@
-﻿namespace ShoppingList.Frontend.Redux.Items.Actions.Editor;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
 public record DeleteItemStartedAction;

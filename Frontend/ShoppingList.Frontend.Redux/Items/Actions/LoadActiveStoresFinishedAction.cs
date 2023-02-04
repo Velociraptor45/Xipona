@@ -1,4 +1,4 @@
-﻿using ShoppingList.Frontend.Redux.Items.States;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 
-namespace ShoppingList.Frontend.Redux.Items.Actions;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions;
 public record LoadActiveStoresFinishedAction(ActiveStores Stores);

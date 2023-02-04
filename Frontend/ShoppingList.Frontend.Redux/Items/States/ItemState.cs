@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 
-namespace ShoppingList.Frontend.Redux.Items.States;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 public record ItemState(
     IReadOnlyCollection<QuantityType> QuantityTypes,
     IReadOnlyCollection<QuantityTypeInPacket> QuantityTypesInPacket,

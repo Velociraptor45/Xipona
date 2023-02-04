@@ -1,6 +1,6 @@
 ﻿using AntDesign;
 using Microsoft.AspNetCore.Components;
-using ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
 {

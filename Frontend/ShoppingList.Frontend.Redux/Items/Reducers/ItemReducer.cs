@@ -1,9 +1,9 @@
 ﻿using Fluxor;
-using ShoppingList.Frontend.Redux.Items.Actions;
-using ShoppingList.Frontend.Redux.Items.Actions.Search;
-using ShoppingList.Frontend.Redux.Items.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Search;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 
-namespace ShoppingList.Frontend.Redux.Items.Reducers;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Reducers;
 
 public static class ItemReducer
 {

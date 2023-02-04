@@ -1,19 +1,19 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
-using ShoppingList.Frontend.Redux.Items.States;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using IngredientQuantityType = global::ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States.IngredientQuantityType;
-using ItemStore = ShoppingList.Frontend.Redux.Items.States.ItemStore;
+using ItemStore = ProjectHermes.ShoppingList.Frontend.Redux.Items.States.ItemStore;
 using ShoppingListStore = ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListStore;
 
-namespace ShoppingList.Frontend.Redux.Shared.Ports
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports
 {
     public interface IApiClient
     {

@@ -1,15 +1,15 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
-using ShoppingList.Frontend.Redux.Items.Actions.Editor;
-using ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
-using ShoppingList.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
-using ShoppingList.Frontend.Redux.Items.States;
-using ShoppingList.Frontend.Redux.Shared.Constants;
-using ShoppingList.Frontend.Redux.Shared.Ports;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 
-namespace ShoppingList.Frontend.Redux.Items.Effects;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
 
 public sealed class ItemEditorEffects
 {

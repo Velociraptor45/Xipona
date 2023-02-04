@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items
 {
     public class CreateTemporaryItemRequest : IApiRequest
     {

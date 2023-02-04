@@ -1,6 +1,6 @@
-﻿using ShoppingList.Frontend.Redux.Shared.Ports.Requests;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests;
 
-namespace ShoppingList.Frontend.Redux.Shared.Ports
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports
 {
     public interface ICommandQueue
     {

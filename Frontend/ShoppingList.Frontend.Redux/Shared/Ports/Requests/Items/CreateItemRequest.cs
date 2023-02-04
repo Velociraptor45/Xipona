@@ -1,6 +1,6 @@
-﻿using ShoppingList.Frontend.Redux.Items.States;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 
-namespace ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items
 {
     public class CreateItemRequest : IApiRequest
     {

@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Frontend.Redux.Shared.Ports.Requests
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests
 {
     public interface IApiRequest
     {

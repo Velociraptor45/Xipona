@@ -1,10 +1,10 @@
 ﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.RequestSenders;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Processing;
 using RestEase;
-using ShoppingList.Frontend.Redux.Shared.Ports;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,7 +1,7 @@
 ﻿using QuantityType = ProjectHermes.ShoppingList.Frontend.Redux.Shared.States.QuantityType;
 using QuantityTypeInPacket = ProjectHermes.ShoppingList.Frontend.Redux.Shared.States.QuantityTypeInPacket;
 
-namespace ShoppingList.Frontend.Redux.Items.States;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 
 public record EditedItem(
     Guid Id,

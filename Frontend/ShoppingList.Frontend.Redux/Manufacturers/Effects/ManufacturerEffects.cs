@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Components;
 using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
-using ShoppingList.Frontend.Redux.Shared.Constants;
-using ShoppingList.Frontend.Redux.Shared.Ports;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Effects;
 
