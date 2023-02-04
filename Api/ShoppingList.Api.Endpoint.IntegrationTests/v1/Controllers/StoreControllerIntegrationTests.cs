@@ -106,7 +106,7 @@ public class StoreControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(StoreId);
 
                 _existingStore = StoreEntityMother
-                    .Initial()
+                    .ActiveAndDeletedSection()
                     .WithId(StoreId.Value)
                     .Create();
             }
@@ -114,7 +114,7 @@ public class StoreControllerIntegrationTests
             public void SetupExistingStoreWithRandomStoreId()
             {
                 _existingStore = StoreEntityMother
-                    .Initial()
+                    .ActiveAndDeletedSection()
                     .Create();
             }
 
@@ -125,8 +125,9 @@ public class StoreControllerIntegrationTests
                 ExpectedResult = new StoreContract(
                     _existingStore.Id,
                     _existingStore.Name,
-                    _existingStore.Sections.Select(s =>
-                        new SectionContract(s.Id, s.Name, s.SortIndex, s.IsDefaultSection)));
+                    _existingStore.Sections
+                        .Where(s => !s.IsDeleted)
+                        .Select(s => new SectionContract(s.Id, s.Name, s.SortIndex, s.IsDefaultSection)));
             }
 
             public override async Task PrepareDatabaseAsync()
@@ -192,8 +193,8 @@ public class StoreControllerIntegrationTests
             {
                 _existingStores = new List<Repositories.Stores.Entities.Store>
                 {
-                    StoreEntityMother.Initial().Create(),
-                    StoreEntityMother.Initial().Create(),
+                    StoreEntityMother.ActiveAndDeletedSection().Create(),
+                    StoreEntityMother.ActiveAndDeletedSection().Create(),
                     StoreEntityMother.Deleted().Create()
                 };
             }
@@ -207,8 +208,10 @@ public class StoreControllerIntegrationTests
                     .Select(s => new StoreForShoppingContract(
                         s.Id,
                         s.Name,
-                        s.Sections.Select(sc =>
-                            new SectionForShoppingContract(sc.Id, sc.Name, sc.IsDefaultSection, sc.SortIndex))))
+                        s.Sections
+                            .Where(s => !s.IsDeleted)
+                            .Select(sc =>
+                                new SectionForShoppingContract(sc.Id, sc.Name, sc.IsDefaultSection, sc.SortIndex))))
                     .ToList();
             }
 
@@ -279,8 +282,8 @@ public class StoreControllerIntegrationTests
             {
                 _existingStores = new List<Repositories.Stores.Entities.Store>
                 {
-                    StoreEntityMother.Initial().Create(),
-                    StoreEntityMother.Initial().Create(),
+                    StoreEntityMother.ActiveAndDeletedSection().Create(),
+                    StoreEntityMother.ActiveAndDeletedSection().Create(),
                     StoreEntityMother.Deleted().Create()
                 };
             }
@@ -294,8 +297,10 @@ public class StoreControllerIntegrationTests
                     .Select(s => new StoreForItemContract(
                         s.Id,
                         s.Name,
-                        s.Sections.Select(sc =>
-                            new SectionForItemContract(sc.Id, sc.Name, sc.IsDefaultSection, sc.SortIndex))))
+                        s.Sections
+                            .Where(s => !s.IsDeleted)
+                            .Select(sc =>
+                                new SectionForItemContract(sc.Id, sc.Name, sc.IsDefaultSection, sc.SortIndex))))
                     .ToList();
             }
 

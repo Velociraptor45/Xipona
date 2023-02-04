@@ -16,9 +16,10 @@ public class StoreForShoppingContractConverter : IToContractConverter<IStore, St
 
     public StoreForShoppingContract ToContract(IStore source)
     {
+        var sectionsToConvert = source.Sections.Where(s => !s.IsDeleted);
         return new StoreForShoppingContract(
             source.Id,
             source.Name,
-            source.Sections.Select(_sectionConverter.ToContract));
+            sectionsToConvert.Select(_sectionConverter.ToContract));
     }
 }
