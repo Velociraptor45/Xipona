@@ -60,6 +60,7 @@
     private void OnAddSectionButtonClicked()
     {
         //State.EditedStore.AddSection();
+        Dispatcher.Dispatch(new SectionAddedAction());
     }
 
     private void OnIncrementSection(EditedSection section)

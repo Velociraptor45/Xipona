@@ -196,4 +196,23 @@ public static class StoreEditorReducer
             }
         };
     }
+
+    [ReducerMethod(typeof(SectionAddedAction))]
+    public static StoreState OnSectionAdded(StoreState state)
+    {
+        var sections = state.Editor.Store!.Sections.ToList();
+        var nextSortingIndex = state.Editor.Store.Sections.Max?.SortingIndex + 1 ?? 0;
+        sections.Add(new EditedSection(Guid.NewGuid(), Guid.Empty, string.Empty, false, nextSortingIndex));
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Store = state.Editor.Store with
+                {
+                    Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                }
+            }
+        };
+    }
 }
