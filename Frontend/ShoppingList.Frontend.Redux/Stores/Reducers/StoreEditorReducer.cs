@@ -1,8 +1,8 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor.Sections;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
-using ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Stores.Reducers;
 

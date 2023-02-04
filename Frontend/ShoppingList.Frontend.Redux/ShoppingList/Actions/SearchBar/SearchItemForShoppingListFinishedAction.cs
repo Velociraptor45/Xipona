@@ -1,4 +1,4 @@
-﻿using ShoppingList.Frontend.Redux.ShoppingList.States;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 
-namespace ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar;
 public record SearchItemForShoppingListFinishedAction(IEnumerable<SearchItemForShoppingListResult> Results);

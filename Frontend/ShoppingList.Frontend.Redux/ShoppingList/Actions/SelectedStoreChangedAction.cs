@@ -1,3 +1,3 @@
-﻿namespace ShoppingList.Frontend.Redux.ShoppingList.Actions;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 
 public record SelectedStoreChangedAction(Guid StoreId);

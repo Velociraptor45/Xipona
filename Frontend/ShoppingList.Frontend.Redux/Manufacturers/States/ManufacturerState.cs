@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 
-namespace ShoppingList.Frontend.Redux.Manufacturers.States;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
 
 public record ManufacturerState(
     ManufacturerSearch Search,

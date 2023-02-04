@@ -1,5 +1,5 @@
 ﻿using Fluxor;
-using ShoppingList.Frontend.Redux.ShoppingList.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using System;
 using System.Linq;
 

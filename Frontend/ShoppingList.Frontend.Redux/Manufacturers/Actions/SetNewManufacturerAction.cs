@@ -1,3 +1,3 @@
-﻿namespace ShoppingList.Frontend.Redux.Manufacturers.Actions;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Actions;
 
 public record SetNewManufacturerAction;

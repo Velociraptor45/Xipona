@@ -1,2 +1,2 @@
-﻿namespace ShoppingList.Frontend.Redux.ShoppingList.Actions.Processing;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Processing;
 public record ApiRequestProcessingErrorResolvedAction;

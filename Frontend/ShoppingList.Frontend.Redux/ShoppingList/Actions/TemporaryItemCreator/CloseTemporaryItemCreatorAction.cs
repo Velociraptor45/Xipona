@@ -1,3 +1,3 @@
-﻿namespace ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
 
 public record CloseTemporaryItemCreatorAction;

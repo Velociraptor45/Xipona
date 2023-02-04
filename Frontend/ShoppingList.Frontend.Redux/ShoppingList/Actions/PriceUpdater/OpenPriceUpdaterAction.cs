@@ -1,4 +1,4 @@
-﻿using ShoppingList.Frontend.Redux.ShoppingList.States;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 
-namespace ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
 public record OpenPriceUpdaterAction(ShoppingListItem Item);

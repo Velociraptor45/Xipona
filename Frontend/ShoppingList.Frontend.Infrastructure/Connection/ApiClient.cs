@@ -38,17 +38,17 @@ using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresFor
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
 using ShoppingList.Frontend.Redux.Items.States;
-using ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ShoppingList.Frontend.Redux.ShoppingList.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +56,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using IngredientQuantityType = global::ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States.IngredientQuantityType;
 using ItemStore = ShoppingList.Frontend.Redux.Items.States.ItemStore;
-using ShoppingListStore = ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListStore;
+using ShoppingListStore = ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListStore;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 {

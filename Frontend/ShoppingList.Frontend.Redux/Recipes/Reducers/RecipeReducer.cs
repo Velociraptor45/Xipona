@@ -1,9 +1,8 @@
 ﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
-using ShoppingList.Frontend.Redux.Recipes.Actions;
 
-namespace ShoppingList.Frontend.Redux.Recipes.Reducers;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Reducers;
 
 public static class RecipeReducer
 {

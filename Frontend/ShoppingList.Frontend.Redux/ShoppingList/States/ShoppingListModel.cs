@@ -1,4 +1,4 @@
-﻿namespace ShoppingList.Frontend.Redux.ShoppingList.States;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 
 public record ShoppingListModel(Guid Id, SortedSet<ShoppingListSection> Sections)
 {

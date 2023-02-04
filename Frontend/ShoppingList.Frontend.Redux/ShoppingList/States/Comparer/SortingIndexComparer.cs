@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 
-namespace ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
 
 public class SortingIndexComparer : IComparer<ISortableItem>
 {

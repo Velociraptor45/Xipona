@@ -5,11 +5,11 @@
 @using Fluxor;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
 @using System.Text
-@using ShoppingListReduxState = global::ShoppingList.Frontend.Redux.ShoppingList.States
 @using System.Globalization;
-@using global::ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary;
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
 
-@inject IState<ShoppingListReduxState.ShoppingListState> State
+@inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
 <div class="d-flex justify-content-end mt-2">

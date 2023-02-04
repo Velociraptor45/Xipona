@@ -2,10 +2,10 @@
 using Fluxor;
 using Moq;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.TestTools.AutoFixture.Builder;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
-using ShoppingList.Frontend.Redux.ShoppingList.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests;
 

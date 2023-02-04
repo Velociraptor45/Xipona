@@ -1,16 +1,16 @@
 ﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ShoppingList.Frontend.Redux.ShoppingList.Actions;
-using ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
-using ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary;
-using ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
-using ShoppingList.Frontend.Redux.ShoppingList.States;
-using ShoppingListItem = ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListItem;
+using ShoppingListItem = ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListItem;
 
-namespace ShoppingList.Frontend.Redux.ShoppingList.Effects;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
 
 public class ShoppingListEffects
 {

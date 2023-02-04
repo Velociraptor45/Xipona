@@ -1,6 +1,6 @@
 ﻿using ShoppingList.Frontend.Redux.Shared.Actions;
 
-namespace ShoppingList.Frontend.Redux.Manufacturers.Actions;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Actions;
 
 public record EditManufacturerAction : ISearchResultTriggerAction
 {

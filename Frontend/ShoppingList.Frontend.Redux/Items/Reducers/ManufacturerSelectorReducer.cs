@@ -1,7 +1,7 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
 using ShoppingList.Frontend.Redux.Items.States;
-using ShoppingList.Frontend.Redux.Manufacturers.States;
 
 namespace ShoppingList.Frontend.Redux.Items.Reducers;
 

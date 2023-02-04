@@ -1,2 +1,2 @@
-﻿namespace ShoppingList.Frontend.Redux.ShoppingList.Actions.Items;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Items;
 public record HideItemsInBasketAction;

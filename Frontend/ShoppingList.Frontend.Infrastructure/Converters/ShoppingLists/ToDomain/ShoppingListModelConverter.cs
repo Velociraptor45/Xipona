@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ShoppingList.Frontend.Redux.ShoppingList.States;
-using ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
 using System.Collections.Generic;
 using System.Linq;
 

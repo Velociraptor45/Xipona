@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using ShoppingList.Frontend.Redux.Manufacturers.Actions;
-using ShoppingList.Frontend.Redux.Manufacturers.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Actions;
+using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
 
-namespace ShoppingList.Frontend.Redux.Manufacturers.Reducers;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Reducers;
 
 public static class ManufacturerReducer
 {

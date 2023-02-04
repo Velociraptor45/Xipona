@@ -1,10 +1,10 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
+using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
 using ShoppingList.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
 using ShoppingList.Frontend.Redux.Items.States;
-using ShoppingList.Frontend.Redux.Manufacturers.States;
 using ShoppingList.Frontend.Redux.Shared.Constants;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;

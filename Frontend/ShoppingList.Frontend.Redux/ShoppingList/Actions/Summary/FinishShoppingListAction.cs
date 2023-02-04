@@ -1,2 +1,2 @@
-﻿namespace ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary;
 public record FinishShoppingListAction;

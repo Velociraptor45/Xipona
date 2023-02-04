@@ -1,12 +1,12 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ShoppingList.Frontend.Redux.ShoppingList.Actions;
-using ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar;
-using ShoppingList.Frontend.Redux.ShoppingList.States;
 using Timer = System.Timers.Timer;
 
-namespace ShoppingList.Frontend.Redux.ShoppingList.Effects;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
 
 public sealed class ShoppingListSearchBarEffects : IDisposable
 {

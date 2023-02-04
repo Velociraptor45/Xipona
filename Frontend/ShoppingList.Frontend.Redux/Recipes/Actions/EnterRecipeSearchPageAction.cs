@@ -1,2 +1,2 @@
-﻿namespace ShoppingList.Frontend.Redux.Recipes.Actions;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions;
 public record EnterRecipeSearchPageAction;

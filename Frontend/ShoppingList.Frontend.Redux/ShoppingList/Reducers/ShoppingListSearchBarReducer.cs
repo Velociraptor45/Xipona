@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar;
-using ShoppingList.Frontend.Redux.ShoppingList.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 
-namespace ShoppingList.Frontend.Redux.ShoppingList.Reducers;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Reducers;
 
 public static class ShoppingListSearchBarReducer
 {

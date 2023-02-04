@@ -3,11 +3,10 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
 @using System.Text.RegularExpressions
 @using Fluxor
-@using global::ShoppingList.Frontend.Redux.ShoppingList.Actions
-@using global::ShoppingList.Frontend.Redux.ShoppingList.Actions.Items
-@using global::ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater
-@using global::ShoppingList.Frontend.Redux.ShoppingList.States
-@using ShoppingListState = global::ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListState
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Items
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
+@using ShoppingListState = global::ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListState
 
 @inject NavigationManager _navigationManager;
 @inject IItemPriceCalculationService _itemPriceCalculationService;

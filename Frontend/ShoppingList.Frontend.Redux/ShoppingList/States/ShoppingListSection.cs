@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 
-namespace ShoppingList.Frontend.Redux.ShoppingList.States;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 
 public record ShoppingListSection(Guid Id, string Name, int SortingIndex, bool IsExpanded,
     IEnumerable<ShoppingListItem> Items) : ISortableItem

@@ -1,13 +1,13 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Items;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ShoppingList.Frontend.Redux.Shared.Constants;
 using ShoppingList.Frontend.Redux.Shared.Ports;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ShoppingList.Frontend.Redux.ShoppingList.Actions.Items;
-using ShoppingList.Frontend.Redux.ShoppingList.States;
 using Timer = System.Timers.Timer;
 
-namespace ShoppingList.Frontend.Redux.ShoppingList.Effects;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
 
 public sealed class ShoppingListItemEffects : IDisposable
 {
