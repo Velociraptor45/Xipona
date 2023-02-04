@@ -46,5 +46,6 @@ public class StoreEditorEffects
             await _client.ModifyStoreAsync(store);
 
         dispatcher.Dispatch(new SaveStoreFinishedAction());
+        dispatcher.Dispatch(new LeaveStoreEditorAction());
     }
 }
