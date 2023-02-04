@@ -22,6 +22,18 @@ public static class StoreEditorReducer
     }
 
     [ReducerMethod]
+    public static StoreState OnLoadStoreForEditingFinished(StoreState state, LoadStoreForEditingFinishedAction action)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Store = action.Store
+            }
+        };
+    }
+
+    [ReducerMethod]
     public static StoreState OnStoreNameChanged(StoreState state, StoreNameChangedAction action)
     {
         return state with
