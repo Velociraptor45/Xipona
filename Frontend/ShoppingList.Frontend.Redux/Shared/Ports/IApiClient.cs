@@ -7,7 +7,6 @@ using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Stores;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
 using IngredientQuantityType = global::ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States.IngredientQuantityType;
 using ItemStore = ShoppingList.Frontend.Redux.Items.States.ItemStore;
@@ -59,9 +58,9 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
 
         Task UpdateItemAsync(UpdateItemRequest request);
 
-        Task CreateStoreAsync(CreateStoreRequest request);
+        Task CreateStoreAsync(EditedStore store);
 
-        Task ModifyStoreAsync(ModifyStoreRequest request);
+        Task ModifyStoreAsync(EditedStore store);
 
         Task ModifyItemWithTypesAsync(ModifyItemWithTypesRequest request);
 
@@ -108,6 +107,7 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
         Task<IEnumerable<ItemStore>> GetAllActiveStoresForItemAsync();
 
         Task<IEnumerable<StoreSearchResult>> GetActiveStoresOverviewAsync();
+
         Task<EditedStore> GetStoreByIdAsync(Guid storeId);
     }
 }

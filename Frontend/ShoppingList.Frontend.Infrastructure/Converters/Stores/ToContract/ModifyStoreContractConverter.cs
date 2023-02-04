@@ -1,24 +1,24 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Stores;
+using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
 using System;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Stores.ToContract
 {
-    public class ModifyStoreContractConverter : IToContractConverter<ModifyStoreRequest, ModifyStoreContract>
+    public class ModifyStoreContractConverter : IToContractConverter<EditedStore, ModifyStoreContract>
     {
-        public ModifyStoreContract ToContract(ModifyStoreRequest request)
+        public ModifyStoreContract ToContract(EditedStore store)
         {
-            var sections = request.Sections.Select(s => new ModifySectionContract(
-                s.Id.BackendId == Guid.Empty ? null : s.Id.BackendId,
+            var sections = store.Sections.Select(s => new ModifySectionContract(
+                s.Id == Guid.Empty ? null : s.Id,
                 s.Name,
                 s.SortingIndex,
                 s.IsDefaultSection));
 
             return new ModifyStoreContract(
-                request.StoreId,
-                request.Name,
+                store.Id,
+                store.Name,
                 sections);
         }
     }

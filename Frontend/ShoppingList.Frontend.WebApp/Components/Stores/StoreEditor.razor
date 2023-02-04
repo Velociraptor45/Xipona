@@ -37,16 +37,16 @@
 
     private async Task OnBackButtonClickedAsync()
     {
-        await State.LeaveEditorAsync();
+        //await State.LeaveEditorAsync();
     }
 
     private async Task OnCreateButtonClickedAsync()
     {
-        await _apiService.CreateStoreAsync(State.EditedStore, FragmentCreator, async () => await State.LeaveEditorAsync());
+        //await _apiService.CreateStoreAsync(State.EditedStore, FragmentCreator, async () => await State.LeaveEditorAsync());
     }
 
     private async Task OnSaveButtonClickedAsync()
     {
-        await _apiService.SaveStoreAsync(State.EditedStore, FragmentCreator, async () => await State.LeaveEditorAsync());
+        //await _apiService.SaveStoreAsync(State.EditedStore, FragmentCreator, async () => await State.LeaveEditorAsync());
     }
 }

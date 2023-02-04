@@ -21,16 +21,16 @@
             </div>
         </div>
 
-        <Sections></Sections>
+        @*<Sections></Sections>*@
 
         <div class="d-flex justify-content-end mt-2">
             @if (State.Value.Editor.Store.Id == Guid.Empty)
             {
-                <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
+                <Button @onclick="@OnSaveButtonClickedAsync" Loading="State.Value.Editor.IsSaving">Create</Button>
             }
             else
             {
-                <Button @onclick="@OnSaveButtonClickedAsync">Save</Button>
+                <Button @onclick="@OnSaveButtonClickedAsync" Loading="State.Value.Editor.IsSaving">Save</Button>
             }
         </div>
     </div>
@@ -58,14 +58,9 @@
     {
         Dispatcher.Dispatch(name);
     }
-
-    private void OnCreateButtonClickedAsync()
-    {
-        
-    }
-
+    
     private void OnSaveButtonClickedAsync()
     {
-        
+        Dispatcher.Dispatch(new SaveStoreAction());
     }
 }

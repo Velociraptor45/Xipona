@@ -47,4 +47,28 @@ public static class StoreEditorReducer
             }
         };
     }
+
+    [ReducerMethod(typeof(SaveStoreStartedAction))]
+    public static StoreState OnSaveStoreStarted(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(SaveStoreFinishedAction))]
+    public static StoreState OnSaveStoreFinished(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = false
+            }
+        };
+    }
 }

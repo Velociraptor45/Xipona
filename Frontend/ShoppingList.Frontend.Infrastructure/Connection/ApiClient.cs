@@ -47,7 +47,6 @@ using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 using ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Stores;
 using ShoppingList.Frontend.Redux.ShoppingList.States;
 using System;
 using System.Collections.Generic;
@@ -279,15 +278,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             await _client.MakeTemporaryItemPermanentAsync(request.ItemId, contract);
         }
 
-        public async Task CreateStoreAsync(CreateStoreRequest request)
+        public async Task CreateStoreAsync(EditedStore store)
         {
-            var contract = _converters.ToContract<CreateStoreRequest, CreateStoreContract>(request);
+            var contract = _converters.ToContract<EditedStore, CreateStoreContract>(store);
             await _client.CreateStoreAsync(contract);
         }
 
-        public async Task ModifyStoreAsync(ModifyStoreRequest request)
+        public async Task ModifyStoreAsync(EditedStore store)
         {
-            await _client.ModifyStoreAsync(_converters.ToContract<ModifyStoreRequest, ModifyStoreContract>(request));
+            await _client.ModifyStoreAsync(_converters.ToContract<EditedStore, ModifyStoreContract>(store));
         }
 
         public async Task<IEnumerable<ManufacturerSearchResult>> GetManufacturerSearchResultsAsync(string searchInput)

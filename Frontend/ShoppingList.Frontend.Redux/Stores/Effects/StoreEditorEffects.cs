@@ -33,4 +33,18 @@ public class StoreEditorEffects
         var result = await _client.GetStoreByIdAsync(action.StoreId);
         dispatcher.Dispatch(new LoadStoreForEditingFinishedAction(result));
     }
+
+    [EffectMethod(typeof(SaveStoreAction))]
+    public async Task HandleSaveStoreAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new SaveStoreStartedAction());
+
+        var store = _state.Value.Editor.Store;
+        if (store.Id == Guid.Empty)
+            await _client.CreateStoreAsync(store);
+        else
+            await _client.ModifyStoreAsync(store);
+
+        dispatcher.Dispatch(new SaveStoreFinishedAction());
+    }
 }

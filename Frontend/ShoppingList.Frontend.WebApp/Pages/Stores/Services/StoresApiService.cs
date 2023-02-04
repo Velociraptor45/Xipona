@@ -1,62 +1,55 @@
-﻿using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
-using ShoppingList.Frontend.Redux.Shared.Ports;
-using ShoppingList.Frontend.Redux.Shared.Ports.Requests.Stores;
-using System;
-using System.Threading.Tasks;
-using StoreModels = ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
-
-namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
+﻿namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
 {
     public class StoresApiService : IStoresApiService
     {
-        private readonly IApiClient _apiClient;
-        private readonly IShoppingListNotificationService _notificationService;
+        //private readonly IApiClient _apiClient;
+        //private readonly IShoppingListNotificationService _notificationService;
 
-        public StoresApiService(IApiClient apiClient, IShoppingListNotificationService notificationService)
-        {
-            _apiClient = apiClient;
-            _notificationService = notificationService;
-        }
+        //public StoresApiService(IApiClient apiClient, IShoppingListNotificationService notificationService)
+        //{
+        //    _apiClient = apiClient;
+        //    _notificationService = notificationService;
+        //}
 
-        public async Task SaveStoreAsync(StoreModels.Store store, IAsyncRetryFragmentCreator fragmentCreator,
-            Func<Task> onSuccessAction)
-        {
-            var request = new ModifyStoreRequest(Guid.NewGuid(), store.Id, store.Name, store.Sections);
+        //public async Task SaveStoreAsync(StoreModels.Store store, IAsyncRetryFragmentCreator fragmentCreator,
+        //    Func<Task> onSuccessAction)
+        //{
+        //    var request = new ModifyStoreRequest(Guid.NewGuid(), store.Id, store.Name, store.Sections);
 
-            try
-            {
-                await _apiClient.ModifyStoreAsync(request);
-            }
-            catch (Exception e)
-            {
-                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await SaveStoreAsync(store, fragmentCreator, onSuccessAction));
-                _notificationService.NotifyError("Saving store failed", e.Message, fragment);
-                return;
-            }
+        //    try
+        //    {
+        //        await _apiClient.ModifyStoreAsync(TODO);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
+        //            await SaveStoreAsync(store, fragmentCreator, onSuccessAction));
+        //        _notificationService.NotifyError("Saving store failed", e.Message, fragment);
+        //        return;
+        //    }
 
-            await onSuccessAction();
-        }
+        //    await onSuccessAction();
+        //}
 
-        public async Task CreateStoreAsync(StoreModels.Store store, IAsyncRetryFragmentCreator fragmentCreator,
-            Func<Task> onSuccessAction)
-        {
-            var request = new CreateStoreRequest(Guid.NewGuid(), store);
+        //public async Task CreateStoreAsync(StoreModels.Store store, IAsyncRetryFragmentCreator fragmentCreator,
+        //    Func<Task> onSuccessAction)
+        //{
+        //    var request = new CreateStoreRequest(Guid.NewGuid(), store);
 
-            try
-            {
-                await _apiClient.CreateStoreAsync(request);
-            }
-            catch (Exception e)
-            {
-                var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
-                    await CreateStoreAsync(store, fragmentCreator, onSuccessAction));
-                _notificationService.NotifyError("Creating store failed", e.Message, fragment);
-                return;
-            }
+        //    try
+        //    {
+        //        await _apiClient.CreateStoreAsync(request);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        var fragment = fragmentCreator.CreateAsyncRetryFragment(async () =>
+        //            await CreateStoreAsync(store, fragmentCreator, onSuccessAction));
+        //        _notificationService.NotifyError("Creating store failed", e.Message, fragment);
+        //        return;
+        //    }
 
-            await onSuccessAction();
-        }
+        //    await onSuccessAction();
+        //}
 
         //public async Task LoadStores(IAsyncRetryFragmentCreator fragmentCreator,
         //    Action<IEnumerable<StoreModels.Store>> onSuccessAction)
