@@ -165,9 +165,6 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Get("stores/active-for-item")]
         Task<StoreForItemContract> GetActiveStoresForItemAsync(CancellationToken cancellationToken = default);
 
-        [Get("stores/active")]
-        Task<IEnumerable<StoreContract>> GetAllActiveStoresAsync(CancellationToken cancellationToken = default);
-
         [Post("stores")]
         Task<StoreContract> CreateStoreAsync([Body] CreateStoreContract createStoreContract,
             CancellationToken cancellationToken = default);

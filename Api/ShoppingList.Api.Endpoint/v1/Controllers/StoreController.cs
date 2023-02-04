@@ -4,7 +4,6 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.ModifyStore;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.AllActiveStores;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.GetActiveStoresForItem;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.StoreById;
@@ -97,23 +96,6 @@ public class StoreController : ControllerBase
 
         var contract = _converters.ToContract<IStore, StoreForItemContract>(models);
         return Ok(contract);
-    }
-
-    [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<StoreContract>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [Route("active")]
-    public async Task<IActionResult> GetAllActiveStoresAsync(CancellationToken cancellationToken = default)
-    {
-        var query = new AllActiveStoresQuery();
-        var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
-
-        if (!readModels.Any())
-            return NoContent();
-
-        var contracts = _converters.ToContract<IStore, StoreContract>(readModels);
-
-        return Ok(contracts);
     }
 
     [HttpPost]
