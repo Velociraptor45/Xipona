@@ -1,5 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
-using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Items.States;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
@@ -35,8 +35,6 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
         Task DeleteItemAsync(DeleteItemRequest request);
 
         Task FinishListAsync(FinishListRequest request);
-
-        Task<IEnumerable<Store>> GetAllActiveStoresAsync();
 
         Task<IEnumerable<SharedStates.QuantityTypeInPacket>> GetAllQuantityTypesInPacketAsync();
 
@@ -108,5 +106,8 @@ namespace ShoppingList.Frontend.Redux.Shared.Ports
         Task<ShoppingListModel> GetActiveShoppingListByStoreIdAsync(Guid storeId); // todo name #298
 
         Task<IEnumerable<ItemStore>> GetAllActiveStoresForItemAsync();
+
+        Task<IEnumerable<StoreSearchResult>> GetActiveStoresOverviewAsync();
+        Task<EditedStore> GetStoreByIdAsync(Guid storeId);
     }
 }

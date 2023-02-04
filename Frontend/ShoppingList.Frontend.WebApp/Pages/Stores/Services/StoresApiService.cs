@@ -68,7 +68,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services
 
             try
             {
-                stores = await _apiClient.GetAllActiveStoresAsync();
+                stores = null;//await _apiClient.GetAllActiveStoresAsync();
             }
             catch (ApiException e)
             {

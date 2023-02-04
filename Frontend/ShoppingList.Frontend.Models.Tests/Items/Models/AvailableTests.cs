@@ -117,7 +117,7 @@ public class AvailableTests
             return store with
             {
                 Sections = store.Sections
-                    .Select(s => new ItemStoreSection(s.Id, s.Name, s.IsDefaultSection))
+                    .Select(s => new ItemStoreSection(s.Id, s.Name, s.IsDefaultSection, s.SortingIndex))
                     .ToList()
             };
         }

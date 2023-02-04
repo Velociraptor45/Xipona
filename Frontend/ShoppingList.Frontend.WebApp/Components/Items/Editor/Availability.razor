@@ -29,7 +29,7 @@
                 </div>
                 <div class="mr-2">@(State.Value.Editor.Item!.QuantityType.PriceLabel)</div>
             </div>
-            @*// todo convert to Select*@
+            @*// todo convert to Select #298 *@
             <SingleSelect Class="ml-2"
                           DataSource="State.Value.Stores.GetSections(Model.StoreId).ToList()"
                           TItem="ItemStoreSection"

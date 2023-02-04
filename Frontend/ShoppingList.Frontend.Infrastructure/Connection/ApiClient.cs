@@ -32,10 +32,13 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItem
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
 using ShoppingList.Frontend.Redux.ItemCategories.States;
 using ShoppingList.Frontend.Redux.Items.States;
 using ShoppingList.Frontend.Redux.Manufacturers.States;
@@ -189,29 +192,36 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task<IEnumerable<ShoppingListStore>> GetAllActiveStoresForShoppingListAsync()
         {
-            var contracts = await _client.GetAllActiveStoresAsync(); //todo write endpoint #298
+            var contracts = await _client.GetActiveStoresForShoppingAsync();
 
             return contracts is null ?
                 Enumerable.Empty<ShoppingListStore>() :
-                contracts.Select(_converters.ToDomain<ActiveStoreContract, ShoppingListStore>);
+                contracts.Select(_converters.ToDomain<StoreForShoppingContract, ShoppingListStore>);
         }
 
         public async Task<IEnumerable<ItemStore>> GetAllActiveStoresForItemAsync()
         {
-            var contracts = await _client.GetAllActiveStoresAsync(); // todo write endpoint #298
+            var contracts = await _client.GetActiveStoresForItemAsync();
 
             return contracts is null ?
                 Enumerable.Empty<ItemStore>() :
-                contracts.Select(_converters.ToDomain<ActiveStoreContract, ItemStore>);
+                contracts.Select(_converters.ToDomain<StoreForItemContract, ItemStore>);
         }
 
-        public async Task<IEnumerable<Store>> GetAllActiveStoresAsync()
+        public async Task<IEnumerable<StoreSearchResult>> GetActiveStoresOverviewAsync()
         {
-            var contracts = await _client.GetAllActiveStoresAsync();
+            var contracts = await _client.GetActiveStoresOverviewAsync();
 
-            return contracts is null ?
-                Enumerable.Empty<Store>() :
-                contracts.Select(_converters.ToDomain<ActiveStoreContract, Store>);
+            return contracts is null
+                ? Enumerable.Empty<StoreSearchResult>()
+                : contracts.Select(_converters.ToDomain<StoreSearchResultContract, StoreSearchResult>);
+        }
+
+        public async Task<EditedStore> GetStoreByIdAsync(Guid storeId)
+        {
+            var contract = await _client.GetStoreByIdAsync(storeId);
+
+            return _converters.ToDomain<StoreContract, EditedStore>(contract);
         }
 
         public async Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(
