@@ -4,6 +4,7 @@
 
 @using Fluxor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions
+@using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States
 
 @inject IDispatcher Dispatcher
@@ -44,6 +45,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        Dispatcher.Dispatch(new StorePageInitializedAction());
         Dispatcher.Dispatch(new LoadStoresOverviewAction());
     }
 
