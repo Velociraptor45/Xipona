@@ -295,7 +295,7 @@ public class StoreControllerIntegrationTests
                         s.Id,
                         s.Name,
                         s.Sections.Select(sc =>
-                            new SectionForItemContract(sc.Id, sc.Name, sc.SortIndex))))
+                            new SectionForItemContract(sc.Id, sc.Name, sc.IsDefaultSection, sc.SortIndex))))
                     .ToList();
             }
 

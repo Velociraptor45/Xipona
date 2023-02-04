@@ -4,15 +4,17 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStore
 {
     public class SectionForItemContract
     {
-        public SectionForItemContract(Guid id, string name, int sortingIndex)
+        public SectionForItemContract(Guid id, string name, bool isDefaultSection, int sortingIndex)
         {
             Id = id;
             Name = name;
+            IsDefaultSection = isDefaultSection;
             SortingIndex = sortingIndex;
         }
 
         public Guid Id { get; }
         public string Name { get; }
+        public bool IsDefaultSection { get; }
         public int SortingIndex { get; }
     }
 }

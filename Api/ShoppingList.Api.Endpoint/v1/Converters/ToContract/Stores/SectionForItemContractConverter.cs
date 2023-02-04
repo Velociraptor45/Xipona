@@ -11,6 +11,7 @@ public class SectionForItemContractConverter : IToContractConverter<ISection, Se
         return new SectionForItemContract(
             source.Id,
             source.Name,
+            source.IsDefaultSection,
             source.SortingIndex);
     }
 }
