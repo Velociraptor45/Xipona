@@ -17,7 +17,7 @@
                 <Icon Type="arrow-left"></Icon>
             </Button>
             <div class="mx-3">
-                <Input Value="@State.Value.Editor.Store.Name" OnChange="OnNameChanged"/>
+                <Input TValue="string" Value="@State.Value.Editor.Store.Name" OnChange="OnNameChanged"/>
             </div>
         </div>
 
@@ -54,9 +54,9 @@
         Dispatcher.Dispatch(new LeaveStoreEditorAction());
     }
 
-    private void OnNameChanged()
+    private void OnNameChanged(string name)
     {
-
+        Dispatcher.Dispatch(name);
     }
 
     private void OnCreateButtonClickedAsync()

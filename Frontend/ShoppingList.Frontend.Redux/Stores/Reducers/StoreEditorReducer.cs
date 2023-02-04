@@ -20,4 +20,19 @@ public static class StoreEditorReducer
             }
         };
     }
+
+    [ReducerMethod]
+    public static StoreState OnStoreNameChanged(StoreState state, StoreNameChangedAction action)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Store = state.Editor.Store with
+                {
+                    Name = action.Name
+                }
+            }
+        };
+    }
 }
