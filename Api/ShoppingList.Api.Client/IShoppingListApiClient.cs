@@ -31,9 +31,10 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItem
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using RestEase;
 using System;
 using System.Collections.Generic;
@@ -157,13 +158,19 @@ namespace ProjectHermes.ShoppingList.Api.Client
         #region StoreController
 
         [Get("stores/{id}")]
-        Task<StoreContract> GetStoreByIdAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<StoreContract> GetStoreByIdAsync([Path] Guid id, CancellationToken cancellationToken = default);
 
         [Get("stores/active-for-shopping")]
-        Task<StoreForShoppingContract> GetActiveStoresForShoppingAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<StoreForShoppingContract>> GetActiveStoresForShoppingAsync(
+            CancellationToken cancellationToken = default);
 
         [Get("stores/active-for-item")]
-        Task<StoreForItemContract> GetActiveStoresForItemAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<StoreForItemContract>> GetActiveStoresForItemAsync(
+            CancellationToken cancellationToken = default);
+
+        [Get("stores/active-overview")]
+        Task<IEnumerable<StoreSearchResultContract>> GetActiveStoresOverviewAsync(
+            CancellationToken cancellationToken = default);
 
         [Post("stores")]
         Task<StoreContract> CreateStoreAsync([Body] CreateStoreContract createStoreContract,

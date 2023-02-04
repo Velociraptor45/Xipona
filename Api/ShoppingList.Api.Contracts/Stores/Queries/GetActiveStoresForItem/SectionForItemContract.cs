@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries
+namespace ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForItem
 {
     public class SectionForItemContract
     {

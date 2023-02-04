@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries
+namespace ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForItem
 {
     public class StoreForItemContract
     {

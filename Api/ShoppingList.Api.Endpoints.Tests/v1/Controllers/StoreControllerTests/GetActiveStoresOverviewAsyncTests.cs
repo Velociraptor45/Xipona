@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.GetActiveStoresForItem;
-using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.GetActiveStoresOverview;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Endpoints.Tests.Common;
@@ -9,24 +9,24 @@ using System.Reflection;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.StoreControllerTests;
 
-public class GetActiveStoresForItemAsyncTests : ControllerEnumerableQueryTestsBase<StoreController,
-    GetActiveStoresForItemQuery, IStore, StoreForItemContract,
-    GetActiveStoresForItemAsyncTests.GetActiveStoresForItemAsyncFixture>
+public class GetActiveStoresOverviewAsyncTests : ControllerEnumerableQueryTestsBase<StoreController,
+    GetActiveStoresOverviewQuery, IStore, StoreSearchResultContract,
+    GetActiveStoresOverviewAsyncTests.GetActiveStoresOverviewAsyncFixture>
 {
-    public GetActiveStoresForItemAsyncTests() : base(new GetActiveStoresForItemAsyncFixture())
+    public GetActiveStoresOverviewAsyncTests() : base(new GetActiveStoresOverviewAsyncFixture())
     {
     }
 
-    public sealed class GetActiveStoresForItemAsyncFixture : ControllerEnumerableQueryFixtureBase
+    public sealed class GetActiveStoresOverviewAsyncFixture : ControllerEnumerableQueryFixtureBase
     {
-        public GetActiveStoresForItemAsyncFixture()
+        public GetActiveStoresOverviewAsyncFixture()
         {
             PossibleResultsList.Add(new OkStatusResult());
             PossibleResultsList.Add(new NoContentStatusResult());
         }
 
         public override MethodInfo Method =>
-            typeof(StoreController).GetMethod(nameof(StoreController.GetActiveStoresForItemAsync))!;
+            typeof(StoreController).GetMethod(nameof(StoreController.GetActiveStoresOverviewAsync))!;
 
         public override StoreController CreateSut()
         {
@@ -38,7 +38,7 @@ public class GetActiveStoresForItemAsyncTests : ControllerEnumerableQueryTestsBa
 
         public override async Task<IActionResult> ExecuteTestMethod(StoreController sut)
         {
-            return await sut.GetActiveStoresForItemAsync();
+            return await sut.GetActiveStoresOverviewAsync();
         }
 
         public override void SetupParameters()
@@ -47,7 +47,7 @@ public class GetActiveStoresForItemAsyncTests : ControllerEnumerableQueryTestsBa
 
         public override void SetupQuery()
         {
-            Query = new GetActiveStoresForItemQuery();
+            Query = new GetActiveStoresOverviewQuery();
         }
     }
 }
