@@ -33,7 +33,9 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItem
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
 using RestEase;
 using System;
 using System.Collections.Generic;
@@ -229,9 +231,16 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.GetStoreByIdAsync(id, cancellationToken);
         }
 
-        public async Task<StoreContract> GetActiveStoresForShoppingAsync(CancellationToken cancellationToken = default)
+        public async Task<StoreForShoppingContract> GetActiveStoresForShoppingAsync(
+            CancellationToken cancellationToken = default)
         {
             return await _apiClient.GetActiveStoresForShoppingAsync(cancellationToken);
+        }
+
+        public async Task<StoreForItemContract> GetActiveStoresForItemAsync(
+            CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.GetActiveStoresForItemAsync(cancellationToken);
         }
 
         public async Task<IEnumerable<StoreContract>> GetAllActiveStoresAsync(

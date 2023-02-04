@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
@@ -207,6 +208,93 @@ public class StoreControllerIntegrationTests
                         s.Name,
                         s.Sections.Select(sc =>
                             new SectionForShoppingContract(sc.Id, sc.Name, sc.IsDefaultSection, sc.SortIndex))))
+                    .ToList();
+            }
+
+            public override async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStores);
+
+                await ApplyMigrationsAsync(SetupScope);
+
+                using var transaction = await CreateTransactionAsync(SetupScope);
+                await using var dbContext = GetContextInstance<StoreContext>(SetupScope);
+
+                foreach (var existingStore in _existingStores)
+                {
+                    dbContext.Add(existingStore);
+                }
+
+                await dbContext.SaveChangesAsync();
+
+                await transaction.CommitAsync(default);
+            }
+        }
+    }
+
+    [Collection(DockerCollection.Name)]
+    public class GetActiveStoresForItemAsync
+    {
+        private readonly GetActiveStoresForItemAsyncFixture _fixture;
+
+        public GetActiveStoresForItemAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new GetActiveStoresForItemAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task GetActiveStoresForItemAsync_WithDeletedStore_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupExistingStores();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.GetActiveStoresForItemAsync();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+
+            var okResult = result as OkObjectResult;
+            okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class GetActiveStoresForItemAsyncFixture : LocalFixture
+        {
+            private IList<Repositories.Stores.Entities.Store>? _existingStores;
+
+            public GetActiveStoresForItemAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public IReadOnlyCollection<StoreForItemContract>? ExpectedResult { get; private set; }
+
+            public void SetupExistingStores()
+            {
+                _existingStores = new List<Repositories.Stores.Entities.Store>
+                {
+                    StoreEntityMother.Initial().Create(),
+                    StoreEntityMother.Initial().Create(),
+                    StoreEntityMother.Deleted().Create()
+                };
+            }
+
+            public void SetupExpectedResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStores);
+
+                ExpectedResult = _existingStores
+                    .Where(s => !s.Deleted)
+                    .Select(s => new StoreForItemContract(
+                        s.Id,
+                        s.Name,
+                        s.Sections.Select(sc =>
+                            new SectionForItemContract(sc.Id, sc.Name, sc.SortIndex))))
                     .ToList();
             }
 
