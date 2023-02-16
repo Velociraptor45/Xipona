@@ -2,6 +2,7 @@
 using Moq.Sequences;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Extensions;
 
@@ -30,5 +31,17 @@ public class ApiClientMock : Mock<IApiClient>
     public void VerifyUpdateItemPriceAsync(UpdateItemPriceRequest request, Func<Times> times)
     {
         Verify(m => m.UpdateItemPriceAsync(It.Is<UpdateItemPriceRequest>(r => r.IsRequestEquivalentTo(request))), times);
+    }
+
+    public void SetupFinishListAsync(FinishListRequest request)
+    {
+        Setup(m => m.FinishListAsync(It.Is<FinishListRequest>(r => r.IsRequestEquivalentTo(request))))
+            .InSequence()
+            .Returns(Task.CompletedTask);
+    }
+
+    public void VerifyFinishListAsync(FinishListRequest request, Func<Times> times)
+    {
+        Verify(m => m.FinishListAsync(It.Is<FinishListRequest>(r => r.IsRequestEquivalentTo(request))), times);
     }
 }

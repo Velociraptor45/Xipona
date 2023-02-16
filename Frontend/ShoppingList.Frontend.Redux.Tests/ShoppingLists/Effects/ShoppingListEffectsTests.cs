@@ -1,8 +1,10 @@
 ﻿using Moq;
 using Moq.Sequences;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
@@ -87,7 +89,7 @@ public class ShoppingListEffectsTests
 
             public void SetupExpectedStores()
             {
-                ExpectedStoresForShoppingList = new DomainTestBuilderBase<ShoppingListStore>().CreateMany(2).ToList();
+                ExpectedStoresForShoppingList = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList();
             }
 
             public void SetupFindingStoresForShoppingList()
@@ -100,19 +102,13 @@ public class ShoppingListEffectsTests
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedStoresForShoppingList);
                 ExpectedStoreChangeAction = new SelectedStoreChangedAction(ExpectedStoresForShoppingList.First().Id);
-                DispatcherMock
-                    .Setup(m => m.Dispatch(
-                        It.Is<SelectedStoreChangedAction>(a => a.IsEquivalentTo(ExpectedStoreChangeAction))))
-                    .InSequence();
+                SetupDispatchingAction(ExpectedStoreChangeAction);
             }
 
             public void VerifyDispatchingChangeAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedStoreChangeAction);
-                DispatcherMock
-                    .Verify(m => m.Dispatch(
-                        It.Is<SelectedStoreChangedAction>(a => a.IsEquivalentTo(ExpectedStoreChangeAction))),
-                        Times.Once);
+                VerifyDispatchingAction(ExpectedStoreChangeAction);
             }
 
             public void VerifyNotDispatchingChangeAction()
@@ -126,17 +122,13 @@ public class ShoppingListEffectsTests
 
                 ExpectedLoadFinishedAction =
                     new LoadAllActiveStoresFinishedAction(new AllActiveStores(ExpectedStoresForShoppingList));
-                DispatcherMock
-                    .Setup(m => m.Dispatch(
-                        It.Is<LoadAllActiveStoresFinishedAction>(a => a.IsEquivalentTo(ExpectedLoadFinishedAction))))
-                    .InSequence();
+                SetupDispatchingAction(ExpectedLoadFinishedAction);
             }
 
             public void VerifyDispatchingLoadFinishedAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedLoadFinishedAction);
-                DispatcherMock.Verify(m => m.Dispatch(
-                    It.Is<LoadAllActiveStoresFinishedAction>(a => a.IsEquivalentTo(ExpectedLoadFinishedAction))));
+                VerifyDispatchingAction(ExpectedLoadFinishedAction);
             }
         }
     }
@@ -273,10 +265,7 @@ public class ShoppingListEffectsTests
                     State.PriceUpdate.Item!.Id.ActualId!.Value,
                     State.PriceUpdate.Item.TypeId,
                     State.PriceUpdate.Price);
-                DispatcherMock
-                    .Setup(m => m.Dispatch(
-                        It.Is<SavePriceUpdateFinishedAction>(a => a.IsEquivalentTo(ExpectedFinishAction))))
-                    .InSequence();
+                SetupDispatchingAction(ExpectedFinishAction);
             }
 
             public void SetupCallingEndpoint()
@@ -298,14 +287,130 @@ public class ShoppingListEffectsTests
             public void VerifyDispatchingFinishAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedFinishAction);
-                DispatcherMock.Setup(m =>
-                    m.Dispatch(It.Is<SavePriceUpdateFinishedAction>(a => a.IsEquivalentTo(ExpectedFinishAction))));
+                VerifyDispatchingAction(ExpectedFinishAction);
             }
 
             public void VerifyCallingEndpoint()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedRequest);
                 ApiClientMock.VerifyUpdateItemPriceAsync(ExpectedRequest, Times.Once);
+            }
+        }
+    }
+
+    public class HandleFinishShoppingListAction
+    {
+        private HandleFinishShoppingListActionFixture _fixture;
+
+        public HandleFinishShoppingListAction()
+        {
+            _fixture = new HandleFinishShoppingListActionFixture();
+        }
+
+        public static IEnumerable<object[]> GetTestDates()
+        {
+            yield return new object[] { new DateTimeOffset(2020, 04, 30, 02, 45, 23, TimeSpan.FromHours(-2)) };
+            yield return new object[] { new DateTimeOffset(2020, 04, 30, 02, 45, 23, TimeSpan.FromHours(6)) };
+            yield return new object[] { new DateTimeOffset(2020, 04, 30, 02, 45, 23, TimeSpan.Zero) };
+            yield return new object[] { DateTimeOffset.UtcNow };
+        }
+
+        [Theory]
+        [MemberData(nameof(GetTestDates))]
+        public async Task HandleFinishShoppingListAction_ShouldCallEndpointAndDispatchActionsInCorrectOrder(
+            DateTimeOffset expectedFinishedAt)
+        {
+            // Arrange
+            using var seq = Sequence.Create();
+
+            _fixture.SetupExpectedFinisheRequest(expectedFinishedAt);
+            _fixture.SetupDispatchingStartAction();
+            _fixture.SetupFinishingList();
+            _fixture.SetupDispatchingFinishAction();
+            _fixture.SetupDispatchingStoreChangeAction();
+
+            _fixture.SetupStateReturningState();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleFinishShoppingListAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            _fixture.VerifyDispatchingStartAction();
+            _fixture.VerifyFinishingList();
+            _fixture.VerifyDispatchingFinishAction();
+            _fixture.VerifyDispatchingStoreChangeAction();
+        }
+
+        private sealed class HandleFinishShoppingListActionFixture : ShoppingListEffectsFixture
+        {
+            public FinishListRequest? ExpectedFinisheRequest { get; private set; }
+            public SelectedStoreChangedAction? ExpectedStoreChangeAction { get; private set; }
+
+            public void SetupExpectedFinisheRequest(DateTimeOffset? expectedFinishDate)
+            {
+                ExpectedFinisheRequest = new DomainTestBuilder<FinishListRequest>()
+                    .FillConstructorWith("finishedAt", expectedFinishDate)
+                    .Create();
+                State = State with
+                {
+                    ShoppingList = State.ShoppingList! with
+                    {
+                        Id = ExpectedFinisheRequest.ShoppingListId
+                    },
+                    Summary = State.Summary with
+                    {
+                        FinishedAt = new DateTime(
+                            ExpectedFinisheRequest.FinishedAt!.Value.DateTime
+                                .Add(-ExpectedFinisheRequest.FinishedAt.Value.Offset)
+                                .Ticks,
+                            DateTimeKind.Utc)
+                    }
+                };
+            }
+
+            public void SetupDispatchingStartAction()
+            {
+                SetupDispatchingAction<FinishShoppingListStartedAction>();
+            }
+
+            public void SetupDispatchingFinishAction()
+            {
+                SetupDispatchingAction<FinishShoppingListFinishedAction>();
+            }
+
+            public void SetupDispatchingStoreChangeAction()
+            {
+                ExpectedStoreChangeAction = new SelectedStoreChangedAction(State.SelectedStoreId);
+                SetupDispatchingAction(ExpectedStoreChangeAction);
+            }
+
+            public void SetupFinishingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedFinisheRequest);
+                ApiClientMock.SetupFinishListAsync(ExpectedFinisheRequest);
+            }
+
+            public void VerifyDispatchingStartAction()
+            {
+                VerifyDispatchingAction<FinishShoppingListStartedAction>();
+            }
+
+            public void VerifyDispatchingFinishAction()
+            {
+                VerifyDispatchingAction<FinishShoppingListFinishedAction>();
+            }
+
+            public void VerifyDispatchingStoreChangeAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedStoreChangeAction);
+                VerifyDispatchingAction(ExpectedStoreChangeAction);
+            }
+
+            public void VerifyFinishingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedFinisheRequest);
+                ApiClientMock.VerifyFinishListAsync(ExpectedFinisheRequest, Times.Once);
             }
         }
     }
@@ -319,7 +424,7 @@ public class ShoppingListEffectsTests
 
         protected ShoppingListEffectsFixture()
         {
-            State = new DomainTestBuilderBase<ShoppingListState>().Create();
+            State = new DomainTestBuilder<ShoppingListState>().Create();
         }
 
         public ShoppingListEffects CreateSut()
@@ -329,16 +434,26 @@ public class ShoppingListEffectsTests
 
         public DispatcherMock DispatcherMock { get; } = new(MockBehavior.Strict);
 
-        protected void SetupDispatchingAction<TAction>() where TAction : new()
+        protected void SetupDispatchingAction<TAction>(TAction action)
         {
             DispatcherMock
-                .Setup(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(new TAction()))))
+                .Setup(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(action))))
                 .InSequence();
+        }
+
+        protected void SetupDispatchingAction<TAction>() where TAction : new()
+        {
+            SetupDispatchingAction(new TAction());
+        }
+
+        protected void VerifyDispatchingAction<TAction>(TAction action)
+        {
+            DispatcherMock.Verify(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(action))), Times.Once);
         }
 
         protected void VerifyDispatchingAction<TAction>() where TAction : new()
         {
-            DispatcherMock.Verify(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(new TAction()))), Times.Once);
+            VerifyDispatchingAction(new TAction());
         }
 
         public void SetupStateReturningState()
