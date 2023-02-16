@@ -120,7 +120,7 @@ public class ShoppingListEffects
 
         dispatcher.Dispatch(new SavePriceUpdateFinishedAction(
             _state.Value.PriceUpdate.Item.Id.ActualId!.Value,
-            _state.Value.PriceUpdate.Item.TypeId,
+            typeId,
             _state.Value.PriceUpdate.Price));
 
         dispatcher.Dispatch(new ClosePriceUpdaterAction());

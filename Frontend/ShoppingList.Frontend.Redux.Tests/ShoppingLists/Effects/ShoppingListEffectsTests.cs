@@ -153,7 +153,7 @@ public class ShoppingListEffectsTests
 
             _fixture.SetupDispatchingStartAction();
             _fixture.SetupCallingEndpoint();
-            _fixture.SetupDispatchingFinishAction();
+            _fixture.SetupDispatchingFinishActionForAllTypes();
             _fixture.SetupDispatchingCloseAction();
 
             _fixture.SetupStateReturningState();
@@ -180,7 +180,7 @@ public class ShoppingListEffectsTests
 
             _fixture.SetupDispatchingStartAction();
             _fixture.SetupCallingEndpoint();
-            _fixture.SetupDispatchingFinishAction();
+            _fixture.SetupDispatchingFinishActionForOneType();
             _fixture.SetupDispatchingCloseAction();
 
             _fixture.SetupStateReturningState();
@@ -259,7 +259,16 @@ public class ShoppingListEffectsTests
                 SetupDispatchingAction<ClosePriceUpdaterAction>();
             }
 
-            public void SetupDispatchingFinishAction()
+            public void SetupDispatchingFinishActionForAllTypes()
+            {
+                ExpectedFinishAction = new SavePriceUpdateFinishedAction(
+                    State.PriceUpdate.Item!.Id.ActualId!.Value,
+                    null,
+                    State.PriceUpdate.Price);
+                SetupDispatchingAction(ExpectedFinishAction);
+            }
+
+            public void SetupDispatchingFinishActionForOneType()
             {
                 ExpectedFinishAction = new SavePriceUpdateFinishedAction(
                     State.PriceUpdate.Item!.Id.ActualId!.Value,
