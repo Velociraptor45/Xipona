@@ -1,5 +1,8 @@
-﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
+﻿using System.Diagnostics;
 
+namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
+
+[DebuggerDisplay("Actual: {ActualId}, Offline: {OfflineId}")]
 public sealed class ShoppingListItemId : IEquatable<ShoppingListItemId>
 {
     public Guid? ActualId { get; }
