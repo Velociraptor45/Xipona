@@ -19,7 +19,7 @@ public class PriceUpdaterReducerTests
         }
 
         [Fact]
-        public void OnPriceOnPriceUpdaterChanged_ShouldUpdatePrice()
+        public void OnPriceOnPriceUpdaterChanged_ShouldUpdateState()
         {
             // Arrange
             _fixture.SetupAction();
@@ -68,7 +68,7 @@ public class PriceUpdaterReducerTests
         }
 
         [Fact]
-        public void OnUpdatePriceForAllTypesOnPriceUpdaterChangedChanged_ShouldUpdatePrice()
+        public void OnUpdatePriceForAllTypesOnPriceUpdaterChangedChanged_ShouldUpdateState()
         {
             // Arrange
             _fixture.SetupAction();
@@ -101,6 +101,74 @@ public class PriceUpdaterReducerTests
                     PriceUpdate = ExpectedState.PriceUpdate with
                     {
                         UpdatePriceForAllTypes = !ExpectedState.PriceUpdate.UpdatePriceForAllTypes
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnOpenPriceUpdaterChanged
+    {
+        private readonly OnOpenPriceUpdaterChangedFixture _fixture;
+
+        public OnOpenPriceUpdaterChanged()
+        {
+            _fixture = new OnOpenPriceUpdaterChangedFixture();
+        }
+
+        [Fact]
+        public void OnOpenPriceUpdaterChanged_ShouldUpdateState()
+        {
+            // Arrange
+            _fixture.SetupExpectedState();
+            _fixture.SetupAction();
+            _fixture.SetupInitialState();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ChangeAction);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.InitialState);
+
+            // Act
+            var result = PriceUpdaterReducer.OnOpenPriceUpdater(_fixture.InitialState, _fixture.ChangeAction);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnOpenPriceUpdaterChangedFixture : PriceUpdaterReducerFixture
+        {
+            public OpenPriceUpdaterAction? ChangeAction { get; private set; }
+            public ShoppingListState? InitialState { get; private set; }
+
+            public void SetupAction()
+            {
+                ChangeAction = new OpenPriceUpdaterAction(ExpectedState.PriceUpdate.Item!);
+            }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    PriceUpdate = ExpectedState.PriceUpdate with
+                    {
+                        Item = null,
+                        Price = new DomainTestBuilder<float>().Create(),
+                        UpdatePriceForAllTypes = false,
+                        IsOpen = false,
+                        IsSaving = true
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    PriceUpdate = ExpectedState.PriceUpdate with
+                    {
+                        Price = ExpectedState.PriceUpdate.Item!.PricePerQuantity,
+                        UpdatePriceForAllTypes = true,
+                        IsOpen = true,
+                        IsSaving = false
                     }
                 };
             }
