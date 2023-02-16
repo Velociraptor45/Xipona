@@ -21,7 +21,7 @@ public abstract class TestBuilderBase<TModel> : Fixture
         this.ConstructorArgumentFor<TModel, TParameter>(parameterName, value);
     }
 
-    public TModel Create()
+    public virtual TModel Create()
     {
         return this.Create<TModel>();
     }
