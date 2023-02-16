@@ -175,6 +175,71 @@ public class PriceUpdaterReducerTests
         }
     }
 
+    public class OnClosePriceUpdaterChanged
+    {
+        private readonly OnClosePriceUpdaterChangedFixture _fixture;
+
+        public OnClosePriceUpdaterChanged()
+        {
+            _fixture = new OnClosePriceUpdaterChangedFixture();
+        }
+
+        [Fact]
+        public void OnClosePriceUpdaterChanged_ShouldUpdateState()
+        {
+            // Arrange
+            _fixture.SetupExpectedState();
+            _fixture.SetupAction();
+            _fixture.SetupInitialState();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ChangeAction);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.InitialState);
+
+            // Act
+            var result = PriceUpdaterReducer.OnClosePriceUpdater(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnClosePriceUpdaterChangedFixture : PriceUpdaterReducerFixture
+        {
+            public ClosePriceUpdaterAction? ChangeAction { get; private set; }
+            public ShoppingListState? InitialState { get; private set; }
+
+            public void SetupAction()
+            {
+                ChangeAction = new ClosePriceUpdaterAction();
+            }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    PriceUpdate = ExpectedState.PriceUpdate with
+                    {
+                        Item = new DomainTestBuilder<ShoppingListItem>().Create(),
+                        IsOpen = true,
+                        IsSaving = true
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    PriceUpdate = ExpectedState.PriceUpdate with
+                    {
+                        Item = null,
+                        IsOpen = false,
+                        IsSaving = false
+                    }
+                };
+            }
+        }
+    }
+
     private abstract class PriceUpdaterReducerFixture
     {
         public ShoppingListState ExpectedState { get; protected set; } =
