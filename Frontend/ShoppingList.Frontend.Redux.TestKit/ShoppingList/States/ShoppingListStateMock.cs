@@ -9,4 +9,9 @@ public class ShoppingListStateMock : Mock<IState<ShoppingListState>>
     public ShoppingListStateMock(MockBehavior behavior) : base(behavior)
     {
     }
+
+    public void SetupValue(ShoppingListState returnValue)
+    {
+        Setup(m => m.Value).Returns(returnValue);
+    }
 }

@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Moq.Sequences" Version="2.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ShoppingList.Frontend.Redux\ShoppingList.Frontend.Redux.csproj" />
     <ProjectReference Include="..\ShoppingList.Frontend.TestTools\ShoppingList.Frontend.TestTools.csproj" />
   </ItemGroup>

@@ -1,5 +1,8 @@
 ﻿using Moq;
+using Moq.Sequences;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
@@ -22,7 +25,7 @@ public class ShoppingListEffectsTests
             // Arrange
             _fixture.SetupExpectedStoresEmpty();
             _fixture.SetupFindingStoresForShoppingList();
-            var sut = _fixture.CreatSut();
+            var sut = _fixture.CreateSut();
 
             // Act
             await sut.HandleLoadAllActiveStoresAction(_fixture.DispatcherMock.Object);
@@ -37,7 +40,7 @@ public class ShoppingListEffectsTests
             // Arrange
             _fixture.SetupExpectedStoresEmpty();
             _fixture.SetupFindingStoresForShoppingList();
-            var sut = _fixture.CreatSut();
+            var sut = _fixture.CreateSut();
 
             // Act
             await sut.HandleLoadAllActiveStoresAction(_fixture.DispatcherMock.Object);
@@ -52,7 +55,7 @@ public class ShoppingListEffectsTests
             // Arrange
             _fixture.SetupExpectedStores();
             _fixture.SetupFindingStoresForShoppingList();
-            var sut = _fixture.CreatSut();
+            var sut = _fixture.CreateSut();
 
             // Act
             await sut.HandleLoadAllActiveStoresAction(_fixture.DispatcherMock.Object);
@@ -95,17 +98,182 @@ public class ShoppingListEffectsTests
         }
     }
 
+    public class HandleSavePriceUpdateAction
+    {
+        private readonly HandleSavePriceUpdateActionFixture _fixture;
+
+        public HandleSavePriceUpdateAction()
+        {
+            _fixture = new HandleSavePriceUpdateActionFixture();
+        }
+
+        [Fact]
+        public async Task HandleSavePriceUpdateAction_WithUpdatingAllTypes_ShouldCallApiAndDispatchActionsInCorrectOrderAsync()
+        {
+            // Arrange
+            _fixture.SetupPriceUpdateForAllTypes();
+            _fixture.SetupExpectedRequestForAllTypes();
+
+            using var seq = Sequence.Create();
+
+            _fixture.SetupDispatchingStartAction();
+            _fixture.SetupCallingEndpoint();
+            _fixture.SetupDispatchingFinishAction();
+            _fixture.SetupDispatchingCloseAction();
+
+            _fixture.SetupStateReturningState();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSavePriceUpdateAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            _fixture.VerifyDispatchingStartAction();
+            _fixture.VerifyCallingEndpoint();
+            _fixture.VerifyDispatchingFinishAction();
+            _fixture.VerifyDispatchingCloseAction();
+        }
+
+        private sealed class HandleSavePriceUpdateActionFixture : ShoppingListEffectsFixture
+        {
+            public UpdateItemPriceRequest? ExpectedRequest { get; private set; }
+            public SavePriceUpdateFinishedAction? ExpectedFinishAction { get; private set; }
+
+            public void SetupPriceUpdateForAllTypes()
+            {
+                State = State with
+                {
+                    PriceUpdate = State.PriceUpdate with
+                    {
+                        UpdatePriceForAllTypes = true,
+                        Item = State.PriceUpdate.Item! with
+                        {
+                            TypeId = Guid.NewGuid()
+                        }
+                    }
+                };
+            }
+
+            public void SetupPriceUpdateForOneType()
+            {
+                State = State with
+                {
+                    PriceUpdate = State.PriceUpdate with
+                    {
+                        UpdatePriceForAllTypes = false,
+                        Item = State.PriceUpdate.Item! with
+                        {
+                            TypeId = Guid.NewGuid()
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedRequestForAllTypes()
+            {
+                ExpectedRequest = new UpdateItemPriceRequest(
+                    State.PriceUpdate.Item!.Id.ActualId!.Value,
+                    null,
+                    State.SelectedStoreId,
+                    State.PriceUpdate.Price);
+            }
+
+            public void SetupExpectedRequestForOneType()
+            {
+                ExpectedRequest = new UpdateItemPriceRequest(
+                    State.PriceUpdate.Item!.Id.ActualId!.Value,
+                    State.PriceUpdate.Item.TypeId,
+                    State.SelectedStoreId,
+                    State.PriceUpdate.Price);
+            }
+
+            public void SetupDispatchingStartAction()
+            {
+                SetupDispatchingAction<SavePriceUpdateStartedAction>();
+            }
+
+            public void SetupDispatchingCloseAction()
+            {
+                SetupDispatchingAction<ClosePriceUpdaterAction>();
+            }
+
+            public void SetupDispatchingFinishAction()
+            {
+                ExpectedFinishAction = new SavePriceUpdateFinishedAction(
+                    State.PriceUpdate.Item!.Id.ActualId!.Value,
+                    State.PriceUpdate.Item.TypeId,
+                    State.PriceUpdate.Price);
+                DispatcherMock
+                    .Setup(m => m.Dispatch(
+                        It.Is<SavePriceUpdateFinishedAction>(a => a.IsEquivalentTo(ExpectedFinishAction))))
+                    .InSequence();
+            }
+
+            public void SetupCallingEndpoint()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedRequest);
+                ApiClientMock.SetupUpdateItemPriceAsync(ExpectedRequest);
+            }
+
+            public void VerifyDispatchingStartAction()
+            {
+                VerifyDispatchingAction<SavePriceUpdateStartedAction>();
+            }
+
+            public void VerifyDispatchingCloseAction()
+            {
+                VerifyDispatchingAction<ClosePriceUpdaterAction>();
+            }
+
+            public void VerifyDispatchingFinishAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedFinishAction);
+                DispatcherMock.Setup(m =>
+                    m.Dispatch(It.Is<SavePriceUpdateFinishedAction>(a => a.IsEquivalentTo(ExpectedFinishAction))));
+            }
+
+            public void VerifyCallingEndpoint()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedRequest);
+                ApiClientMock.VerifyUpdateItemPriceAsync(ExpectedRequest, Times.Once);
+            }
+        }
+    }
+
     private abstract class ShoppingListEffectsFixture
     {
         protected readonly ShoppingListStateMock ShoppingListStateMock = new(MockBehavior.Strict);
         protected readonly ApiClientMock ApiClientMock = new(MockBehavior.Strict);
         protected readonly CommandQueueMock CommandQueueMock = new(MockBehavior.Strict);
+        protected ShoppingListState State;
 
-        public ShoppingListEffects CreatSut()
+        protected ShoppingListEffectsFixture()
+        {
+            State = new DomainTestBuilderBase<ShoppingListState>().Create();
+        }
+
+        public ShoppingListEffects CreateSut()
         {
             return new ShoppingListEffects(ApiClientMock.Object, CommandQueueMock.Object, ShoppingListStateMock.Object);
         }
 
-        public DispatcherMock DispatcherMock { get; } = new();
+        public DispatcherMock DispatcherMock { get; } = new(MockBehavior.Strict);
+
+        protected void SetupDispatchingAction<TAction>() where TAction : new()
+        {
+            DispatcherMock
+                .Setup(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(new TAction()))))
+                .InSequence();
+        }
+
+        protected void VerifyDispatchingAction<TAction>() where TAction : new()
+        {
+            DispatcherMock.Verify(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(new TAction()))), Times.Once);
+        }
+
+        public void SetupStateReturningState()
+        {
+            ShoppingListStateMock.SetupValue(State);
+        }
     }
 }
