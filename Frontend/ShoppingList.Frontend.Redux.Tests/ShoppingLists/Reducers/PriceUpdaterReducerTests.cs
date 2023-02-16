@@ -11,7 +11,7 @@ public class PriceUpdaterReducerTests
 {
     public class OnPriceOnPriceUpdaterChanged
     {
-        private OnPriceOnPriceUpdaterChangedFixture _fixture;
+        private readonly OnPriceOnPriceUpdaterChangedFixture _fixture;
 
         public OnPriceOnPriceUpdaterChanged()
         {
@@ -52,6 +52,55 @@ public class PriceUpdaterReducerTests
                     PriceUpdate = ExpectedState.PriceUpdate with
                     {
                         Price = new DomainTestBuilder<float>().Create()
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnUpdatePriceForAllTypesOnPriceUpdaterChangedChanged
+    {
+        private readonly OnUpdatePriceForAllTypesOnPriceUpdaterChangedChangedFixture _fixture;
+
+        public OnUpdatePriceForAllTypesOnPriceUpdaterChangedChanged()
+        {
+            _fixture = new OnUpdatePriceForAllTypesOnPriceUpdaterChangedChangedFixture();
+        }
+
+        [Fact]
+        public void OnUpdatePriceForAllTypesOnPriceUpdaterChangedChanged_ShouldUpdatePrice()
+        {
+            // Arrange
+            _fixture.SetupAction();
+            _fixture.SetupInitialState();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ChangeAction);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.InitialState);
+
+            // Act
+            var result = PriceUpdaterReducer.OnUpdatePriceForAllTypesOnPriceUpdaterChanged(_fixture.InitialState, _fixture.ChangeAction);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnUpdatePriceForAllTypesOnPriceUpdaterChangedChangedFixture : PriceUpdaterReducerFixture
+        {
+            public UpdatePriceForAllTypesOnPriceUpdaterChangedAction? ChangeAction { get; private set; }
+            public ShoppingListState? InitialState { get; private set; }
+
+            public void SetupAction()
+            {
+                ChangeAction = new UpdatePriceForAllTypesOnPriceUpdaterChangedAction(ExpectedState.PriceUpdate.UpdatePriceForAllTypes);
+            }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    PriceUpdate = ExpectedState.PriceUpdate with
+                    {
+                        UpdatePriceForAllTypes = !ExpectedState.PriceUpdate.UpdatePriceForAllTypes
                     }
                 };
             }
