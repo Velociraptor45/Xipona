@@ -87,7 +87,7 @@ public static class PriceUpdaterReducer
             for (int ii = 0; ii < items.Count; ii++)
             {
                 var item = items[ii];
-                if (item.Id.ActualId == action.ItemId && item.TypeId == action.ItemTypeId)
+                if (item.Id.ActualId == action.ItemId && (action.ItemTypeId is null || item.TypeId == action.ItemTypeId))
                 {
                     items[ii] = item with
                     {
