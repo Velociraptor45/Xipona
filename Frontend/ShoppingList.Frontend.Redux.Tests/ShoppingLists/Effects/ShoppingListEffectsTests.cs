@@ -23,8 +23,11 @@ public class ShoppingListEffectsTests
         public async Task HandleLoadAllActiveStoresAction_WithoutStores_ShouldDispatchFinishedAction()
         {
             // Arrange
+            using var seq = Sequence.Create();
+
             _fixture.SetupExpectedStoresEmpty();
             _fixture.SetupFindingStoresForShoppingList();
+            _fixture.SetupDispatchingLoadFinishedAction();
             var sut = _fixture.CreateSut();
 
             // Act
@@ -38,8 +41,11 @@ public class ShoppingListEffectsTests
         public async Task HandleLoadAllActiveStoresAction_WithoutStores_ShouldNotDispatchChangeAction()
         {
             // Arrange
+            using var seq = Sequence.Create();
+
             _fixture.SetupExpectedStoresEmpty();
             _fixture.SetupFindingStoresForShoppingList();
+            _fixture.SetupDispatchingLoadFinishedAction();
             var sut = _fixture.CreateSut();
 
             // Act
@@ -50,11 +56,15 @@ public class ShoppingListEffectsTests
         }
 
         [Fact]
-        public async Task HandleLoadAllActiveStoresAction_WithStores_ShouldDispatchFinishedChangeAction()
+        public async Task HandleLoadAllActiveStoresAction_WithStores_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
+            using var seq = Sequence.Create();
+
             _fixture.SetupExpectedStores();
             _fixture.SetupFindingStoresForShoppingList();
+            _fixture.SetupDispatchingLoadFinishedAction();
+            _fixture.SetupDispatchingChangeAction();
             var sut = _fixture.CreateSut();
 
             // Act
@@ -67,6 +77,8 @@ public class ShoppingListEffectsTests
         private sealed class HandleLoadAllActiveStoresActionFixture : ShoppingListEffectsFixture
         {
             public IReadOnlyCollection<ShoppingListStore>? ExpectedStoresForShoppingList { get; private set; }
+            public LoadAllActiveStoresFinishedAction? ExpectedLoadFinishedAction { get; private set; }
+            public SelectedStoreChangedAction? ExpectedStoreChangeAction { get; private set; }
 
             public void SetupExpectedStoresEmpty()
             {
@@ -84,16 +96,47 @@ public class ShoppingListEffectsTests
                 ApiClientMock.SetupGetAllActiveStoresForShoppingListAsync(ExpectedStoresForShoppingList);
             }
 
+            public void SetupDispatchingChangeAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedStoresForShoppingList);
+                ExpectedStoreChangeAction = new SelectedStoreChangedAction(ExpectedStoresForShoppingList.First().Id);
+                DispatcherMock
+                    .Setup(m => m.Dispatch(
+                        It.Is<SelectedStoreChangedAction>(a => a.IsEquivalentTo(ExpectedStoreChangeAction))))
+                    .InSequence();
+            }
+
+            public void VerifyDispatchingChangeAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedStoreChangeAction);
+                DispatcherMock
+                    .Verify(m => m.Dispatch(
+                        It.Is<SelectedStoreChangedAction>(a => a.IsEquivalentTo(ExpectedStoreChangeAction))),
+                        Times.Once);
+            }
+
             public void VerifyNotDispatchingChangeAction()
             {
                 DispatcherMock.Verify(m => m.Dispatch(It.IsAny<SelectedStoreChangedAction>()), Times.Never);
             }
 
-            public void VerifyDispatchingLoadFinishedAction()
+            public void SetupDispatchingLoadFinishedAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedStoresForShoppingList);
+
+                ExpectedLoadFinishedAction =
+                    new LoadAllActiveStoresFinishedAction(new AllActiveStores(ExpectedStoresForShoppingList));
+                DispatcherMock
+                    .Setup(m => m.Dispatch(
+                        It.Is<LoadAllActiveStoresFinishedAction>(a => a.IsEquivalentTo(ExpectedLoadFinishedAction))))
+                    .InSequence();
+            }
+
+            public void VerifyDispatchingLoadFinishedAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedLoadFinishedAction);
                 DispatcherMock.Verify(m => m.Dispatch(
-                    It.Is<LoadAllActiveStoresFinishedAction>(a => a.Stores.Stores.IsEquivalentTo(ExpectedStoresForShoppingList))));
+                    It.Is<LoadAllActiveStoresFinishedAction>(a => a.IsEquivalentTo(ExpectedLoadFinishedAction))));
             }
         }
     }
@@ -113,6 +156,33 @@ public class ShoppingListEffectsTests
             // Arrange
             _fixture.SetupPriceUpdateForAllTypes();
             _fixture.SetupExpectedRequestForAllTypes();
+
+            using var seq = Sequence.Create();
+
+            _fixture.SetupDispatchingStartAction();
+            _fixture.SetupCallingEndpoint();
+            _fixture.SetupDispatchingFinishAction();
+            _fixture.SetupDispatchingCloseAction();
+
+            _fixture.SetupStateReturningState();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSavePriceUpdateAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            _fixture.VerifyDispatchingStartAction();
+            _fixture.VerifyCallingEndpoint();
+            _fixture.VerifyDispatchingFinishAction();
+            _fixture.VerifyDispatchingCloseAction();
+        }
+
+        [Fact]
+        public async Task HandleSavePriceUpdateAction_WithUpdatingOneType_ShouldCallApiAndDispatchActionsInCorrectOrderAsync()
+        {
+            // Arrange
+            _fixture.SetupPriceUpdateForOneType();
+            _fixture.SetupExpectedRequestForOneType();
 
             using var seq = Sequence.Create();
 
