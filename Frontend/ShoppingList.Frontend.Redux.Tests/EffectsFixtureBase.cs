@@ -34,4 +34,9 @@ public abstract class EffectsFixtureBase
     {
         VerifyDispatchingAction(new TAction());
     }
+
+    protected void VerifyNotDispatchingAction<TAction>() where TAction : new()
+    {
+        DispatcherMock.Verify(m => m.Dispatch(It.IsAny<TAction>()), Times.Never);
+    }
 }

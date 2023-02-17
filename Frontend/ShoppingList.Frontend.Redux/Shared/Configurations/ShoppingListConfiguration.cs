@@ -2,5 +2,5 @@
 
 public class ShoppingListConfiguration
 {
-    public TimeSpan SearchDelayAfterInput { get; init; };
+    public TimeSpan SearchDelayAfterInput { get; init; }
 }
