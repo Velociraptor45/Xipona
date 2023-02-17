@@ -44,4 +44,12 @@ public class ApiClientMock : Mock<IApiClient>
     {
         Verify(m => m.FinishListAsync(It.Is<FinishListRequest>(r => r.IsRequestEquivalentTo(request))), times);
     }
+
+    public void SetupSearchItemsForShoppingListAsync(string searchInput, Guid storeId,
+        IEnumerable<SearchItemForShoppingListResult> returnValue)
+    {
+        Setup(m => m.SearchItemsForShoppingListAsync(searchInput, storeId, It.IsAny<CancellationToken>()))
+            .InSequence()
+            .ReturnsAsync(returnValue);
+    }
 }

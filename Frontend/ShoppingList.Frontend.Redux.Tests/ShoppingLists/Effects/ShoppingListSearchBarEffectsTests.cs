@@ -1,6 +1,8 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Configurations;
+﻿using Moq.Sequences;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Configurations;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
 
@@ -101,6 +103,123 @@ public class ShoppingListSearchBarEffectsTests
             public void VerifyNotDispatchingSearchAction()
             {
                 VerifyNotDispatchingAction<SearchItemForShoppingListAction>();
+            }
+        }
+    }
+
+    public class HandleSearchItemForShoppingListAction
+    {
+        private HandleSearchItemForShoppingListActionFixture _fixture;
+
+        public HandleSearchItemForShoppingListAction()
+        {
+            _fixture = new HandleSearchItemForShoppingListActionFixture();
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task HandleSearchItemForShoppingListAction_WithEmptyInput_ShouldDoNothing(string input)
+        {
+            // Arrange
+            _fixture.SetupInput(input);
+            _fixture.SetupAction();
+
+            _fixture.SetupStateReturningState();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await sut.HandleSearchItemForShoppingListAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            _fixture.VerifyNotDispatchingFinishAction();
+        }
+
+        [Fact]
+        public async Task HandleSearchItemForShoppingListAction_WithValidInput_ShouldDispatchExpectedAction()
+        {
+            // Arrange
+            using var seq = Sequence.Create();
+
+            _fixture.SetupInput();
+            _fixture.SetupAction();
+            _fixture.SetupSearchResult();
+            _fixture.SetupSearchingForItems();
+            _fixture.SetupDispatchingFinishAction();
+
+            _fixture.SetupStateReturningState();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await sut.HandleSearchItemForShoppingListAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            _fixture.VerifyDispatchingFinishAction();
+        }
+
+        private sealed class HandleSearchItemForShoppingListActionFixture : ShoppingListSearchBarEffectsFixture
+        {
+            private string? _input;
+            private List<SearchItemForShoppingListResult>? _searchResult;
+
+            public SearchItemForShoppingListAction? Action { get; private set; }
+            public SearchItemForShoppingListFinishedAction? ExpectedAction { get; private set; }
+
+            public void SetupInput()
+            {
+                SetupInput(new DomainTestBuilder<string>().Create());
+            }
+
+            public void SetupInput(string input)
+            {
+                _input = input;
+                State = State with
+                {
+                    SearchBar = State.SearchBar with
+                    {
+                        Input = _input
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new SearchItemForShoppingListAction();
+            }
+
+            public void SetupSearchResult()
+            {
+                _searchResult = new DomainTestBuilder<SearchItemForShoppingListResult>().CreateMany(2).ToList();
+            }
+
+            public void SetupSearchingForItems()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_input);
+                TestPropertyNotSetException.ThrowIfNull(_searchResult);
+
+                ApiClientMock.SetupSearchItemsForShoppingListAsync(_input, State.SelectedStoreId, _searchResult);
+            }
+
+            public void SetupDispatchingFinishAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_searchResult);
+
+                ExpectedAction = new SearchItemForShoppingListFinishedAction(_searchResult);
+                SetupDispatchingAction(ExpectedAction);
+            }
+
+            public void VerifyDispatchingFinishAction()
+            {
+                VerifyDispatchingAction(ExpectedAction);
+            }
+
+            public void VerifyNotDispatchingFinishAction()
+            {
+                VerifyNotDispatchingAction<SearchItemForShoppingListFinishedAction>();
             }
         }
     }
