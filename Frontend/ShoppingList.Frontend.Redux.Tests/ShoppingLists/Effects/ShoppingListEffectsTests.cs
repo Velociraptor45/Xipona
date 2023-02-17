@@ -11,7 +11,6 @@ using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
-using ProjectHermes.ShoppingList.Frontend.TestTools.Extensions;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.ShoppingLists.Effects;
 
@@ -424,50 +423,11 @@ public class ShoppingListEffectsTests
         }
     }
 
-    private abstract class ShoppingListEffectsFixture
+    private abstract class ShoppingListEffectsFixture : ShoppingListEffectsFixtureBase
     {
-        protected readonly ShoppingListStateMock ShoppingListStateMock = new(MockBehavior.Strict);
-        protected readonly ApiClientMock ApiClientMock = new(MockBehavior.Strict);
-        protected readonly CommandQueueMock CommandQueueMock = new(MockBehavior.Strict);
-        protected ShoppingListState State;
-
-        protected ShoppingListEffectsFixture()
-        {
-            State = new DomainTestBuilder<ShoppingListState>().Create();
-        }
-
         public ShoppingListEffects CreateSut()
         {
             return new ShoppingListEffects(ApiClientMock.Object, CommandQueueMock.Object, ShoppingListStateMock.Object);
-        }
-
-        public DispatcherMock DispatcherMock { get; } = new(MockBehavior.Strict);
-
-        protected void SetupDispatchingAction<TAction>(TAction action)
-        {
-            DispatcherMock
-                .Setup(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(action))))
-                .InSequence();
-        }
-
-        protected void SetupDispatchingAction<TAction>() where TAction : new()
-        {
-            SetupDispatchingAction(new TAction());
-        }
-
-        protected void VerifyDispatchingAction<TAction>(TAction action)
-        {
-            DispatcherMock.Verify(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(action))), Times.Once);
-        }
-
-        protected void VerifyDispatchingAction<TAction>() where TAction : new()
-        {
-            VerifyDispatchingAction(new TAction());
-        }
-
-        public void SetupStateReturningState()
-        {
-            ShoppingListStateMock.SetupValue(State);
         }
     }
 }
