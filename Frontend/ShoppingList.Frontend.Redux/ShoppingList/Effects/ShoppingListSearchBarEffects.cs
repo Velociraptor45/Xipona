@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Configurations;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
@@ -12,14 +13,16 @@ public sealed class ShoppingListSearchBarEffects : IDisposable
 {
     private readonly IApiClient _client;
     private readonly IState<ShoppingListState> _state;
-
+    private readonly ShoppingListConfiguration _config;
     private Timer? _startSearchTimer;
     private CancellationTokenSource? _searchCancellationTokenSource;
 
-    public ShoppingListSearchBarEffects(IApiClient client, IState<ShoppingListState> state)
+    public ShoppingListSearchBarEffects(IApiClient client, IState<ShoppingListState> state,
+        ShoppingListConfiguration config)
     {
         _client = client;
         _state = state;
+        _config = config;
     }
 
     [EffectMethod]
@@ -38,7 +41,7 @@ public sealed class ShoppingListSearchBarEffects : IDisposable
             _startSearchTimer.Dispose();
         }
 
-        _startSearchTimer = new(300d);
+        _startSearchTimer = new(_config.SearchDelayAfterInput);
         _startSearchTimer.AutoReset = false;
         _startSearchTimer.Elapsed += (_, _) => dispatcher.Dispatch(new SearchItemForShoppingListAction());
         _startSearchTimer.Start();
