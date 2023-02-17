@@ -52,4 +52,32 @@ public class ApiClientMock : Mock<IApiClient>
             .InSequence()
             .ReturnsAsync(returnValue);
     }
+
+    public void SetupAddItemToShoppingListAsync(AddItemToShoppingListRequest request)
+    {
+        Setup(m => m.AddItemToShoppingListAsync(It.Is<AddItemToShoppingListRequest>(r => r.IsRequestEquivalentTo(request))))
+            .InSequence()
+            .Returns(Task.CompletedTask);
+    }
+
+    public void VerifyAddItemToShoppingListAsync(AddItemToShoppingListRequest request, Func<Times> times)
+    {
+        Verify(m =>
+            m.AddItemToShoppingListAsync(It.Is<AddItemToShoppingListRequest>(r => r.IsRequestEquivalentTo(request))),
+            times);
+    }
+
+    public void SetupAddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request)
+    {
+        Setup(m => m.AddItemWithTypeToShoppingListAsync(It.Is<AddItemWithTypeToShoppingListRequest>(r => r.IsRequestEquivalentTo(request))))
+            .InSequence()
+            .Returns(Task.CompletedTask);
+    }
+
+    public void VerifyAddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request, Func<Times> times)
+    {
+        Verify(m =>
+            m.AddItemWithTypeToShoppingListAsync(It.Is<AddItemWithTypeToShoppingListRequest>(r => r.IsRequestEquivalentTo(request))),
+            times);
+    }
 }

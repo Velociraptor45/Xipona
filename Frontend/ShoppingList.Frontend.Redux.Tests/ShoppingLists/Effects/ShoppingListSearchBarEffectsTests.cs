@@ -1,5 +1,8 @@
-﻿using Moq.Sequences;
+﻿using Moq;
+using Moq.Sequences;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Configurations;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
@@ -12,7 +15,7 @@ public class ShoppingListSearchBarEffectsTests
 {
     public class HandleItemForShoppingListSearchInputChangedAction
     {
-        private HandleItemForShoppingListSearchInputChangedActionFixture _fixture;
+        private readonly HandleItemForShoppingListSearchInputChangedActionFixture _fixture;
 
         public HandleItemForShoppingListSearchInputChangedAction()
         {
@@ -109,7 +112,7 @@ public class ShoppingListSearchBarEffectsTests
 
     public class HandleSearchItemForShoppingListAction
     {
-        private HandleSearchItemForShoppingListActionFixture _fixture;
+        private readonly HandleSearchItemForShoppingListActionFixture _fixture;
 
         public HandleSearchItemForShoppingListAction()
         {
@@ -220,6 +223,190 @@ public class ShoppingListSearchBarEffectsTests
             public void VerifyNotDispatchingFinishAction()
             {
                 VerifyNotDispatchingAction<SearchItemForShoppingListFinishedAction>();
+            }
+        }
+    }
+
+    public class HandleItemForShoppingListSearchResultSelectedAction
+    {
+        private readonly HandleItemForShoppingListSearchResultSelectedActionFixture _fixture;
+
+        public HandleItemForShoppingListSearchResultSelectedAction()
+        {
+            _fixture = new HandleItemForShoppingListSearchResultSelectedActionFixture();
+        }
+
+        [Fact]
+        public async Task HandleItemForShoppingListSearchResultSelectedAction_WithoutType_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        {
+            // Arrange
+            using var seq = Sequence.Create();
+
+            _fixture.SetupExpectedRequestWithoutType();
+            _fixture.SetupActionWithoutType();
+            _fixture.SetupStateWithoutType();
+            _fixture.SetupAddingItemWithoutType();
+            _fixture.SetupDispatchingChangeAction();
+
+            _fixture.SetupStateReturningState();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await sut.HandleItemForShoppingListSearchResultSelectedAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            _fixture.VerifyAddingItemWithoutType();
+            _fixture.VerifyDispatchingChangeAction();
+        }
+
+        [Fact]
+        public async Task HandleItemForShoppingListSearchResultSelectedAction_WithType_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        {
+            // Arrange
+            using var seq = Sequence.Create();
+
+            _fixture.SetupExpectedRequestWithType();
+            _fixture.SetupActionWithType();
+            _fixture.SetupStateWithType();
+            _fixture.SetupAddingItemWithType();
+            _fixture.SetupDispatchingChangeAction();
+
+            _fixture.SetupStateReturningState();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await sut.HandleItemForShoppingListSearchResultSelectedAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            _fixture.VerifyAddingItemWithType();
+            _fixture.VerifyDispatchingChangeAction();
+        }
+
+        private sealed class HandleItemForShoppingListSearchResultSelectedActionFixture :
+            ShoppingListSearchBarEffectsFixture
+        {
+            private AddItemToShoppingListRequest? _expectedRequestWithoutType;
+            private AddItemWithTypeToShoppingListRequest? _expectedRequestWithType;
+            private SelectedStoreChangedAction? _expectedChangeAction;
+
+            public ItemForShoppingListSearchResultSelectedAction? Action { get; private set; }
+
+            public void SetupExpectedRequestWithoutType()
+            {
+                _expectedRequestWithoutType = new DomainTestBuilder<AddItemToShoppingListRequest>()
+                    .FillConstructorWith("quantity", (float)new DomainTestBuilder<int>().Create())
+                    .Create();
+            }
+
+            public void SetupExpectedRequestWithType()
+            {
+                _expectedRequestWithType = new DomainTestBuilder<AddItemWithTypeToShoppingListRequest>().Create();
+            }
+
+            public void SetupStateWithoutType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedRequestWithoutType);
+
+                State = State with
+                {
+                    ShoppingList = State.ShoppingList! with
+                    {
+                        Id = _expectedRequestWithoutType.ShoppingListId
+                    }
+                };
+            }
+
+            public void SetupStateWithType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedRequestWithType);
+
+                State = State with
+                {
+                    ShoppingList = State.ShoppingList! with
+                    {
+                        Id = _expectedRequestWithType.ShoppingListId
+                    }
+                };
+            }
+
+            public void SetupActionWithoutType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedRequestWithoutType);
+
+                Action = new ItemForShoppingListSearchResultSelectedAction(
+                    new SearchItemForShoppingListResult(
+                        _expectedRequestWithoutType.ItemId.ActualId!.Value,
+                        null,
+                        "",
+                        0,
+                        (int)_expectedRequestWithoutType.Quantity,
+                        "",
+                        "",
+                        "",
+                        _expectedRequestWithoutType.SectionId!.Value));
+            }
+
+            public void SetupActionWithType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedRequestWithType);
+
+                Action = new ItemForShoppingListSearchResultSelectedAction(
+                    new SearchItemForShoppingListResult(
+                        _expectedRequestWithType.ItemId,
+                        _expectedRequestWithType.ItemTypeId,
+                        "",
+                        0,
+                        (int)_expectedRequestWithType.Quantity,
+                        "",
+                        "",
+                        "",
+                        _expectedRequestWithType.SectionId!.Value));
+            }
+
+            public void SetupAddingItemWithoutType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedRequestWithoutType);
+                ApiClientMock.SetupAddItemToShoppingListAsync(_expectedRequestWithoutType);
+            }
+
+            public void SetupAddingItemWithType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedRequestWithType);
+                ApiClientMock.SetupAddItemWithTypeToShoppingListAsync(_expectedRequestWithType);
+            }
+
+            public void VerifyAddingItemWithoutType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedRequestWithoutType);
+                ApiClientMock.VerifyAddItemToShoppingListAsync(_expectedRequestWithoutType, Times.Once);
+            }
+
+            public void VerifyAddingItemWithType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedRequestWithType);
+                ApiClientMock.VerifyAddItemWithTypeToShoppingListAsync(_expectedRequestWithType, Times.Once);
+            }
+
+            public void SetupDispatchingChangeAction()
+            {
+                _expectedChangeAction = new SelectedStoreChangedAction(State.SelectedStoreId);
+                SetupDispatchingAction(_expectedChangeAction);
+            }
+
+            public void VerifyDispatchingChangeAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedChangeAction);
+                VerifyDispatchingAction(_expectedChangeAction);
+            }
+
+            public void VerifyNotDispatchingChangeAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedChangeAction);
+                VerifyNotDispatchingAction<SelectedStoreChangedAction>();
             }
         }
     }
