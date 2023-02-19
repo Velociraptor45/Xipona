@@ -1,5 +1,5 @@
 ﻿using Moq;
-using Moq.Sequences;
+using Moq.Contrib.InOrder.Extensions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
@@ -16,15 +16,13 @@ public class ApiClientMock : Mock<IApiClient>
 
     public void SetupGetAllActiveStoresForShoppingListAsync(IEnumerable<ShoppingListStore> returnValue)
     {
-        Setup(m => m.GetAllActiveStoresForShoppingListAsync())
-            .InSequence()
+        this.SetupInOrder(m => m.GetAllActiveStoresForShoppingListAsync())
             .ReturnsAsync(returnValue);
     }
 
     public void SetupUpdateItemPriceAsync(UpdateItemPriceRequest request)
     {
-        Setup(m => m.UpdateItemPriceAsync(It.Is<UpdateItemPriceRequest>(r => r.IsRequestEquivalentTo(request))))
-            .InSequence()
+        this.SetupInOrder(m => m.UpdateItemPriceAsync(It.Is<UpdateItemPriceRequest>(r => r.IsRequestEquivalentTo(request))))
             .Returns(Task.CompletedTask);
     }
 
@@ -35,8 +33,7 @@ public class ApiClientMock : Mock<IApiClient>
 
     public void SetupFinishListAsync(FinishListRequest request)
     {
-        Setup(m => m.FinishListAsync(It.Is<FinishListRequest>(r => r.IsRequestEquivalentTo(request))))
-            .InSequence()
+        this.SetupInOrder(m => m.FinishListAsync(It.Is<FinishListRequest>(r => r.IsRequestEquivalentTo(request))))
             .Returns(Task.CompletedTask);
     }
 
@@ -48,15 +45,13 @@ public class ApiClientMock : Mock<IApiClient>
     public void SetupSearchItemsForShoppingListAsync(string searchInput, Guid storeId,
         IEnumerable<SearchItemForShoppingListResult> returnValue)
     {
-        Setup(m => m.SearchItemsForShoppingListAsync(searchInput, storeId, It.IsAny<CancellationToken>()))
-            .InSequence()
+        this.SetupInOrder(m => m.SearchItemsForShoppingListAsync(searchInput, storeId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);
     }
 
     public void SetupAddItemToShoppingListAsync(AddItemToShoppingListRequest request)
     {
-        Setup(m => m.AddItemToShoppingListAsync(It.Is<AddItemToShoppingListRequest>(r => r.IsRequestEquivalentTo(request))))
-            .InSequence()
+        this.SetupInOrder(m => m.AddItemToShoppingListAsync(It.Is<AddItemToShoppingListRequest>(r => r.IsRequestEquivalentTo(request))))
             .Returns(Task.CompletedTask);
     }
 
@@ -69,8 +64,7 @@ public class ApiClientMock : Mock<IApiClient>
 
     public void SetupAddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request)
     {
-        Setup(m => m.AddItemWithTypeToShoppingListAsync(It.Is<AddItemWithTypeToShoppingListRequest>(r => r.IsRequestEquivalentTo(request))))
-            .InSequence()
+        this.SetupInOrder(m => m.AddItemWithTypeToShoppingListAsync(It.Is<AddItemWithTypeToShoppingListRequest>(r => r.IsRequestEquivalentTo(request))))
             .Returns(Task.CompletedTask);
     }
 

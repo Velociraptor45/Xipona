@@ -1,5 +1,5 @@
 ﻿using Moq;
-using Moq.Sequences;
+using Moq.Contrib.InOrder;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
@@ -24,29 +24,31 @@ public class ShoppingListEffectsTests
         public async Task HandleLoadAllActiveStoresAction_WithoutStores_ShouldDispatchFinishedAction()
         {
             // Arrange
-            using var seq = Sequence.Create();
-
-            _fixture.SetupExpectedStoresEmpty();
-            _fixture.SetupFindingStoresForShoppingList();
-            _fixture.SetupDispatchingLoadFinishedAction();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupExpectedStoresEmpty();
+                _fixture.SetupFindingStoresForShoppingList();
+                _fixture.SetupDispatchingLoadFinishedAction();
+            });
             var sut = _fixture.CreateSut();
 
             // Act
             await sut.HandleLoadAllActiveStoresAction(_fixture.DispatcherMock.Object);
 
             // Assert
-            _fixture.VerifyDispatchingLoadFinishedAction();
+            queue.VerifyOrder();
         }
 
         [Fact]
         public async Task HandleLoadAllActiveStoresAction_WithoutStores_ShouldNotDispatchChangeAction()
         {
             // Arrange
-            using var seq = Sequence.Create();
-
-            _fixture.SetupExpectedStoresEmpty();
-            _fixture.SetupFindingStoresForShoppingList();
-            _fixture.SetupDispatchingLoadFinishedAction();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupExpectedStoresEmpty();
+                _fixture.SetupFindingStoresForShoppingList();
+                _fixture.SetupDispatchingLoadFinishedAction();
+            });
             var sut = _fixture.CreateSut();
 
             // Act
@@ -54,25 +56,27 @@ public class ShoppingListEffectsTests
 
             // Assert
             _fixture.VerifyNotDispatchingChangeAction();
+            queue.VerifyOrder();
         }
 
         [Fact]
         public async Task HandleLoadAllActiveStoresAction_WithStores_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
-            using var seq = Sequence.Create();
-
-            _fixture.SetupExpectedStores();
-            _fixture.SetupFindingStoresForShoppingList();
-            _fixture.SetupDispatchingLoadFinishedAction();
-            _fixture.SetupDispatchingChangeAction();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupExpectedStores();
+                _fixture.SetupFindingStoresForShoppingList();
+                _fixture.SetupDispatchingLoadFinishedAction();
+                _fixture.SetupDispatchingChangeAction();
+            });
             var sut = _fixture.CreateSut();
 
             // Act
             await sut.HandleLoadAllActiveStoresAction(_fixture.DispatcherMock.Object);
 
             // Assert
-            _fixture.VerifyDispatchingLoadFinishedAction();
+            queue.VerifyOrder();
         }
 
         private sealed class HandleLoadAllActiveStoresActionFixture : ShoppingListEffectsFixture
@@ -104,12 +108,6 @@ public class ShoppingListEffectsTests
                 SetupDispatchingAction(ExpectedStoreChangeAction);
             }
 
-            public void VerifyDispatchingChangeAction()
-            {
-                TestPropertyNotSetException.ThrowIfNull(ExpectedStoreChangeAction);
-                VerifyDispatchingAction(ExpectedStoreChangeAction);
-            }
-
             public void VerifyNotDispatchingChangeAction()
             {
                 DispatcherMock.Verify(m => m.Dispatch(It.IsAny<SelectedStoreChangedAction>()), Times.Never);
@@ -122,12 +120,6 @@ public class ShoppingListEffectsTests
                 ExpectedLoadFinishedAction =
                     new LoadAllActiveStoresFinishedAction(new AllActiveStores(ExpectedStoresForShoppingList));
                 SetupDispatchingAction(ExpectedLoadFinishedAction);
-            }
-
-            public void VerifyDispatchingLoadFinishedAction()
-            {
-                TestPropertyNotSetException.ThrowIfNull(ExpectedLoadFinishedAction);
-                VerifyDispatchingAction(ExpectedLoadFinishedAction);
             }
         }
     }
@@ -148,12 +140,13 @@ public class ShoppingListEffectsTests
             _fixture.SetupPriceUpdateForAllTypes();
             _fixture.SetupExpectedRequestForAllTypes();
 
-            using var seq = Sequence.Create();
-
-            _fixture.SetupDispatchingStartAction();
-            _fixture.SetupCallingEndpoint();
-            _fixture.SetupDispatchingFinishActionForAllTypes();
-            _fixture.SetupDispatchingCloseAction();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartAction();
+                _fixture.SetupCallingEndpoint();
+                _fixture.SetupDispatchingFinishActionForAllTypes();
+                _fixture.SetupDispatchingCloseAction();
+            });
 
             _fixture.SetupStateReturningState();
             var sut = _fixture.CreateSut();
@@ -162,10 +155,8 @@ public class ShoppingListEffectsTests
             await sut.HandleSavePriceUpdateAction(_fixture.DispatcherMock.Object);
 
             // Assert
-            _fixture.VerifyDispatchingStartAction();
             _fixture.VerifyCallingEndpoint();
-            _fixture.VerifyDispatchingFinishAction();
-            _fixture.VerifyDispatchingCloseAction();
+            queue.VerifyOrder();
         }
 
         [Fact]
@@ -175,12 +166,13 @@ public class ShoppingListEffectsTests
             _fixture.SetupPriceUpdateForOneType();
             _fixture.SetupExpectedRequestForOneType();
 
-            using var seq = Sequence.Create();
-
-            _fixture.SetupDispatchingStartAction();
-            _fixture.SetupCallingEndpoint();
-            _fixture.SetupDispatchingFinishActionForOneType();
-            _fixture.SetupDispatchingCloseAction();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartAction();
+                _fixture.SetupCallingEndpoint();
+                _fixture.SetupDispatchingFinishActionForOneType();
+                _fixture.SetupDispatchingCloseAction();
+            });
 
             _fixture.SetupStateReturningState();
             var sut = _fixture.CreateSut();
@@ -189,10 +181,8 @@ public class ShoppingListEffectsTests
             await sut.HandleSavePriceUpdateAction(_fixture.DispatcherMock.Object);
 
             // Assert
-            _fixture.VerifyDispatchingStartAction();
             _fixture.VerifyCallingEndpoint();
-            _fixture.VerifyDispatchingFinishAction();
-            _fixture.VerifyDispatchingCloseAction();
+            queue.VerifyOrder();
         }
 
         private sealed class HandleSavePriceUpdateActionFixture : ShoppingListEffectsFixture
@@ -282,22 +272,6 @@ public class ShoppingListEffectsTests
                 ApiClientMock.SetupUpdateItemPriceAsync(ExpectedRequest);
             }
 
-            public void VerifyDispatchingStartAction()
-            {
-                VerifyDispatchingAction<SavePriceUpdateStartedAction>();
-            }
-
-            public void VerifyDispatchingCloseAction()
-            {
-                VerifyDispatchingAction<ClosePriceUpdaterAction>();
-            }
-
-            public void VerifyDispatchingFinishAction()
-            {
-                TestPropertyNotSetException.ThrowIfNull(ExpectedFinishAction);
-                VerifyDispatchingAction(ExpectedFinishAction);
-            }
-
             public void VerifyCallingEndpoint()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedRequest);
@@ -308,7 +282,7 @@ public class ShoppingListEffectsTests
 
     public class HandleFinishShoppingListAction
     {
-        private HandleFinishShoppingListActionFixture _fixture;
+        private readonly HandleFinishShoppingListActionFixture _fixture;
 
         public HandleFinishShoppingListAction()
         {
@@ -329,13 +303,14 @@ public class ShoppingListEffectsTests
             DateTimeOffset expectedFinishedAt)
         {
             // Arrange
-            using var seq = Sequence.Create();
-
-            _fixture.SetupExpectedFinisheRequest(expectedFinishedAt);
-            _fixture.SetupDispatchingStartAction();
-            _fixture.SetupFinishingList();
-            _fixture.SetupDispatchingFinishAction();
-            _fixture.SetupDispatchingStoreChangeAction();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupExpectedFinisheRequest(expectedFinishedAt);
+                _fixture.SetupDispatchingStartAction();
+                _fixture.SetupFinishingList();
+                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupDispatchingStoreChangeAction();
+            });
 
             _fixture.SetupStateReturningState();
             var sut = _fixture.CreateSut();
@@ -344,10 +319,8 @@ public class ShoppingListEffectsTests
             await sut.HandleFinishShoppingListAction(_fixture.DispatcherMock.Object);
 
             // Assert
-            _fixture.VerifyDispatchingStartAction();
             _fixture.VerifyFinishingList();
-            _fixture.VerifyDispatchingFinishAction();
-            _fixture.VerifyDispatchingStoreChangeAction();
+            queue.VerifyOrder();
         }
 
         private sealed class HandleFinishShoppingListActionFixture : ShoppingListEffectsFixture
@@ -397,22 +370,6 @@ public class ShoppingListEffectsTests
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedFinisheRequest);
                 ApiClientMock.SetupFinishListAsync(ExpectedFinisheRequest);
-            }
-
-            public void VerifyDispatchingStartAction()
-            {
-                VerifyDispatchingAction<FinishShoppingListStartedAction>();
-            }
-
-            public void VerifyDispatchingFinishAction()
-            {
-                VerifyDispatchingAction<FinishShoppingListFinishedAction>();
-            }
-
-            public void VerifyDispatchingStoreChangeAction()
-            {
-                TestPropertyNotSetException.ThrowIfNull(ExpectedStoreChangeAction);
-                VerifyDispatchingAction(ExpectedStoreChangeAction);
             }
 
             public void VerifyFinishingList()

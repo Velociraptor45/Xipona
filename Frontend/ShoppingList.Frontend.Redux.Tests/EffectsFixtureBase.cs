@@ -1,5 +1,5 @@
 ﻿using Moq;
-using Moq.Sequences;
+using Moq.Contrib.InOrder.Extensions;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Extensions;
@@ -16,8 +16,7 @@ public abstract class EffectsFixtureBase
     protected void SetupDispatchingAction<TAction>(TAction action)
     {
         DispatcherMock
-            .Setup(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(action))))
-            .InSequence();
+            .SetupInOrder(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(action))));
     }
 
     protected void SetupDispatchingAction<TAction>() where TAction : new()

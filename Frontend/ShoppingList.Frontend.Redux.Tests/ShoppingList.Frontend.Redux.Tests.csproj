@@ -12,7 +12,7 @@
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.9.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-    <PackageReference Include="Moq.Sequences" Version="2.2.1" />
+    <PackageReference Include="Moq.Contrib.InOrder" Version="1.0.0-alpha.4" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -27,7 +27,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ShoppingList.Frontend.Redux.TestKit\ShoppingList.Frontend.Redux.TestKit.csproj" />
     <ProjectReference Include="..\ShoppingList.Frontend.Redux\ShoppingList.Frontend.Redux.csproj" />
-    <ProjectReference Include="..\ShoppingList.Frontend.WebApp\ShoppingList.Frontend.WebApp.csproj" />
   </ItemGroup>
 
 </Project>

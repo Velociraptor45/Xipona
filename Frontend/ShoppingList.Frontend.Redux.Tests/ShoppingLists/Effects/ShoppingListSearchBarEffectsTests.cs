@@ -1,5 +1,5 @@
 ﻿using Moq;
-using Moq.Sequences;
+using Moq.Contrib.InOrder;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Configurations;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
@@ -47,6 +47,7 @@ public class ShoppingListSearchBarEffectsTests
         {
             // Arrange
             _fixture.SetupAction();
+            _fixture.SetupDispatchingSearchAction();
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -64,7 +65,9 @@ public class ShoppingListSearchBarEffectsTests
         {
             // Arrange
             _fixture.SetupAction();
+            _fixture.SetupDispatchingSearchAction();
             _fixture.SetupLongSearchDelay();
+
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -96,6 +99,11 @@ public class ShoppingListSearchBarEffectsTests
             public void SetupLongSearchDelay()
             {
                 SearchDelayInMilliseconds = 100;
+            }
+
+            public void SetupDispatchingSearchAction()
+            {
+                SetupDispatchingAction<SearchItemForShoppingListAction>();
             }
 
             public void VerifyDispatchingSearchAction()
@@ -144,13 +152,14 @@ public class ShoppingListSearchBarEffectsTests
         public async Task HandleSearchItemForShoppingListAction_WithValidInput_ShouldDispatchExpectedAction()
         {
             // Arrange
-            using var seq = Sequence.Create();
-
-            _fixture.SetupInput();
-            _fixture.SetupAction();
-            _fixture.SetupSearchResult();
-            _fixture.SetupSearchingForItems();
-            _fixture.SetupDispatchingFinishAction();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupInput();
+                _fixture.SetupAction();
+                _fixture.SetupSearchResult();
+                _fixture.SetupSearchingForItems();
+                _fixture.SetupDispatchingFinishAction();
+            });
 
             _fixture.SetupStateReturningState();
             var sut = _fixture.CreateSut();
@@ -161,7 +170,7 @@ public class ShoppingListSearchBarEffectsTests
             await sut.HandleSearchItemForShoppingListAction(_fixture.Action, _fixture.DispatcherMock.Object);
 
             // Assert
-            _fixture.VerifyDispatchingFinishAction();
+            queue.VerifyOrder();
         }
 
         private sealed class HandleSearchItemForShoppingListActionFixture : ShoppingListSearchBarEffectsFixture
@@ -215,11 +224,6 @@ public class ShoppingListSearchBarEffectsTests
                 SetupDispatchingAction(ExpectedAction);
             }
 
-            public void VerifyDispatchingFinishAction()
-            {
-                VerifyDispatchingAction(ExpectedAction);
-            }
-
             public void VerifyNotDispatchingFinishAction()
             {
                 VerifyNotDispatchingAction<SearchItemForShoppingListFinishedAction>();
@@ -240,13 +244,14 @@ public class ShoppingListSearchBarEffectsTests
         public async Task HandleItemForShoppingListSearchResultSelectedAction_WithoutType_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
-            using var seq = Sequence.Create();
-
-            _fixture.SetupExpectedRequestWithoutType();
-            _fixture.SetupActionWithoutType();
-            _fixture.SetupStateWithoutType();
-            _fixture.SetupAddingItemWithoutType();
-            _fixture.SetupDispatchingChangeAction();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupExpectedRequestWithoutType();
+                _fixture.SetupActionWithoutType();
+                _fixture.SetupStateWithoutType();
+                _fixture.SetupAddingItemWithoutType();
+                _fixture.SetupDispatchingChangeAction();
+            });
 
             _fixture.SetupStateReturningState();
             var sut = _fixture.CreateSut();
@@ -258,20 +263,21 @@ public class ShoppingListSearchBarEffectsTests
 
             // Assert
             _fixture.VerifyAddingItemWithoutType();
-            _fixture.VerifyDispatchingChangeAction();
+            queue.VerifyOrder();
         }
 
         [Fact]
         public async Task HandleItemForShoppingListSearchResultSelectedAction_WithType_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
-            using var seq = Sequence.Create();
-
-            _fixture.SetupExpectedRequestWithType();
-            _fixture.SetupActionWithType();
-            _fixture.SetupStateWithType();
-            _fixture.SetupAddingItemWithType();
-            _fixture.SetupDispatchingChangeAction();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupExpectedRequestWithType();
+                _fixture.SetupActionWithType();
+                _fixture.SetupStateWithType();
+                _fixture.SetupAddingItemWithType();
+                _fixture.SetupDispatchingChangeAction();
+            });
 
             _fixture.SetupStateReturningState();
             var sut = _fixture.CreateSut();
@@ -283,7 +289,7 @@ public class ShoppingListSearchBarEffectsTests
 
             // Assert
             _fixture.VerifyAddingItemWithType();
-            _fixture.VerifyDispatchingChangeAction();
+            queue.VerifyOrder();
         }
 
         private sealed class HandleItemForShoppingListSearchResultSelectedActionFixture :
@@ -395,12 +401,6 @@ public class ShoppingListSearchBarEffectsTests
             {
                 _expectedChangeAction = new SelectedStoreChangedAction(State.SelectedStoreId);
                 SetupDispatchingAction(_expectedChangeAction);
-            }
-
-            public void VerifyDispatchingChangeAction()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_expectedChangeAction);
-                VerifyDispatchingAction(_expectedChangeAction);
             }
 
             public void VerifyNotDispatchingChangeAction()
