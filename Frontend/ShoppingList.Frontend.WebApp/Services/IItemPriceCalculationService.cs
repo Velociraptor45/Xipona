@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
+namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services
 {
     public interface IItemPriceCalculationService
     {

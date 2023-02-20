@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using System;
 using System.Linq;
 
-namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
+namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services;
 
 public class ItemPriceCalculationService : IItemPriceCalculationService
 {
@@ -20,14 +20,14 @@ public class ItemPriceCalculationService : IItemPriceCalculationService
         if (type == null)
             throw new InvalidOperationException($"Quantity type {quantityTypeId} not recognized.");
 
-        float price = (quantity / type.QuantityNormalizer) * pricePerQuantity;
+        var price = quantity / type.QuantityNormalizer * pricePerQuantity;
 
         return (float)Math.Round(price * 100, MidpointRounding.AwayFromZero) / 100;
     }
 
     public float CalculatePrice(ShoppingListItem item)
     {
-        float price = (item.Quantity / item.QuantityType.QuantityNormalizer) * item.PricePerQuantity;
+        var price = item.Quantity / item.QuantityType.QuantityNormalizer * item.PricePerQuantity;
 
         return (float)Math.Round(price * 100, MidpointRounding.AwayFromZero) / 100;
     }

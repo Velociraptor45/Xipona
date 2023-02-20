@@ -26,9 +26,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.TestT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.Redux", "ShoppingList.Frontend.Redux\ShoppingList.Frontend.Redux.csproj", "{129E8366-DC98-4AB5-8B59-E6B91A2D5721}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Frontend.Redux.TestKit", "ShoppingList.Frontend.Redux.TestKit\ShoppingList.Frontend.Redux.TestKit.csproj", "{93A3121E-9D6E-45BF-972C-96BD7A2ACB0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.Redux.TestKit", "ShoppingList.Frontend.Redux.TestKit\ShoppingList.Frontend.Redux.TestKit.csproj", "{93A3121E-9D6E-45BF-972C-96BD7A2ACB0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Frontend.Redux.Tests", "ShoppingList.Frontend.Redux.Tests\ShoppingList.Frontend.Redux.Tests.csproj", "{C4BEE332-DDA4-4C77-88A0-2EF423F73A51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.Redux.Tests", "ShoppingList.Frontend.Redux.Tests\ShoppingList.Frontend.Redux.Tests.csproj", "{C4BEE332-DDA4-4C77-88A0-2EF423F73A51}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01_Execution", "01_Execution", "{866EDF30-7112-4ADC-9B81-E09B32269A87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Frontend.WebApp.Tests", "ShoppingList.Frontend.WebApp.Tests\ShoppingList.Frontend.WebApp.Tests.csproj", "{DC2DDC9A-F65B-4E69-A99F-927AB756FC97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +64,10 @@ Global
 		{C4BEE332-DDA4-4C77-88A0-2EF423F73A51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4BEE332-DDA4-4C77-88A0-2EF423F73A51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4BEE332-DDA4-4C77-88A0-2EF423F73A51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC2DDC9A-F65B-4E69-A99F-927AB756FC97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC2DDC9A-F65B-4E69-A99F-927AB756FC97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC2DDC9A-F65B-4E69-A99F-927AB756FC97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC2DDC9A-F65B-4E69-A99F-927AB756FC97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +80,8 @@ Global
 		{129E8366-DC98-4AB5-8B59-E6B91A2D5721} = {49182B40-8923-466B-BC25-8DC743CD4695}
 		{93A3121E-9D6E-45BF-972C-96BD7A2ACB0F} = {58D41EF0-51C7-41DA-96DF-AA514C9D9E72}
 		{C4BEE332-DDA4-4C77-88A0-2EF423F73A51} = {58D41EF0-51C7-41DA-96DF-AA514C9D9E72}
+		{866EDF30-7112-4ADC-9B81-E09B32269A87} = {B0F9BA1C-CF64-41E7-9865-6698E317F211}
+		{DC2DDC9A-F65B-4E69-A99F-927AB756FC97} = {866EDF30-7112-4ADC-9B81-E09B32269A87}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0798AF8-B771-4324-B367-501339CD7290}
