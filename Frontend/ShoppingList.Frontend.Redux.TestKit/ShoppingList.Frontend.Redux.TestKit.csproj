@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Moq.Contrib.InOrder" Version="1.0.0-alpha.4" />
+    <PackageReference Include="Moq.Contrib.InOrder" Version="1.0.0-alpha.5" />
   </ItemGroup>
 
   <ItemGroup>
