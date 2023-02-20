@@ -1,5 +1,6 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Configurations;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
@@ -234,7 +235,7 @@ public class ShoppingListItemEffectsTests
         public ShoppingListItemEffects CreateSut()
         {
             return new ShoppingListItemEffects(CommandQueueMock.Object, ShoppingListStateMock.Object,
-                NavigationManagerMock.Object);
+                NavigationManagerMock.Object, new ShoppingListConfiguration());
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Configurations;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
@@ -14,15 +15,17 @@ public sealed class ShoppingListItemEffects : IDisposable
     private readonly ICommandQueue _commandQueue;
     private readonly IState<ShoppingListState> _state;
     private readonly NavigationManager _navigationManager;
+    private readonly ShoppingListConfiguration _config;
 
     private Timer? _hideItemsTimer;
 
     public ShoppingListItemEffects(ICommandQueue commandQueue, IState<ShoppingListState> state,
-        NavigationManager navigationManager)
+        NavigationManager navigationManager, ShoppingListConfiguration config)
     {
         _commandQueue = commandQueue;
         _state = state;
         _navigationManager = navigationManager;
+        _config = config;
     }
 
     [EffectMethod]
@@ -94,7 +97,7 @@ public sealed class ShoppingListItemEffects : IDisposable
             _hideItemsTimer.Dispose();
         }
 
-        _hideItemsTimer = new(1000d);
+        _hideItemsTimer = new(_config.HideItemsDelay);
         _hideItemsTimer.AutoReset = false;
         _hideItemsTimer.Elapsed += (_, _) =>
         {

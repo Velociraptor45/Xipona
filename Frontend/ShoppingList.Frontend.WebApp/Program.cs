@@ -46,7 +46,8 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
         {
             var config = new ShoppingListConfiguration()
             {
-                SearchDelayAfterInput = TimeSpan.FromMilliseconds(300)
+                SearchDelayAfterInput = TimeSpan.FromMilliseconds(300),
+                HideItemsDelay = TimeSpan.FromMilliseconds(1000)
             };
             builder.Services.AddSingleton(config);
             builder.Services.AddTransient<IShoppingListApiClient, ShoppingListApiClient>();
