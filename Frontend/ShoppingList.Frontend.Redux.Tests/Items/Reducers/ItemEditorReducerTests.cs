@@ -317,6 +317,59 @@ public class ItemEditorReducerTests
         }
     }
 
+    public class OnItemCommentChanged
+    {
+        private readonly OnItemCommentChangedFixture _fixture;
+
+        public OnItemCommentChanged()
+        {
+            _fixture = new OnItemCommentChangedFixture();
+        }
+
+        [Fact]
+        public void OnItemCommentChanged_ShouldSetComment()
+        {
+            // Arrange
+            _fixture.SetupAction();
+            _fixture.SetupInitialState();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnItemCommentChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnItemCommentChangedFixture : ItemEditorReducerFixture
+        {
+            public ItemCommentChangedAction? Action { get; private set; }
+
+            public void SetupAction()
+            {
+                Action = new DomainTestBuilder<ItemCommentChangedAction>().Create() with
+                {
+                    Comment = ExpectedState.Editor.Item!.Comment
+                };
+            }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            Comment = new DomainTestBuilder<string>().Create()
+                        }
+                    }
+                };
+            }
+        }
+    }
+
     private abstract class ItemEditorReducerFixture
     {
         public ItemState ExpectedState { get; protected set; } = new DomainTestBuilder<ItemState>().Create();
