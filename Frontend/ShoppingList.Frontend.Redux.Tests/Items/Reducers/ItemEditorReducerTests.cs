@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
+using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Items.States;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.Items.Reducers;
@@ -574,6 +575,137 @@ public class ItemEditorReducerTests
                     {
                         Item = new DomainTestBuilder<EditedItem>().Create(),
                         IsLoadingEditedItem = true
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnStoreAddedToItem
+    {
+        private readonly OnStoreAddedToItemFixture _fixture;
+
+        public OnStoreAddedToItem()
+        {
+            _fixture = new OnStoreAddedToItemFixture();
+        }
+
+        [Fact]
+        public void OnStoreAddedToItem_WithOneStoreAvailable_ShouldAddStore()
+        {
+            // Arrange
+            _fixture.SetupStores();
+            _fixture.SetupOneStoreAvailable();
+
+            // Act
+            var result = ItemEditorReducer.OnStoreAddedToItem(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreAddedToItem_WithNoStoreAvailable_ShouldAddStore()
+        {
+            // Arrange
+            _fixture.SetupStores();
+            _fixture.SetupNoStoreAvailable();
+
+            // Act
+            var result = ItemEditorReducer.OnStoreAddedToItem(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnStoreAddedToItemFixture : ItemEditorReducerFixture
+        {
+            private List<ItemStore>? _stores;
+
+            public void SetupStores()
+            {
+                _stores = new List<ItemStore>
+                {
+                    ItemStoreMother.GetValid(),
+                    ItemStoreMother.GetValid()
+                };
+                ExpectedState = ExpectedState with
+                {
+                    Stores = new ActiveStores(_stores)
+                };
+                InitialState = InitialState with
+                {
+                    Stores = new ActiveStores(_stores)
+                };
+            }
+
+            public void SetupOneStoreAvailable()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_stores);
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            Availabilities = new List<EditedItemAvailability>
+                            {
+                                new EditedItemAvailability(
+                                    _stores.Last().Id,
+                                    _stores.Last().DefaultSectionId,
+                                    4.67f)
+                            }
+                        }
+                    }
+                };
+
+                ExpectedState = InitialState;
+            }
+
+            public void SetupNoStoreAvailable()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_stores);
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            Availabilities = new List<EditedItemAvailability>
+                            {
+                                new EditedItemAvailability(
+                                    _stores.Last().Id,
+                                    _stores.Last().DefaultSectionId,
+                                    4.67f),
+                                new EditedItemAvailability(
+                                    _stores.First().Id,
+                                    _stores.First().DefaultSectionId,
+                                    13.98f),
+                            }
+                        }
+                    }
+                };
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            Availabilities = new List<EditedItemAvailability>
+                            {
+                                new EditedItemAvailability(
+                                    _stores.Last().Id,
+                                    _stores.Last().DefaultSectionId,
+                                    4.67f),
+                                new EditedItemAvailability(
+                                    _stores.First().Id,
+                                    _stores.First().DefaultSectionId,
+                                    13.98f),
+                            }
+                        }
                     }
                 };
             }
