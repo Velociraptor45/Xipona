@@ -723,6 +723,24 @@ public class ItemEditorReducerTests
         }
 
         [Fact]
+        public void OnStoreAddedToItemType_WithInvalidTypeId_ShouldNotAddStore()
+        {
+            // Arrange
+            _fixture.SetupStores();
+            _fixture.SetupItemTypes();
+            _fixture.SetupActionWithInvalidTypeId();
+            _fixture.SetupOneStoreAvailableForInvalidTypeId();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreAddedToItemType(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
         public void OnStoreAddedToItemType_WithOneStoreAvailable_ShouldAddStore()
         {
             // Arrange
@@ -769,6 +787,11 @@ public class ItemEditorReducerTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_typeId);
                 Action = new StoreAddedToItemTypeAction(_typeId.Value);
+            }
+
+            public void SetupActionWithInvalidTypeId()
+            {
+                Action = new StoreAddedToItemTypeAction(Guid.NewGuid());
             }
 
             public void SetupItemTypes()
@@ -822,6 +845,37 @@ public class ItemEditorReducerTests
                 {
                     Stores = new ActiveStores(_stores)
                 };
+            }
+
+            public void SetupOneStoreAvailableForInvalidTypeId()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_stores);
+
+                InitialState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Item = InitialState.Editor.Item! with
+                        {
+                            ItemTypes = new List<EditedItemType>
+                            {
+                                InitialState.Editor.Item.ItemTypes.First(),
+                                InitialState.Editor.Item.ItemTypes.Last() with
+                                {
+                                    Availabilities = new List<EditedItemAvailability>
+                                    {
+                                        new EditedItemAvailability(
+                                            _stores.Last().Id,
+                                            _stores.Last().DefaultSectionId,
+                                            4.67f)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+
+                ExpectedState = InitialState;
             }
 
             public void SetupOneStoreAvailable()

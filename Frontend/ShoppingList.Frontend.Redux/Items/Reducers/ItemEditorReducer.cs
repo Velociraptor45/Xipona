@@ -209,9 +209,6 @@ public static class ItemEditorReducer
 
         var typeIndex = types.IndexOf(type);
 
-        if (typeIndex == -1)
-            return state;
-
         var availabilities = type.Availabilities.ToList();
         var occupiedStoreIds = availabilities.Select(av => av.StoreId).ToHashSet();
         var availableStores = state.Stores.Stores.Where(s => !occupiedStoreIds.Contains(s.Id)).ToArray();
