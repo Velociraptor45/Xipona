@@ -172,7 +172,7 @@ public class ItemEditorReducerTests
             // Arrange
             _fixture.SetupExpectedResultWithUnitType();
             _fixture.SetupAction();
-            _fixture.SetupInitialState();
+            _fixture.SetupInitialStateForUnitType();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
@@ -189,7 +189,7 @@ public class ItemEditorReducerTests
             // Arrange
             _fixture.SetupExpectedResultWithWeightType();
             _fixture.SetupAction();
-            _fixture.SetupInitialState();
+            _fixture.SetupInitialStateForWeightType();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
@@ -250,7 +250,7 @@ public class ItemEditorReducerTests
                 };
             }
 
-            public void SetupInitialState()
+            public void SetupInitialStateForWeightType()
             {
                 InitialState = ExpectedState with
                 {
@@ -259,6 +259,24 @@ public class ItemEditorReducerTests
                         Item = ExpectedState.Editor.Item! with
                         {
                             QuantityType = new DomainTestBuilder<QuantityType>().Create()
+                        }
+                    }
+                };
+            }
+
+            public void SetupInitialStateForUnitType()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            QuantityType = new DomainTestBuilder<QuantityType>().Create() with
+                            {
+                                Id = 0
+                            },
+                            QuantityInPacketType = null
                         }
                     }
                 };
