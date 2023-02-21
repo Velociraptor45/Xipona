@@ -7,7 +7,6 @@ using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Redux;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Configurations;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using System;
@@ -57,8 +56,6 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddScoped<ICommandQueue, CommandQueue>();
 
             builder.Services.AddScoped<IItemPriceCalculationService, ItemPriceCalculationService>();
-
-            builder.Services.AddTransient<IStoresApiService, StoresApiService>();
 
             builder.Services.AddInfrastructure();
 
