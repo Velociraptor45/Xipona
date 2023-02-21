@@ -517,6 +517,69 @@ public class ItemEditorReducerTests
         }
     }
 
+    public class OnLoadItemForEditingFinished
+    {
+        private readonly OnLoadItemForEditingFinishedFixture _fixture;
+
+        public OnLoadItemForEditingFinished()
+        {
+            _fixture = new OnLoadItemForEditingFinishedFixture();
+        }
+
+        [Fact]
+        public void OnLoadItemForEditingFinished_ShouldItemAndIsLoadingEditedItem()
+        {
+            // Arrange
+            _fixture.SetupExpectedState();
+            _fixture.SetupAction();
+            _fixture.SetupInitialState();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnLoadItemForEditingFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnLoadItemForEditingFinishedFixture : ItemEditorReducerFixture
+        {
+            public LoadItemForEditingFinishedAction? Action { get; private set; }
+
+            public void SetupAction()
+            {
+                Action = new DomainTestBuilder<LoadItemForEditingFinishedAction>().Create() with
+                {
+                    Item = ExpectedState.Editor.Item!
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsLoadingEditedItem = false
+                    }
+                };
+            }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = new DomainTestBuilder<EditedItem>().Create(),
+                        IsLoadingEditedItem = true
+                    }
+                };
+            }
+        }
+    }
+
     private abstract class ItemEditorReducerFixture
     {
         public ItemState ExpectedState { get; protected set; } = new DomainTestBuilder<ItemState>().Create();
