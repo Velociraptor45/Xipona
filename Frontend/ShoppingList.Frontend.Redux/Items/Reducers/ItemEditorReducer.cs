@@ -203,12 +203,16 @@ public static class ItemEditorReducer
     public static ItemState OnStoreAddedToItemType(ItemState state, StoreAddedToItemTypeAction action)
     {
         var types = state.Editor.Item!.ItemTypes.ToList();
-        var typeIndex = types.IndexOf(action.ItemType);
+        var type = types.FirstOrDefault(t => t.Id == action.ItemTypeId);
+        if (type == null)
+            return state;
+
+        var typeIndex = types.IndexOf(type);
 
         if (typeIndex == -1)
             return state;
 
-        var availabilities = action.ItemType.Availabilities.ToList();
+        var availabilities = type.Availabilities.ToList();
         var occupiedStoreIds = availabilities.Select(av => av.StoreId).ToHashSet();
         var availableStores = state.Stores.Stores.Where(s => !occupiedStoreIds.Contains(s.Id)).ToArray();
 
@@ -218,12 +222,7 @@ public static class ItemEditorReducer
         var store = availableStores.First();
         availabilities.Add(new EditedItemAvailability(store.Id, store.DefaultSectionId, 1f));
 
-        for (int i = 0; i < availabilities.Count; i++)
-        {
-            availabilities[i] = availabilities[i] with { PricePerQuantity = 1f };
-        }
-
-        var itemType = action.ItemType with { Availabilities = availabilities };
+        var itemType = type with { Availabilities = availabilities };
         types[typeIndex] = itemType;
 
         return state with

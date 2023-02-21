@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Reducers;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
@@ -605,7 +606,7 @@ public class ItemEditorReducerTests
         }
 
         [Fact]
-        public void OnStoreAddedToItem_WithNoStoreAvailable_ShouldAddStore()
+        public void OnStoreAddedToItem_WithNoStoreAvailable_ShouldNotAddStore()
         {
             // Arrange
             _fixture.SetupStores();
@@ -643,11 +644,11 @@ public class ItemEditorReducerTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_stores);
 
-                InitialState = ExpectedState with
+                InitialState = InitialState with
                 {
-                    Editor = ExpectedState.Editor with
+                    Editor = InitialState.Editor with
                     {
-                        Item = ExpectedState.Editor.Item! with
+                        Item = InitialState.Editor.Item! with
                         {
                             Availabilities = new List<EditedItemAvailability>
                             {
@@ -660,7 +661,224 @@ public class ItemEditorReducerTests
                     }
                 };
 
+                ExpectedState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Item = InitialState.Editor.Item! with
+                        {
+                            Availabilities = new List<EditedItemAvailability>
+                            {
+                                new EditedItemAvailability(
+                                    _stores.Last().Id,
+                                    _stores.Last().DefaultSectionId,
+                                    4.67f),
+                                new EditedItemAvailability(
+                                    _stores.First().Id,
+                                    _stores.First().DefaultSectionId,
+                                    1f),
+                            }
+                        }
+                    }
+                };
+            }
+
+            public void SetupNoStoreAvailable()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_stores);
+
+                InitialState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Item = InitialState.Editor.Item! with
+                        {
+                            Availabilities = new List<EditedItemAvailability>
+                            {
+                                new EditedItemAvailability(
+                                    _stores.Last().Id,
+                                    _stores.Last().DefaultSectionId,
+                                    4.67f),
+                                new EditedItemAvailability(
+                                    _stores.First().Id,
+                                    _stores.First().DefaultSectionId,
+                                    13.98f),
+                            }
+                        }
+                    }
+                };
+
                 ExpectedState = InitialState;
+            }
+        }
+    }
+
+    public class OnStoreAddedToItemType
+    {
+        private readonly OnStoreAddedToItemTypeFixture _fixture;
+
+        public OnStoreAddedToItemType()
+        {
+            _fixture = new OnStoreAddedToItemTypeFixture();
+        }
+
+        [Fact]
+        public void OnStoreAddedToItemType_WithOneStoreAvailable_ShouldAddStore()
+        {
+            // Arrange
+            _fixture.SetupStores();
+            _fixture.SetupItemTypes();
+            _fixture.SetupAction();
+            _fixture.SetupOneStoreAvailable();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreAddedToItemType(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreAddedToItemType_WithNoStoreAvailable_ShouldNotAddStore()
+        {
+            // Arrange
+            _fixture.SetupStores();
+            _fixture.SetupItemTypes();
+            _fixture.SetupAction();
+            _fixture.SetupNoStoreAvailable();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreAddedToItemType(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnStoreAddedToItemTypeFixture : ItemEditorReducerFixture
+        {
+            private List<ItemStore>? _stores;
+            private Guid? _typeId;
+
+            public StoreAddedToItemTypeAction? Action { get; private set; }
+
+            public void SetupAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_typeId);
+                Action = new StoreAddedToItemTypeAction(_typeId.Value);
+            }
+
+            public void SetupItemTypes()
+            {
+                var types = new List<EditedItemType>()
+                {
+                    new DomainTestBuilder<EditedItemType>().Create() with
+                    {
+                        Availabilities = new List<EditedItemAvailability>()
+                    },
+                    new DomainTestBuilder<EditedItemType>().Create() with
+                    {
+                        Availabilities = new List<EditedItemAvailability>()
+                    }
+                };
+                _typeId = types.Last().Id;
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            ItemTypes = types
+                        }
+                    }
+                };
+                InitialState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Item = InitialState.Editor.Item! with
+                        {
+                            ItemTypes = types
+                        }
+                    }
+                };
+            }
+
+            public void SetupStores()
+            {
+                _stores = new List<ItemStore>
+                {
+                    ItemStoreMother.GetValid(),
+                    ItemStoreMother.GetValid()
+                };
+                ExpectedState = ExpectedState with
+                {
+                    Stores = new ActiveStores(_stores)
+                };
+                InitialState = InitialState with
+                {
+                    Stores = new ActiveStores(_stores)
+                };
+            }
+
+            public void SetupOneStoreAvailable()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_stores);
+
+                InitialState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Item = InitialState.Editor.Item! with
+                        {
+                            ItemTypes = new List<EditedItemType>
+                            {
+                                InitialState.Editor.Item.ItemTypes.First(),
+                                InitialState.Editor.Item.ItemTypes.Last() with
+                                {
+                                    Availabilities = new List<EditedItemAvailability>
+                                    {
+                                        new EditedItemAvailability(
+                                            _stores.Last().Id,
+                                            _stores.Last().DefaultSectionId,
+                                            4.67f)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+
+                ExpectedState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Item = InitialState.Editor.Item! with
+                        {
+                            ItemTypes = new List<EditedItemType>
+                            {
+                                InitialState.Editor.Item.ItemTypes.First(),
+                                InitialState.Editor.Item.ItemTypes.Last() with
+                                {
+                                    Availabilities = new List<EditedItemAvailability>
+                                    {
+                                        new EditedItemAvailability(
+                                            _stores.Last().Id,
+                                            _stores.Last().DefaultSectionId,
+                                            4.67f),
+                                        new EditedItemAvailability(
+                                            _stores.First().Id,
+                                            _stores.First().DefaultSectionId,
+                                            1f),
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
             }
 
             public void SetupNoStoreAvailable()
@@ -673,41 +891,29 @@ public class ItemEditorReducerTests
                     {
                         Item = ExpectedState.Editor.Item! with
                         {
-                            Availabilities = new List<EditedItemAvailability>
+                            ItemTypes = new List<EditedItemType>
                             {
-                                new EditedItemAvailability(
-                                    _stores.Last().Id,
-                                    _stores.Last().DefaultSectionId,
-                                    4.67f),
-                                new EditedItemAvailability(
-                                    _stores.First().Id,
-                                    _stores.First().DefaultSectionId,
-                                    13.98f),
+                                ExpectedState.Editor.Item.ItemTypes.First(),
+                                ExpectedState.Editor.Item.ItemTypes.Last() with
+                                {
+                                    Availabilities = new List<EditedItemAvailability>
+                                    {
+                                        new EditedItemAvailability(
+                                            _stores.Last().Id,
+                                            _stores.Last().DefaultSectionId,
+                                            4.67f),
+                                        new EditedItemAvailability(
+                                            _stores.First().Id,
+                                            _stores.First().DefaultSectionId,
+                                            13.98f),
+                                    }
+                                }
                             }
                         }
                     }
                 };
 
-                ExpectedState = ExpectedState with
-                {
-                    Editor = ExpectedState.Editor with
-                    {
-                        Item = ExpectedState.Editor.Item! with
-                        {
-                            Availabilities = new List<EditedItemAvailability>
-                            {
-                                new EditedItemAvailability(
-                                    _stores.Last().Id,
-                                    _stores.Last().DefaultSectionId,
-                                    4.67f),
-                                new EditedItemAvailability(
-                                    _stores.First().Id,
-                                    _stores.First().DefaultSectionId,
-                                    13.98f),
-                            }
-                        }
-                    }
-                };
+                ExpectedState = InitialState;
             }
         }
     }
