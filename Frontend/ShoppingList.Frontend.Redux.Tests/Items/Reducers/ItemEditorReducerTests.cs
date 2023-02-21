@@ -1,7 +1,9 @@
 ﻿using FluentAssertions;
+using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Reducers;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
@@ -363,6 +365,84 @@ public class ItemEditorReducerTests
                         Item = ExpectedState.Editor.Item! with
                         {
                             Comment = new DomainTestBuilder<string>().Create()
+                        }
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnSetNewItem
+    {
+        private readonly OnSetNewItemFixture _fixture;
+
+        public OnSetNewItem()
+        {
+            _fixture = new OnSetNewItemFixture();
+        }
+
+        [Fact]
+        public void OnSetNewItem_ShouldSetItemAndSelectors()
+        {
+            // Arrange
+            _fixture.SetupExpectedState();
+            _fixture.SetupInitialState();
+
+            // Act
+            var result = ItemEditorReducer.OnSetNewItem(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSetNewItemFixture : ItemEditorReducerFixture
+        {
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = new EditedItem(
+                            Guid.Empty,
+                            string.Empty,
+                            false,
+                            string.Empty,
+                            false,
+                            ExpectedState.QuantityTypes.First(),
+                            1,
+                            ExpectedState.QuantityTypesInPacket.First(),
+                            null,
+                            null,
+                            new List<EditedItemAvailability>(),
+                            new List<EditedItemType>(),
+                            ItemMode.NotDefined),
+                        ItemCategorySelector = ExpectedState.Editor.ItemCategorySelector with
+                        {
+                            ItemCategories = new List<ItemCategorySearchResult>(0)
+                        },
+                        ManufacturerSelector = ExpectedState.Editor.ManufacturerSelector with
+                        {
+                            Manufacturers = new List<ManufacturerSearchResult>(0)
+                        }
+                    }
+                };
+            }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = new DomainTestBuilder<EditedItem>().Create(),
+                        ItemCategorySelector = ExpectedState.Editor.ItemCategorySelector with
+                        {
+                            ItemCategories = new DomainTestBuilder<ItemCategorySearchResult>().CreateMany(2).ToList()
+                        },
+                        ManufacturerSelector = ExpectedState.Editor.ManufacturerSelector with
+                        {
+                            Manufacturers = new DomainTestBuilder<ManufacturerSearchResult>().CreateMany(3).ToList()
                         }
                     }
                 };

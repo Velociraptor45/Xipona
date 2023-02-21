@@ -125,9 +125,9 @@ public static class ItemEditorReducer
             {
                 Item = new EditedItem(
                     Guid.Empty,
-                    "",
+                    string.Empty,
                     false,
-                    "",
+                    string.Empty,
                     false,
                     state.QuantityTypes.First(),
                     1,
