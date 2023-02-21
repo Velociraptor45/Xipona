@@ -468,6 +468,55 @@ public class ItemEditorReducerTests
         }
     }
 
+    public class OnLoadItemForEditingStarted
+    {
+        private readonly OnLoadItemForEditingStartedFixture _fixture;
+
+        public OnLoadItemForEditingStarted()
+        {
+            _fixture = new OnLoadItemForEditingStartedFixture();
+        }
+
+        [Fact]
+        public void OnLoadItemForEditingStarted_ShouldSetIsLoadingEditedItem()
+        {
+            // Arrange
+            _fixture.SetupExpectedState();
+            _fixture.SetupInitialState();
+
+            // Act
+            var result = ItemEditorReducer.OnLoadItemForEditingStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnLoadItemForEditingStartedFixture : ItemEditorReducerFixture
+        {
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsLoadingEditedItem = true
+                    }
+                };
+            }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsLoadingEditedItem = false
+                    }
+                };
+            }
+        }
+    }
+
     private abstract class ItemEditorReducerFixture
     {
         public ItemState ExpectedState { get; protected set; } = new DomainTestBuilder<ItemState>().Create();
