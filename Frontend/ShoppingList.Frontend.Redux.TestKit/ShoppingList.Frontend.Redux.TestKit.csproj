@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Shared\States\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Moq.Contrib.InOrder" Version="1.0.0-alpha.5" />
   </ItemGroup>
 

@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
-using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Items.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.Items.States;
 
@@ -85,11 +84,11 @@ public class AvailableTests
         {
             Stores = new List<ItemStore>
             {
-                new ItemStoreBuilder().Create() with
+                new DomainTestBuilder<ItemStore>().Create() with
                 {
                     Sections = CreateSections().ToList()
                 },
-                new ItemStoreBuilder().Create() with
+                new DomainTestBuilder<ItemStore>().Create() with
                 {
                     Sections = CreateSections().ToList()
                 }

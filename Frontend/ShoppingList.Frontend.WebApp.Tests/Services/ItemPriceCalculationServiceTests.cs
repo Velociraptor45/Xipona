@@ -3,7 +3,6 @@ using Moq;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
-using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.TestTools.AutoFixture.Builder;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
@@ -97,7 +96,7 @@ public class ItemPriceCalculationServiceTests
             _quantityTypes =
                 new List<QuantityType>()
                 {
-                    new QuantityTypeBuilder().Create() with
+                    new DomainTestBuilder<QuantityType>().Create() with
                     {
                         QuantityNormalizer = quantityNormalizer
                     }
