@@ -102,7 +102,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports
 
         Task<IEnumerable<ShoppingListStore>> GetAllActiveStoresForShoppingListAsync();
 
-        Task<ShoppingListModel> GetActiveShoppingListByStoreIdAsync(Guid storeId); // todo name #298
+        Task<ShoppingListModel> GetActiveShoppingListByStoreIdAsync(Guid storeId);
 
         Task<IEnumerable<ItemStore>> GetAllActiveStoresForItemAsync();
 

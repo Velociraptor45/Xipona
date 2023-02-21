@@ -10,6 +10,9 @@ public static class ItemCategorySelectorReducer
     [ReducerMethod]
     public static RecipeState OnItemCategoryInputChanged(RecipeState state, ItemCategoryInputChangedAction action)
     {
+        if (state.Editor.Recipe is null)
+            return state;
+
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
         var ingredientIndex = ingredients.IndexOf(action.Ingredient);
         if (ingredientIndex < 0)
@@ -38,6 +41,9 @@ public static class ItemCategorySelectorReducer
     [ReducerMethod]
     public static RecipeState OnItemCategoryDropdownClosed(RecipeState state, ItemCategoryDropdownClosedAction action)
     {
+        if (state.Editor.Recipe is null)
+            return state;
+
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
         var ingredientIndex = ingredients.IndexOf(action.Ingredient);
         if (ingredientIndex < 0)
@@ -66,6 +72,9 @@ public static class ItemCategorySelectorReducer
     [ReducerMethod]
     public static RecipeState OnSelectedItemCategoryChanged(RecipeState state, SelectedItemCategoryChangedAction action)
     {
+        if (state.Editor.Recipe is null)
+            return state;
+
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
         var ingredient = ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
         if (ingredient is null)
@@ -102,6 +111,9 @@ public static class ItemCategorySelectorReducer
     public static RecipeState OnLoadInitialItemCategoryFinished(RecipeState state,
         LoadInitialItemCategoryFinishedAction action)
     {
+        if (state.Editor.Recipe is null)
+            return state;
+
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
         var ingredient = ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
         if (ingredient is null)
@@ -134,6 +146,9 @@ public static class ItemCategorySelectorReducer
     [ReducerMethod]
     public static RecipeState OnSearchItemCategoriesFinished(RecipeState state, SearchItemCategoriesFinishedAction action)
     {
+        if (state.Editor.Recipe is null)
+            return state;
+
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
         var ingredient = ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
         if (ingredient is null)
@@ -177,6 +192,9 @@ public static class ItemCategorySelectorReducer
     public static RecipeState OnCreateNewItemCategoryFinished(RecipeState state,
         CreateNewItemCategoryFinishedAction action)
     {
+        if (state.Editor.Recipe is null)
+            return state;
+
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
         var ingredient = ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
         if (ingredient is null)

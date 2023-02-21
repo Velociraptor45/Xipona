@@ -2,4 +2,4 @@
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
 
-public record SelectedItemChangedAction(EditedIngredient Ingredient, SearchItemByItemCategoryResult? Item);
+public record SelectedItemChangedAction(EditedIngredient Ingredient, SearchItemByItemCategoryResult Item);

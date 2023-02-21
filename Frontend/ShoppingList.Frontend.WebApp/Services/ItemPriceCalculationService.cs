@@ -25,7 +25,7 @@ public class ItemPriceCalculationService : IItemPriceCalculationService
         return (float)Math.Round(price * 100, MidpointRounding.AwayFromZero) / 100;
     }
 
-    public float CalculatePrice(ShoppingListItem item)
+    private static float CalculatePrice(ShoppingListItem item)
     {
         var price = item.Quantity / item.QuantityType.QuantityNormalizer * item.PricePerQuantity;
 

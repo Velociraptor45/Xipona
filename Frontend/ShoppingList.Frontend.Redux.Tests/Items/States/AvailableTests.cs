@@ -49,7 +49,7 @@ public class AvailableTests
             _fixture.SetupStores();
             _fixture.SetupExpectedStore(1);
             var sut = AvailableFixture.CreateSut();
-            sut = _fixture.AddAvailability(sut as AvailableDummy, 0);
+            sut = _fixture.AddAvailability((AvailableDummy)sut, 0);
 
             // Act
             var result = sut.GetNotRegisteredStores(_fixture.Stores).ToList();

@@ -11,19 +11,6 @@
 @inject IState<RecipeState> State
 @inject IDispatcher Dispatcher
 
-@*
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services
-@using global::ShoppingList.Frontend.Redux.ItemCategories.States
-@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models*@
-@*
-@inject IItemCategoryApiService _itemCategoryApiService;
-@inject IItemsApiService _itemsApiService;
-@inject IRecipesApiService _recipesApiService;
-@inject RecipesState _state;*@
-
 <div class="ingredient">
     <div class="d-flex align-items-start">
         <div class="item-select">
@@ -57,19 +44,6 @@
                         IgnoreItemChanges="false"
                         Value="@($"{Model.DefaultItemId?.ToString() ?? string.Empty}{Model.DefaultItemTypeId?.ToString() ?? string.Empty}")">
                 </Select>
-
-                @*<SingleSelect Class="mt-1 min-w-150"
-                              TItem="SearchItemByItemCategoryResult"
-                              TValue="string"
-                              DataSource="_itemDataSource"
-                              ValueName="@nameof(SearchItemByItemCategoryResult.SelectIdentifier)"
-                              LabelName="@nameof(SearchItemByItemCategoryResult.Name)"
-                              OnItemChanged="@OnItemChanged"
-                              Placeholder="Default Item"
-                              DefaultValue="@($"{Model.DefaultItemId?.ToString() ?? string.Empty}{Model.DefaultItemTypeId?.ToString() ?? string.Empty}")"
-                              CanAddItem="false"
-                              AllowClear="true">
-                </SingleSelect>*@
             }
         </div>
         <div>
@@ -108,68 +82,21 @@
 @code {
     [Parameter]
     public EditedIngredient Model { get; set; }
-    //[Parameter]
-    //public Action<ShoppingList.Frontend.Models.Recipes.Models.Ingredient> OnRemove { get; set; }
-
-    //private List<ItemCategorySearchResult> _itemCategoryDataSource = new();
-    //private List<SearchItemByItemCategoryResult> _itemDataSource = new();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        //if (Model.ItemCategoryId != Guid.Empty)
-        //{
-        //    //var itemCategory = await _itemCategoryApiService.GetAsync(Model.ItemCategoryId);
-        //    //if (itemCategory is not null)
-        //    //    _itemCategoryDataSource.Add(new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name));
-
-        //    await LoadItemsAsync(Model.ItemCategoryId);
-        //}
         Dispatcher.Dispatch(new LoadInitialItemsAction(Model));
         Dispatcher.Dispatch(new LoadInitialItemCategoryAction(Model));
     }
-
-    //private async Task LoadItemsAsync(Guid itemCategoryId)
-    //{
-    //    if (itemCategoryId == Guid.Empty)
-    //        return;
-    //    _itemDataSource.Clear();
-    //    _itemDataSource.AddRange(await _itemsApiService.SearchItemsByItemCategoryAsync(itemCategoryId));
-    //    StateHasChanged();
-    //}
-
-    //private async void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
-    //{
-    //    if(Model.ItemCategoryId == itemCategory?.Id)
-    //        return;
-
-    //    Model.ItemCategoryId = itemCategory?.Id ?? Guid.Empty;
-    //    Model.DefaultItemId = null;
-    //    Model.DefaultItemTypeId = null;
-    //    await LoadItemsAsync(Model.ItemCategoryId);
-    //}
-
-    //private void OnNewItemCategoryCreatedAsync(string name)
-    //{
-        //var newItemCategory = await _itemCategoryApiService.CreateAsync(name);
-
-        //if (newItemCategory == null)
-        //    return (null, Guid.Empty);
-            
-        //return (new ItemCategorySearchResult(newItemCategory.Id, newItemCategory.Name), newItemCategory.Id);
-    //}
-
     private void OnItemChanged(SearchItemByItemCategoryResult itemSearchResult)
     {
-        //Model.DefaultItemId = itemSearchResult?.ItemId;
-        //Model.DefaultItemTypeId = itemSearchResult?.ItemTypeId;
         Dispatcher.Dispatch(new SelectedItemChangedAction(Model, itemSearchResult));
     }
 
     private void OnIngredientQuantityTypeChanged(IngredientQuantityType quantityType)
     {
-        //Model.QuantityType = quantityType.Id;
         Dispatcher.Dispatch(new IngredientQuantityTypeChangedAction(Model, quantityType));
     }
 
@@ -180,7 +107,6 @@
 
     private void OnRemoveIngredientButtonClicked()
     {
-        //OnRemove(Model);
         Dispatcher.Dispatch(new IngredientRemovedAction(Model));
     }
 

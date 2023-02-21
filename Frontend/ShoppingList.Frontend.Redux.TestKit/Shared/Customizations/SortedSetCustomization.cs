@@ -23,7 +23,7 @@ public class SortedSetCustomization : ICustomization
             return CreateInstance(context);
         }
 
-        private bool MatchesType(object request)
+        private static bool MatchesType(object request)
         {
             var expectedType = typeof(SortedSet<ShoppingListSection>);
             if (request is SeededRequest seededRequest)
@@ -36,7 +36,7 @@ public class SortedSetCustomization : ICustomization
             return expectedType == t;
         }
 
-        private SortedSet<ShoppingListSection> CreateInstance(ISpecimenContext context)
+        private static SortedSet<ShoppingListSection> CreateInstance(ISpecimenContext context)
         {
             var sections = new DomainTestBuilderBase<ShoppingListSection>().CreateMany(3).ToList(); // todo replace
             for (int i = 0; i < sections.Count; i++)

@@ -35,6 +35,9 @@ public sealed class ItemCategorySelectorEffects : IDisposable
     [EffectMethod]
     public async Task HandleSearchItemCategoriesAction(SearchItemCategoriesAction action, IDispatcher dispatcher)
     {
+        if (_state.Value.Editor.Recipe is null)
+            return;
+
         var ingredient = _state.Value.Editor.Recipe.Ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
         if (ingredient is null || string.IsNullOrWhiteSpace(ingredient.ItemCategorySelector.Input))
             return;
@@ -87,6 +90,9 @@ public sealed class ItemCategorySelectorEffects : IDisposable
     [EffectMethod]
     public async Task HandleCreateNewItemCategoryAction(CreateNewItemCategoryAction action, IDispatcher dispatcher)
     {
+        if (_state.Value.Editor.Recipe is null)
+            return;
+
         var name = _state.Value.Editor.Recipe.Ingredients
             .FirstOrDefault(i => i.Key == action.IngredientKey)?
             .ItemCategorySelector.Input;

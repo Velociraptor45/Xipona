@@ -20,7 +20,10 @@ public static class IngredientReducer
     [ReducerMethod(typeof(IngredientAddedAction))]
     public static RecipeState OnIngredientAdded(RecipeState state)
     {
-        var ingredients = state.Editor.Recipe!.Ingredients.ToList();
+        if (state.Editor.Recipe is null)
+            return state;
+
+        var ingredients = state.Editor.Recipe.Ingredients.ToList();
         ingredients.Add(new EditedIngredient(
             Guid.NewGuid(),
             Guid.Empty,
@@ -49,7 +52,10 @@ public static class IngredientReducer
     [ReducerMethod]
     public static RecipeState OnIngredientRemoved(RecipeState state, IngredientRemovedAction action)
     {
-        var ingredients = state.Editor.Recipe!.Ingredients.ToList();
+        if (state.Editor.Recipe is null)
+            return state;
+
+        var ingredients = state.Editor.Recipe.Ingredients.ToList();
         ingredients.Remove(action.Ingredient);
 
         return state with
@@ -67,6 +73,9 @@ public static class IngredientReducer
     [ReducerMethod]
     public static RecipeState OnIngredientQuantityChanged(RecipeState state, IngredientQuantityChangedAction action)
     {
+        if (state.Editor.Recipe is null)
+            return state;
+
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
         var ingredientIndex = ingredients.IndexOf(action.Ingredient);
         if (ingredientIndex < 0)
@@ -90,6 +99,9 @@ public static class IngredientReducer
     public static RecipeState OnIngredientQuantityTypeChanged(RecipeState state,
         IngredientQuantityTypeChangedAction action)
     {
+        if (state.Editor.Recipe is null)
+            return state;
+
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
         var ingredientIndex = ingredients.IndexOf(action.Ingredient);
         if (ingredientIndex < 0)
@@ -112,6 +124,9 @@ public static class IngredientReducer
     [ReducerMethod]
     public static RecipeState OnSelectedItemChanged(RecipeState state, SelectedItemChangedAction action)
     {
+        if (state.Editor.Recipe is null)
+            return state;
+
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
         var ingredientIndex = ingredients.IndexOf(action.Ingredient);
         if (ingredientIndex < 0)
@@ -139,6 +154,9 @@ public static class IngredientReducer
     public static RecipeState OnLoadItemsForItemCategoryFinished(RecipeState state,
         LoadItemsForItemCategoryFinishedAction action)
     {
+        if (state.Editor.Recipe is null)
+            return state;
+
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
         var ingredient = ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
         if (ingredient is null)

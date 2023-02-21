@@ -40,6 +40,9 @@ public class StoreEditorEffects
         dispatcher.Dispatch(new SaveStoreStartedAction());
 
         var store = _state.Value.Editor.Store;
+        if (store is null)
+            return;
+
         if (store.Id == Guid.Empty)
             await _client.CreateStoreAsync(store);
         else

@@ -10,6 +10,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Reducers;
 
 public static class ItemEditorReducer
 {
+    private const int _weightQuantityTypeId = 1;
+
     [ReducerMethod]
     public static ItemState OnItemNameChanged(ItemState state, ItemNameChangedAction action)
     {
@@ -54,7 +56,7 @@ public static class ItemEditorReducer
             }
         };
 
-        if (action.QuantityType.Id == 1) // todo magic number #298
+        if (action.QuantityType.Id == _weightQuantityTypeId)
         {
             newState = newState with
             {

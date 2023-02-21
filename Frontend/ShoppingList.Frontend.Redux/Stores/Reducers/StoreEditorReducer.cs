@@ -38,6 +38,9 @@ public static class StoreEditorReducer
     [ReducerMethod]
     public static StoreState OnStoreNameChanged(StoreState state, StoreNameChangedAction action)
     {
+        if (state.Editor.Store is null)
+            return state;
+
         return state with
         {
             Editor = state.Editor with
@@ -77,6 +80,9 @@ public static class StoreEditorReducer
     [ReducerMethod]
     public static StoreState OnSectionDecremented(StoreState state, SectionDecrementedAction action)
     {
+        if (state.Editor.Store is null)
+            return state;
+
         var sections = state.Editor.Store.Sections.ToList();
         var section = sections.FirstOrDefault(s => s.Key == action.SectionKey);
         if (section is null)
@@ -107,6 +113,9 @@ public static class StoreEditorReducer
     [ReducerMethod]
     public static StoreState OnSectionIncremented(StoreState state, SectionIncrementedAction action)
     {
+        if (state.Editor.Store is null)
+            return state;
+
         var sections = state.Editor.Store.Sections.ToList();
         var section = sections.FirstOrDefault(s => s.Key == action.SectionKey);
         if (section is null)
@@ -137,7 +146,10 @@ public static class StoreEditorReducer
     [ReducerMethod]
     public static StoreState OnSectionRemoved(StoreState state, SectionRemovedAction action)
     {
-        var sections = state.Editor.Store!.Sections.ToList();
+        if (state.Editor.Store is null)
+            return state;
+
+        var sections = state.Editor.Store.Sections.ToList();
         sections.Remove(action.Section);
 
         return state with
@@ -155,7 +167,10 @@ public static class StoreEditorReducer
     [ReducerMethod]
     public static StoreState OnPreparationStepTextChanged(StoreState state, SectionTextChangedAction action)
     {
-        var sections = state.Editor.Store!.Sections.ToList();
+        if (state.Editor.Store is null)
+            return state;
+
+        var sections = state.Editor.Store.Sections.ToList();
         var step = sections.FirstOrDefault(s => s.Key == action.SectionKey);
         if (step is null)
             return state;
@@ -178,7 +193,10 @@ public static class StoreEditorReducer
     [ReducerMethod]
     public static StoreState OnDefaultSectionChanged(StoreState state, DefaultSectionChangedAction action)
     {
-        if (state.Editor.Store!.Sections.All(s => s.Key != action.SectionKey))
+        if (state.Editor.Store is null)
+            return state;
+
+        if (state.Editor.Store.Sections.All(s => s.Key != action.SectionKey))
             return state;
 
         var sections = state.Editor.Store!.Sections
@@ -200,7 +218,10 @@ public static class StoreEditorReducer
     [ReducerMethod(typeof(SectionAddedAction))]
     public static StoreState OnSectionAdded(StoreState state)
     {
-        var sections = state.Editor.Store!.Sections.ToList();
+        if (state.Editor.Store is null)
+            return state;
+
+        var sections = state.Editor.Store.Sections.ToList();
         var nextSortingIndex = state.Editor.Store.Sections.Max?.SortingIndex + 1 ?? 0;
         sections.Add(new EditedSection(Guid.NewGuid(), Guid.Empty, string.Empty, false, nextSortingIndex));
 

@@ -39,6 +39,9 @@ public static class RecipeEditorReducer
     [ReducerMethod]
     public static RecipeState OnRecipeNameChanged(RecipeState state, RecipeNameChangedAction action)
     {
+        if (state.Editor.Recipe is null)
+            return state;
+
         return state with
         {
             Editor = state.Editor with

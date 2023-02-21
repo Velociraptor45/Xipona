@@ -7,7 +7,7 @@ using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
 
-public sealed class ManufacturerSelectorEffects
+public sealed class ManufacturerSelectorEffects : IDisposable
 {
     private readonly IApiClient _client;
     private readonly IState<ItemState> _state;
