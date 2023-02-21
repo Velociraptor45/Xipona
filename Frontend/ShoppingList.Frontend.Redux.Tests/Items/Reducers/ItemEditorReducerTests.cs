@@ -264,6 +264,59 @@ public class ItemEditorReducerTests
         }
     }
 
+    public class OnItemQuantityInPacketChanged
+    {
+        private readonly OnItemQuantityInPacketChangedFixture _fixture;
+
+        public OnItemQuantityInPacketChanged()
+        {
+            _fixture = new OnItemQuantityInPacketChangedFixture();
+        }
+
+        [Fact]
+        public void OnItemQuantityInPacketChanged_ShouldSetQuantityInPacket()
+        {
+            // Arrange
+            _fixture.SetupAction();
+            _fixture.SetupInitialState();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnItemQuantityInPacketChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnItemQuantityInPacketChangedFixture : ItemEditorReducerFixture
+        {
+            public ItemQuantityInPacketChangedAction? Action { get; private set; }
+
+            public void SetupAction()
+            {
+                Action = new DomainTestBuilder<ItemQuantityInPacketChangedAction>().Create() with
+                {
+                    QuantityInPacket = ExpectedState.Editor.Item!.QuantityInPacket!.Value
+                };
+            }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            QuantityInPacket = new DomainTestBuilder<float>().Create()
+                        }
+                    }
+                };
+            }
+        }
+    }
+
     private abstract class ItemEditorReducerFixture
     {
         public ItemState ExpectedState { get; protected set; } = new DomainTestBuilder<ItemState>().Create();

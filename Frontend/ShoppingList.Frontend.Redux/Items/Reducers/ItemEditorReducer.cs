@@ -95,7 +95,7 @@ public static class ItemEditorReducer
             {
                 Item = state.Editor.Item! with
                 {
-                    QuantityInPacket = action.QuanityInPacket
+                    QuantityInPacket = action.QuantityInPacket
                 }
             }
         };
