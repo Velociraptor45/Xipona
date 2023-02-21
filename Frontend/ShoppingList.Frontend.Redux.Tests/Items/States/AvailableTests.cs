@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Items.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.Items.States;
@@ -84,12 +85,14 @@ public class AvailableTests
         {
             Stores = new List<ItemStore>
             {
-                new ItemStoreBuilder()
-                    .WithSections(CreateSections().ToList())
-                    .Create(),
-                new ItemStoreBuilder()
-                    .WithSections(CreateSections().ToList())
-                    .Create()
+                new ItemStoreBuilder().Create() with
+                {
+                    Sections = CreateSections().ToList()
+                },
+                new ItemStoreBuilder().Create() with
+                {
+                    Sections = CreateSections().ToList()
+                }
             };
         }
 
@@ -121,8 +124,15 @@ public class AvailableTests
 
         private static IEnumerable<ItemStoreSection> CreateSections()
         {
-            yield return ItemStoreSectionMother.NotDefault().WithSortingIndex(1).Create();
-            yield return ItemStoreSectionMother.Default().WithSortingIndex(2).Create();
+            for (int i = 0; i < 2; i++)
+            {
+                var section = new DomainTestBuilder<ItemStoreSection>().Create() with
+                {
+                    IsDefaultSection = i == 0,
+                    SortingIndex = i
+                };
+                yield return section;
+            }
         }
     }
 
