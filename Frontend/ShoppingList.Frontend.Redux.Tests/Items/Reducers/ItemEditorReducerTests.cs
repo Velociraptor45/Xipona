@@ -1516,6 +1516,90 @@ public class ItemEditorReducerTests
         }
     }
 
+    public class OnPriceOfItemChanged
+    {
+        private readonly OnPriceOfItemChangedFixture _fixture;
+
+        public OnPriceOfItemChanged()
+        {
+            _fixture = new OnPriceOfItemChangedFixture();
+        }
+
+        [Fact]
+        public void OnPriceOfItemChanged_WithValidData_ShouldChangeStore()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnPriceOfItemChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnPriceOfItemChanged_WithInvalidAvailability_ShouldNotChangeStore()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualExpectedState();
+            _fixture.SetupActionWithInvalidAvailability();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnPriceOfItemChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnPriceOfItemChangedFixture : ItemEditorReducerFixture
+        {
+            public PriceOfItemChangedAction? Action { get; private set; }
+
+            public void SetupInitialStateEqualExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState()
+            {
+                var availabilities = ExpectedState.Editor.Item!.Availabilities.ToList();
+                availabilities[0] = availabilities.First() with
+                {
+                    PricePerQuantity = new DomainTestBuilder<float>().Create()
+                };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item with
+                        {
+                            Availabilities = availabilities
+                        }
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new PriceOfItemChangedAction(InitialState.Editor.Item!.Availabilities.First(),
+                    ExpectedState.Editor.Item!.Availabilities.First().PricePerQuantity);
+            }
+
+            public void SetupActionWithInvalidAvailability()
+            {
+                Action = new PriceOfItemChangedAction(new DomainTestBuilder<EditedItemAvailability>().Create(),
+                    ExpectedState.Editor.Item!.Availabilities.First().PricePerQuantity);
+            }
+        }
+    }
+
     private abstract class ItemEditorReducerFixture
     {
         public ItemState ExpectedState { get; protected set; } = new DomainTestBuilder<ItemState>().Create();
