@@ -990,6 +990,8 @@ public class ItemEditorReducerTests
             _fixture.SetupInitialState();
             _fixture.SetupAction();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
             // Act
             var result = ItemEditorReducer.OnStoreOfItemChanged(_fixture.InitialState, _fixture.Action);
 
@@ -1005,6 +1007,8 @@ public class ItemEditorReducerTests
             _fixture.SetupInitialStateEqualExpectedState();
             _fixture.SetupActionWithInvalidAvailability();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
             // Act
             var result = ItemEditorReducer.OnStoreOfItemChanged(_fixture.InitialState, _fixture.Action);
 
@@ -1019,6 +1023,8 @@ public class ItemEditorReducerTests
             _fixture.SetupInitialStateEqualExpectedState();
             _fixture.SetupActionWithInvalidStoreId();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
             // Act
             var result = ItemEditorReducer.OnStoreOfItemChanged(_fixture.InitialState, _fixture.Action);
 
@@ -1029,7 +1035,7 @@ public class ItemEditorReducerTests
         private sealed class OnStoreOfItemChangedFixture : ItemEditorReducerFixture
         {
             private ItemStore? _store;
-            public StoreOfItemChangedAction Action { get; private set; }
+            public StoreOfItemChangedAction? Action { get; private set; }
 
             public void SetupStore()
             {
@@ -1113,6 +1119,198 @@ public class ItemEditorReducerTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_store);
                 Action = new StoreOfItemChangedAction(new DomainTestBuilder<EditedItemAvailability>().Create(), _store.Id);
+            }
+        }
+    }
+
+    public class OnStoreOfItemTypeChanged
+    {
+        private readonly OnStoreOfItemTypeChangedFixture _fixture;
+
+        public OnStoreOfItemTypeChanged()
+        {
+            _fixture = new OnStoreOfItemTypeChangedFixture();
+        }
+
+        [Fact]
+        public void OnStoreOfItemTypeChanged_WithValidData_ShouldChangeStore()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupExpectedState();
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemTypeChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreOfItemTypeChanged_WithInvalidItemType_ShouldNotChangeStore()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupInitialStateEqualExpectedState();
+            _fixture.SetupActionWithInvalidItemType();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemTypeChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreOfItemTypeChanged_WithInvalidAvailability_ShouldNotChangeStore()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupInitialStateEqualExpectedState();
+            _fixture.SetupActionWithInvalidAvailability();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemTypeChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreOfItemTypeChanged_WithInvalidStoreId_ShouldNotChangeStore()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualExpectedState();
+            _fixture.SetupActionWithInvalidStoreId();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemTypeChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnStoreOfItemTypeChangedFixture : ItemEditorReducerFixture
+        {
+            private ItemStore? _store;
+            public StoreOfItemTypeChangedAction? Action { get; private set; }
+
+            public void SetupStore()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Stores = new ActiveStores(new List<ItemStore>
+                    {
+                        ItemStoreMother.GetValid(),
+                        ItemStoreMother.GetValid(),
+                        ItemStoreMother.GetValid()
+                    })
+                };
+
+                _store = ExpectedState.Stores.Stores.First();
+            }
+
+            public void SetupInitialStateEqualExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState()
+            {
+                var itemTypes = ExpectedState.Editor.Item!.ItemTypes.ToList();
+
+                var availabilities = itemTypes.First().Availabilities.ToList();
+                availabilities[0] = availabilities.First() with
+                {
+                    StoreId = Guid.NewGuid(),
+                    DefaultSectionId = Guid.NewGuid()
+                };
+
+                itemTypes[0] = itemTypes.First() with { Availabilities = availabilities };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item with
+                        {
+                            ItemTypes = itemTypes
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var itemTypes = ExpectedState.Editor.Item!.ItemTypes.ToList();
+
+                var availabilities = itemTypes.First().Availabilities.ToList();
+                availabilities[0] = availabilities.First() with
+                {
+                    StoreId = _store.Id,
+                    DefaultSectionId = _store.DefaultSectionId
+                };
+
+                itemTypes[0] = itemTypes.First() with { Availabilities = availabilities };
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item with
+                        {
+                            ItemTypes = itemTypes
+                        }
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var itemType = InitialState.Editor.Item!.ItemTypes.First();
+                var availability = itemType.Availabilities.First();
+                Action = new StoreOfItemTypeChangedAction(itemType, availability, _store.Id);
+            }
+
+            public void SetupActionWithInvalidStoreId()
+            {
+                var itemType = InitialState.Editor.Item!.ItemTypes.First();
+                var availability = itemType.Availabilities.First();
+                Action = new StoreOfItemTypeChangedAction(itemType, availability, Guid.NewGuid());
+            }
+
+            public void SetupActionWithInvalidItemType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var itemType = new DomainTestBuilder<EditedItemType>().Create();
+                Action = new StoreOfItemTypeChangedAction(
+                    itemType,
+                    InitialState.Editor.Item!.ItemTypes.First().Availabilities.First(),
+                    _store.Id);
+            }
+
+            public void SetupActionWithInvalidAvailability()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var itemType = InitialState.Editor.Item!.ItemTypes.First();
+                Action = new StoreOfItemTypeChangedAction(itemType,
+                    new DomainTestBuilder<EditedItemAvailability>().Create(), _store.Id);
             }
         }
     }
