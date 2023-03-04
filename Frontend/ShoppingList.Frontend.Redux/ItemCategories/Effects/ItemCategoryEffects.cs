@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Components;
 using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using RestEase;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Effects;
 
@@ -29,7 +31,17 @@ public class ItemCategoryEffects
 
         dispatcher.Dispatch(new SearchItemCategoriesStartedAction());
 
-        var result = await _client.GetItemCategorySearchResultsAsync(action.SearchInput);
+        IEnumerable<ItemCategorySearchResult> result;
+
+        try
+        {
+            result = await _client.GetItemCategorySearchResultsAsync(action.SearchInput);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading search results failed", e));
+            return;
+        }
 
         var finishAction = new SearchItemCategoriesFinishedAction(result.ToList());
         dispatcher.Dispatch(finishAction);

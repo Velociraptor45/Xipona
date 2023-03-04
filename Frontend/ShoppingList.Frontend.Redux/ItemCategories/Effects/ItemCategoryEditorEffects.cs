@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Components;
 using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
+using RestEase;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Effects;
 
@@ -34,7 +36,17 @@ public class ItemCategoryEditorEffects
     {
         dispatcher.Dispatch(new LoadItemCategoryForEditingStartedAction());
 
-        var itemCategory = await _client.GetItemCategoryByIdAsync(action.ItemCategoryId);
+        EditedItemCategory itemCategory;
+
+        try
+        {
+            itemCategory = await _client.GetItemCategoryByIdAsync(action.ItemCategoryId);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading item category failed", e));
+            return;
+        }
 
         var finishAction = new LoadItemCategoryForEditingFinishedAction(itemCategory);
         dispatcher.Dispatch(finishAction);
@@ -48,12 +60,30 @@ public class ItemCategoryEditorEffects
         var editor = _state.Value.Editor;
         if (editor.ItemCategory!.Id == Guid.Empty)
         {
-            await _client.CreateItemCategoryAsync(editor.ItemCategory.Name);
+            try
+            {
+                await _client.CreateItemCategoryAsync(editor.ItemCategory.Name);
+            }
+            catch (ApiException e)
+            {
+                dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Creating item category failed", e));
+                dispatcher.Dispatch(new SaveItemCategoryFinishedAction());
+                return;
+            }
         }
         else
         {
-            await _client.ModifyItemCategoryAsync(
-                new ModifyItemCategoryRequest(editor.ItemCategory.Id, editor.ItemCategory.Name));
+            try
+            {
+                await _client.ModifyItemCategoryAsync(
+                        new ModifyItemCategoryRequest(editor.ItemCategory.Id, editor.ItemCategory.Name));
+            }
+            catch (ApiException e)
+            {
+                dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Saving item category failed", e));
+                dispatcher.Dispatch(new SaveItemCategoryFinishedAction());
+                return;
+            }
             var updateAction = new UpdateItemCategorySearchResultsAfterSaveAction(
                 editor.ItemCategory.Id,
                 editor.ItemCategory.Name);
@@ -69,7 +99,16 @@ public class ItemCategoryEditorEffects
     {
         dispatcher.Dispatch(new DeleteItemCategoryStartedAction());
 
-        await _client.DeleteItemCategoryAsync(_state.Value.Editor.ItemCategory!.Id);
+        try
+        {
+            await _client.DeleteItemCategoryAsync(_state.Value.Editor.ItemCategory!.Id);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Deleting item category failed", e));
+            dispatcher.Dispatch(new DeleteItemCategoryFinishedAction());
+            return;
+        }
 
         dispatcher.Dispatch(new DeleteItemCategoryFinishedAction());
         dispatcher.Dispatch(new LeaveItemCategoryEditorAction());
