@@ -68,7 +68,7 @@ public sealed class ItemCategorySelectorEffects : IDisposable
     }
 
     [EffectMethod]
-    public Task HandleSelectedItemCategoryChangedAction(SelectedItemCategoryChangedAction action,
+    public static Task HandleSelectedItemCategoryChangedAction(SelectedItemCategoryChangedAction action,
         IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new LoadItemsForItemCategoryAction(action.IngredientKey, action.ItemCategoryId));

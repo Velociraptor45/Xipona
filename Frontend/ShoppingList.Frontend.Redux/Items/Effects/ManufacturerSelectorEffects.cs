@@ -85,9 +85,9 @@ public sealed class ManufacturerSelectorEffects : IDisposable
     }
 
     [EffectMethod(typeof(ManufacturerDropdownClosedAction))]
-    public Task HandleManufacturerDropdownClosedAction(IDispatcher dispatcher)
+    public static Task HandleManufacturerDropdownClosedAction(IDispatcher dispatcher)
     {
-        dispatcher.Dispatch(new ManufacturerInputChangedAction(string.Empty));
+        dispatcher.Dispatch(new ClearManufacturerAction());
         return Task.CompletedTask;
     }
 
@@ -113,7 +113,7 @@ public sealed class ManufacturerSelectorEffects : IDisposable
     }
 
     [EffectMethod(typeof(ClearManufacturerAction))]
-    public Task HandleClearManufacturerAction(IDispatcher dispatcher)
+    public static Task HandleClearManufacturerAction(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new ManufacturerInputChangedAction(string.Empty));
         return Task.CompletedTask;

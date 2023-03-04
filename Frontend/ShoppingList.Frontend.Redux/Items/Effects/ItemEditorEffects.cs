@@ -42,7 +42,7 @@ public sealed class ItemEditorEffects
     }
 
     [EffectMethod]
-    public Task HandleAddStoreAction(AddStoreAction action, IDispatcher dispatcher)
+    public static Task HandleAddStoreAction(AddStoreAction action, IDispatcher dispatcher)
     {
         if (action.Available is EditedItem)
             dispatcher.Dispatch(new StoreAddedToItemAction());
@@ -53,7 +53,7 @@ public sealed class ItemEditorEffects
     }
 
     [EffectMethod]
-    public Task HandleChangeStoreAction(ChangeStoreAction action, IDispatcher dispatcher)
+    public static Task HandleChangeStoreAction(ChangeStoreAction action, IDispatcher dispatcher)
     {
         if (action.Available is EditedItem)
             dispatcher.Dispatch(new StoreOfItemChangedAction(action.Availability, action.StoreId));
@@ -64,7 +64,7 @@ public sealed class ItemEditorEffects
     }
 
     [EffectMethod]
-    public Task HandleChangePriceAction(ChangePriceAction action, IDispatcher dispatcher)
+    public static Task HandleChangePriceAction(ChangePriceAction action, IDispatcher dispatcher)
     {
         if (action.Available is EditedItem)
             dispatcher.Dispatch(new PriceOfItemChangedAction(action.Availability, action.Price));
@@ -75,7 +75,7 @@ public sealed class ItemEditorEffects
     }
 
     [EffectMethod]
-    public Task HandleChangeDefaultSectionAction(ChangeDefaultSectionAction action, IDispatcher dispatcher)
+    public static Task HandleChangeDefaultSectionAction(ChangeDefaultSectionAction action, IDispatcher dispatcher)
     {
         if (action.Available is EditedItem)
             dispatcher.Dispatch(new DefaultSectionOfItemChangedAction(action.Availability, action.DefaultSectionId));
@@ -86,7 +86,7 @@ public sealed class ItemEditorEffects
     }
 
     [EffectMethod]
-    public Task HandleRemoveStoreAction(RemoveStoreAction action, IDispatcher dispatcher)
+    public static Task HandleRemoveStoreAction(RemoveStoreAction action, IDispatcher dispatcher)
     {
         if (action.Available is EditedItem)
             dispatcher.Dispatch(new StoreOfItemRemovedAction(action.Availability));

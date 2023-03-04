@@ -33,7 +33,7 @@ public class IngredientEffects
     }
 
     [EffectMethod]
-    public Task HandleLoadInitialItemsAction(LoadInitialItemsAction action, IDispatcher dispatcher)
+    public static Task HandleLoadInitialItemsAction(LoadInitialItemsAction action, IDispatcher dispatcher)
     {
         if (action.Ingredient.ItemCategoryId != Guid.Empty)
             dispatcher.Dispatch(

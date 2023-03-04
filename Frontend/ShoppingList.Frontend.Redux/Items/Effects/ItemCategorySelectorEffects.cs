@@ -86,7 +86,7 @@ public sealed class ItemCategorySelectorEffects : IDisposable
     }
 
     [EffectMethod(typeof(ItemCategoryDropdownClosedAction))]
-    public Task HandleItemCategoryDropdownClosedAction(IDispatcher dispatcher)
+    public static Task HandleItemCategoryDropdownClosedAction(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new ItemCategoryInputChangedAction(string.Empty));
         return Task.CompletedTask;

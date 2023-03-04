@@ -26,7 +26,7 @@ public class ItemEffects
     }
 
     [EffectMethod(typeof(EnterItemSearchPageAction))]
-    public Task HandleEnterItemSearchPageAction(IDispatcher dispatcher)
+    public static Task HandleEnterItemSearchPageAction(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new LoadQuantityTypesAction());
         dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
