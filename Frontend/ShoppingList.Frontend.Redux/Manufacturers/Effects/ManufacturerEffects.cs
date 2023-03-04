@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Components;
 using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
+using RestEase;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Effects;
 
@@ -32,7 +34,16 @@ public class ManufacturerEffects
 
         dispatcher.Dispatch(new SearchManufacturersStartedAction());
 
-        var result = await _client.GetManufacturerSearchResultsAsync(action.SearchInput);
+        IEnumerable<ManufacturerSearchResult> result;
+        try
+        {
+            result = await _client.GetManufacturerSearchResultsAsync(action.SearchInput);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for manufacturers failed", e));
+            return;
+        }
 
         var finishAction = new SearchManufacturersFinishedAction(result.ToList());
         dispatcher.Dispatch(finishAction);
@@ -57,7 +68,16 @@ public class ManufacturerEffects
     {
         dispatcher.Dispatch(new LoadManufacturerForEditingStartedAction());
 
-        var manufacturer = await _client.GetManufacturerByIdAsync(action.Id);
+        EditedManufacturer manufacturer;
+        try
+        {
+            manufacturer = await _client.GetManufacturerByIdAsync(action.Id);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading manufacturer failed", e));
+            return;
+        }
 
         var finishAction = new LoadManufacturerForEditingFinishedAction(manufacturer);
         dispatcher.Dispatch(finishAction);
@@ -71,12 +91,30 @@ public class ManufacturerEffects
         var editor = _state.Value.Editor;
         if (editor.Manufacturer!.Id == Guid.Empty)
         {
-            await _client.CreateManufacturerAsync(editor.Manufacturer.Name);
+            try
+            {
+                await _client.CreateManufacturerAsync(editor.Manufacturer.Name);
+            }
+            catch (ApiException e)
+            {
+                dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Creating manufacturer failed", e));
+                dispatcher.Dispatch(new SavingManufacturerFinishedAction());
+                return;
+            }
         }
         else
         {
-            await _client.ModifyManufacturerAsync(
-                new ModifyManufacturerRequest(editor.Manufacturer.Id, editor.Manufacturer.Name));
+            try
+            {
+                await _client.ModifyManufacturerAsync(
+                        new ModifyManufacturerRequest(editor.Manufacturer.Id, editor.Manufacturer.Name));
+            }
+            catch (ApiException e)
+            {
+                dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Saving manufacturer failed", e));
+                dispatcher.Dispatch(new SavingManufacturerFinishedAction());
+                return;
+            }
             var updateAction = new UpdateSearchResultsAfterSaveAction(
                 editor.Manufacturer.Id,
                 editor.Manufacturer.Name);
@@ -92,7 +130,16 @@ public class ManufacturerEffects
     {
         dispatcher.Dispatch(new DeletingManufacturerStartedAction());
 
-        await _client.DeleteManufacturerAsync(_state.Value.Editor.Manufacturer!.Id);
+        try
+        {
+            await _client.DeleteManufacturerAsync(_state.Value.Editor.Manufacturer!.Id);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Deleting manufacturer failed", e));
+            dispatcher.Dispatch(new DeletingManufacturerFinishedAction());
+            return;
+        }
 
         dispatcher.Dispatch(new DeletingManufacturerFinishedAction());
         dispatcher.Dispatch(new LeaveManufacturerEditorAction());
