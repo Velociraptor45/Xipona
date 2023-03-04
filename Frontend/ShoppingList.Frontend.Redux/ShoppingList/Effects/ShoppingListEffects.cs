@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
@@ -8,6 +9,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdate
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
+using RestEase;
 using ShoppingListItem = ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListItem;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
@@ -28,21 +30,49 @@ public class ShoppingListEffects
     [EffectMethod(typeof(LoadQuantityTypesAction))]
     public async Task HandleLoadQuantityTypesAction(IDispatcher dispatcher)
     {
-        var quantityTypes = await _client.GetAllQuantityTypesAsync();
+        IEnumerable<QuantityType> quantityTypes;
+        try
+        {
+            quantityTypes = await _client.GetAllQuantityTypesAsync();
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading initial page state failed", e));
+            return;
+        }
         dispatcher.Dispatch(new LoadQuantityTypesFinishedAction(quantityTypes));
     }
 
     [EffectMethod(typeof(LoadQuantityTypesInPacketAction))]
     public async Task HandleLoadQuantityTypesInPacketAction(IDispatcher dispatcher)
     {
-        var quantityTypes = await _client.GetAllQuantityTypesInPacketAsync();
+        IEnumerable<QuantityTypeInPacket> quantityTypes;
+        try
+        {
+            quantityTypes = await _client.GetAllQuantityTypesInPacketAsync();
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading initial page state failed", e));
+            return;
+        }
         dispatcher.Dispatch(new LoadQuantityTypesInPacketFinishedAction(quantityTypes));
     }
 
     [EffectMethod(typeof(LoadAllActiveStoresAction))]
     public async Task HandleLoadAllActiveStoresAction(IDispatcher dispatcher)
     {
-        var stores = await _client.GetAllActiveStoresForShoppingListAsync();
+        IEnumerable<ShoppingListStore> stores;
+        try
+        {
+            stores = await _client.GetAllActiveStoresForShoppingListAsync();
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading stores failed", e));
+            return;
+        }
+
         var finishAction = new LoadAllActiveStoresFinishedAction(new AllActiveStores(stores.ToList()));
         dispatcher.Dispatch(finishAction);
 
@@ -53,7 +83,16 @@ public class ShoppingListEffects
     [EffectMethod]
     public async Task HandleSelectedStoreChangedAction(SelectedStoreChangedAction action, IDispatcher dispatcher)
     {
-        var shoppingList = await _client.GetActiveShoppingListByStoreIdAsync(action.StoreId);
+        ShoppingListModel shoppingList;
+        try
+        {
+            shoppingList = await _client.GetActiveShoppingListByStoreIdAsync(action.StoreId);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading shopping list failed", e));
+            return;
+        }
 
         dispatcher.Dispatch(new LoadShoppingListFinishedAction(shoppingList));
     }
@@ -116,7 +155,15 @@ public class ShoppingListEffects
             _state.Value.SelectedStoreId,
             _state.Value.PriceUpdate.Price);
 
-        await _client.UpdateItemPriceAsync(request);
+        try
+        {
+            await _client.UpdateItemPriceAsync(request);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Updating item price failed", e));
+            return;
+        }
 
         dispatcher.Dispatch(new SavePriceUpdateFinishedAction(
             _state.Value.PriceUpdate.Item.Id.ActualId!.Value,
@@ -138,7 +185,17 @@ public class ShoppingListEffects
             Guid.NewGuid(),
             _state.Value.ShoppingList!.Id,
             finishedAt);
-        await _client.FinishListAsync(request);
+
+        try
+        {
+            await _client.FinishListAsync(request);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Finishing shopping list failed", e));
+            dispatcher.Dispatch(new FinishShoppingListFinishedAction());
+            return;
+        }
 
         dispatcher.Dispatch(new FinishShoppingListFinishedAction());
         dispatcher.Dispatch(new SelectedStoreChangedAction(_state.Value.SelectedStoreId));

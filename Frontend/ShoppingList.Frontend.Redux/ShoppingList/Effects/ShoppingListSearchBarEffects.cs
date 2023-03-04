@@ -1,10 +1,12 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Configurations;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
+using RestEase;
 using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
@@ -59,8 +61,22 @@ public sealed class ShoppingListSearchBarEffects : IDisposable
         }
 
         _searchCancellationTokenSource = CreateNewCancellationTokenSource();
-        var results = await _client.SearchItemsForShoppingListAsync(_state.Value.SearchBar.Input,
-            _state.Value.SelectedStoreId, _searchCancellationTokenSource.Token);
+        IEnumerable<SearchItemForShoppingListResult> results;
+        try
+        {
+            results = await _client.SearchItemsForShoppingListAsync(_state.Value.SearchBar.Input,
+                    _state.Value.SelectedStoreId, _searchCancellationTokenSource.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for items failed", e));
+            return;
+        }
+
         dispatcher.Dispatch(new SearchItemForShoppingListFinishedAction(results));
     }
 
@@ -68,26 +84,34 @@ public sealed class ShoppingListSearchBarEffects : IDisposable
     public async Task HandleItemForShoppingListSearchResultSelectedAction(
         ItemForShoppingListSearchResultSelectedAction action, IDispatcher dispatcher)
     {
-        if (action.Result.ItemTypeId is null)
+        try
         {
-            var request = new AddItemToShoppingListRequest(
-                Guid.NewGuid(),
-                _state.Value.ShoppingList!.Id,
-                ShoppingListItemId.FromActualId(action.Result.ItemId),
-                action.Result.DefaultQuantity,
-                action.Result.DefaultSectionId);
-            await _client.AddItemToShoppingListAsync(request);
+            if (action.Result.ItemTypeId is null)
+            {
+                var request = new AddItemToShoppingListRequest(
+                    Guid.NewGuid(),
+                    _state.Value.ShoppingList!.Id,
+                    ShoppingListItemId.FromActualId(action.Result.ItemId),
+                    action.Result.DefaultQuantity,
+                    action.Result.DefaultSectionId);
+                await _client.AddItemToShoppingListAsync(request);
+            }
+            else
+            {
+                var request = new AddItemWithTypeToShoppingListRequest(
+                    Guid.NewGuid(),
+                    _state.Value.ShoppingList!.Id,
+                    action.Result.ItemId,
+                    action.Result.ItemTypeId.Value,
+                    action.Result.DefaultQuantity,
+                    action.Result.DefaultSectionId);
+                await _client.AddItemWithTypeToShoppingListAsync(request);
+            }
         }
-        else
+        catch (ApiException e)
         {
-            var request = new AddItemWithTypeToShoppingListRequest(
-                Guid.NewGuid(),
-                _state.Value.ShoppingList!.Id,
-                action.Result.ItemId,
-                action.Result.ItemTypeId.Value,
-                action.Result.DefaultQuantity,
-                action.Result.DefaultSectionId);
-            await _client.AddItemWithTypeToShoppingListAsync(request);
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Adding item to shopping list failed", e));
+            return;
         }
 
         dispatcher.Dispatch(new SelectedStoreChangedAction(_state.Value.SelectedStoreId));
