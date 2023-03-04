@@ -2,7 +2,9 @@
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using RestEase;
 using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
@@ -26,7 +28,17 @@ public sealed class ManufacturerSelectorEffects : IDisposable
         if (_state.Value.Editor.Item?.ManufacturerId is null)
             return;
 
-        var manufacturer = await _client.GetManufacturerByIdAsync(_state.Value.Editor.Item!.ManufacturerId!.Value);
+        EditedManufacturer manufacturer;
+        try
+        {
+            manufacturer = await _client.GetManufacturerByIdAsync(_state.Value.Editor.Item!.ManufacturerId!.Value);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading manufacturer failed", e));
+            return;
+        }
+
         var result = new ManufacturerSearchResult(manufacturer.Id, manufacturer.Name);
         dispatcher.Dispatch(new LoadInitialManufacturerFinishedAction(result));
     }
@@ -34,7 +46,17 @@ public sealed class ManufacturerSelectorEffects : IDisposable
     [EffectMethod]
     public async Task HandleCreateNewManufacturerAction(CreateNewManufacturerAction action, IDispatcher dispatcher)
     {
-        var result = await _client.CreateManufacturerAsync(_state.Value.Editor.ManufacturerSelector.Input);
+        EditedManufacturer result;
+        try
+        {
+            result = await _client.CreateManufacturerAsync(_state.Value.Editor.ManufacturerSelector.Input);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Creating manufacturer failed", e));
+            return;
+        }
+
         dispatcher.Dispatch(
             new CreateNewManufacturerFinishedAction(new ManufacturerSearchResult(result.Id, result.Name)));
     }
@@ -76,7 +98,17 @@ public sealed class ManufacturerSelectorEffects : IDisposable
         if (string.IsNullOrWhiteSpace(input))
             return;
 
-        var result = await _client.GetManufacturerSearchResultsAsync(input);
+        IEnumerable<ManufacturerSearchResult> result;
+        try
+        {
+            result = await _client.GetManufacturerSearchResultsAsync(input);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for manufacturers failed", e));
+            return;
+        }
+
         dispatcher.Dispatch(new SearchManufacturerFinishedAction(result.ToList()));
     }
 

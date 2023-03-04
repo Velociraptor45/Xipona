@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Components;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
-using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
-using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
+using RestEase;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
 
@@ -28,7 +28,16 @@ public sealed class ItemEditorEffects
     public async Task HandleLoadItemForEditingAction(LoadItemForEditingAction action, IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new LoadItemForEditingStartedAction());
-        var item = await _client.GetItemByIdAsync(action.ItemId);
+        EditedItem item;
+        try
+        {
+            item = await _client.GetItemByIdAsync(action.ItemId);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading item failed", e));
+            return;
+        }
         dispatcher.Dispatch(new LoadItemForEditingFinishedAction(item));
     }
 
@@ -87,17 +96,6 @@ public sealed class ItemEditorEffects
         return Task.CompletedTask;
     }
 
-    [EffectMethod(typeof(LoadInitialManufacturerAction))]
-    public async Task HandleLoadInitialManufacturerAction(IDispatcher dispatcher)
-    {
-        if (_state.Value.Editor.Item?.ManufacturerId is null)
-            return;
-
-        var manufacturer = await _client.GetManufacturerByIdAsync(_state.Value.Editor.Item!.ManufacturerId!.Value);
-        var result = new ManufacturerSearchResult(manufacturer.Id, manufacturer.Name);
-        dispatcher.Dispatch(new LoadInitialManufacturerFinishedAction(result));
-    }
-
     [EffectMethod(typeof(LeaveItemEditorAction))]
     public Task HandleLeaveItemEditorAction(IDispatcher dispatcher)
     {
@@ -111,15 +109,24 @@ public sealed class ItemEditorEffects
         dispatcher.Dispatch(new CreateItemStartedAction());
 
         var item = _state.Value.Editor.Item!;
-        if (item.IsItemWithTypes || (item.ItemMode is ItemMode.NotDefined && item.ItemTypes.Count > 0))
+        try
         {
-            var request = new CreateItemWithTypesRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
-            await _client.CreateItemWithTypesAsync(request);
+            if (item.IsItemWithTypes || (item.ItemMode is ItemMode.NotDefined && item.ItemTypes.Count > 0))
+            {
+                var request = new CreateItemWithTypesRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+                await _client.CreateItemWithTypesAsync(request);
+            }
+            else
+            {
+                var request = new CreateItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+                await _client.CreateItemAsync(request);
+            }
         }
-        else
+        catch (ApiException e)
         {
-            var request = new CreateItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
-            await _client.CreateItemAsync(request);
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Creating item failed", e));
+            dispatcher.Dispatch(new CreateItemFinishedAction());
+            return;
         }
 
         dispatcher.Dispatch(new CreateItemFinishedAction());
@@ -131,15 +138,24 @@ public sealed class ItemEditorEffects
     {
         dispatcher.Dispatch(new UpdateItemStartedAction());
 
-        if (_state.Value.Editor.Item!.IsItemWithTypes)
+        try
         {
-            var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
-            await _client.UpdateItemWithTypesAsync(request);
+            if (_state.Value.Editor.Item!.IsItemWithTypes)
+            {
+                var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+                await _client.UpdateItemWithTypesAsync(request);
+            }
+            else
+            {
+                var request = new UpdateItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+                await _client.UpdateItemAsync(request);
+            }
         }
-        else
+        catch (ApiException e)
         {
-            var request = new UpdateItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
-            await _client.UpdateItemAsync(request);
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Updating item failed", e));
+            dispatcher.Dispatch(new UpdateItemFinishedAction());
+            return;
         }
 
         dispatcher.Dispatch(new UpdateItemFinishedAction());
@@ -151,15 +167,24 @@ public sealed class ItemEditorEffects
     {
         dispatcher.Dispatch(new ModifyItemStartedAction());
 
-        if (_state.Value.Editor.Item!.IsItemWithTypes)
+        try
         {
-            var request = new ModifyItemWithTypesRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
-            await _client.ModifyItemWithTypesAsync(request);
+            if (_state.Value.Editor.Item!.IsItemWithTypes)
+            {
+                var request = new ModifyItemWithTypesRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+                await _client.ModifyItemWithTypesAsync(request);
+            }
+            else
+            {
+                var request = new ModifyItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+                await _client.ModifyItemAsync(request);
+            }
         }
-        else
+        catch (ApiException e)
         {
-            var request = new ModifyItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
-            await _client.ModifyItemAsync(request);
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Modifying item failed", e));
+            dispatcher.Dispatch(new ModifyItemFinishedAction());
+            return;
         }
 
         dispatcher.Dispatch(new ModifyItemFinishedAction());
@@ -182,7 +207,17 @@ public sealed class ItemEditorEffects
             item.ItemCategoryId!.Value,
             item.ManufacturerId,
             item.Availabilities);
-        await _client.MakeTemporaryItemPermanent(request);
+
+        try
+        {
+            await _client.MakeTemporaryItemPermanent(request);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Saving item failed", e));
+            dispatcher.Dispatch(new MakeItemPermanentFinishedAction());
+            return;
+        }
 
         dispatcher.Dispatch(new MakeItemPermanentFinishedAction());
         dispatcher.Dispatch(new LeaveItemEditorAction());
@@ -194,7 +229,17 @@ public sealed class ItemEditorEffects
         dispatcher.Dispatch(new DeleteItemStartedAction());
 
         var request = new DeleteItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!.Id);
-        await _client.DeleteItemAsync(request);
+
+        try
+        {
+            await _client.DeleteItemAsync(request);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Deleting item failed", e));
+            dispatcher.Dispatch(new DeleteItemFinishedAction());
+            return;
+        }
 
         dispatcher.Dispatch(new DeleteItemFinishedAction());
         dispatcher.Dispatch(new LeaveItemEditorAction());

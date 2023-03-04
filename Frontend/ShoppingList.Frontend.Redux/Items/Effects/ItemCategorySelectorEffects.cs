@@ -2,7 +2,9 @@
 using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.ItemCategorySelectors;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using RestEase;
 using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
@@ -26,7 +28,18 @@ public sealed class ItemCategorySelectorEffects : IDisposable
         if (_state.Value.Editor.Item?.ItemCategoryId is null)
             return;
 
-        var itemCategory = await _client.GetItemCategoryByIdAsync(_state.Value.Editor.Item!.ItemCategoryId!.Value);
+        EditedItemCategory itemCategory;
+
+        try
+        {
+            itemCategory = await _client.GetItemCategoryByIdAsync(_state.Value.Editor.Item!.ItemCategoryId!.Value);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading item category failed", e));
+            return;
+        }
+
         var result = new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name);
         dispatcher.Dispatch(new LoadInitialItemCategoryFinishedAction(result));
     }
@@ -34,7 +47,17 @@ public sealed class ItemCategorySelectorEffects : IDisposable
     [EffectMethod(typeof(CreateNewItemCategoryAction))]
     public async Task HandleCreateNewItemCategoryAction(IDispatcher dispatcher)
     {
-        var result = await _client.CreateItemCategoryAsync(_state.Value.Editor.ItemCategorySelector.Input);
+        EditedItemCategory result;
+        try
+        {
+            result = await _client.CreateItemCategoryAsync(_state.Value.Editor.ItemCategorySelector.Input);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Creating item category failed", e));
+            return;
+        }
+
         dispatcher.Dispatch(
             new CreateNewItemCategoryFinishedAction(new ItemCategorySearchResult(result.Id, result.Name)));
     }
@@ -76,7 +99,20 @@ public sealed class ItemCategorySelectorEffects : IDisposable
         if (string.IsNullOrWhiteSpace(input))
             return;
 
-        var result = await _client.GetItemCategorySearchResultsAsync(input);
+        IEnumerable<ItemCategorySearchResult> result;
+        try
+        {
+            result = await _client.GetItemCategorySearchResultsAsync(input);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for item categories failed", e));
+            return;
+        }
         dispatcher.Dispatch(new SearchItemCategoryFinishedAction(result.ToList()));
     }
 

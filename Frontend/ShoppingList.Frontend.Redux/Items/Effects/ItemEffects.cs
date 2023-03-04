@@ -4,8 +4,11 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Search;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
+using RestEase;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
 
@@ -43,7 +46,16 @@ public class ItemEffects
 
         dispatcher.Dispatch(new SearchItemsStartedAction());
 
-        var result = await _client.SearchItemsAsync(action.SearchInput);
+        IEnumerable<ItemSearchResult> result;
+        try
+        {
+            result = await _client.SearchItemsAsync(action.SearchInput);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for items failed", e));
+            return;
+        }
 
         var finishAction = new SearchItemsFinishedAction(result.ToList());
         dispatcher.Dispatch(finishAction);
@@ -62,7 +74,17 @@ public class ItemEffects
         if (_state.Value.QuantityTypes.Any())
             return;
 
-        var quantityTypes = await _client.GetAllQuantityTypesAsync();
+        IEnumerable<QuantityType> quantityTypes;
+        try
+        {
+            quantityTypes = await _client.GetAllQuantityTypesAsync();
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading initial page state failed", e));
+            return;
+        }
+
         dispatcher.Dispatch(new LoadQuantityTypesFinishedAction(quantityTypes.ToList()));
     }
 
@@ -72,7 +94,17 @@ public class ItemEffects
         if (_state.Value.QuantityTypesInPacket.Any())
             return;
 
-        var quantityTypes = await _client.GetAllQuantityTypesInPacketAsync();
+        IEnumerable<QuantityTypeInPacket> quantityTypes;
+        try
+        {
+            quantityTypes = await _client.GetAllQuantityTypesInPacketAsync();
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading initial page state failed", e));
+            return;
+        }
+
         dispatcher.Dispatch(new LoadQuantityTypesInPacketFinishedAction(quantityTypes.ToList()));
     }
 
@@ -82,7 +114,17 @@ public class ItemEffects
         if (_state.Value.Stores.Stores.Any())
             return;
 
-        var stores = await _client.GetAllActiveStoresForItemAsync();
+        IEnumerable<ItemStore> stores;
+        try
+        {
+            stores = await _client.GetAllActiveStoresForItemAsync();
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading initial page state failed", e));
+            return;
+        }
+
         dispatcher.Dispatch(new LoadActiveStoresFinishedAction(new ActiveStores(stores.ToList())));
     }
 }
