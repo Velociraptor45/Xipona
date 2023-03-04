@@ -1315,6 +1315,113 @@ public class ItemEditorReducerTests
         }
     }
 
+    public class OnDefaultSectionOfItemChanged
+    {
+        private readonly OnDefaultSectionOfItemChangedFixture _fixture;
+
+        public OnDefaultSectionOfItemChanged()
+        {
+            _fixture = new OnDefaultSectionOfItemChangedFixture();
+        }
+
+        [Fact]
+        public void OnDefaultSectionOfItemChanged_WithValidData_ShouldChangeStore()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnDefaultSectionOfItemChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnDefaultSectionOfItemChanged_WithInvalidAvailability_ShouldNotChangeStore()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualExpectedState();
+            _fixture.SetupActionWithInvalidAvailability();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnDefaultSectionOfItemChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnDefaultSectionOfItemChangedFixture : ItemEditorReducerFixture
+        {
+            public DefaultSectionOfItemChangedAction? Action { get; private set; }
+
+            public void SetupInitialStateEqualExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState()
+            {
+                var availabilities = ExpectedState.Editor.Item!.Availabilities.ToList();
+                availabilities[0] = availabilities.First() with
+                {
+                    DefaultSectionId = Guid.NewGuid()
+                };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item with
+                        {
+                            Availabilities = availabilities
+                        }
+                    }
+                };
+            }
+
+            //public void SetupExpectedState()
+            //{
+            //    TestPropertyNotSetException.ThrowIfNull(_store);
+
+            //    var availabilities = ExpectedState.Editor.Item!.Availabilities.ToList();
+            //    availabilities[0] = availabilities.First() with
+            //    {
+            //        StoreId = _store.Id,
+            //        DefaultSectionId = _store.DefaultSectionId
+            //    };
+
+            //    ExpectedState = ExpectedState with
+            //    {
+            //        Editor = ExpectedState.Editor with
+            //        {
+            //            Item = ExpectedState.Editor.Item with
+            //            {
+            //                Availabilities = availabilities
+            //            }
+            //        }
+            //    };
+            //}
+
+            public void SetupAction()
+            {
+                Action = new DefaultSectionOfItemChangedAction(InitialState.Editor.Item!.Availabilities.First(),
+                    ExpectedState.Editor.Item!.Availabilities.First().DefaultSectionId);
+            }
+
+            public void SetupActionWithInvalidAvailability()
+            {
+                Action = new DefaultSectionOfItemChangedAction(new DomainTestBuilder<EditedItemAvailability>().Create(),
+                    ExpectedState.Editor.Item!.Availabilities.First().DefaultSectionId);
+            }
+        }
+    }
+
     private abstract class ItemEditorReducerFixture
     {
         public ItemState ExpectedState { get; protected set; } = new DomainTestBuilder<ItemState>().Create();
