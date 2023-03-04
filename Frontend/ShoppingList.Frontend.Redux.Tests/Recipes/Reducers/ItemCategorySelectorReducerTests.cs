@@ -131,6 +131,150 @@ public class ItemCategorySelectorReducerTests
         }
     }
 
+    public class OnItemCategoryDropdownClosed
+    {
+        private readonly OnItemCategoryDropdownClosedFixture _fixture;
+
+        public OnItemCategoryDropdownClosed()
+        {
+            _fixture = new OnItemCategoryDropdownClosedFixture();
+        }
+
+        [Fact]
+        public void OnItemCategoryDropdownClosed_WithValidData_ShouldChangeInput()
+        {
+            // Arrange
+            _fixture.SetupExpectedState();
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategorySelectorReducer.OnItemCategoryDropdownClosed(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnItemCategoryDropdownClosed_WithInvalidIngredient_ShouldNotChangeInput()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionWithInvalidIngredient();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategorySelectorReducer.OnItemCategoryDropdownClosed(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnItemCategoryDropdownClosed_WithRecipeNull_ShouldNotChangeInput()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateRecipeNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForRecipeNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategorySelectorReducer.OnItemCategoryDropdownClosed(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnItemCategoryDropdownClosedFixture : ItemCategorySelectorReducerFixture
+        {
+            public ItemCategoryDropdownClosedAction? Action { get; private set; }
+
+            public void SetupExpectedStateRecipeNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState()
+            {
+                var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+                ingredients[0] = ingredients.First() with
+                {
+                    ItemCategorySelector = ingredients.First().ItemCategorySelector with
+                    {
+                        Input = new DomainTestBuilder<string>().Create()
+                    }
+                };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe with
+                        {
+                            Ingredients = ingredients
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+                ingredients[0] = ingredients.First() with
+                {
+                    ItemCategorySelector = ingredients.First().ItemCategorySelector with
+                    {
+                        Input = string.Empty
+                    }
+                };
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe with
+                        {
+                            Ingredients = ingredients
+                        }
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                var ingredient = InitialState.Editor.Recipe!.Ingredients.First();
+                Action = new ItemCategoryDropdownClosedAction(ingredient);
+            }
+
+            public void SetupActionWithInvalidIngredient()
+            {
+                var ingredient = new DomainTestBuilder<EditedIngredient>().Create();
+                Action = new ItemCategoryDropdownClosedAction(ingredient);
+            }
+
+            public void SetupActionForRecipeNull()
+            {
+                Action = new DomainTestBuilder<ItemCategoryDropdownClosedAction>().Create();
+            }
+        }
+    }
+
     private abstract class ItemCategorySelectorReducerFixture
     {
         public RecipeState ExpectedState { get; protected set; } = new DomainTestBuilder<RecipeState>().Create();
