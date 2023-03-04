@@ -3,7 +3,9 @@ using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients.ItemCategorySelectors;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using RestEase;
 using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Effects;
@@ -27,7 +29,17 @@ public sealed class ItemCategorySelectorEffects : IDisposable
         if (action.Ingredient.ItemCategoryId == Guid.Empty)
             return;
 
-        var itemCategory = await _client.GetItemCategoryByIdAsync(action.Ingredient.ItemCategoryId);
+        EditedItemCategory itemCategory;
+        try
+        {
+            itemCategory = await _client.GetItemCategoryByIdAsync(action.Ingredient.ItemCategoryId);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading item category failed", e));
+            return;
+        }
+
         var result = new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name);
         dispatcher.Dispatch(new LoadInitialItemCategoryFinishedAction(action.Ingredient.Key, result));
     }
@@ -42,7 +54,16 @@ public sealed class ItemCategorySelectorEffects : IDisposable
         if (ingredient is null || string.IsNullOrWhiteSpace(ingredient.ItemCategorySelector.Input))
             return;
 
-        var results = await _client.GetItemCategorySearchResultsAsync(ingredient.ItemCategorySelector.Input);
+        IEnumerable<ItemCategorySearchResult> results;
+        try
+        {
+            results = await _client.GetItemCategorySearchResultsAsync(ingredient.ItemCategorySelector.Input);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for item categories failed", e));
+            return;
+        }
         dispatcher.Dispatch(new SearchItemCategoriesFinishedAction(results.ToList(), action.IngredientKey));
     }
 
@@ -58,7 +79,16 @@ public sealed class ItemCategorySelectorEffects : IDisposable
     public async Task HandleLoadItemsForItemCategoryAction(LoadItemsForItemCategoryAction action,
         IDispatcher dispatcher)
     {
-        var result = await _client.SearchItemByItemCategoryAsync(action.ItemCategoryId);
+        IEnumerable<SearchItemByItemCategoryResult> result;
+        try
+        {
+            result = await _client.SearchItemByItemCategoryAsync(action.ItemCategoryId);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading items for item category failed", e));
+            return;
+        }
 
         dispatcher.Dispatch(new LoadItemsForItemCategoryFinishedAction(result.ToList(), action.IngredientKey));
     }
@@ -100,7 +130,17 @@ public sealed class ItemCategorySelectorEffects : IDisposable
         if (string.IsNullOrWhiteSpace(name))
             return;
 
-        var itemCategory = await _client.CreateItemCategoryAsync(name);
+        EditedItemCategory itemCategory;
+        try
+        {
+            itemCategory = await _client.CreateItemCategoryAsync(name);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Creating item category failed", e));
+            return;
+        }
+
         var searchResult = new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name);
         dispatcher.Dispatch(new CreateNewItemCategoryFinishedAction(action.IngredientKey, searchResult));
         dispatcher.Dispatch(new LoadItemsForItemCategoryAction(action.IngredientKey, searchResult.Id));

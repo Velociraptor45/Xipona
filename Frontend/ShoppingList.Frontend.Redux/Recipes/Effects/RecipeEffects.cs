@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Components;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using RestEase;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Effects;
 
@@ -27,7 +29,16 @@ public class RecipeEffects
             return;
         }
 
-        var results = await _client.SearchRecipesByNameAsync(action.SearchInput);
+        IEnumerable<RecipeSearchResult> results;
+        try
+        {
+            results = await _client.SearchRecipesByNameAsync(action.SearchInput);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for recipes failed", e));
+            return;
+        }
 
         dispatcher.Dispatch(new SearchRecipeFinishedAction(results.ToList()));
     }

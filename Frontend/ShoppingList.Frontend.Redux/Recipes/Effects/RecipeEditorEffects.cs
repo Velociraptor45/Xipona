@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Components;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using RestEase;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Effects;
 
@@ -23,7 +25,16 @@ public sealed class RecipeEditorEffects
     [EffectMethod]
     public async Task HandleLoadRecipeForEditing(LoadRecipeForEditingAction action, IDispatcher dispatcher)
     {
-        var result = await _client.GetRecipeByIdAsync(action.RecipeId);
+        EditedRecipe result;
+        try
+        {
+            result = await _client.GetRecipeByIdAsync(action.RecipeId);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading recipe failed", e));
+            return;
+        }
         dispatcher.Dispatch(new LoadRecipeForEditingFinishedAction(result));
     }
 
@@ -38,9 +49,18 @@ public sealed class RecipeEditorEffects
     public async Task HandleModifyRecipeAction(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new ModifyRecipeStartedAction());
-        await _client.ModifyRecipeAsync(_state.Value.Editor.Recipe!);
-        dispatcher.Dispatch(new ModifyRecipeFinishedAction());
+        try
+        {
+            await _client.ModifyRecipeAsync(_state.Value.Editor.Recipe!);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Modifying recipe failed", e));
+            dispatcher.Dispatch(new ModifyRecipeFinishedAction());
+            return;
+        }
 
+        dispatcher.Dispatch(new ModifyRecipeFinishedAction());
         dispatcher.Dispatch(new LeaveRecipeEditorAction());
     }
 
@@ -48,9 +68,18 @@ public sealed class RecipeEditorEffects
     public async Task HandleCreateRecipeAction(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new CreateRecipeStartedAction());
-        await _client.CreateRecipeAsync(_state.Value.Editor.Recipe!);
-        dispatcher.Dispatch(new CreateRecipeFinishedAction());
+        try
+        {
+            await _client.CreateRecipeAsync(_state.Value.Editor.Recipe!);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Creating recipe failed", e));
+            dispatcher.Dispatch(new CreateRecipeFinishedAction());
+            return;
+        }
 
+        dispatcher.Dispatch(new CreateRecipeFinishedAction());
         dispatcher.Dispatch(new LeaveRecipeEditorAction());
     }
 }

@@ -1,6 +1,9 @@
 ﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using RestEase;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Effects;
 
@@ -16,7 +19,16 @@ public class IngredientEffects
     [EffectMethod(typeof(LoadIngredientQuantityTypesAction))]
     public async Task HandleLoadIngredientQuantityTypesAction(IDispatcher dispatcher)
     {
-        var results = await _client.GetAllIngredientQuantityTypes();
+        IEnumerable<IngredientQuantityType> results;
+        try
+        {
+            results = await _client.GetAllIngredientQuantityTypes();
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading ingredient types failed", e));
+            return;
+        }
         dispatcher.Dispatch(new LoadIngredientQuantityTypesFinishedAction(results.ToList()));
     }
 
