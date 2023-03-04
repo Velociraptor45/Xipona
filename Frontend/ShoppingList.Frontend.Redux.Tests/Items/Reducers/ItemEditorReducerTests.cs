@@ -652,7 +652,7 @@ public class ItemEditorReducerTests
                         {
                             Availabilities = new List<EditedItemAvailability>
                             {
-                                new EditedItemAvailability(
+                                new(
                                     _stores.Last().Id,
                                     _stores.Last().DefaultSectionId,
                                     4.67f)
@@ -669,11 +669,11 @@ public class ItemEditorReducerTests
                         {
                             Availabilities = new List<EditedItemAvailability>
                             {
-                                new EditedItemAvailability(
+                                new(
                                     _stores.Last().Id,
                                     _stores.Last().DefaultSectionId,
                                     4.67f),
-                                new EditedItemAvailability(
+                                new(
                                     _stores.First().Id,
                                     _stores.First().DefaultSectionId,
                                     1f),
@@ -695,11 +695,11 @@ public class ItemEditorReducerTests
                         {
                             Availabilities = new List<EditedItemAvailability>
                             {
-                                new EditedItemAvailability(
+                                new(
                                     _stores.Last().Id,
                                     _stores.Last().DefaultSectionId,
                                     4.67f),
-                                new EditedItemAvailability(
+                                new(
                                     _stores.First().Id,
                                     _stores.First().DefaultSectionId,
                                     13.98f),
@@ -864,7 +864,7 @@ public class ItemEditorReducerTests
                                 {
                                     Availabilities = new List<EditedItemAvailability>
                                     {
-                                        new EditedItemAvailability(
+                                        new(
                                             _stores.Last().Id,
                                             _stores.Last().DefaultSectionId,
                                             4.67f)
@@ -895,7 +895,7 @@ public class ItemEditorReducerTests
                                 {
                                     Availabilities = new List<EditedItemAvailability>
                                     {
-                                        new EditedItemAvailability(
+                                        new(
                                             _stores.Last().Id,
                                             _stores.Last().DefaultSectionId,
                                             4.67f)
@@ -919,11 +919,11 @@ public class ItemEditorReducerTests
                                 {
                                     Availabilities = new List<EditedItemAvailability>
                                     {
-                                        new EditedItemAvailability(
+                                        new(
                                             _stores.Last().Id,
                                             _stores.Last().DefaultSectionId,
                                             4.67f),
-                                        new EditedItemAvailability(
+                                        new(
                                             _stores.First().Id,
                                             _stores.First().DefaultSectionId,
                                             1f),
@@ -952,11 +952,11 @@ public class ItemEditorReducerTests
                                 {
                                     Availabilities = new List<EditedItemAvailability>
                                     {
-                                        new EditedItemAvailability(
+                                        new(
                                             _stores.Last().Id,
                                             _stores.Last().DefaultSectionId,
                                             4.67f),
-                                        new EditedItemAvailability(
+                                        new(
                                             _stores.First().Id,
                                             _stores.First().DefaultSectionId,
                                             13.98f),
