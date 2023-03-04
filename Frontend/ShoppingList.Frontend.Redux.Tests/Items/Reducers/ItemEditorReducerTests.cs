@@ -1717,6 +1717,86 @@ public class ItemEditorReducerTests
         }
     }
 
+    public class OnStoreOfItemRemoved
+    {
+        private readonly OnStoreOfItemRemovedFixture _fixture;
+
+        public OnStoreOfItemRemoved()
+        {
+            _fixture = new OnStoreOfItemRemovedFixture();
+        }
+
+        [Fact]
+        public void OnStoreOfItemRemoved_WithValidData_ShouldChangePrice()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualExpectedState();
+            _fixture.SetupExpectedState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemRemoved(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreOfItemRemoved_WithInvalidAvailability_ShouldNotChangePrice()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualExpectedState();
+            _fixture.SetupActionWithInvalidAvailability();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemRemoved(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnStoreOfItemRemovedFixture : ItemEditorReducerFixture
+        {
+            public StoreOfItemRemovedAction? Action { get; private set; }
+
+            public void SetupInitialStateEqualExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupExpectedState()
+            {
+                var availabilities = ExpectedState.Editor.Item!.Availabilities.ToList();
+                availabilities.RemoveAt(0);
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item with
+                        {
+                            Availabilities = availabilities
+                        }
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new StoreOfItemRemovedAction(InitialState.Editor.Item!.Availabilities.First());
+            }
+
+            public void SetupActionWithInvalidAvailability()
+            {
+                Action = new StoreOfItemRemovedAction(new DomainTestBuilder<EditedItemAvailability>().Create());
+            }
+        }
+    }
+
     private abstract class ItemEditorReducerFixture
     {
         public ItemState ExpectedState { get; protected set; } = new DomainTestBuilder<ItemState>().Create();
