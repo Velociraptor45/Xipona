@@ -2042,6 +2042,87 @@ public class ItemEditorReducerTests
         }
     }
 
+    public class OnItemTypeRemoved
+    {
+        private readonly OnItemTypeRemovedFixture _fixture;
+
+        public OnItemTypeRemoved()
+        {
+            _fixture = new OnItemTypeRemovedFixture();
+        }
+
+        [Fact]
+        public void OnItemTypeRemoved_WithValidData_ShouldRemoveType()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnItemTypeRemoved(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnItemTypeRemoved_WithInvalidItemType_ShouldNotRemoveType()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualExpectedState();
+            _fixture.SetupActionWithInvalidItemType();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnItemTypeRemoved(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnItemTypeRemovedFixture : ItemEditorReducerFixture
+        {
+            public ItemTypeRemovedAction? Action { get; private set; }
+
+            public void SetupInitialStateEqualExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState()
+            {
+                var itemTypes = ExpectedState.Editor.Item!.ItemTypes.ToList();
+                itemTypes.Insert(0, new DomainTestBuilder<EditedItemType>().Create());
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item with
+                        {
+                            ItemTypes = itemTypes
+                        }
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                var itemTypeInitial = InitialState.Editor.Item!.ItemTypes.First();
+                Action = new ItemTypeRemovedAction(itemTypeInitial);
+            }
+
+            public void SetupActionWithInvalidItemType()
+            {
+                var itemType = new DomainTestBuilder<EditedItemType>().Create();
+                Action = new ItemTypeRemovedAction(itemType);
+            }
+        }
+    }
+
     private abstract class ItemEditorReducerFixture
     {
         public ItemState ExpectedState { get; protected set; } = new DomainTestBuilder<ItemState>().Create();
