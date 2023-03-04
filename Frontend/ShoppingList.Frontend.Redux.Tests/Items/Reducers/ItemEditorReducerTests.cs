@@ -972,6 +972,151 @@ public class ItemEditorReducerTests
         }
     }
 
+    public class OnStoreOfItemChanged
+    {
+        private readonly OnStoreOfItemChangedFixture _fixture;
+
+        public OnStoreOfItemChanged()
+        {
+            _fixture = new OnStoreOfItemChangedFixture();
+        }
+
+        [Fact]
+        public void OnStoreOfItemChanged_WithValidData_ShouldChangeStore()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupExpectedState();
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreOfItemChanged_WithInvalidAvailability_ShouldNotChangeStore()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupInitialStateEqualExpectedState();
+            _fixture.SetupActionWithInvalidAvailability();
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreOfItemChanged_WithInvalidStoreId_ShouldNotChangeStore()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualExpectedState();
+            _fixture.SetupActionWithInvalidStoreId();
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnStoreOfItemChangedFixture : ItemEditorReducerFixture
+        {
+            private ItemStore? _store;
+            public StoreOfItemChangedAction Action { get; private set; }
+
+            public void SetupStore()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Stores = ExpectedState.Stores with
+                    {
+                        Stores = new List<ItemStore>
+                        {
+                            ItemStoreMother.GetValid(),
+                            ItemStoreMother.GetValid(),
+                            ItemStoreMother.GetValid()
+                        }
+                    }
+                };
+
+                _store = ExpectedState.Stores.Stores.First();
+            }
+
+            public void SetupInitialStateEqualExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState()
+            {
+                var availabilities = ExpectedState.Editor.Item!.Availabilities.ToList();
+                availabilities[0] = availabilities.First() with
+                {
+                    StoreId = Guid.NewGuid(),
+                    DefaultSectionId = Guid.NewGuid()
+                };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item with
+                        {
+                            Availabilities = availabilities
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var availabilities = ExpectedState.Editor.Item!.Availabilities.ToList();
+                availabilities[0] = availabilities.First() with
+                {
+                    StoreId = _store.Id,
+                    DefaultSectionId = _store.DefaultSectionId
+                };
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item with
+                        {
+                            Availabilities = availabilities
+                        }
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                Action = new StoreOfItemChangedAction(InitialState.Editor.Item!.Availabilities.First(), _store.Id);
+            }
+
+            public void SetupActionWithInvalidStoreId()
+            {
+                Action = new StoreOfItemChangedAction(InitialState.Editor.Item!.Availabilities.First(), Guid.NewGuid());
+            }
+
+            public void SetupActionWithInvalidAvailability()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                Action = new StoreOfItemChangedAction(new DomainTestBuilder<EditedItemAvailability>().Create(), _store.Id);
+            }
+        }
+    }
+
     private abstract class ItemEditorReducerFixture
     {
         public ItemState ExpectedState { get; protected set; } = new DomainTestBuilder<ItemState>().Create();

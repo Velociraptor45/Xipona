@@ -249,7 +249,8 @@ public static class ItemEditorReducer
         if (store == null)
             return state;
 
-        availabilities[availabilityIndex] = new EditedItemAvailability(store.Id, store.DefaultSectionId, 1f);
+        availabilities[availabilityIndex] =
+            new EditedItemAvailability(store.Id, store.DefaultSectionId, action.Availability.PricePerQuantity);
 
         return state with
         {
