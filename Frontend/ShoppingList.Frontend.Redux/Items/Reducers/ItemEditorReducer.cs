@@ -482,7 +482,7 @@ public static class ItemEditorReducer
     public static ItemState OnItemTypeAdded(ItemState state)
     {
         var types = state.Editor.Item!.ItemTypes.ToList();
-        types.Add(new(Guid.Empty, "", new List<EditedItemAvailability>()));
+        types.Add(new(Guid.Empty, string.Empty, new List<EditedItemAvailability>()));
 
         return state with
         {

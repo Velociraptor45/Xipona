@@ -1993,6 +1993,55 @@ public class ItemEditorReducerTests
         }
     }
 
+    public class OnItemTypeAdded
+    {
+        private readonly OnItemTypeAddedFixture _fixture;
+
+        public OnItemTypeAdded()
+        {
+            _fixture = new OnItemTypeAddedFixture();
+        }
+
+        [Fact]
+        public void OnItemTypeAdded_WithValidData_ShouldAddItemType()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnItemTypeAdded(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnItemTypeAddedFixture : ItemEditorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupExpectedState()
+            {
+                var itemTypes = ExpectedState.Editor.Item!.ItemTypes.ToList();
+                itemTypes.Add(new(Guid.Empty, string.Empty, new List<EditedItemAvailability>()));
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item with
+                        {
+                            ItemTypes = itemTypes
+                        }
+                    }
+                };
+            }
+        }
+    }
+
     private abstract class ItemEditorReducerFixture
     {
         public ItemState ExpectedState { get; protected set; } = new DomainTestBuilder<ItemState>().Create();
