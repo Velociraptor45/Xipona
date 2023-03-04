@@ -2635,6 +2635,302 @@ public class ItemEditorReducerTests
         }
     }
 
+    public class OnMakeItemPermanentStarted
+    {
+        private readonly OnMakeItemPermanentStartedFixture _fixture;
+
+        public OnMakeItemPermanentStarted()
+        {
+            _fixture = new OnMakeItemPermanentStartedFixture();
+        }
+
+        [Fact]
+        public void OnMakeItemPermanentStarted_WithNotSaving_ShouldEnableSaving()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnMakeItemPermanentStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnMakeItemPermanentStarted_WithSaving_ShouldEnableSaving()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithAlreadySaving();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnMakeItemPermanentStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnMakeItemPermanentStartedFixture : ItemEditorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = false
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithAlreadySaving()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = true
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = true
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnMakeItemPermanentFinished
+    {
+        private readonly OnMakeItemPermanentFinishedFixture _fixture;
+
+        public OnMakeItemPermanentFinished()
+        {
+            _fixture = new OnMakeItemPermanentFinishedFixture();
+        }
+
+        [Fact]
+        public void OnMakeItemPermanentFinished_WithSaving_ShouldDisableSaving()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnMakeItemPermanentFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnMakeItemPermanentFinished_WithNotSaving_ShouldDisableSaving()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithNotSaving();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnMakeItemPermanentFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnMakeItemPermanentFinishedFixture : ItemEditorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = true
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithNotSaving()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = false
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = false
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnDeleteItemStarted
+    {
+        private readonly OnDeleteItemStartedFixture _fixture;
+
+        public OnDeleteItemStarted()
+        {
+            _fixture = new OnDeleteItemStartedFixture();
+        }
+
+        [Fact]
+        public void OnDeleteItemStarted_WithNotDeleting_ShouldEnableDeleting()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnDeleteItemStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnDeleteItemStarted_WithDeleting_ShouldEnableDeleting()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithAlreadyDeleting();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnDeleteItemStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnDeleteItemStartedFixture : ItemEditorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleting = false
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithAlreadyDeleting()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleting = true
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleting = true
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnDeleteItemFinished
+    {
+        private readonly OnDeleteItemFinishedFixture _fixture;
+
+        public OnDeleteItemFinished()
+        {
+            _fixture = new OnDeleteItemFinishedFixture();
+        }
+
+        [Fact]
+        public void OnDeleteItemFinished_WithDeleting_ShouldDisableDeleting()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnDeleteItemFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnDeleteItemFinished_WithNotDeleting_ShouldDisableDeleting()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithNotDeleting();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnDeleteItemFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnDeleteItemFinishedFixture : ItemEditorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleting = true
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithNotDeleting()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleting = false
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleting = false
+                    }
+                };
+            }
+        }
+    }
+
     private abstract class ItemEditorReducerFixture
     {
         public ItemState ExpectedState { get; protected set; } = new DomainTestBuilder<ItemState>().Create();
