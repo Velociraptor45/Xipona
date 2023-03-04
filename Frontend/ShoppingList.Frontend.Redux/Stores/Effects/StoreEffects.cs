@@ -1,8 +1,11 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions;
+using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
+using RestEase;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Stores.Effects;
 
@@ -20,7 +23,16 @@ public class StoreEffects
     [EffectMethod(typeof(LoadStoresOverviewAction))]
     public async Task HandleLoadStoresOverviewAction(IDispatcher dispatcher)
     {
-        var searchResults = await _client.GetActiveStoresOverviewAsync();
+        IEnumerable<StoreSearchResult> searchResults;
+        try
+        {
+            searchResults = await _client.GetActiveStoresOverviewAsync();
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading stores failed", e));
+            return;
+        }
 
         dispatcher.Dispatch(new LoadStoresOverviewFinishedAction(searchResults.OrderBy(s => s.Name).ToList()));
     }

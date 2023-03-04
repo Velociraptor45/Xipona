@@ -1,9 +1,11 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
+using RestEase;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Stores.Effects;
 
@@ -30,7 +32,16 @@ public class StoreEditorEffects
     [EffectMethod]
     public async Task HandleLoadStoreForEditing(LoadStoreForEditingAction action, IDispatcher dispatcher)
     {
-        var result = await _client.GetStoreByIdAsync(action.StoreId);
+        EditedStore result;
+        try
+        {
+            result = await _client.GetStoreByIdAsync(action.StoreId);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading store failed", e));
+            return;
+        }
         dispatcher.Dispatch(new LoadStoreForEditingFinishedAction(result));
     }
 
@@ -44,9 +55,31 @@ public class StoreEditorEffects
             return;
 
         if (store.Id == Guid.Empty)
-            await _client.CreateStoreAsync(store);
+        {
+            try
+            {
+                await _client.CreateStoreAsync(store);
+            }
+            catch (ApiException e)
+            {
+                dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Creating store failed", e));
+                dispatcher.Dispatch(new SaveStoreFinishedAction());
+                return;
+            }
+        }
         else
-            await _client.ModifyStoreAsync(store);
+        {
+            try
+            {
+                await _client.ModifyStoreAsync(store);
+            }
+            catch (ApiException e)
+            {
+                dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Modifying store failed", e));
+                dispatcher.Dispatch(new SaveStoreFinishedAction());
+                return;
+            }
+        }
 
         dispatcher.Dispatch(new SaveStoreFinishedAction());
         dispatcher.Dispatch(new LeaveStoreEditorAction());
