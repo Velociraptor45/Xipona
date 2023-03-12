@@ -96,6 +96,80 @@ public class StoreEditorReducerTests
         }
     }
 
+    public class OnStoreNameChanged
+    {
+        private readonly OnStoreNameChangedFixture _fixture;
+
+        public OnStoreNameChanged()
+        {
+            _fixture = new OnStoreNameChangedFixture();
+        }
+
+        [Fact]
+        public void OnStoreNameChanged_WithValidData_ShouldChangeName()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnStoreNameChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreNameChanged_WithStoreNull_ShouldNotChangeName()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateStoreNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForStoreNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnStoreNameChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnStoreNameChangedFixture : StoreEditorReducerFixture
+        {
+            public StoreNameChangedAction? Action { get; private set; }
+
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupExpectedStateStoreNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = null
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new StoreNameChangedAction(ExpectedState.Editor.Store!.Name);
+            }
+
+            public void SetupActionForStoreNull()
+            {
+                Action = new DomainTestBuilder<StoreNameChangedAction>().Create();
+            }
+        }
+    }
+
     private abstract class StoreEditorReducerFixture
     {
         public StoreState ExpectedState { get; protected set; } = new DomainTestBuilder<StoreState>().Create();
