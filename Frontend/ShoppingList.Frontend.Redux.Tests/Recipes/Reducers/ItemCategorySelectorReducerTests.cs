@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients.ItemCategorySelectors;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Reducers;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
@@ -271,6 +272,161 @@ public class ItemCategorySelectorReducerTests
             public void SetupActionForRecipeNull()
             {
                 Action = new DomainTestBuilder<ItemCategoryDropdownClosedAction>().Create();
+            }
+        }
+    }
+
+    public class OnSelectedItemCategoryChanged
+    {
+        private readonly OnSelectedItemCategoryChangedFixture _fixture;
+
+        public OnSelectedItemCategoryChanged()
+        {
+            _fixture = new OnSelectedItemCategoryChangedFixture();
+        }
+
+        [Fact]
+        public void OnSelectedItemCategoryChanged_WithValidData_ShouldChangeItemCategory()
+        {
+            // Arrange
+            _fixture.SetupExpectedState();
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategorySelectorReducer.OnSelectedItemCategoryChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSelectedItemCategoryChanged_WithInvalidIngredient_ShouldNotChangeItemCategory()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionWithInvalidIngredient();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategorySelectorReducer.OnSelectedItemCategoryChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSelectedItemCategoryChanged_WithRecipeNull_ShouldNotChangeItemCategory()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateRecipeNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForRecipeNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategorySelectorReducer.OnSelectedItemCategoryChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSelectedItemCategoryChangedFixture : ItemCategorySelectorReducerFixture
+        {
+            public SelectedItemCategoryChangedAction? Action { get; private set; }
+
+            public void SetupExpectedStateRecipeNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState()
+            {
+                var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+                ingredients[0] = ingredients.First() with
+                {
+                    ItemCategoryId = Guid.NewGuid(),
+                    ItemCategorySelector = ingredients.First().ItemCategorySelector with
+                    {
+                        ItemCategories =
+                            ingredients.First().ItemCategorySelector.ItemCategories
+                                .Concat(new DomainTestBuilder<ItemCategorySearchResult>().CreateMany(2))
+                                .ToList(),
+                        Input = new DomainTestBuilder<string>().Create()
+                    }
+                };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe with
+                        {
+                            Ingredients = ingredients
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+                ingredients[0] = ingredients.First() with
+                {
+                    ItemCategoryId = ingredients.First().ItemCategorySelector.ItemCategories.First().Id,
+                    ItemCategorySelector = ingredients.First().ItemCategorySelector with
+                    {
+                        ItemCategories = new List<ItemCategorySearchResult>
+                        {
+                            ingredients.First().ItemCategorySelector.ItemCategories.First()
+                        },
+                        Input = string.Empty
+                    }
+                };
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe with
+                        {
+                            Ingredients = ingredients
+                        }
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                var ingredient = InitialState.Editor.Recipe!.Ingredients.First();
+                var itemCategoryId = ExpectedState.Editor.Recipe!.Ingredients.First().ItemCategoryId;
+                Action = new SelectedItemCategoryChangedAction(ingredient.Key, itemCategoryId);
+            }
+
+            public void SetupActionWithInvalidIngredient()
+            {
+                var itemCategoryId = ExpectedState.Editor.Recipe!.Ingredients.First().ItemCategoryId;
+                Action = new SelectedItemCategoryChangedAction(Guid.NewGuid(), itemCategoryId);
+            }
+
+            public void SetupActionForRecipeNull()
+            {
+                Action = new DomainTestBuilder<SelectedItemCategoryChangedAction>().Create();
             }
         }
     }
