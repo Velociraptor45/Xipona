@@ -745,6 +745,162 @@ public class ItemCategorySelectorReducerTests
         }
     }
 
+    public class OnCreateNewItemCategoryFinished
+    {
+        private readonly OnCreateNewItemCategoryFinishedFixture _fixture;
+
+        public OnCreateNewItemCategoryFinished()
+        {
+            _fixture = new OnCreateNewItemCategoryFinishedFixture();
+        }
+
+        [Fact]
+        public void OnCreateNewItemCategoryFinished_WithValidData_ShouldSetSearchResult()
+        {
+            // Arrange
+            _fixture.SetupExpectedState();
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategorySelectorReducer.OnCreateNewItemCategoryFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCreateNewItemCategoryFinished_WithInvalidIngredient_ShouldNotSetSearchResult()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionWithInvalidIngredient();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategorySelectorReducer.OnCreateNewItemCategoryFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCreateNewItemCategoryFinished_WithRecipeNull_ShouldNotSetSearchResult()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateRecipeNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForRecipeNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategorySelectorReducer.OnCreateNewItemCategoryFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnCreateNewItemCategoryFinishedFixture : ItemCategorySelectorReducerFixture
+        {
+            public CreateNewItemCategoryFinishedAction? Action { get; private set; }
+
+            public void SetupExpectedStateRecipeNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState()
+            {
+                var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+                ingredients[0] = ingredients.First() with
+                {
+                    ItemCategorySelector = ingredients.First().ItemCategorySelector with
+                    {
+                        ItemCategories = new DomainTestBuilder<ItemCategorySearchResult>().CreateMany(2).ToList(),
+                        Input = new DomainTestBuilder<string>().Create()
+                    }
+                };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe with
+                        {
+                            Ingredients = ingredients
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+
+                var result = new DomainTestBuilder<ItemCategorySearchResult>().Create();
+                result.Id = ingredients.First().ItemCategoryId;
+
+                ingredients[0] = ingredients.First() with
+                {
+                    ItemCategorySelector = ingredients.First().ItemCategorySelector with
+                    {
+                        ItemCategories = new List<ItemCategorySearchResult>
+                        {
+                            result
+                        },
+                        Input = string.Empty
+                    }
+                };
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe with
+                        {
+                            Ingredients = ingredients
+                        }
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                var ingredient = InitialState.Editor.Recipe!.Ingredients.First();
+                var itemCategory = ExpectedState.Editor.Recipe!.Ingredients.First().ItemCategorySelector
+                    .ItemCategories.First();
+                Action = new CreateNewItemCategoryFinishedAction(ingredient.Key, itemCategory);
+            }
+
+            public void SetupActionWithInvalidIngredient()
+            {
+                var itemCategory = ExpectedState.Editor.Recipe!.Ingredients.First().ItemCategorySelector
+                    .ItemCategories.First();
+                Action = new CreateNewItemCategoryFinishedAction(Guid.NewGuid(), itemCategory);
+            }
+
+            public void SetupActionForRecipeNull()
+            {
+                Action = new DomainTestBuilder<CreateNewItemCategoryFinishedAction>().Create();
+            }
+        }
+    }
+
     private abstract class ItemCategorySelectorReducerFixture
     {
         public RecipeState ExpectedState { get; protected set; } = new DomainTestBuilder<RecipeState>().Create();
