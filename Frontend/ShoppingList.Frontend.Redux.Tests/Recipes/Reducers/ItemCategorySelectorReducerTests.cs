@@ -581,6 +581,170 @@ public class ItemCategorySelectorReducerTests
         }
     }
 
+    public class OnSearchItemCategoriesFinished
+    {
+        private readonly OnSearchItemCategoriesFinishedFixture _fixture;
+
+        public OnSearchItemCategoriesFinished()
+        {
+            _fixture = new OnSearchItemCategoriesFinishedFixture();
+        }
+
+        [Fact]
+        public void OnSearchItemCategoriesFinished_WithCurrentlySelectedNotPartOfResults_ShouldSetSearchResult()
+        {
+            // Arrange
+            _fixture.SetupExpectedState();
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategorySelectorReducer.OnSearchItemCategoriesFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSearchItemCategoriesFinished_WithInvalidIngredient_ShouldNotSetSearchResult()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionWithInvalidIngredient();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategorySelectorReducer.OnSearchItemCategoriesFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSearchItemCategoriesFinished_WithRecipeNull_ShouldNotSetSearchResult()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateRecipeNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForRecipeNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategorySelectorReducer.OnSearchItemCategoriesFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSearchItemCategoriesFinishedFixture : ItemCategorySelectorReducerFixture
+        {
+            public SearchItemCategoriesFinishedAction? Action { get; private set; }
+
+            public void SetupExpectedStateRecipeNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState()
+            {
+                var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+                ingredients[0] = ingredients.First() with
+                {
+                    ItemCategorySelector = ingredients.First().ItemCategorySelector with
+                    {
+                        ItemCategories = new DomainTestBuilder<ItemCategorySearchResult>()
+                            .CreateMany(3)
+                            .Concat(new List<ItemCategorySearchResult>
+                            {
+                                ingredients.First().ItemCategorySelector.ItemCategories.First()
+                            })
+                            .ToList()
+                    }
+                };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe with
+                        {
+                            Ingredients = ingredients
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+
+                var existing = new DomainTestBuilder<ItemCategorySearchResult>().Create();
+                existing.Id = ingredients.First().ItemCategoryId;
+
+                var searchResults = ingredients.First().ItemCategorySelector.ItemCategories
+                    .OrderBy(r => r.Name)
+                    .ToList();
+                searchResults.Insert(0, existing);
+
+                ingredients[0] = ingredients.First() with
+                {
+                    ItemCategorySelector = ingredients.First().ItemCategorySelector with
+                    {
+                        ItemCategories = searchResults
+                    }
+                };
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe with
+                        {
+                            Ingredients = ingredients
+                        }
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                var ingredient = InitialState.Editor.Recipe!.Ingredients.First();
+                var itemCategories = ExpectedState.Editor.Recipe!.Ingredients.First().ItemCategorySelector
+                    .ItemCategories.Reverse().ToList();
+                itemCategories.RemoveAt(itemCategories.Count - 1);
+                Action = new SearchItemCategoriesFinishedAction(itemCategories, ingredient.Key);
+            }
+
+            public void SetupActionWithInvalidIngredient()
+            {
+                var itemCategories = ExpectedState.Editor.Recipe!.Ingredients.First().ItemCategorySelector
+                    .ItemCategories.Reverse().ToList();
+                itemCategories.RemoveAt(itemCategories.Count - 1);
+                Action = new SearchItemCategoriesFinishedAction(itemCategories, Guid.NewGuid());
+            }
+
+            public void SetupActionForRecipeNull()
+            {
+                Action = new DomainTestBuilder<SearchItemCategoriesFinishedAction>().Create();
+            }
+        }
+    }
+
     private abstract class ItemCategorySelectorReducerFixture
     {
         public RecipeState ExpectedState { get; protected set; } = new DomainTestBuilder<RecipeState>().Create();
