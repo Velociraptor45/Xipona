@@ -118,8 +118,6 @@ public static class ItemCategorySelectorReducer
             return state;
 
         var ingredientIndex = ingredients.IndexOf(ingredient);
-        if (ingredientIndex < 0)
-            return state;
 
         ingredients[ingredientIndex] = ingredient with
         {
