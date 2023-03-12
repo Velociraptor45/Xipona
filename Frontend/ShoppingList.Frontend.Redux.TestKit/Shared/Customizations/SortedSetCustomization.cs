@@ -3,6 +3,7 @@ using AutoFixture.Kernel;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
+using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Customizations;
@@ -13,6 +14,7 @@ public class SortedSetCustomization : ICustomization
     {
         fixture.Customizations.Add(new ShoppingListSectionSortedSetSpecimenBuilder());
         fixture.Customizations.Add(new EditedPreparationStepSortedSetSpecimenBuilder());
+        fixture.Customizations.Add(new EditedSectionSortedSetSpecimenBuilder());
     }
 
     private class ShoppingListSectionSortedSetSpecimenBuilder : ISpecimenBuilder
@@ -40,7 +42,7 @@ public class SortedSetCustomization : ICustomization
 
         private static SortedSet<ShoppingListSection> CreateInstance(ISpecimenContext context)
         {
-            var sections = new DomainTestBuilderBase<ShoppingListSection>().CreateMany(3).ToList(); // todo replace
+            var sections = new DomainTestBuilderBase<ShoppingListSection>().CreateMany(3).ToList();
             for (int i = 0; i < sections.Count; i++)
             {
                 sections[i] = sections[i] with
@@ -78,7 +80,7 @@ public class SortedSetCustomization : ICustomization
 
         private static SortedSet<EditedPreparationStep> CreateInstance(ISpecimenContext context)
         {
-            var sections = new DomainTestBuilderBase<EditedPreparationStep>().CreateMany(3).ToList(); // todo replace
+            var sections = new DomainTestBuilderBase<EditedPreparationStep>().CreateMany(3).ToList();
             for (int i = 0; i < sections.Count; i++)
             {
                 sections[i] = sections[i] with
@@ -88,6 +90,44 @@ public class SortedSetCustomization : ICustomization
             }
 
             return new SortedSet<EditedPreparationStep>(sections, new SortingIndexComparer());
+        }
+    }
+
+    private class EditedSectionSortedSetSpecimenBuilder : ISpecimenBuilder
+    {
+        public object Create(object request, ISpecimenContext context)
+        {
+            if (!MatchesType(request))
+                return new NoSpecimen();
+
+            return CreateInstance(context);
+        }
+
+        private static bool MatchesType(object request)
+        {
+            var expectedType = typeof(SortedSet<EditedSection>);
+            if (request is SeededRequest seededRequest)
+            {
+                var requestType = seededRequest.Request as Type;
+                return expectedType == requestType;
+            }
+
+            var t = request as Type;
+            return expectedType == t;
+        }
+
+        private static SortedSet<EditedSection> CreateInstance(ISpecimenContext context)
+        {
+            var sections = new DomainTestBuilderBase<EditedSection>().CreateMany(3).ToList();
+            for (int i = 0; i < sections.Count; i++)
+            {
+                sections[i] = sections[i] with
+                {
+                    SortingIndex = i
+                };
+            }
+
+            return new SortedSet<EditedSection>(sections, new SortingIndexComparer());
         }
     }
 }
