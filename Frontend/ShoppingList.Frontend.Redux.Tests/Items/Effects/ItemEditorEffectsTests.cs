@@ -450,6 +450,88 @@ public class ItemEditorEffectsTests
         }
     }
 
+    public class HandleRemoveStoreAction
+    {
+        private readonly HandleRemoveStoreActionFixture _fixture;
+
+        public HandleRemoveStoreAction()
+        {
+            _fixture = new HandleRemoveStoreActionFixture();
+        }
+
+        [Fact]
+        public async Task HandleRemoveStoreAction_WithItem_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            _fixture.SetupActionForItem();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingItemAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await ItemEditorEffects.HandleRemoveStoreAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleRemoveStoreAction_WithItemType_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            _fixture.SetupActionForItemType();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingItemTypeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await ItemEditorEffects.HandleRemoveStoreAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleRemoveStoreActionFixture : ItemEditorEffectsFixture
+        {
+            public RemoveStoreAction? Action { get; private set; }
+
+            public void SetupDispatchingItemAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+
+                SetupDispatchingAction(new StoreOfItemRemovedAction(Action.Availability));
+            }
+
+            public void SetupDispatchingItemTypeAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+
+                var itemType = Action.Available as EditedItemType;
+                SetupDispatchingAction(new StoreOfItemTypeRemovedAction(itemType!, Action.Availability));
+            }
+
+            public void SetupActionForItem()
+            {
+                Action = new RemoveStoreAction(
+                    new DomainTestBuilder<EditedItem>().Create(),
+                    new DomainTestBuilder<EditedItemAvailability>().Create());
+            }
+
+            public void SetupActionForItemType()
+            {
+                Action = new RemoveStoreAction(
+                    new DomainTestBuilder<EditedItemType>().Create(),
+                    new DomainTestBuilder<EditedItemAvailability>().Create());
+            }
+        }
+    }
+
     private abstract class ItemEditorEffectsFixture : ItemEffectsFixtureBase
     {
         public ItemEditorEffects CreateSut()
