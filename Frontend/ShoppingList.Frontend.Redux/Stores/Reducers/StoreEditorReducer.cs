@@ -165,7 +165,7 @@ public static class StoreEditorReducer
     }
 
     [ReducerMethod]
-    public static StoreState OnPreparationStepTextChanged(StoreState state, SectionTextChangedAction action)
+    public static StoreState OnSectionTextChanged(StoreState state, SectionTextChangedAction action)
     {
         if (state.Editor.Store is null)
             return state;
