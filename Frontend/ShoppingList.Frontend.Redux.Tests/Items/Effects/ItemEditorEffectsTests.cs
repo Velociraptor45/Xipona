@@ -214,7 +214,7 @@ public class ItemEditorEffectsTests
             _fixture.SetupActionForItem();
             var queue = CallQueue.Create(_ =>
             {
-                _fixture.SetupDispatchingAddedItemAction();
+                _fixture.SetupDispatchingItemAction();
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -233,7 +233,7 @@ public class ItemEditorEffectsTests
             _fixture.SetupActionForItemType();
             var queue = CallQueue.Create(_ =>
             {
-                _fixture.SetupDispatchingAddedItemTypeAction();
+                _fixture.SetupDispatchingItemTypeAction();
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -249,14 +249,14 @@ public class ItemEditorEffectsTests
         {
             public ChangeStoreAction? Action { get; private set; }
 
-            public void SetupDispatchingAddedItemAction()
+            public void SetupDispatchingItemAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
                 SetupDispatchingAction(new StoreOfItemChangedAction(Action.Availability, Action.StoreId));
             }
 
-            public void SetupDispatchingAddedItemTypeAction()
+            public void SetupDispatchingItemTypeAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
@@ -278,6 +278,90 @@ public class ItemEditorEffectsTests
                     new DomainTestBuilder<EditedItemType>().Create(),
                     new DomainTestBuilder<EditedItemAvailability>().Create(),
                     Guid.NewGuid());
+            }
+        }
+    }
+
+    public class HandleChangePriceAction
+    {
+        private readonly HandleChangePriceActionFixture _fixture;
+
+        public HandleChangePriceAction()
+        {
+            _fixture = new HandleChangePriceActionFixture();
+        }
+
+        [Fact]
+        public async Task HandleChangePriceAction_WithItem_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            _fixture.SetupActionForItem();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingItemAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await ItemEditorEffects.HandleChangePriceAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleChangePriceAction_WithItemType_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            _fixture.SetupActionForItemType();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingItemTypeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await ItemEditorEffects.HandleChangePriceAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleChangePriceActionFixture : ItemEditorEffectsFixture
+        {
+            public ChangePriceAction? Action { get; private set; }
+
+            public void SetupDispatchingItemAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+
+                SetupDispatchingAction(new PriceOfItemChangedAction(Action.Availability, Action.Price));
+            }
+
+            public void SetupDispatchingItemTypeAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+
+                var itemType = Action.Available as EditedItemType;
+                SetupDispatchingAction(new PriceOfItemTypeChangedAction(itemType!, Action.Availability, Action.Price));
+            }
+
+            public void SetupActionForItem()
+            {
+                Action = new ChangePriceAction(
+                    new DomainTestBuilder<EditedItem>().Create(),
+                    new DomainTestBuilder<EditedItemAvailability>().Create(),
+                    new DomainTestBuilder<float>().Create());
+            }
+
+            public void SetupActionForItemType()
+            {
+                Action = new ChangePriceAction(
+                    new DomainTestBuilder<EditedItemType>().Create(),
+                    new DomainTestBuilder<EditedItemAvailability>().Create(),
+                    new DomainTestBuilder<float>().Create());
             }
         }
     }
