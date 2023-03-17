@@ -446,6 +446,119 @@ public class StoreEditorReducerTests
         }
     }
 
+    public class OnSectionRemoved
+    {
+        private readonly OnSectionRemovedFixture _fixture;
+
+        public OnSectionRemoved()
+        {
+            _fixture = new OnSectionRemovedFixture();
+        }
+
+        [Fact]
+        public void OnSectionRemoved_WithValidSection_ShouldRemoveSection()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnSectionRemoved(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSectionRemoved_WithInvalidSection_ShouldNotRemoveSection()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForInvalidSection();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnSectionRemoved(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSectionRemoved_WithStoreNull_ShouldNotRemoveSection()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateStoreNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForStoreNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnSectionRemoved(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSectionRemovedFixture : StoreEditorReducerFixture
+        {
+            public SectionRemovedAction? Action { get; private set; }
+
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState()
+            {
+                var sections = ExpectedState.Editor.Store!.Sections.ToList();
+                var additionalSection = new DomainTestBuilder<EditedSection>().Create() with { SortingIndex = -1 };
+                sections.Add(additionalSection);
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store with
+                        {
+                            Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateStoreNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = null
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new SectionRemovedAction(InitialState.Editor.Store!.Sections.First());
+            }
+
+            public void SetupActionForInvalidSection()
+            {
+                Action = new SectionRemovedAction(new DomainTestBuilder<EditedSection>().Create());
+            }
+
+            public void SetupActionForStoreNull()
+            {
+                Action = new DomainTestBuilder<SectionRemovedAction>().Create();
+            }
+        }
+    }
+
     private abstract class StoreEditorReducerFixture
     {
         public StoreState ExpectedState { get; protected set; } = new DomainTestBuilder<StoreState>().Create();
