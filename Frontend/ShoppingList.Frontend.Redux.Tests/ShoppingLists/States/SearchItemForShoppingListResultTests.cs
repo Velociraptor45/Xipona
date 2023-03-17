@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.ShoppingList.States;
 
-namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.ShoppingList.States;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.ShoppingLists.States;
 
 public class SearchItemForShoppingListResultTests
 {
