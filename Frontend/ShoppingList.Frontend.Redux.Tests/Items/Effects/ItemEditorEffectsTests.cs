@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq.Contrib.InOrder;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
@@ -117,6 +118,76 @@ public class ItemEditorEffectsTests
             public void SetupDispatchingExceptionAction()
             {
                 SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+            }
+        }
+    }
+
+    public class HandleAddStoreAction
+    {
+        private readonly HandleAddStoreActionFixture _fixture;
+
+        public HandleAddStoreAction()
+        {
+            _fixture = new HandleAddStoreActionFixture();
+        }
+
+        [Fact]
+        public async Task HandleAddStoreAction_WithItem_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            _fixture.SetupActionForItem();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingAddedItemAction();
+            });
+
+            // Act
+            await ItemEditorEffects.HandleAddStoreAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleAddStoreAction_WithItemType_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            _fixture.SetupActionForItemType();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingAddedItemTypeAction();
+            });
+
+            // Act
+            await ItemEditorEffects.HandleAddStoreAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleAddStoreActionFixture : ItemEditorEffectsFixture
+        {
+            public AddStoreAction? Action { get; private set; }
+
+            public void SetupDispatchingAddedItemAction()
+            {
+                SetupDispatchingAction<StoreAddedToItemAction>();
+            }
+
+            public void SetupDispatchingAddedItemTypeAction()
+            {
+                var itemType = Action.Available as EditedItemType;
+                SetupDispatchingAction(new StoreAddedToItemTypeAction(itemType.Id));
+            }
+
+            public void SetupActionForItem()
+            {
+                Action = new AddStoreAction(new DomainTestBuilder<EditedItem>().Create());
+            }
+
+            public void SetupActionForItemType()
+            {
+                Action = new AddStoreAction(new DomainTestBuilder<EditedItemType>().Create());
             }
         }
     }
