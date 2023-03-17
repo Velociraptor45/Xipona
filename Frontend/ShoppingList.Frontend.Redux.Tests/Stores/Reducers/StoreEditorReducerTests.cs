@@ -172,6 +172,154 @@ public class StoreEditorReducerTests
         }
     }
 
+    public class OnSaveStoreStarted
+    {
+        private readonly OnSaveStoreStartedFixture _fixture;
+
+        public OnSaveStoreStarted()
+        {
+            _fixture = new OnSaveStoreStartedFixture();
+        }
+
+        [Fact]
+        public void OnSaveStoreStarted_WithNotAlreadySaving_ShouldSave()
+        {
+            // Arrange
+            _fixture.SetupInitialStateNotSaving();
+            _fixture.SetupExpectedStateSaving();
+
+            // Act
+            var result = StoreEditorReducer.OnSaveStoreStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSaveStoreStarted_WithAlreadySaving_ShouldSave()
+        {
+            // Arrange
+            _fixture.SetupInitialStateSaving();
+            _fixture.SetupExpectedStateSaving();
+
+            // Act
+            var result = StoreEditorReducer.OnSaveStoreStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSaveStoreStartedFixture : StoreEditorReducerFixture
+        {
+            public void SetupInitialStateSaving()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = true
+                    }
+                };
+            }
+
+            public void SetupInitialStateNotSaving()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = false
+                    }
+                };
+            }
+
+            public void SetupExpectedStateSaving()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = true
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnSaveStoreFinished
+    {
+        private readonly OnSaveStoreFinishedFixture _fixture;
+
+        public OnSaveStoreFinished()
+        {
+            _fixture = new OnSaveStoreFinishedFixture();
+        }
+
+        [Fact]
+        public void OnSaveStoreFinished_WithSaving_ShouldNotSave()
+        {
+            // Arrange
+            _fixture.SetupInitialStateSaving();
+            _fixture.SetupExpectedStateNotSaving();
+
+            // Act
+            var result = StoreEditorReducer.OnSaveStoreFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSaveStoreFinished_WithNotSaving_ShouldNotSave()
+        {
+            // Arrange
+            _fixture.SetupInitialStateNotSaving();
+            _fixture.SetupExpectedStateNotSaving();
+
+            // Act
+            var result = StoreEditorReducer.OnSaveStoreFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSaveStoreFinishedFixture : StoreEditorReducerFixture
+        {
+            public void SetupInitialStateSaving()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = true
+                    }
+                };
+            }
+
+            public void SetupInitialStateNotSaving()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = false
+                    }
+                };
+            }
+
+            public void SetupExpectedStateNotSaving()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = false
+                    }
+                };
+            }
+        }
+    }
+
     public class OnSectionDecremented
     {
         private readonly OnSectionDecrementedFixture _fixture;
