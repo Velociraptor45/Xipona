@@ -309,6 +309,143 @@ public class StoreEditorReducerTests
         }
     }
 
+    public class OnSectionIncremented
+    {
+        private readonly OnSectionIncrementedFixture _fixture;
+
+        public OnSectionIncremented()
+        {
+            _fixture = new OnSectionIncrementedFixture();
+        }
+
+        [Fact]
+        public void OnSectionIncremented_WithSectionIncrementable_ShouldIncrementSection()
+        {
+            // Arrange
+            _fixture.SetupInitialStateForIncrementingFirstSection();
+            _fixture.SetupActionForIncrementingFirstSection();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnSectionIncremented(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSectionIncremented_WithSectionNotIncrementable_ShouldNotChangeSectionOrder()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForIncrementingLastSection();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnSectionIncremented(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSectionIncremented_WithInvalidSectionKey_ShouldNotChangeSectionOrder()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForInvalidSectionKey();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnSectionIncremented(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSectionIncremented_WithStoreNull_ShouldNotChangeSectionOrder()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateForStoreNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForStoreNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnSectionIncremented(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSectionIncrementedFixture : StoreEditorReducerFixture
+        {
+            public SectionIncrementedAction? Action { get; private set; }
+
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialStateForIncrementingFirstSection()
+            {
+                var sections = ExpectedState.Editor.Store!.Sections.ToList();
+                var sortingIndexTmp = sections[0].SortingIndex;
+                sections[0] = sections[0] with { SortingIndex = sections[1].SortingIndex };
+                sections[1] = sections[1] with { SortingIndex = sortingIndexTmp };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store! with
+                        {
+                            Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateForStoreNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = null
+                    }
+                };
+            }
+
+            public void SetupActionForIncrementingLastSection()
+            {
+                var section = InitialState.Editor.Store!.Sections.Last();
+                Action = new SectionIncrementedAction(section.Key);
+            }
+
+            public void SetupActionForIncrementingFirstSection()
+            {
+                var section = InitialState.Editor.Store!.Sections.First();
+                Action = new SectionIncrementedAction(section.Key);
+            }
+
+            public void SetupActionForInvalidSectionKey()
+            {
+                Action = new SectionIncrementedAction(Guid.NewGuid());
+            }
+
+            public void SetupActionForStoreNull()
+            {
+                Action = new DomainTestBuilder<SectionIncrementedAction>().Create();
+            }
+        }
+    }
+
     private abstract class StoreEditorReducerFixture
     {
         public StoreState ExpectedState { get; protected set; } = new DomainTestBuilder<StoreState>().Create();
