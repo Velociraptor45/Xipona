@@ -672,6 +672,120 @@ public class StoreEditorReducerTests
         }
     }
 
+    public class OnDefaultSectionChanged
+    {
+        private readonly OnDefaultSectionChangedFixture _fixture;
+
+        public OnDefaultSectionChanged()
+        {
+            _fixture = new OnDefaultSectionChangedFixture();
+        }
+
+        [Fact]
+        public void OnDefaultSectionChanged_WithValidSection_ShouldChangeDefaultSection()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnDefaultSectionChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnDefaultSectionChanged_WithInvalidSection_ShouldNotChangeDefaultSection()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForInvalidSection();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnDefaultSectionChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnDefaultSectionChanged_WithStoreNull_ShouldNotChangeDefaultSection()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateStoreNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForStoreNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnDefaultSectionChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnDefaultSectionChangedFixture : StoreEditorReducerFixture
+        {
+            public DefaultSectionChangedAction? Action { get; private set; }
+
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState()
+            {
+                var sections = ExpectedState.Editor.Store!.Sections.ToList();
+                sections[0] = sections[0] with { IsDefaultSection = false };
+                sections[2] = sections[2] with { IsDefaultSection = true };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store with
+                        {
+                            Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateStoreNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = null
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                var section = ExpectedState.Editor.Store!.Sections.First();
+                Action = new DefaultSectionChangedAction(section.Key);
+            }
+
+            public void SetupActionForInvalidSection()
+            {
+                Action = new DefaultSectionChangedAction(Guid.NewGuid());
+            }
+
+            public void SetupActionForStoreNull()
+            {
+                Action = new DomainTestBuilder<DefaultSectionChangedAction>().Create();
+            }
+        }
+    }
+
     private abstract class StoreEditorReducerFixture
     {
         public StoreState ExpectedState { get; protected set; } = new DomainTestBuilder<StoreState>().Create();

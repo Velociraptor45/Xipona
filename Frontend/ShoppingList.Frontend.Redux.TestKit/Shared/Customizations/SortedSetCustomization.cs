@@ -24,7 +24,7 @@ public class SortedSetCustomization : ICustomization
             if (!MatchesType(request))
                 return new NoSpecimen();
 
-            return CreateInstance(context);
+            return CreateInstance();
         }
 
         private static bool MatchesType(object request)
@@ -40,7 +40,7 @@ public class SortedSetCustomization : ICustomization
             return expectedType == t;
         }
 
-        private static SortedSet<ShoppingListSection> CreateInstance(ISpecimenContext context)
+        private static SortedSet<ShoppingListSection> CreateInstance()
         {
             var sections = new DomainTestBuilderBase<ShoppingListSection>().CreateMany(3).ToList();
             for (int i = 0; i < sections.Count; i++)
@@ -62,7 +62,7 @@ public class SortedSetCustomization : ICustomization
             if (!MatchesType(request))
                 return new NoSpecimen();
 
-            return CreateInstance(context);
+            return CreateInstance();
         }
 
         private static bool MatchesType(object request)
@@ -78,7 +78,7 @@ public class SortedSetCustomization : ICustomization
             return expectedType == t;
         }
 
-        private static SortedSet<EditedPreparationStep> CreateInstance(ISpecimenContext context)
+        private static SortedSet<EditedPreparationStep> CreateInstance()
         {
             var sections = new DomainTestBuilderBase<EditedPreparationStep>().CreateMany(3).ToList();
             for (int i = 0; i < sections.Count; i++)
@@ -100,7 +100,7 @@ public class SortedSetCustomization : ICustomization
             if (!MatchesType(request))
                 return new NoSpecimen();
 
-            return CreateInstance(context);
+            return CreateInstance();
         }
 
         private static bool MatchesType(object request)
@@ -116,13 +116,14 @@ public class SortedSetCustomization : ICustomization
             return expectedType == t;
         }
 
-        private static SortedSet<EditedSection> CreateInstance(ISpecimenContext context)
+        private static SortedSet<EditedSection> CreateInstance()
         {
             var sections = new DomainTestBuilderBase<EditedSection>().CreateMany(3).ToList();
             for (int i = 0; i < sections.Count; i++)
             {
                 sections[i] = sections[i] with
                 {
+                    IsDefaultSection = i == 0,
                     SortingIndex = i
                 };
             }
