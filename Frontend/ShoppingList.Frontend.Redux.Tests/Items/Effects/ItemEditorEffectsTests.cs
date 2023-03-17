@@ -141,6 +141,8 @@ public class ItemEditorEffectsTests
                 _fixture.SetupDispatchingAddedItemAction();
             });
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
             // Act
             await ItemEditorEffects.HandleAddStoreAction(_fixture.Action, _fixture.DispatcherMock.Object);
 
@@ -157,6 +159,8 @@ public class ItemEditorEffectsTests
             {
                 _fixture.SetupDispatchingAddedItemTypeAction();
             });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
             // Act
             await ItemEditorEffects.HandleAddStoreAction(_fixture.Action, _fixture.DispatcherMock.Object);
@@ -176,8 +180,10 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingAddedItemTypeAction()
             {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+
                 var itemType = Action.Available as EditedItemType;
-                SetupDispatchingAction(new StoreAddedToItemTypeAction(itemType.Id));
+                SetupDispatchingAction(new StoreAddedToItemTypeAction(itemType!.Id));
             }
 
             public void SetupActionForItem()
@@ -188,6 +194,90 @@ public class ItemEditorEffectsTests
             public void SetupActionForItemType()
             {
                 Action = new AddStoreAction(new DomainTestBuilder<EditedItemType>().Create());
+            }
+        }
+    }
+
+    public class HandleChangeStoreAction
+    {
+        private readonly HandleChangeStoreActionFixture _fixture;
+
+        public HandleChangeStoreAction()
+        {
+            _fixture = new HandleChangeStoreActionFixture();
+        }
+
+        [Fact]
+        public async Task HandleChangeStoreAction_WithItem_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            _fixture.SetupActionForItem();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingAddedItemAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await ItemEditorEffects.HandleChangeStoreAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleChangeStoreAction_WithItemType_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            _fixture.SetupActionForItemType();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingAddedItemTypeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await ItemEditorEffects.HandleChangeStoreAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleChangeStoreActionFixture : ItemEditorEffectsFixture
+        {
+            public ChangeStoreAction? Action { get; private set; }
+
+            public void SetupDispatchingAddedItemAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+
+                SetupDispatchingAction(new StoreOfItemChangedAction(Action.Availability, Action.StoreId));
+            }
+
+            public void SetupDispatchingAddedItemTypeAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+
+                var itemType = Action.Available as EditedItemType;
+                SetupDispatchingAction(new StoreOfItemTypeChangedAction(itemType!, Action.Availability, Action.StoreId));
+            }
+
+            public void SetupActionForItem()
+            {
+                Action = new ChangeStoreAction(
+                    new DomainTestBuilder<EditedItem>().Create(),
+                    new DomainTestBuilder<EditedItemAvailability>().Create(),
+                    Guid.NewGuid());
+            }
+
+            public void SetupActionForItemType()
+            {
+                Action = new ChangeStoreAction(
+                    new DomainTestBuilder<EditedItemType>().Create(),
+                    new DomainTestBuilder<EditedItemAvailability>().Create(),
+                    Guid.NewGuid());
             }
         }
     }
