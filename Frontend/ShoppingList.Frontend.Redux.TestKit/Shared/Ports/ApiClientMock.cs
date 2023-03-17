@@ -1,5 +1,6 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder.Extensions;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
@@ -73,5 +74,21 @@ public class ApiClientMock : Mock<IApiClient>
         Verify(m =>
             m.AddItemWithTypeToShoppingListAsync(It.Is<AddItemWithTypeToShoppingListRequest>(r => r.IsRequestEquivalentTo(request))),
             times);
+    }
+
+    public void SetupGetItemByIdAsync(Guid itemId, EditedItem returnValue)
+    {
+        this.SetupInOrder(m => m.GetItemByIdAsync(itemId))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetItemByIdAsyncThrowing(Guid itemId, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetItemByIdAsync(itemId)).ThrowsAsync(ex);
+    }
+
+    public void VerifyGetItemByIdAsync(Guid itemId, Func<Times> times)
+    {
+        Verify(m => m.GetItemByIdAsync(itemId), times);
     }
 }
