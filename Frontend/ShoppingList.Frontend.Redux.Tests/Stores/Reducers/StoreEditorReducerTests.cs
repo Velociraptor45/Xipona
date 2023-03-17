@@ -786,6 +786,157 @@ public class StoreEditorReducerTests
         }
     }
 
+    public class OnSectionAdded
+    {
+        private readonly OnSectionAddedFixture _fixture;
+
+        public OnSectionAdded()
+        {
+            _fixture = new OnSectionAddedFixture();
+        }
+
+        [Fact]
+        public void OnSectionAdded_WithSectionsExisting_ShouldAddSection()
+        {
+            // Arrange
+            _fixture.SetupInitialStateForSectionsExisting();
+            _fixture.SetupExpectedStateForSectionsExisting();
+
+            // Act
+            var result = StoreEditorReducer.OnSectionAdded(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState,
+                opt => opt.Excluding(info => info.Path == "Editor.Store.Sections[2].Key"));
+        }
+
+        [Fact]
+        public void OnSectionAdded_WithNoSectionsExisting_ShouldAddSection()
+        {
+            // Arrange
+            _fixture.SetupInitialStateForNoSectionsExisting();
+            _fixture.SetupExpectedStateForNoSectionsExisting();
+
+            // Act
+            var result = StoreEditorReducer.OnSectionAdded(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState,
+                opt => opt.Excluding(info => info.Path == "Editor.Store.Sections[0].Key"));
+        }
+
+        [Fact]
+        public void OnSectionAdded_WithStoreNull_ShouldNotChangeDefaultSection()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateStoreNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+
+            // Act
+            var result = StoreEditorReducer.OnSectionAdded(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSectionAddedFixture : StoreEditorReducerFixture
+        {
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialStateForSectionsExisting()
+            {
+                var sections = ExpectedState.Editor.Store!.Sections.ToList();
+                sections.RemoveAt(2);
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store with
+                        {
+                            Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                        }
+                    }
+                };
+            }
+
+            public void SetupInitialStateForNoSectionsExisting()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store! with
+                        {
+                            Sections = new SortedSet<EditedSection>(new SortingIndexComparer())
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateForSectionsExisting()
+            {
+                var sections = ExpectedState.Editor.Store!.Sections.ToList();
+                sections[2] = sections[2] with
+                {
+                    Id = Guid.Empty,
+                    Name = string.Empty,
+                    IsDefaultSection = false
+                };
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store with
+                        {
+                            Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateForNoSectionsExisting()
+            {
+                var sections = new List<EditedSection>
+                {
+                    new(
+                        Guid.NewGuid(),
+                        Guid.Empty,
+                        string.Empty,
+                        false,
+                        0
+                    )
+                };
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store! with
+                        {
+                            Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateStoreNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = null
+                    }
+                };
+            }
+        }
+    }
+
     private abstract class StoreEditorReducerFixture
     {
         public StoreState ExpectedState { get; protected set; } = new DomainTestBuilder<StoreState>().Create();
