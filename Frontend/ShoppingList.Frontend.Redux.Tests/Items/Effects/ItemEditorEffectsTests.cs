@@ -366,6 +366,90 @@ public class ItemEditorEffectsTests
         }
     }
 
+    public class HandleChangeDefaultSectionAction
+    {
+        private readonly HandleChangeDefaultSectionActionFixture _fixture;
+
+        public HandleChangeDefaultSectionAction()
+        {
+            _fixture = new HandleChangeDefaultSectionActionFixture();
+        }
+
+        [Fact]
+        public async Task HandleChangeDefaultSectionAction_WithItem_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            _fixture.SetupActionForItem();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingItemAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await ItemEditorEffects.HandleChangeDefaultSectionAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleChangeDefaultSectionAction_WithItemType_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            _fixture.SetupActionForItemType();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingItemTypeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await ItemEditorEffects.HandleChangeDefaultSectionAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleChangeDefaultSectionActionFixture : ItemEditorEffectsFixture
+        {
+            public ChangeDefaultSectionAction? Action { get; private set; }
+
+            public void SetupDispatchingItemAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+
+                SetupDispatchingAction(new DefaultSectionOfItemChangedAction(Action.Availability, Action.DefaultSectionId));
+            }
+
+            public void SetupDispatchingItemTypeAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+
+                var itemType = Action.Available as EditedItemType;
+                SetupDispatchingAction(new DefaultSectionOfItemTypeChangedAction(itemType!, Action.Availability, Action.DefaultSectionId));
+            }
+
+            public void SetupActionForItem()
+            {
+                Action = new ChangeDefaultSectionAction(
+                    new DomainTestBuilder<EditedItem>().Create(),
+                    new DomainTestBuilder<EditedItemAvailability>().Create(),
+                    Guid.NewGuid());
+            }
+
+            public void SetupActionForItemType()
+            {
+                Action = new ChangeDefaultSectionAction(
+                    new DomainTestBuilder<EditedItemType>().Create(),
+                    new DomainTestBuilder<EditedItemAvailability>().Create(),
+                    Guid.NewGuid());
+            }
+        }
+    }
+
     private abstract class ItemEditorEffectsFixture : ItemEffectsFixtureBase
     {
         public ItemEditorEffects CreateSut()
