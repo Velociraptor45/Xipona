@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilit
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
 using RestEase;
@@ -532,10 +533,252 @@ public class ItemEditorEffectsTests
         }
     }
 
+    public class HandleCreateItemAction
+    {
+        private readonly HandleCreateItemActionFixture _fixture;
+
+        public HandleCreateItemAction()
+        {
+            _fixture = new HandleCreateItemActionFixture();
+        }
+
+        [Fact]
+        public async Task HandleCreateItemAction_WithoutTypes_CallSuccessful_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            _fixture.SetupItemWithoutTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupCreatingItem();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingLeaveAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleCreateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleCreateItemAction_WithoutTypesAndItemModeNotDefined_CallSuccessful_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            _fixture.SetupItemWithoutTypesAndItemModeNotDefined();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupCreatingItem();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingLeaveAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleCreateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleCreateItemAction_WithoutTypes_CallFailed_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            _fixture.SetupItemWithoutTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupCreatingItemFailed();
+                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleCreateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleCreateItemAction_WithTypes_CallSuccessful_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            _fixture.SetupItemWithTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupCreatingItemWithTypes();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingLeaveAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleCreateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleCreateItemAction_WithTypesAndItemModeNotDefined_CallSuccessful_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            _fixture.SetupItemWithTypesAndItemModeNotDefined();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupCreatingItemWithTypes();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingLeaveAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleCreateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleCreateItemAction_WithTypes_CallFailed_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            _fixture.SetupItemWithTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupCreatingItemWithTypesFailed();
+                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleCreateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleCreateItemActionFixture : ItemEditorEffectsFixture
+        {
+            public void SetupItemWithoutTypes()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Item = State.Editor.Item! with
+                        {
+                            ItemMode = ItemMode.WithoutTypes
+                        }
+                    }
+                };
+            }
+
+            public void SetupItemWithoutTypesAndItemModeNotDefined()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Item = State.Editor.Item! with
+                        {
+                            ItemMode = ItemMode.NotDefined,
+                            ItemTypes = new List<EditedItemType>()
+                        }
+                    }
+                };
+            }
+
+            public void SetupItemWithTypes()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Item = State.Editor.Item! with
+                        {
+                            ItemMode = ItemMode.WithTypes
+                        }
+                    }
+                };
+            }
+
+            public void SetupItemWithTypesAndItemModeNotDefined()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Item = State.Editor.Item! with
+                        {
+                            ItemMode = ItemMode.NotDefined,
+                            ItemTypes = new DomainTestBuilder<EditedItemType>().CreateMany(2).ToList()
+                        }
+                    }
+                };
+            }
+
+            public void SetupCreatingItem()
+            {
+                var request = new CreateItemRequest(Guid.NewGuid(), State.Editor.Item!);
+                ApiClientMock.SetupCreateItemAsync(request);
+            }
+
+            public void SetupCreatingItemFailed()
+            {
+                var request = new CreateItemRequest(Guid.NewGuid(), State.Editor.Item!);
+                ApiClientMock.SetupCreateItemAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupCreatingItemWithTypes()
+            {
+                var request = new CreateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
+                ApiClientMock.CreateItemWithTypesAsync(request);
+            }
+
+            public void SetupCreatingItemWithTypesFailed()
+            {
+                var request = new CreateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
+                ApiClientMock.CreateItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupDispatchingStartedAction()
+            {
+                SetupDispatchingAction<CreateItemStartedAction>();
+            }
+
+            public void SetupDispatchingFinishedAction()
+            {
+                SetupDispatchingAction<CreateItemFinishedAction>();
+            }
+
+            public void SetupDispatchingLeaveAction()
+            {
+                SetupDispatchingAction<LeaveItemEditorAction>();
+            }
+
+            public void SetupDispatchingExceptionAction()
+            {
+                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+            }
+        }
+    }
+
     private abstract class ItemEditorEffectsFixture : ItemEffectsFixtureBase
     {
         public ItemEditorEffects CreateSut()
         {
+            SetupStateReturningState();
             return new ItemEditorEffects(ApiClientMock.Object, ItemStateMock.Object, NavigationManagerMock.Object);
         }
     }
