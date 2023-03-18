@@ -44,6 +44,11 @@ public class ManufacturerEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for manufacturers failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Searching for manufacturers failed", e.Message));
+            return;
+        }
 
         var finishAction = new SearchManufacturersFinishedAction(result.ToList());
         dispatcher.Dispatch(finishAction);
@@ -78,6 +83,11 @@ public class ManufacturerEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading manufacturer failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading manufacturer failed", e.Message));
+            return;
+        }
 
         var finishAction = new LoadManufacturerForEditingFinishedAction(manufacturer);
         dispatcher.Dispatch(finishAction);
@@ -101,6 +111,12 @@ public class ManufacturerEffects
                 dispatcher.Dispatch(new SavingManufacturerFinishedAction());
                 return;
             }
+            catch (HttpRequestException e)
+            {
+                dispatcher.Dispatch(new DisplayErrorNotificationAction("Creating manufacturer failed", e.Message));
+                dispatcher.Dispatch(new SavingManufacturerFinishedAction());
+                return;
+            }
         }
         else
         {
@@ -115,6 +131,13 @@ public class ManufacturerEffects
                 dispatcher.Dispatch(new SavingManufacturerFinishedAction());
                 return;
             }
+            catch (HttpRequestException e)
+            {
+                dispatcher.Dispatch(new DisplayErrorNotificationAction("Saving manufacturer failed", e.Message));
+                dispatcher.Dispatch(new SavingManufacturerFinishedAction());
+                return;
+            }
+
             var updateAction = new UpdateSearchResultsAfterSaveAction(
                 editor.Manufacturer.Id,
                 editor.Manufacturer.Name);
@@ -137,6 +160,12 @@ public class ManufacturerEffects
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Deleting manufacturer failed", e));
+            dispatcher.Dispatch(new DeletingManufacturerFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Deleting manufacturer failed", e.Message));
             dispatcher.Dispatch(new DeletingManufacturerFinishedAction());
             return;
         }

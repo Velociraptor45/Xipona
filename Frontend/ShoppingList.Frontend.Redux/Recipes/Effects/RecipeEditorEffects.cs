@@ -35,6 +35,11 @@ public sealed class RecipeEditorEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading recipe failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading recipe failed", e.Message));
+            return;
+        }
         dispatcher.Dispatch(new LoadRecipeForEditingFinishedAction(result));
     }
 
@@ -59,6 +64,12 @@ public sealed class RecipeEditorEffects
             dispatcher.Dispatch(new ModifyRecipeFinishedAction());
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Modifying recipe failed", e.Message));
+            dispatcher.Dispatch(new ModifyRecipeFinishedAction());
+            return;
+        }
 
         dispatcher.Dispatch(new ModifyRecipeFinishedAction());
         dispatcher.Dispatch(new LeaveRecipeEditorAction());
@@ -75,6 +86,12 @@ public sealed class RecipeEditorEffects
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Creating recipe failed", e));
+            dispatcher.Dispatch(new CreateRecipeFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Creating recipe failed", e.Message));
             dispatcher.Dispatch(new CreateRecipeFinishedAction());
             return;
         }

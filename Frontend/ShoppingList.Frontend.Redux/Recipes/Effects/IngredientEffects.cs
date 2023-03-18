@@ -29,6 +29,12 @@ public class IngredientEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading ingredient types failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading ingredient types failed", e.Message));
+            return;
+        }
+
         dispatcher.Dispatch(new LoadIngredientQuantityTypesFinishedAction(results.ToList()));
     }
 

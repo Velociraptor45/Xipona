@@ -42,6 +42,12 @@ public class StoreEditorEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading store failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading store failed", e.Message));
+            return;
+        }
+
         dispatcher.Dispatch(new LoadStoreForEditingFinishedAction(result));
     }
 
@@ -66,6 +72,12 @@ public class StoreEditorEffects
                 dispatcher.Dispatch(new SaveStoreFinishedAction());
                 return;
             }
+            catch (HttpRequestException e)
+            {
+                dispatcher.Dispatch(new DisplayErrorNotificationAction("Creating store failed", e.Message));
+                dispatcher.Dispatch(new SaveStoreFinishedAction());
+                return;
+            }
         }
         else
         {
@@ -76,6 +88,12 @@ public class StoreEditorEffects
             catch (ApiException e)
             {
                 dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Modifying store failed", e));
+                dispatcher.Dispatch(new SaveStoreFinishedAction());
+                return;
+            }
+            catch (HttpRequestException e)
+            {
+                dispatcher.Dispatch(new DisplayErrorNotificationAction("Modifying store failed", e.Message));
                 dispatcher.Dispatch(new SaveStoreFinishedAction());
                 return;
             }

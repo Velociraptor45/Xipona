@@ -39,6 +39,11 @@ public class RecipeEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for recipes failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Searching for recipes failed", e.Message));
+            return;
+        }
 
         dispatcher.Dispatch(new SearchRecipeFinishedAction(results.ToList()));
     }

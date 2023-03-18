@@ -76,6 +76,11 @@ public sealed class ShoppingListSearchBarEffects : IDisposable
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for items failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Searching for items failed", e.Message));
+            return;
+        }
 
         dispatcher.Dispatch(new SearchItemForShoppingListFinishedAction(results));
     }
@@ -111,6 +116,11 @@ public sealed class ShoppingListSearchBarEffects : IDisposable
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Adding item to shopping list failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Adding item to shopping list failed", e.Message));
             return;
         }
 

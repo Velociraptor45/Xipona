@@ -38,6 +38,11 @@ public sealed class ItemEditorEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading item failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading item failed", e.Message));
+            return;
+        }
         dispatcher.Dispatch(new LoadItemForEditingFinishedAction(item));
     }
 
@@ -128,6 +133,12 @@ public sealed class ItemEditorEffects
             dispatcher.Dispatch(new CreateItemFinishedAction());
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Creating item failed", e.Message));
+            dispatcher.Dispatch(new CreateItemFinishedAction());
+            return;
+        }
 
         dispatcher.Dispatch(new CreateItemFinishedAction());
         dispatcher.Dispatch(new LeaveItemEditorAction());
@@ -157,6 +168,12 @@ public sealed class ItemEditorEffects
             dispatcher.Dispatch(new UpdateItemFinishedAction());
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Updating item failed", e.Message));
+            dispatcher.Dispatch(new UpdateItemFinishedAction());
+            return;
+        }
 
         dispatcher.Dispatch(new UpdateItemFinishedAction());
         dispatcher.Dispatch(new LeaveItemEditorAction());
@@ -183,6 +200,12 @@ public sealed class ItemEditorEffects
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Modifying item failed", e));
+            dispatcher.Dispatch(new ModifyItemFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Modifying item failed", e.Message));
             dispatcher.Dispatch(new ModifyItemFinishedAction());
             return;
         }
@@ -218,6 +241,12 @@ public sealed class ItemEditorEffects
             dispatcher.Dispatch(new MakeItemPermanentFinishedAction());
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Saving item failed", e.Message));
+            dispatcher.Dispatch(new MakeItemPermanentFinishedAction());
+            return;
+        }
 
         dispatcher.Dispatch(new MakeItemPermanentFinishedAction());
         dispatcher.Dispatch(new LeaveItemEditorAction());
@@ -237,6 +266,12 @@ public sealed class ItemEditorEffects
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Deleting item failed", e));
+            dispatcher.Dispatch(new DeleteItemFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Deleting item failed", e.Message));
             dispatcher.Dispatch(new DeleteItemFinishedAction());
             return;
         }

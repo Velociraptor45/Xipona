@@ -33,6 +33,11 @@ public class StoreEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading stores failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading stores failed", e.Message));
+            return;
+        }
 
         dispatcher.Dispatch(new LoadStoresOverviewFinishedAction(searchResults.OrderBy(s => s.Name).ToList()));
     }

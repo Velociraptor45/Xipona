@@ -39,6 +39,11 @@ public sealed class ItemCategorySelectorEffects : IDisposable
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading item category failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading item category failed", e.Message));
+            return;
+        }
 
         var result = new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name);
         dispatcher.Dispatch(new LoadInitialItemCategoryFinishedAction(action.Ingredient.Key, result));
@@ -64,6 +69,12 @@ public sealed class ItemCategorySelectorEffects : IDisposable
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for item categories failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Searching for item categories failed", e.Message));
+            return;
+        }
+
         dispatcher.Dispatch(new SearchItemCategoriesFinishedAction(results.ToList(), action.IngredientKey));
     }
 
@@ -87,6 +98,11 @@ public sealed class ItemCategorySelectorEffects : IDisposable
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading items for item category failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading items for item category failed", e.Message));
             return;
         }
 
@@ -138,6 +154,11 @@ public sealed class ItemCategorySelectorEffects : IDisposable
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Creating item category failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Creating item category failed", e.Message));
             return;
         }
 

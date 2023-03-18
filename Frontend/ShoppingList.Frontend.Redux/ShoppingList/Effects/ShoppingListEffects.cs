@@ -40,6 +40,11 @@ public class ShoppingListEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading initial page state failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading initial page state failed", e.Message));
+            return;
+        }
         dispatcher.Dispatch(new LoadQuantityTypesFinishedAction(quantityTypes));
     }
 
@@ -56,6 +61,11 @@ public class ShoppingListEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading initial page state failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading initial page state failed", e.Message));
+            return;
+        }
         dispatcher.Dispatch(new LoadQuantityTypesInPacketFinishedAction(quantityTypes));
     }
 
@@ -70,6 +80,11 @@ public class ShoppingListEffects
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading stores failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading stores failed", e.Message));
             return;
         }
 
@@ -91,6 +106,11 @@ public class ShoppingListEffects
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading shopping list failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading shopping list failed", e.Message));
             return;
         }
 
@@ -164,6 +184,11 @@ public class ShoppingListEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Updating item price failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Updating item price failed", e.Message));
+            return;
+        }
 
         dispatcher.Dispatch(new SavePriceUpdateFinishedAction(
             _state.Value.PriceUpdate.Item.Id.ActualId!.Value,
@@ -193,6 +218,12 @@ public class ShoppingListEffects
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Finishing shopping list failed", e));
+            dispatcher.Dispatch(new FinishShoppingListFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Finishing shopping list failed", e.Message));
             dispatcher.Dispatch(new FinishShoppingListFinishedAction());
             return;
         }

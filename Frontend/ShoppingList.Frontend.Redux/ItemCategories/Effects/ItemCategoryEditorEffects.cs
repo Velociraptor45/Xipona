@@ -47,6 +47,11 @@ public class ItemCategoryEditorEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading item category failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading item category failed", e.Message));
+            return;
+        }
 
         var finishAction = new LoadItemCategoryForEditingFinishedAction(itemCategory);
         dispatcher.Dispatch(finishAction);
@@ -70,6 +75,12 @@ public class ItemCategoryEditorEffects
                 dispatcher.Dispatch(new SaveItemCategoryFinishedAction());
                 return;
             }
+            catch (HttpRequestException e)
+            {
+                dispatcher.Dispatch(new DisplayErrorNotificationAction("Creating item category failed", e.Message));
+                dispatcher.Dispatch(new SaveItemCategoryFinishedAction());
+                return;
+            }
         }
         else
         {
@@ -84,6 +95,13 @@ public class ItemCategoryEditorEffects
                 dispatcher.Dispatch(new SaveItemCategoryFinishedAction());
                 return;
             }
+            catch (HttpRequestException e)
+            {
+                dispatcher.Dispatch(new DisplayErrorNotificationAction("Saving item category failed", e.Message));
+                dispatcher.Dispatch(new SaveItemCategoryFinishedAction());
+                return;
+            }
+
             var updateAction = new UpdateItemCategorySearchResultsAfterSaveAction(
                 editor.ItemCategory.Id,
                 editor.ItemCategory.Name);
@@ -106,6 +124,12 @@ public class ItemCategoryEditorEffects
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Deleting item category failed", e));
+            dispatcher.Dispatch(new DeleteItemCategoryFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Deleting item category failed", e.Message));
             dispatcher.Dispatch(new DeleteItemCategoryFinishedAction());
             return;
         }

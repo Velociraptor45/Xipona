@@ -38,6 +38,11 @@ public sealed class ManufacturerSelectorEffects : IDisposable
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading manufacturer failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading manufacturer failed", e.Message));
+            return;
+        }
 
         var result = new ManufacturerSearchResult(manufacturer.Id, manufacturer.Name);
         dispatcher.Dispatch(new LoadInitialManufacturerFinishedAction(result));
@@ -54,6 +59,11 @@ public sealed class ManufacturerSelectorEffects : IDisposable
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Creating manufacturer failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Creating manufacturer failed", e.Message));
             return;
         }
 
@@ -106,6 +116,11 @@ public sealed class ManufacturerSelectorEffects : IDisposable
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for manufacturers failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Searching for manufacturers failed", e.Message));
             return;
         }
 

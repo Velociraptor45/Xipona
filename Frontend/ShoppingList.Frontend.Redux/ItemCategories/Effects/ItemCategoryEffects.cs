@@ -42,6 +42,11 @@ public class ItemCategoryEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading search results failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading search results failed", e.Message));
+            return;
+        }
 
         var finishAction = new SearchItemCategoriesFinishedAction(result.ToList());
         dispatcher.Dispatch(finishAction);

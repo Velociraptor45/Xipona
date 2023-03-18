@@ -56,6 +56,11 @@ public class ItemEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for items failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Searching for items failed", e.Message));
+            return;
+        }
 
         var finishAction = new SearchItemsFinishedAction(result.ToList());
         dispatcher.Dispatch(finishAction);
@@ -84,6 +89,11 @@ public class ItemEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading initial page state failed", e));
             return;
         }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading initial page state failed", e.Message));
+            return;
+        }
 
         dispatcher.Dispatch(new LoadQuantityTypesFinishedAction(quantityTypes.ToList()));
     }
@@ -104,7 +114,11 @@ public class ItemEffects
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading initial page state failed", e));
             return;
         }
-
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading initial page state failed", e.Message));
+            return;
+        }
         dispatcher.Dispatch(new LoadQuantityTypesInPacketFinishedAction(quantityTypes.ToList()));
     }
 
@@ -122,6 +136,11 @@ public class ItemEffects
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading initial page state failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading initial page state failed", e.Message));
             return;
         }
 
