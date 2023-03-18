@@ -20,6 +20,7 @@ public class ItemType
     public Guid ItemId { get; set; }
     public string Name { get; set; }
     public Guid? PredecessorId { get; set; }
+    public bool IsDeleted { get; set; }
 
     [ForeignKey("ItemId")]
     public Item Item { get; set; }
