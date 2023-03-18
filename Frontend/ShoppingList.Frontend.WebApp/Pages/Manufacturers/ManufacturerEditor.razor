@@ -1,101 +1,83 @@
 ﻿@page "/manufacturers/{ManufacturerId:guid}"
 
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject NavigationManager _navigationManager;
-@inject ManufacturersState _state;
-@inject IManufacturerApiService _apiService
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Actions
+@using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States
+
+@inject IState<ManufacturerState> State
+@inject IDispatcher Dispatcher
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers
 
-<div>
-    <div class="d-flex">
-        <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
-            <Icon Type="arrow-left"></Icon>
-        </Button>
-        @if (_state.EditedManufacturer is not null)
-        {
+@if (State.Value.Editor?.Manufacturer is not null)
+{
+    <div>
+        <div class="d-flex">
+            <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+                <Icon Type="arrow-left"></Icon>
+            </Button>
             <div class="mx-3">
-                <Input @bind-Value="@_state.EditedManufacturer.Name" />
+                <Input Placeholder="Name ..."
+                       TValue="string"
+                       Value="@State.Value.Editor.Manufacturer.Name"
+                       OnChange="OnNameChanged" />
             </div>
-            @if (_state.EditedManufacturer.Id != Guid.Empty)
+            @if (State.Value.Editor.Manufacturer.Id != Guid.Empty)
             {
                 <Button Danger="true"
                         Class="ml-auto"
-                        OnClick="@OnDeleteButtonClickedAsync">
+                        OnClick="@OnDeleteButtonClicked">
                     Delete
                 </Button>
             }
-        }
-    </div>
-    @if (_state.EditedManufacturer is not null)
-    {
+        </div>
         <div class="d-flex justify-content-end mt-2">
-            
-            @if (_state.EditedManufacturer.Id == Guid.Empty)
+
+            @if (State.Value.Editor.Manufacturer.Id == Guid.Empty)
             {
-                <Button @onclick="@OnCreateButtonClickedAsync">Create</Button>
+                <Button @onclick="@OnSaveButtonClicked">Create</Button>
             }
             else
             {
-                <Button @onclick="@OnModifyButtonClickedAsync">Save</Button>
+                <Button @onclick="@OnSaveButtonClicked">Save</Button>
             }
         </div>
-        }
-</div>
+    </div>
+}
 
 @code {
     [Parameter] public Guid ManufacturerId { get; set; }
 
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await base.OnInitializedAsync();
+        base.OnInitialized();
 
         if (ManufacturerId == Guid.Empty)
-        {
-            _state.SetNewEditedManufacturer();
-            return;
-        }
+            Dispatcher.Dispatch(new SetNewManufacturerAction());
+        else
+            Dispatcher.Dispatch(new LoadManufacturerForEditingAction(ManufacturerId));
+    }
 
-        var result = await _apiService.GetAsync(ManufacturerId);
-        if (result is null)
-            return;
-
-        _state.SetEditedManufacturer(result);
+    private void OnNameChanged(string name)
+    {
+        Dispatcher.Dispatch(new EditedManufacturerNameChangedAction(name));
     }
 
     private void OnBackButtonClicked()
     {
-        _navigationManager.NavigateTo("manufacturers");
+        Dispatcher.Dispatch(new LeaveManufacturerEditorAction());
     }
 
-    private async Task OnCreateButtonClickedAsync()
+    private void OnSaveButtonClicked()
     {
-        var newManufacturer = await _apiService.CreateAsync(_state.EditedManufacturer);
-        if (newManufacturer is null)
-            return;
-        _navigationManager.NavigateTo($"manufacturers/{newManufacturer.Id}");
+        Dispatcher.Dispatch(new SaveManufacturerAction());
     }
 
-    private async Task OnModifyButtonClickedAsync()
+    private void OnDeleteButtonClicked()
     {
-        var successful = await _apiService.ModifyAsync(_state.EditedManufacturer);
-        if (successful)
-        {
-            _state.UpdateManufacturerSearchResultName(_state.EditedManufacturer.Id, _state.EditedManufacturer.Name);
-            _navigationManager.NavigateTo("manufacturers");
-        }
-    }
-
-    private async Task OnDeleteButtonClickedAsync()
-    {
-        var successful = await _apiService.DeleteAsync(_state.EditedManufacturer.Id);
-        if (successful)
-        {
-            _state.RemoveFromSearchResultsIfExists(_state.EditedManufacturer.Id);
-            _navigationManager.NavigateTo("manufacturers");
-        }
+        Dispatcher.Dispatch(new DeleteManufacturerAction());
     }
 }

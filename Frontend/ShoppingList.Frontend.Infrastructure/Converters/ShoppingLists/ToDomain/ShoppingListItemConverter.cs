@@ -1,8 +1,9 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
+using ShoppingListItem = ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListItem;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain
 {
@@ -13,7 +14,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
 
         public ShoppingListItemConverter(
             IToDomainConverter<QuantityTypeContract, QuantityType> quantityTypeConverter,
-            IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> quantityTypeInPacketConverter)
+            IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket> quantityTypeInPacketConverter
+            )
         {
             _quantityTypeConverter = quantityTypeConverter;
             _quantityTypeInPacketConverter = quantityTypeInPacketConverter;
@@ -35,7 +37,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
                     source.ItemCategory?.Name ?? "",
                     source.Manufacturer?.Name ?? "",
                     source.IsInBasket,
-                    source.Quantity);
+                    source.Quantity,
+                    Hidden: source.IsInBasket);
         }
     }
 }

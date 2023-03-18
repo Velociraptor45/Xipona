@@ -1,12 +1,13 @@
 ﻿@page "/manufacturers"
 
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services
-@using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject NavigationManager _navigationManager;
-@inject ManufacturersState _state;
-@inject IManufacturerApiService _apiService
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Actions
+@using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States
+
+@inject IState<ManufacturerState> State
+@inject IDispatcher Dispatcher
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers
 
@@ -19,41 +20,31 @@
     </div>
     <div>
         <Input TValue="string" @bind-value="@input" 
-               OnPressEnter="@OnLoadButtonClickedAsync" 
+               OnPressEnter="@OnLoadButtonClicked" 
                Placeholder="Manufacturer name ..."></Input>
-        <Button @onclick="@OnLoadButtonClickedAsync" Class="mt-2">Load</Button>
+        <Button @onclick="@OnLoadButtonClicked" Class="mt-2">Load</Button>
     </div>
     <div>
-        @foreach (var searchResult in _state.SearchResults)
+        @foreach (var searchResult in State.Value.Search.SearchResults)
         {
-            <SearchResult Model="searchResult" RedirectPageName="manufacturers"></SearchResult>
+            <SearchResult Model="searchResult" TAction="EditManufacturerAction"></SearchResult>
         }
     </div>
 </div>
 
 @code {
     private string input = "";
-
-    protected override void OnInitialized()
+    
+    private void OnLoadButtonClicked()
     {
-        base.OnInitialized();
-        _state.ResetEditedManufacturer();
-    }
-
-    private async Task OnLoadButtonClickedAsync()
-    {
-        if (string.IsNullOrWhiteSpace(input))
-        {
-            _state.RegisterSearchResults(Enumerable.Empty<ManufacturerSearchResult>());
-            return;
-        }
-
-        var results = await _apiService.SearchAsync(input);
-        _state.RegisterSearchResults(results);
+        Dispatcher.Dispatch(new SearchManufacturersAction(input));
     }
 
     private void OnCreateManufacturerButtonClicked()
     {
-        _navigationManager.NavigateTo($"manufacturers/{Guid.Empty}");
+        Dispatcher.Dispatch(new EditManufacturerAction
+        {
+            Id = Guid.Empty
+        });
     }
 }

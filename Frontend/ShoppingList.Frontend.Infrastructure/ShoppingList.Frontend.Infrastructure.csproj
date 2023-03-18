@@ -7,13 +7,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
-    <PackageReference Include="ProjectHermes.ShoppingList.Api.Client" Version="0.9.1" />
+    <PackageReference Include="ProjectHermes.ShoppingList.Api.Client" Version="0.10.0-alpha.2" />
     <PackageReference Include="RestEase" Version="1.6.0" />
     <PackageReference Include="WebAssembly.Bindings" Version="3.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ShoppingList.Frontend.Models\ShoppingList.Frontend.Models.csproj" />
+    <ProjectReference Include="..\ShoppingList.Frontend.Redux\ShoppingList.Frontend.Redux.csproj" />
   </ItemGroup>
 
   <ItemGroup>

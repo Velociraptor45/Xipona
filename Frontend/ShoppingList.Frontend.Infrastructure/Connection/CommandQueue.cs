@@ -1,7 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Error;
+﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.RequestSenders;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Processing;
 using RestEase;
 using System;
 using System.Collections.Generic;
@@ -17,49 +19,45 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
     {
         private const int _connectionRetryIntervalInMilliseconds = 4000;
 
-        private readonly Timer _timer;
         private readonly IApiClient _commandClient;
         private readonly IRequestSenderStrategy _senderStrategy;
+        private readonly IDispatcher _dispatcher;
 
         private bool _connectionAlive = true;
         private readonly List<IApiRequest> _queue = new();
 
-        private ICommandQueueErrorHandler _errorHandler;
-
-        public CommandQueue(IApiClient commandClient, IRequestSenderStrategy senderStrategy)
+        public CommandQueue(IApiClient commandClient, IRequestSenderStrategy senderStrategy, IDispatcher dispatcher)
         {
-            _timer = new Timer(_connectionRetryIntervalInMilliseconds);
             _commandClient = commandClient;
             _senderStrategy = senderStrategy;
-        }
-
-        public void Initialize(ICommandQueueErrorHandler errorHandler)
-        {
-            _errorHandler = errorHandler;
+            _dispatcher = dispatcher;
 
             try
             {
-                _timer.Elapsed += async (_, _) =>
+                var timer = new Timer(_connectionRetryIntervalInMilliseconds);
+                timer.Elapsed += async (_, _) =>
                 {
                     if (!_connectionAlive)
                         await RetryConnectionAsync();
                 };
-                _timer.Start();
+                timer.Start();
             }
             catch (Exception e)
             {
-                errorHandler.Log(e.ToString());
+                _dispatcher.Dispatch(new LogAction(e.ToString()));
             }
         }
 
         public async Task Enqueue(IApiRequest request)
         {
+            int queueCount;
             lock (_queue)
             {
                 _queue.Add(request);
+                queueCount = _queue.Count;
             }
 
-            if (_connectionAlive && _queue.Count == 1)
+            if (_connectionAlive && queueCount == 1)
             {
                 try
                 {
@@ -72,7 +70,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 catch (ApiProcessingException e)
                 {
                     OnApiProcessingError();
-                    _errorHandler.Log(e.InnerException.ToString());
+                    _dispatcher.Dispatch(new LogAction(e.InnerException.ToString()));
                 }
             }
         }
@@ -104,12 +102,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             catch (ApiProcessingException e)
             {
                 OnApiProcessingError();
-                _errorHandler.Log(e.InnerException.ToString());
+                _dispatcher.Dispatch(new LogAction(e.InnerException.ToString()));
                 return;
             }
             _connectionAlive = true;
 
-            await _errorHandler.OnQueueProcessedAsync();
+            _dispatcher.Dispatch(new QueueProcessedAction());
         }
 
         private async Task ProcessQueue()
@@ -176,13 +174,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             {
                 _queue.Clear();
             }
-            _errorHandler.OnApiProcessingError();
+            _dispatcher.Dispatch(new ApiRequestProcessingErrorOccurredAction());
         }
 
         private void OnApiConnectionDied()
         {
             _connectionAlive = false;
-            _errorHandler.OnConnectionFailed();
+            _dispatcher.Dispatch(new ApiConnectionDiedAction());
         }
     }
 }

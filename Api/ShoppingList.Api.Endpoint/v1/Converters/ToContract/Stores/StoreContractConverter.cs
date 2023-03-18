@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
@@ -16,7 +17,8 @@ public class StoreContractConverter : IToContractConverter<IStore, StoreContract
 
     public StoreContract ToContract(IStore source)
     {
-        var sections = _sectionConverter.ToContract(source.Sections);
+        var sectionsToConvert = source.Sections.Where(s => !s.IsDeleted);
+        var sections = _sectionConverter.ToContract(sectionsToConvert);
         return new StoreContract(source.Id, source.Name, sections);
     }
 }

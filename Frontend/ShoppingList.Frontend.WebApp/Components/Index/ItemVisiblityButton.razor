@@ -1,9 +1,16 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
+
+@inject IState<ShoppingListState> State
+@inject IDispatcher Dispatcher
 
 <Button Class="mr-1 d-flex align-items-center"
         OnClick="@OnShowBasketItemsChangeButtonClickedAsync"
-        Disabled="@(!State.ShoppingList?.AnyItemInBasket ?? true)">
-    @if (State.ItemsInBasketVisible)
+        Disabled="@(!State.Value.ShoppingList?.AnyItemInBasket ?? true)">
+    @if (State.Value.ItemsInBasketVisible)
     {
         <Icon Type="eye" />
     }
@@ -14,11 +21,8 @@
 </Button>
 
 @code {
-    [Parameter] public ShoppingListState State { get; set; }
-
-    private async Task OnShowBasketItemsChangeButtonClickedAsync()
+    private void OnShowBasketItemsChangeButtonClickedAsync()
     {
-        State.ToggleItemsInBasketVisible();
-        await State.RequestReloadAsync();
+        Dispatcher.Dispatch(new ToggleItemsInBasketVisibleAction());
     }
 }

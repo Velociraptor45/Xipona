@@ -1,12 +1,13 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
+
+@inject IState<ShoppingListState> State
 
 <div>
-    @foreach (var msg in ErrorHandler.Stack)
+    @foreach (var msg in State.Value.Errors.Stack)
     {
-        <div>@msg</div>
+        <div>@msg</div><br/>
     }
 </div>
-
-@code {
-    [Parameter] public ErrorHandler ErrorHandler { get; set; }
-}

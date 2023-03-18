@@ -1,17 +1,17 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToContract
 {
     public class ItemAvailabilityContractConverter :
-        IToContractConverter<ItemAvailability, ItemAvailabilityContract>
+        IToContractConverter<EditedItemAvailability, ItemAvailabilityContract>
     {
-        public ItemAvailabilityContract ToContract(ItemAvailability model)
+        public ItemAvailabilityContract ToContract(EditedItemAvailability model)
         {
             return new ItemAvailabilityContract()
             {
-                StoreId = model.Store.Id,
+                StoreId = model.StoreId,
                 Price = model.PricePerQuantity,
                 DefaultSectionId = model.DefaultSectionId
             };

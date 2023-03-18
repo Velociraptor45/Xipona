@@ -1,8 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.Shared;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using System;
 using System.Linq;
 
@@ -11,17 +11,17 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
     public class ModifyItemWithTypesContractConverter :
         IToContractConverter<ModifyItemWithTypesRequest, ModifyItemWithTypesContract>
     {
-        private readonly IToContractConverter<ItemAvailability, ItemAvailabilityContract> _availabilityConverter;
+        private readonly IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> _availabilityConverter;
 
         public ModifyItemWithTypesContractConverter(
-            IToContractConverter<ItemAvailability, ItemAvailabilityContract> availabilityConverter)
+            IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> availabilityConverter)
         {
             _availabilityConverter = availabilityConverter;
         }
 
         public ModifyItemWithTypesContract ToContract(ModifyItemWithTypesRequest request)
         {
-            var types = request.StoreItem.ItemTypes.Select(t => new ModifyItemTypeContract
+            var types = request.Item.ItemTypes.Select(t => new ModifyItemTypeContract
             {
                 Id = t.Id == Guid.Empty ? null : t.Id,
                 Name = t.Name,
@@ -29,13 +29,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
             });
 
             return new ModifyItemWithTypesContract(
-                request.StoreItem.Name,
-                request.StoreItem.Comment,
-                request.StoreItem.QuantityType.Id,
-                request.StoreItem.QuantityInPacket,
-                request.StoreItem.QuantityInPacketType?.Id,
-                request.StoreItem.ItemCategoryId.Value,
-                request.StoreItem.ManufacturerId,
+                request.Item.Name,
+                request.Item.Comment,
+                request.Item.QuantityType.Id,
+                request.Item.QuantityInPacket,
+                request.Item.QuantityInPacketType?.Id,
+                request.Item.ItemCategoryId.Value,
+                request.Item.ManufacturerId,
                 types);
         }
     }

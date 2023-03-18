@@ -1,15 +1,27 @@
-﻿<div class="d-flex p-2 mb-2 warning-bg">
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Processing
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
+
+@inject IState<ShoppingListState> State
+@inject IDispatcher Dispatcher
+
+<div class="d-flex p-2 mb-2 warning-bg">
     <div>
-        An error occured while processing your requests. Any changes were discarded. Please reload the page.
+        An error occurred while processing your requests. Any changes were discarded. Please reload the page.
     </div>
     <div class="ml-auto">
         <Button Class="d-flex align-items-center justify-content-center"
-                OnClick="@ReloadCallback"
+                OnClick="@OnReloadButtonClicked"
                 Icon="reload"
                 Size="@AntSizeLDSType.Small"></Button>
     </div>
 </div>
 
 @code{
-    [Parameter] public Func<Task> ReloadCallback { get; set; }
+    private void OnReloadButtonClicked()
+    {
+        Dispatcher.Dispatch(new ReloadAfterErrorAction());
+    }
 }

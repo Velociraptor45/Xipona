@@ -1,31 +1,22 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
-@using ProjectHermes.ShoppingList.Frontend.Models.Items
-@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Search
+@using ProjectHermes.ShoppingList.Frontend.Redux.Items.States
 
-@inject IItemsApiService _loadingService;
+@inject IState<ItemState> State
+@inject IDispatcher Dispatcher
 
 <div>
-    <Input TValue="string" @bind-value="@input" OnPressEnter="@OnLoadButtonClickedAsync"></Input>
-    <Button @onclick="@OnLoadButtonClickedAsync" Class="mt-2">Load</Button>
+    <Input TValue="string" @bind-value="@input" OnPressEnter="@OnLoadButtonClicked" Placeholder="Item name ..."></Input>
+    <Button @onclick="@OnLoadButtonClicked" Class="mt-2">Load</Button>
 </div>
 
 @code {
-    [Parameter] public ItemsState State { get; set; }
-    [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
-
     private string input = "";
 
-    private async Task OnLoadButtonClickedAsync()
+    private void OnLoadButtonClicked()
     {
-        if (string.IsNullOrWhiteSpace(input))
-        {
-            State.UpdateItems(Enumerable.Empty<SearchItemResult>());
-            return;
-        }
-
-        await _loadingService.SearchItemsAsync(input, FragmentCreator, items => State.UpdateItems(items));
+        Dispatcher.Dispatch(new SearchItemsAction(input));
     }
 }

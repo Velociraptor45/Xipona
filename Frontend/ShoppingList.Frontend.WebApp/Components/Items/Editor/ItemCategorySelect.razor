@@ -1,13 +1,12 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models;
-@using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
-@using ProjectHermes.ShoppingList.Frontend.Models.Items;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEditor
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error;
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject IItemEditorApiService _itemApiService;
-@inject IItemCategoryApiService _itemCategoryApiService;
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States
+@using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.ItemCategorySelectors
+@using ProjectHermes.ShoppingList.Frontend.Redux.Items.States
+
+@inject IState<ItemState> State
+@inject IDispatcher Dispatcher
 
 <div>
     <div class="font-weight-bold">Category</div>
@@ -15,47 +14,44 @@
         Class="mt-1 min-w-150"
         TItem="ItemCategorySearchResult"
         TValue="Guid"
-        DataSource="_dataSource"
+        DataSource="@State.Value.Editor.ItemCategorySelector.ItemCategories"
         ValueName="@nameof(ItemCategorySearchResult.Id)"
         LabelName="@nameof(ItemCategorySearchResult.Name)"
-        OnItemAdded="@OnNewItemCategoryCreatedAsync"
         OnItemChanged="@OnItemCategoryChanged"
+        OnItemAdded="@OnNewItemCategoryCreatedAsync"
+        OnInputChanged="OnInputChanged"
         Placeholder="Item Category"
-        DefaultValue="@State.EditedItem.ItemCategoryId.GetValueOrDefault()"
-        SearchForItemsAsync="_itemCategoryApiService.SearchAsync"
+        Value="@State.Value.Editor.Item.ItemCategoryId.GetValueOrDefault()"
+        SearchInput="@State.Value.Editor.ItemCategorySelector.Input"
+        OnDropdownClosed="OnDropdownClosed"
         CanAddItem="true">
     </SingleSearchSelect>
 </div>
 
 @code {
-    [Parameter] public ItemsState State { get; set; }
-    [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
-
-    private List<ItemCategorySearchResult> _dataSource = new();
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        if (State.EditedItem.ItemCategoryId.HasValue)
-        {
-            var itemCategory = await _itemCategoryApiService.GetAsync(State.EditedItem.ItemCategoryId.Value);
-            if(itemCategory is not null)
-                _dataSource.Add(new ItemCategorySearchResult(itemCategory.Id, itemCategory.Name));
-        }
+        Dispatcher.Dispatch(new LoadInitialItemCategoryAction());
     }
 
     private void OnItemCategoryChanged(ItemCategorySearchResult itemCategory)
     {
-        State.EditedItem.ItemCategoryId = itemCategory?.Id;
+        Dispatcher.Dispatch(new SelectedItemCategoryChangedAction(itemCategory.Id));
     }
 
-    private async Task<(ItemCategorySearchResult, Guid)> OnNewItemCategoryCreatedAsync(string name)
+    private void OnNewItemCategoryCreatedAsync()
     {
-        var newItemCategory = await _itemApiService.CreateItemCategoryAsync(name, FragmentCreator);
+        Dispatcher.Dispatch(new CreateNewItemCategoryAction());
+    }
 
-        if(newItemCategory == null)
-            return (null, Guid.Empty);
+    private void OnInputChanged(string input)
+    {
+        Dispatcher.Dispatch(new ItemCategoryInputChangedAction(input));
+    }
 
-        return (new ItemCategorySearchResult(newItemCategory.Id, newItemCategory.Name), newItemCategory.Id);
+    private void OnDropdownClosed()
+    {
+        Dispatcher.Dispatch(new ItemCategoryDropdownClosedAction());
     }
 }

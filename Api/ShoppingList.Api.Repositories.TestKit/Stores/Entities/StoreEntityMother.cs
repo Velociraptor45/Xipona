@@ -55,4 +55,35 @@ public static class StoreEntityMother
 
         return new StoreEntityBuilder().WithSections(sections);
     }
+
+    public static StoreEntityBuilder ActiveAndDeletedSection()
+    {
+        var sections = new List<Section>()
+        {
+            new SectionEntityBuilder()
+                .WithIsDefaultSection(false)
+                .WithSortIndex(0)
+                .WithIsDeleted(false)
+                .Create(),
+            new SectionEntityBuilder()
+                .WithIsDefaultSection(true)
+                .WithSortIndex(1)
+                .WithIsDeleted(true)
+                .Create(),
+            new SectionEntityBuilder()
+                .WithIsDefaultSection(false)
+                .WithSortIndex(2)
+                .WithIsDeleted(false)
+                .Create()
+        };
+        return new StoreEntityBuilder()
+            .WithDeleted(false)
+            .WithSections(sections);
+    }
+
+    public static StoreEntityBuilder Deleted()
+    {
+        return Initial()
+            .WithDeleted(true);
+    }
 }

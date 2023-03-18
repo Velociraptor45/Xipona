@@ -1,12 +1,13 @@
 ﻿@page "/item-categories"
 
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services
-@using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject NavigationManager _navigationManager;
-@inject ItemCategoriesState _state;
-@inject IItemCategoryApiService _apiService
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Actions
+@using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States
+
+@inject IState<ItemCategoryState> State
+@inject IDispatcher Dispatcher
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories
 
@@ -19,14 +20,14 @@
     </div>
     <div>
         <Input TValue="string" @bind-value="@input" 
-               OnPressEnter="@OnLoadButtonClickedAsync" 
-               Placeholder="ItemCategory name ..."></Input>
-        <Button @onclick="@OnLoadButtonClickedAsync" Class="mt-2">Load</Button>
+               OnPressEnter="@OnLoadButtonClicked" 
+               Placeholder="Item category name ..."></Input>
+        <Button @onclick="@OnLoadButtonClicked" Class="mt-2">Load</Button>
     </div>
     <div>
-        @foreach (var searchResult in _state.SearchResults)
+        @foreach (var searchResult in State.Value.Search.SearchResults)
         {
-            <SearchResult Model="searchResult" RedirectPageName="item-categories"></SearchResult>
+            <SearchResult Model="searchResult" TAction="EditItemCategoryAction"></SearchResult>
         }
     </div>
 </div>
@@ -34,26 +35,15 @@
 @code {
     private string input = "";
 
-    protected override void OnInitialized()
+    private void OnLoadButtonClicked()
     {
-        base.OnInitialized();
-        _state.ResetEditedItemCategory();
+        Dispatcher.Dispatch(new SearchItemCategoriesAction(input));
     }
-
-    private async Task OnLoadButtonClickedAsync()
-    {
-        if (string.IsNullOrWhiteSpace(input))
-        {
-            _state.RegisterSearchResults(Enumerable.Empty<ItemCategorySearchResult>());
-            return;
-        }
-
-        var results = await _apiService.SearchAsync(input);
-        _state.RegisterSearchResults(results);
-    }
-
     private void OnCreateItemCategoryButtonClicked()
     {
-        _navigationManager.NavigateTo($"item-categories/{Guid.Empty}");
+        Dispatcher.Dispatch(new EditItemCategoryAction
+        {
+            Id = Guid.Empty
+        });
     }
 }

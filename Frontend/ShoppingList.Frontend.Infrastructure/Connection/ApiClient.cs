@@ -32,24 +32,31 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItem
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ItemCategories;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Items;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Manufacturers;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.ShoppingLists;
-using ProjectHermes.ShoppingList.Frontend.Infrastructure.Requests.Stores;
-using ProjectHermes.ShoppingList.Frontend.Models.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models;
+using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using IngredientQuantityType = global::ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States.IngredientQuantityType;
+using ItemStore = ProjectHermes.ShoppingList.Frontend.Redux.Items.States.ItemStore;
+using ShoppingListStore = ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListStore;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 {
@@ -119,8 +126,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task UpdateItemAsync(UpdateItemRequest request)
         {
-            var contract = _converters.ToContract<Item, UpdateItemContract>(request.StoreItem);
-            await _client.UpdateItemAsync(request.StoreItem.Id, contract);
+            var contract = _converters.ToContract<EditedItem, UpdateItemContract>(request.Item);
+            await _client.UpdateItemAsync(request.Item.Id, contract);
         }
 
         public async Task UpdateItemPriceAsync(UpdateItemPriceRequest request)
@@ -131,31 +138,31 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
 
         public async Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request)
         {
-            var contract = _converters.ToContract<Item, UpdateItemWithTypesContract>(request.StoreItem);
-            await _client.UpdateItemWithTypesAsync(request.StoreItem.Id, contract);
+            var contract = _converters.ToContract<EditedItem, UpdateItemWithTypesContract>(request.Item);
+            await _client.UpdateItemWithTypesAsync(request.Item.Id, contract);
         }
 
         public async Task ModifyItemAsync(ModifyItemRequest request)
         {
-            var contract = _converters.ToContract<Item, ModifyItemContract>(request.StoreItem);
-            await _client.ModifyItemAsync(request.StoreItem.Id, contract);
+            var contract = _converters.ToContract<EditedItem, ModifyItemContract>(request.Item);
+            await _client.ModifyItemAsync(request.Item.Id, contract);
         }
 
         public async Task ModifyItemWithTypesAsync(ModifyItemWithTypesRequest request)
         {
             var contract = _converters.ToContract<ModifyItemWithTypesRequest, ModifyItemWithTypesContract>(request);
-            await _client.ModifyItemWithTypesAsync(request.StoreItem.Id, contract);
+            await _client.ModifyItemWithTypesAsync(request.Item.Id, contract);
         }
 
         public async Task CreateItemAsync(CreateItemRequest request)
         {
-            var contract = _converters.ToContract<Item, CreateItemContract>(request.StoreItem);
+            var contract = _converters.ToContract<EditedItem, CreateItemContract>(request.Item);
             await _client.CreateItemAsync(contract);
         }
 
         public async Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request)
         {
-            var contract = _converters.ToContract<Item, CreateItemWithTypesContract>(request.StoreItem);
+            var contract = _converters.ToContract<EditedItem, CreateItemWithTypesContract>(request.Item);
             await _client.CreateItemWithTypesAsync(contract);
         }
 
@@ -164,50 +171,56 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             await _client.DeleteItemAsync(request.ItemId);
         }
 
-        public async Task<Manufacturer> CreateManufacturerAsync(string name)
+        public async Task<EditedManufacturer> CreateManufacturerAsync(string name)
         {
             var result = await _client.CreateManufacturerAsync(name);
-            return _converters.ToDomain<ManufacturerContract, Manufacturer>(result);
+            return _converters.ToDomain<ManufacturerContract, EditedManufacturer>(result);
         }
 
-        public async Task<ItemCategory> CreateItemCategoryAsync(string name)
+        public async Task<EditedItemCategory> CreateItemCategoryAsync(string name)
         {
             var result = await _client.CreateItemCategoryAsync(name);
-            return _converters.ToDomain<ItemCategoryContract, ItemCategory>(result);
+            return _converters.ToDomain<ItemCategoryContract, EditedItemCategory>(result);
         }
 
-        public async Task<ShoppingListRoot> GetActiveShoppingListByStoreIdAsync(Guid storeId)
+        public async Task<ShoppingListModel> GetActiveShoppingListByStoreIdAsync(Guid storeId)
         {
             var list = await _client.GetActiveShoppingListByStoreIdAsync(storeId);
-            return _converters.ToDomain<ShoppingListContract, ShoppingListRoot>(list);
+            return _converters.ToDomain<ShoppingListContract, ShoppingListModel>(list);
         }
 
-        public async Task<IEnumerable<Store>> GetAllActiveStoresAsync()
+        public async Task<IEnumerable<ShoppingListStore>> GetAllActiveStoresForShoppingListAsync()
         {
-            var contracts = await _client.GetAllActiveStoresAsync();
+            var contracts = await _client.GetActiveStoresForShoppingAsync();
 
             return contracts is null ?
-                Enumerable.Empty<Store>() :
-                contracts.Select(_converters.ToDomain<ActiveStoreContract, Store>);
+                Enumerable.Empty<ShoppingListStore>() :
+                contracts.Select(_converters.ToDomain<StoreForShoppingContract, ShoppingListStore>);
         }
 
-        public async Task<IEnumerable<Manufacturer>> GetAllActiveManufacturersAsync()
+        public async Task<IEnumerable<ItemStore>> GetAllActiveStoresForItemAsync()
         {
-            var manufacturers = await _client.GetAllActiveManufacturersAsync();
+            var contracts = await _client.GetActiveStoresForItemAsync();
 
-            return manufacturers is null ?
-                Enumerable.Empty<Manufacturer>() :
-                manufacturers.Select(_converters.ToDomain<ManufacturerContract, Manufacturer>);
+            return contracts is null ?
+                Enumerable.Empty<ItemStore>() :
+                contracts.Select(_converters.ToDomain<StoreForItemContract, ItemStore>);
         }
 
-        public async Task<IEnumerable<ItemCategory>> GetAllActiveItemCategoriesAsync()
+        public async Task<IEnumerable<StoreSearchResult>> GetActiveStoresOverviewAsync()
         {
-            var itemCategories = await _client.GetAllActiveItemCategoriesAsync();
+            var contracts = await _client.GetActiveStoresOverviewAsync();
 
-            if (itemCategories is null)
-                return Enumerable.Empty<ItemCategory>();
+            return contracts is null
+                ? Enumerable.Empty<StoreSearchResult>()
+                : contracts.Select(_converters.ToDomain<StoreSearchResultContract, StoreSearchResult>);
+        }
 
-            return itemCategories.Select(_converters.ToDomain<ItemCategoryContract, ItemCategory>);
+        public async Task<EditedStore> GetStoreByIdAsync(Guid storeId)
+        {
+            var contract = await _client.GetStoreByIdAsync(storeId);
+
+            return _converters.ToDomain<StoreContract, EditedStore>(contract);
         }
 
         public async Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(
@@ -221,32 +234,19 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 .Select(_converters.ToDomain<SearchItemForShoppingListResultContract, SearchItemForShoppingListResult>);
         }
 
-        public async Task<IEnumerable<SearchItemResult>> SearchItemsAsync(string searchInput)
+        public async Task<IEnumerable<ItemSearchResult>> SearchItemsAsync(string searchInput)
         {
             var result = await _client.SearchItemsAsync(searchInput);
 
             return result is null ?
-                Enumerable.Empty<SearchItemResult>() :
-                result.Select(_converters.ToDomain<SearchItemResultContract, SearchItemResult>);
+                Enumerable.Empty<ItemSearchResult>() :
+                result.Select(_converters.ToDomain<SearchItemResultContract, ItemSearchResult>);
         }
 
-        public async Task<IEnumerable<SearchItemResult>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,
-            IEnumerable<Guid> itemCategoryIds, IEnumerable<Guid> manufacturerIds)
-        {
-            var result = await _client.SearchItemsByFilterAsync(
-                storeIds,
-                itemCategoryIds,
-                manufacturerIds);
-
-            return result is null ?
-                Enumerable.Empty<SearchItemResult>() :
-                result.Select(_converters.ToDomain<SearchItemResultContract, SearchItemResult>);
-        }
-
-        public async Task<Item> GetItemByIdAsync(Guid itemId)
+        public async Task<EditedItem> GetItemByIdAsync(Guid itemId)
         {
             var result = await _client.GetAsync(itemId);
-            return _converters.ToDomain<ItemContract, Item>(result);
+            return _converters.ToDomain<ItemContract, EditedItem>(result);
         }
 
         public async Task<IEnumerable<QuantityType>> GetAllQuantityTypesAsync()
@@ -278,15 +278,15 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             await _client.MakeTemporaryItemPermanentAsync(request.ItemId, contract);
         }
 
-        public async Task CreateStoreAsync(CreateStoreRequest request)
+        public async Task CreateStoreAsync(EditedStore store)
         {
-            var contract = _converters.ToContract<CreateStoreRequest, CreateStoreContract>(request);
+            var contract = _converters.ToContract<EditedStore, CreateStoreContract>(store);
             await _client.CreateStoreAsync(contract);
         }
 
-        public async Task ModifyStoreAsync(ModifyStoreRequest request)
+        public async Task ModifyStoreAsync(EditedStore store)
         {
-            await _client.ModifyStoreAsync(_converters.ToContract<ModifyStoreRequest, ModifyStoreContract>(request));
+            await _client.ModifyStoreAsync(_converters.ToContract<EditedStore, ModifyStoreContract>(store));
         }
 
         public async Task<IEnumerable<ManufacturerSearchResult>> GetManufacturerSearchResultsAsync(string searchInput)
@@ -298,11 +298,11 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 : result.Select(_converters.ToDomain<ManufacturerSearchResultContract, ManufacturerSearchResult>);
         }
 
-        public async Task<Manufacturer> GetManufacturerByIdAsync(Guid id)
+        public async Task<EditedManufacturer> GetManufacturerByIdAsync(Guid id)
         {
             var result = await _client.GetManufacturerByIdAsync(id);
 
-            return _converters.ToDomain<ManufacturerContract, Manufacturer>(result);
+            return _converters.ToDomain<ManufacturerContract, EditedManufacturer>(result);
         }
 
         public async Task DeleteManufacturerAsync(Guid id)
@@ -316,13 +316,13 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
             await _client.ModifyManufacturerAsync(contract);
         }
 
-        public async Task<ItemCategory> GetItemCategoryByIdAsync(Guid id)
+        public async Task<EditedItemCategory> GetItemCategoryByIdAsync(Guid id)
         {
             var result = await _client.GetItemCategoryByIdAsync(id);
-            return _converters.ToDomain<ItemCategoryContract, ItemCategory>(result);
+            return _converters.ToDomain<ItemCategoryContract, EditedItemCategory>(result);
         }
 
-        public async Task<IEnumerable<ItemCategorySearchResult>> GetItemCategoriesSearchResultsAsync(string searchInput)
+        public async Task<IEnumerable<ItemCategorySearchResult>> GetItemCategorySearchResultsAsync(string searchInput)
         {
             var results = await _client.SearchItemCategoriesByNameAsync(searchInput, false);
 
@@ -350,10 +350,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 : _converters.ToDomain<SearchItemByItemCategoryResultContract, SearchItemByItemCategoryResult>(results);
         }
 
-        public async Task<Recipe> GetRecipeByIdAsync(Guid recipeId)
+        public async Task<EditedRecipe> GetRecipeByIdAsync(Guid recipeId)
         {
             var result = await _client.GetRecipeByIdAsync(recipeId);
-            return _converters.ToDomain<RecipeContract, Recipe>(result);
+            return _converters.ToDomain<RecipeContract, EditedRecipe>(result);
         }
 
         public async Task<IEnumerable<RecipeSearchResult>> SearchRecipesByNameAsync(string searchInput)
@@ -364,16 +364,16 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection
                 : _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
         }
 
-        public async Task<Recipe> CreateRecipeAsync(Recipe recipe)
+        public async Task<EditedRecipe> CreateRecipeAsync(EditedRecipe recipe)
         {
-            var contract = _converters.ToContract<Recipe, CreateRecipeContract>(recipe);
+            var contract = _converters.ToContract<EditedRecipe, CreateRecipeContract>(recipe);
             var result = await _client.CreateRecipeAsync(contract);
-            return _converters.ToDomain<RecipeContract, Recipe>(result);
+            return _converters.ToDomain<RecipeContract, EditedRecipe>(result);
         }
 
-        public async Task ModifyRecipeAsync(Recipe recipe)
+        public async Task ModifyRecipeAsync(EditedRecipe recipe)
         {
-            var contract = _converters.ToContract<Recipe, ModifyRecipeContract>(recipe);
+            var contract = _converters.ToContract<EditedRecipe, ModifyRecipeContract>(recipe);
             await _client.ModifyRecipeAsync(recipe.Id, contract);
         }
 
