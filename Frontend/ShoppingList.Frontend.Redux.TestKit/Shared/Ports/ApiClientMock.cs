@@ -117,4 +117,30 @@ public class ApiClientMock : Mock<IApiClient>
                 It.Is<CreateItemWithTypesRequest>(r => r.IsRequestEquivalentTo(request))))
             .ThrowsAsync(ex);
     }
+
+    public void SetupUpdateItemAsync(UpdateItemRequest request)
+    {
+        this.SetupInOrder(m => m.UpdateItemAsync(It.Is<UpdateItemRequest>(r => r.IsRequestEquivalentTo(request))))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupUpdateItemAsyncThrowing(UpdateItemRequest request, Exception ex)
+    {
+        this.SetupInOrder(m => m.UpdateItemAsync(It.Is<UpdateItemRequest>(r => r.IsRequestEquivalentTo(request))))
+            .ThrowsAsync(ex);
+    }
+
+    public void UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request)
+    {
+        this.SetupInOrder(m => m.UpdateItemWithTypesAsync(
+                It.Is<UpdateItemWithTypesRequest>(r => r.IsRequestEquivalentTo(request))))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void UpdateItemWithTypesAsyncThrowing(UpdateItemWithTypesRequest request, Exception ex)
+    {
+        this.SetupInOrder(m => m.UpdateItemWithTypesAsync(
+                It.Is<UpdateItemWithTypesRequest>(r => r.IsRequestEquivalentTo(request))))
+            .ThrowsAsync(ex);
+    }
 }

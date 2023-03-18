@@ -774,6 +774,175 @@ public class ItemEditorEffectsTests
         }
     }
 
+    public class HandleUpdateItemAction
+    {
+        private readonly HandleUpdateItemActionFixture _fixture;
+
+        public HandleUpdateItemAction()
+        {
+            _fixture = new HandleUpdateItemActionFixture();
+        }
+
+        [Fact]
+        public async Task HandleUpdateItemAction_WithoutTypes_CallSuccessful_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            _fixture.SetupItemWithoutTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupUpdatingItem();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingLeaveAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleUpdateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleUpdateItemAction_WithoutTypes_CallFailed_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            _fixture.SetupItemWithoutTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupUpdatingItemFailed();
+                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleUpdateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleUpdateItemAction_WithTypes_CallSuccessful_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            _fixture.SetupItemWithTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupUpdatingItemWithTypes();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingLeaveAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleUpdateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleUpdateItemAction_WithTypes_CallFailed_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            _fixture.SetupItemWithTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupUpdatingItemWithTypesFailed();
+                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleUpdateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleUpdateItemActionFixture : ItemEditorEffectsFixture
+        {
+            public void SetupItemWithoutTypes()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Item = State.Editor.Item! with
+                        {
+                            ItemMode = ItemMode.WithoutTypes
+                        }
+                    }
+                };
+            }
+
+            public void SetupItemWithTypes()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Item = State.Editor.Item! with
+                        {
+                            ItemMode = ItemMode.WithTypes
+                        }
+                    }
+                };
+            }
+
+            public void SetupUpdatingItem()
+            {
+                var request = new UpdateItemRequest(Guid.NewGuid(), State.Editor.Item!);
+                ApiClientMock.SetupUpdateItemAsync(request);
+            }
+
+            public void SetupUpdatingItemFailed()
+            {
+                var request = new UpdateItemRequest(Guid.NewGuid(), State.Editor.Item!);
+                ApiClientMock.SetupUpdateItemAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupUpdatingItemWithTypes()
+            {
+                var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
+                ApiClientMock.UpdateItemWithTypesAsync(request);
+            }
+
+            public void SetupUpdatingItemWithTypesFailed()
+            {
+                var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
+                ApiClientMock.UpdateItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupDispatchingStartedAction()
+            {
+                SetupDispatchingAction<UpdateItemStartedAction>();
+            }
+
+            public void SetupDispatchingFinishedAction()
+            {
+                SetupDispatchingAction<UpdateItemFinishedAction>();
+            }
+
+            public void SetupDispatchingLeaveAction()
+            {
+                SetupDispatchingAction<LeaveItemEditorAction>();
+            }
+
+            public void SetupDispatchingExceptionAction()
+            {
+                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+            }
+        }
+    }
+
     private abstract class ItemEditorEffectsFixture : ItemEffectsFixtureBase
     {
         public ItemEditorEffects CreateSut()
