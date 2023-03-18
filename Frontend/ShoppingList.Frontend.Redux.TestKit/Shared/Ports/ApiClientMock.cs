@@ -183,4 +183,18 @@ public class ApiClientMock : Mock<IApiClient>
                 It.Is<MakeTemporaryItemPermanentRequest>(r => r.IsRequestEquivalentTo(request))))
             .ThrowsAsync(ex);
     }
+
+    public void SetupDeleteItemAsync(DeleteItemRequest request)
+    {
+        this.SetupInOrder(m => m.DeleteItemAsync(
+                It.Is<DeleteItemRequest>(r => r.IsRequestEquivalentTo(request))))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupDeleteItemAsyncThrowing(DeleteItemRequest request, Exception ex)
+    {
+        this.SetupInOrder(m => m.DeleteItemAsync(
+                It.Is<DeleteItemRequest>(r => r.IsRequestEquivalentTo(request))))
+            .ThrowsAsync(ex);
+    }
 }

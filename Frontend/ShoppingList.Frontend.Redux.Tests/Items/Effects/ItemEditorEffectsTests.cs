@@ -1236,6 +1236,93 @@ public class ItemEditorEffectsTests
         }
     }
 
+    public class HandleDeleteItemAction
+    {
+        private readonly HandleDeleteItemActionFixture _fixture;
+
+        public HandleDeleteItemAction()
+        {
+            _fixture = new HandleDeleteItemActionFixture();
+        }
+
+        [Fact]
+        public async Task HandleDeleteItemAction_WithCallSuccessful_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupMakingItemPermanent();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingLeaveAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleDeleteItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleDeleteItemAction_WithCallFailed_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupMakingItemPermanentFailed();
+                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleDeleteItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleDeleteItemActionFixture : ItemEditorEffectsFixture
+        {
+            public void SetupMakingItemPermanent()
+            {
+                var item = State.Editor.Item!;
+                var request = new DeleteItemRequest(Guid.NewGuid(), item.Id);
+                ApiClientMock.SetupDeleteItemAsync(request);
+            }
+
+            public void SetupMakingItemPermanentFailed()
+            {
+                var item = State.Editor.Item!;
+                var request = new DeleteItemRequest(Guid.NewGuid(), item.Id);
+                ApiClientMock.SetupDeleteItemAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupDispatchingStartedAction()
+            {
+                SetupDispatchingAction<DeleteItemStartedAction>();
+            }
+
+            public void SetupDispatchingFinishedAction()
+            {
+                SetupDispatchingAction<DeleteItemFinishedAction>();
+            }
+
+            public void SetupDispatchingLeaveAction()
+            {
+                SetupDispatchingAction<LeaveItemEditorAction>();
+            }
+
+            public void SetupDispatchingExceptionAction()
+            {
+                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+            }
+        }
+    }
+
     private abstract class ItemEditorEffectsFixture : ItemEffectsFixtureBase
     {
         public ItemEditorEffects CreateSut()
