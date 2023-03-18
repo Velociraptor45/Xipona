@@ -7,7 +7,9 @@ public static class ItemTypeEntityMother
         return new ItemTypeEntityBuilder()
             .WithoutPredecessorId()
             .WithoutPredecessor()
-            .WithoutItem();
+            .WithoutItem()
+            .WithIsDeleted(false)
+            .WithEmptyAvailableAt();
     }
 
     public static ItemTypeEntityBuilder InitialForStore(Guid storeId)
@@ -21,6 +23,7 @@ public static class ItemTypeEntityMother
             .WithAvailableAt(availabilities)
             .WithoutPredecessorId()
             .WithoutPredecessor()
-            .WithoutItem();
+            .WithoutItem()
+            .WithIsDeleted(false);
     }
 }
