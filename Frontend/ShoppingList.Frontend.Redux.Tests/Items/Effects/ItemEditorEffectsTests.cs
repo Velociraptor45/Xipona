@@ -743,13 +743,13 @@ public class ItemEditorEffectsTests
             public void SetupCreatingItemWithTypes()
             {
                 var request = new CreateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.CreateItemWithTypesAsync(request);
+                ApiClientMock.SetupCreateItemWithTypesAsync(request);
             }
 
             public void SetupCreatingItemWithTypesFailed()
             {
                 var request = new CreateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.CreateItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupCreateItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupDispatchingStartedAction()
@@ -912,13 +912,13 @@ public class ItemEditorEffectsTests
             public void SetupUpdatingItemWithTypes()
             {
                 var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.UpdateItemWithTypesAsync(request);
+                ApiClientMock.SetupUpdateItemWithTypesAsync(request);
             }
 
             public void SetupUpdatingItemWithTypesFailed()
             {
                 var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.UpdateItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupUpdateItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupDispatchingStartedAction()
@@ -1081,13 +1081,13 @@ public class ItemEditorEffectsTests
             public void SetupModifyingItemWithTypes()
             {
                 var request = new ModifyItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.ModifyItemWithTypesAsync(request);
+                ApiClientMock.SetupModifyItemWithTypesAsync(request);
             }
 
             public void SetupModifyingItemWithTypesFailed()
             {
                 var request = new ModifyItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.ModifyItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupModifyItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupDispatchingStartedAction()
@@ -1098,6 +1098,130 @@ public class ItemEditorEffectsTests
             public void SetupDispatchingFinishedAction()
             {
                 SetupDispatchingAction<ModifyItemFinishedAction>();
+            }
+
+            public void SetupDispatchingLeaveAction()
+            {
+                SetupDispatchingAction<LeaveItemEditorAction>();
+            }
+
+            public void SetupDispatchingExceptionAction()
+            {
+                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+            }
+        }
+    }
+
+    public class HandleMakeItemPermanentAction
+    {
+        private readonly HandleMakeItemPermanentActionFixture _fixture;
+
+        public HandleMakeItemPermanentAction()
+        {
+            _fixture = new HandleMakeItemPermanentActionFixture();
+        }
+
+        [Fact]
+        public async Task HandleMakeItemPermanentAction_WithCallSuccessful_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            _fixture.SetupItemWithoutTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupMakingItemPermanent();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingLeaveAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleMakeItemPermanentAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleMakeItemPermanentAction_WithCallFailed_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            _fixture.SetupItemWithoutTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupMakingItemPermanentFailed();
+                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleMakeItemPermanentAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleMakeItemPermanentActionFixture : ItemEditorEffectsFixture
+        {
+            public void SetupItemWithoutTypes()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Item = State.Editor.Item! with
+                        {
+                            ItemMode = ItemMode.WithoutTypes,
+                            ItemTypes = new List<EditedItemType>(),
+                            Availabilities = new DomainTestBuilder<EditedItemAvailability>().CreateMany(2).ToList()
+                        }
+                    }
+                };
+            }
+
+            public void SetupMakingItemPermanent()
+            {
+                var item = State.Editor.Item!;
+                var request = new MakeTemporaryItemPermanentRequest(
+                    item.Id,
+                    item.Name,
+                    item.Comment,
+                    item.QuantityType.Id,
+                    item.QuantityInPacket,
+                    item.QuantityInPacketType?.Id,
+                    item.ItemCategoryId!.Value,
+                    item.ManufacturerId,
+                    item.Availabilities);
+                ApiClientMock.SetupMakeTemporaryItemPermanent(request);
+            }
+
+            public void SetupMakingItemPermanentFailed()
+            {
+                var item = State.Editor.Item!;
+                var request = new MakeTemporaryItemPermanentRequest(
+                    item.Id,
+                    item.Name,
+                    item.Comment,
+                    item.QuantityType.Id,
+                    item.QuantityInPacket,
+                    item.QuantityInPacketType?.Id,
+                    item.ItemCategoryId!.Value,
+                    item.ManufacturerId,
+                    item.Availabilities);
+                ApiClientMock.SetupMakeTemporaryItemPermanentThrowing(request,
+                    new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupDispatchingStartedAction()
+            {
+                SetupDispatchingAction<MakeItemPermanentStartedAction>();
+            }
+
+            public void SetupDispatchingFinishedAction()
+            {
+                SetupDispatchingAction<MakeItemPermanentFinishedAction>();
             }
 
             public void SetupDispatchingLeaveAction()
