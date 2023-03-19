@@ -49,6 +49,7 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
 
         var storeIds = item.Availabilities.Select(av => av.StoreId).ToList();
         storeIds.AddRange(item.ItemTypes.SelectMany(t => t.Availabilities.Select(av => av.StoreId)));
+        storeIds = storeIds.Distinct().ToList();
         var storeDict = (await _storeRepository.FindActiveByAsync(storeIds, cancellationToken))
             .ToDictionary(store => store.Id);
 
@@ -63,6 +64,9 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
         var itemTypeReadModels = new List<ItemTypeReadModel>();
         foreach (var itemType in model.ItemTypes)
         {
+            if (itemType.IsDeleted)
+                continue;
+
             var itemTypeReadModel = new ItemTypeReadModel(itemType.Id, itemType.Name,
                 ToAvailabilityReadModel(itemType.Availabilities, stores));
             itemTypeReadModels.Add(itemTypeReadModel);

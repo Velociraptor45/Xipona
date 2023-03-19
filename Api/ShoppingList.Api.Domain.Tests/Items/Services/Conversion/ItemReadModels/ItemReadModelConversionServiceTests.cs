@@ -13,6 +13,7 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAsse
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
@@ -185,6 +186,36 @@ public class ItemReadModelConversionServiceTests
         }
     }
 
+    [Fact]
+    public async Task ConvertAsync_WithDeletedItemType_ShouldNotConvertItemTypeToReadModel()
+    {
+        // Arrange
+        var local = new LocalFixture();
+        var service = local.CreateService();
+
+        local.SetupItemWithDeletedType();
+        local.SetupItemCategory();
+        local.SetupManufacturer();
+        local.SetupStore();
+
+        local.SetupFindingItemCategory();
+        local.SetupFindingManufacturer();
+        local.SetupFindingStore();
+
+        TestPropertyNotSetException.ThrowIfNull(local.Item);
+
+        // Act
+        var result = await service.ConvertAsync(local.Item, default);
+
+        // Assert
+        var expected = local.CreateSimpleReadModelWithDeletedType();
+
+        using (new AssertionScope())
+        {
+            result.Should().BeEquivalentTo(expected);
+        }
+    }
+
     private class LocalFixture
     {
         private readonly SectionFactoryMock _sectionFactoryMock;
@@ -222,6 +253,25 @@ public class ItemReadModelConversionServiceTests
                 .Create();
         }
 
+        public void SetupItemWithDeletedType()
+        {
+            var storeId = StoreId.New;
+            var types = new List<IItemType>()
+            {
+                new ItemTypeBuilder()
+                    .WithIsDeleted(false)
+                    .WithAvailability(ItemAvailabilityMother.Initial().WithStoreId(storeId).Create())
+                    .Create(),
+                new ItemTypeBuilder()
+                    .WithIsDeleted(true)
+                    .WithAvailability(ItemAvailabilityMother.Initial().WithStoreId(storeId).Create())
+                    .Create()
+            };
+            Item = ItemMother.InitialWithTypes()
+                .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
+                .Create();
+        }
+
         public void SetupItemWithoutItemCategory()
         {
             Item = ItemMother.Initial()
@@ -246,7 +296,7 @@ public class ItemReadModelConversionServiceTests
         public void SetupStore()
         {
             TestPropertyNotSetException.ThrowIfNull(Item);
-            var availability = Item.Availabilities.First();
+            var availability = Item.Availabilities.FirstOrDefault() ?? Item.ItemTypes.First().Availabilities.First();
             var section = SectionMother.Default()
                 .WithId(availability.DefaultSectionId)
                 .Create();
@@ -270,6 +320,56 @@ public class ItemReadModelConversionServiceTests
             _manufacturer = ManufacturerMother.NotDeleted()
                 .WithId(ManufacturerId)
                 .Create();
+        }
+
+        public ItemReadModel CreateSimpleReadModelWithDeletedType()
+        {
+            TestPropertyNotSetException.ThrowIfNull(_store);
+            TestPropertyNotSetException.ThrowIfNull(Item);
+
+            var manufacturerReadModel = _manufacturer == null
+                ? null
+                : new ManufacturerReadModel(
+                    _manufacturer.Id,
+                    _manufacturer.Name,
+                    _manufacturer.IsDeleted);
+
+            var itemCategoryReadModel = _itemCategory == null
+                ? null
+                : new ItemCategoryReadModel(
+                    _itemCategory.Id,
+                    _itemCategory.Name,
+                    _itemCategory.IsDeleted);
+
+            var itemType = Item.ItemTypes.First();
+            var itemTypeAvailability = itemType.Availabilities.First();
+            var itemTypeAvailabilityReadModel = CreateAvailabilityReadModel(_store, itemTypeAvailability);
+            List<ItemTypeReadModel> itemTypeReadModels = new()
+            {
+                new ItemTypeReadModel(
+                    itemType.Id,
+                    itemType.Name,
+                    itemTypeAvailabilityReadModel.ToMonoList())
+            };
+
+            var itemQuantityInPacket = Item.ItemQuantity.InPacket;
+            var quantityTypeInPacketReadModel = itemQuantityInPacket is null
+                ? null
+                : new QuantityTypeInPacketReadModel(itemQuantityInPacket.Type);
+
+            return new ItemReadModel(
+                Item.Id,
+                Item.Name,
+                Item.IsDeleted,
+                Item.Comment,
+                Item.IsTemporary,
+                new QuantityTypeReadModel(Item.ItemQuantity.Type),
+                itemQuantityInPacket?.Quantity,
+                quantityTypeInPacketReadModel,
+                itemCategoryReadModel,
+                manufacturerReadModel,
+                new List<ItemAvailabilityReadModel>(),
+                itemTypeReadModels);
         }
 
         public ItemReadModel CreateSimpleReadModel()
