@@ -105,9 +105,10 @@ public class ItemSearchService : IItemSearchService
             return Enumerable.Empty<SearchItemForShoppingResultReadModel>();
 
         var store = await LoadStoreAsync(storeId);
+        var nameTrimmed = name.Trim();
 
         var searchResultItemGroups = (await _itemRepository
-                .FindActiveByAsync(name.Trim(), storeId, _cancellationToken))
+                .FindActiveByAsync(nameTrimmed, storeId, _cancellationToken))
             .ToLookup(i => i.HasItemTypes);
         IShoppingList shoppingList = await LoadShoppingListAsync(storeId);
 
@@ -133,7 +134,7 @@ public class ItemSearchService : IItemSearchService
             .ToList();
 
         // types
-        var itemsWithMatchingItemTypes = await GetItemsWithMatchingItemTypeIdsAsync(name, storeId,
+        var itemsWithMatchingItemTypes = await GetItemsWithMatchingItemTypeIdsAsync(nameTrimmed, storeId,
             searchResultItemsWithTypesDict, itemIdsWithTypeIdOnShoppingListGroups.Select(m => m.TypeId));
         itemsWithTypeNotOnShoppingList.AddRange(itemsWithMatchingItemTypes);
 
@@ -151,7 +152,11 @@ public class ItemSearchService : IItemSearchService
         {
             if (!itemsWithTypesOnShoppingList.Contains(item.Id))
             {
-                var itemTypeIds = item.GetTypesFor(storeId).Select(t => t.Id).ToList();
+                var itemTypeIds = item
+                    .GetTypesFor(storeId)
+                    .Where(t => !t.IsDeleted)
+                    .Select(t => t.Id)
+                    .ToList();
                 if (!itemTypeIds.Any())
                     continue;
 
