@@ -397,8 +397,14 @@ public class ItemModificationServiceTests
             _itemMock.SetupItemTypes()
                 .Returns(() =>
                     _itemMock.ModifyWithTypeCalled ?
-                        new List<IItemType>(Modification.ItemTypes
-                            .Select(t => new ItemType(t.Id!.Value, t.Name, t.Availabilities, null, false))).AsReadOnly() :
+                        new List<IItemType>(originalItemTypes
+                            .Select(t => new ItemType(
+                                t.Id,
+                                t.Name,
+                                t.Availabilities,
+                                null,
+                                Modification.ItemTypes.All(it => it.Id != t.Id))))
+                            .AsReadOnly() :
                         originalItemTypes);
         }
 
