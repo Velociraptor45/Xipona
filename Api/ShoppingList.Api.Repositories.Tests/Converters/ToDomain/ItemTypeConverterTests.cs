@@ -31,7 +31,8 @@ public class ItemTypeConverterTests : ToDomainConverterTestBase<ItemType, IItemT
             Id = destination.Id,
             Name = destination.Name,
             AvailableAt = availabilities,
-            PredecessorId = destination.PredecessorId
+            PredecessorId = destination.PredecessorId,
+            IsDeleted = destination.IsDeleted
         };
     }
 

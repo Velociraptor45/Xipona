@@ -4,6 +4,7 @@ using Force.DeepCloner;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
@@ -57,6 +58,146 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class ItemControllerIntegrationTests
 {
+    [Collection(DockerCollection.Name)]
+    public sealed class ModifyItemWithTypesAsync
+    {
+        private readonly ModifyItemWithTypesAsyncFixture _fixture;
+
+        public ModifyItemWithTypesAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new ModifyItemWithTypesAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task ModifyItemWithTypesAsync_WithRemovingType_ShouldMarkTypeAsDeleted()
+        {
+            // Arrange
+            _fixture.SetupExistingItem();
+            _fixture.SetupExpectedItem();
+            _fixture.SetupContractWithLessItemTypes();
+            await _fixture.PrepareDatabaseAsync();
+
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExistingItem);
+
+            // Act
+            await sut.ModifyItemWithTypesAsync(_fixture.ExistingItem.Id, _fixture.Contract);
+
+            // Assert
+            await _fixture.VerifyMarkingAllItemTypesAsDeleted();
+        }
+
+        private sealed class ModifyItemWithTypesAsyncFixture : ItemControllerFixture
+        {
+            public ModifyItemWithTypesAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public Item? ExistingItem { get; private set; }
+            public Manufacturer? ExistingManufacturer { get; private set; }
+            public ItemCategory? ExistingItemCategory { get; private set; }
+            public Item? ExpectedItem { get; private set; }
+            public ModifyItemWithTypesContract? Contract { get; private set; }
+
+            public void SetupExistingItem()
+            {
+                ExistingItem = ItemEntityMother
+                    .InitialWithTypes()
+                    .WithItemTypes(ItemTypeEntityMother.Initial().CreateMany(3).ToList())
+                    .Create();
+
+                foreach (var type in ExistingItem.ItemTypes)
+                {
+                    type.ItemId = ExistingItem.Id;
+                }
+
+                ExistingItemCategory = new ItemCategoryEntityBuilder()
+                    .WithDeleted(false)
+                    .WithId(ExistingItem.ItemCategoryId!.Value)
+                    .Create();
+                ExistingManufacturer = new ManufacturerEntityBuilder()
+                    .WithDeleted(false)
+                    .WithId(ExistingItem.ManufacturerId!.Value)
+                    .Create();
+            }
+
+            public void SetupExpectedItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+
+                ExpectedItem = ExistingItem.DeepClone();
+                foreach (var type in ExpectedItem.ItemTypes.Skip(1))
+                {
+                    type.IsDeleted = true;
+                }
+            }
+
+            public void SetupContractWithLessItemTypes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+
+                Contract = new ModifyItemWithTypesContract(
+                    ExistingItem.Name,
+                    ExistingItem.Comment,
+                    ExistingItem.QuantityType,
+                    ExistingItem.QuantityInPacket,
+                    ExistingItem.QuantityTypeInPacket,
+                    ExistingItem.ItemCategoryId!.Value,
+                    ExistingItem.ManufacturerId,
+                    new List<ModifyItemTypeContract>
+                    {
+                        new()
+                        {
+                            Id = ExistingItem.ItemTypes.First().Id,
+                            Name = ExistingItem.ItemTypes.First().Name,
+                            Availabilities = ExistingItem.ItemTypes.First().AvailableAt.Select(av => new ItemAvailabilityContract
+                            {
+                                StoreId = av.StoreId,
+                                DefaultSectionId = av.DefaultSectionId,
+                                Price = av.Price
+                            })
+                        }
+                    });
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+                TestPropertyNotSetException.ThrowIfNull(ExistingItemCategory);
+                TestPropertyNotSetException.ThrowIfNull(ExistingManufacturer);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var itemDbContext = GetContextInstance<ItemContext>(ArrangeScope);
+                await using var itemCategoryDbContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
+                await using var manufacturerDbContext = GetContextInstance<ManufacturerContext>(ArrangeScope);
+
+                itemCategoryDbContext.Add(ExistingItemCategory);
+                manufacturerDbContext.Add(ExistingManufacturer);
+                itemDbContext.Add(ExistingItem);
+
+                await itemCategoryDbContext.SaveChangesAsync();
+                await manufacturerDbContext.SaveChangesAsync();
+                await itemDbContext.SaveChangesAsync();
+            }
+
+            public async Task VerifyMarkingAllItemTypesAsDeleted()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedItem);
+
+                var items = (await LoadAllItemEntities()).ToList();
+                items.Should().HaveCount(1);
+                var item = items.SingleOrDefault(i => i.Id == ExistingItem.Id);
+                item.Should().NotBeNull();
+                item.Should().BeEquivalentTo(ExpectedItem, opt => opt
+                    .Excluding(info => info.Path == "UpdatedOn" || Regex.IsMatch(info.Path, @"ItemTypes\[\d\].Item")));
+            }
+        }
+    }
+
     [Collection(DockerCollection.Name)]
     public sealed class UpdateItemWithTypesAsync
     {
@@ -189,27 +330,6 @@ public class ItemControllerIntegrationTests
             entitiesAsContractTypes.Should().BeEquivalentTo(contractItemTypes);
         }
 
-        [Fact]
-        public async Task UpdateItemWithTypesAsync_WithRemovingType_ShouldMarkTypeAsDeleted()
-        {
-            // Arrange
-            _fixture.SetupExistingItem();
-            _fixture.SetupExpectedItem();
-            _fixture.SetupContractWithLessItemTypes();
-            await _fixture.PrepareDatabaseAsync();
-
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ExistingItem);
-
-            // Act
-            await sut.UpdateItemWithTypesAsync(_fixture.ExistingItem.Id, _fixture.Contract);
-
-            // Assert
-            await _fixture.VerifyMarkingAllItemTypesAsDeleted();
-        }
-
         private sealed class UpdateItemWithTypesAsyncFixture : ItemControllerFixture
         {
             private List<IStore> _newStores = new();
@@ -226,10 +346,6 @@ public class ItemControllerIntegrationTests
             {
             }
 
-            public Item? ExistingItem { get; private set; }
-            public Manufacturer? ExistingManufacturer { get; private set; }
-            public ItemCategory? ExistingItemCategory { get; private set; }
-            public Item? ExpectedItem { get; private set; }
             public IItem? CurrentItem { get; private set; }
             public IItem? SecondLevelPredecessor { get; private set; }
             public IItem? FirstLevelPredecessor { get; private set; }
@@ -245,7 +361,7 @@ public class ItemControllerIntegrationTests
                     var types = FirstLevelPredecessor.ItemTypes
                         .Select(t =>
                         {
-                            var type = new ItemTypeBuilder().WithPredecessorId(t.Id).Create();
+                            var type = new ItemTypeBuilder().WithIsDeleted(false).WithPredecessorId(t.Id).Create();
                             return type;
                         });
                     builder.WithTypes(new ItemTypes(types, factory));
@@ -272,7 +388,7 @@ public class ItemControllerIntegrationTests
                 var types = SecondLevelPredecessor.ItemTypes
                     .Select(t =>
                     {
-                        var type = new ItemTypeBuilder().WithPredecessorId(t.Id).Create();
+                        var type = new ItemTypeBuilder().WithIsDeleted(false).WithPredecessorId(t.Id).Create();
                         return type;
                     });
 
@@ -353,105 +469,9 @@ public class ItemControllerIntegrationTests
                 await StoreAsync(itemCategory: _newItemCategory, manufacturer: _newManufacturer, stores: _newStores);
             }
 
-            public void SetupExistingItem()
-            {
-                ExistingItem = ItemEntityMother
-                    .InitialWithTypes()
-                    .WithItemTypes(ItemTypeEntityMother.Initial().CreateMany(3).ToList())
-                    .Create();
-
-                foreach (var type in ExistingItem.ItemTypes)
-                {
-                    type.ItemId = ExistingItem.Id;
-                }
-
-                ExistingItemCategory = new ItemCategoryEntityBuilder()
-                    .WithDeleted(false)
-                    .WithId(ExistingItem.ItemCategoryId!.Value)
-                    .Create();
-                ExistingManufacturer = new ManufacturerEntityBuilder()
-                    .WithDeleted(false)
-                    .WithId(ExistingItem.ManufacturerId!.Value)
-                    .Create();
-            }
-
-            public void SetupExpectedItem()
-            {
-                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
-
-                ExpectedItem = ExistingItem.DeepClone();
-                ExpectedItem.Deleted = true;
-                foreach (var type in ExpectedItem.ItemTypes.Skip(1))
-                {
-                    type.IsDeleted = true;
-                }
-            }
-
-            public void SetupContractWithLessItemTypes()
-            {
-                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
-
-                Contract = new UpdateItemWithTypesContract(
-                    ExistingItem.Name,
-                    ExistingItem.Comment,
-                    ExistingItem.QuantityType,
-                    ExistingItem.QuantityInPacket,
-                    ExistingItem.QuantityTypeInPacket,
-                    ExistingItem.ItemCategoryId!.Value,
-                    ExistingItem.ManufacturerId,
-                    new List<UpdateItemTypeContract>
-                    {
-                        new(
-                            ExistingItem.ItemTypes.First().Id,
-                            ExistingItem.ItemTypes.First().Name,
-                            ExistingItem.ItemTypes.First().AvailableAt.Select(av => new ItemAvailabilityContract
-                            {
-                                StoreId = av.StoreId,
-                                DefaultSectionId = av.DefaultSectionId,
-                                Price = av.Price
-                            }))
-                    });
-            }
-
             public async Task ApplyMigrationsAsync()
             {
                 await ApplyMigrationsAsync(ArrangeScope);
-            }
-
-            public async Task PrepareDatabaseAsync()
-            {
-                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
-                TestPropertyNotSetException.ThrowIfNull(ExistingItemCategory);
-                TestPropertyNotSetException.ThrowIfNull(ExistingManufacturer);
-
-                await ApplyMigrationsAsync(ArrangeScope);
-
-                await using var itemDbContext = GetContextInstance<ItemContext>(ArrangeScope);
-                await using var itemCategoryDbContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
-                await using var manufacturerDbContext = GetContextInstance<ManufacturerContext>(ArrangeScope);
-
-                itemCategoryDbContext.Add(ExistingItemCategory);
-                manufacturerDbContext.Add(ExistingManufacturer);
-                itemDbContext.Add(ExistingItem);
-
-                await itemCategoryDbContext.SaveChangesAsync();
-                await manufacturerDbContext.SaveChangesAsync();
-                await itemDbContext.SaveChangesAsync();
-            }
-
-            public async Task VerifyMarkingAllItemTypesAsDeleted()
-            {
-                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
-                TestPropertyNotSetException.ThrowIfNull(ExpectedItem);
-
-                var items = (await LoadAllItemEntities()).ToList();
-                items.Should().HaveCount(2);
-                var item = items.FirstOrDefault(i => i.Id == ExistingItem.Id);
-                item.Should().BeEquivalentTo(ExpectedItem, opt => opt
-                    .Excluding(info =>
-                        info.Path == "UpdatedOn"
-                        //|| Regex.IsMatch(info.Path, @"ItemTypes\[\d\].Item")
-                        || Regex.IsMatch(info.Path, @"ItemTypes\[\d\].Item")));
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
@@ -10,18 +11,20 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 public class ItemType : IItemType
 {
     public ItemType(ItemTypeId id, ItemTypeName name, IEnumerable<IItemAvailability> availabilities,
-        ItemTypeId? predecessorId)
+        ItemTypeId? predecessorId, bool isDeleted)
     {
         Id = id;
         Name = name;
         PredecessorId = predecessorId;
         Availabilities = availabilities.ToList();
+        IsDeleted = isDeleted;
     }
 
     public ItemTypeId Id { get; }
     public ItemTypeName Name { get; }
     public IReadOnlyCollection<IItemAvailability> Availabilities { get; }
     public ItemTypeId? PredecessorId { get; }
+    public bool IsDeleted { get; }
 
     public SectionId GetDefaultSectionIdForStore(StoreId storeId)
     {
@@ -44,30 +47,41 @@ public class ItemType : IItemType
 
     public async Task<IItemType> ModifyAsync(ItemTypeModification modification, IValidator validator)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotModifyDeletedItemTypeReason(Id));
+
         await validator.ValidateAsync(modification.Availabilities);
 
         return new ItemType(
             Id,
             modification.Name,
             modification.Availabilities,
-            PredecessorId);
+            PredecessorId,
+            IsDeleted);
     }
 
     public async Task<IItemType> UpdateAsync(ItemTypeUpdate update, IValidator validator)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotModifyDeletedItemTypeReason(Id));
+
         await validator.ValidateAsync(update.Availabilities);
 
         var type = new ItemType(
             ItemTypeId.New,
             update.Name,
             update.Availabilities,
-            Id);
+            Id,
+            IsDeleted);
 
         return type;
     }
 
     public IItemType Update(StoreId storeId, Price price)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotModifyDeletedItemTypeReason(Id));
+
         if (Availabilities.All(av => av.StoreId != storeId))
             throw new DomainException(new ItemTypeAtStoreNotAvailableReason(Id, storeId));
 
@@ -76,23 +90,30 @@ public class ItemType : IItemType
                 ? new ItemAvailability(storeId, price, av.DefaultSectionId)
                 : av);
 
-        var newItemType = new ItemType(ItemTypeId.New, Name, availabilities, Id);
+        var newItemType = new ItemType(ItemTypeId.New, Name, availabilities, Id, IsDeleted);
         return newItemType;
     }
 
     public IItemType Update()
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotModifyDeletedItemTypeReason(Id));
+
         var newItemType = new ItemType(
             ItemTypeId.New,
             Name,
             Availabilities,
-            Id);
+            Id,
+            IsDeleted);
 
         return newItemType;
     }
 
     public IItemType TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotModifyDeletedItemTypeReason(Id));
+
         if (!IsAvailableAt(oldSectionId))
             return this;
 
@@ -110,6 +131,17 @@ public class ItemType : IItemType
             Id,
             Name,
             availabilities,
-            PredecessorId);
+            PredecessorId,
+            IsDeleted);
+    }
+
+    public IItemType Delete()
+    {
+        return new ItemType(
+            Id,
+            Name,
+            Availabilities,
+            PredecessorId,
+            true);
     }
 }

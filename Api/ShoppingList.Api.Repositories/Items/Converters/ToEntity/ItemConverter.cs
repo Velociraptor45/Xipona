@@ -49,7 +49,8 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
             ItemId = source.Id,
             Name = itemType.Name,
             AvailableAt = itemType.Availabilities.Select(av => ToItemTypeAvailableAt(av, itemType)).ToList(),
-            PredecessorId = itemType.PredecessorId
+            PredecessorId = itemType.PredecessorId,
+            IsDeleted = itemType.IsDeleted
         };
     }
 

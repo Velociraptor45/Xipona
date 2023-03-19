@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
@@ -20,25 +20,25 @@ public class ItemTypeBuilder : DomainTestBuilderBase<ItemType>
 
     public ItemTypeBuilder WithId(ItemTypeId id)
     {
-        FillConstructorWith("id", id);
+        FillConstructorWith(nameof(id), id);
         return this;
     }
 
     public ItemTypeBuilder WithName(ItemTypeName name)
     {
-        FillConstructorWith("name", name);
+        FillConstructorWith(nameof(name), name);
         return this;
     }
 
     public ItemTypeBuilder WithAvailabilities(IEnumerable<IItemAvailability> availabilities)
     {
-        FillConstructorWith("availabilities", availabilities);
+        FillConstructorWith(nameof(availabilities), availabilities);
         return this;
     }
 
-    public ItemTypeBuilder WithAvailability(IItemAvailability availability)
+    public ItemTypeBuilder WithEmptyAvailabilities()
     {
-        return WithAvailabilities(availability.ToMonoList());
+        return WithAvailabilities(Enumerable.Empty<IItemAvailability>());
     }
 
     public ItemTypeBuilder WithPredecessorId(ItemTypeId? predecessorId)
@@ -50,5 +50,17 @@ public class ItemTypeBuilder : DomainTestBuilderBase<ItemType>
     public ItemTypeBuilder WithoutPredecessorId()
     {
         return WithPredecessorId(null);
+    }
+
+    public ItemTypeBuilder WithIsDeleted(bool isDeleted)
+    {
+        FillConstructorWith(nameof(isDeleted), isDeleted);
+        return this;
+    }
+
+    // tcg keep
+    public ItemTypeBuilder WithAvailability(IItemAvailability availability)
+    {
+        return WithAvailabilities(availability.ToMonoList());
     }
 }

@@ -328,7 +328,9 @@ public class ItemTests
 
             public void SetupOldItem()
             {
-                _existingItemTypeMock = new ItemTypeMock(new ItemTypeBuilder().Create(), MockBehavior.Strict);
+                _existingItemTypeMock = new ItemTypeMock(
+                    new ItemTypeBuilder().WithIsDeleted(false).Create(),
+                    MockBehavior.Strict);
 
                 var types = new ItemTypes(_existingItemTypeMock.Object.ToMonoList(), _itemTypeFactoryMock.Object);
                 ItemMother.InitialWithTypes(Builder)
@@ -342,7 +344,7 @@ public class ItemTests
 
             public void SetupExpectedItem(IItem sut)
             {
-                ExpectedItemType = new ItemTypeBuilder().Create();
+                ExpectedItemType = new ItemTypeBuilder().WithIsDeleted(false).Create();
                 ExpectedResult = ItemMother.InitialWithTypes()
                     .WithTypes(new ItemTypes(ExpectedItemType.ToMonoList(), _itemTypeFactoryMock.Object))
                     .WithPredecessorId(sut.Id)
@@ -800,8 +802,10 @@ public class ItemTests
                 var type1 = new ItemTypeBuilder()
                     .WithAvailability(ItemAvailabilityMother.ForStore(StoreId.Value).Create())
                     .WithId(ItemTypeId ?? Domain.Items.Models.ItemTypeId.New)
+                    .WithIsDeleted(false)
                     .Create();
                 var type2 = new ItemTypeBuilder()
+                    .WithIsDeleted(false)
                     .Create();
 
                 Builder.WithTypes(new ItemTypes(new List<IItemType> { type1, type2 }, _itemTypeFactoryMock.Object));
@@ -867,7 +871,8 @@ public class ItemTests
                                 t.Availabilities.Select(av => av.StoreId == StoreId
                                     ? new ItemAvailability(StoreId.Value, Price.Value, av.DefaultSectionId)
                                     : av),
-                                t.Id);
+                                t.Id,
+                                t.IsDeleted);
                             return type;
                         }),
                         _itemTypeFactoryMock.Object),
@@ -897,7 +902,8 @@ public class ItemTests
                                 t.Availabilities.Select(av => t.Id == ItemTypeId.Value
                                     ? new ItemAvailability(StoreId.Value, Price.Value, av.DefaultSectionId)
                                     : av),
-                                t.Id);
+                                t.Id,
+                                t.IsDeleted);
                             return type;
                         }),
                         _itemTypeFactoryMock.Object),
@@ -1052,6 +1058,7 @@ public class ItemTests
 
                 var type = new ItemTypeBuilder()
                     .WithAvailability(av)
+                    .WithIsDeleted(false)
                     .CreateMany(1);
 
                 var types = new ItemTypes(type, ItemTypeFactoryMock.Object);
@@ -1068,6 +1075,7 @@ public class ItemTests
 
                 var type = new ItemTypeBuilder()
                     .WithAvailability(av)
+                    .WithIsDeleted(false)
                     .CreateMany(1);
 
                 var types = new ItemTypes(type, ItemTypeFactoryMock.Object);
@@ -1220,6 +1228,7 @@ public class ItemTests
                 var itemTypes = new ItemTypeBuilder()
                     .WithId(ItemTypeId.Value)
                     .WithAvailability(availability)
+                    .WithIsDeleted(false)
                     .CreateMany(1);
 
                 Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
@@ -1231,6 +1240,7 @@ public class ItemTests
 
                 var itemTypes = new ItemTypeBuilder()
                     .WithId(ItemTypeId.Value)
+                    .WithIsDeleted(false)
                     .CreateMany(1);
 
                 Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
@@ -1239,6 +1249,7 @@ public class ItemTests
             public void SetupNotContainingItemType()
             {
                 var itemTypes = new ItemTypeBuilder()
+                    .WithIsDeleted(false)
                     .CreateMany(1);
 
                 Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));

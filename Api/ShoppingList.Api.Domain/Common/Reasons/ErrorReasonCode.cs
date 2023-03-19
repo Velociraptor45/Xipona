@@ -50,4 +50,5 @@ public enum ErrorReasonCode
     OldAndNewSectionNotInSameStore = 48,
     ItemWithTypesHasNoAvailabilities = 49,
     ItemHasNoItemTypes = 50,
+    CannotModifyDeletedItemType = 51,
 }

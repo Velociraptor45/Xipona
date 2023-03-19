@@ -116,6 +116,7 @@ public class ItemTypeTests
                 ExpectedResult = new ItemTypeBuilder()
                     .WithId(sut.Id)
                     .WithPredecessorId(sut.PredecessorId)
+                    .WithIsDeleted(false)
                     .Create();
             }
 
@@ -153,7 +154,9 @@ public class ItemTypeTests
 
         public ItemType CreateSut()
         {
-            return Builder.Create();
+            return Builder
+                .WithIsDeleted(false)
+                .Create();
         }
     }
 }
