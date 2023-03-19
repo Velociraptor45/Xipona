@@ -79,6 +79,9 @@ public class ItemSearchService : IItemSearchService
         {
             foreach (var type in item.ItemTypes)
             {
+                if (type.IsDeleted)
+                    continue;
+
                 results.Add(new SearchItemByItemCategoryResult(
                     item.Id,
                     type.Id,

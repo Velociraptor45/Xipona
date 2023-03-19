@@ -781,6 +781,28 @@ public class ItemSearchServiceTests
         }
 
         [Fact]
+        public async Task SearchAsync_WithDeletedItemWithTypes_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupItemCategoryId();
+            _fixture.SetupValidatingItemCategoryId();
+            _fixture.SetupItemWithDeletedTypes();
+            _fixture.SetupFindingItems();
+            _fixture.SetupConvertedAvailabilitiesWithTypes();
+            _fixture.SetupConvertingAvailabilities();
+            _fixture.SetupExpectedResultWithDeletedTypes();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCategoryId);
+
+            // Act
+            var results = await sut.SearchAsync(_fixture.ItemCategoryId.Value);
+
+            // Assert
+            results.Should().BeEquivalentTo(_fixture.ExpectedResults);
+        }
+
+        [Fact]
         public async Task SearchAsync_WithItemAndItemWithTypes_ShouldReturnExpectedResult()
         {
             // Arrange
@@ -869,6 +891,16 @@ public class ItemSearchServiceTests
                 _foundItemWithTypes = ItemMother.InitialWithTypes().Create();
             }
 
+            public void SetupItemWithDeletedTypes()
+            {
+                _foundItemWithTypes = ItemMother
+                    .InitialWithTypes()
+                    .WithTypes(new ItemTypes(
+                        new ItemTypeBuilder().WithIsDeleted(true).CreateMany(2),
+                        ItemTypeFactoryMock.Object))
+                    .Create();
+            }
+
             public void SetupItemWithoutTypes()
             {
                 _foundItem = ItemMother.Initial().Create();
@@ -904,6 +936,11 @@ public class ItemSearchServiceTests
                         $"{_foundItemWithTypes.Name} {type.Name}",
                         _convertedAvailabilities[(_foundItemWithTypes.Id, type.Id)]));
                 }
+            }
+
+            public void SetupExpectedResultWithDeletedTypes()
+            {
+                ExpectedResults.Clear();
             }
 
             public void SetupConvertedAvailabilitiesWithTypes()
