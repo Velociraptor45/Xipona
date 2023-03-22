@@ -436,6 +436,7 @@ public class ItemSearchServiceTests
                 var item = _itemsFromTypeMapping.Single();
 
                 var typesBuilder = new ItemTypeBuilder()
+                    .WithIsDeleted(false)
                     .WithId(CommonFixture.ChooseRandom(item.ItemTypes).Id);
 
                 if (availableAtStore)
@@ -459,7 +460,7 @@ public class ItemSearchServiceTests
 
             private ItemTypes GetItemTypes(bool availableAtStore, int count)
             {
-                var typesBuilder = new ItemTypeBuilder();
+                var typesBuilder = new ItemTypeBuilder().WithIsDeleted(false);
 
                 if (availableAtStore)
                 {
