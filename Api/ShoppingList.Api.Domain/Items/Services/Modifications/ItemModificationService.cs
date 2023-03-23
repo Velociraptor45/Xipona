@@ -48,7 +48,7 @@ public class ItemModificationService : IItemModificationService
 
         foreach (var type in itemTypesAfter)
         {
-            if (!itemTypesBefore.Remove(type.Id))
+            if (type.IsDeleted || !itemTypesBefore.Remove(type.Id))
                 continue;
 
             // only remove item type from shopping list if it's not available anymore in respective store

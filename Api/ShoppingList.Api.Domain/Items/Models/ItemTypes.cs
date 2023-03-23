@@ -33,7 +33,7 @@ public class ItemTypes : IEnumerable<IItemType>
 
         foreach (var typeId in typeIdsToDelete)
         {
-            Remove(typeId);
+            Delete(typeId);
         }
 
         foreach (var type in typesToModify.Values)
@@ -102,9 +102,12 @@ public class ItemTypes : IEnumerable<IItemType>
         return itemType != null;
     }
 
-    private void Remove(ItemTypeId id)
+    private void Delete(ItemTypeId id)
     {
-        _itemTypes.Remove(id);
+        if (!_itemTypes.TryGetValue(id, out var type))
+            return;
+
+        _itemTypes[id] = type.Delete();
     }
 
     private async Task ModifyAsync(ItemTypeModification modification, IValidator validator)

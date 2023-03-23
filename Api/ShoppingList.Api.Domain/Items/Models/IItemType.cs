@@ -11,6 +11,7 @@ public interface IItemType
     ItemTypeName Name { get; }
     IReadOnlyCollection<IItemAvailability> Availabilities { get; }
     ItemTypeId? PredecessorId { get; }
+    bool IsDeleted { get; }
 
     SectionId GetDefaultSectionIdForStore(StoreId storeId);
 
@@ -27,4 +28,6 @@ public interface IItemType
     IItemType Update();
 
     IItemType TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId);
+
+    IItemType Delete();
 }

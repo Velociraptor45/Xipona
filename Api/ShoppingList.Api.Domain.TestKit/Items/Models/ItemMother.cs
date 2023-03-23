@@ -23,7 +23,7 @@ public static class ItemMother
     {
         builder ??= new ItemBuilder();
 
-        var types = ItemTypeMother.Initial().CreateMany(3);
+        var types = ItemTypeMother.Initial().WithIsDeleted(false).CreateMany(3);
 
         return builder
             .WithIsDeleted(false)

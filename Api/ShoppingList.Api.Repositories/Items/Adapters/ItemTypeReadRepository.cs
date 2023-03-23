@@ -22,6 +22,7 @@ public class ItemTypeReadRepository : IItemTypeReadRepository
             .Include(t => t.Item)
             .Where(type =>
                 !type.Item.Deleted
+                && !type.IsDeleted
                 && type.Name.Contains(name)
                 && type.AvailableAt.Any(av => av.StoreId == storeId))
             .Select(type => new { type.ItemId, type.Id })

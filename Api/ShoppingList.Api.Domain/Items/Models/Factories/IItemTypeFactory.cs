@@ -3,7 +3,7 @@
 public interface IItemTypeFactory
 {
     IItemType Create(ItemTypeId id, ItemTypeName name, IEnumerable<IItemAvailability> availabilities,
-        ItemTypeId? predecessorId);
+        ItemTypeId? predecessorId, bool isDeleted);
 
     IItemType CreateNew(ItemTypeName name, IEnumerable<IItemAvailability> availabilities, ItemTypeId? predecessorId);
 
