@@ -14,7 +14,9 @@ public class ItemEntityBuilder : TestBuilder<Item>
     {
         WithQuantityTypeInPacket(new DomainTestBuilder<QuantityTypeInPacket>().Create().ToInt());
         WithQuantityType(new DomainTestBuilder<QuantityType>().Create().ToInt());
+        WithoutPredecessor();
     }
+
     public ItemEntityBuilder WithId(Guid id)
     {
         FillPropertyWith(p => p.Id, id);

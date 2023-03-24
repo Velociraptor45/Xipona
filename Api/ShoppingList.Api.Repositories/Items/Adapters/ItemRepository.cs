@@ -95,7 +95,7 @@ public class ItemRepository : IItemRepository
                 && !item.IsTemporary
                 && item.Name.Contains(searchInput)
                 && (item.AvailableAt.Any(map => map.StoreId == storeId)
-                    || item.ItemTypes.Any(t => t.AvailableAt.Any(av => av.StoreId == storeId))))
+                    || item.ItemTypes.Any(t => !t.IsDeleted && t.AvailableAt.Any(av => av.StoreId == storeId))))
             .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -119,7 +119,7 @@ public class ItemRepository : IItemRepository
         cancellationToken.ThrowIfCancellationRequested();
 
         var itemEntity = await GetItemQuery()
-            .FirstOrDefaultAsync(item => 
+            .FirstOrDefaultAsync(item =>
                     !item.Deleted && item.CreatedFrom.HasValue && item.CreatedFrom == temporaryItemId,
                 cancellationToken);
 
@@ -204,7 +204,7 @@ public class ItemRepository : IItemRepository
                            && (item.AvailableAt.Any(av => av.DefaultSectionId == sectionId)
                                || item.ItemTypes.Any(t =>
                                    t.AvailableAt.Any(av => av.DefaultSectionId == sectionId))))
-            .ToArrayAsync(cancellationToken);
+            .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -222,10 +222,25 @@ public class ItemRepository : IItemRepository
             .Where(item => item.ItemCategoryId.HasValue
                            && rawItemIds.Contains(item.Id)
                            && !item.Deleted)
-            .ToArrayAsync(cancellationToken);
+            .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
+        return _toModelConverter.ToDomain(items);
+    }
+
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemCategoryId> itemCategoryIds,
+        StoreId storeId, CancellationToken cancellationToken)
+    {
+        var rawItemCategoryIds = itemCategoryIds.Select(id => id.Value).ToArray();
+        var items = await GetItemQuery()
+            .Where(item => item.ItemCategoryId.HasValue
+                           && rawItemCategoryIds.Contains(item.ItemCategoryId.Value)
+                           && !item.Deleted
+                           && (item.AvailableAt.Any(av => av.StoreId == storeId)
+                               || item.ItemTypes.Any(t => !t.IsDeleted && t.AvailableAt.Any(av => av.StoreId == storeId))))
+            .ToListAsync(cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
         return _toModelConverter.ToDomain(items);
     }
 

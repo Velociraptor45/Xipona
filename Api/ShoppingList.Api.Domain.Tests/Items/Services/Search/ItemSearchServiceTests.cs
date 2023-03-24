@@ -7,6 +7,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
@@ -82,6 +83,7 @@ public class ItemSearchServiceTests
             // Arrange
             _fixture.SetupParameters();
             _fixture.SetupFindingNoItems();
+            _fixture.SetupFindingNoItemsWithMatchingItemCategory();
             _fixture.SetupFindingStore();
             _fixture.SetupNotFindingShoppingList();
             var sut = _fixture.CreateSut();
@@ -101,6 +103,7 @@ public class ItemSearchServiceTests
             _fixture.SetupItemsWithoutTypes();
             _fixture.SetupFindingItems();
             _fixture.SetupFindingShoppingListWithItemWithoutTypes(true);
+            _fixture.SetupFindingNoItemsWithMatchingItemCategory();
             _fixture.SetupFindingStore();
             _fixture.SetupFindingNoItemTypeMapping();
             _fixture.SetupConversionServiceReceivingEmptyItemList();
@@ -122,6 +125,7 @@ public class ItemSearchServiceTests
             _fixture.SetupItemsWithoutTypes();
             _fixture.SetupFindingItems();
             _fixture.SetupFindingShoppingListWithItemWithoutTypes(false);
+            _fixture.SetupFindingNoItemsWithMatchingItemCategory();
             _fixture.SetupFindingStore();
             _fixture.SetupFindingNoItemTypeMapping();
             _fixture.SetupConversionServiceReceivingItemList();
@@ -146,6 +150,7 @@ public class ItemSearchServiceTests
             _fixture.SetupItemsWithTypes(availableAtStore);
             _fixture.SetupFindingItems();
             _fixture.SetupFindingShoppingListWithItemWithTypes(true, false);
+            _fixture.SetupFindingNoItemsWithMatchingItemCategory();
             _fixture.SetupFindingStore();
             _fixture.SetupFindingNoItemTypeMapping();
             _fixture.SetupItemTypesPartiallyNotOnShoppingList();
@@ -168,6 +173,7 @@ public class ItemSearchServiceTests
             _fixture.SetupItemsWithTypes(true);
             _fixture.SetupFindingItems();
             _fixture.SetupFindingShoppingListWithItemWithTypes(false, false);
+            _fixture.SetupFindingNoItemsWithMatchingItemCategory();
             _fixture.SetupFindingStore();
             _fixture.SetupFindingNoItemTypeMapping();
             _fixture.SetupAllItemTypesNotOnShoppingList();
@@ -190,6 +196,7 @@ public class ItemSearchServiceTests
             _fixture.SetupItemsWithTypes(false);
             _fixture.SetupFindingItems();
             _fixture.SetupFindingShoppingListWithItemWithTypes(false, false);
+            _fixture.SetupFindingNoItemsWithMatchingItemCategory();
             _fixture.SetupFindingStore();
             _fixture.SetupFindingNoItemTypeMapping();
             _fixture.SetupAllItemTypesOnShoppingListOrNotAvailable();
@@ -213,6 +220,7 @@ public class ItemSearchServiceTests
             _fixture.SetupItemsWithTypes(true, 2);
             _fixture.SetupFindingItems();
             _fixture.SetupFindingShoppingListWithItemWithTypes(true, false);
+            _fixture.SetupFindingNoItemsWithMatchingItemCategory();
             _fixture.SetupFindingStore();
             _fixture.SetupFindingNoItemTypeMapping();
             _fixture.SetupItemTypesPartiallyNotOnShoppingList();
@@ -235,6 +243,7 @@ public class ItemSearchServiceTests
             _fixture.SetupItemsWithAndWithoutTypes();
             _fixture.SetupFindingItems();
             _fixture.SetupFindingShoppingListWithItemWithAndWithoutTypes(false, false);
+            _fixture.SetupFindingNoItemsWithMatchingItemCategory();
             _fixture.SetupFindingStore();
             _fixture.SetupFindingNoItemTypeMapping();
             _fixture.SetupItemTypesPartiallyNotOnShoppingList();
@@ -262,6 +271,7 @@ public class ItemSearchServiceTests
             _fixture.SetupItemTypeMapping();
             _fixture.SetupFindingItemTypeMapping();
             _fixture.SetupFindingItemsFromTypeMapping();
+            _fixture.SetupFindingNoItemsWithMatchingItemCategory();
 
             _fixture.SetupAllItemTypeMappingsNotOnShoppingList();
 
@@ -289,6 +299,7 @@ public class ItemSearchServiceTests
             _fixture.SetupItemTypeMapping();
             _fixture.SetupFindingItemTypeMapping();
             _fixture.SetupFindingNoItemsFromTypeMapping();
+            _fixture.SetupFindingNoItemsWithMatchingItemCategory();
 
             _fixture.SetupAllItemTypeMappingsNotOnShoppingList();
 
@@ -316,6 +327,7 @@ public class ItemSearchServiceTests
             _fixture.SetupItemTypeMapping();
             _fixture.SetupFindingItemTypeMapping();
             _fixture.SetupFindingNoItemsFromTypeMappingWithEmptyInput();
+            _fixture.SetupFindingNoItemsWithMatchingItemCategory();
 
             _fixture.SetupAllItemTypeMappingsOnShoppingListOrNotAvailable();
 
@@ -344,6 +356,7 @@ public class ItemSearchServiceTests
             _fixture.SetupItemTypeMapping();
             _fixture.SetupFindingItemTypeMapping();
             _fixture.SetupFindingNoItemsFromTypeMappingWithEmptyInput();
+            _fixture.SetupFindingNoItemsWithMatchingItemCategory();
 
             _fixture.SetupAllItemTypesNotOnShoppingList();
 
@@ -372,6 +385,7 @@ public class ItemSearchServiceTests
             _fixture.SetupItemTypeMapping();
             _fixture.SetupFindingItemTypeMapping();
             _fixture.SetupFindingNoItemsFromTypeMappingWithEmptyInput();
+            _fixture.SetupFindingNoItemsWithMatchingItemCategory();
 
             _fixture.SetupAllItemTypesOnShoppingListOrNotAvailable();
 
@@ -480,6 +494,11 @@ public class ItemSearchServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_items);
                 ItemRepositoryMock.SetupFindActiveByAsync(Name, StoreId, _items);
+            }
+
+            public void SetupFindingNoItemsWithMatchingItemCategory()
+            {
+                ItemCategoryRepositoryMock.SetupFindByAsync(Name, false, Enumerable.Empty<IItemCategory>());
             }
 
             public void SetupFindingNoItems()
@@ -986,6 +1005,7 @@ public class ItemSearchServiceTests
         protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock = new(MockBehavior.Strict);
         protected readonly StoreRepositoryMock StoreRepositoryMock = new(MockBehavior.Strict);
         protected readonly ItemTypeReadRepositoryMock ItemTypeReadRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ItemCategoryRepositoryMock ItemCategoryRepositoryMock = new(MockBehavior.Strict);
         protected readonly ItemSearchReadModelConversionServiceMock ConversionServiceMock = new(MockBehavior.Strict);
         protected readonly ItemTypeFactoryMock ItemTypeFactoryMock = new(MockBehavior.Strict);
         protected readonly ItemAvailabilityReadModelConversionServiceMock AvailabilityConversionServiceMock = new(MockBehavior.Strict);
@@ -1003,6 +1023,7 @@ public class ItemSearchServiceTests
                 ShoppingListRepositoryMock.Object,
                 StoreRepositoryMock.Object,
                 ItemTypeReadRepositoryMock.Object,
+                ItemCategoryRepositoryMock.Object,
                 ConversionServiceMock.Object,
                 _ => ValidatorMock.Object,
                 _ => AvailabilityConversionServiceMock.Object,
