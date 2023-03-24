@@ -14,6 +14,7 @@ public interface IItemRepository
     Task<IEnumerable<IItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
         IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
         CancellationToken cancellationToken);
+
     Task<IEnumerable<IItem>> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken);
 
     Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId, CancellationToken cancellationToken);
@@ -21,6 +22,9 @@ public interface IItemRepository
     Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, CancellationToken cancellationToken);
 
     Task<IEnumerable<IItem>> FindActiveByAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);
+
+    Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemCategoryId> itemCategoryIds, StoreId storeId,
+        CancellationToken cancellationToken);
 
     Task<IItem?> FindActiveByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken);
 

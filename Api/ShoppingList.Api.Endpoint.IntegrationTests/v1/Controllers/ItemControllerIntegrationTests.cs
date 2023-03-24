@@ -8,6 +8,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithType
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
@@ -58,6 +59,135 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class ItemControllerIntegrationTests
 {
+    [Collection(DockerCollection.Name)]
+    public sealed class SearchItemsForShoppingListAsync
+    {
+        private readonly SearchItemsForShoppingListAsyncFixture _fixture;
+
+        public SearchItemsForShoppingListAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new SearchItemsForShoppingListAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task SearchItemsForShoppingListAsync_WithDeletedItemMatchingCategory_ShouldReturnEmptyList()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupDeletedItemForCategory();
+            _fixture.SetupEmptyShoppingList();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<NoContentResult>();
+        }
+
+        [Fact]
+        public async Task SearchItemsForShoppingListAsync_WithItemMatchingCategory_ShouldReturnEmptyList()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupItemForCategory();
+            _fixture.SetupEmptyShoppingList();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+
+            var okResult = (OkObjectResult)result;
+            okResult.Value.Should().NotBeNull();
+            okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
+
+            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value).ToList();
+            contract.Should().HaveCount(1);
+        }
+
+        private sealed class SearchItemsForShoppingListAsyncFixture : ItemControllerFixture
+        {
+            private readonly List<Item> _items = new();
+            private readonly List<ItemCategory> _itemCategories = new();
+            private Store? _store;
+            private Repositories.ShoppingLists.Entities.ShoppingList? _shoppingList;
+
+            public SearchItemsForShoppingListAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public string SearchInput { get; } = new DomainTestBuilder<string>().Create();
+            public Guid StoreId { get; } = Guid.NewGuid();
+
+            public void SetupStore()
+            {
+                _store = StoreEntityMother.Initial()
+                    .WithId(StoreId)
+                    .Create();
+            }
+
+            public void SetupEmptyShoppingList()
+            {
+                _shoppingList = ShoppingListEntityMother.Empty()
+                    .WithStoreId(StoreId)
+                    .Create();
+            }
+
+            public void SetupDeletedItemForCategory()
+            {
+                SetupItemForCategory(true);
+            }
+
+            public void SetupItemForCategory(bool isDeleted = false)
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var category = new ItemCategoryEntityBuilder()
+                    .WithName(SearchInput)
+                    .WithDeleted(false)
+                    .Create();
+                var item = ItemEntityMother.InitialForStore(StoreId, _store.Sections.First().Id)
+                    .WithItemCategoryId(category.Id)
+                    .WithoutManufacturerId()
+                    .WithDeleted(isDeleted)
+                    .Create();
+
+                _items.Add(item);
+                _itemCategories.Add(category);
+            }
+
+            public async Task SetupDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+                await using var itemCategoryContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
+                await using var storeContext = GetContextInstance<StoreContext>(ArrangeScope);
+                await using var shoppingListContext = GetContextInstance<ShoppingListContext>(ArrangeScope);
+
+                await itemCategoryContext.AddRangeAsync(_itemCategories);
+                await itemContext.AddRangeAsync(_items);
+                await storeContext.AddAsync(_store);
+                await shoppingListContext.AddAsync(_shoppingList);
+
+                await itemContext.SaveChangesAsync();
+                await itemCategoryContext.SaveChangesAsync();
+                await storeContext.SaveChangesAsync();
+                await shoppingListContext.SaveChangesAsync();
+            }
+        }
+    }
+
     [Collection(DockerCollection.Name)]
     public sealed class ModifyItemWithTypesAsync
     {

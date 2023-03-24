@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
@@ -22,13 +23,18 @@ public class ItemSearchService : IItemSearchService
     private readonly IShoppingListRepository _shoppingListRepository;
     private readonly IStoreRepository _storeRepository;
     private readonly IItemTypeReadRepository _itemTypeReadRepository;
+    private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IItemSearchReadModelConversionService _itemSearchReadModelConversionService;
     private readonly IValidator _validator;
     private readonly IItemAvailabilityReadModelConversionService _availabilityConverter;
     private readonly CancellationToken _cancellationToken;
 
-    public ItemSearchService(IItemRepository itemRepository, IShoppingListRepository shoppingListRepository,
-        IStoreRepository storeRepository, IItemTypeReadRepository itemTypeReadRepository,
+    public ItemSearchService(
+        IItemRepository itemRepository,
+        IShoppingListRepository shoppingListRepository,
+        IStoreRepository storeRepository,
+        IItemTypeReadRepository itemTypeReadRepository,
+        IItemCategoryRepository itemCategoryRepository,
         IItemSearchReadModelConversionService itemSearchReadModelConversionService,
         Func<CancellationToken, IValidator> validatorDelegate,
         Func<CancellationToken, IItemAvailabilityReadModelConversionService> availabilityConverterDelegate,
@@ -38,6 +44,7 @@ public class ItemSearchService : IItemSearchService
         _shoppingListRepository = shoppingListRepository;
         _storeRepository = storeRepository;
         _itemTypeReadRepository = itemTypeReadRepository;
+        _itemCategoryRepository = itemCategoryRepository;
         _itemSearchReadModelConversionService = itemSearchReadModelConversionService;
         _validator = validatorDelegate(cancellationToken);
         _availabilityConverter = availabilityConverterDelegate(cancellationToken);
@@ -110,8 +117,17 @@ public class ItemSearchService : IItemSearchService
         var store = await LoadStoreAsync(storeId);
         var nameTrimmed = name.Trim();
 
-        var searchResultItemGroups = (await _itemRepository
-                .FindActiveByAsync(nameTrimmed, storeId, _cancellationToken))
+        var categoryIds = (await _itemCategoryRepository.FindByAsync(nameTrimmed, false, _cancellationToken))
+            .Select(c => c.Id)
+            .ToList();
+
+        var itemsWithItemCategory = categoryIds.Any()
+            ? await _itemRepository.FindActiveByAsync(categoryIds, storeId, _cancellationToken)
+            : Enumerable.Empty<Item>();
+
+        var searchResultItemGroups = (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, _cancellationToken))
+            .Union(itemsWithItemCategory)
+            .DistinctBy(item => item.Id)
             .ToLookup(i => i.HasItemTypes);
         IShoppingList shoppingList = await LoadShoppingListAsync(storeId);
 
@@ -147,7 +163,7 @@ public class ItemSearchService : IItemSearchService
         return itemsWithTypesReadModels.Union(itemWithoutTypesReadModels);
     }
 
-    private IEnumerable<ItemWithMatchingItemTypeIds> GetMatchingItemsWithTypeIds(StoreId storeId,
+    private static IEnumerable<ItemWithMatchingItemTypeIds> GetMatchingItemsWithTypeIds(StoreId storeId,
         IEnumerable<IItem> searchResultItemsWithTypes, IEnumerable<(ItemId, ItemTypeId)> itemIdsOnShoppingList)
     {
         var itemsWithTypesOnShoppingList = itemIdsOnShoppingList.ToLookup(g => g.Item1, g => g.Item2);

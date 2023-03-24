@@ -33,4 +33,9 @@ public class ShoppingListEntityBuilder : TestBuilderBase<Repositories.ShoppingLi
         FillPropertyWith(p => p.ItemsOnList, itemsOnList);
         return this;
     }
+
+    public ShoppingListEntityBuilder WithEmptyItemsOnList()
+    {
+        return WithItemsOnList(new List<ItemsOnList>());
+    }
 }

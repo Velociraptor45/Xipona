@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Core.Services;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion;
@@ -72,13 +73,14 @@ public static class ServiceCollectionExtensions
             var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
             var storeRepository = provider.GetRequiredService<IStoreRepository>();
             var itemTypeReadRepository = provider.GetRequiredService<IItemTypeReadRepository>();
+            var itemCategoryRepository = provider.GetRequiredService<IItemCategoryRepository>();
             var conversionService = provider.GetRequiredService<IItemSearchReadModelConversionService>();
             var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
             var availabilityConverterDelegate = provider.GetRequiredService<
                 Func<CancellationToken, IItemAvailabilityReadModelConversionService>>();
 
             return cancellationToken => new ItemSearchService(itemRepository, shoppingListRepository,
-                storeRepository, itemTypeReadRepository, conversionService, validatorDelegate,
+                storeRepository, itemTypeReadRepository, itemCategoryRepository, conversionService, validatorDelegate,
                 availabilityConverterDelegate, cancellationToken);
         });
 

@@ -83,7 +83,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                 item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId.Value];
 
             var itemTypeIdsSet = tuple.MatchingItemTypeIds.ToHashSet();
-            var requiredItemTypes = item.ItemTypes.Where(t => itemTypeIdsSet.Contains(t.Id));
+            var requiredItemTypes = item.ItemTypes.Where(t => !t.IsDeleted && itemTypeIdsSet.Contains(t.Id));
             return requiredItemTypes.Select(type =>
             {
                 IItemAvailability storeAvailability = type.Availabilities

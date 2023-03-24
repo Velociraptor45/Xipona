@@ -33,4 +33,11 @@ public static class ShoppingListEntityMother
             .WithoutCompletionDate()
             .WithItemsOnList(new[] { item1, item2 });
     }
+
+    public static ShoppingListEntityBuilder Empty()
+    {
+        return new ShoppingListEntityBuilder()
+            .WithoutCompletionDate()
+            .WithEmptyItemsOnList();
+    }
 }

@@ -163,8 +163,9 @@ public class ItemController : ControllerBase
         if (!readModels.Any())
             return NoContent();
 
-        var contracts =
-            _converters.ToContract<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>(readModels);
+        var contracts = _converters
+            .ToContract<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>(readModels)
+            .ToList();
 
         return Ok(contracts);
     }
