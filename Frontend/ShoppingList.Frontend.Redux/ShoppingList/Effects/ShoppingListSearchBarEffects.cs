@@ -82,7 +82,7 @@ public sealed class ShoppingListSearchBarEffects : IDisposable
             return;
         }
 
-        dispatcher.Dispatch(new SearchItemForShoppingListFinishedAction(results));
+        dispatcher.Dispatch(new SearchItemForShoppingListFinishedAction(results.ToList()));
     }
 
     [EffectMethod]

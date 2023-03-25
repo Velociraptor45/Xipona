@@ -10,7 +10,10 @@ public static class StoreReducer
     [ReducerMethod]
     public static StoreState OnLoadStoresOverviewFinished(StoreState state, LoadStoresOverviewFinishedAction action)
     {
-        return state with { SearchResults = action.SearchResults };
+        return state with
+        {
+            SearchResults = action.SearchResults.OrderBy(r => r.Name).ToList()
+        };
     }
 
     [ReducerMethod(typeof(StorePageInitializedAction))]

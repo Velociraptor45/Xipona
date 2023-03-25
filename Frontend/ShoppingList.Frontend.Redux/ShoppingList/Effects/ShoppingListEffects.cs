@@ -45,7 +45,7 @@ public class ShoppingListEffects
             dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading initial page state failed", e.Message));
             return;
         }
-        dispatcher.Dispatch(new LoadQuantityTypesFinishedAction(quantityTypes));
+        dispatcher.Dispatch(new LoadQuantityTypesFinishedAction(quantityTypes.ToList()));
     }
 
     [EffectMethod(typeof(LoadQuantityTypesInPacketAction))]
@@ -66,16 +66,16 @@ public class ShoppingListEffects
             dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading initial page state failed", e.Message));
             return;
         }
-        dispatcher.Dispatch(new LoadQuantityTypesInPacketFinishedAction(quantityTypes));
+        dispatcher.Dispatch(new LoadQuantityTypesInPacketFinishedAction(quantityTypes.ToList()));
     }
 
     [EffectMethod(typeof(LoadAllActiveStoresAction))]
     public async Task HandleLoadAllActiveStoresAction(IDispatcher dispatcher)
     {
-        IEnumerable<ShoppingListStore> stores;
+        List<ShoppingListStore> stores;
         try
         {
-            stores = await _client.GetAllActiveStoresForShoppingListAsync();
+            stores = (await _client.GetAllActiveStoresForShoppingListAsync()).ToList();
         }
         catch (ApiException e)
         {
@@ -88,7 +88,7 @@ public class ShoppingListEffects
             return;
         }
 
-        var finishAction = new LoadAllActiveStoresFinishedAction(new AllActiveStores(stores.ToList()));
+        var finishAction = new LoadAllActiveStoresFinishedAction(stores.ToList());
         dispatcher.Dispatch(finishAction);
 
         if (stores.Any())

@@ -27,7 +27,7 @@ public static class ItemReducer
             Search = state.Search with
             {
                 IsLoadingSearchResults = false,
-                SearchResults = action.SearchResults.ToList()
+                SearchResults = action.SearchResults.OrderBy(r => r.Name).ToList()
             }
         };
     }
