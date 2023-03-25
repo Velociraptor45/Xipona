@@ -77,11 +77,12 @@ public static class IngredientReducer
             return state;
 
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
-        var ingredientIndex = ingredients.IndexOf(action.Ingredient);
-        if (ingredientIndex < 0)
+        var ingredient = ingredients.FirstOrDefault(x => x.Key == action.IngredientKey);
+        if (ingredient is null)
             return state;
 
-        ingredients[ingredientIndex] = action.Ingredient with { Quantity = action.Quantity };
+        var ingredientIndex = ingredients.IndexOf(ingredient);
+        ingredients[ingredientIndex] = ingredient with { Quantity = action.Quantity };
 
         return state with
         {
@@ -103,11 +104,12 @@ public static class IngredientReducer
             return state;
 
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
-        var ingredientIndex = ingredients.IndexOf(action.Ingredient);
-        if (ingredientIndex < 0)
+        var ingredient = ingredients.FirstOrDefault(x => x.Key == action.IngredientKey);
+        if (ingredient is null)
             return state;
 
-        ingredients[ingredientIndex] = action.Ingredient with { QuantityTypeId = action.QuantityType.Id };
+        var ingredientIndex = ingredients.IndexOf(ingredient);
+        ingredients[ingredientIndex] = ingredient with { QuantityTypeId = action.QuantityTypeId };
 
         return state with
         {
@@ -128,14 +130,15 @@ public static class IngredientReducer
             return state;
 
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
-        var ingredientIndex = ingredients.IndexOf(action.Ingredient);
-        if (ingredientIndex < 0)
+        var ingredient = ingredients.FirstOrDefault(x => x.Key == action.IngredientKey);
+        if (ingredient is null)
             return state;
 
-        ingredients[ingredientIndex] = action.Ingredient with
+        var ingredientIndex = ingredients.IndexOf(ingredient);
+        ingredients[ingredientIndex] = ingredient with
         {
-            DefaultItemId = action.Item.ItemId,
-            DefaultItemTypeId = action.Item.ItemTypeId
+            DefaultItemId = action.ItemId,
+            DefaultItemTypeId = action.ItemTypeId
         };
 
         return state with
@@ -163,9 +166,6 @@ public static class IngredientReducer
             return state;
 
         var ingredientIndex = ingredients.IndexOf(ingredient);
-        if (ingredientIndex < 0)
-            return state;
-
         ingredients[ingredientIndex] = ingredient with
         {
             ItemSelector = ingredient.ItemSelector with

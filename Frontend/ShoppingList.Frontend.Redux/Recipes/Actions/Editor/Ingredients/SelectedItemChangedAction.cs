@@ -1,5 +1,3 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
 
-namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
-
-public record SelectedItemChangedAction(EditedIngredient Ingredient, SearchItemByItemCategoryResult Item);
+public record SelectedItemChangedAction(Guid IngredientKey, Guid ItemId, Guid? ItemTypeId);

@@ -106,7 +106,7 @@ public sealed class ItemCategorySelectorEffects : IDisposable
             return;
         }
 
-        dispatcher.Dispatch(new LoadItemsForItemCategoryFinishedAction(result.ToList(), action.IngredientKey));
+        dispatcher.Dispatch(new LoadItemsForItemCategoryFinishedAction(action.IngredientKey, result.ToList()));
     }
 
     [EffectMethod]

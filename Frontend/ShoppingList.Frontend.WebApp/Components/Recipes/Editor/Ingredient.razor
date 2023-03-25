@@ -92,17 +92,18 @@
     }
     private void OnItemChanged(SearchItemByItemCategoryResult itemSearchResult)
     {
-        Dispatcher.Dispatch(new SelectedItemChangedAction(Model, itemSearchResult));
+        Dispatcher.Dispatch(new SelectedItemChangedAction(Model.Key, itemSearchResult.ItemId,
+            itemSearchResult.ItemTypeId));
     }
 
     private void OnIngredientQuantityTypeChanged(IngredientQuantityType quantityType)
     {
-        Dispatcher.Dispatch(new IngredientQuantityTypeChangedAction(Model, quantityType));
+        Dispatcher.Dispatch(new IngredientQuantityTypeChangedAction(Model.Key, quantityType.Id));
     }
 
     private void OnQuantityChanged(float quantity)
     {
-        Dispatcher.Dispatch(new IngredientQuantityChangedAction(Model, quantity));
+        Dispatcher.Dispatch(new IngredientQuantityChangedAction(Model.Key, quantity));
     }
 
     private void OnRemoveIngredientButtonClicked()
