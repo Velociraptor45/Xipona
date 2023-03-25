@@ -25,7 +25,7 @@ public static class RecipeReducer
         {
             Search = state.Search with
             {
-                SearchResults = action.SearchResults
+                SearchResults = action.SearchResults.OrderBy(r => r.Name).ToList()
             }
         };
     }
