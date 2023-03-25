@@ -105,7 +105,7 @@ public class ManufacturerReducerTests
             var result = ManufacturerReducer.OnSearchManufacturersFinished(_fixture.InitialState, _fixture.Action);
 
             // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+            result.Should().BeEquivalentTo(_fixture.ExpectedState, opt => opt.WithStrictOrdering());
         }
 
         [Fact]
@@ -122,7 +122,7 @@ public class ManufacturerReducerTests
             var result = ManufacturerReducer.OnSearchManufacturersFinished(_fixture.InitialState, _fixture.Action);
 
             // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+            result.Should().BeEquivalentTo(_fixture.ExpectedState, opt => opt.WithStrictOrdering());
         }
 
         private sealed class OnSearchManufacturersFinishedFixture : ManufacturerReducerFixture
@@ -176,7 +176,7 @@ public class ManufacturerReducerTests
 
             public void SetupAction()
             {
-                Action = new SearchManufacturersFinishedAction(ExpectedState.Search.SearchResults);
+                Action = new SearchManufacturersFinishedAction(ExpectedState.Search.SearchResults.Reverse().ToList());
             }
         }
     }
