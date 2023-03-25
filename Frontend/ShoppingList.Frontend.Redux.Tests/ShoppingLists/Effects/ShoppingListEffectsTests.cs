@@ -8,8 +8,6 @@ using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
-using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
-using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.ShoppingLists.Effects;
@@ -117,8 +115,7 @@ public class ShoppingListEffectsTests
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedStoresForShoppingList);
 
-                ExpectedLoadFinishedAction =
-                    new LoadAllActiveStoresFinishedAction(new AllActiveStores(ExpectedStoresForShoppingList));
+                ExpectedLoadFinishedAction = new LoadAllActiveStoresFinishedAction(ExpectedStoresForShoppingList);
                 SetupDispatchingAction(ExpectedLoadFinishedAction);
             }
         }

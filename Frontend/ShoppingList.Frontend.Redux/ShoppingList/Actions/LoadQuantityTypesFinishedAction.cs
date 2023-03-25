@@ -2,4 +2,4 @@
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 
-public record LoadQuantityTypesFinishedAction(IEnumerable<QuantityType> QuantityTypes);
+public record LoadQuantityTypesFinishedAction(IReadOnlyCollection<QuantityType> QuantityTypes);

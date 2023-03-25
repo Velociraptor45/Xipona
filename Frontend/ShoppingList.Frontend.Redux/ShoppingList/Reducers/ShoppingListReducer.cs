@@ -25,7 +25,10 @@ public static class ShoppingListReducer
     public static ShoppingListState OnLoadAllActiveStoresFinished(ShoppingListState state,
         LoadAllActiveStoresFinishedAction action)
     {
-        return state with { Stores = action.Stores };
+        return state with
+        {
+            Stores = new AllActiveStores(action.Stores)
+        };
     }
 
     [ReducerMethod]
@@ -63,13 +66,15 @@ public static class ShoppingListReducer
     public static ShoppingListState OnToggleShoppingListSectionExpansion(ShoppingListState state,
         ToggleShoppingListSectionExpansionAction action)
     {
+        if (state.ShoppingList is null)
+            return state;
+
         var sections = new List<ShoppingListSection>(state.ShoppingList!.Sections);
         var section = sections.FirstOrDefault(s => s.Id == action.SectionId);
         if (section == null)
             return state;
 
         var sectionIndex = sections.IndexOf(section);
-
         sections[sectionIndex] = section with { IsExpanded = !section.IsExpanded };
 
         return state with
