@@ -27,7 +27,7 @@ public static class ShoppingListReducer
     {
         return state with
         {
-            Stores = new AllActiveStores(action.Stores)
+            Stores = new AllActiveStores(action.Stores.OrderBy(s => s.Name).ToList())
         };
     }
 

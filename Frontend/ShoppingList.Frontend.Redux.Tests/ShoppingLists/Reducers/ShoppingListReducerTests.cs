@@ -109,10 +109,11 @@ public class ShoppingListReducerTests
         }
 
         [Fact]
-        public void OnLoadAllActiveStoresFinished_WithValidData_ShouldSetStores()
+        public void OnLoadAllActiveStoresFinished_WithValidData_ShouldSetAndOrderStores()
         {
             // Arrange
             _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -121,7 +122,7 @@ public class ShoppingListReducerTests
             var result = ShoppingListReducer.OnLoadAllActiveStoresFinished(_fixture.InitialState, _fixture.Action);
 
             // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+            result.Should().BeEquivalentTo(_fixture.ExpectedState, opt => opt.WithStrictOrdering());
         }
 
         private sealed class OnLoadAllActiveStoresFinishedFixture : ShoppingListReducerFixture
@@ -136,9 +137,31 @@ public class ShoppingListReducerTests
                 };
             }
 
+            public void SetupExpectedState()
+            {
+                ExpectedState = InitialState with
+                {
+                    Stores = new AllActiveStores(new List<ShoppingListStore>
+                    {
+                        new DomainTestBuilder<ShoppingListStore>().Create() with
+                        {
+                            Name = $"A{new DomainTestBuilder<string>().Create()}"
+                        },
+                        new DomainTestBuilder<ShoppingListStore>().Create() with
+                        {
+                            Name = $"B{new DomainTestBuilder<string>().Create()}"
+                        },
+                        new DomainTestBuilder<ShoppingListStore>().Create() with
+                        {
+                            Name = $"Z{new DomainTestBuilder<string>().Create()}"
+                        }
+                    })
+                };
+            }
+
             public void SetupAction()
             {
-                Action = new LoadAllActiveStoresFinishedAction(ExpectedState.Stores.Stores);
+                Action = new LoadAllActiveStoresFinishedAction(ExpectedState.Stores.Stores.Reverse().ToList());
             }
         }
     }
