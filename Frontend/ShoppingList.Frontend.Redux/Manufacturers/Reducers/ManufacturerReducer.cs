@@ -141,7 +141,7 @@ public static class ManufacturerReducer
         {
             Editor = state.Editor with
             {
-                Manufacturer = new EditedManufacturer(Guid.Empty, "")
+                Manufacturer = new EditedManufacturer(Guid.Empty, string.Empty)
             }
         };
     }
