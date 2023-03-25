@@ -740,7 +740,7 @@ public class IngredientReducerTests
             {
                 var ingredient = ExpectedState.Editor.Recipe!.Ingredients.Last();
                 Action = new LoadItemsForItemCategoryFinishedAction(ingredient.Key,
-                    ingredient.ItemSelector.Items);
+                    ingredient.ItemSelector.Items.Reverse().ToList());
             }
 
             public void SetupActionForInvalidIngredientKey()

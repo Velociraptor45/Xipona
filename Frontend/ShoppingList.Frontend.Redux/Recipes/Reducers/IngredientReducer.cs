@@ -170,7 +170,7 @@ public static class IngredientReducer
         {
             ItemSelector = ingredient.ItemSelector with
             {
-                Items = action.Items
+                Items = action.Items.OrderBy(i => i.Name).ToList()
             }
         };
 
