@@ -27,7 +27,7 @@ public class TestBuilder<TModel, TBuilder> : TestBuilderBase<TModel>
     /// This method will fill a property matching the given propertyName with the provided value <b>upon</b> object
     /// creation if the data types match
     /// </summary>
-    public new TBuilder FillPropertyWith<TParameter>(Expression<Func<TModel, TParameter>> property, TParameter value)
+    public TBuilder FillPropertyWith<TParameter>(Expression<Func<TModel, TParameter>> property, TParameter value)
     {
         // expression source: https://handcraftsman.wordpress.com/2008/11/11/how-to-get-c-property-names-without-magic-strings/
         var body = (MemberExpression)property.Body;

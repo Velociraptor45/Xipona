@@ -226,13 +226,13 @@ public class ShoppingListSearchBarReducerTests
                         Results = new List<SearchItemForShoppingListResult>
                         {
                             new DomainTestBuilder<SearchItemForShoppingListResult>()
-                                .FillPropertyWith(r => r.Name, $"A{new DomainTestBuilder<string>().Create()}")
+                                .FillConstructorWith("name", $"A{new DomainTestBuilder<string>().Create()}")
                                 .Create(),
                             new DomainTestBuilder<SearchItemForShoppingListResult>()
-                                .FillPropertyWith(r => r.Name, $"B{new DomainTestBuilder<string>().Create()}")
+                                .FillConstructorWith("name", $"B{new DomainTestBuilder<string>().Create()}")
                                 .Create(),
                             new DomainTestBuilder<SearchItemForShoppingListResult>()
-                                .FillPropertyWith(r => r.Name, $"Z{new DomainTestBuilder<string>().Create()}")
+                                .FillConstructorWith("name", $"Z{new DomainTestBuilder<string>().Create()}")
                                 .Create()
                         }
                     }
@@ -241,7 +241,7 @@ public class ShoppingListSearchBarReducerTests
 
             public void SetupAction()
             {
-                Action = new SearchItemForShoppingListFinishedAction(ExpectedState.SearchBar.Results);
+                Action = new SearchItemForShoppingListFinishedAction(ExpectedState.SearchBar.Results.Reverse().ToList());
             }
         }
     }
