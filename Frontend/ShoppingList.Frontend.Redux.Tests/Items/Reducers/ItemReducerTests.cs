@@ -164,13 +164,13 @@ public class ItemReducerTests
                         SearchResults = new List<ItemSearchResult>
                         {
                             new DomainTestBuilder<ItemSearchResult>()
-                                .FillConstructorWith("name", $"A{new DomainTestBuilder<string>().Create()}")
+                                .FillPropertyWith(r => r.Name, $"A{new DomainTestBuilder<string>().Create()}")
                                 .Create(),
                             new DomainTestBuilder<ItemSearchResult>()
-                                .FillConstructorWith("name", $"B{new DomainTestBuilder<string>().Create()}")
+                                .FillPropertyWith(r => r.Name, $"B{new DomainTestBuilder<string>().Create()}")
                                 .Create(),
                             new DomainTestBuilder<ItemSearchResult>()
-                                .FillConstructorWith("name", $"Z{new DomainTestBuilder<string>().Create()}")
+                                .FillPropertyWith(r => r.Name, $"Z{new DomainTestBuilder<string>().Create()}")
                                 .Create()
                         }
                     }
