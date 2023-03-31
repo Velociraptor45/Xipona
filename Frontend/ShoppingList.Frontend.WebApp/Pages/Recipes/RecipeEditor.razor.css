@@ -73,6 +73,11 @@
     }
 }
 
+.recipe-editor-view-name {
+    font-weight: bold;
+    font-size: 21px
+}
+
 hr {
     margin: 10px 0 10px 0;
 }
