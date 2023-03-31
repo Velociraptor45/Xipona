@@ -53,4 +53,16 @@ public static class RecipeEditorReducer
             }
         };
     }
+
+    [ReducerMethod(typeof(ToggleEditModeAction))]
+    public static RecipeState OnToggleEditMode(RecipeState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsInEditMode = !state.Editor.IsInEditMode
+            }
+        };
+    }
 }

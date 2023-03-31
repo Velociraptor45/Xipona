@@ -8,4 +8,17 @@ public record EditedIngredient(
     Guid? DefaultItemId,
     Guid? DefaultItemTypeId,
     ItemCategorySelector ItemCategorySelector,
-    ItemSelector ItemSelector);
+    ItemSelector ItemSelector)
+{
+    public string SelectedItemCategoryName => ItemCategorySelector
+        .ItemCategories
+        .FirstOrDefault(ic => ic.Id == ItemCategoryId)?
+        .Name ?? string.Empty;
+
+    public string GetSelectedQuantityLabel(IEnumerable<IngredientQuantityType> quantityTypes)
+    {
+        return quantityTypes
+            .FirstOrDefault(qt => qt.Id == QuantityTypeId)?
+            .QuantityLabel ?? string.Empty;
+    }
+}
