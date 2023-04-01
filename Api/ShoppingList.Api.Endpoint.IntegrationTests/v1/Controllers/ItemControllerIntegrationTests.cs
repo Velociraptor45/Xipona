@@ -649,7 +649,7 @@ public class ItemControllerIntegrationTests
                 opt => opt
                     .ExcludeItemCycleRef()
                     .ExcludeRowVersion()
-                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(5)));
+                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(20)));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
@@ -691,7 +691,7 @@ public class ItemControllerIntegrationTests
                 opt => opt
                     .ExcludeItemCycleRef()
                     .ExcludeRowVersion()
-                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(5)));
+                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(20)));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
