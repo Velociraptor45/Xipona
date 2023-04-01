@@ -19,6 +19,7 @@ using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ItemCategories.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Recipes.Entities;
+using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System.Text.RegularExpressions;
 using Xunit;
@@ -67,12 +68,14 @@ public class RecipeControllerIntegrationTests
 
             var recipeEntities = (await _fixture.LoadAllRecipesAsync()).ToList();
             recipeEntities.Should().HaveCount(1);
-            recipeEntities.First().Should().BeEquivalentTo(_fixture.ExpectedEntity, opt => opt.Excluding(info =>
-                info.Path.EndsWith(".Id")
-                || info.Path == "Id"
-                || Regex.IsMatch(info.Path, @"Ingredients\[\d+\]\.Recipe")
-                || Regex.IsMatch(info.Path, @"PreparationSteps\[\d+\]\.Recipe")
-            ));
+            recipeEntities.First().Should().BeEquivalentTo(_fixture.ExpectedEntity, opt => opt
+                .Excluding(info =>
+                    info.Path.EndsWith(".Id")
+                    || info.Path == "Id"
+                    || Regex.IsMatch(info.Path, @"Ingredients\[\d+\]\.Recipe")
+                    || Regex.IsMatch(info.Path, @"PreparationSteps\[\d+\]\.Recipe"))
+                .ExcludeRowVersion()
+            );
         }
 
         private sealed class CreateRecipeAsyncFixture : RecipeControllerFixture
@@ -189,7 +192,7 @@ public class RecipeControllerIntegrationTests
                         Instruction = p.Instruction.Value,
                         SortingIndex = p.SortingIndex,
                         RecipeId = _model.Id
-                    }).ToList()
+                    }).ToList(),
                 };
             }
 

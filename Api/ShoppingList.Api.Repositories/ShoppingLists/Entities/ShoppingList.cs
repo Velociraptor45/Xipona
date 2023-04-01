@@ -8,6 +8,7 @@ public class ShoppingList
     public ShoppingList()
     {
         ItemsOnList ??= new List<ItemsOnList>();
+        RowVersion ??= Array.Empty<byte>();
     }
 
     [Key]
@@ -19,4 +20,7 @@ public class ShoppingList
 
     [InverseProperty("ShoppingList")]
     public ICollection<ItemsOnList> ItemsOnList { get; set; }
+
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
 }

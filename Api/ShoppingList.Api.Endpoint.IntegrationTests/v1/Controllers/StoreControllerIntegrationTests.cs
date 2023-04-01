@@ -23,6 +23,7 @@ using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ShoppingLists.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Stores.Entities;
+using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
 using Xunit;
@@ -435,7 +436,9 @@ public class StoreControllerIntegrationTests
             var createdResult = result as CreatedAtActionResult;
             createdResult!.Value.Should().BeOfType<StoreContract>();
             createdResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResultValue!,
-                opts => opts.Excluding(x => x.Path.EndsWith("Id")));
+                opts => opts
+                    .Excluding(x => x.Path.EndsWith("Id"))
+                    .ExcludeRowVersion());
         }
 
         [Fact]
@@ -455,7 +458,9 @@ public class StoreControllerIntegrationTests
 
             stores.Should().HaveCount(1);
             stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
-                opts => opts.Excluding(x => x.Path.EndsWith("Id")));
+                opts => opts
+                    .Excluding(x => x.Path.EndsWith("Id"))
+                    .ExcludeRowVersion());
         }
 
         private class CreateStoreAsyncFixture : LocalFixture
@@ -554,7 +559,9 @@ public class StoreControllerIntegrationTests
             var stores = (await _fixture.LoadAllStoresAsync()).ToArray();
             stores.Should().HaveCount(1);
             stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
-                opt => opt.Excluding(info => info.Path.EndsWith(".Store")));
+                opt => opt
+                    .Excluding(info => info.Path.EndsWith(".Store"))
+                    .ExcludeRowVersion());
 
             var items = (await _fixture.LoadAllItemsAsync()).ToArray();
             items.Should().HaveCount(1);
@@ -597,7 +604,9 @@ public class StoreControllerIntegrationTests
             var stores = (await _fixture.LoadAllStoresAsync()).ToArray();
             stores.Should().HaveCount(1);
             stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
-                opt => opt.Excluding(info => info.Path.EndsWith(".Store")));
+                opt => opt
+                    .Excluding(info => info.Path.EndsWith(".Store"))
+                    .ExcludeRowVersion());
 
             var items = (await _fixture.LoadAllItemsAsync()).ToArray();
             items.Should().HaveCount(1);
@@ -792,7 +801,7 @@ public class StoreControllerIntegrationTests
                     Id = ExistingStore.Id,
                     Name = Contract.Name,
                     Deleted = false,
-                    Sections = sections
+                    Sections = sections,
                 };
             }
         }

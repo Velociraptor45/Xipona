@@ -1,4 +1,5 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
@@ -7,7 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
-public class ShoppingList : IShoppingList
+public class ShoppingList : AggregateRoot, IShoppingList
 {
     private readonly Dictionary<SectionId, IShoppingListSection> _sections;
 

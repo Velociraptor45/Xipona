@@ -2,24 +2,27 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
 
 #nullable disable
 
-namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Manufacturers
+namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.ItemCategories
 {
-    [DbContext(typeof(ManufacturerContext))]
-    partial class ManufacturerContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ItemCategoryContext))]
+    [Migration("20230401101644_AddRowVersion")]
+    partial class AddRowVersion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Entities.Manufacturer", b =>
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Entities.ItemCategory", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
@@ -32,13 +35,13 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Manufacturers
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("RowVersion")
-                        .IsRowVersion()
+                        .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Manufacturers");
+                    b.ToTable("ItemCategories");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Recipes.Converters.ToContract;
@@ -27,7 +28,8 @@ public class RecipeConverter : IToContractConverter<IRecipe, Entities.Recipe>
                 .ToList(),
             PreparationSteps = source.PreparationSteps
                 .Select(step => _preparationStepConverter.ToContract((source.Id, step)))
-                .ToList()
+                .ToList(),
+            RowVersion = ((AggregateRoot)source).RowVersion
         };
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using Section = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Section;
@@ -21,10 +22,13 @@ public class StoreConverter : IToDomainConverter<Entities.Store, IStore>
     {
         List<ISection> sections = _sectionConverter.ToDomain(source.Sections).ToList();
 
-        return _storeFactory.Create(
+        var store = (AggregateRoot)_storeFactory.Create(
             new StoreId(source.Id),
             new StoreName(source.Name),
             source.Deleted,
             sections);
+
+        store.EnrichWithRowVersion(source.RowVersion);
+        return (store as IStore)!;
     }
 }

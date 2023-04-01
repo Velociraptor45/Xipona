@@ -1,7 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
@@ -19,15 +23,18 @@ public class ItemRepository : IItemRepository
     private readonly IToDomainConverter<Item, IItem> _toModelConverter;
     private readonly IToEntityConverter<IItem, Item> _toEntityConverter;
     private readonly Func<CancellationToken, IDomainEventDispatcher> _domainEventDispatcherDelegate;
+    private readonly ILogger<ItemRepository> _logger;
 
     public ItemRepository(ItemContext dbContext, IToDomainConverter<Item, IItem> toModelConverter,
         IToEntityConverter<IItem, Item> toEntityConverter,
-        Func<CancellationToken, IDomainEventDispatcher> domainEventDispatcherDelegate)
+        Func<CancellationToken, IDomainEventDispatcher> domainEventDispatcherDelegate,
+        ILogger<ItemRepository> logger)
     {
         _dbContext = dbContext;
         _toModelConverter = toModelConverter;
         _toEntityConverter = toEntityConverter;
         _domainEventDispatcherDelegate = domainEventDispatcherDelegate;
+        _logger = logger;
     }
 
     #region public methods
@@ -263,7 +270,11 @@ public class ItemRepository : IItemRepository
         {
             var updatedEntity = _toEntityConverter.ToEntity(item);
             updatedEntity.Id = existingEntity.Id;
+
+            var existingRowVersion = existingEntity.RowVersion;
+
             _dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
+            _dbContext.Entry(existingEntity).Property(e => e.RowVersion).OriginalValue = existingRowVersion;
             _dbContext.Entry(existingEntity).State = EntityState.Modified;
 
             UpdateOrAddAvailabilities(existingEntity, updatedEntity);
@@ -271,7 +282,15 @@ public class ItemRepository : IItemRepository
             UpdateOrAddItemTypes(existingEntity, updatedEntity);
             DeleteItemTypes(existingEntity, updatedEntity);
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _logger.LogInformation(ex, () => $"Saving item {item.Id.Value} failed due to concurrency violation");
+                throw new DomainException(new ModelOutOfDateReason());
+            }
             entityIdToLoad = updatedEntity.Id;
         }
 

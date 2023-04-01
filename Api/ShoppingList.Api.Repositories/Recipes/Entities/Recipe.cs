@@ -7,9 +7,10 @@ public class Recipe
 {
     public Recipe()
     {
-        Name = string.Empty;
-        Ingredients = new List<Ingredient>();
-        PreparationSteps = new List<PreparationStep>();
+        Name ??= string.Empty;
+        Ingredients ??= new List<Ingredient>();
+        PreparationSteps ??= new List<PreparationStep>();
+        RowVersion ??= Array.Empty<byte>();
     }
 
     [Key]
@@ -24,4 +25,7 @@ public class Recipe
 
     [InverseProperty("Recipe")]
     public ICollection<PreparationStep> PreparationSteps { get; set; }
+
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
 }

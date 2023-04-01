@@ -5,6 +5,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 public abstract class AggregateRoot
 {
     private readonly List<IDomainEvent> _domainEvents = new();
+    public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
 
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
@@ -21,5 +22,13 @@ public abstract class AggregateRoot
         }
 
         _domainEvents.Clear();
+    }
+
+    public void EnrichWithRowVersion(byte[] rowVersion)
+    {
+        if (RowVersion.Length > 0)
+            throw new InvalidOperationException("Row version already exists.");
+
+        RowVersion = rowVersion;
     }
 }

@@ -1,8 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Modifications;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Modifications;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
-public class Manufacturer : IManufacturer
+public class Manufacturer : AggregateRoot, IManufacturer
 {
     public Manufacturer(ManufacturerId id, ManufacturerName name, bool isDeleted)
     {

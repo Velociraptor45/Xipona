@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using Section = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Section;
 
@@ -20,7 +21,8 @@ public class StoreConverter : IToEntityConverter<IStore, Entities.Store>
             Id = source.Id,
             Name = source.Name,
             Deleted = source.IsDeleted,
-            Sections = _sectionConverter.ToEntity(source.Sections).ToList()
+            Sections = _sectionConverter.ToEntity(source.Sections).ToList(),
+            RowVersion = ((AggregateRoot)source).RowVersion
         };
     }
 }

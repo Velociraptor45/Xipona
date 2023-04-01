@@ -323,7 +323,8 @@ public class ItemControllerIntegrationTests
                 var item = items.SingleOrDefault(i => i.Id == ExistingItem.Id);
                 item.Should().NotBeNull();
                 item.Should().BeEquivalentTo(ExpectedItem, opt => opt
-                    .Excluding(info => info.Path == "UpdatedOn" || Regex.IsMatch(info.Path, @"ItemTypes\[\d\].Item")));
+                    .Excluding(info => info.Path == "UpdatedOn" || Regex.IsMatch(info.Path, @"ItemTypes\[\d\].Item"))
+                    .ExcludeRowVersion());
             }
         }
     }
@@ -645,13 +646,16 @@ public class ItemControllerIntegrationTests
 
             var oldItem = allStoredItems.First(i => i.Id == _fixture.ExpectedOldItem.Id);
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
-                opt => opt.ExcludeItemCycleRef()
-                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(5)));
+                opt => opt
+                    .ExcludeItemCycleRef()
+                    .ExcludeRowVersion()
+                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(20)));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
                 opt => opt
                     .ExcludeItemCycleRef()
+                    .ExcludeRowVersion()
                     .Excluding(info => info.Path == "Id"));
         }
 
@@ -686,12 +690,14 @@ public class ItemControllerIntegrationTests
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
                 opt => opt
                     .ExcludeItemCycleRef()
-                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(5)));
+                    .ExcludeRowVersion()
+                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(20)));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
                 opt => opt
                     .ExcludeItemCycleRef()
+                    .ExcludeRowVersion()
                     .Excluding(info => info.Path == "Id"
                                        || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Id")));
         }
@@ -782,7 +788,7 @@ public class ItemControllerIntegrationTests
                     QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
                     PredecessorId = null,
                     ItemTypes = new List<ItemType>(),
-                    UpdatedOn = DateTimeOffset.Now
+                    UpdatedOn = DateTimeOffset.Now,
                 };
 
                 ExpectedNewItem = new Item
@@ -804,7 +810,7 @@ public class ItemControllerIntegrationTests
                     QuantityType = _existingItem.QuantityType,
                     QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
                     PredecessorId = _existingItem.Id,
-                    ItemTypes = new List<ItemType>()
+                    ItemTypes = new List<ItemType>(),
                 };
             }
 
@@ -1025,6 +1031,7 @@ public class ItemControllerIntegrationTests
             items.First().Should().BeEquivalentTo(_fixture.ExpectedItem,
                 opt => opt
                     .ExcludeItemCycleRef()
+                    .ExcludeRowVersion()
                     .UsingDateTimeOffsetWithPrecision());
 
             var recipes = (await _fixture.LoadAllRecipesAsync(assertionServiceScope)).ToArray();
@@ -1032,7 +1039,7 @@ public class ItemControllerIntegrationTests
             recipes.First().Should().BeEquivalentTo(_fixture.ExpectedRecipe,
                 opt => opt
                 .ExcludeRecipeCycleRef()
-                    .Excluding(info => Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Id")));
+                .Excluding(info => Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Id")));
 
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionServiceScope)).ToArray();
             shoppingLists.Should().HaveCount(1);

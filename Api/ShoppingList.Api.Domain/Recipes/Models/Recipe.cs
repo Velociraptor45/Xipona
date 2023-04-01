@@ -1,10 +1,11 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 
-public class Recipe : IRecipe
+public class Recipe : AggregateRoot, IRecipe
 {
     private readonly Ingredients _ingredients;
     private readonly PreparationSteps _steps;

@@ -22,6 +22,14 @@ public static class LoggerExtensions
         logger.LogDebug(logFunction());
     }
 
+    public static void LogInformation<T>(this ILogger<T> logger, Exception e, Func<string> logFunction)
+    {
+        if (!logger.IsEnabled(LogLevel.Information))
+            return;
+
+        logger.LogInformation(e, logFunction());
+    }
+
     public static void LogInformation<T>(this ILogger<T> logger, Func<string> logFunction)
     {
         if (!logger.IsEnabled(LogLevel.Information))

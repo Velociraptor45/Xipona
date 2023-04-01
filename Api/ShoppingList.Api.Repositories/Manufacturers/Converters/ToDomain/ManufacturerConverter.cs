@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models.Factories;
 
@@ -15,9 +16,12 @@ public class ManufacturerConverter : IToDomainConverter<Entities.Manufacturer, I
 
     public IManufacturer ToDomain(Entities.Manufacturer source)
     {
-        return _manufacturerFactory.Create(
+        var manufacturer = (AggregateRoot)_manufacturerFactory.Create(
             new ManufacturerId(source.Id),
             new ManufacturerName(source.Name),
             source.Deleted);
+
+        manufacturer.EnrichWithRowVersion(source.RowVersion);
+        return (manufacturer as IManufacturer)!;
     }
 }
