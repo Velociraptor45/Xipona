@@ -103,8 +103,14 @@ else
         Dispatcher.Dispatch(new LoadInitialItemsAction(Model));
         Dispatcher.Dispatch(new LoadInitialItemCategoryAction(Model));
     }
-    private void OnItemChanged(SearchItemByItemCategoryResult itemSearchResult)
+    private void OnItemChanged(SearchItemByItemCategoryResult? itemSearchResult)
     {
+        if (itemSearchResult is null)
+        {
+            Dispatcher.Dispatch(new SelectedItemClearedAction(Model.Key));
+            return;
+        }
+
         Dispatcher.Dispatch(new SelectedItemChangedAction(Model.Key, itemSearchResult.ItemId,
             itemSearchResult.ItemTypeId));
     }

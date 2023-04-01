@@ -19,7 +19,7 @@ public class RecipeEditorReducerTests
         }
 
         [Fact]
-        public void OnSetNewRecipe_WithValidData_ShouldSetRecipe()
+        public void OnSetNewRecipe_WithValidData_ShouldSetRecipeAndLeaveEditMode()
         {
             // Arrange
             _fixture.SetupInitialState();
@@ -40,7 +40,8 @@ public class RecipeEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        Recipe = new DomainTestBuilder<EditedRecipe>().Create()
+                        Recipe = new DomainTestBuilder<EditedRecipe>().Create(),
+                        IsInEditMode = true
                     }
                 };
             }
@@ -55,7 +56,8 @@ public class RecipeEditorReducerTests
                             Guid.Empty,
                             string.Empty,
                             new List<EditedIngredient>(0),
-                            new SortedSet<EditedPreparationStep>())
+                            new SortedSet<EditedPreparationStep>()),
+                        IsInEditMode = false
                     }
                 };
             }
@@ -72,10 +74,11 @@ public class RecipeEditorReducerTests
         }
 
         [Fact]
-        public void OnLoadRecipeForEditingFinished_WithValidData_ShouldSetRecipe()
+        public void OnLoadRecipeForEditingFinished_WithValidData_ShouldSetRecipeAndLeaveEditMode()
         {
             // Arrange
             _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -97,7 +100,19 @@ public class RecipeEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        Recipe = new DomainTestBuilder<EditedRecipe>().Create()
+                        Recipe = new DomainTestBuilder<EditedRecipe>().Create(),
+                        IsInEditMode = true
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsInEditMode = false
                     }
                 };
             }

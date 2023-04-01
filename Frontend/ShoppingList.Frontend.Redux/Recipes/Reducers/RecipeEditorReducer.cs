@@ -19,7 +19,8 @@ public static class RecipeEditorReducer
         {
             Editor = state.Editor with
             {
-                Recipe = recipe
+                Recipe = recipe,
+                IsInEditMode = false
             }
         };
     }
@@ -31,7 +32,8 @@ public static class RecipeEditorReducer
         {
             Editor = state.Editor with
             {
-                Recipe = action.Recipe
+                Recipe = action.Recipe,
+                IsInEditMode = false
             }
         };
     }

@@ -154,6 +154,36 @@ public static class IngredientReducer
     }
 
     [ReducerMethod]
+    public static RecipeState OnSelectedItemCleared(RecipeState state, SelectedItemClearedAction action)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        var ingredients = state.Editor.Recipe.Ingredients.ToList();
+        var ingredient = ingredients.FirstOrDefault(x => x.Key == action.IngredientKey);
+        if (ingredient is null)
+            return state;
+
+        var ingredientIndex = ingredients.IndexOf(ingredient);
+        ingredients[ingredientIndex] = ingredient with
+        {
+            DefaultItemId = null,
+            DefaultItemTypeId = null
+        };
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Recipe = state.Editor.Recipe with
+                {
+                    Ingredients = ingredients
+                }
+            }
+        };
+    }
+
+    [ReducerMethod]
     public static RecipeState OnLoadItemsForItemCategoryFinished(RecipeState state,
         LoadItemsForItemCategoryFinishedAction action)
     {
