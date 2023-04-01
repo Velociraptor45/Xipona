@@ -22,6 +22,7 @@ public class RecipeFeatureState : Feature<RecipeState>
                 false,
                 new List<RecipeSearchResult>(0)),
             new RecipeEditor(
-                null));
+                null,
+                false));
     }
 }
