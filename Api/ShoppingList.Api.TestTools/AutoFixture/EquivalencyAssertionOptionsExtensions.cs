@@ -20,6 +20,14 @@ public static partial class EquivalencyAssertionOptionsExtensions
     [GeneratedRegex(@"AvailableAt\[\d+\].Item")]
     private static partial Regex AvailableAtItemCycle();
 
+    [GeneratedRegex(@"RowVersion$")]
+    private static partial Regex RowVersion();
+
+    public static EquivalencyAssertionOptions<T> ExcludeRowVersion<T>(this EquivalencyAssertionOptions<T> options)
+    {
+        return options.Excluding(info => RowVersion().IsMatch(info.Path));
+    }
+
     public static EquivalencyAssertionOptions<T> ExcludeItemCycleRef<T>(this EquivalencyAssertionOptions<T> options)
     {
         return options.Excluding(info => ItemTypesItemCycle().IsMatch(info.Path)
