@@ -597,6 +597,150 @@ public class IngredientReducerTests
         }
     }
 
+    public class OnSelectedItemCleared
+    {
+        private readonly OnSelectedItemClearedFixture _fixture;
+
+        public OnSelectedItemCleared()
+        {
+            _fixture = new OnSelectedItemClearedFixture();
+        }
+
+        [Fact]
+        public void OnSelectedItemCleared_WithValidData_ShouldChangeSelectedItem()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = IngredientReducer.OnSelectedItemCleared(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSelectedItemCleared_WithRecipeNull_ShouldNotModifyState()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithRecipeNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForRecipeNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = IngredientReducer.OnSelectedItemCleared(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSelectedItemCleared_WithInvalidIngredientKey_ShouldNotModifyState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForInvalidIngredientKey();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = IngredientReducer.OnSelectedItemCleared(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSelectedItemClearedFixture : IngredientReducerFixture
+        {
+            public SelectedItemClearedAction? Action { get; private set; }
+
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupExpectedStateWithRecipeNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+                ingredients[^1] = ingredients[^1] with
+                {
+                    DefaultItemId = null,
+                    DefaultItemTypeId = null
+                };
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            Ingredients = ingredients
+                        }
+                    }
+                };
+            }
+
+            public void SetupInitialState()
+            {
+                var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+                ingredients[^1] = ingredients[^1] with
+                {
+                    DefaultItemId = Guid.NewGuid(),
+                    DefaultItemTypeId = Guid.NewGuid()
+                };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            Ingredients = ingredients
+                        }
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                var ingredient = ExpectedState.Editor.Recipe!.Ingredients.Last();
+                Action = new SelectedItemClearedAction(ingredient.Key);
+            }
+
+            public void SetupActionForInvalidIngredientKey()
+            {
+                SetupRandomAction();
+            }
+
+            public void SetupActionForRecipeNull()
+            {
+                SetupRandomAction();
+            }
+
+            private void SetupRandomAction()
+            {
+                Action = new DomainTestBuilder<SelectedItemClearedAction>().Create();
+            }
+        }
+    }
+
     public class OnLoadItemsForItemCategoryFinished
     {
         private readonly OnLoadItemsForItemCategoryFinishedFixture _fixture;
