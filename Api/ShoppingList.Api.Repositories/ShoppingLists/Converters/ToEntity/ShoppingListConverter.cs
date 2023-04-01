@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Entities;
 
@@ -13,7 +14,8 @@ public class ShoppingListConverter : IToEntityConverter<IShoppingList, Entities.
             Id = source.Id,
             CompletionDate = source.CompletionDate,
             StoreId = source.StoreId,
-            ItemsOnList = CreateItemsOnListMap(source).ToList()
+            ItemsOnList = CreateItemsOnListMap(source).ToList(),
+            RowVersion = ((AggregateRoot)source).RowVersion
         };
     }
 
