@@ -161,7 +161,7 @@ public class RecipeEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        Recipe = ExpectedState.Editor.Recipe with
+                        Recipe = ExpectedState.Editor.Recipe! with
                         {
                             Name = new DomainTestBuilder<string>().Create()
                         }
