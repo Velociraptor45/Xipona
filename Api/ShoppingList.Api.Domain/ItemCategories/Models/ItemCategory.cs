@@ -1,8 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Modifications;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Modifications;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 
-public class ItemCategory : IItemCategory
+public class ItemCategory : AggregateRoot, IItemCategory
 {
     public ItemCategory(ItemCategoryId id, ItemCategoryName name, bool isDeleted)
     {
