@@ -32,6 +32,9 @@ public class Item
     public DateTimeOffset? UpdatedOn { get; set; }
     public Guid? PredecessorId { get; set; }
 
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
+
     [ForeignKey("PredecessorId")]
     public Item? Predecessor { get; set; }
 
