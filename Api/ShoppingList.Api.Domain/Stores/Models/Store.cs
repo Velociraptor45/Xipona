@@ -1,10 +1,11 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
-public class Store : IStore
+public class Store : AggregateRoot, IStore
 {
     private readonly Sections _sections;
 
