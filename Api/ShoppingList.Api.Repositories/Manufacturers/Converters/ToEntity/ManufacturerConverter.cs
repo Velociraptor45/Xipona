@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Converters.ToEntity;
@@ -11,7 +12,8 @@ public class ManufacturerConverter : IToEntityConverter<IManufacturer, Entities.
         {
             Id = source.Id,
             Name = source.Name,
-            Deleted = source.IsDeleted
+            Deleted = source.IsDeleted,
+            RowVersion = ((AggregateRoot)source).RowVersion
         };
     }
 }
