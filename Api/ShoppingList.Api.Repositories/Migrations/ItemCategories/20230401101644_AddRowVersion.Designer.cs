@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
 
@@ -10,9 +11,11 @@ using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
 namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.ItemCategories
 {
     [DbContext(typeof(ItemCategoryContext))]
-    partial class ItemCategoryContextModelSnapshot : ModelSnapshot
+    [Migration("20230401101644_AddRowVersion")]
+    partial class AddRowVersion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,7 +35,7 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.ItemCategories
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("RowVersion")
-                        .IsRowVersion()
+                        .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 
