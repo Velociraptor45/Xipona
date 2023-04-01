@@ -51,4 +51,5 @@ public enum ErrorReasonCode
     ItemWithTypesHasNoAvailabilities = 49,
     ItemHasNoItemTypes = 50,
     CannotModifyDeletedItemType = 51,
+    ModelOutOfDate = 52,
 }
