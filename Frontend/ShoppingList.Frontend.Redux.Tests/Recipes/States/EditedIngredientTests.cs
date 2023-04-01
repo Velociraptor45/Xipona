@@ -75,6 +75,7 @@ public class EditedIngredientTests
             public void SetupItemCategoriesContainingItemCategoryId()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                TestPropertyNotSetException.ThrowIfNull(_itemCategoryId);
 
                 var itemCategory = new DomainTestBuilder<ItemCategorySearchResult>()
                     .FillPropertyWith(i => i.Id, _itemCategoryId.Value)
@@ -126,7 +127,7 @@ public class EditedIngredientTests
         {
             // Arrange
             _fixture.SetupExpectedResult();
-            var sut = _fixture.CreateSut();
+            var sut = GetSelectedQuantityLabelFixture.CreateSut();
             _fixture.SetupQuantityTypesMatchingId(sut.QuantityTypeId);
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
@@ -144,7 +145,7 @@ public class EditedIngredientTests
         {
             // Arrange
             _fixture.SetupExpectedResultEmpty();
-            var sut = _fixture.CreateSut();
+            var sut = GetSelectedQuantityLabelFixture.CreateSut();
             _fixture.SetupQuantityTypes();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
@@ -194,7 +195,7 @@ public class EditedIngredientTests
                     .ToList();
             }
 
-            public EditedIngredient CreateSut()
+            public static EditedIngredient CreateSut()
             {
                 return new DomainTestBuilder<EditedIngredient>().Create();
             }

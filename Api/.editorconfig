@@ -258,6 +258,9 @@ dotnet_style_namespace_match_folder = true:suggestion
 
 ###### Analyzers ######
 
+# SYSLIB1045: Convert to 'GeneratedRegexAttribute'.
+dotnet_diagnostic.SYSLIB1045.severity = none
+
 # CA1822: Mark members as static
 dotnet_diagnostic.CA1822.severity = none
 
