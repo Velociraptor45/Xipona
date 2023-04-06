@@ -10,6 +10,8 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Repositories.Common.Transactions;
@@ -21,6 +23,8 @@ using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Adapters;
 using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Adapters;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.RecipeTags.Adapters;
+using ProjectHermes.ShoppingList.Api.Repositories.RecipeTags.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Adapters;
 using ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Stores.Adapters;
@@ -29,6 +33,7 @@ using ProjectHermes.ShoppingList.Api.Vault.Configs;
 using System.Data.Common;
 using System.Reflection;
 using Recipe = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Recipe;
+using RecipeTag = ProjectHermes.ShoppingList.Api.Repositories.RecipeTags.Entities.RecipeTag;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories;
 
@@ -61,6 +66,7 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<ItemContext>(SetDbConnection);
         services.AddDbContext<StoreContext>(SetDbConnection);
         services.AddDbContext<RecipeContext>(SetDbConnection);
+        services.AddDbContext<RecipeTagContext>(SetDbConnection);
 
         services.AddTransient<IShoppingListRepository, ShoppingListRepository>();
         services.AddTransient<IItemRepository, ItemRepository>();
@@ -78,6 +84,15 @@ public static class ServiceCollectionExtensions
             return cancellationToken =>
                 new RecipeRepository(context, searchResultToDomainConverter, toDomainConverter, toContractConverter,
                     logger, cancellationToken);
+        });
+        services.AddTransient<Func<CancellationToken, IRecipeTagRepository>>(provider =>
+        {
+            var context = provider.GetRequiredService<RecipeTagContext>();
+            var toDomainConverter = provider.GetRequiredService<IToDomainConverter<RecipeTag, IRecipeTag>>();
+            var toContractConverter = provider.GetRequiredService<IToContractConverter<IRecipeTag, RecipeTag>>();
+            var logger = provider.GetRequiredService<ILogger<RecipeTagRepository>>();
+            return cancellationToken =>
+                new RecipeTagRepository(context, toDomainConverter, toContractConverter, logger, cancellationToken);
         });
         services.AddScoped(_ => new SemaphoreSlim(1, 1));
         services.AddScoped<ITransactionGenerator, TransactionGenerator>();
