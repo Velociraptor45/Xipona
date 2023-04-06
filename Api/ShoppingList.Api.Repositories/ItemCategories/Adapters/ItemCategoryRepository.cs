@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
@@ -11,14 +15,17 @@ public class ItemCategoryRepository : IItemCategoryRepository
     private readonly ItemCategoryContext _dbContext;
     private readonly IToDomainConverter<Entities.ItemCategory, IItemCategory> _toModelConverter;
     private readonly IToEntityConverter<IItemCategory, Entities.ItemCategory> _toEntityConverter;
+    private readonly ILogger<ItemCategoryRepository> _logger;
 
     public ItemCategoryRepository(ItemCategoryContext dbContext,
         IToDomainConverter<Entities.ItemCategory, IItemCategory> toModelConverter,
-        IToEntityConverter<IItemCategory, Entities.ItemCategory> toEntityConverter)
+        IToEntityConverter<IItemCategory, Entities.ItemCategory> toEntityConverter,
+        ILogger<ItemCategoryRepository> logger)
     {
         _dbContext = dbContext;
         _toModelConverter = toModelConverter;
         _toEntityConverter = toEntityConverter;
+        _logger = logger;
     }
 
     public async Task<IEnumerable<IItemCategory>> FindByAsync(string searchInput, bool includeDeleted,
@@ -102,13 +109,24 @@ public class ItemCategoryRepository : IItemCategoryRepository
         }
         else
         {
+            var existingRowVersion = existingEntity.RowVersion;
             _dbContext.Entry(existingEntity).CurrentValues.SetValues(convertedEntity);
             _dbContext.Entry(existingEntity).State = EntityState.Modified;
+            _dbContext.Entry(existingEntity).Property(r => r.RowVersion).OriginalValue = existingRowVersion;
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogInformation(ex,
+                () => $"Saving item category {model.Id.Value} failed due to concurrency violation");
+            throw new DomainException(new ModelOutOfDateReason());
+        }
         return _toModelConverter.ToDomain(convertedEntity);
     }
 

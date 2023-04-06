@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
@@ -11,14 +15,17 @@ public class StoreRepository : IStoreRepository
     private readonly StoreContext _dbContext;
     private readonly IToDomainConverter<Entities.Store, IStore> _toDomainConverter;
     private readonly IToEntityConverter<IStore, Entities.Store> _toEntityConverter;
+    private readonly ILogger<StoreRepository> _logger;
 
     public StoreRepository(StoreContext dbContext,
         IToDomainConverter<Entities.Store, IStore> toDomainConverter,
-        IToEntityConverter<IStore, Entities.Store> toEntityConverter)
+        IToEntityConverter<IStore, Entities.Store> toEntityConverter,
+        ILogger<StoreRepository> logger)
     {
         _dbContext = dbContext;
         _toDomainConverter = toDomainConverter;
         _toEntityConverter = toEntityConverter;
+        _logger = logger;
     }
 
     public async Task<IStore?> FindByAsync(StoreId id, CancellationToken cancellationToken)
@@ -104,11 +111,14 @@ public class StoreRepository : IStoreRepository
             return await StoreAsNew(store, cancellationToken);
         }
         var existingSections = existingEntity.Sections.ToDictionary(s => s.Id);
-        var incomingEntity = _toEntityConverter.ToEntity(store);
+        var updatedEntity = _toEntityConverter.ToEntity(store);
 
-        _dbContext.Entry(incomingEntity).State = EntityState.Modified;
+        var existingRowVersion = existingEntity.RowVersion;
+        _dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
+        _dbContext.Entry(existingEntity).Property(r => r.RowVersion).OriginalValue = existingRowVersion;
+        _dbContext.Entry(existingEntity).State = EntityState.Modified;
 
-        foreach (var section in incomingEntity.Sections)
+        foreach (var section in updatedEntity.Sections)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (existingSections.ContainsKey(section.Id))
@@ -131,11 +141,17 @@ public class StoreRepository : IStoreRepository
             _dbContext.Entry(section).State = EntityState.Deleted;
         }
 
-        cancellationToken.ThrowIfCancellationRequested();
+        try
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogInformation(ex, () => $"Saving store {store.Id.Value} failed due to concurrency violation");
+            throw new DomainException(new ModelOutOfDateReason());
+        }
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return _toDomainConverter.ToDomain(incomingEntity);
+        return _toDomainConverter.ToDomain(updatedEntity);
     }
 
     #region private methods

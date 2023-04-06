@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
@@ -15,6 +19,7 @@ public class RecipeRepository : IRecipeRepository
     private readonly IToDomainConverter<Recipe, RecipeSearchResult> _searchToModelConverter;
     private readonly IToDomainConverter<Recipe, IRecipe> _toModelConverter;
     private readonly IToContractConverter<IRecipe, Recipe> _toEntityConverter;
+    private readonly ILogger<RecipeRepository> _logger;
     private readonly CancellationToken _cancellationToken;
 
     public RecipeRepository(
@@ -22,12 +27,14 @@ public class RecipeRepository : IRecipeRepository
         IToDomainConverter<Recipe, RecipeSearchResult> searchToModelConverter,
         IToDomainConverter<Recipe, IRecipe> toModelConverter,
         IToContractConverter<IRecipe, Recipe> toEntityConverter,
+        ILogger<RecipeRepository> logger,
         CancellationToken cancellationToken)
     {
         _dbContext = dbContext;
         _searchToModelConverter = searchToModelConverter;
         _toModelConverter = toModelConverter;
         _toEntityConverter = toEntityConverter;
+        _logger = logger;
         _cancellationToken = cancellationToken;
     }
 
@@ -69,7 +76,10 @@ public class RecipeRepository : IRecipeRepository
         else
         {
             var updatedEntity = _toEntityConverter.ToContract(recipe);
+
+            var existingRowVersion = existingEntity.RowVersion;
             _dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
+            _dbContext.Entry(existingEntity).Property(r => r.RowVersion).OriginalValue = existingRowVersion;
             _dbContext.Entry(existingEntity).State = EntityState.Modified;
 
             UpdateOrAddIngredients(existingEntity, updatedEntity);
@@ -78,7 +88,16 @@ public class RecipeRepository : IRecipeRepository
             DeletePreparationSteps(existingEntity, updatedEntity);
         }
 
-        await _dbContext.SaveChangesAsync(_cancellationToken);
+        try
+        {
+            await _dbContext.SaveChangesAsync(_cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogInformation(ex, () => $"Saving recipe {recipe.Id.Value} failed due to concurrency violation");
+            throw new DomainException(new ModelOutOfDateReason());
+        }
+
         var entity = await GetRecipeQuery().FirstAsync(r => r.Id == recipe.Id, _cancellationToken);
         return _toModelConverter.ToDomain(entity);
     }

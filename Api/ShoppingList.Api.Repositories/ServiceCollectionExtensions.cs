@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MySqlConnector;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
@@ -73,9 +74,10 @@ public static class ServiceCollectionExtensions
             var searchResultToDomainConverter = provider.GetRequiredService<IToDomainConverter<Recipe, RecipeSearchResult>>();
             var toDomainConverter = provider.GetRequiredService<IToDomainConverter<Recipe, IRecipe>>();
             var toContractConverter = provider.GetRequiredService<IToContractConverter<IRecipe, Recipe>>();
+            var logger = provider.GetRequiredService<ILogger<RecipeRepository>>();
             return cancellationToken =>
                 new RecipeRepository(context, searchResultToDomainConverter, toDomainConverter, toContractConverter,
-                    cancellationToken);
+                    logger, cancellationToken);
         });
         services.AddScoped(_ => new SemaphoreSlim(1, 1));
         services.AddScoped<ITransactionGenerator, TransactionGenerator>();
