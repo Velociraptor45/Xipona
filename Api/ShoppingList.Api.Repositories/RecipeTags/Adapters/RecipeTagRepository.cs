@@ -33,6 +33,12 @@ public class RecipeTagRepository : IRecipeTagRepository
         _cancellationToken = cancellationToken;
     }
 
+    public async Task<IEnumerable<IRecipeTag>> FindAllAsync()
+    {
+        var entities = await _dbContext.RecipeTags.ToListAsync(_cancellationToken);
+        return _toDomainConverter.ToDomain(entities);
+    }
+
     public async Task<IRecipeTag> StoreAsync(IRecipeTag recipeTag)
     {
         var existingEntity = await FindTrackedEntityBy(recipeTag.Id);

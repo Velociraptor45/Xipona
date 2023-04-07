@@ -5,4 +5,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Ports;
 public interface IRecipeTagRepository
 {
     Task<IRecipeTag> StoreAsync(IRecipeTag recipeTag);
+
+    Task<IEnumerable<IRecipeTag>> FindAllAsync();
 }

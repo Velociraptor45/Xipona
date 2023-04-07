@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
@@ -41,6 +42,7 @@ public class DomainCustomization : ICustomization
         fixture.Customize<RecipeId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<IngredientId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<PreparationStepId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+        fixture.Customize<RecipeTagId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
 
         fixture.Customize(new PriceCustomization());
         fixture.Customize(new QuantityCustomization());
