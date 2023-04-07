@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
 
@@ -28,17 +29,22 @@ public class RecipeFactory : IRecipeFactory
 
         var preparationSteps = creation.PreparationStepCreations.Select(_preparationStepFactory.CreateNew);
 
-        return new Recipe(RecipeId.New, creation.Name, new Ingredients(ingredients, _ingredientFactory),
-            new PreparationSteps(preparationSteps, _preparationStepFactory));
+        return new Recipe(
+            RecipeId.New,
+            creation.Name,
+            new Ingredients(ingredients, _ingredientFactory),
+            new PreparationSteps(preparationSteps, _preparationStepFactory),
+            new RecipeTags(Enumerable.Empty<RecipeTagId>())); // todo #341
     }
 
     public IRecipe Create(RecipeId id, RecipeName name, IEnumerable<IIngredient> ingredients,
-        IEnumerable<IPreparationStep> steps)
+        IEnumerable<IPreparationStep> steps, IEnumerable<RecipeTagId> recipeTagIds)
     {
         return new Recipe(
             id,
             name,
             new Ingredients(ingredients, _ingredientFactory),
-            new PreparationSteps(steps, _preparationStepFactory));
+            new PreparationSteps(steps, _preparationStepFactory),
+            new RecipeTags(recipeTagIds));
     }
 }

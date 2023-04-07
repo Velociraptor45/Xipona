@@ -22,7 +22,7 @@ public class RecipeFactoryTests
         }
 
         [Fact]
-        public void CreateNew_WithValidData_ShouldReturnExpectedResult()
+        public void Create_WithValidData_ShouldReturnExpectedResult()
         {
             // Arrange
             _fixture.SetupExpectedResult();
@@ -35,7 +35,8 @@ public class RecipeFactoryTests
                 _fixture.ExpectedResult.Id,
                 _fixture.ExpectedResult.Name,
                 _fixture.ExpectedResult.Ingredients,
-                _fixture.ExpectedResult.PreparationSteps);
+                _fixture.ExpectedResult.PreparationSteps,
+                _fixture.ExpectedResult.Tags);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedResult);
