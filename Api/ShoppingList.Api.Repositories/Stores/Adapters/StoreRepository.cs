@@ -104,13 +104,13 @@ public class StoreRepository : IStoreRepository
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var existingEntity = await FindEntityById(store.Id, cancellationToken);
+        var existingEntity = await FindTrackedEntityById(store.Id, cancellationToken);
 
         if (existingEntity is null)
         {
             return await StoreAsNew(store, cancellationToken);
         }
-        var existingSections = existingEntity.Sections.ToDictionary(s => s.Id);
+
         var updatedEntity = _toEntityConverter.ToEntity(store);
 
         var existingRowVersion = existingEntity.RowVersion;
@@ -118,28 +118,8 @@ public class StoreRepository : IStoreRepository
         _dbContext.Entry(existingEntity).Property(r => r.RowVersion).OriginalValue = existingRowVersion;
         _dbContext.Entry(existingEntity).State = EntityState.Modified;
 
-        foreach (var section in updatedEntity.Sections)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (existingSections.ContainsKey(section.Id))
-            {
-                // section was modified
-                _dbContext.Entry(section).State = EntityState.Modified;
-                existingSections.Remove(section.Id);
-            }
-            else
-            {
-                // section was added
-                _dbContext.Entry(section).State = EntityState.Added;
-            }
-        }
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        foreach (var section in existingSections.Values)
-        {
-            _dbContext.Entry(section).State = EntityState.Deleted;
-        }
+        AddOrUpdateSections(existingEntity, updatedEntity);
+        DeleteSections(existingEntity, updatedEntity);
 
         try
         {
@@ -151,10 +131,40 @@ public class StoreRepository : IStoreRepository
             throw new DomainException(new ModelOutOfDateReason());
         }
 
-        return _toDomainConverter.ToDomain(updatedEntity);
+        return _toDomainConverter.ToDomain(existingEntity);
     }
 
     #region private methods
+
+    private void AddOrUpdateSections(Entities.Store existingStore, Entities.Store updatedStore)
+    {
+        foreach (var updatedSection in updatedStore.Sections)
+        {
+            var existingSection = existingStore.Sections
+                .FirstOrDefault(t => t.Id == updatedSection.Id);
+
+            if (existingSection == null)
+            {
+                existingStore.Sections.Add(updatedSection);
+            }
+            else
+            {
+                _dbContext.Entry(existingSection).CurrentValues.SetValues(updatedSection);
+            }
+        }
+    }
+
+    private void DeleteSections(Entities.Store existingStore, Entities.Store updatedStore)
+    {
+        var deletedSections = existingStore.Sections
+            .Where(t => updatedStore.Sections.All(s => s.Id != t.Id))
+            .ToList();
+
+        foreach (var deletedSection in deletedSections)
+        {
+            _dbContext.Remove(deletedSection);
+        }
+    }
 
     private async Task<IStore> StoreAsNew(IStore store, CancellationToken cancellationToken)
     {
@@ -166,20 +176,15 @@ public class StoreRepository : IStoreRepository
             _dbContext.Entry(section).State = EntityState.Added;
         }
 
-        cancellationToken.ThrowIfCancellationRequested();
-
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return _toDomainConverter.ToDomain(entity);
     }
 
-    private async Task<Entities.Store?> FindEntityById(Guid id, CancellationToken cancellationToken)
+    private async Task<Entities.Store?> FindTrackedEntityById(Guid id, CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        return await _dbContext.Stores.AsNoTracking()
+        return await _dbContext.Stores
             .Include(s => s.Sections)
-            .Where(store => !store.Deleted)
             .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
     }
 

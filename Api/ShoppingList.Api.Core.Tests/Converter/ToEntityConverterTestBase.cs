@@ -4,7 +4,6 @@ using ProjectHermes.ShoppingList.Api.Core.Converter;
 namespace ProjectHermes.ShoppingList.Api.Core.Tests.Converter;
 
 public abstract class ToEntityConverterTestBase<TSource, TDestination>
-    where TSource : class
     where TDestination : class
 {
     protected readonly TSource Source;

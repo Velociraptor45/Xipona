@@ -25,7 +25,7 @@ public class StoreConverterTests : ToEntityConverterTestBase<IStore, Store>
             Id = source.Id,
             Name = source.Name,
             Deleted = source.IsDeleted,
-            Sections = source.Sections.Select(s => SectionConverterTests.GetDestination(s)).ToList()
+            Sections = source.Sections.Select(s => SectionConverterTests.GetDestination(source.Id, s)).ToList()
         };
     }
 
