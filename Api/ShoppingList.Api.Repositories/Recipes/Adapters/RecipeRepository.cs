@@ -9,6 +9,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities;
 using Recipe = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Recipe;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Recipes.Adapters;
@@ -86,6 +87,8 @@ public class RecipeRepository : IRecipeRepository
             DeleteIngredients(existingEntity, updatedEntity);
             UpdateOrAddPreparationSteps(existingEntity, updatedEntity);
             DeletePreparationSteps(existingEntity, updatedEntity);
+            UpdateOrAddTags(existingEntity, updatedEntity);
+            DeleteTags(existingEntity, updatedEntity);
         }
 
         try
@@ -107,6 +110,7 @@ public class RecipeRepository : IRecipeRepository
         return await _dbContext.Recipes
             .Include(r => r.Ingredients)
             .Include(r => r.PreparationSteps)
+            .Include(r => r.Tags)
             .FirstOrDefaultAsync(r => r.Id == id, _cancellationToken);
     }
 
@@ -114,7 +118,8 @@ public class RecipeRepository : IRecipeRepository
     {
         return _dbContext.Recipes.AsNoTracking()
             .Include(r => r.Ingredients)
-            .Include(r => r.PreparationSteps);
+            .Include(r => r.PreparationSteps)
+            .Include(r => r.Tags);
     }
 
     private void UpdateOrAddIngredients(Recipe existing, Recipe updated)
@@ -175,5 +180,39 @@ public class RecipeRepository : IRecipeRepository
                 _dbContext.Remove(type);
             }
         }
+    }
+
+    private void UpdateOrAddTags(Recipe existing, Recipe updated)
+    {
+        foreach (var updatedTag in updated.Tags)
+        {
+            var existingTag = existing.Tags.FirstOrDefault(t => MatchesKey(t, updatedTag));
+
+            if (existingTag == null)
+            {
+                existing.Tags.Add(updatedTag);
+            }
+            else
+            {
+                _dbContext.Entry(existingTag).CurrentValues.SetValues(updatedTag);
+            }
+        }
+    }
+
+    private void DeleteTags(Recipe existing, Recipe updated)
+    {
+        foreach (var type in existing.Tags)
+        {
+            bool hasExistingTag = updated.Tags.Any(t => MatchesKey(t, type));
+            if (!hasExistingTag)
+            {
+                _dbContext.Remove(type);
+            }
+        }
+    }
+
+    private bool MatchesKey(TagsForRecipe left, TagsForRecipe right)
+    {
+        return left.RecipeId == right.RecipeId && left.RecipeTagId == right.RecipeTagId;
     }
 }
