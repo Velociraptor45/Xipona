@@ -107,7 +107,7 @@ public class RecipeTagControllerIntegrationTests
     {
         protected readonly IServiceScope ArrangeScope;
 
-        public RecipeTagControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
+        protected RecipeTagControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
             ArrangeScope = CreateServiceScope();
         }
