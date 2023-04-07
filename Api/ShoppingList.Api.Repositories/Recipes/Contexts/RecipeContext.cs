@@ -8,7 +8,7 @@ public class RecipeContext : DbContext
     public DbSet<Recipe> Recipes { get; set; } = null!;
     public DbSet<Ingredient> Ingredients { get; set; } = null!;
     public DbSet<PreparationStep> PreparationSteps { get; set; } = null!;
-    public DbSet<TagsForRecipe> Tags { get; set; } = null!;
+    public DbSet<TagsForRecipe> TagsForRecipes { get; set; } = null!;
 
     public RecipeContext(DbContextOptions<RecipeContext> options) : base(options)
     {

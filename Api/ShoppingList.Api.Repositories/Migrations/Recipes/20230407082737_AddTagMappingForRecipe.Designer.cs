@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
 
@@ -10,9 +11,11 @@ using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
 namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Recipes
 {
     [DbContext(typeof(RecipeContext))]
-    partial class RecipeContextModelSnapshot : ModelSnapshot
+    [Migration("20230407082737_AddTagMappingForRecipe")]
+    partial class AddTagMappingForRecipe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
