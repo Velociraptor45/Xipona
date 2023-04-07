@@ -82,6 +82,7 @@ public abstract class DatabaseFixture : IDisposable
         return await recipeContext.Recipes.AsNoTracking()
             .Include(r => r.Ingredients)
             .Include(r => r.PreparationSteps)
+            .Include(r => r.Tags)
             .ToListAsync();
     }
 
