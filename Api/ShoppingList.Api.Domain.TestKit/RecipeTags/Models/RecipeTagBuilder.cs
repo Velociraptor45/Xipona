@@ -1,8 +1,8 @@
 using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
-using System;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.RecipeTags.Models;
+
 public class RecipeTagBuilder : DomainTestBuilderBase<RecipeTag>
 {
     public RecipeTagBuilder WithId(RecipeTagId id)
@@ -11,7 +11,7 @@ public class RecipeTagBuilder : DomainTestBuilderBase<RecipeTag>
         return this;
     }
 
-    public RecipeTagBuilder WithName(string name)
+    public RecipeTagBuilder WithName(RecipeTagName name)
     {
         FillConstructorWith(nameof(name), name);
         return this;

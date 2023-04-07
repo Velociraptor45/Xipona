@@ -3,4 +3,5 @@
 public interface IRecipeTagFactory
 {
     IRecipeTag Create(RecipeTagId id, string name);
+    IRecipeTag CreateNew(string name);
 }

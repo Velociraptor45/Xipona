@@ -3,5 +3,5 @@
 public interface IRecipeTag
 {
     RecipeTagId Id { get; }
-    string Name { get; }
+    RecipeTagName Name { get; }
 }
