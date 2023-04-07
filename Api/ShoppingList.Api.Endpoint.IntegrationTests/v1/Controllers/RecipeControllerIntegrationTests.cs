@@ -165,7 +165,8 @@ public class RecipeControllerIntegrationTests
                     _model.PreparationSteps.Select(p => new PreparationStepContract(
                         p.Id,
                         p.Instruction.Value,
-                        p.SortingIndex)));
+                        p.SortingIndex)),
+                    _model.Tags.Select(t => t.Value));
             }
 
             public void SetupExpectedEntity()

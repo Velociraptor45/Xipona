@@ -26,6 +26,7 @@ public class RecipeContractConverter : IToContractConverter<IRecipe, RecipeContr
             source.Id,
             source.Name,
             ingredients,
-            steps);
+            steps,
+            source.Tags.Select(t => t.Value));
     }
 }
