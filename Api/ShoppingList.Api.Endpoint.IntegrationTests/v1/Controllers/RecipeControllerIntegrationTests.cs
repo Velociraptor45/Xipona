@@ -145,7 +145,8 @@ public class RecipeControllerIntegrationTests
                         i.DefaultItemTypeId)),
                     _model.PreparationSteps.Select(p => new CreatePreparationStepContract(
                         p.Instruction.Value,
-                        p.SortingIndex)));
+                        p.SortingIndex)),
+                    _model.Tags.Select(t => t.Value));
             }
 
             public void SetupExpectedResult()

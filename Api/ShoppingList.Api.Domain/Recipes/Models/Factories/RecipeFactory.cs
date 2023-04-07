@@ -34,7 +34,7 @@ public class RecipeFactory : IRecipeFactory
             creation.Name,
             new Ingredients(ingredients, _ingredientFactory),
             new PreparationSteps(preparationSteps, _preparationStepFactory),
-            new RecipeTags(Enumerable.Empty<RecipeTagId>())); // todo #341
+            new RecipeTags(creation.RecipeTagIds));
     }
 
     public IRecipe Create(RecipeId id, RecipeName name, IEnumerable<IIngredient> ingredients,

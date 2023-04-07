@@ -127,7 +127,8 @@ public class RecipeFactoryTests
                         i.DefaultItemTypeId)),
                     ExpectedResult.PreparationSteps.Select(p => new PreparationStepCreation(
                         p.Instruction,
-                        p.SortingIndex)));
+                        p.SortingIndex)),
+                    ExpectedResult.Tags);
             }
 
             public void SetupPreparationStepCreation()

@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Recipes;
 
@@ -24,10 +25,13 @@ public class CreateRecipeCommandConverter : IToDomainConverter<CreateRecipeContr
             i.DefaultItemId is null ? null : new ItemId(i.DefaultItemId.Value),
             i.DefaultItemTypeId is null ? null : new ItemTypeId(i.DefaultItemTypeId.Value)));
 
+        var tags = source.RecipeTagIds.Select(t => new RecipeTagId(t)).ToList();
+
         var creation = new RecipeCreation(
             new RecipeName(source.Name),
             ingredients,
-            steps);
+            steps,
+            tags);
 
         return new CreateRecipeCommand(creation);
     }
