@@ -26,8 +26,10 @@ internal static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IRecipeFactory>>(provider =>
         {
             var ingredientFactory = provider.GetRequiredService<Func<CancellationToken, IIngredientFactory>>();
+            var validator = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
             var preparationStepFactory = provider.GetRequiredService<IPreparationStepFactory>();
-            return cancellationToken => new RecipeFactory(ingredientFactory, preparationStepFactory, cancellationToken);
+            return cancellationToken =>
+                new RecipeFactory(ingredientFactory, validator, preparationStepFactory, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IRecipeCreationService>>(provider =>

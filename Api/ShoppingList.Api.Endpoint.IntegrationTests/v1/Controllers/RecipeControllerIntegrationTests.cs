@@ -96,10 +96,12 @@ public class RecipeControllerIntegrationTests
             public async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_model);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
 
                 await ApplyMigrationsAsync(ArrangeScope);
                 await using var itemCategoryContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
                 await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+                await using var tagContext = GetContextInstance<RecipeTagContext>(ArrangeScope);
 
                 foreach (var ingredient in _model.Ingredients)
                 {
@@ -130,8 +132,14 @@ public class RecipeControllerIntegrationTests
                     itemContext.Add(item);
                 }
 
+                foreach (var tagId in Contract.RecipeTagIds)
+                {
+                    tagContext.RecipeTags.Add(new RecipeTagEntityBuilder().WithId(tagId).Create());
+                }
+
                 await itemCategoryContext.SaveChangesAsync();
                 await itemContext.SaveChangesAsync();
+                await tagContext.SaveChangesAsync();
             }
 
             public void SetupContract()
@@ -574,6 +582,7 @@ public class RecipeControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategories);
                 TestPropertyNotSetException.ThrowIfNull(_items);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
 
                 await ApplyMigrationsAsync(ArrangeScope);
                 await using var dbContext = GetContextInstance<RecipeContext>(ArrangeScope);
