@@ -12,3 +12,4 @@ dotnet ef database update --context ShoppingListContext --no-build
 dotnet ef database update --context ItemContext --no-build
 dotnet ef database update --context StoreContext --no-build
 dotnet ef database update --context RecipeContext --no-build
+dotnet ef database update --context RecipeTagContext --no-build
