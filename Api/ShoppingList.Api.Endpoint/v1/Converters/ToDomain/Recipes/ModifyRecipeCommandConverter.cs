@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Recipes;
 
@@ -30,11 +31,14 @@ public class ModifyRecipeCommandConverter : IToDomainConverter<(Guid, ModifyReci
                 new PreparationStepInstruction(s.Instruction),
                 s.SortingIndex));
 
+        var tags = contract.RecipeTagIds.Select(t => new RecipeTagId(t));
+
         var model = new RecipeModification(
             new RecipeId(id),
             new RecipeName(contract.Name),
             ingredients,
-            steps);
+            steps,
+            tags);
 
         return new ModifyRecipeCommand(model);
     }

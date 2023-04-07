@@ -32,6 +32,7 @@ public class Recipe : AggregateRoot, IRecipe
         Name = modification.Name;
         await _ingredients.ModifyManyAsync(modification.IngredientModifications, validator);
         _steps.ModifyMany(modification.PreparationStepModifications);
+        await _tags.ModifyAsync(validator, modification.RecipeTagIds);
     }
 
     public void RemoveDefaultItem(ItemId defaultItemId)

@@ -1,10 +1,11 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 
 public class RecipeTags : IEnumerable<RecipeTagId>
 {
-    private readonly HashSet<RecipeTagId> _tags = new();
+    private HashSet<RecipeTagId> _tags = new();
 
     public RecipeTags(IEnumerable<RecipeTagId> tagIds)
     {
@@ -15,6 +16,15 @@ public class RecipeTags : IEnumerable<RecipeTagId>
 
             _tags.Add(tagId);
         }
+    }
+
+    public async Task ModifyAsync(IValidator validator, IEnumerable<RecipeTagId> recipeTagIds)
+    {
+        var tags = recipeTagIds.ToList();
+
+        await validator.ValidateAsync(tags);
+
+        _tags = new HashSet<RecipeTagId>(tags);
     }
 
     public IReadOnlyCollection<RecipeTagId> AsReadOnly()

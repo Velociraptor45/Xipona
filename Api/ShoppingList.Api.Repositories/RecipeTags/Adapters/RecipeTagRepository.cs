@@ -33,6 +33,20 @@ public class RecipeTagRepository : IRecipeTagRepository
         _cancellationToken = cancellationToken;
     }
 
+    public async Task<IEnumerable<RecipeTagId>> FindNonExistingInAsync(IEnumerable<RecipeTagId> recipeTagIds)
+    {
+        var rawTagIds = recipeTagIds.Select(r => r.Value).ToList();
+
+        var existingRecipeTagIds = await _dbContext.RecipeTags
+            .Where(r => rawTagIds.Contains(r.Id))
+            .Select(r => r.Id)
+            .ToListAsync(_cancellationToken);
+
+        return rawTagIds
+            .Except(existingRecipeTagIds)
+            .Select(t => new RecipeTagId(t));
+    }
+
     public async Task<IEnumerable<IRecipeTag>> FindAllAsync()
     {
         var entities = await _dbContext.RecipeTags.ToListAsync(_cancellationToken);

@@ -20,5 +20,5 @@ public class RecipeCreation
     public RecipeName Name { get; }
     public IReadOnlyCollection<IngredientCreation> IngredientCreations => _ingredientCreations;
     public IReadOnlyCollection<PreparationStepCreation> PreparationStepCreations => _preparationStepCreations;
-    public IEnumerable<RecipeTagId> RecipeTagIds { get; }
+    public IReadOnlyCollection<RecipeTagId> RecipeTagIds { get; }
 }

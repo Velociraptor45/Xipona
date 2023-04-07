@@ -7,4 +7,6 @@ public interface IRecipeTagRepository
     Task<IRecipeTag> StoreAsync(IRecipeTag recipeTag);
 
     Task<IEnumerable<IRecipeTag>> FindAllAsync();
+
+    Task<IEnumerable<RecipeTagId>> FindNonExistingInAsync(IEnumerable<RecipeTagId> recipeTagIds);
 }
