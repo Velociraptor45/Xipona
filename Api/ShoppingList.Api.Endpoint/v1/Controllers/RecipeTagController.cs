@@ -2,8 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.RecipeTags.Commands.CreateRecipeTag;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.RecipeTags.Queries.GetAll;
+using ProjectHermes.ShoppingList.Api.Contracts.Common;
+using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Queries.GetAll;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 using System.Threading;
@@ -40,5 +45,26 @@ public class RecipeTagController : ControllerBase
 
         var contracts = _converters.ToContract<IRecipeTag, RecipeTagContract>(recipeTags);
         return Ok(contracts);
+    }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(RecipeTagContract), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("")]
+    public async Task<IActionResult> CreateRecipeTagAsync(CreateRecipeTagContract contract,
+        CancellationToken cancellationToken = default)
+    {
+        var command = _converters.ToDomain<CreateRecipeTagContract, CreateRecipeTagCommand>(contract);
+        try
+        {
+            var result = await _commandDispatcher.DispatchAsync(command, cancellationToken);
+            var resultContract = _converters.ToContract<IRecipeTag, RecipeTagContract>(result);
+            return CreatedAtAction(nameof(GetAllRecipeTagsAsync), new { }, resultContract);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            return UnprocessableEntity(errorContract);
+        }
     }
 }

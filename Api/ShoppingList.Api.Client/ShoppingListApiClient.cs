@@ -384,6 +384,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.GetAllRecipeTagsAsync(cancellationToken);
         }
 
+        public async Task<RecipeTagContract> CreateRecipeTagAsync(CreateRecipeContract contract,
+            CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.CreateRecipeTagAsync(contract, cancellationToken);
+        }
+
         #endregion RecipeTagController
     }
 }
