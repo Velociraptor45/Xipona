@@ -54,4 +54,26 @@ public class RecipeEffects
         _navigationManager.NavigateTo($"{PageRoutes.Recipes}/{action.Id}");
         return Task.CompletedTask;
     }
+
+    [EffectMethod(typeof(LoadRecipeTagsAction))]
+    public async Task HandleLoadRecipeTagsAction(IDispatcher dispatcher)
+    {
+        List<RecipeTag> recipeTags;
+        try
+        {
+            recipeTags = (await _client.GetAllRecipeTagsAsync()).ToList();
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading recipe tags failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading recipe tags failed", e.Message));
+            return;
+        }
+
+        dispatcher.Dispatch(new LoadRecipeTagsFinishedAction(recipeTags));
+    }
 }

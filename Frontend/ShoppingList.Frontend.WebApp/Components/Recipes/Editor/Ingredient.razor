@@ -103,7 +103,7 @@ else
         Dispatcher.Dispatch(new LoadInitialItemsAction(Model));
         Dispatcher.Dispatch(new LoadInitialItemCategoryAction(Model));
     }
-    private void OnItemChanged(SearchItemByItemCategoryResult? itemSearchResult)
+    private void OnItemChanged(SearchItemByItemCategoryResult itemSearchResult)
     {
         if (itemSearchResult is null)
         {

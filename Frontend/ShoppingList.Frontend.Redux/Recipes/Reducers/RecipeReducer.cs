@@ -29,4 +29,13 @@ public static class RecipeReducer
             }
         };
     }
+
+    [ReducerMethod]
+    public static RecipeState OnLoadRecipeTagsFinished(RecipeState state, LoadRecipeTagsFinishedAction action)
+    {
+        return state with
+        {
+            RecipeTags = action.RecipeTags.OrderBy(t => t.Name).ToList()
+        };
+    }
 }

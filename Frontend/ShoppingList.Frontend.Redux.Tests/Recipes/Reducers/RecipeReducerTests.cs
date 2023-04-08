@@ -128,6 +128,73 @@ public class RecipeReducerTests
         }
     }
 
+    public class OnLoadRecipeTagsFinished
+    {
+        private readonly OnLoadRecipeTagsFinishedFixture _fixture;
+
+        public OnLoadRecipeTagsFinished()
+        {
+            _fixture = new OnLoadRecipeTagsFinishedFixture();
+        }
+
+        [Fact]
+        public void OnLoadRecipeTagsFinished_WithValidData_ShouldSortResults()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = RecipeReducer.OnLoadRecipeTagsFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState, opt => opt.WithStrictOrdering());
+        }
+
+        private sealed class OnLoadRecipeTagsFinishedFixture : RecipeReducerFixture
+        {
+            public LoadRecipeTagsFinishedAction? Action { get; private set; }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    RecipeTags = new DomainTestBuilder<RecipeTag>().CreateMany(2).ToList()
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    RecipeTags = new List<RecipeTag>
+                    {
+                        new DomainTestBuilder<RecipeTag>().Create() with
+                        {
+                            Name = $"A{new DomainTestBuilder<string>().Create()}"
+                        },
+                        new DomainTestBuilder<RecipeTag>().Create() with
+                        {
+                            Name = $"B{new DomainTestBuilder<string>().Create()}"
+                        },
+                        new DomainTestBuilder<RecipeTag>().Create() with
+                        {
+                            Name = $"Z{new DomainTestBuilder<string>().Create()}"
+                        }
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new LoadRecipeTagsFinishedAction(ExpectedState.RecipeTags.Reverse().ToList());
+            }
+        }
+    }
+
     private abstract class RecipeReducerFixture
     {
         public RecipeState ExpectedState { get; protected set; } = new DomainTestBuilder<RecipeState>().Create();

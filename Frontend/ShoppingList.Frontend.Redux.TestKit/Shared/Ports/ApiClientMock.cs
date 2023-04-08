@@ -1,6 +1,7 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder.Extensions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
@@ -196,5 +197,27 @@ public class ApiClientMock : Mock<IApiClient>
         this.SetupInOrder(m => m.DeleteItemAsync(
                 It.Is<DeleteItemRequest>(r => r.IsRequestEquivalentTo(request))))
             .ThrowsAsync(ex);
+    }
+
+    public void SetupSearchRecipesByNameAsync(string searchInput, IEnumerable<RecipeSearchResult> returnValue)
+    {
+        this.SetupInOrder(m => m.SearchRecipesByNameAsync(searchInput))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupSearchRecipesByNameAsyncThrowing(string searchInput, Exception ex)
+    {
+        this.SetupInOrder(m => m.SearchRecipesByNameAsync(searchInput)).ThrowsAsync(ex);
+    }
+
+    public void SetupGetAllRecipeTagsAsync(IEnumerable<RecipeTag> returnValue)
+    {
+        this.SetupInOrder(m => m.GetAllRecipeTagsAsync())
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetAllRecipeTagsAsyncThrowing(Exception ex)
+    {
+        this.SetupInOrder(m => m.GetAllRecipeTagsAsync()).ThrowsAsync(ex);
     }
 }
