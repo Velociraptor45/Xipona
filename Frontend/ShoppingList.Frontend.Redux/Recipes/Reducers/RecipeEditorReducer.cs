@@ -125,7 +125,7 @@ public static class RecipeEditorReducer
 
         return state with
         {
-            RecipeTags = allTags,
+            RecipeTags = allTags.OrderBy(t => t.Name).ToList(),
             Editor = state.Editor with
             {
                 Recipe = state.Editor.Recipe with

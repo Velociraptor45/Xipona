@@ -302,6 +302,317 @@ public class RecipeEditorReducerTests
         }
     }
 
+    public class OnRecipeTagInputChanged
+    {
+        private readonly OnRecipeTagInputChangedFixture _fixture;
+
+        public OnRecipeTagInputChanged()
+        {
+            _fixture = new OnRecipeTagInputChangedFixture();
+        }
+
+        [Fact]
+        public void OnRecipeTagInputChanged_WithValidData_ShouldSetInput()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = RecipeEditorReducer.OnRecipeTagInputChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnRecipeTagInputChangedFixture : RecipeEditorReducerFixture
+        {
+            public RecipeTagInputChangedAction? Action { get; private set; }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        RecipeTagCreateInput = new DomainTestBuilder<string>().Create()
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new RecipeTagInputChangedAction(ExpectedState.Editor.RecipeTagCreateInput);
+            }
+        }
+    }
+
+    public class OnRecipeTagsDropdownClosed
+    {
+        private readonly OnRecipeTagsDropdownClosedFixture _fixture;
+
+        public OnRecipeTagsDropdownClosed()
+        {
+            _fixture = new OnRecipeTagsDropdownClosedFixture();
+        }
+
+        [Fact]
+        public void OnRecipeTagsDropdownClosed_ShouldClearRecipeTagInput()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = RecipeEditorReducer.OnRecipeTagsDropdownClosed(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnRecipeTagsDropdownClosedFixture : RecipeEditorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        RecipeTagCreateInput = new DomainTestBuilder<string>().Create()
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        RecipeTagCreateInput = string.Empty
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnRecipeTagsChanged
+    {
+        private readonly OnRecipeTagsChangedFixture _fixture;
+
+        public OnRecipeTagsChanged()
+        {
+            _fixture = new OnRecipeTagsChangedFixture();
+        }
+
+        [Fact]
+        public void OnRecipeTagsChanged_WithValidData_ShouldSetRecipeTagIds()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = RecipeEditorReducer.OnRecipeTagsChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnRecipeTagsChanged_WithRecipeNull_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithRecipeNull();
+            _fixture.SetupExpectedStateWithRecipeNull();
+            _fixture.SetupActionForRecipeNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = RecipeEditorReducer.OnRecipeTagsChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnRecipeTagsChangedFixture : RecipeEditorReducerFixture
+        {
+            public RecipeTagsChangedAction? Action { get; private set; }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            RecipeTagIds = new DomainTestBuilder<Guid>().CreateMany(2).ToList()
+                        }
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithRecipeNull()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithRecipeNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new RecipeTagsChangedAction(ExpectedState.Editor.Recipe!.RecipeTagIds);
+            }
+
+            public void SetupActionForRecipeNull()
+            {
+                Action = new DomainTestBuilder<RecipeTagsChangedAction>().Create();
+            }
+        }
+    }
+
+    public class OnCreateNewRecipeTagFinished
+    {
+        private readonly OnCreateNewRecipeTagFinishedFixture _fixture;
+
+        public OnCreateNewRecipeTagFinished()
+        {
+            _fixture = new OnCreateNewRecipeTagFinishedFixture();
+        }
+
+        [Fact]
+        public void OnCreateNewRecipeTagFinished_WithValidData_ShouldSetRecipeTagIds()
+        {
+            // Arrange
+            _fixture.SetupExpectedState();
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = RecipeEditorReducer.OnCreateNewRecipeTagFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCreateNewRecipeTagFinished_WithRecipeNull_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithRecipeNull();
+            _fixture.SetupExpectedStateWithRecipeNull();
+            _fixture.SetupActionForRecipeNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = RecipeEditorReducer.OnCreateNewRecipeTagFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnCreateNewRecipeTagFinishedFixture : RecipeEditorReducerFixture
+        {
+            public CreateNewRecipeTagFinishedAction? Action { get; private set; }
+
+            public void SetupExpectedState()
+            {
+                var tag = ExpectedState.RecipeTags.ElementAt(1);
+                var recipeTagIds = ExpectedState.Editor.Recipe!.RecipeTagIds.ToList();
+                recipeTagIds.RemoveAt(recipeTagIds.Count - 1);
+                recipeTagIds.Add(tag.Id);
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            RecipeTagIds = recipeTagIds
+                        }
+                    }
+                };
+            }
+
+            public void SetupInitialState()
+            {
+                var allTags = ExpectedState.RecipeTags.ToList();
+                allTags.RemoveAt(1);
+
+                var recipeTagIds = ExpectedState.Editor.Recipe!.RecipeTagIds.ToList();
+                recipeTagIds.RemoveAt(recipeTagIds.Count - 1);
+
+                InitialState = ExpectedState with
+                {
+                    RecipeTags = allTags,
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            RecipeTagIds = recipeTagIds
+                        }
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithRecipeNull()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithRecipeNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new CreateNewRecipeTagFinishedAction(ExpectedState.RecipeTags.ElementAt(1));
+            }
+
+            public void SetupActionForRecipeNull()
+            {
+                Action = new DomainTestBuilder<CreateNewRecipeTagFinishedAction>().Create();
+            }
+        }
+    }
+
     private abstract class RecipeEditorReducerFixture
     {
         public RecipeState ExpectedState { get; protected set; } = new DomainTestBuilder<RecipeState>().Create();
