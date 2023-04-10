@@ -3,6 +3,7 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.Editor
@@ -19,16 +20,15 @@
     {
         @if (State.Value.Editor.IsInEditMode)
         {
-            <div class="d-flex">
-                <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+            <div class="d-flex recipe-editor-top-row-parent">
+                <Button Class="recipe-editor-top-row d-flex align-items-center" OnClick="@OnBackButtonClicked">
                     <Icon Type="arrow-left"></Icon>
                 </Button>
-                <div class="mx-3">
+                <div class="mx-3 recipe-editor-top-row">
                     <Input TValue="string" Value="@State.Value.Editor.Recipe.Name" ValueChanged="OnNameChanged"/>
                 </div>
-                <div>
+                <div class="recipe-editor-top-row">
                     <MultiSelect
-                        Class="min-w-150"
                         TItem="RecipeTag"
                         TValue="Guid"
                         DataSource="@State.Value.RecipeTags"
@@ -37,14 +37,14 @@
                         OnItemsChanged="@OnRecipeTagsChanged"
                         OnItemAdded="@OnRecipeTagCreated"
                         OnInputChanged="OnRecipeTagInputChanged"
-                        Placeholder="Item Category"
+                        Placeholder="Tags"
                         Values="@State.Value.Editor.Recipe.RecipeTagIds"
                         SearchInput="@State.Value.Editor.RecipeTagCreateInput"
                         OnDropdownClosed="OnRecipeTagsDropdownClosed"
                         CanAddItem="true">
                     </MultiSelect>
                 </div>
-                <Button Class="d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
+                <Button Class="recipe-editor-top-row d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
                     <Icon Type="edit"></Icon>
                 </Button>
             </div>
@@ -101,14 +101,20 @@
         }
         else
         {
-            <div class="d-flex">
-                <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+            <div class="d-flex recipe-editor-top-row-parent">
+                <Button Class="recipe-editor-top-row d-flex align-items-center" OnClick="@OnBackButtonClicked">
                     <Icon Type="arrow-left"></Icon>
                 </Button>
-                <div class="mx-3 recipe-editor-view-name">
+                <div class="mx-3 recipe-editor-view-name recipe-editor-top-row">
                     @State.Value.Editor.Recipe.Name
                 </div>
-                <Button Class="d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
+                <div class="align-self-center recipe-editor-top-row">
+                    @foreach (var tag in State.Value.GetTagNamesFor(State.Value.Editor.Recipe.RecipeTagIds))
+                    {
+                        <span class="recipe-editor-view-tag">@tag</span>
+                    }
+                </div>
+                <Button Class="recipe-editor-top-row d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
                     <Icon Type="edit"></Icon>
                 </Button>
             </div>
@@ -148,6 +154,7 @@
         base.OnInitialized();
 
         Dispatcher.Dispatch(new LoadIngredientQuantityTypesAction());
+        Dispatcher.Dispatch(new LoadRecipeTagsAction());
 
         if(RecipeId == Guid.Empty)
             Dispatcher.Dispatch(new SetNewRecipeAction());

@@ -40,6 +40,7 @@
     {
         base.OnInitialized();
         Dispatcher.Dispatch(new EnterRecipeSearchPageAction());
+        Dispatcher.Dispatch(new LoadRecipeTagsAction());
     }
 
     private void OnLoadButtonClicked()

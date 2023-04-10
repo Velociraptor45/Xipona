@@ -71,11 +71,28 @@
     .recipe-editor-view-content {
         display: block;
     }
+
+    .recipe-editor-top-row:nth-child(3) {
+        order: 4;
+        flex-basis: 100%;
+        margin-top: 5px;
+        margin-left: 62px;
+    }
+}
+
+.recipe-editor-top-row-parent {
+    flex-wrap: wrap;
 }
 
 .recipe-editor-view-name {
     font-weight: bold;
     font-size: 21px
+}
+
+.recipe-editor-view-tag {
+    margin-right: 4px;
+    background-color: #eaeaea;
+    padding: 1px 3px;
 }
 
 hr {
