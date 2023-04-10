@@ -172,18 +172,15 @@ public class RecipeReducerTests
                 {
                     RecipeTags = new List<RecipeTag>
                     {
-                        new DomainTestBuilder<RecipeTag>().Create() with
-                        {
-                            Name = $"A{new DomainTestBuilder<string>().Create()}"
-                        },
-                        new DomainTestBuilder<RecipeTag>().Create() with
-                        {
-                            Name = $"B{new DomainTestBuilder<string>().Create()}"
-                        },
-                        new DomainTestBuilder<RecipeTag>().Create() with
-                        {
-                            Name = $"Z{new DomainTestBuilder<string>().Create()}"
-                        }
+                        new DomainTestBuilder<RecipeTag>()
+                            .FillPropertyWith(r => r.Name, $"A{new DomainTestBuilder<string>().Create()}")
+                            .Create(),
+                        new DomainTestBuilder<RecipeTag>()
+                            .FillPropertyWith(r => r.Name, $"B{new DomainTestBuilder<string>().Create()}")
+                            .Create(),
+                        new DomainTestBuilder<RecipeTag>()
+                            .FillPropertyWith(r => r.Name, $"Z{new DomainTestBuilder<string>().Create()}")
+                            .Create(),
                     }
                 };
             }

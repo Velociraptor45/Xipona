@@ -32,7 +32,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.Redux
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01_Execution", "01_Execution", "{866EDF30-7112-4ADC-9B81-E09B32269A87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Frontend.WebApp.Tests", "ShoppingList.Frontend.WebApp.Tests\ShoppingList.Frontend.WebApp.Tests.csproj", "{DC2DDC9A-F65B-4E69-A99F-927AB756FC97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.WebApp.Tests", "ShoppingList.Frontend.WebApp.Tests\ShoppingList.Frontend.WebApp.Tests.csproj", "{DC2DDC9A-F65B-4E69-A99F-927AB756FC97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -25,6 +25,7 @@ public class RecipeFeatureState : Feature<RecipeState>
                 new List<RecipeSearchResult>(0)),
             new RecipeEditor(
                 null,
+                string.Empty,
                 false));
     }
 }

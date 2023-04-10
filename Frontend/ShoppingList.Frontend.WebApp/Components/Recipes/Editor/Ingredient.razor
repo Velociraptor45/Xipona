@@ -24,7 +24,7 @@
                     ValueName="@nameof(ItemCategorySearchResult.Id)"
                     LabelName="@nameof(ItemCategorySearchResult.Name)"
                     OnItemChanged="@OnItemCategoryChanged"
-                    OnItemAdded="@OnNewItemCategoryCreatedAsync"
+                    OnItemAdded="@OnNewItemCategoryCreated"
                     OnInputChanged="OnItemCategoryInputChanged"
                     Placeholder="Item Category"
                     Value="@Model.ItemCategoryId"
@@ -135,7 +135,7 @@ else
         Dispatcher.Dispatch(new SelectedItemCategoryChangedAction(Model.Key, itemCategory.Id));
     }
 
-    private void OnNewItemCategoryCreatedAsync()
+    private void OnNewItemCategoryCreated()
     {
         Dispatcher.Dispatch(new CreateNewItemCategoryAction(Model.Key));
     }

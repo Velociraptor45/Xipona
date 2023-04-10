@@ -26,6 +26,24 @@
                 <div class="mx-3">
                     <Input TValue="string" Value="@State.Value.Editor.Recipe.Name" ValueChanged="OnNameChanged"/>
                 </div>
+                <div>
+                    <MultiSelect
+                        Class="min-w-150"
+                        TItem="RecipeTag"
+                        TValue="Guid"
+                        DataSource="@State.Value.RecipeTags"
+                        ValueName="@nameof(RecipeTag.Id)"
+                        LabelName="@nameof(RecipeTag.Name)"
+                        OnItemsChanged="@OnRecipeTagsChanged"
+                        OnItemAdded="@OnRecipeTagCreated"
+                        OnInputChanged="OnRecipeTagInputChanged"
+                        Placeholder="Item Category"
+                        Values="@State.Value.Editor.Recipe.RecipeTagIds"
+                        SearchInput="@State.Value.Editor.RecipeTagCreateInput"
+                        OnDropdownClosed="OnRecipeTagsDropdownClosed"
+                        CanAddItem="true">
+                    </MultiSelect>
+                </div>
                 <Button Class="d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
                     <Icon Type="edit"></Icon>
                 </Button>
@@ -190,5 +208,25 @@
     private void OnPreparationStepTextChanged(EditedPreparationStep step, string text)
     {
         Dispatcher.Dispatch(new PreparationStepTextChangedAction(step.Key, text));
+    }
+
+    private void OnRecipeTagsChanged(IEnumerable<RecipeTag> tags)
+    {
+        Dispatcher.Dispatch(new RecipeTagsChangedAction(tags.Select(t => t.Id).ToList()));
+    }
+
+    private void OnRecipeTagCreated()
+    {
+        Dispatcher.Dispatch(new CreateNewRecipeTagAction());
+    }
+
+    private void OnRecipeTagInputChanged(string input)
+    {
+        Dispatcher.Dispatch(new RecipeTagInputChangedAction(input));
+    }
+
+    private void OnRecipeTagsDropdownClosed()
+    {
+        Dispatcher.Dispatch(new RecipeTagsDropdownClosedAction());
     }
 }

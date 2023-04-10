@@ -220,4 +220,48 @@ public class ApiClientMock : Mock<IApiClient>
     {
         this.SetupInOrder(m => m.GetAllRecipeTagsAsync()).ThrowsAsync(ex);
     }
+
+    public void SetupGetRecipeByIdAsync(Guid recipeId, EditedRecipe returnValue)
+    {
+        this.SetupInOrder(m => m.GetRecipeByIdAsync(recipeId))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetRecipeByIdAsyncThrowing(Guid recipeId, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetRecipeByIdAsync(recipeId)).ThrowsAsync(ex);
+    }
+
+    public void SetupModifyRecipeAsync(EditedRecipe recipe)
+    {
+        this.SetupInOrder(m => m.ModifyRecipeAsync(recipe))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupModifyRecipeAsyncThrowing(EditedRecipe recipe, Exception ex)
+    {
+        this.SetupInOrder(m => m.ModifyRecipeAsync(recipe)).ThrowsAsync(ex);
+    }
+
+    public void SetupCreateRecipeAsync(EditedRecipe recipe, EditedRecipe returnValue)
+    {
+        this.SetupInOrder(m => m.CreateRecipeAsync(recipe))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupCreateRecipeAsyncThrowing(EditedRecipe recipe, Exception ex)
+    {
+        this.SetupInOrder(m => m.CreateRecipeAsync(recipe)).ThrowsAsync(ex);
+    }
+
+    public void SetupCreateRecipeTagAsync(string recipeTag, RecipeTag returnValue)
+    {
+        this.SetupInOrder(m => m.CreateRecipeTagAsync(recipeTag))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupCreateRecipeTagAsyncThrowing(string recipeTag, Exception ex)
+    {
+        this.SetupInOrder(m => m.CreateRecipeTagAsync(recipeTag)).ThrowsAsync(ex);
+    }
 }
