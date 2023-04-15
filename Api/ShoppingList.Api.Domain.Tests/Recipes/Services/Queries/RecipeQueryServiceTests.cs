@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
@@ -163,6 +164,91 @@ public class RecipeQueryServiceTests
                 TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
 
                 RecipeRepositoryMock.SetupSearchByAsync(SearchInput, ExpectedResult);
+            }
+        }
+    }
+
+    public sealed class SearchByTagIdsAsync
+    {
+        private readonly SearchByTagIdsAsyncFixture _fixture;
+
+        public SearchByTagIdsAsync(ITestOutputHelper output)
+        {
+            _fixture = new SearchByTagIdsAsyncFixture(output);
+        }
+
+        [Fact]
+        public async Task SearchByTagIdsAsync_WithRecipeTagIdsEmpty_ShouldReturnEmptyCollection()
+        {
+            // Arrange
+            _fixture.SetupRecipeTagIdsEmpty();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.RecipeTagIds);
+
+            // Act
+            var results = await sut.SearchByTagIdsAsync(_fixture.RecipeTagIds);
+
+            // Assert
+            results.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task SearchByTagIdsAsync_WithRecipeTagIdsNotEmpty_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupRecipeTagIds();
+            _fixture.SetupExpectedResult();
+            _fixture.SetupFindingSearchResults();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.RecipeTagIds);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var results = await sut.SearchByTagIdsAsync(_fixture.RecipeTagIds);
+
+            // Assert
+            results.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class SearchByTagIdsAsyncFixture : RecipeQueryServiceFixture
+        {
+            public SearchByTagIdsAsyncFixture(ITestOutputHelper output) : base(output)
+            {
+            }
+
+            public IEnumerable<RecipeSearchResult>? ExpectedResult { get; private set; }
+            public IReadOnlyCollection<RecipeTagId>? RecipeTagIds { get; private set; }
+
+            public void SetupExpectedResult()
+            {
+                ExpectedResult = new DomainTestBuilder<RecipeSearchResult>().CreateMany(3);
+            }
+
+            public void SetupRecipeTagIds()
+            {
+                RecipeTagIds = new DomainTestBuilder<RecipeTagId>().CreateMany(3).ToList();
+            }
+
+            public void SetupRecipeTagIdsEmpty()
+            {
+                RecipeTagIds = new List<RecipeTagId>();
+            }
+
+            public void SetupFindingSearchResults()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                TestPropertyNotSetException.ThrowIfNull(RecipeTagIds);
+
+                var results = ExpectedResult
+                    .Select(r => new RecipeBuilder()
+                        .WithId(r.Id)
+                        .WithName(r.Name)
+                        .Create())
+                    .ToList<IRecipe>();
+
+                RecipeRepositoryMock.SetupFindByAsync(RecipeTagIds, results);
             }
         }
     }

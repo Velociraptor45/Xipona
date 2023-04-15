@@ -8,6 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities;
 using Recipe = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Recipe;
@@ -46,6 +47,16 @@ public class RecipeRepository : IRecipeRepository
             .ToListAsync(_cancellationToken);
 
         return _searchToModelConverter.ToDomain(entities);
+    }
+
+    public async Task<IEnumerable<IRecipe>> FindByAsync(IEnumerable<RecipeTagId> recipeTagIds)
+    {
+        var rawRecipeTagIds = recipeTagIds.Select(t => t.Value).ToList();
+
+        var entities = await GetRecipeQuery()
+            .Where(r => r.Tags.Any(t => rawRecipeTagIds.Contains(t.RecipeTagId)))
+            .ToListAsync(_cancellationToken);
+        return _toModelConverter.ToDomain(entities);
     }
 
     public async Task<IRecipe?> FindByAsync(RecipeId recipeId)

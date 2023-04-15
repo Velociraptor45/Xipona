@@ -357,6 +357,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.SearchRecipesByNameAsync(searchInput, cancellationToken);
         }
 
+        public async Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByTagsAsync(
+            IEnumerable<Guid> tagIds, CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.SearchRecipesByTagsAsync(tagIds, cancellationToken);
+        }
+
         public async Task<IEnumerable<IngredientQuantityTypeContract>> GetAllIngredientQuantityTypes(
             CancellationToken cancellationToken = default)
         {

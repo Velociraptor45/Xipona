@@ -243,8 +243,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Get("recipes/{id}")]
         Task<RecipeContract> GetRecipeByIdAsync([Path] Guid id, CancellationToken cancellationToken = default);
 
-        [Get("recipes")]
+        [Get("recipes/search-by-name")]
         Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByNameAsync([Query] string searchInput,
+            CancellationToken cancellationToken = default);
+
+        [Get("recipes/search-by-tags")]
+        Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByTagsAsync([Query] IEnumerable<Guid> tagIds,
             CancellationToken cancellationToken = default);
 
         [Get("recipes/ingredient-quantity-types")]
