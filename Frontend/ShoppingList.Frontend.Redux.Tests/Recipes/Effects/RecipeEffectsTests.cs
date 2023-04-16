@@ -252,7 +252,7 @@ public class RecipeEffectsTests
 
         private sealed class HandleSearchRecipeByTagsActionFixture : RecipeEffectsFixture
         {
-            private IReadOnlyCollection<Guid> _selectedTags;
+            private IReadOnlyCollection<Guid>? _selectedTags;
             private List<RecipeSearchResult>? _expectedRecipeSearchResults;
 
             public void SetupNoSelectedTags()
