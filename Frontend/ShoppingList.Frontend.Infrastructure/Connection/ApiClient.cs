@@ -401,4 +401,12 @@ public class ApiClient : IApiClient
         var result = await _client.CreateRecipeTagAsync(contract);
         return _converters.ToDomain<RecipeTagContract, RecipeTag>(result);
     }
+
+    public async Task<IEnumerable<RecipeSearchResult>> SearchRecipesByTagsAsync(IEnumerable<Guid> tagIds)
+    {
+        var results = await _client.SearchRecipesByTagsAsync(tagIds);
+        return results is null
+            ? Enumerable.Empty<RecipeSearchResult>()
+            : _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
+    }
 }

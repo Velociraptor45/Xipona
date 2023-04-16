@@ -38,4 +38,17 @@ public static class RecipeReducer
             RecipeTags = action.RecipeTags.OrderBy(t => t.Name).ToList()
         };
     }
+
+    [ReducerMethod]
+    public static RecipeState OnSelectedSearchRecipeTagIdsChanged(RecipeState state,
+        SelectedSearchRecipeTagIdsChangedAction action)
+    {
+        return state with
+        {
+            Search = state.Search with
+            {
+                SelectedRecipeTagIds = action.SelectedRecipeTagIds
+            }
+        };
+    }
 }

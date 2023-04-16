@@ -264,4 +264,16 @@ public class ApiClientMock : Mock<IApiClient>
     {
         this.SetupInOrder(m => m.CreateRecipeTagAsync(recipeTag)).ThrowsAsync(ex);
     }
+
+    public void SetupSearchRecipesByTagsAsync(IEnumerable<Guid> tags,
+        IEnumerable<RecipeSearchResult> returnValue)
+    {
+        this.SetupInOrder(m => m.SearchRecipesByTagsAsync(tags))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupSearchRecipesByTagsAsyncThrowing(IEnumerable<Guid> tags, Exception ex)
+    {
+        this.SetupInOrder(m => m.SearchRecipesByTagsAsync(tags)).ThrowsAsync(ex);
+    }
 }

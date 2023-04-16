@@ -11,12 +11,12 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.Recipes.Effects;
 
 public class RecipeEffectsTests
 {
-    public class HandleSearchRecipeAction
+    public class HandleSearchRecipeByNameAction
     {
-        private readonly HandleSearchRecipeActionFixture _fixture = new();
+        private readonly HandleSearchRecipeByNameActionFixture _fixture = new();
 
         [Fact]
-        public async Task HandleSearchRecipeAction_WithValidData_ShouldDispatchFinishedAction()
+        public async Task HandleSearchRecipeByNameAction_WithValidData_ShouldDispatchFinishedAction()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -31,7 +31,7 @@ public class RecipeEffectsTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
             // Act
-            await sut.HandleSearchRecipeAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchRecipeByNameAction(_fixture.Action, _fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -40,7 +40,7 @@ public class RecipeEffectsTests
         [Theory]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task HandleSearchRecipeAction_WithValidData_ShouldDispatchEmptyFinishedAction(string searchInput)
+        public async Task HandleSearchRecipeByNameAction_WithEmptySearchInput_ShouldDispatchEmptyFinishedAction(string searchInput)
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -54,14 +54,14 @@ public class RecipeEffectsTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
             // Act
-            await sut.HandleSearchRecipeAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchRecipeByNameAction(_fixture.Action, _fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
         }
 
         [Fact]
-        public async Task HandleSearchRecipeAction_WithErrorInApi_ShouldDispatchApiExceptionNotificationAction()
+        public async Task HandleSearchRecipeByNameAction_WithErrorInApi_ShouldDispatchApiExceptionNotificationAction()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -76,14 +76,14 @@ public class RecipeEffectsTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
             // Act
-            await sut.HandleSearchRecipeAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchRecipeByNameAction(_fixture.Action, _fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
         }
 
         [Fact]
-        public async Task HandleSearchRecipeAction_WithErrorWhileTransmittingRequest_ShouldDispatchErrorNotificationAction()
+        public async Task HandleSearchRecipeByNameAction_WithErrorWhileTransmittingRequest_ShouldDispatchErrorNotificationAction()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -98,17 +98,17 @@ public class RecipeEffectsTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
             // Act
-            await sut.HandleSearchRecipeAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchRecipeByNameAction(_fixture.Action, _fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
         }
 
-        private sealed class HandleSearchRecipeActionFixture : RecipeEffectsFixture
+        private sealed class HandleSearchRecipeByNameActionFixture : RecipeEffectsFixture
         {
             private string? _searchInput;
             private List<RecipeSearchResult>? _expectedRecipeSearchResults;
-            public SearchRecipeAction? Action { get; private set; }
+            public SearchRecipeByNameAction? Action { get; private set; }
 
             public void SetupSearchInput()
             {
@@ -145,7 +145,159 @@ public class RecipeEffectsTests
             public void SetupAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
-                Action = new SearchRecipeAction(_searchInput);
+                Action = new SearchRecipeByNameAction(_searchInput);
+            }
+
+            public void SetupDispatchingEmptyFinishedAction()
+            {
+                SetupDispatchingAction(new SearchRecipeFinishedAction(new List<RecipeSearchResult>()));
+            }
+
+            public void SetupDispatchingFinishedAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedRecipeSearchResults);
+                SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults));
+            }
+
+            public void SetupDispatchingExceptionNotificationAction()
+            {
+                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+            }
+
+            public void SetupDispatchingErrorNotificationAction()
+            {
+                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
+            }
+        }
+    }
+
+    public class HandleSearchRecipeByTagsAction
+    {
+        private readonly HandleSearchRecipeByTagsActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleSearchRecipeByTagsAction_WithValidData_ShouldDispatchFinishedAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupSelectedTags();
+                _fixture.SetupSearchingSuccessfully();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSearchRecipeByTagsAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleSearchRecipeByTagsAction_WithoutSelectedTags_ShouldDispatchEmptyFinishedAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupNoSelectedTags();
+                _fixture.SetupDispatchingEmptyFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSearchRecipeByTagsAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleSearchRecipeByTagsAction_WithErrorInApi_ShouldDispatchApiExceptionNotificationAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupSelectedTags();
+                _fixture.SetupSearchingFailedWithErrorInApi();
+                _fixture.SetupDispatchingExceptionNotificationAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSearchRecipeByTagsAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleSearchRecipeByTagsAction_WithErrorWhileTransmittingRequest_ShouldDispatchErrorNotificationAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupSelectedTags();
+                _fixture.SetupSearchingFailedWithErrorWhileTransmittingRequest();
+                _fixture.SetupDispatchingErrorNotificationAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSearchRecipeByTagsAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleSearchRecipeByTagsActionFixture : RecipeEffectsFixture
+        {
+            private IReadOnlyCollection<Guid> _selectedTags;
+            private List<RecipeSearchResult>? _expectedRecipeSearchResults;
+
+            public void SetupNoSelectedTags()
+            {
+                SetupSelectedTags(Enumerable.Empty<Guid>());
+            }
+
+            public void SetupSelectedTags()
+            {
+                SetupSelectedTags(new DomainTestBuilder<Guid>().CreateMany(2));
+            }
+
+            private void SetupSelectedTags(IEnumerable<Guid> selectedTags)
+            {
+                _selectedTags = selectedTags.ToList();
+                State = State with
+                {
+                    Search = State.Search with
+                    {
+                        SelectedRecipeTagIds = _selectedTags
+                    }
+                };
+                SetupStateReturningState();
+            }
+
+            public void SetupSearchingSuccessfully()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_selectedTags);
+
+                _expectedRecipeSearchResults = new DomainTestBuilder<RecipeSearchResult>().CreateMany(2).ToList();
+                ApiClientMock.SetupSearchRecipesByTagsAsync(_selectedTags, _expectedRecipeSearchResults);
+            }
+
+            public void SetupSearchingFailedWithErrorInApi()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_selectedTags);
+                ApiClientMock.SetupSearchRecipesByTagsAsyncThrowing(_selectedTags,
+                    new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupSearchingFailedWithErrorWhileTransmittingRequest()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_selectedTags);
+                ApiClientMock.SetupSearchRecipesByTagsAsyncThrowing(_selectedTags,
+                    new DomainTestBuilder<HttpRequestException>().Create());
             }
 
             public void SetupDispatchingEmptyFinishedAction()
@@ -272,7 +424,7 @@ public class RecipeEffectsTests
         public RecipeEffects CreateSut()
         {
             SetupStateReturningState();
-            return new RecipeEffects(ApiClientMock.Object, NavigationManagerMock.Object);
+            return new RecipeEffects(ApiClientMock.Object, NavigationManagerMock.Object, RecipeStateMock.Object);
         }
     }
 }

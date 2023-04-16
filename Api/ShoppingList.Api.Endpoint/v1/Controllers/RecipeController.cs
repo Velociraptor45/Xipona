@@ -105,10 +105,10 @@ public class RecipeController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<RecipeSearchResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("search-by-tags")]
-    public async Task<IActionResult> SearchRecipesByTagsAsync([FromQuery] IEnumerable<Guid> tags,
+    public async Task<IActionResult> SearchRecipesByTagsAsync([FromQuery] IEnumerable<Guid> tagIds,
         CancellationToken cancellationToken = default)
     {
-        var query = new SearchRecipesByTagsQuery(tags.Select(t => new RecipeTagId(t)));
+        var query = new SearchRecipesByTagsQuery(tagIds.Select(t => new RecipeTagId(t)));
 
         var results = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
         if (!results.Any())

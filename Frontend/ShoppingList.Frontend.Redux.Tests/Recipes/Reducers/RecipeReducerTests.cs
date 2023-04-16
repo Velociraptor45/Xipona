@@ -192,6 +192,53 @@ public class RecipeReducerTests
         }
     }
 
+    public class OnSelectedSearchRecipeTagIdsChanged
+    {
+        private readonly OnSelectedSearchRecipeTagIdsChangedFixture _fixture;
+
+        public OnSelectedSearchRecipeTagIdsChanged()
+        {
+            _fixture = new OnSelectedSearchRecipeTagIdsChangedFixture();
+        }
+
+        [Fact]
+        public void OnSelectedSearchRecipeTagIdsChanged_WithValidData_ShouldSetRecipeTagIds()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = RecipeReducer.OnSelectedSearchRecipeTagIdsChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState, opt => opt.WithStrictOrdering());
+        }
+
+        private sealed class OnSelectedSearchRecipeTagIdsChangedFixture : RecipeReducerFixture
+        {
+            public SelectedSearchRecipeTagIdsChangedAction? Action { get; private set; }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Search = ExpectedState.Search with
+                    {
+                        SelectedRecipeTagIds = new DomainTestBuilder<Guid>().CreateMany(2).ToList()
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new SelectedSearchRecipeTagIdsChangedAction(ExpectedState.Search.SelectedRecipeTagIds);
+            }
+        }
+    }
+
     private abstract class RecipeReducerFixture
     {
         public RecipeState ExpectedState { get; protected set; } = new DomainTestBuilder<RecipeState>().Create();
