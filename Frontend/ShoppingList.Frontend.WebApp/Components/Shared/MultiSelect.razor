@@ -13,7 +13,7 @@
         OnSelectedItemsChanged="OnSelectedItemsChanged"
         AllowClear="@AllowClear"
         DropdownRender="@OnRender"
-        IgnoreItemChanges="false"
+        IgnoreItemChanges="@IgnoreItemChanges"
         OnDropdownVisibleChange="OnDropdownToggle"
         OnClearSelected="() => OnClear?.Invoke()"
         AutoClearSearchValue="false"
@@ -41,6 +41,8 @@
 
     [Parameter] public IEnumerable<TValue> Values { get; set; }
     [Parameter] public string SearchInput { get; set; }
+
+    [Parameter] public bool IgnoreItemChanges { get; set; }= true;
 
     private Input<string> _searchInput;
 

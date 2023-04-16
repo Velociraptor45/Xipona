@@ -43,7 +43,6 @@
                             TItem="SearchItemByItemCategoryResult"
                             OnSelectedItemChanged="OnItemChanged"
                             AllowClear="true"
-                            IgnoreItemChanges="false"
                             Value="@($"{Model.DefaultItemId?.ToString() ?? string.Empty}{Model.DefaultItemTypeId?.ToString() ?? string.Empty}")">
                     </Select>
                 }
