@@ -24,7 +24,7 @@
             <TabPane Tab="By Name" Key="1">
                 <Input TValue="string" @bind-value="@input"
                        OnPressEnter="@OnLoadByNameButtonClicked"
-                       Placeholder="Recipe name ..."></Input>
+                       Placeholder="Recipe name"></Input>
                 <Button @onclick="@OnLoadByNameButtonClicked" Class="mt-2">Load</Button>
             </TabPane>
             <TabPane Tab="By Tags" Key="2">
@@ -35,7 +35,7 @@
                     ValueName="@nameof(RecipeTag.Id)"
                     LabelName="@nameof(RecipeTag.Name)"
                     OnItemsChanged="@OnSelectedRecipeTagsChanged"
-                    Placeholder="Tags"
+                    Placeholder="Recipe tags"
                     Values="@State.Value.Search.SelectedRecipeTagIds"
                     CanAddItem="false">
                 </MultiSelect>
