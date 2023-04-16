@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 
@@ -40,5 +41,16 @@ public class RecipeQueryService : IRecipeQueryService
         _logger.LogInformation(() => $"Found {results.Count} result{(results.Count != 1 ? 's' : string.Empty)} for input '{searchInput}'");
 
         return results;
+    }
+
+    public async Task<IEnumerable<RecipeSearchResult>> SearchByTagIdsAsync(IEnumerable<RecipeTagId> tagIds)
+    {
+        var tagIdsList = tagIds.ToList();
+
+        if (!tagIdsList.Any())
+            return Enumerable.Empty<RecipeSearchResult>();
+
+        var results = (await _recipeRepository.FindByContainingAllAsync(tagIdsList)).ToList();
+        return results.Select(r => new RecipeSearchResult(r.Id, r.Name));
     }
 }

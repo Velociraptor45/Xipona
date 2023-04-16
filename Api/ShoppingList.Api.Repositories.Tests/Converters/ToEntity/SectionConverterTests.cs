@@ -8,17 +8,18 @@ using Section = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Sect
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Converters.ToEntity;
 
-public class SectionConverterTests : ToEntityConverterTestBase<ISection, Section>
+public class SectionConverterTests : ToEntityConverterTestBase<(StoreId, ISection), Section>
 {
-    protected override (ISection, Section) CreateTestObjects()
+    protected override ((StoreId, ISection), Section) CreateTestObjects()
     {
         var source = SectionMother.Default().Create();
-        var destination = GetDestination(source);
+        var storeId = StoreId.New;
+        var destination = GetDestination(storeId, source);
 
-        return (source, destination);
+        return ((storeId, source), destination);
     }
 
-    public static Section GetDestination(ISection source)
+    public static Section GetDestination(StoreId storeId, ISection source)
     {
         return new Section
         {
@@ -27,6 +28,7 @@ public class SectionConverterTests : ToEntityConverterTestBase<ISection, Section
             SortIndex = source.SortingIndex,
             IsDefaultSection = source.IsDefaultSection,
             IsDeleted = source.IsDeleted,
+            StoreId = storeId.Value
         };
     }
 

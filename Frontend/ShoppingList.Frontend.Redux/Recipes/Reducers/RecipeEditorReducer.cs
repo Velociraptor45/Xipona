@@ -13,7 +13,8 @@ public static class RecipeEditorReducer
             Guid.Empty,
             string.Empty,
             new List<EditedIngredient>(0),
-            new SortedSet<EditedPreparationStep>());
+            new SortedSet<EditedPreparationStep>(),
+            new List<Guid>(0));
 
         return state with
         {
@@ -64,6 +65,73 @@ public static class RecipeEditorReducer
             Editor = state.Editor with
             {
                 IsInEditMode = !state.Editor.IsInEditMode
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static RecipeState OnRecipeTagInputChanged(RecipeState state, RecipeTagInputChangedAction action)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                RecipeTagCreateInput = action.Input
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(RecipeTagsDropdownClosedAction))]
+    public static RecipeState OnRecipeTagsDropdownClosed(RecipeState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                RecipeTagCreateInput = string.Empty
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static RecipeState OnRecipeTagsChanged(RecipeState state, RecipeTagsChangedAction action)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Recipe = state.Editor.Recipe with
+                {
+                    RecipeTagIds = action.RecipeTagIds
+                }
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static RecipeState OnCreateNewRecipeTagFinished(RecipeState state, CreateNewRecipeTagFinishedAction action)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        var allTags = state.RecipeTags.ToList();
+        allTags.Add(action.NewTag);
+
+        var recipeTagIds = state.Editor.Recipe.RecipeTagIds.ToList();
+        recipeTagIds.Add(action.NewTag.Id);
+
+        return state with
+        {
+            RecipeTags = allTags.OrderBy(t => t.Name).ToList(),
+            Editor = state.Editor with
+            {
+                Recipe = state.Editor.Recipe with
+                {
+                    RecipeTagIds = recipeTagIds
+                }
             }
         };
     }

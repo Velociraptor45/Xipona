@@ -50,10 +50,14 @@ public static partial class EquivalencyAssertionOptionsExtensions
     [GeneratedRegex(@"Ingredients\[\d+\].Recipe")]
     private static partial Regex IngredientsRecipeCycle();
 
+    [GeneratedRegex(@"Tags\[\d+\].Recipe")]
+    private static partial Regex RecipeTagRecipeCycle();
+
     public static EquivalencyAssertionOptions<T> ExcludeRecipeCycleRef<T>(this EquivalencyAssertionOptions<T> options)
     {
         return options.Excluding(info => PreparationStepsRecipeCycle().IsMatch(info.Path)
-                                         || IngredientsRecipeCycle().IsMatch(info.Path));
+                                         || IngredientsRecipeCycle().IsMatch(info.Path)
+                                         || RecipeTagRecipeCycle().IsMatch(info.Path));
     }
 
     public static EquivalencyAssertionOptions<T> UsingDateTimeOffsetWithPrecision<T>(
