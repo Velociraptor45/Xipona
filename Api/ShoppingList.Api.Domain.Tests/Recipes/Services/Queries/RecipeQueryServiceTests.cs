@@ -248,7 +248,7 @@ public class RecipeQueryServiceTests
                         .Create())
                     .ToList<IRecipe>();
 
-                RecipeRepositoryMock.SetupFindByAsync(RecipeTagIds, results);
+                RecipeRepositoryMock.SetupFindByContainingAllAsync(RecipeTagIds, results);
             }
         }
     }

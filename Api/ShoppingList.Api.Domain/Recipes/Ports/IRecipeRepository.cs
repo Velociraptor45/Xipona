@@ -10,7 +10,10 @@ public interface IRecipeRepository
     Task<IRecipe> StoreAsync(IRecipe recipe);
 
     Task<IEnumerable<RecipeSearchResult>> SearchByAsync(string searchInput);
+
     Task<IRecipe?> FindByAsync(RecipeId recipeId);
+
     Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId);
-    Task<IEnumerable<IRecipe>> FindByAsync(IEnumerable<RecipeTagId> recipeTagIds);
+
+    Task<IEnumerable<IRecipe>> FindByContainingAllAsync(IEnumerable<RecipeTagId> recipeTagIds);
 }

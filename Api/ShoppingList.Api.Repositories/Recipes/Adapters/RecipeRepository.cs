@@ -49,13 +49,19 @@ public class RecipeRepository : IRecipeRepository
         return _searchToModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IRecipe>> FindByAsync(IEnumerable<RecipeTagId> recipeTagIds)
+    public async Task<IEnumerable<IRecipe>> FindByContainingAllAsync(IEnumerable<RecipeTagId> recipeTagIds)
     {
         var rawRecipeTagIds = recipeTagIds.Select(t => t.Value).ToList();
 
-        var entities = await GetRecipeQuery()
-            .Where(r => r.Tags.Any(t => rawRecipeTagIds.Contains(t.RecipeTagId)))
-            .ToListAsync(_cancellationToken);
+        var query = GetRecipeQuery();
+
+        foreach (Guid tagId in rawRecipeTagIds)
+        {
+            query = query.Where(r => r.Tags.Any(t => t.RecipeTagId == tagId));
+        }
+
+        var entities = await query.ToListAsync(_cancellationToken);
+
         return _toModelConverter.ToDomain(entities);
     }
 

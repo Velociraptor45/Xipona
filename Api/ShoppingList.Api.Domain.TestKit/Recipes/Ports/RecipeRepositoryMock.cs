@@ -32,8 +32,8 @@ public class RecipeRepositoryMock : Mock<IRecipeRepository>
         Setup(m => m.FindByAsync(recipeId)).ReturnsAsync(returnValue);
     }
 
-    public void SetupFindByAsync(IEnumerable<RecipeTagId> recipeTagIds, IEnumerable<IRecipe> returnValue)
+    public void SetupFindByContainingAllAsync(IEnumerable<RecipeTagId> recipeTagIds, IEnumerable<IRecipe> returnValue)
     {
-        Setup(m => m.FindByAsync(recipeTagIds)).ReturnsAsync(returnValue);
+        Setup(m => m.FindByContainingAllAsync(recipeTagIds)).ReturnsAsync(returnValue);
     }
 }
