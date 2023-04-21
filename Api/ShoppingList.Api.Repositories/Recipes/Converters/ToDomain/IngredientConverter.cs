@@ -27,8 +27,8 @@ public class IngredientConverter : IToDomainConverter<Entities.Ingredient, IIngr
             properties = new IngredientShoppingListProperties(
                 new ItemId(source.DefaultItemId.Value),
                 source.DefaultItemTypeId is null ? null : new ItemTypeId(source.DefaultItemTypeId.Value),
-                StoreId.New, // TODO #348
-                false);
+                new StoreId(source.DefaultStoreId!.Value),
+                source.AddToShoppingListByDefault!.Value);
         }
 
         return _ingredientFactory.Create(

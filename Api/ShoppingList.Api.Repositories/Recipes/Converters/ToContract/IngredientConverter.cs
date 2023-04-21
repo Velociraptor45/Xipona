@@ -18,8 +18,10 @@ public class IngredientConverter : IToContractConverter<(RecipeId, IIngredient),
             ItemCategoryId = ingredient.ItemCategoryId,
             Quantity = ingredient.Quantity.Value,
             QuantityType = ingredient.QuantityType.ToInt(),
-            DefaultItemId = ingredient.DefaultItemId,
-            DefaultItemTypeId = ingredient.DefaultItemTypeId
+            DefaultItemId = ingredient.ShoppingListProperties?.DefaultItemId,
+            DefaultItemTypeId = ingredient.ShoppingListProperties?.DefaultItemTypeId,
+            DefaultStoreId = ingredient.ShoppingListProperties?.DefaultStoreId,
+            AddToShoppingListByDefault = ingredient.ShoppingListProperties?.AddToShoppingListByDefault
         };
     }
 }
