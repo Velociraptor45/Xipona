@@ -23,7 +23,6 @@ using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Recipes.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.RecipeTags.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
-using System;
 using System.Text.RegularExpressions;
 using Xunit;
 using Ingredient = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Ingredient;
@@ -155,7 +154,7 @@ public class RecipeControllerIntegrationTests
                         i.DefaultItemId,
                         i.DefaultItemTypeId,
                         i.ShoppingListProperties?.DefaultStoreId,
-                        i.ShoppingListProperties.AddToShoppingListByDefault)),
+                        i.ShoppingListProperties?.AddToShoppingListByDefault)),
                     _model.PreparationSteps.Select(p => new CreatePreparationStepContract(
                         p.Instruction.Value,
                         p.SortingIndex)),

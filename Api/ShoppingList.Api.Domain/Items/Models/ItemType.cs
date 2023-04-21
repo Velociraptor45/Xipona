@@ -18,6 +18,9 @@ public class ItemType : IItemType
         PredecessorId = predecessorId;
         Availabilities = availabilities.ToList();
         IsDeleted = isDeleted;
+
+        if (!Availabilities.Any())
+            throw new DomainException(new CannotCreateItemTypeWithoutAvailabilitiesReason());
     }
 
     public ItemTypeId Id { get; }
@@ -49,6 +52,8 @@ public class ItemType : IItemType
     {
         if (IsDeleted)
             throw new DomainException(new CannotModifyDeletedItemTypeReason(Id));
+        if (!modification.Availabilities.Any())
+            throw new DomainException(new CannotModifyItemTypeWithoutAvailabilitiesReason());
 
         await validator.ValidateAsync(modification.Availabilities);
 
@@ -64,6 +69,8 @@ public class ItemType : IItemType
     {
         if (IsDeleted)
             throw new DomainException(new CannotModifyDeletedItemTypeReason(Id));
+        if (!update.Availabilities.Any())
+            throw new DomainException(new CannotUpdateItemTypeWithoutAvailabilitiesReason());
 
         await validator.ValidateAsync(update.Availabilities);
 
