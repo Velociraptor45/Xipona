@@ -126,8 +126,7 @@ public class RecipeFactoryTests
                         i.ItemCategoryId,
                         i.QuantityType,
                         i.Quantity,
-                        i.DefaultItemId,
-                        i.DefaultItemTypeId)),
+                        i.ShoppingListProperties)),
                     ExpectedResult.PreparationSteps.Select(p => new PreparationStepCreation(
                         p.Instruction,
                         p.SortingIndex)),

@@ -1,5 +1,4 @@
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
@@ -31,25 +30,14 @@ public class IngredientBuilder : DomainTestBuilderBase<Ingredient>
         return this;
     }
 
-    public IngredientBuilder WithDefaultItemId(ItemId? defaultItemId)
+    public IngredientBuilder WithShoppingListProperties(IngredientShoppingListProperties? shoppingListProperties)
     {
-        FillConstructorWith(nameof(defaultItemId), defaultItemId);
+        FillConstructorWith(nameof(shoppingListProperties), shoppingListProperties);
         return this;
     }
 
-    public IngredientBuilder WithoutDefaultItemId()
+    public IngredientBuilder WithoutShoppingListProperties()
     {
-        return WithDefaultItemId(null);
-    }
-
-    public IngredientBuilder WithDefaultItemTypeId(ItemTypeId? defaultItemTypeId)
-    {
-        FillConstructorWith(nameof(defaultItemTypeId), defaultItemTypeId);
-        return this;
-    }
-
-    public IngredientBuilder WithoutDefaultItemTypeId()
-    {
-        return WithDefaultItemTypeId(null);
+        return WithShoppingListProperties(null);
     }
 }

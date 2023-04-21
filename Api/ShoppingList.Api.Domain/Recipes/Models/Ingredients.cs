@@ -45,8 +45,7 @@ public class Ingredients : IEnumerable<IIngredient>
         foreach (var modification in ingredientsToCreate)
         {
             var newIngredient = await _ingredientFactory.CreateNewAsync(modification.ItemCategoryId,
-                modification.QuantityType, modification.Quantity, modification.DefaultItemId,
-                modification.DefaultItemTypeId);
+                modification.QuantityType, modification.Quantity, modification.ShoppingListProperties);
             newIngredients.Add(newIngredient);
         }
 

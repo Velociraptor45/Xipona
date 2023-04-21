@@ -153,7 +153,9 @@ public class RecipeControllerIntegrationTests
                         (int)i.QuantityType,
                         i.Quantity.Value,
                         i.DefaultItemId,
-                        i.DefaultItemTypeId)),
+                        i.DefaultItemTypeId,
+                        i.ShoppingListProperties?.DefaultStoreId,
+                        i.ShoppingListProperties.AddToShoppingListByDefault)),
                     _model.PreparationSteps.Select(p => new CreatePreparationStepContract(
                         p.Instruction.Value,
                         p.SortingIndex)),
@@ -553,11 +555,14 @@ public class RecipeControllerIntegrationTests
                 var ingredients = new List<ModifyIngredientContract>
                 {
                     new(firstIngredient.Id, firstIngredient.ItemCategoryId, firstIngredient.QuantityType,
-                        firstIngredient.Quantity, firstIngredient.DefaultItemId, firstIngredient.DefaultItemTypeId),
+                        firstIngredient.Quantity, firstIngredient.DefaultItemId, firstIngredient.DefaultItemTypeId,
+                        firstIngredient.DefaultStoreId, firstIngredient.AddToShoppingListByDefault),
                     new(secondIngredient.Id, secondIngredient.ItemCategoryId, secondIngredient.QuantityType,
-                        secondIngredient.Quantity, secondIngredient.DefaultItemId, secondIngredient.DefaultItemTypeId),
+                        secondIngredient.Quantity, secondIngredient.DefaultItemId, secondIngredient.DefaultItemTypeId,
+                        secondIngredient.DefaultStoreId, secondIngredient.AddToShoppingListByDefault),
                     new(null, thirdIngredient.ItemCategoryId, thirdIngredient.QuantityType, thirdIngredient.Quantity,
-                        thirdIngredient.DefaultItemId, thirdIngredient.DefaultItemTypeId)
+                        thirdIngredient.DefaultItemId, thirdIngredient.DefaultItemTypeId,
+                        thirdIngredient.DefaultStoreId, thirdIngredient.AddToShoppingListByDefault)
                 };
 
                 var firstStep = ExpectedRecipe.PreparationSteps.ElementAt(0);

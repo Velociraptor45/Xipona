@@ -28,7 +28,7 @@ public class RecipeEditorEffectsTests
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-            
+
             // Act
             await _fixture.CreateSut().HandleLoadRecipeForEditing(_fixture.Action, _fixture.DispatcherMock.Object);
 
@@ -68,12 +68,12 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupGettingRecipeByIdThrowsHttpRequestException();
                 _fixture.SetupDispatchingErrorAction();
             });
-            
+
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
             // Act
             await _fixture.CreateSut().HandleLoadRecipeForEditing(_fixture.Action, _fixture.DispatcherMock.Object);
-            
+
             // Assert
             queue.VerifyOrder();
         }
@@ -82,9 +82,7 @@ public class RecipeEditorEffectsTests
         {
             private EditedRecipe? _recipe;
 
-
             public LoadRecipeForEditingAction? Action { get; private set; }
-
 
             public void SetupGettingRecipeById()
             {
@@ -154,7 +152,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
             });
-            
+
             // Act
             await _fixture.CreateSut().HandleModifyRecipeAction(_fixture.DispatcherMock.Object);
 
@@ -199,7 +197,7 @@ public class RecipeEditorEffectsTests
 
             // Act
             await _fixture.CreateSut().HandleModifyRecipeAction(_fixture.DispatcherMock.Object);
-            
+
             // Assert
             queue.VerifyOrder();
         }
@@ -290,7 +288,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
             });
-            
+
             // Act
             await _fixture.CreateSut().HandleCreateRecipeAction(_fixture.DispatcherMock.Object);
 
@@ -335,7 +333,7 @@ public class RecipeEditorEffectsTests
 
             // Act
             await _fixture.CreateSut().HandleCreateRecipeAction(_fixture.DispatcherMock.Object);
-            
+
             // Assert
             queue.VerifyOrder();
         }
@@ -442,7 +440,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupCreatingRecipeTag();
                 _fixture.SetupDispatchingFinishedAction();
             });
-            
+
             // Act
             await _fixture.CreateSut().HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
 
@@ -483,7 +481,7 @@ public class RecipeEditorEffectsTests
 
             // Act
             await _fixture.CreateSut().HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
-            
+
             // Assert
             queue.VerifyOrder();
         }
