@@ -173,8 +173,10 @@ public class RecipeControllerIntegrationTests
                         i.ItemCategoryId,
                         (int)i.QuantityType,
                         i.Quantity.Value,
-                        i.DefaultItemId,
-                        i.DefaultItemTypeId)),
+                        i.ShoppingListProperties?.DefaultItemId,
+                        i.ShoppingListProperties?.DefaultItemTypeId,
+                        i.ShoppingListProperties?.DefaultStoreId,
+                        i.ShoppingListProperties?.AddToShoppingListByDefault)),
                     _model.PreparationSteps.Select(p => new PreparationStepContract(
                         p.Id,
                         p.Instruction.Value,
