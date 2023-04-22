@@ -490,6 +490,7 @@ public class IngredientReducerTests
         {
             // Arrange
             _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -560,10 +561,36 @@ public class IngredientReducerTests
                 ingredients[^1] = ingredients[^1] with
                 {
                     DefaultItemId = Guid.NewGuid(),
-                    DefaultItemTypeId = Guid.NewGuid()
+                    DefaultItemTypeId = Guid.NewGuid(),
+                    DefaultStoreId = Guid.NewGuid(),
+                    AddToShoppingListByDefault = false
                 };
 
                 InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            Ingredients = ingredients
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+                var item = ingredients[^1].ItemSelector.Items.First();
+                ingredients[^1] = ingredients[^1] with
+                {
+                    DefaultItemId = item.ItemId,
+                    DefaultItemTypeId = item.ItemTypeId,
+                    DefaultStoreId = item.Availabilities.First().StoreId,
+                    AddToShoppingListByDefault = true
+                };
+
+                ExpectedState = ExpectedState with
                 {
                     Editor = ExpectedState.Editor with
                     {
@@ -684,7 +711,9 @@ public class IngredientReducerTests
                 ingredients[^1] = ingredients[^1] with
                 {
                     DefaultItemId = null,
-                    DefaultItemTypeId = null
+                    DefaultItemTypeId = null,
+                    DefaultStoreId = null,
+                    AddToShoppingListByDefault = null
                 };
 
                 ExpectedState = ExpectedState with
@@ -705,7 +734,9 @@ public class IngredientReducerTests
                 ingredients[^1] = ingredients[^1] with
                 {
                     DefaultItemId = Guid.NewGuid(),
-                    DefaultItemTypeId = Guid.NewGuid()
+                    DefaultItemTypeId = Guid.NewGuid(),
+                    DefaultStoreId = Guid.NewGuid(),
+                    AddToShoppingListByDefault = false
                 };
 
                 InitialState = ExpectedState with
@@ -902,6 +933,252 @@ public class IngredientReducerTests
             private void SetupRandomAction()
             {
                 Action = new DomainTestBuilder<LoadItemsForItemCategoryFinishedAction>().Create();
+            }
+        }
+    }
+
+    public class OnIngredientDefaultStoreChanged
+    {
+        private readonly OnIngredientDefaultStoreChangedFixture _fixture;
+
+        public OnIngredientDefaultStoreChanged()
+        {
+            _fixture = new OnIngredientDefaultStoreChangedFixture();
+        }
+
+        [Fact]
+        public void OnIngredientDefaultStoreChanged_WithValidData_ShouldChangeDefaultStoreId()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = IngredientReducer.OnIngredientDefaultStoreChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnIngredientDefaultStoreChanged_WithRecipeNull_ShouldNotModifyState()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithRecipeNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForRecipeNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = IngredientReducer.OnIngredientDefaultStoreChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnIngredientDefaultStoreChanged_WithInvalidIngredientKey_ShouldNotModifyState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForInvalidIngredientKey();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = IngredientReducer.OnIngredientDefaultStoreChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnIngredientDefaultStoreChangedFixture : IngredientReducerFixture
+        {
+            public IngredientDefaultStoreChangedAction? Action { get; private set; }
+
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupExpectedStateWithRecipeNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupInitialState()
+            {
+                var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+                ingredients[^1] = ingredients[^1] with
+                {
+                    DefaultStoreId = Guid.NewGuid()
+                };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            Ingredients = ingredients
+                        }
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                var ingredient = ExpectedState.Editor.Recipe!.Ingredients.Last();
+                Action = new IngredientDefaultStoreChangedAction(ingredient.Key, ingredient.DefaultStoreId!.Value);
+            }
+
+            public void SetupActionForInvalidIngredientKey()
+            {
+                SetupRandomAction();
+            }
+
+            public void SetupActionForRecipeNull()
+            {
+                SetupRandomAction();
+            }
+
+            private void SetupRandomAction()
+            {
+                Action = new DomainTestBuilder<IngredientDefaultStoreChangedAction>().Create();
+            }
+        }
+    }
+
+    public class OnIngredientAddToShoppingListByDefaultChanged
+    {
+        private readonly OnIngredientAddToShoppingListByDefaultChangedFixture _fixture;
+
+        public OnIngredientAddToShoppingListByDefaultChanged()
+        {
+            _fixture = new OnIngredientAddToShoppingListByDefaultChangedFixture();
+        }
+
+        [Fact]
+        public void OnIngredientAddToShoppingListByDefaultChanged_WithValidData_ShouldChangeAddToShoppingListByDefault()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = IngredientReducer.OnIngredientAddToShoppingListByDefaultChanged(_fixture.InitialState,
+                _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnIngredientAddToShoppingListByDefaultChanged_WithRecipeNull_ShouldNotModifyState()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithRecipeNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForRecipeNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = IngredientReducer.OnIngredientAddToShoppingListByDefaultChanged(_fixture.InitialState,
+                _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnIngredientAddToShoppingListByDefaultChanged_WithInvalidIngredientKey_ShouldNotModifyState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupActionForInvalidIngredientKey();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = IngredientReducer.OnIngredientAddToShoppingListByDefaultChanged(_fixture.InitialState,
+                _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnIngredientAddToShoppingListByDefaultChangedFixture : IngredientReducerFixture
+        {
+            public IngredientAddToShoppingListByDefaultChangedAction? Action { get; private set; }
+
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupExpectedStateWithRecipeNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupInitialState()
+            {
+                var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+                ingredients[^1] = ingredients[^1] with
+                {
+                    AddToShoppingListByDefault = !ingredients[^1].AddToShoppingListByDefault
+                };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            Ingredients = ingredients
+                        }
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                var ingredient = ExpectedState.Editor.Recipe!.Ingredients.Last();
+                Action = new IngredientAddToShoppingListByDefaultChangedAction(ingredient.Key,
+                    ingredient.AddToShoppingListByDefault!.Value);
+            }
+
+            public void SetupActionForInvalidIngredientKey()
+            {
+                SetupRandomAction();
+            }
+
+            public void SetupActionForRecipeNull()
+            {
+                SetupRandomAction();
+            }
+
+            private void SetupRandomAction()
+            {
+                Action = new DomainTestBuilder<IngredientAddToShoppingListByDefaultChangedAction>().Create();
             }
         }
     }

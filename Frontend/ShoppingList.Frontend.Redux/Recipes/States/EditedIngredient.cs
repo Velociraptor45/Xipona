@@ -17,6 +17,12 @@ public record EditedIngredient(
         .FirstOrDefault(ic => ic.Id == ItemCategoryId)?
         .Name ?? string.Empty;
 
+    public IEnumerable<SearchItemByItemCategoryAvailability> AvailableStoresOfItem => ItemSelector
+            .Items
+            .FirstOrDefault(i => i.ItemId == DefaultItemId && i.ItemTypeId == DefaultItemTypeId)?
+            .Availabilities
+        ?? Enumerable.Empty<SearchItemByItemCategoryAvailability>();
+
     public string GetSelectedQuantityLabel(IEnumerable<IngredientQuantityType> quantityTypes)
     {
         return quantityTypes

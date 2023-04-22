@@ -33,3 +33,9 @@
 .ant-modal-close {
     margin-top: -8px;
 }
+
+/* ingredient checkbox */
+
+.add-to-sl-wrapper .ant-checkbox-wrapper {
+    margin-top: 5px;
+}

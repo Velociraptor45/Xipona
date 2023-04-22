@@ -81,6 +81,9 @@ public static class ItemCategorySelectorReducer
             return state;
         var ingredientIndex = ingredients.IndexOf(ingredient);
 
+        if(ingredients[ingredientIndex].ItemCategoryId == action.ItemCategoryId)
+            return state;
+
         ingredients[ingredientIndex] = ingredient with
         {
             ItemCategoryId = action.ItemCategoryId,
@@ -90,7 +93,11 @@ public static class ItemCategorySelectorReducer
                     .Where(i => i.Id == action.ItemCategoryId)
                     .ToList(),
                 Input = string.Empty
-            }
+            },
+            DefaultItemId = null,
+            DefaultItemTypeId = null,
+            DefaultStoreId = null,
+            AddToShoppingListByDefault = null
         };
 
         return state with

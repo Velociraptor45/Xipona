@@ -46,6 +46,19 @@
                             Value="@($"{Model.DefaultItemId?.ToString() ?? string.Empty}{Model.DefaultItemTypeId?.ToString() ?? string.Empty}")">
                     </Select>
                 }
+                @if (Model.DefaultItemId is not null)
+                {
+                    <SingleSelect
+                        Class="pl-4 mt-1 min-w-150"
+                        DataSource="@Model.AvailableStoresOfItem.ToList()"
+                        TItem="SearchItemByItemCategoryAvailability"
+                        TValue="Guid"
+                        DefaultValue="@Model.DefaultStoreId!.Value"
+                        ValueName="@nameof(SearchItemByItemCategoryAvailability.StoreId)"
+                        LabelName="@nameof(SearchItemByItemCategoryAvailability.StoreName)"
+                        OnItemChanged="OnDefaultStoreChanged">
+                    </SingleSelect>
+                }
             </div>
             <div>
                 <Button Class="d-flex align-items-center ml-auto"
@@ -76,6 +89,14 @@
                         </SingleSelect>
                     </div>
                 </div>
+                @if(Model.DefaultItemId is not null)
+                {
+                    <div class="add-to-sl-wrapper align-items-center ml-4 mt-1">
+                        <Checkbox
+                            Value="@Model.AddToShoppingListByDefault!.Value" 
+                            OnChange="OnAddToShoppingListByDefaultChanged">Add by default</Checkbox>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -147,5 +168,15 @@ else
     private void OnItemCategoryDropdownClosed()
     {
         Dispatcher.Dispatch(new ItemCategoryDropdownClosedAction(Model));
+    }
+
+    private void OnDefaultStoreChanged(SearchItemByItemCategoryAvailability store)
+    {
+        Dispatcher.Dispatch(new IngredientDefaultStoreChangedAction(Model.Key, store.StoreId));
+    }
+
+    private void OnAddToShoppingListByDefaultChanged(bool value)
+    {
+        Dispatcher.Dispatch(new IngredientAddToShoppingListByDefaultChangedAction(Model.Key, value));
     }
 }
