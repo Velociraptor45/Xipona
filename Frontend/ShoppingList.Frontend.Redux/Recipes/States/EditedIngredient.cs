@@ -7,6 +7,8 @@ public record EditedIngredient(
     float Quantity,
     Guid? DefaultItemId,
     Guid? DefaultItemTypeId,
+    Guid? DefaultStoreId,
+    bool? AddToShoppingListByDefault,
     ItemCategorySelector ItemCategorySelector,
     ItemSelector ItemSelector)
 {

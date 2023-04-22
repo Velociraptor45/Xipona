@@ -32,6 +32,8 @@ public static class IngredientReducer
             1,
             null,
             null,
+            null,
+            null,
             new ItemCategorySelector(
                 new List<ItemCategorySearchResult>(0),
                 string.Empty),

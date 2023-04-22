@@ -129,6 +129,8 @@ public class IngredientReducerTests
                                         1,
                                         null,
                                         null,
+                                        null,
+                                        null,
                                         new ItemCategorySelector(
                                             new List<ItemCategorySearchResult>(),
                                             string.Empty),
