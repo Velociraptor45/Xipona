@@ -60,7 +60,7 @@ public class ShoppingListTests
         using (new AssertionScope())
         {
             action.Should().Throw<DomainException>()
-                .Where(e => e.Reason.ErrorCode == ErrorReasonCode.SectionInStoreNotFound);
+                .Where(e => e.Reason.ErrorCode == ErrorReasonCode.SectionNotPartOfStore);
         }
     }
 
