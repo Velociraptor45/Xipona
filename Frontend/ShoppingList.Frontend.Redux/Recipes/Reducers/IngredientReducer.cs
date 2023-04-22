@@ -136,6 +136,9 @@ public static class IngredientReducer
         if (ingredient is null)
             return state;
 
+        if(ingredient.DefaultItemId == action.ItemId && ingredient.DefaultItemTypeId == action.ItemTypeId)
+            return state;
+
         var defaultStoreId = ingredient.ItemSelector.Items
             .First(i => i.ItemId == action.ItemId && i.ItemTypeId == action.ItemTypeId)
             .Availabilities
@@ -143,6 +146,7 @@ public static class IngredientReducer
             .StoreId;
 
         var ingredientIndex = ingredients.IndexOf(ingredient);
+
         ingredients[ingredientIndex] = ingredient with
         {
             DefaultItemId = action.ItemId,

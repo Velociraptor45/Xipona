@@ -503,6 +503,22 @@ public class IngredientReducerTests
         }
 
         [Fact]
+        public void OnSelectedItemChanged_WithSettingSameItem_ShouldNotModifyState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = IngredientReducer.OnSelectedItemChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
         public void OnSelectedItemChanged_WithRecipeNull_ShouldNotModifyState()
         {
             // Arrange
