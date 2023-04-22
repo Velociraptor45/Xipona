@@ -8,6 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 
@@ -46,6 +47,7 @@ public class DomainCustomization : ICustomization
 
         fixture.Customize(new PriceCustomization());
         fixture.Customize(new QuantityCustomization());
+        fixture.Customize(new QuantityInBasketCustomization());
         fixture.Customize(new ItemQuantityCustomization());
 
         fixture.Customize(new SectionsCustomization());

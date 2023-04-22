@@ -24,7 +24,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Queries.GetAll;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
@@ -42,6 +42,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AddItemToShoppingListContract = ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
 
 namespace ProjectHermes.ShoppingList.Api.Client
 {
@@ -64,6 +65,10 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task AddItemWithTypeToShoppingListAsync([Path] Guid id, [Path] Guid itemId,
             [Path] Guid itemTypeId, [Body] AddItemWithTypeToShoppingListContract contract,
             CancellationToken cancellationToken = default);
+
+        [Put("shopping-lists/add-items-to-shopping-lists")]
+        Task AddItemsToShoppingListsAsync(
+            [Body] AddItemsToShoppingListsContract contract, CancellationToken cancellationToken = default);
 
         [Put("shopping-lists/{id}/items/quantity")]
         Task ChangeItemQuantityOnShoppingListAsync([Path] Guid id,

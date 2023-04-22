@@ -32,6 +32,32 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         _shoppingListRepository = shoppingListRepository;
     }
 
+    public async Task AddAsync(IEnumerable<ItemToShoppingListAddition> itemsToAdd, CancellationToken cancellationToken)
+    {
+        var storeIds = itemsToAdd.Select(x => x.StoreId).Distinct().ToList();
+        var shoppingLists = (await _shoppingListRepository.FindActiveByAsync(storeIds, cancellationToken))
+            .ToDictionary(list => list.StoreId);
+
+        if (storeIds.Count != shoppingLists.Count)
+            throw new DomainException(new StoreNotFoundReason(storeIds.Except(shoppingLists.Select(x => x.Key))));
+
+        foreach (var itemToAdd in itemsToAdd)
+        {
+            var shoppingList = shoppingLists[itemToAdd.StoreId];
+            if (itemToAdd.ItemTypeId is null)
+            {
+                await AddItemToShoppingListAsync(shoppingList, itemToAdd.ItemId, null, itemToAdd.Quantity,
+                    cancellationToken);
+            }
+            else
+            {
+                var item = await LoadItemAsync(itemToAdd.ItemId, cancellationToken);
+                await AddItemWithTypeToShoppingList(shoppingList, item, itemToAdd.ItemTypeId.Value, null,
+                    itemToAdd.Quantity, cancellationToken);
+            }
+        }
+    }
+
     public async Task AddAsync(ShoppingListId shoppingListId, OfflineTolerantItemId itemId, SectionId? sectionId,
         QuantityInBasket quantity, CancellationToken cancellationToken)
     {

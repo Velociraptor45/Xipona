@@ -115,6 +115,19 @@ public class ShoppingListRepository : IShoppingListRepository
         return _toDomainConverter.ToDomain(entity);
     }
 
+    public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(IEnumerable<StoreId> storeIds,
+        CancellationToken cancellationToken)
+    {
+        var rawStoreIds = storeIds.Select(s => s.Value).ToList();
+        var entities = await GetShoppingListQuery()
+            .Where(list =>
+                    list.CompletionDate == null
+                    && rawStoreIds.Contains(list.StoreId))
+            .ToListAsync(cancellationToken);
+
+        return _toDomainConverter.ToDomain(entities);
+    }
+
     #endregion public methods
 
     #region private methods

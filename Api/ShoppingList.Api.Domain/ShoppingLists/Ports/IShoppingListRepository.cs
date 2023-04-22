@@ -10,6 +10,9 @@ public interface IShoppingListRepository
 
     Task<IEnumerable<IShoppingList>> FindActiveByAsync(ItemId itemId, CancellationToken cancellationToken);
 
+    Task<IEnumerable<IShoppingList>> FindActiveByAsync(IEnumerable<StoreId> storeIds,
+        CancellationToken cancellationToken);
+
     Task<IEnumerable<IShoppingList>> FindByAsync(ItemTypeId typeId, CancellationToken cancellationToken);
 
     Task<IShoppingList?> FindByAsync(ShoppingListId id, CancellationToken cancellationToken);

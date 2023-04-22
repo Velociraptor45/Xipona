@@ -21,4 +21,6 @@ public interface IAddItemToShoppingListService
 
     Task AddAsync(ShoppingListId shoppingListId, OfflineTolerantItemId itemId, SectionId? sectionId,
         QuantityInBasket quantity, CancellationToken cancellationToken);
+
+    Task AddAsync(IEnumerable<ItemToShoppingListAddition> itemsToAdd, CancellationToken cancellationToken);
 }

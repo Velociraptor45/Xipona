@@ -48,6 +48,14 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
             .Returns(Task.CompletedTask);
     }
 
+    public void SetupAddAsync(IEnumerable<ItemToShoppingListAddition> itemsToAdd)
+    {
+        Setup(m => m.AddAsync(
+                itemsToAdd,
+                It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+    }
+
     public void VerifyAddItemWithTypeToShoppingList(IShoppingList shoppingList, IItem item,
         ItemTypeId typeId, SectionId? sectionId, QuantityInBasket quantity, Func<Times> times)
     {
@@ -83,5 +91,13 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
                 quantity,
                 It.IsAny<CancellationToken>()),
             Times.Once);
+    }
+
+    public void VerifyAddAsync(IEnumerable<ItemToShoppingListAddition> itemsToAdd, Func<Times> times)
+    {
+        Verify(m => m.AddAsync(
+                itemsToAdd,
+                It.IsAny<CancellationToken>()),
+            times);
     }
 }

@@ -13,7 +13,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.AllQuantityTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
@@ -26,7 +25,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Queries.GetAll;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
@@ -45,6 +44,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using AddItemToShoppingListContract = ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
+using ItemContract = ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get.ItemContract;
 
 namespace ProjectHermes.ShoppingList.Api.Client
 {
@@ -95,6 +96,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
             AddItemWithTypeToShoppingListContract contract, CancellationToken cancellationToken = default)
         {
             await _apiClient.AddItemWithTypeToShoppingListAsync(id, itemId, itemTypeId, contract, cancellationToken);
+        }
+
+        public async Task AddItemsToShoppingListsAsync(
+            AddItemsToShoppingListsContract contract, CancellationToken cancellationToken = default)
+        {
+            await _apiClient.AddItemsToShoppingListsAsync(contract, cancellationToken);
         }
 
         public async Task PutItemInBasketAsync(Guid id, PutItemInBasketContract contract,
