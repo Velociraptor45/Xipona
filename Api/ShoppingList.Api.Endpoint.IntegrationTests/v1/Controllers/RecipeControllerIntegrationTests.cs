@@ -118,7 +118,7 @@ public class RecipeControllerIntegrationTests
                         .WithItemTypes(new ItemTypeEntityBuilder()
                             .WithId(ingredient.DefaultItemTypeId!.Value)
                             .WithoutItem()
-                            .WithEmptyAvailableAt()
+                            .WithAvailableAt(ItemTypeAvailableAtEntityMother.Initial().CreateMany(1).ToList())
                             .WithoutPredecessorId()
                             .WithoutPredecessor()
                             .CreateMany(1)
@@ -198,8 +198,10 @@ public class RecipeControllerIntegrationTests
                         ItemCategoryId = i.ItemCategoryId,
                         Quantity = i.Quantity.Value,
                         QuantityType = (int)i.QuantityType,
-                        DefaultItemId = i.DefaultItemId,
-                        DefaultItemTypeId = i.DefaultItemTypeId,
+                        DefaultItemId = i.ShoppingListProperties?.DefaultItemId,
+                        DefaultItemTypeId = i.ShoppingListProperties?.DefaultItemTypeId,
+                        DefaultStoreId = i.ShoppingListProperties?.DefaultStoreId,
+                        AddToShoppingListByDefault = i.ShoppingListProperties?.AddToShoppingListByDefault,
                         RecipeId = _model.Id
                     }).ToList(),
                     PreparationSteps = _model.PreparationSteps.Select(p => new PreparationStep
@@ -494,7 +496,7 @@ public class RecipeControllerIntegrationTests
                         .WithItemTypes(new ItemTypeEntityBuilder()
                             .WithId(i.DefaultItemTypeId!.Value)
                             .WithoutItem()
-                            .WithEmptyAvailableAt()
+                            .WithAvailableAt(ItemTypeAvailableAtEntityMother.Initial().CreateMany(1).ToList())
                             .WithoutPredecessorId()
                             .WithoutPredecessor()
                             .CreateMany(1)
@@ -634,10 +636,10 @@ public class RecipeControllerIntegrationTests
 
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)
         {
-            yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
-            yield return scope.ServiceProvider.GetRequiredService<RecipeTagContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
+            yield return scope.ServiceProvider.GetRequiredService<RecipeTagContext>();
+            yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
         }
 
         public async Task<IEnumerable<Recipe>> LoadAllRecipesAsync()
