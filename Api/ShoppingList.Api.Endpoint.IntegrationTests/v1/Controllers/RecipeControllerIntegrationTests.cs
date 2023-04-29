@@ -147,6 +147,7 @@ public class RecipeControllerIntegrationTests
 
                 Contract = new CreateRecipeContract(
                     _model.Name,
+                    _model.NumberOfServings,
                     _model.Ingredients.Select(i => new CreateIngredientContract(
                         i.ItemCategoryId,
                         (int)i.QuantityType,
@@ -168,6 +169,7 @@ public class RecipeControllerIntegrationTests
                 ExpectedResult = new RecipeContract(
                     _model.Id,
                     _model.Name,
+                    _model.NumberOfServings,
                     _model.Ingredients.Select(i => new IngredientContract(
                         i.Id,
                         i.ItemCategoryId,
@@ -580,6 +582,7 @@ public class RecipeControllerIntegrationTests
 
                 Contract = new ModifyRecipeContract(
                     ExpectedRecipe.Name,
+                    1, // todo #348
                     ingredients,
                     steps,
                     ExpectedRecipe.Tags.Select(t => t.RecipeTagId));

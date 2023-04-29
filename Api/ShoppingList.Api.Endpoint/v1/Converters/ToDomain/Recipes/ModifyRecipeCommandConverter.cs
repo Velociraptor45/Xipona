@@ -53,6 +53,7 @@ public class ModifyRecipeCommandConverter : IToDomainConverter<(Guid, ModifyReci
         var model = new RecipeModification(
             new RecipeId(id),
             new RecipeName(contract.Name),
+            new NumberOfServings(contract.NumberOfServings),
             ingredients,
             steps,
             tags);

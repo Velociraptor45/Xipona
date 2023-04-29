@@ -12,17 +12,20 @@ public class Recipe : AggregateRoot, IRecipe
     private readonly PreparationSteps _steps;
     private readonly RecipeTags _tags;
 
-    public Recipe(RecipeId id, RecipeName name, Ingredients ingredients, PreparationSteps steps, RecipeTags tags)
+    public Recipe(RecipeId id, RecipeName name, NumberOfServings numberOfServings, Ingredients ingredients,
+        PreparationSteps steps, RecipeTags tags)
     {
         _ingredients = ingredients;
         _steps = steps;
         _tags = tags;
         Id = id;
         Name = name;
+        NumberOfServings = numberOfServings;
     }
 
     public RecipeId Id { get; }
     public RecipeName Name { get; private set; }
+    public NumberOfServings NumberOfServings { get; private set; }
     public IReadOnlyCollection<IIngredient> Ingredients => _ingredients.AsReadOnly();
     public IReadOnlyCollection<IPreparationStep> PreparationSteps => _steps.AsReadOnly();
     public IReadOnlyCollection<RecipeTagId> Tags => _tags.AsReadOnly();
@@ -30,6 +33,7 @@ public class Recipe : AggregateRoot, IRecipe
     public async Task ModifyAsync(RecipeModification modification, IValidator validator)
     {
         Name = modification.Name;
+        NumberOfServings = modification.NumberOfServings;
         await _ingredients.ModifyManyAsync(modification.IngredientModifications, validator);
         _steps.ModifyMany(modification.PreparationStepModifications);
         await _tags.ModifyAsync(validator, modification.RecipeTagIds);

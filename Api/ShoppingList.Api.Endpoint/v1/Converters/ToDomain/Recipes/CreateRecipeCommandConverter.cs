@@ -46,6 +46,7 @@ public class CreateRecipeCommandConverter : IToDomainConverter<CreateRecipeContr
 
         var creation = new RecipeCreation(
             new RecipeName(source.Name),
+            new NumberOfServings(source.NumberOfServings),
             ingredients,
             steps,
             tags);

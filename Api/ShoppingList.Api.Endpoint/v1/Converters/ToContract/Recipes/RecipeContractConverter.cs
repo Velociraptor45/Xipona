@@ -27,6 +27,7 @@ public class RecipeContractConverter : IToContractConverter<IRecipe, RecipeContr
         return new RecipeContract(
             source.Id,
             source.Name,
+            source.NumberOfServings,
             ingredients,
             steps,
             source.Tags.Select(t => t.Value));
