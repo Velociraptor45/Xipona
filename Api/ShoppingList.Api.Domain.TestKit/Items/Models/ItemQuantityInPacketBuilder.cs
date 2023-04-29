@@ -9,4 +9,10 @@ public class ItemQuantityInPacketBuilder : DomainTestBuilderBase<ItemQuantityInP
     {
         Customize(new QuantityCustomization());
     }
+
+    public ItemQuantityInPacketBuilder WithQuantity(Quantity quantity)
+    {
+        FillConstructorWith(nameof(quantity), quantity);
+        return this;
+    }
 }
