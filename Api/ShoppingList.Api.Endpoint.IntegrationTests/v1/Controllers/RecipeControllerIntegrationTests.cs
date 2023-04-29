@@ -194,6 +194,7 @@ public class RecipeControllerIntegrationTests
                 {
                     Id = _model.Id,
                     Name = _model.Name,
+                    NumberOfServings = _model.NumberOfServings,
                     Ingredients = _model.Ingredients.Select(i => new Ingredient
                     {
                         Id = i.Id,
@@ -582,7 +583,7 @@ public class RecipeControllerIntegrationTests
 
                 Contract = new ModifyRecipeContract(
                     ExpectedRecipe.Name,
-                    1, // todo #348
+                    ExpectedRecipe.NumberOfServings,
                     ingredients,
                     steps,
                     ExpectedRecipe.Tags.Select(t => t.RecipeTagId));

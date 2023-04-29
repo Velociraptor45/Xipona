@@ -32,7 +32,7 @@ public class RecipeConverter : IToDomainConverter<Entities.Recipe, IRecipe>
         var recipe = (AggregateRoot)_recipeFactory.Create(
             new RecipeId(source.Id),
             new RecipeName(source.Name),
-            new NumberOfServings(1), // todo #348
+            new NumberOfServings(source.NumberOfServings),
             ingredients,
             steps,
             recipeTagIds);

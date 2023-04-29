@@ -28,6 +28,7 @@ public class RecipeConverter : IToContractConverter<IRecipe, Entities.Recipe>
         {
             Id = source.Id,
             Name = source.Name,
+            NumberOfServings = source.NumberOfServings,
             Ingredients = source.Ingredients
                 .Select(ing => _ingredientConverter.ToContract((source.Id, ing)))
                 .ToList(),
