@@ -27,6 +27,7 @@ public class EditedRecipeConverter : IToDomainConverter<RecipeContract, EditedRe
         return new EditedRecipe(
             source.Id,
             source.Name,
+            source.NumberOfServings,
             _ingredientConverter.ToDomain(source.Ingredients).ToList(),
             new SortedSet<EditedPreparationStep>(preparationSteps, new SortingIndexComparer()),
             source.RecipeTagIds.ToList());

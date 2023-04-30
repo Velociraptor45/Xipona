@@ -12,6 +12,7 @@ public class ModifyRecipeContractConverter : IToContractConverter<EditedRecipe, 
     {
         return new ModifyRecipeContract(
             source.Name,
+            source.NumberOfServings,
             source.Ingredients.Select(i => new ModifyIngredientContract(
                 i.Id == Guid.Empty ? null : i.Id,
                 i.ItemCategoryId,

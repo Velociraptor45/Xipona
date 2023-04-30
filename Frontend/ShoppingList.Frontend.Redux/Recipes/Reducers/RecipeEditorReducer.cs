@@ -12,6 +12,7 @@ public static class RecipeEditorReducer
         var recipe = new EditedRecipe(
             Guid.Empty,
             string.Empty,
+            1,
             new List<EditedIngredient>(0),
             new SortedSet<EditedPreparationStep>(),
             new List<Guid>(0));
