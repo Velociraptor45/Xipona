@@ -136,4 +136,23 @@ public static class RecipeEditorReducer
             }
         };
     }
+
+    [ReducerMethod]
+    public static RecipeState OnRecipeNumberOfServingsChanged(RecipeState state,
+        RecipeNumberOfServingsChangedAction action)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Recipe = state.Editor.Recipe with
+                {
+                    NumberOfServings = action.NumberOfServings
+                }
+            }
+        };
+    }
 }

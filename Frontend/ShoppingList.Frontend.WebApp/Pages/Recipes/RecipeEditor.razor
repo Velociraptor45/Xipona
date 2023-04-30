@@ -45,6 +45,14 @@
                         CanAddItem="true">
                     </MultiSelect>
                 </div>
+                <div class="recipe-editor-top-row recipe-editor-top-row-number-of-servings">
+                    <AntDesign.InputNumber Value="@State.Value.Editor.Recipe.NumberOfServings"
+                                 TValue="int"
+                                 Step="1"
+                                 Min="1"
+                                 OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
+                    <span>People</span>
+                </div>
                 <Button Class="recipe-editor-top-row d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
                     <Icon Type="edit"></Icon>
                 </Button>
@@ -114,6 +122,10 @@
                     {
                         <span class="recipe-editor-view-tag">@tag</span>
                     }
+                </div>
+                <div class="align-self-center recipe-editor-top-row recipe-editor-top-row-number-of-servings">
+                    <span>@State.Value.Editor.Recipe.NumberOfServings</span>
+                    <span>People</span>
                 </div>
                 <Button Class="recipe-editor-top-row d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
                     <Icon Type="edit"></Icon>
@@ -236,5 +248,10 @@
     private void OnRecipeTagsDropdownClosed()
     {
         Dispatcher.Dispatch(new RecipeTagsDropdownClosedAction());
+    }
+
+    private void OnNumberOfServingsChanged(int servings)
+    {
+        Dispatcher.Dispatch(new RecipeNumberOfServingsChangedAction(servings));
     }
 }
