@@ -7,6 +7,6 @@ public static class EquivalencyAssertionOptionsExtensions
 {
     public static EquivalencyAssertionOptions<T> ExcludingKey<T>(this EquivalencyAssertionOptions<T> options)
     {
-        return options.Excluding(info => Regex.IsMatch(info.Path, @"\[\d+\]\.Key"));
+        return options.Excluding(info => Regex.IsMatch(info.Path, @"(\[\d+\]\.)?Key"));
     }
 }
