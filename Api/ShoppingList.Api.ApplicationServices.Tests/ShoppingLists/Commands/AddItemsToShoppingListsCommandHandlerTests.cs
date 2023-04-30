@@ -33,6 +33,7 @@ public class AddItemsToShoppingListsCommandHandlerTests : CommandHandlerTestsBas
 
         public override void VerifyCallingService()
         {
+            TestPropertyNotSetException.ThrowIfNull(Command);
             _serviceMock.VerifyAddAsync(Command.ItemToShoppingListAdditions, Times.Once);
         }
 
