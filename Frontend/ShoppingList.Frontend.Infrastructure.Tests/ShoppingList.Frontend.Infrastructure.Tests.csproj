@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ShoppingList.Frontend.Infrastructure\ShoppingList.Frontend.Infrastructure.csproj" />
+    <ProjectReference Include="..\ShoppingList.Frontend.Redux.TestKit\ShoppingList.Frontend.Redux.TestKit.csproj" />
     <ProjectReference Include="..\ShoppingList.Frontend.TestTools\ShoppingList.Frontend.TestTools.csproj" />
   </ItemGroup>
 

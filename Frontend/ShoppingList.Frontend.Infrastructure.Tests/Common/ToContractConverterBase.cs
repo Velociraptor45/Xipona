@@ -1,13 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.TestTools;
-using ProjectHermes.ShoppingList.Frontend.TestTools.Extensions;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Tests.Common;
 
-public abstract class ToDomainConverterBase<TSource, TDest, TConverter> where TConverter : IToDomainConverter<TSource, TDest>
+public abstract class ToContractConverterBase<TSource, TDest, TConverter> where TConverter : IToContractConverter<TSource, TDest>
 {
-    protected bool ExcludingKey { get; set; } = true;
-
     [Fact]
     public void Convert_ShouldMapAllMembersCorrectly()
     {
@@ -28,16 +25,10 @@ public abstract class ToDomainConverterBase<TSource, TDest, TConverter> where TC
         var sut = CreateSut();
 
         // Act
-        var result = sut.ToDomain(contract);
+        var result = sut.ToContract(contract);
 
         // Assert
-        result.Should().BeEquivalentTo(expectedResult, opt =>
-        {
-            if (ExcludingKey)
-                opt.ExcludingKey();
-
-            return opt;
-        });
+        result.Should().BeEquivalentTo(expectedResult);
     }
 
     protected abstract TConverter CreateSut();
