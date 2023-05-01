@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
@@ -7,6 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes;
 
@@ -43,8 +45,12 @@ internal static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IRecipeQueryService>>(provider =>
         {
             var repository = provider.GetRequiredService<Func<CancellationToken, IRecipeRepository>>();
+            var itemRepository = provider.GetRequiredService<IItemRepository>();
+            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            var translationService = provider.GetRequiredService<IQuantityTranslationService>();
             var logger = provider.GetRequiredService<ILogger<RecipeQueryService>>();
-            return cancellationToken => new RecipeQueryService(repository, logger, cancellationToken);
+            return cancellationToken => new RecipeQueryService(repository, itemRepository, storeRepository,
+                translationService, logger, cancellationToken);
         });
         services.AddTransient<Func<CancellationToken, IRecipeModificationService>>(provider =>
         {
@@ -52,5 +58,7 @@ internal static class ServiceCollectionExtensions
             var validator = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
             return cancellationToken => new RecipeModificationService(repository, validator, cancellationToken);
         });
+
+        services.AddTransient<IQuantityTranslationService, QuantityTranslationService>();
     }
 }

@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 
-public class QuantityTranslationService
+public class QuantityTranslationService : IQuantityTranslationService
 {
     private const float _mlInTablespoon = 18f;
     private const float _mlInTeaspoon = _mlInTablespoon / 3;
@@ -41,7 +41,7 @@ public class QuantityTranslationService
         }
     }
 
-    private (QuantityType, Quantity) NormalizeForSpoon(NumberOfServings numberOfServings,
+    private static (QuantityType, Quantity) NormalizeForSpoon(NumberOfServings numberOfServings,
         IngredientQuantity ingredientQuantity, ItemQuantity itemQuantity, float spoonCapacity)
     {
         if (itemQuantity.Type == QuantityType.Weight)

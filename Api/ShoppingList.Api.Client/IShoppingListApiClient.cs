@@ -21,6 +21,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Queries.GetAll;
@@ -258,6 +259,10 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Get("recipes/ingredient-quantity-types")]
         Task<IEnumerable<IngredientQuantityTypeContract>> GetAllIngredientQuantityTypes(
+            CancellationToken cancellationToken = default);
+
+        [Get("recipes/{id}/item-amounts-for-one-serving")]
+        Task<ItemAmountsForOneServingContract> GetItemAmountsForOneServingAsync([Path] Guid id,
             CancellationToken cancellationToken = default);
 
         [Post("recipes")]

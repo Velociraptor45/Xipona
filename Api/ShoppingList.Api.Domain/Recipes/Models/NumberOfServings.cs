@@ -1,4 +1,7 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Reasons;
+
+namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 public readonly record struct NumberOfServings
 {
     public NumberOfServings()
@@ -8,6 +11,9 @@ public readonly record struct NumberOfServings
 
     public NumberOfServings(int value)
     {
+        if (value < 1)
+            throw new DomainException(new NumberOfServingsMustBeAtLeastOneReason());
+
         Value = value;
     }
 

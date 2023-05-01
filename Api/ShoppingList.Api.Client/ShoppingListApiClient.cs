@@ -22,6 +22,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Queries.GetAll;
@@ -374,6 +375,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
             CancellationToken cancellationToken = default)
         {
             return await _apiClient.GetAllIngredientQuantityTypes(cancellationToken);
+        }
+
+        public async Task<ItemAmountsForOneServingContract> GetItemAmountsForOneServingAsync(Guid id,
+            CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.GetItemAmountsForOneServingAsync(id, cancellationToken);
         }
 
         public async Task<RecipeContract> CreateRecipeAsync(CreateRecipeContract contract,

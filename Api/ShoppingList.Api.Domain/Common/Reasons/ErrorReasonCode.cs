@@ -60,4 +60,5 @@ public enum ErrorReasonCode
     CannotCreateItemTypeWithoutAvailabilities = 58,
     CannotUpdateItemTypeWithoutAvailabilities = 59,
     CannotModifyItemTypeWithoutAvailabilities = 60,
+    NumberOfServingsMustBeAtLeastOne = 61,
 }

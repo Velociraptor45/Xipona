@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.AllIngredientQuantityTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.ItemAmountsForOneServing;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.RecipeById;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.SearchByTagIds;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.SearchRecipesByName;
@@ -13,6 +14,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
@@ -133,6 +135,34 @@ public class RecipeController : ControllerBase
         var contracts = _converters.ToContract<IngredientQuantityTypeReadModel, IngredientQuantityTypeContract>(results);
 
         return Ok(contracts);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(ItemAmountsForOneServingContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}/item-amounts-for-one-serving")]
+    public async Task<IActionResult> GetItemAmountsForOneServingAsync([FromRoute] Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var query = new ItemAmountsForOneServingQuery(new RecipeId(id));
+            var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
+
+            var contract = _converters
+                .ToContract<IEnumerable<ItemAmountForOneServing>, ItemAmountsForOneServingContract>(result);
+
+            return Ok(contract);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.RecipeNotFound or ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
     }
 
     [HttpPost]
