@@ -1,14 +1,17 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
+﻿using AutoFixture;
+using AutoMapper;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
-namespace ProjectHermes.ShoppingList.Api.Core.TestKit.Common;
+namespace ProjectHermes.ShoppingList.Api.Core.Tests.Converter;
 
-public abstract class ToDomainConverterBase<TSource, TDest, TConverter> where TConverter : IToDomainConverter<TSource, TDest>
+public abstract class ToContractConverterBase<TSource, TDest, TConverter> where TConverter : IToContractConverter<TSource, TDest>
 {
     [Fact]
     public void Convert_ShouldMapAllMembersCorrectly()
     {
         // Arrange
-        var builder = new TestBuilder<TSource>();
+        var builder = new DomainTestBuilder<TSource>();
         Customize(builder);
         var contract = builder.Create();
 
@@ -24,7 +27,7 @@ public abstract class ToDomainConverterBase<TSource, TDest, TConverter> where TC
         var sut = CreateSut();
 
         // Act
-        var result = sut.ToDomain(contract);
+        var result = sut.ToContract(contract);
 
         // Assert
         result.Should().BeEquivalentTo(expectedResult);
