@@ -10,11 +10,11 @@ public class ManufacturerRepository : IManufacturerRepository
 {
     private readonly ManufacturerContext _dbContext;
     private readonly IToDomainConverter<Entities.Manufacturer, IManufacturer> _toModelConverter;
-    private readonly IToEntityConverter<IManufacturer, Entities.Manufacturer> _toEntityConverter;
+    private readonly IToContractConverter<IManufacturer, Entities.Manufacturer> _toEntityConverter;
 
     public ManufacturerRepository(ManufacturerContext dbContext,
         IToDomainConverter<Entities.Manufacturer, IManufacturer> toModelConverter,
-        IToEntityConverter<IManufacturer, Entities.Manufacturer> toEntityConverter)
+        IToContractConverter<IManufacturer, Entities.Manufacturer> toEntityConverter)
     {
         _dbContext = dbContext;
         _toModelConverter = toModelConverter;
@@ -92,7 +92,7 @@ public class ManufacturerRepository : IManufacturerRepository
 
     public async Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken)
     {
-        var convertedEntity = _toEntityConverter.ToEntity(model);
+        var convertedEntity = _toEntityConverter.ToContract(model);
         var existingEntity = await FindTrackedEntityById(model.Id, cancellationToken);
 
         if (existingEntity is null)

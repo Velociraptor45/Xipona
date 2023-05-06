@@ -4,9 +4,9 @@ using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Converters.ToEntity;
 
-public class ManufacturerConverter : IToEntityConverter<IManufacturer, Entities.Manufacturer>
+public class ManufacturerConverter : IToContractConverter<IManufacturer, Entities.Manufacturer>
 {
-    public Entities.Manufacturer ToEntity(IManufacturer source)
+    public Entities.Manufacturer ToContract(IManufacturer source)
     {
         return new Entities.Manufacturer()
         {

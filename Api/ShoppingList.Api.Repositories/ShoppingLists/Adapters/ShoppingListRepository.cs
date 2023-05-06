@@ -12,11 +12,11 @@ public class ShoppingListRepository : IShoppingListRepository
 {
     private readonly ShoppingListContext _dbContext;
     private readonly IToDomainConverter<Entities.ShoppingList, IShoppingList> _toDomainConverter;
-    private readonly IToEntityConverter<IShoppingList, Entities.ShoppingList> _toEntityConverter;
+    private readonly IToContractConverter<IShoppingList, Entities.ShoppingList> _toEntityConverter;
 
     public ShoppingListRepository(ShoppingListContext dbContext,
         IToDomainConverter<Entities.ShoppingList, IShoppingList> toDomainConverter,
-        IToEntityConverter<IShoppingList, Entities.ShoppingList> toEntityConverter)
+        IToContractConverter<IShoppingList, Entities.ShoppingList> toEntityConverter)
     {
         _dbContext = dbContext;
         _toDomainConverter = toDomainConverter;
@@ -115,7 +115,7 @@ public class ShoppingListRepository : IShoppingListRepository
     private async Task StoreModifiedListAsync(Entities.ShoppingList existingShoppingListEntity,
         IShoppingList shoppingList, CancellationToken cancellationToken)
     {
-        var shoppingListEntityToStore = _toEntityConverter.ToEntity(shoppingList);
+        var shoppingListEntityToStore = _toEntityConverter.ToContract(shoppingList);
         var onListMappings = existingShoppingListEntity.ItemsOnList.ToDictionary(map => (map.ItemId, map.ItemTypeId));
 
         _dbContext.Entry(shoppingListEntityToStore).State = EntityState.Modified;
@@ -149,7 +149,7 @@ public class ShoppingListRepository : IShoppingListRepository
 
     private async Task StoreAsNewListAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
     {
-        var entity = _toEntityConverter.ToEntity(shoppingList);
+        var entity = _toEntityConverter.ToContract(shoppingList);
 
         _dbContext.Entry(entity).State = EntityState.Added;
         foreach (var onListMap in entity.ItemsOnList)

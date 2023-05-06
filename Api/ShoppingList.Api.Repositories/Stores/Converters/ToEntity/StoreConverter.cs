@@ -5,23 +5,23 @@ using Section = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Sect
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Stores.Converters.ToEntity;
 
-public class StoreConverter : IToEntityConverter<IStore, Entities.Store>
+public class StoreConverter : IToContractConverter<IStore, Entities.Store>
 {
-    private readonly IToEntityConverter<ISection, Section> _sectionConverter;
+    private readonly IToContractConverter<ISection, Section> _sectionConverter;
 
-    public StoreConverter(IToEntityConverter<ISection, Section> sectionConverter)
+    public StoreConverter(IToContractConverter<ISection, Section> sectionConverter)
     {
         _sectionConverter = sectionConverter;
     }
 
-    public Entities.Store ToEntity(IStore source)
+    public Entities.Store ToContract(IStore source)
     {
         return new Entities.Store()
         {
             Id = source.Id,
             Name = source.Name,
             Deleted = source.IsDeleted,
-            Sections = _sectionConverter.ToEntity(source.Sections).ToList(),
+            Sections = _sectionConverter.ToContract(source.Sections).ToList(),
             RowVersion = ((AggregateRoot)source).RowVersion
         };
     }

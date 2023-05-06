@@ -5,9 +5,9 @@ using ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Entities;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Converters.ToEntity;
 
-public class ShoppingListConverter : IToEntityConverter<IShoppingList, Entities.ShoppingList>
+public class ShoppingListConverter : IToContractConverter<IShoppingList, Entities.ShoppingList>
 {
-    public Entities.ShoppingList ToEntity(IShoppingList source)
+    public Entities.ShoppingList ToContract(IShoppingList source)
     {
         return new Entities.ShoppingList()
         {

@@ -4,9 +4,9 @@ using Section = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Sect
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Stores.Converters.ToEntity;
 
-public class SectionConverter : IToEntityConverter<ISection, Entities.Section>
+public class SectionConverter : IToContractConverter<ISection, Entities.Section>
 {
-    public Section ToEntity(ISection source)
+    public Section ToContract(ISection source)
     {
         return new Section
         {

@@ -80,7 +80,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped(_ => new SemaphoreSlim(1, 1));
         services.AddScoped<ITransactionGenerator, TransactionGenerator>();
 
-        services.AddImplementationOfGenericType(assembly, typeof(IToEntityConverter<,>));
         services.AddImplementationOfGenericType(assembly, typeof(IToContractConverter<,>));
         services.AddImplementationOfGenericType(assembly, typeof(IToDomainConverter<,>));
     }

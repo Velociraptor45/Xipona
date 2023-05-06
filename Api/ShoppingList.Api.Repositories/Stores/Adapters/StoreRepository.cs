@@ -10,11 +10,11 @@ public class StoreRepository : IStoreRepository
 {
     private readonly StoreContext _dbContext;
     private readonly IToDomainConverter<Entities.Store, IStore> _toDomainConverter;
-    private readonly IToEntityConverter<IStore, Entities.Store> _toEntityConverter;
+    private readonly IToContractConverter<IStore, Entities.Store> _toEntityConverter;
 
     public StoreRepository(StoreContext dbContext,
         IToDomainConverter<Entities.Store, IStore> toDomainConverter,
-        IToEntityConverter<IStore, Entities.Store> toEntityConverter)
+        IToContractConverter<IStore, Entities.Store> toEntityConverter)
     {
         _dbContext = dbContext;
         _toDomainConverter = toDomainConverter;
@@ -104,7 +104,7 @@ public class StoreRepository : IStoreRepository
             return await StoreAsNew(store, cancellationToken);
         }
         var existingSections = existingEntity.Sections.ToDictionary(s => s.Id);
-        var incomingEntity = _toEntityConverter.ToEntity(store);
+        var incomingEntity = _toEntityConverter.ToContract(store);
 
         _dbContext.Entry(incomingEntity).State = EntityState.Modified;
 
@@ -142,7 +142,7 @@ public class StoreRepository : IStoreRepository
 
     private async Task<IStore> StoreAsNew(IStore store, CancellationToken cancellationToken)
     {
-        var entity = _toEntityConverter.ToEntity(store);
+        var entity = _toEntityConverter.ToContract(store);
         _dbContext.Entry(entity).State = EntityState.Added;
 
         foreach (var section in entity.Sections)

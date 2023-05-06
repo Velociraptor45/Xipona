@@ -21,12 +21,12 @@ public class ItemRepository : IItemRepository
 {
     private readonly ItemContext _dbContext;
     private readonly IToDomainConverter<Item, IItem> _toModelConverter;
-    private readonly IToEntityConverter<IItem, Item> _toEntityConverter;
+    private readonly IToContractConverter<IItem, Item> _toEntityConverter;
     private readonly Func<CancellationToken, IDomainEventDispatcher> _domainEventDispatcherDelegate;
     private readonly ILogger<ItemRepository> _logger;
 
     public ItemRepository(ItemContext dbContext, IToDomainConverter<Item, IItem> toModelConverter,
-        IToEntityConverter<IItem, Item> toEntityConverter,
+        IToContractConverter<IItem, Item> toEntityConverter,
         Func<CancellationToken, IDomainEventDispatcher> domainEventDispatcherDelegate,
         ILogger<ItemRepository> logger)
     {
@@ -260,7 +260,7 @@ public class ItemRepository : IItemRepository
         Guid entityIdToLoad;
         if (existingEntity == null)
         {
-            var newEntity = _toEntityConverter.ToEntity(item);
+            var newEntity = _toEntityConverter.ToContract(item);
             _dbContext.Add(newEntity);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -268,7 +268,7 @@ public class ItemRepository : IItemRepository
         }
         else
         {
-            var updatedEntity = _toEntityConverter.ToEntity(item);
+            var updatedEntity = _toEntityConverter.ToContract(item);
             updatedEntity.Id = existingEntity.Id;
 
             var existingRowVersion = existingEntity.RowVersion;

@@ -10,11 +10,11 @@ public class ItemCategoryRepository : IItemCategoryRepository
 {
     private readonly ItemCategoryContext _dbContext;
     private readonly IToDomainConverter<Entities.ItemCategory, IItemCategory> _toModelConverter;
-    private readonly IToEntityConverter<IItemCategory, Entities.ItemCategory> _toEntityConverter;
+    private readonly IToContractConverter<IItemCategory, Entities.ItemCategory> _toEntityConverter;
 
     public ItemCategoryRepository(ItemCategoryContext dbContext,
         IToDomainConverter<Entities.ItemCategory, IItemCategory> toModelConverter,
-        IToEntityConverter<IItemCategory, Entities.ItemCategory> toEntityConverter)
+        IToContractConverter<IItemCategory, Entities.ItemCategory> toEntityConverter)
     {
         _dbContext = dbContext;
         _toModelConverter = toModelConverter;
@@ -93,7 +93,7 @@ public class ItemCategoryRepository : IItemCategoryRepository
 
     public async Task<IItemCategory> StoreAsync(IItemCategory model, CancellationToken cancellationToken)
     {
-        var convertedEntity = _toEntityConverter.ToEntity(model);
+        var convertedEntity = _toEntityConverter.ToContract(model);
         var existingEntity = await FindTrackedEntityById(model.Id, cancellationToken);
 
         if (existingEntity is null)
