@@ -5,7 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
 using Item = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.Item;
 
-namespace ProjectHermes.ShoppingList.Api.Repositories.Items.Converters.ToEntity;
+namespace ProjectHermes.ShoppingList.Api.Repositories.Items.Converters.ToContract;
 
 public class ItemConverter : IToContractConverter<IItem, Entities.Item>
 {

@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Entities;
 
-namespace ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Converters.ToEntity;
+namespace ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Converters.ToContract;
 
 public class ShoppingListConverter : IToContractConverter<IShoppingList, Entities.ShoppingList>
 {

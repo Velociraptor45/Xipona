@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using Section = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Section;
 
-namespace ProjectHermes.ShoppingList.Api.Repositories.Stores.Converters.ToEntity;
+namespace ProjectHermes.ShoppingList.Api.Repositories.Stores.Converters.ToContract;
 
 public class SectionConverter : IToContractConverter<ISection, Entities.Section>
 {

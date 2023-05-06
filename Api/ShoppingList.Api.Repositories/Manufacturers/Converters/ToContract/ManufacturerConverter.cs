@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Converters.ToEntity;
+namespace ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Converters.ToContract;
 
 public class ManufacturerConverter : IToContractConverter<IManufacturer, Entities.Manufacturer>
 {
