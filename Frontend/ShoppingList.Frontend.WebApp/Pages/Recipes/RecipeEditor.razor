@@ -163,38 +163,7 @@
         }
     }
 </div>
-<Modal Title="Add To Shoppping List"
-       Visible="@State.Value.Editor.IsAddToShoppingListOpen"
-       OkText="@("Add to Shopping List")"
-       OnOk="OnAddToShoppingListModalOkClicked"
-       OnCancel="OnAddToShoppingListModalCancelClicked">
-    <div>
-        @if (State.Value.Editor.AddToShoppingList is not null)
-        {
-            <AntDesign.InputNumber TValue="int" Min="1" Max="100"
-                                   Value="@State.Value.Editor.AddToShoppingList.NumberOfServings"
-                                   OnChange="OnAddToShoppingListNumberOfServingsChanged"></AntDesign.InputNumber>
-            @foreach (var ingredient in State.Value.Editor.AddToShoppingList.Ingredients)
-            {
-                <div class="d-flex align-items-center pb-2">
-                    <Checkbox Checked="ingredient.AddToShoppingList"
-                              OnChange="isChecked => OnAddIngredientToShoppingListChanged(isChecked, ingredient)"></Checkbox>
-                    <div class="">@ingredient.Quantity</div>
-                    <div class="mr-2">@ingredient.QuantityLabel</div>
-                    <div>@ingredient.ItemId</div> <!-- TODO -->
-                    <SingleSelect 
-                        TItem="AddToShoppingListAvailability"
-                        TValue="Guid"
-                        DataSource="ingredient.Availabilities.ToList()"
-                        DefaultValue="ingredient.SelectedStoreId"
-                        ValueName="@nameof(AddToShoppingListAvailability.StoreId)"
-                        LabelName="@nameof(AddToShoppingListAvailability.StoreName)"
-                        OnItemChanged="av => OnAddToShoppingListIngredientStoreChanged(ingredient, av.StoreId)"></SingleSelect>
-                </div>
-            }
-        }
-    </div>
-</Modal>
+<AddToShoppingListModal></AddToShoppingListModal>
 
 @code {
     [Parameter] public Guid RecipeId { get; set; }
@@ -295,30 +264,5 @@
     private void OnAddToShoppingListButtonClicked()
     {
         Dispatcher.Dispatch(new LoadAddToShoppingListAction());
-    }
-
-    private void OnAddToShoppingListNumberOfServingsChanged(int numberOfServings)
-    {
-        Dispatcher.Dispatch(new AddToShoppingListNumberOfServingsChangedAction(numberOfServings));
-    }
-
-    private void OnAddIngredientToShoppingListChanged(bool addToShoppingList, AddToShoppingListIngredient ingredient)
-    {
-        Dispatcher.Dispatch(new AddIngredientToShoppingListChangedAction(ingredient.Key, addToShoppingList));
-    }
-
-    private void OnAddToShoppingListModalOkClicked()
-    {
-        Dispatcher.Dispatch(new AddItemsToShoppingListAction());
-    }
-
-    private void OnAddToShoppingListModalCancelClicked()
-    {
-        Dispatcher.Dispatch(new AddToShoppingListModalClosedAction());
-    }
-
-    private void OnAddToShoppingListIngredientStoreChanged(AddToShoppingListIngredient ingredient, Guid storeId)
-    {
-        Dispatcher.Dispatch(new AddToShoppingListIngredientStoreChangedAction(ingredient.Key, storeId));
     }
 }
