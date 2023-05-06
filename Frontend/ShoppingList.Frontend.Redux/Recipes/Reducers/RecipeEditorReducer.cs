@@ -177,11 +177,14 @@ public static class RecipeEditorReducer
         if (state.Editor.Recipe is null)
             return state;
 
-        var ingredients = Multiply(action.Ingredients, state.Editor.Recipe.NumberOfServings).ToList();
+        var amountsForOneServing = action.IngredientsForOneServing.ToDictionary(i => (i.ItemId, i.ItemTypeId), i => i.Quantity);
+
+        var ingredients = Multiply(amountsForOneServing, action.IngredientsForOneServing, state.Editor.Recipe.NumberOfServings)
+            .ToList();
 
         var addToShoppingList = new AddToShoppingList(
             state.Editor.Recipe.NumberOfServings,
-            action.Ingredients,
+            amountsForOneServing,
             ingredients);
 
         return state with
@@ -198,10 +201,13 @@ public static class RecipeEditorReducer
     public static RecipeState OnAddToShoppingListNumberOfServingsChanged(RecipeState state,
         AddToShoppingListNumberOfServingsChangedAction action)
     {
-        if (state.Editor.Recipe is null)
+        if (state.Editor.AddToShoppingList is null)
             return state;
 
-        var ingredients = Multiply(state.Editor.AddToShoppingList!.IngredientsForOneServing, action.NumberOfServings)
+        var ingredients = Multiply(
+                state.Editor.AddToShoppingList.ItemAmountsForOneServing,
+                state.Editor.AddToShoppingList.Ingredients,
+                action.NumberOfServings)
             .ToList();
 
         return state with
@@ -221,8 +227,9 @@ public static class RecipeEditorReducer
     public static RecipeState OnAddIngredientToShoppingListChanged(RecipeState state,
         AddIngredientToShoppingListChangedAction action)
     {
-        if (state.Editor.Recipe is null)
+        if (state.Editor.AddToShoppingList is null)
             return state;
+
         var ingredients = state.Editor.AddToShoppingList!.Ingredients.ToList();
         var ingredient = ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
         if (ingredient is null)
@@ -243,12 +250,44 @@ public static class RecipeEditorReducer
         };
     }
 
-    private static IEnumerable<AddToShoppingListIngredient> Multiply(IEnumerable<AddToShoppingListIngredient> ingredients,
+    [ReducerMethod]
+    public static RecipeState OnAddToShoppingListIngredientStoreChanged(RecipeState state,
+        AddToShoppingListIngredientStoreChangedAction action)
+    {
+        if (state.Editor.AddToShoppingList is null)
+            return state;
+
+        var ingredients = state.Editor.AddToShoppingList!.Ingredients.ToList();
+        var ingredient = ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
+        if (ingredient is null)
+            return state;
+
+        var ingredientIndex = ingredients.IndexOf(ingredient);
+        ingredients[ingredientIndex] = ingredient with { SelectedStoreId = action.StoreId };
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                AddToShoppingList = state.Editor.AddToShoppingList with
+                {
+                    Ingredients = ingredients,
+                }
+            }
+        };
+    }
+
+    private static IEnumerable<AddToShoppingListIngredient> Multiply(
+        IReadOnlyDictionary<(Guid, Guid?), float> itemAmountsForOneServing,
+        IEnumerable<AddToShoppingListIngredient> ingredients,
         int numberOfServings)
     {
         foreach (var ingredient in ingredients)
         {
-            yield return ingredient with { Quantity = (float)Math.Ceiling(ingredient.Quantity * numberOfServings) };
+            if (!itemAmountsForOneServing.TryGetValue((ingredient.ItemId, ingredient.ItemTypeId), out var quantity))
+                continue;
+
+            yield return ingredient with { Quantity = (float)Math.Ceiling(quantity * numberOfServings) };
         }
     }
 }

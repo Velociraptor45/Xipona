@@ -6,6 +6,6 @@ public record AddToShoppingListIngredient(
     int QuantityType,
     string QuantityLabel,
     float Quantity,
-    Guid DefaultStoreId,
+    Guid SelectedStoreId,
     bool AddToShoppingList,
     IReadOnlyCollection<AddToShoppingListAvailability> Availabilities);

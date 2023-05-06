@@ -182,6 +182,14 @@
                     <div class="">@ingredient.Quantity</div>
                     <div class="mr-2">@ingredient.QuantityLabel</div>
                     <div>@ingredient.ItemId</div> <!-- TODO -->
+                    <SingleSelect 
+                        TItem="AddToShoppingListAvailability"
+                        TValue="Guid"
+                        DataSource="ingredient.Availabilities.ToList()"
+                        DefaultValue="ingredient.SelectedStoreId"
+                        ValueName="@nameof(AddToShoppingListAvailability.StoreId)"
+                        LabelName="@nameof(AddToShoppingListAvailability.StoreName)"
+                        OnItemChanged="av => OnAddToShoppingListIngredientStoreChanged(ingredient, av.StoreId)"></SingleSelect>
                 </div>
             }
         }
@@ -307,5 +315,10 @@
     private void OnAddToShoppingListModalCancelClicked()
     {
         Dispatcher.Dispatch(new AddToShoppingListModalClosedAction());
+    }
+
+    private void OnAddToShoppingListIngredientStoreChanged(AddToShoppingListIngredient ingredient, Guid storeId)
+    {
+        Dispatcher.Dispatch(new AddToShoppingListIngredientStoreChangedAction(ingredient.Key, storeId));
     }
 }
