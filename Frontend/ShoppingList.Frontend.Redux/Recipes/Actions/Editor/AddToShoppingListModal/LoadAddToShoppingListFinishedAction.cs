@@ -1,5 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 
-namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor;
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal;
 public record LoadAddToShoppingListFinishedAction(
     IReadOnlyCollection<AddToShoppingListIngredient> IngredientsForOneServing);
