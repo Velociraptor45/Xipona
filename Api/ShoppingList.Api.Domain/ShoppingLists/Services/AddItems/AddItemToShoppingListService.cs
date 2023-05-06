@@ -48,6 +48,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
             {
                 await AddItemToShoppingListAsync(shoppingList, itemToAdd.ItemId, null, itemToAdd.Quantity,
                     cancellationToken);
+                await _shoppingListRepository.StoreAsync(shoppingList, cancellationToken);
             }
             else
             {
