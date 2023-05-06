@@ -7,7 +7,7 @@ using System.Linq;
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Recipes.ToDomain;
 
 public class AddToShoppingListIngredientConverter
-    : IToDomainConverter<ItemAmountForOneServingContract, AddToShoppingListIngredient>
+    : IToDomainConverter<ItemAmountForOneServingContract, AddToShoppingListItem>
 {
     private readonly IToDomainConverter<ItemAmountForOneServingAvailabilityContract, AddToShoppingListAvailability> _availabilityConverter;
 
@@ -17,9 +17,9 @@ public class AddToShoppingListIngredientConverter
         _availabilityConverter = availabilityConverter;
     }
 
-    public AddToShoppingListIngredient ToDomain(ItemAmountForOneServingContract source)
+    public AddToShoppingListItem ToDomain(ItemAmountForOneServingContract source)
     {
-        return new AddToShoppingListIngredient(
+        return new AddToShoppingListItem(
             Guid.NewGuid(),
             source.ItemId,
             source.ItemTypeId,

@@ -1,5 +1,5 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
-public record AddToShoppingListIngredient(
+public record AddToShoppingListItem(
     Guid Key,
     Guid ItemId,
     Guid? ItemTypeId,

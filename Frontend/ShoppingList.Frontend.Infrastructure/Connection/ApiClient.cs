@@ -411,9 +411,9 @@ public class ApiClient : IApiClient
             : _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
     }
 
-    public async Task<IEnumerable<AddToShoppingListIngredient>> GetItemAmountsForOneServingAsync(Guid recipeId)
+    public async Task<IEnumerable<AddToShoppingListItem>> GetItemAmountsForOneServingAsync(Guid recipeId)
     {
         var result = await _client.GetItemAmountsForOneServingAsync(recipeId);
-        return _converters.ToDomain<ItemAmountForOneServingContract, AddToShoppingListIngredient>(result.Items);
+        return _converters.ToDomain<ItemAmountForOneServingContract, AddToShoppingListItem>(result.Items);
     }
 }

@@ -20,21 +20,21 @@
             <AntDesign.InputNumber TValue="int" Min="1" Max="100"
                                Value="@State.Value.Editor.AddToShoppingList.NumberOfServings"
                                OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
-            @foreach (var ingredient in State.Value.Editor.AddToShoppingList.Ingredients)
+            @foreach (var item in State.Value.Editor.AddToShoppingList.Items)
             {
                 <div class="d-flex align-items-center pb-2">
-                    <Checkbox Checked="ingredient.AddToShoppingList"
-                      OnChange="isChecked => OnAddItemToShoppingListChanged(isChecked, ingredient)"></Checkbox>
-                    <div class="">@ingredient.Quantity</div>
-                    <div class="mr-2">@ingredient.QuantityLabel</div>
-                    <div>@ingredient.ItemId</div> <!-- TODO -->
+                    <Checkbox Checked="item.AddToShoppingList"
+                      OnChange="isChecked => OnAddItemToShoppingListChanged(isChecked, item)"></Checkbox>
+                    <div class="">@item.Quantity</div>
+                    <div class="mr-2">@item.QuantityLabel</div>
+                    <div>@item.ItemId</div> <!-- TODO -->
                     <SingleSelect TItem="AddToShoppingListAvailability"
                           TValue="Guid"
-                          DataSource="ingredient.Availabilities.ToList()"
-                          DefaultValue="ingredient.SelectedStoreId"
+                          DataSource="item.Availabilities.ToList()"
+                          DefaultValue="item.SelectedStoreId"
                           ValueName="@nameof(AddToShoppingListAvailability.StoreId)"
                           LabelName="@nameof(AddToShoppingListAvailability.StoreName)"
-                          OnItemChanged="av => OnItemStoreChanged(ingredient, av.StoreId)"></SingleSelect>
+                          OnItemChanged="av => OnItemStoreChanged(item, av.StoreId)"></SingleSelect>
                 </div>
             }
         }
@@ -47,9 +47,9 @@
         Dispatcher.Dispatch(new AddToShoppingListNumberOfServingsChangedAction(numberOfServings));
     }
 
-    private void OnAddItemToShoppingListChanged(bool addToShoppingList, AddToShoppingListIngredient ingredient)
+    private void OnAddItemToShoppingListChanged(bool addToShoppingList, AddToShoppingListItem item)
     {
-        Dispatcher.Dispatch(new AddIngredientToShoppingListChangedAction(ingredient.Key, addToShoppingList));
+        Dispatcher.Dispatch(new AddItemToShoppingListChangedAction(item.Key, addToShoppingList));
     }
 
     private void OnOkClicked()
@@ -62,8 +62,8 @@
         Dispatcher.Dispatch(new AddToShoppingListModalClosedAction());
     }
 
-    private void OnItemStoreChanged(AddToShoppingListIngredient ingredient, Guid storeId)
+    private void OnItemStoreChanged(AddToShoppingListItem item, Guid storeId)
     {
-        Dispatcher.Dispatch(new AddToShoppingListIngredientStoreChangedAction(ingredient.Key, storeId));
+        Dispatcher.Dispatch(new AddToShoppingListItemStoreChangedAction(item.Key, storeId));
     }
 }

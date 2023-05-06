@@ -132,7 +132,7 @@ public sealed class RecipeEditorEffects
         if (_state.Value.Editor.Recipe is null)
             return;
 
-        IEnumerable<AddToShoppingListIngredient> results;
+        IEnumerable<AddToShoppingListItem> results;
         try
         {
             results = await _client.GetItemAmountsForOneServingAsync(_state.Value.Editor.Recipe.Id);

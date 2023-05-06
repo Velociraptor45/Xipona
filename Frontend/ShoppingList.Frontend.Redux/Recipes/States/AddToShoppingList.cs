@@ -3,4 +3,4 @@
 public record AddToShoppingList(
     int NumberOfServings,
     IReadOnlyDictionary<(Guid, Guid?), float> ItemAmountsForOneServing,
-    IReadOnlyCollection<AddToShoppingListIngredient> Ingredients);
+    IReadOnlyCollection<AddToShoppingListItem> Items);
