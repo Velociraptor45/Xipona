@@ -150,4 +150,33 @@ public sealed class RecipeEditorEffects
 
         dispatcher.Dispatch(new LoadAddToShoppingListFinishedAction(results.ToList()));
     }
+
+    [EffectMethod(typeof(AddItemsToShoppingListAction))]
+    public async Task HandleAddItemsToShoppingListAction(IDispatcher dispatcher)
+    {
+        if (_state.Value.Editor.AddToShoppingList is null)
+            return;
+
+        dispatcher.Dispatch(new AddItemsToShoppingListStartedAction());
+        try
+        {
+            var itemsToAdd = _state.Value.Editor.AddToShoppingList.Items.Where(i => i.AddToShoppingList);
+            await _client.AddItemsToShoppingListsAsync(itemsToAdd);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Adding items to shopping list failed", e));
+            dispatcher.Dispatch(new AddItemsToShoppingListFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Adding items to shopping list failed", e.Message));
+            dispatcher.Dispatch(new AddItemsToShoppingListFinishedAction());
+            return;
+        }
+
+        dispatcher.Dispatch(new AddItemsToShoppingListFinishedAction());
+        dispatcher.Dispatch(new AddToShoppingListModalClosedAction());
+    }
 }

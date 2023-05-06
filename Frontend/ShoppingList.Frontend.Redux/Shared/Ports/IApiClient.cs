@@ -117,4 +117,6 @@ public interface IApiClient
     Task<IEnumerable<RecipeSearchResult>> SearchRecipesByTagsAsync(IEnumerable<Guid> tagIds);
 
     Task<IEnumerable<AddToShoppingListItem>> GetItemAmountsForOneServingAsync(Guid recipeId);
+
+    Task AddItemsToShoppingListsAsync(IEnumerable<AddToShoppingListItem> items);
 }
