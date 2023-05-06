@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Reducers;
@@ -154,5 +155,100 @@ public static class RecipeEditorReducer
                 }
             }
         };
+    }
+
+    [ReducerMethod(typeof(AddToShoppingListModalClosedAction))]
+    public static RecipeState OnAddToShoppingListModalClosed(RecipeState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsAddToShoppingListOpen = false,
+                AddToShoppingList = null
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static RecipeState OnLoadAddToShoppingListFinished(RecipeState state,
+        LoadAddToShoppingListFinishedAction action)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        var ingredients = Multiply(action.Ingredients, state.Editor.Recipe.NumberOfServings).ToList();
+
+        var addToShoppingList = new AddToShoppingList(
+            state.Editor.Recipe.NumberOfServings,
+            action.Ingredients,
+            ingredients);
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsAddToShoppingListOpen = true,
+                AddToShoppingList = addToShoppingList
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static RecipeState OnAddToShoppingListNumberOfServingsChanged(RecipeState state,
+        AddToShoppingListNumberOfServingsChangedAction action)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        var ingredients = Multiply(state.Editor.AddToShoppingList!.IngredientsForOneServing, action.NumberOfServings)
+            .ToList();
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                AddToShoppingList = state.Editor.AddToShoppingList with
+                {
+                    NumberOfServings = action.NumberOfServings,
+                    Ingredients = ingredients
+                }
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static RecipeState OnAddIngredientToShoppingListChanged(RecipeState state,
+        AddIngredientToShoppingListChangedAction action)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+        var ingredients = state.Editor.AddToShoppingList!.Ingredients.ToList();
+        var ingredient = ingredients.FirstOrDefault(i => i.Key == action.IngredientKey);
+        if (ingredient is null)
+            return state;
+
+        var ingredientIndex = ingredients.IndexOf(ingredient);
+        ingredients[ingredientIndex] = ingredient with { AddToShoppingList = action.AddToShoppingList };
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                AddToShoppingList = state.Editor.AddToShoppingList with
+                {
+                    Ingredients = ingredients,
+                }
+            }
+        };
+    }
+
+    private static IEnumerable<AddToShoppingListIngredient> Multiply(IEnumerable<AddToShoppingListIngredient> ingredients,
+        int numberOfServings)
+    {
+        foreach (var ingredient in ingredients)
+        {
+            yield return ingredient with { Quantity = (float)Math.Ceiling(ingredient.Quantity * numberOfServings) };
+        }
     }
 }

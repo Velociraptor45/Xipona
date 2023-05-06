@@ -22,6 +22,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Queries.GetAll;
@@ -408,5 +409,11 @@ public class ApiClient : IApiClient
         return results is null
             ? Enumerable.Empty<RecipeSearchResult>()
             : _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
+    }
+
+    public async Task<IEnumerable<AddToShoppingListIngredient>> GetItemAmountsForOneServingAsync(Guid recipeId)
+    {
+        var result = await _client.GetItemAmountsForOneServingAsync(recipeId);
+        return _converters.ToDomain<ItemAmountForOneServingContract, AddToShoppingListIngredient>(result.Items);
     }
 }

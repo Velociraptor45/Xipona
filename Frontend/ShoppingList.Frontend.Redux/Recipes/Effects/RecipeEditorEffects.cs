@@ -124,4 +124,29 @@ public sealed class RecipeEditorEffects
 
         dispatcher.Dispatch(new CreateNewRecipeTagFinishedAction(newTag));
     }
+
+    [EffectMethod(typeof(LoadAddToShoppingListAction))]
+    public async Task HandleLoadAddToShoppingListAction(IDispatcher dispatcher)
+    {
+        if (_state.Value.Editor.Recipe is null)
+            return;
+
+        IEnumerable<AddToShoppingListIngredient> results;
+        try
+        {
+            results = await _client.GetItemAmountsForOneServingAsync(_state.Value.Editor.Recipe.Id);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading item amounts for one serving failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading item amounts for one serving failed", e.Message));
+            return;
+        }
+
+        dispatcher.Dispatch(new LoadAddToShoppingListFinishedAction(results.ToList()));
+    }
 }

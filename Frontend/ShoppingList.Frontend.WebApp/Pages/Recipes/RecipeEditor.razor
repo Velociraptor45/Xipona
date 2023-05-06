@@ -5,6 +5,7 @@
 @using Fluxor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.Editor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients
@@ -47,10 +48,10 @@
                 </div>
                 <div class="recipe-editor-top-row recipe-editor-top-row-number-of-servings">
                     <AntDesign.InputNumber Value="@State.Value.Editor.Recipe.NumberOfServings"
-                                 TValue="int"
-                                 Step="1"
-                                 Min="1"
-                                 OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
+                                           TValue="int"
+                                           Step="1"
+                                           Min="1"
+                                           OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
                     <span>People</span>
                 </div>
                 <Button Class="recipe-editor-top-row d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
@@ -127,6 +128,10 @@
                     <span>@State.Value.Editor.Recipe.NumberOfServings</span>
                     <span>People</span>
                 </div>
+                <Button Class="recipe-editor-top-row d-flex align-items-center"
+                        OnClick="OnAddToShoppingListButtonClicked">
+                    Add to SL
+                </Button>
                 <Button Class="recipe-editor-top-row d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
                     <Icon Type="edit"></Icon>
                 </Button>
@@ -158,6 +163,30 @@
         }
     }
 </div>
+<Modal Title="Add To Shoppping List"
+       Visible="@State.Value.Editor.IsAddToShoppingListOpen"
+       OkText="@("Add to Shopping List")"
+       OnOk="OnAddToShoppingListModalOkClicked"
+       OnCancel="OnAddToShoppingListModalCancelClicked">
+    <div>
+        @if (State.Value.Editor.AddToShoppingList is not null)
+        {
+            <AntDesign.InputNumber TValue="int" Min="1" Max="100"
+                                   Value="@State.Value.Editor.AddToShoppingList.NumberOfServings"
+                                   OnChange="OnAddToShoppingListNumberOfServingsChanged"></AntDesign.InputNumber>
+            @foreach (var ingredient in State.Value.Editor.AddToShoppingList.Ingredients)
+            {
+                <div class="d-flex align-items-center pb-2">
+                    <Checkbox Checked="ingredient.AddToShoppingList"
+                              OnChange="isChecked => OnAddIngredientToShoppingListChanged(isChecked, ingredient)"></Checkbox>
+                    <div class="">@ingredient.Quantity</div>
+                    <div class="mr-2">@ingredient.QuantityLabel</div>
+                    <div>@ingredient.ItemId</div> <!-- TODO -->
+                </div>
+            }
+        }
+    </div>
+</Modal>
 
 @code {
     [Parameter] public Guid RecipeId { get; set; }
@@ -204,7 +233,7 @@
     {
         Dispatcher.Dispatch(new IngredientAddedAction());
     }
-    
+
     private void OnAddPreparationStepButtonClicked()
     {
         Dispatcher.Dispatch(new PreparationStepAddedAction());
@@ -253,5 +282,30 @@
     private void OnNumberOfServingsChanged(int servings)
     {
         Dispatcher.Dispatch(new RecipeNumberOfServingsChangedAction(servings));
+    }
+
+    private void OnAddToShoppingListButtonClicked()
+    {
+        Dispatcher.Dispatch(new LoadAddToShoppingListAction());
+    }
+
+    private void OnAddToShoppingListNumberOfServingsChanged(int numberOfServings)
+    {
+        Dispatcher.Dispatch(new AddToShoppingListNumberOfServingsChangedAction(numberOfServings));
+    }
+
+    private void OnAddIngredientToShoppingListChanged(bool addToShoppingList, AddToShoppingListIngredient ingredient)
+    {
+        Dispatcher.Dispatch(new AddIngredientToShoppingListChangedAction(ingredient.Key, addToShoppingList));
+    }
+
+    private void OnAddToShoppingListModalOkClicked()
+    {
+        Dispatcher.Dispatch(new AddItemsToShoppingListAction());
+    }
+
+    private void OnAddToShoppingListModalCancelClicked()
+    {
+        Dispatcher.Dispatch(new AddToShoppingListModalClosedAction());
     }
 }
