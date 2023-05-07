@@ -8,6 +8,7 @@ public class ItemAmountForOneServing
     public ItemAmountForOneServing(
         ItemId itemId,
         ItemTypeId? itemTypeId,
+        string itemName,
         QuantityType quantityType,
         string quantityLabel,
         Quantity quantity,
@@ -17,6 +18,7 @@ public class ItemAmountForOneServing
     {
         ItemId = itemId;
         ItemTypeId = itemTypeId;
+        ItemName = itemName;
         QuantityType = quantityType;
         QuantityLabel = quantityLabel;
         Quantity = quantity;
@@ -27,6 +29,7 @@ public class ItemAmountForOneServing
 
     public ItemId ItemId { get; }
     public ItemTypeId? ItemTypeId { get; }
+    public string ItemName { get; }
     public QuantityType QuantityType { get; }
     public string QuantityLabel { get; }
     public Quantity Quantity { get; }

@@ -116,9 +116,14 @@ public class RecipeQueryService : IRecipeQueryService
                     ingredient.Quantity,
                     item.ItemQuantity);
 
+                var name = itemType is null
+                    ? item.Name
+                    : $"{item.Name} {itemType.Name}";
+
                 return new ItemAmountForOneServing(
                     item.Id,
                     ingredient.DefaultItemTypeId,
+                    name,
                     quantityType,
                     quantityType.GetAttribute<QuantityLabelAttribute>().QuantityLabel,
                     quantity,

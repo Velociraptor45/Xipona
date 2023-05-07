@@ -14,6 +14,7 @@ public class ItemAmountsForOneServingContractConverter
             new ItemAmountForOneServingContract(
                 i.ItemId.Value,
                 i.ItemTypeId?.Value,
+                i.ItemName,
                 i.QuantityType.ToInt(),
                 i.QuantityLabel,
                 i.Quantity,

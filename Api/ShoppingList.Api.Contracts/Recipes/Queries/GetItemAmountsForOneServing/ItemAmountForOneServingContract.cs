@@ -8,6 +8,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.GetItemAmount
         public ItemAmountForOneServingContract(
             Guid itemId,
             Guid? itemTypeId,
+            string itemName,
             int quantityType,
             string quantityLabel,
             float quantity,
@@ -17,6 +18,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.GetItemAmount
         {
             ItemId = itemId;
             ItemTypeId = itemTypeId;
+            ItemName = itemName;
             QuantityType = quantityType;
             QuantityLabel = quantityLabel;
             Quantity = quantity;
@@ -27,6 +29,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.GetItemAmount
 
         public Guid ItemId { get; }
         public Guid? ItemTypeId { get; }
+        public string ItemName { get; }
         public int QuantityType { get; }
         public string QuantityLabel { get; }
         public float Quantity { get; }

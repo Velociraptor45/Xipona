@@ -12,6 +12,7 @@ using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
@@ -690,6 +691,7 @@ public class RecipeControllerIntegrationTests
             {
                 var availability1 = new TestBuilder<ItemAmountForOneServingAvailabilityContract>().Create();
                 var availability2 = new TestBuilder<ItemAmountForOneServingAvailabilityContract>().Create();
+                var fluidToUnitName = $"{new DomainTestBuilder<string>().Create()} {new DomainTestBuilder<string>().Create()}";
 
                 ExpectedResult = new ItemAmountsForOneServingContract(new List<ItemAmountForOneServingContract>
                 {
@@ -718,6 +720,7 @@ public class RecipeControllerIntegrationTests
                         .Create(),
                     // fluid to unit
                     new TestBuilder<ItemAmountForOneServingContract>()
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.ItemName).LowerFirstChar(), fluidToUnitName)
                         .FillConstructorWith(nameof(ItemAmountForOneServingContract.Quantity).LowerFirstChar(), 1.25f) // 2.5 x 500 ml
                         .FillConstructorWith(nameof(ItemAmountForOneServingContract.QuantityType).LowerFirstChar(), (int)QuantityType.Unit)
                         .FillConstructorWith(nameof(ItemAmountForOneServingContract.QuantityLabel).LowerFirstChar(), "x")
@@ -765,6 +768,7 @@ public class RecipeControllerIntegrationTests
                 };
                 var unitToUnitItem = ItemEntityMother.Initial()
                     .WithId(firstExpItem.ItemId)
+                    .WithName(firstExpItem.ItemName)
                     .WithAvailableAt(unitToUnitAvailabilities)
                     .WithQuantityType(QuantityType.Unit.ToInt())
                     .WithQuantityInPacket(3f)
@@ -779,12 +783,14 @@ public class RecipeControllerIntegrationTests
                 };
                 var teaspoonToWeightItem = ItemEntityMother.Initial()
                     .WithId(secondExpItem.ItemId)
+                    .WithName(secondExpItem.ItemName)
                     .WithAvailableAt(teaspoonToWeightAvailabilities)
                     .WithQuantityType(QuantityType.Weight.ToInt())
                     .WithoutQuantityInPacket()
                     .WithoutQuantityTypeInPacket()
                     .Create();
 
+                var nameParts = thirdExpItem.ItemName!.Split(' ');
                 var fluidToUnitAvailabilities = new List<ItemTypeAvailableAt>
                 {
                     ItemTypeAvailableAtEntityMother.InitialForStore(thirdExpItem.Availabilities.First().StoreId)
@@ -795,10 +801,12 @@ public class RecipeControllerIntegrationTests
                 {
                     ItemTypeEntityMother.Initial()
                         .WithId(thirdExpItem.ItemTypeId!.Value)
+                        .WithName(nameParts.Last())
                         .WithAvailableAt(fluidToUnitAvailabilities).Create(),
                 };
                 var fluidToUnitItem = ItemEntityMother.InitialWithTypes()
                     .WithId(thirdExpItem.ItemId)
+                    .WithName(nameParts.First())
                     .WithItemTypes(fluidToUnitItemTypes)
                     .WithQuantityType(QuantityType.Unit.ToInt())
                     .WithQuantityInPacket(500f)
