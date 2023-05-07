@@ -21,14 +21,70 @@ public class QuantityTranslationServiceTests
         [InlineData(1, 2, 2)]
         [InlineData(2, 1, 0.5)]
         [InlineData(2, 2.5, 1.25)]
-        public void NormalizeForOneServing_WithIngredientUnit_WithItemUnit_ShouldReturnCorrectResult(
+        public void NormalizeForOneServing_WithIngredientUnit_WithItemUnit_WithInPacketWeight_ShouldReturnCorrectResult(
             int numberOfServingsRaw, float ingredientQuantityRaw, float expectedQuantityRaw)
         {
             // Arrange
             var numberOfServings = new NumberOfServings(numberOfServingsRaw);
             var ingredientQuantityType = IngredientQuantityType.Unit;
             var ingredientQuantity = new IngredientQuantity(ingredientQuantityRaw);
-            var itemQuantity = new ItemQuantity(QuantityType.Unit, new ItemQuantityInPacketBuilder().Create());
+            var inPacket = new ItemQuantityInPacketBuilder().WithQuantityType(QuantityTypeInPacket.Weight).Create();
+            var itemQuantity = new ItemQuantity(QuantityType.Unit, inPacket);
+
+            // Act
+            var result = _sut.NormalizeForOneServing(numberOfServings, ingredientQuantityType, ingredientQuantity,
+                itemQuantity);
+
+            // Assert
+            result.QuantityType.Should().Be(QuantityType.Unit);
+            result.Quantity.Should().Be(new Quantity(expectedQuantityRaw));
+        }
+
+        [Theory]
+        [InlineData(1, 1, 1)]
+        [InlineData(1, 2, 2)]
+        [InlineData(2, 1, 0.5)]
+        [InlineData(2, 2.5, 1.25)]
+        public void NormalizeForOneServing_WithIngredientUnit_WithItemUnit_WithInPacketFluid_ShouldReturnCorrectResult(
+            int numberOfServingsRaw, float ingredientQuantityRaw, float expectedQuantityRaw)
+        {
+            // Arrange
+            var numberOfServings = new NumberOfServings(numberOfServingsRaw);
+            var ingredientQuantityType = IngredientQuantityType.Unit;
+            var ingredientQuantity = new IngredientQuantity(ingredientQuantityRaw);
+            var inPacket = new ItemQuantityInPacketBuilder().WithQuantityType(QuantityTypeInPacket.Fluid).Create();
+            var itemQuantity = new ItemQuantity(QuantityType.Unit, inPacket);
+
+            // Act
+            var result = _sut.NormalizeForOneServing(numberOfServings, ingredientQuantityType, ingredientQuantity,
+                itemQuantity);
+
+            // Assert
+            result.QuantityType.Should().Be(QuantityType.Unit);
+            result.Quantity.Should().Be(new Quantity(expectedQuantityRaw));
+        }
+
+        [Theory]
+        [InlineData(1, 1, 1, 1)]
+        [InlineData(1, 1, 2, 0.5)]
+        [InlineData(1, 2, 1, 2)]
+        [InlineData(1, 2, 2, 1)]
+        [InlineData(2, 2, 2, 0.5)]
+        [InlineData(2, 2, 1, 1)]
+        [InlineData(2, 2, 0.5, 2)]
+        [InlineData(2, 2.5, 2, 0.625)]
+        public void NormalizeForOneServing_WithIngredientUnit_WithItemUnit_WithInPacketUnit_ShouldReturnCorrectResult(
+            int numberOfServingsRaw, float ingredientQuantityRaw, float inPacketQuantity, float expectedQuantityRaw)
+        {
+            // Arrange
+            var numberOfServings = new NumberOfServings(numberOfServingsRaw);
+            var ingredientQuantityType = IngredientQuantityType.Unit;
+            var ingredientQuantity = new IngredientQuantity(ingredientQuantityRaw);
+            var inPacket = new ItemQuantityInPacketBuilder()
+                .WithQuantityType(QuantityTypeInPacket.Unit)
+                .WithQuantity(new Quantity(inPacketQuantity))
+                .Create();
+            var itemQuantity = new ItemQuantity(QuantityType.Unit, inPacket);
 
             // Act
             var result = _sut.NormalizeForOneServing(numberOfServings, ingredientQuantityType, ingredientQuantity,

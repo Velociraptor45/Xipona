@@ -15,11 +15,18 @@ public class QuantityTranslationService : IQuantityTranslationService
         switch (ingredientQuantityType)
         {
             case IngredientQuantityType.Unit:
-                if (itemQuantity.Type == QuantityType.Unit)
-                    return (QuantityType.Unit, new Quantity(ingredientQuantity.Value / definedNumberOfServings));
-
                 var quantityPerServingUnit = ingredientQuantity.Value / definedNumberOfServings;
-                return (QuantityType.Weight, new Quantity(quantityPerServingUnit * _unitToWeightFactor));
+                if (itemQuantity.Type == QuantityType.Weight)
+                {
+                    return (QuantityType.Weight, new Quantity(quantityPerServingUnit * _unitToWeightFactor));
+                }
+
+                if (itemQuantity.InPacket!.Type == QuantityTypeInPacket.Unit)
+                {
+                    return (QuantityType.Unit, new Quantity(quantityPerServingUnit / itemQuantity.InPacket.Quantity));
+                }
+
+                return (QuantityType.Unit, new Quantity(ingredientQuantity.Value / definedNumberOfServings));
             case IngredientQuantityType.Weight:
                 if (itemQuantity.Type == QuantityType.Weight)
                     return (QuantityType.Weight, new Quantity(ingredientQuantity.Value / definedNumberOfServings));

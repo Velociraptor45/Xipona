@@ -15,4 +15,10 @@ public class ItemQuantityInPacketBuilder : DomainTestBuilderBase<ItemQuantityInP
         FillConstructorWith(nameof(quantity), quantity);
         return this;
     }
+
+    public ItemQuantityInPacketBuilder WithQuantityType(QuantityTypeInPacket type)
+    {
+        FillConstructorWith(nameof(type), type);
+        return this;
+    }
 }
