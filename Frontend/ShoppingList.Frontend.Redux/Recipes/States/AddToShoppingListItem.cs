@@ -2,6 +2,7 @@
 public record AddToShoppingListItem(
     Guid Key,
     Guid ItemId,
+    string ItemName,
     Guid? ItemTypeId,
     int QuantityType,
     string QuantityLabel,

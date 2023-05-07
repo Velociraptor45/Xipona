@@ -22,6 +22,7 @@ public class AddToShoppingListIngredientConverter
         return new AddToShoppingListItem(
             Guid.NewGuid(),
             source.ItemId,
+            source.ItemName,
             source.ItemTypeId,
             source.QuantityType,
             source.QuantityLabel,

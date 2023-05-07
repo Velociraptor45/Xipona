@@ -9,7 +9,8 @@
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.Editor
 
-<Modal Title="Add To Shoppping List"
+<Modal Class="w-auto"
+       Title="Add To Shoppping List"
        Visible="@State.Value.Editor.IsAddToShoppingListOpen"
        OkText="@("Add to Shopping List")"
        OnOk="OnOkClicked"
@@ -18,25 +19,31 @@
         @if (State.Value.Editor.AddToShoppingList is not null)
         {
             <AntDesign.InputNumber TValue="int" Min="1" Max="100"
-                               Value="@State.Value.Editor.AddToShoppingList.NumberOfServings"
-                               OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
-            @foreach (var item in State.Value.Editor.AddToShoppingList.Items)
-            {
-                <div class="d-flex align-items-center pb-2">
-                    <Checkbox Checked="item.AddToShoppingList"
-                      OnChange="isChecked => OnAddItemToShoppingListChanged(isChecked, item)"></Checkbox>
-                    <div class="">@item.Quantity</div>
-                    <div class="mr-2">@item.QuantityLabel</div>
-                    <div>@item.ItemId</div> <!-- TODO -->
-                    <SingleSelect TItem="AddToShoppingListAvailability"
-                          TValue="Guid"
-                          DataSource="item.Availabilities.ToList()"
-                          DefaultValue="item.SelectedStoreId"
-                          ValueName="@nameof(AddToShoppingListAvailability.StoreId)"
-                          LabelName="@nameof(AddToShoppingListAvailability.StoreName)"
-                          OnItemChanged="av => OnItemStoreChanged(item, av.StoreId)"></SingleSelect>
-                </div>
-            }
+                                   Value="@State.Value.Editor.AddToShoppingList.NumberOfServings"
+                                   OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
+            <div class="container">
+                @foreach (var item in State.Value.Editor.AddToShoppingList.Items)
+                {
+                    <div class="align-items-center pt-3 add-to-sl-modal-item-hidden row">
+                        <Checkbox Class="col" Checked="item.AddToShoppingList"
+                                  OnChange="isChecked => OnAddItemToShoppingListChanged(isChecked, item)"></Checkbox>
+                        <div class="col-2 pr-0">
+                            <span>@item.Quantity</span>
+                            <span>@item.QuantityLabel</span>
+                        </div>
+                        <div class="col pl-0">@item.ItemName</div>
+                        <SingleSelect
+                            Class="ml-auto col-4"
+                            TItem="AddToShoppingListAvailability"
+                            TValue="Guid"
+                            DataSource="item.Availabilities.ToList()"
+                            DefaultValue="item.SelectedStoreId"
+                            ValueName="@nameof(AddToShoppingListAvailability.StoreId)"
+                            LabelName="@nameof(AddToShoppingListAvailability.StoreName)"
+                            OnItemChanged="av => OnItemStoreChanged(item, av.StoreId)"></SingleSelect>
+                    </div>
+                }
+            </div>
         }
     </div>
 </Modal>
