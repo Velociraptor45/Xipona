@@ -10,7 +10,7 @@ using Item = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.Item;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Items.Converters.ToDomain;
 
-public class ItemConverter : IToDomainConverter<Entities.Item, IItem>
+public class ItemConverter : IToDomainConverter<Item, IItem>
 {
     private readonly IItemFactory _itemFactory;
     private readonly IToDomainConverter<Entities.ItemType, IItemType> _itemTypeConverter;

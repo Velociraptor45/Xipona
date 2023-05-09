@@ -5,6 +5,13 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
 
 public class ItemTypeEntityBuilder : TestBuilderBase<ItemType>
 {
+    public ItemTypeEntityBuilder()
+    {
+        WithoutPredecessor();
+        WithoutItem();
+        WithAvailableAt(new ItemTypeAvailableAtEntityBuilder().CreateMany(2).ToList());
+    }
+
     public ItemTypeEntityBuilder WithId(Guid id)
     {
         FillPropertyWith(p => p.Id, id);
