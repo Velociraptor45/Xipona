@@ -19,6 +19,7 @@ public abstract class ToDomainConverterBase<TSource, TDest, TConverter> where TC
         mapper.ConfigurationProvider.AssertConfigurationIsValid();
 
         var expectedResult = mapper.Map<TDest>(contract);
+        OnAfterMapping(contract, expectedResult);
         var sut = CreateSut();
 
         // Act
@@ -56,5 +57,9 @@ public abstract class ToDomainConverterBase<TSource, TDest, TConverter> where TC
         var mapping = cfg.CreateMap<TSource, TDest>(MemberList.Destination);
         AddMapping(mapping);
         AddAdditionalMapping(cfg);
+    }
+
+    protected virtual void OnAfterMapping(TSource src, TDest mapped)
+    {
     }
 }
