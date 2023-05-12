@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
@@ -12,15 +16,18 @@ public class ShoppingListRepository : IShoppingListRepository
 {
     private readonly ShoppingListContext _dbContext;
     private readonly IToDomainConverter<Entities.ShoppingList, IShoppingList> _toDomainConverter;
-    private readonly IToContractConverter<IShoppingList, Entities.ShoppingList> _toEntityConverter;
+    private readonly IToContractConverter<IShoppingList, Entities.ShoppingList> _toContractConverter;
+    private readonly ILogger<ShoppingListRepository> _logger;
 
     public ShoppingListRepository(ShoppingListContext dbContext,
         IToDomainConverter<Entities.ShoppingList, IShoppingList> toDomainConverter,
-        IToContractConverter<IShoppingList, Entities.ShoppingList> toEntityConverter)
+        IToContractConverter<IShoppingList, Entities.ShoppingList> toContractConverter,
+        ILogger<ShoppingListRepository> logger)
     {
         _dbContext = dbContext;
         _toDomainConverter = toDomainConverter;
-        _toEntityConverter = toEntityConverter;
+        _toContractConverter = toContractConverter;
+        _logger = logger;
     }
 
     #region public methods
@@ -112,14 +119,18 @@ public class ShoppingListRepository : IShoppingListRepository
 
     #region private methods
 
-    private async Task StoreModifiedListAsync(Entities.ShoppingList existingShoppingListEntity,
+    private async Task StoreModifiedListAsync(Entities.ShoppingList existingEntity,
         IShoppingList shoppingList, CancellationToken cancellationToken)
     {
-        var shoppingListEntityToStore = _toEntityConverter.ToContract(shoppingList);
-        var onListMappings = existingShoppingListEntity.ItemsOnList.ToDictionary(map => (map.ItemId, map.ItemTypeId));
+        var updatedEntity = _toContractConverter.ToContract(shoppingList);
+        var onListMappings = existingEntity.ItemsOnList.ToDictionary(map => (map.ItemId, map.ItemTypeId));
 
-        _dbContext.Entry(shoppingListEntityToStore).State = EntityState.Modified;
-        foreach (var map in shoppingListEntityToStore.ItemsOnList)
+        var existingRowVersion = existingEntity.RowVersion;
+        _dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
+        _dbContext.Entry(existingEntity).Property(r => r.RowVersion).OriginalValue = existingRowVersion;
+        _dbContext.Entry(existingEntity).State = EntityState.Modified;
+
+        foreach (var map in updatedEntity.ItemsOnList)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (onListMappings.TryGetValue((map.ItemId, map.ItemTypeId), out var existingMapping))
@@ -144,12 +155,21 @@ public class ShoppingListRepository : IShoppingListRepository
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogInformation(ex,
+                () => $"Saving shopping list {shoppingList.Id.Value} failed due to concurrency violation");
+            throw new DomainException(new ModelOutOfDateReason());
+        }
     }
 
     private async Task StoreAsNewListAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
     {
-        var entity = _toEntityConverter.ToContract(shoppingList);
+        var entity = _toContractConverter.ToContract(shoppingList);
 
         _dbContext.Entry(entity).State = EntityState.Added;
         foreach (var onListMap in entity.ItemsOnList)

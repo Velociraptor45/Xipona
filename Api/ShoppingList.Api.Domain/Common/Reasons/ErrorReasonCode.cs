@@ -53,4 +53,5 @@ public enum ErrorReasonCode
     ItemHasNoItemTypes = 50,
     CannotModifyDeletedItemType = 51,
     ModelOutOfDate = 52,
+    InvalidRecipeTagIds = 53,
 }

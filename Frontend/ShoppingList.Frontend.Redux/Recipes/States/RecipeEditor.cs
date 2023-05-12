@@ -2,4 +2,5 @@
 
 public record RecipeEditor(
     EditedRecipe? Recipe,
+    string RecipeTagCreateInput,
     bool IsInEditMode);

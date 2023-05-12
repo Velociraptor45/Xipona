@@ -22,6 +22,7 @@ public class ModifyRecipeContractConverter : IToContractConverter<EditedRecipe, 
             source.PreparationSteps.Select(p => new ModifyPreparationStepContract(
                 p.Id == Guid.Empty ? null : p.Id,
                 p.Name,
-                p.SortingIndex)));
+                p.SortingIndex)),
+            source.RecipeTagIds);
     }
 }

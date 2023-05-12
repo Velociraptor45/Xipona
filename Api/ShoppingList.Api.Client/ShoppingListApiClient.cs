@@ -24,6 +24,8 @@ using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
+using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Commands;
+using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Queries.GetAll;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
@@ -355,6 +357,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
             return await _apiClient.SearchRecipesByNameAsync(searchInput, cancellationToken);
         }
 
+        public async Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByTagsAsync(
+            IEnumerable<Guid> tagIds, CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.SearchRecipesByTagsAsync(tagIds, cancellationToken);
+        }
+
         public async Task<IEnumerable<IngredientQuantityTypeContract>> GetAllIngredientQuantityTypes(
             CancellationToken cancellationToken = default)
         {
@@ -374,5 +382,21 @@ namespace ProjectHermes.ShoppingList.Api.Client
         }
 
         #endregion RecipeController
+
+        #region RecipeTagController
+
+        public async Task<IEnumerable<RecipeTagContract>> GetAllRecipeTagsAsync(
+            CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.GetAllRecipeTagsAsync(cancellationToken);
+        }
+
+        public async Task<RecipeTagContract> CreateRecipeTagAsync(CreateRecipeTagContract contract,
+            CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.CreateRecipeTagAsync(contract, cancellationToken);
+        }
+
+        #endregion RecipeTagController
     }
 }

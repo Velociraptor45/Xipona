@@ -24,7 +24,7 @@
                     ValueName="@nameof(ItemCategorySearchResult.Id)"
                     LabelName="@nameof(ItemCategorySearchResult.Name)"
                     OnItemChanged="@OnItemCategoryChanged"
-                    OnItemAdded="@OnNewItemCategoryCreatedAsync"
+                    OnItemAdded="@OnNewItemCategoryCreated"
                     OnInputChanged="OnItemCategoryInputChanged"
                     Placeholder="Item Category"
                     Value="@Model.ItemCategoryId"
@@ -43,7 +43,6 @@
                             TItem="SearchItemByItemCategoryResult"
                             OnSelectedItemChanged="OnItemChanged"
                             AllowClear="true"
-                            IgnoreItemChanges="false"
                             Value="@($"{Model.DefaultItemId?.ToString() ?? string.Empty}{Model.DefaultItemTypeId?.ToString() ?? string.Empty}")">
                     </Select>
                 }
@@ -103,7 +102,7 @@ else
         Dispatcher.Dispatch(new LoadInitialItemsAction(Model));
         Dispatcher.Dispatch(new LoadInitialItemCategoryAction(Model));
     }
-    private void OnItemChanged(SearchItemByItemCategoryResult? itemSearchResult)
+    private void OnItemChanged(SearchItemByItemCategoryResult itemSearchResult)
     {
         if (itemSearchResult is null)
         {
@@ -135,7 +134,7 @@ else
         Dispatcher.Dispatch(new SelectedItemCategoryChangedAction(Model.Key, itemCategory.Id));
     }
 
-    private void OnNewItemCategoryCreatedAsync()
+    private void OnNewItemCategoryCreated()
     {
         Dispatcher.Dispatch(new CreateNewItemCategoryAction(Model.Key));
     }

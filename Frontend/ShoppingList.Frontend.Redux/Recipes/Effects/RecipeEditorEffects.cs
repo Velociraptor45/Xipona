@@ -99,4 +99,29 @@ public sealed class RecipeEditorEffects
         dispatcher.Dispatch(new CreateRecipeFinishedAction());
         dispatcher.Dispatch(new LeaveRecipeEditorAction());
     }
+
+    [EffectMethod(typeof(CreateNewRecipeTagAction))]
+    public async Task HandleCreateNewRecipeTagAction(IDispatcher dispatcher)
+    {
+        if (string.IsNullOrWhiteSpace(_state.Value.Editor.RecipeTagCreateInput))
+            return;
+
+        RecipeTag newTag;
+        try
+        {
+            newTag = await _client.CreateRecipeTagAsync(_state.Value.Editor.RecipeTagCreateInput);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Creating recipe tag failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Creating recipe tag failed", e.Message));
+            return;
+        }
+
+        dispatcher.Dispatch(new CreateNewRecipeTagFinishedAction(newTag));
+    }
 }

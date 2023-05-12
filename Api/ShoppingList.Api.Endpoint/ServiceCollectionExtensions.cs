@@ -17,6 +17,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<ItemController>();
         services.AddTransient<StoreController>();
         services.AddTransient<RecipeController>();
+        services.AddTransient<RecipeTagController>();
 
         var assembly = typeof(ServiceCollectionExtensions).Assembly;
         services.AddImplementationOfGenericType(assembly, typeof(IToContractConverter<,>));

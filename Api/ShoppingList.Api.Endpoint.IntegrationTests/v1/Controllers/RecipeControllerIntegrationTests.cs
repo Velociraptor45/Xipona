@@ -16,11 +16,14 @@ using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.RecipeTags.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ItemCategories.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Recipes.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.RecipeTags.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+using System;
 using System.Text.RegularExpressions;
 using Xunit;
 using Ingredient = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Ingredient;
@@ -93,10 +96,12 @@ public class RecipeControllerIntegrationTests
             public async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_model);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
 
                 await ApplyMigrationsAsync(ArrangeScope);
                 await using var itemCategoryContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
                 await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+                await using var tagContext = GetContextInstance<RecipeTagContext>(ArrangeScope);
 
                 foreach (var ingredient in _model.Ingredients)
                 {
@@ -127,8 +132,14 @@ public class RecipeControllerIntegrationTests
                     itemContext.Add(item);
                 }
 
+                foreach (var tagId in Contract.RecipeTagIds)
+                {
+                    tagContext.RecipeTags.Add(new RecipeTagEntityBuilder().WithId(tagId).Create());
+                }
+
                 await itemCategoryContext.SaveChangesAsync();
                 await itemContext.SaveChangesAsync();
+                await tagContext.SaveChangesAsync();
             }
 
             public void SetupContract()
@@ -145,7 +156,8 @@ public class RecipeControllerIntegrationTests
                         i.DefaultItemTypeId)),
                     _model.PreparationSteps.Select(p => new CreatePreparationStepContract(
                         p.Instruction.Value,
-                        p.SortingIndex)));
+                        p.SortingIndex)),
+                    _model.Tags.Select(t => t.Value));
             }
 
             public void SetupExpectedResult()
@@ -165,7 +177,8 @@ public class RecipeControllerIntegrationTests
                     _model.PreparationSteps.Select(p => new PreparationStepContract(
                         p.Id,
                         p.Instruction.Value,
-                        p.SortingIndex)));
+                        p.SortingIndex)),
+                    _model.Tags.Select(t => t.Value));
             }
 
             public void SetupExpectedEntity()
@@ -446,6 +459,7 @@ public class RecipeControllerIntegrationTests
                     .WithId(recipeId)
                     .WithIngredients(new IngredientEntityBuilder().WithRecipeId(recipeId).CreateMany(3).ToList())
                     .WithPreparationSteps(new PreparationStepEntityBuilder().WithRecipeId(recipeId).CreateMany(3).ToList())
+                    .WithTags(new TagsForRecipeEntityBuilder().WithRecipeId(recipeId).CreateMany(2).ToList())
                     .Create();
             }
 
@@ -559,7 +573,8 @@ public class RecipeControllerIntegrationTests
                 Contract = new ModifyRecipeContract(
                     ExpectedRecipe.Name,
                     ingredients,
-                    steps);
+                    steps,
+                    ExpectedRecipe.Tags.Select(t => t.RecipeTagId));
             }
 
             public async Task PrepareDatabase()
@@ -567,19 +582,31 @@ public class RecipeControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategories);
                 TestPropertyNotSetException.ThrowIfNull(_items);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
 
                 await ApplyMigrationsAsync(ArrangeScope);
                 await using var dbContext = GetContextInstance<RecipeContext>(ArrangeScope);
+                await using var tagDbContext = GetContextInstance<RecipeTagContext>(ArrangeScope);
                 await using var itemCategoryDbContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
                 await using var itemDbContext = GetContextInstance<ItemContext>(ArrangeScope);
 
                 dbContext.Add(_existingRecipe);
                 itemCategoryDbContext.AddRange(_itemCategories);
                 itemDbContext.AddRange(_items);
+                foreach (var existingRecipeTag in _existingRecipe.Tags)
+                {
+                    tagDbContext.RecipeTags
+                        .Add(new RecipeTagEntityBuilder().WithId(existingRecipeTag.RecipeTagId).Create());
+                }
+                foreach (var tagId in Contract.RecipeTagIds)
+                {
+                    tagDbContext.RecipeTags.Add(new RecipeTagEntityBuilder().WithId(tagId).Create());
+                }
 
                 await dbContext.SaveChangesAsync();
                 await itemCategoryDbContext.SaveChangesAsync();
                 await itemDbContext.SaveChangesAsync();
+                await tagDbContext.SaveChangesAsync();
             }
         }
     }
@@ -602,6 +629,7 @@ public class RecipeControllerIntegrationTests
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)
         {
             yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
+            yield return scope.ServiceProvider.GetRequiredService<RecipeTagContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
         }

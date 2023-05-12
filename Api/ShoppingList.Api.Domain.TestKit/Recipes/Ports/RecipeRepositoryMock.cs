@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Ports;
 
@@ -29,5 +30,10 @@ public class RecipeRepositoryMock : Mock<IRecipeRepository>
     public void SetupFindByAsync(RecipeId recipeId, IRecipe? returnValue)
     {
         Setup(m => m.FindByAsync(recipeId)).ReturnsAsync(returnValue);
+    }
+
+    public void SetupFindByContainingAllAsync(IEnumerable<RecipeTagId> recipeTagIds, IEnumerable<IRecipe> returnValue)
+    {
+        Setup(m => m.FindByContainingAllAsync(recipeTagIds)).ReturnsAsync(returnValue);
     }
 }

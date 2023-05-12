@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Contexts;
@@ -10,15 +14,18 @@ public class ManufacturerRepository : IManufacturerRepository
 {
     private readonly ManufacturerContext _dbContext;
     private readonly IToDomainConverter<Entities.Manufacturer, IManufacturer> _toModelConverter;
-    private readonly IToContractConverter<IManufacturer, Entities.Manufacturer> _toEntityConverter;
+    private readonly IToContractConverter<IManufacturer, Entities.Manufacturer> _toContractConverter;
+    private readonly ILogger<ManufacturerRepository> _logger;
 
     public ManufacturerRepository(ManufacturerContext dbContext,
         IToDomainConverter<Entities.Manufacturer, IManufacturer> toModelConverter,
-        IToContractConverter<IManufacturer, Entities.Manufacturer> toEntityConverter)
+        IToContractConverter<IManufacturer, Entities.Manufacturer> toContractConverter,
+        ILogger<ManufacturerRepository> logger)
     {
         _dbContext = dbContext;
         _toModelConverter = toModelConverter;
-        _toEntityConverter = toEntityConverter;
+        _toContractConverter = toContractConverter;
+        _logger = logger;
     }
 
     public async Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput, bool includeDeleted,
@@ -92,7 +99,7 @@ public class ManufacturerRepository : IManufacturerRepository
 
     public async Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken)
     {
-        var convertedEntity = _toEntityConverter.ToContract(model);
+        var convertedEntity = _toContractConverter.ToContract(model);
         var existingEntity = await FindTrackedEntityById(model.Id, cancellationToken);
 
         if (existingEntity is null)
@@ -101,13 +108,24 @@ public class ManufacturerRepository : IManufacturerRepository
         }
         else
         {
+            var existingRowVersion = existingEntity.RowVersion;
             _dbContext.Entry(existingEntity).CurrentValues.SetValues(convertedEntity);
+            _dbContext.Entry(existingEntity).Property(r => r.RowVersion).OriginalValue = existingRowVersion;
             _dbContext.Entry(existingEntity).State = EntityState.Modified;
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogInformation(ex,
+                () => $"Saving manufacturer {model.Id.Value} failed due to concurrency violation");
+            throw new DomainException(new ModelOutOfDateReason());
+        }
         return _toModelConverter.ToDomain(convertedEntity);
     }
 

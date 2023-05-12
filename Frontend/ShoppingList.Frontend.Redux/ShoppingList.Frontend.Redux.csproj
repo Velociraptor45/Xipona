@@ -11,7 +11,7 @@
     <PackageReference Include="Fluxor.Blazor.Web" Version="5.7.0" />
     <PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="5.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.0" />
-    <PackageReference Include="ProjectHermes.ShoppingList.Api.Contracts" Version="0.10.0-alpha.2" />
+    <PackageReference Include="ProjectHermes.ShoppingList.Api.Contracts" Version="0.10.0-alpha.5" />
     <PackageReference Include="RestEase" Version="1.6.0" />
   </ItemGroup>
 

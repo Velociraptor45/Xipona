@@ -22,6 +22,8 @@ using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
+using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Commands;
+using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Queries.GetAll;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
@@ -241,8 +243,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Get("recipes/{id}")]
         Task<RecipeContract> GetRecipeByIdAsync([Path] Guid id, CancellationToken cancellationToken = default);
 
-        [Get("recipes")]
+        [Get("recipes/search-by-name")]
         Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByNameAsync([Query] string searchInput,
+            CancellationToken cancellationToken = default);
+
+        [Get("recipes/search-by-tags")]
+        Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByTagsAsync([Query] IEnumerable<Guid> tagIds,
             CancellationToken cancellationToken = default);
 
         [Get("recipes/ingredient-quantity-types")]
@@ -258,5 +264,16 @@ namespace ProjectHermes.ShoppingList.Api.Client
             CancellationToken cancellationToken = default);
 
         #endregion RecipeController
+
+        #region RecipeTagController
+
+        [Get("recipe-tags/all")]
+        Task<IEnumerable<RecipeTagContract>> GetAllRecipeTagsAsync(CancellationToken cancellationToken = default);
+
+        [Post("recipe-tags")]
+        Task<RecipeTagContract> CreateRecipeTagAsync([Body] CreateRecipeTagContract contract,
+            CancellationToken cancellationToken = default);
+
+        #endregion RecipeTagController
     }
 }

@@ -7,9 +7,9 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Stores.Converters.ToContra
 
 public class StoreConverter : IToContractConverter<IStore, Entities.Store>
 {
-    private readonly IToContractConverter<ISection, Section> _sectionConverter;
+    private readonly IToContractConverter<(StoreId, ISection), Section> _sectionConverter;
 
-    public StoreConverter(IToContractConverter<ISection, Section> sectionConverter)
+    public StoreConverter(IToContractConverter<(StoreId, ISection), Section> sectionConverter)
     {
         _sectionConverter = sectionConverter;
     }
@@ -21,7 +21,7 @@ public class StoreConverter : IToContractConverter<IStore, Entities.Store>
             Id = source.Id,
             Name = source.Name,
             Deleted = source.IsDeleted,
-            Sections = _sectionConverter.ToContract(source.Sections).ToList(),
+            Sections = source.Sections.Select(s => _sectionConverter.ToContract((source.Id, s))).ToList(),
             RowVersion = ((AggregateRoot)source).RowVersion
         };
     }

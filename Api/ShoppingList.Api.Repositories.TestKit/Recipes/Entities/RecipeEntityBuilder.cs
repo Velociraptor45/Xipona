@@ -9,6 +9,7 @@ public class RecipeEntityBuilder : TestBuilderBase<Recipe>
     {
         WithIngredients(new IngredientEntityBuilder().CreateMany(3).ToArray());
         WithPreparationSteps(new PreparationStepEntityBuilder().CreateMany(3).ToArray());
+        WithTags(new TagsForRecipeEntityBuilder().CreateMany(3).ToArray());
     }
 
     public RecipeEntityBuilder WithId(Guid id)
@@ -32,6 +33,12 @@ public class RecipeEntityBuilder : TestBuilderBase<Recipe>
     public RecipeEntityBuilder WithPreparationSteps(ICollection<PreparationStep> preparationSteps)
     {
         FillPropertyWith(p => p.PreparationSteps, preparationSteps);
+        return this;
+    }
+
+    public RecipeEntityBuilder WithTags(ICollection<TagsForRecipe> tags)
+    {
+        FillPropertyWith(p => p.Tags, tags);
         return this;
     }
 }

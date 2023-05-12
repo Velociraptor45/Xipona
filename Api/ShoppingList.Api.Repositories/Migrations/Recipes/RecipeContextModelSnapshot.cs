@@ -81,13 +81,28 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Recipes
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("RowVersion")
-                        .IsRowVersion()
+                        .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Recipes");
+                });
+
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.TagsForRecipe", b =>
+                {
+                    b.Property<Guid>("RecipeId")
+                        .HasColumnType("char(36)")
+                        .HasColumnOrder(1);
+
+                    b.Property<Guid>("RecipeTagId")
+                        .HasColumnType("char(36)")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("RecipeId", "RecipeTagId");
+
+                    b.ToTable("TagsForRecipes");
                 });
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Ingredient", b =>
@@ -112,11 +127,24 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Recipes
                     b.Navigation("Recipe");
                 });
 
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.TagsForRecipe", b =>
+                {
+                    b.HasOne("ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Recipe", "Recipe")
+                        .WithMany("Tags")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recipe");
+                });
+
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Recipe", b =>
                 {
                     b.Navigation("Ingredients");
 
                     b.Navigation("PreparationSteps");
+
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

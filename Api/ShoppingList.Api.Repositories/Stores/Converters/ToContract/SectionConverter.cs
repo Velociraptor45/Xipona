@@ -4,17 +4,20 @@ using Section = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Sect
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Stores.Converters.ToContract;
 
-public class SectionConverter : IToContractConverter<ISection, Entities.Section>
+public class SectionConverter : IToContractConverter<(StoreId, ISection), Section>
 {
-    public Section ToContract(ISection source)
+    public Section ToContract((StoreId, ISection) source)
     {
+        var (storeId, section) = source;
+
         return new Section
         {
-            Id = source.Id,
-            Name = source.Name,
-            SortIndex = source.SortingIndex,
-            IsDefaultSection = source.IsDefaultSection,
-            IsDeleted = source.IsDeleted
+            Id = section.Id,
+            Name = section.Name,
+            SortIndex = section.SortingIndex,
+            IsDefaultSection = section.IsDefaultSection,
+            IsDeleted = section.IsDeleted,
+            StoreId = storeId.Value,
         };
     }
 }
