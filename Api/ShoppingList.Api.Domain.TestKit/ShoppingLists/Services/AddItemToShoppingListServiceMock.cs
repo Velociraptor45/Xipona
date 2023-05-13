@@ -11,10 +11,10 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
     {
     }
 
-    public void SetupAddItemToShoppingList(IShoppingList shoppingList,
+    public void SetupAddItemAsync(IShoppingList shoppingList,
         ItemId itemId, SectionId? sectionId, QuantityInBasket quantity)
     {
-        Setup(m => m.AddItemToShoppingListAsync(
+        Setup(m => m.AddItemAsync(
                 shoppingList,
                 itemId,
                 sectionId,
@@ -23,22 +23,10 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
             .Returns(Task.CompletedTask);
     }
 
-    public void SetupAddItemToShoppingList(IShoppingList shoppingList,
-        TemporaryItemId temporaryItemId, SectionId? sectionId, QuantityInBasket quantity)
-    {
-        Setup(m => m.AddItemToShoppingListAsync(
-                shoppingList,
-                temporaryItemId,
-                sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
-    }
-
-    public void SetupAddItemWithTypeToShoppingList(IShoppingList shoppingList, IItem item,
+    public void SetupAddItemWithTypeAsync(IShoppingList shoppingList, IItem item,
         ItemTypeId typeId, SectionId? sectionId, QuantityInBasket quantity)
     {
-        Setup(m => m.AddItemWithTypeToShoppingList(
+        Setup(m => m.AddItemWithTypeAsync(
                 shoppingList,
                 item,
                 typeId,
@@ -56,10 +44,10 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
             .Returns(Task.CompletedTask);
     }
 
-    public void VerifyAddItemWithTypeToShoppingList(IShoppingList shoppingList, IItem item,
+    public void VerifyAddItemWithTypeAsync(IShoppingList shoppingList, IItem item,
         ItemTypeId typeId, SectionId? sectionId, QuantityInBasket quantity, Func<Times> times)
     {
-        Verify(m => m.AddItemWithTypeToShoppingList(
+        Verify(m => m.AddItemWithTypeAsync(
                 shoppingList,
                 item,
                 typeId,
@@ -69,24 +57,12 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
             times);
     }
 
-    public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
+    public void VerifyAddItemAsyncOnce(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
         QuantityInBasket quantity)
     {
-        Verify(i => i.AddItemToShoppingListAsync(
+        Verify(i => i.AddItemAsync(
                 shoppingList,
                 itemId,
-                sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()),
-            Times.Once);
-    }
-
-    public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
-        SectionId? sectionId, QuantityInBasket quantity)
-    {
-        Verify(i => i.AddItemToShoppingListAsync(
-                shoppingList,
-                temporaryItemId,
                 sectionId,
                 quantity,
                 It.IsAny<CancellationToken>()),

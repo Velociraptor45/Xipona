@@ -51,7 +51,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
             if (newItem.IsAvailableInStore(list.StoreId))
             {
                 var sectionId = newItem.GetDefaultSectionIdForStore(list.StoreId);
-                await _addItemToShoppingListService.AddItemToShoppingListAsync(list, newItem.Id, sectionId,
+                await _addItemToShoppingListService.AddItemAsync(list, newItem.Id, sectionId,
                     oldListItem.Quantity, cancellationToken);
 
                 if (oldListItem.IsInBasket)
@@ -84,7 +84,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
 
                 var sectionId = itemType.GetDefaultSectionIdForStore(list.StoreId);
 
-                await _addItemToShoppingListService.AddItemWithTypeToShoppingList(list, newItem, itemType.Id,
+                await _addItemToShoppingListService.AddItemWithTypeAsync(list, newItem, itemType.Id,
                     sectionId, oldListItem.Quantity, cancellationToken);
 
                 if (oldListItem.IsInBasket)
