@@ -698,7 +698,7 @@ public class RecipeControllerIntegrationTests
                     // unit to unit
                     new TestBuilder<ItemAmountForOneServingContract>()
                         .FillConstructorWith(nameof(ItemAmountForOneServingContract.ItemTypeId).LowerFirstChar(), (Guid?)null)
-                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.Quantity).LowerFirstChar(), 1.5f) // 3 units
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.Quantity).LowerFirstChar(), 0.5f) // 1.5 units (with 3 units in 1 packet)
                         .FillConstructorWith(nameof(ItemAmountForOneServingContract.QuantityType).LowerFirstChar(), (int)QuantityType.Unit)
                         .FillConstructorWith(nameof(ItemAmountForOneServingContract.QuantityLabel).LowerFirstChar(), "x")
                         .FillConstructorWith(nameof(ItemAmountForOneServingContract.DefaultStoreId).LowerFirstChar(), availability2.StoreId)
@@ -733,7 +733,7 @@ public class RecipeControllerIntegrationTests
             public void SetupStores()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
-                
+
                 var firstExpItem = ExpectedResult.Items.First();
 
                 var store1 = StoreEntityMother.Initial()
