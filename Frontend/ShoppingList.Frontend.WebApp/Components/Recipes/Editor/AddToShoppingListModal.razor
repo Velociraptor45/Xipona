@@ -14,17 +14,21 @@
        Visible="@State.Value.Editor.IsAddToShoppingListOpen"
        OkText="@("Add to Shopping List")"
        OnOk="OnOkClicked"
+       OkButtonProps="CreateOkButtonProps()"
        OnCancel="OnCancelClicked">
     <div>
         @if (State.Value.Editor.AddToShoppingList is not null)
         {
-            <AntDesign.InputNumber TValue="int" Min="1" Max="100"
-                                   Value="@State.Value.Editor.AddToShoppingList.NumberOfServings"
-                                   OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
+            <div class="add-to-sl-modal-number-of-servings">
+                <AntDesign.InputNumber TValue="int" Min="1" Max="100"
+                                       Value="@State.Value.Editor.AddToShoppingList.NumberOfServings"
+                                       OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
+                <span class="pl-2">People</span>
+            </div>
             <div class="container">
                 @foreach (var item in State.Value.Editor.AddToShoppingList.Items)
                 {
-                    <div class="align-items-center pt-3 add-to-sl-modal-item-hidden row">
+                    <div class="align-items-center pt-3 row @(item.AddToShoppingList ? "" : "add-to-sl-modal-item-hidden")">
                         <Checkbox Class="col" Checked="item.AddToShoppingList"
                                   OnChange="isChecked => OnAddItemToShoppingListChanged(isChecked, item)"></Checkbox>
                         <div class="col-2 pr-0">
@@ -32,15 +36,18 @@
                             <span>@item.QuantityLabel</span>
                         </div>
                         <div class="col pl-0">@item.ItemName</div>
-                        <SingleSelect
-                            Class="ml-auto col-4"
-                            TItem="AddToShoppingListAvailability"
-                            TValue="Guid"
-                            DataSource="item.Availabilities.ToList()"
-                            DefaultValue="item.SelectedStoreId"
-                            ValueName="@nameof(AddToShoppingListAvailability.StoreId)"
-                            LabelName="@nameof(AddToShoppingListAvailability.StoreName)"
-                            OnItemChanged="av => OnItemStoreChanged(item, av.StoreId)"></SingleSelect>
+                        @if (item.AddToShoppingList)
+                        {
+                            <SingleSelect
+                                Class="ml-auto col-4"
+                                TItem="AddToShoppingListAvailability"
+                                TValue="Guid"
+                                DataSource="item.Availabilities.ToList()"
+                                DefaultValue="item.SelectedStoreId"
+                                ValueName="@nameof(AddToShoppingListAvailability.StoreId)"
+                                LabelName="@nameof(AddToShoppingListAvailability.StoreName)"
+                                OnItemChanged="av => OnItemStoreChanged(item, av.StoreId)"></SingleSelect>
+                        }
                     </div>
                 }
             </div>
@@ -49,6 +56,16 @@
 </Modal>
 
 @code {
+
+    private ButtonProps CreateOkButtonProps()
+    {
+        var props = new ButtonProps
+        {
+            Disabled = State.Value.Editor.AddToShoppingList?.Items.All(i => !i.AddToShoppingList) ?? false
+        };
+        return props;
+    }
+
     private void OnNumberOfServingsChanged(int numberOfServings)
     {
         Dispatcher.Dispatch(new AddToShoppingListNumberOfServingsChangedAction(numberOfServings));

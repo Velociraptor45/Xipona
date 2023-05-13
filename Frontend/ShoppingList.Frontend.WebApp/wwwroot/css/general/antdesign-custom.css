@@ -43,3 +43,9 @@
 .recipe-editor-top-row-number-of-servings .ant-input-number {
     width: 55px;
 }
+
+/* add to shopping list modal */
+
+.add-to-sl-modal-number-of-servings .ant-input-number {
+    width: 55px
+}

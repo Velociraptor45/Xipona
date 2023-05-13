@@ -128,13 +128,15 @@
                     <span>@State.Value.Editor.Recipe.NumberOfServings</span>
                     <span>People</span>
                 </div>
-                <Button Class="recipe-editor-top-row d-flex align-items-center"
-                        OnClick="OnAddToShoppingListButtonClicked">
-                    Add to SL
-                </Button>
-                <Button Class="recipe-editor-top-row d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
-                    <Icon Type="edit"></Icon>
-                </Button>
+                <div class="recipe-editor-top-row d-flex ml-auto">
+                    <Button Class="d-flex align-items-center mr-2"
+                            OnClick="OnAddToShoppingListButtonClicked">
+                        <Icon Type="shopping-cart" Theme="outline" />
+                    </Button>
+                    <Button Class="recipe-editor-top-row d-flex align-items-center" OnClick="@OnToggleEditModeButtonClicked">
+                        <Icon Type="edit"></Icon>
+                    </Button>
+                </div>
             </div>
             <div class="recipe-editor-view-main">
                 <div class="recipe-editor-view-content">
