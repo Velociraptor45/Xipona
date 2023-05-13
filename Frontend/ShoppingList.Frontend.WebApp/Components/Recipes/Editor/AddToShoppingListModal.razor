@@ -13,6 +13,7 @@
        Title="Add To Shoppping List"
        Visible="@State.Value.Editor.IsAddToShoppingListOpen"
        OkText="@("Add to Shopping List")"
+       CancelText="@("Cancel")"
        OnOk="OnOkClicked"
        OkButtonProps="CreateOkButtonProps()"
        OnCancel="OnCancelClicked">
@@ -35,7 +36,7 @@
                             <span>@item.Quantity</span>
                             <span>@item.QuantityLabel</span>
                         </div>
-                        <div class="col pl-0">@item.ItemName</div>
+                        <div class="col pl-0 add-to-sl-modal-item-name" @onclick="() => OnAddItemToShoppingListChanged(!item.AddToShoppingList, item)">@item.ItemName</div>
                         @if (item.AddToShoppingList)
                         {
                             <SingleSelect
@@ -56,12 +57,12 @@
 </Modal>
 
 @code {
-
     private ButtonProps CreateOkButtonProps()
     {
         var props = new ButtonProps
         {
-            Disabled = State.Value.Editor.AddToShoppingList?.Items.All(i => !i.AddToShoppingList) ?? false
+            Disabled = State.Value.Editor.AddToShoppingList?.Items.All(i => !i.AddToShoppingList) ?? false,
+            Loading = State.Value.Editor.AddToShoppingList?.IsSaving ?? false
         };
         return props;
     }

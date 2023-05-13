@@ -34,7 +34,8 @@ public static class AddToShoppingListReducer
         var addToShoppingList = new AddToShoppingList(
             state.Editor.Recipe.NumberOfServings,
             amountsForOneServing,
-            items);
+            items,
+            false);
 
         return state with
         {
@@ -121,6 +122,42 @@ public static class AddToShoppingListReducer
                 AddToShoppingList = state.Editor.AddToShoppingList with
                 {
                     Items = items,
+                }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(AddItemsToShoppingListStartedAction))]
+    public static RecipeState OnAddItemsToShoppingListStarted(RecipeState state)
+    {
+        if (state.Editor.AddToShoppingList is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                AddToShoppingList = state.Editor.AddToShoppingList with
+                {
+                    IsSaving = true,
+                }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(AddItemsToShoppingListFinishedAction))]
+    public static RecipeState OnAddItemsToShoppingListFinished(RecipeState state)
+    {
+        if (state.Editor.AddToShoppingList is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                AddToShoppingList = state.Editor.AddToShoppingList with
+                {
+                    IsSaving = false,
                 }
             }
         };
