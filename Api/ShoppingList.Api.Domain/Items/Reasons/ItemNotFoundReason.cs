@@ -8,7 +8,7 @@ public class ItemNotFoundReason : IReason
 {
     public ItemNotFoundReason(IEnumerable<ItemId> itemIds)
     {
-        Message = $"Items '{string.Join(", ", itemIds)}' not found.";
+        Message = $"Items '{string.Join(", ", itemIds.Select(i => i.Value))}' not found.";
     }
 
     public ItemNotFoundReason(ItemId id)
