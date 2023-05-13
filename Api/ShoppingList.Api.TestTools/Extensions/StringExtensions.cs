@@ -2,5 +2,8 @@
 
 public static class StringExtensions
 {
-    public static string LowerFirstChar(this string str) => str.Substring(0, 1).ToLower() + str.Substring(1);
+    public static string LowerFirstChar(this string str)
+    {
+        return string.Concat(str[..1].ToLower(), str.AsSpan(1));
+    }
 }

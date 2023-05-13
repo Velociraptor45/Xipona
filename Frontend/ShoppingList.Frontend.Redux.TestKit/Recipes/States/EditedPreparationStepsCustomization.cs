@@ -26,7 +26,9 @@ public class EditedPreparationStepsCustomization : ICustomization
 
         private bool MatchesType(object request)
         {
-            if (request is SeededRequest seededRequest && seededRequest.Request == _expectedType)
+            if (request is SeededRequest seededRequest
+                && seededRequest.Request is Type requestType
+                && requestType == _expectedType)
             {
                 return true;
             }
@@ -35,7 +37,7 @@ public class EditedPreparationStepsCustomization : ICustomization
             return _expectedType == t;
         }
 
-        private SortedSet<EditedPreparationStep> CreateInstance(ISpecimenContext context)
+        private static SortedSet<EditedPreparationStep> CreateInstance(ISpecimenContext context)
         {
             var ingredients = context.CreateMany<EditedPreparationStep>().ToList();
             return new SortedSet<EditedPreparationStep>(ingredients, new SortingIndexComparer());
