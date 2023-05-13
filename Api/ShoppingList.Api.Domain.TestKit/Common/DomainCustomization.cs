@@ -31,6 +31,7 @@ public class DomainCustomization : ICustomization
         fixture.Customizations.Add(new TypeRelay(typeof(IRecipe), typeof(Recipe)));
         fixture.Customizations.Add(new TypeRelay(typeof(IIngredient), typeof(Ingredient)));
         fixture.Customizations.Add(new TypeRelay(typeof(IPreparationStep), typeof(PreparationStep)));
+        fixture.Customizations.Add(new TypeRelay(typeof(IRecipeTag), typeof(RecipeTag)));
 
         fixture.Customize<ItemCategoryId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<ManufacturerId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));

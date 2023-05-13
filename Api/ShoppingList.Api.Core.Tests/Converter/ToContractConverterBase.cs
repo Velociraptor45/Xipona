@@ -11,15 +11,9 @@ public abstract class ToContractConverterBase<TSource, TDest, TConverter> where 
     public void Convert_ShouldMapAllMembersCorrectly()
     {
         // Arrange
-        var builder = new DomainTestBuilder<TSource>();
-        Customize(builder);
-        var contract = builder.Create();
+        var contract = CreateSource();
 
-        var mapper = new MapperConfiguration(cfg =>
-        {
-            AddMapping(cfg);
-            AddAdditionalMapping(cfg);
-        }).CreateMapper();
+        var mapper = new MapperConfiguration(AddMapping).CreateMapper();
 
         mapper.ConfigurationProvider.AssertConfigurationIsValid();
 
@@ -45,9 +39,17 @@ public abstract class ToContractConverterBase<TSource, TDest, TConverter> where 
     {
     }
 
+    protected virtual TSource CreateSource()
+    {
+        var builder = new DomainTestBuilder<TSource>();
+        Customize(builder);
+        return builder.Create();
+    }
+
     public void AddMapping(IMapperConfigurationExpression cfg)
     {
         var mapping = cfg.CreateMap<TSource, TDest>(MemberList.Destination);
         AddMapping(mapping);
+        AddAdditionalMapping(cfg);
     }
 }
