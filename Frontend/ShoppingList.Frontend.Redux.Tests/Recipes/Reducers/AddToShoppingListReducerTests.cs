@@ -532,6 +532,194 @@ public class AddToShoppingListReducerTests
         }
     }
 
+    public class OnAddItemsToShoppingListStarted
+    {
+        private readonly OnAddItemsToShoppingListStartedFixture _fixture = new();
+
+        [Fact]
+        public void OnAddItemsToShoppingListStarted_WithSaving_ShouldSetSaving()
+        {
+            // Arrange
+            _fixture.SetupInitialState(true);
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = AddToShoppingListReducer.OnAddItemsToShoppingListStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnAddItemsToShoppingListStarted_WithNotSaving_ShouldSetSaving()
+        {
+            // Arrange
+            _fixture.SetupInitialState(false);
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = AddToShoppingListReducer.OnAddItemsToShoppingListStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnAddItemsToShoppingListStarted_WithAddToShoppingListNull_ShouldDoNothing()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithAddToShoppingListNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+
+            // Act
+            var result = AddToShoppingListReducer.OnAddItemsToShoppingListStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnAddItemsToShoppingListStartedFixture : AddToShoppingListReducerFixture
+        {
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState(bool isSaving)
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        AddToShoppingList = ExpectedState.Editor.AddToShoppingList! with
+                        {
+                            IsSaving = isSaving
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        AddToShoppingList = ExpectedState.Editor.AddToShoppingList! with
+                        {
+                            IsSaving = true
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithAddToShoppingListNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        AddToShoppingList = null
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnAddItemsToShoppingListFinished
+    {
+        private readonly OnAddItemsToShoppingListFinishedFixture _fixture = new();
+
+        [Fact]
+        public void OnAddItemsToShoppingListFinished_WithSaving_ShouldSetNotSaving()
+        {
+            // Arrange
+            _fixture.SetupInitialState(true);
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = AddToShoppingListReducer.OnAddItemsToShoppingListFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnAddItemsToShoppingListFinished_WithNotSaving_ShouldSetNotSaving()
+        {
+            // Arrange
+            _fixture.SetupInitialState(false);
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = AddToShoppingListReducer.OnAddItemsToShoppingListFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnAddItemsToShoppingListFinished_WithAddToShoppingListNull_ShouldDoNothing()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithAddToShoppingListNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+
+            // Act
+            var result = AddToShoppingListReducer.OnAddItemsToShoppingListFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnAddItemsToShoppingListFinishedFixture : AddToShoppingListReducerFixture
+        {
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState(bool isSaving)
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        AddToShoppingList = ExpectedState.Editor.AddToShoppingList! with
+                        {
+                            IsSaving = isSaving
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        AddToShoppingList = ExpectedState.Editor.AddToShoppingList! with
+                        {
+                            IsSaving = false
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithAddToShoppingListNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        AddToShoppingList = null
+                    }
+                };
+            }
+        }
+    }
+
     private abstract class AddToShoppingListReducerFixture
     {
         public RecipeState ExpectedState { get; protected set; } = new DomainTestBuilder<RecipeState>().Create();

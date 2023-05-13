@@ -276,4 +276,29 @@ public class ApiClientMock : Mock<IApiClient>
     {
         this.SetupInOrder(m => m.SearchRecipesByTagsAsync(tags)).ThrowsAsync(ex);
     }
+
+    public void SetupAddItemsToShoppingListsAsync(IEnumerable<AddToShoppingListItem> items)
+    {
+        this.SetupInOrder(m =>
+                m.AddItemsToShoppingListsAsync(It.Is<IEnumerable<AddToShoppingListItem>>(itms => itms.IsEquivalentTo(items))))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupAddItemsToShoppingListsAsyncThrowing(IEnumerable<AddToShoppingListItem> items, Exception ex)
+    {
+        this.SetupInOrder(m =>
+                m.AddItemsToShoppingListsAsync(It.Is<IEnumerable<AddToShoppingListItem>>(itms => itms.IsEquivalentTo(items))))
+            .ThrowsAsync(ex);
+    }
+
+    public void SetupGetItemAmountsForOneServingAsync(Guid recipeId, IEnumerable<AddToShoppingListItem> returnValue)
+    {
+        this.SetupInOrder(m => m.GetItemAmountsForOneServingAsync(recipeId))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetItemAmountsForOneServingAsyncThrowing(Guid recipeId, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetItemAmountsForOneServingAsync(recipeId)).ThrowsAsync(ex);
+    }
 }
