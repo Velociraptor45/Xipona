@@ -18,8 +18,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
                 shoppingList,
                 itemId,
                 sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()))
+                quantity))
             .Returns(Task.CompletedTask);
     }
 
@@ -31,16 +30,14 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
                 item,
                 typeId,
                 sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()))
+                quantity))
             .Returns(Task.CompletedTask);
     }
 
     public void SetupAddAsync(IEnumerable<ItemToShoppingListAddition> itemsToAdd)
     {
         Setup(m => m.AddAsync(
-                itemsToAdd,
-                It.IsAny<CancellationToken>()))
+                itemsToAdd))
             .Returns(Task.CompletedTask);
     }
 
@@ -52,8 +49,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
                 item,
                 typeId,
                 sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()),
+                quantity),
             times);
     }
 
@@ -64,16 +60,14 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
                 shoppingList,
                 itemId,
                 sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()),
+                quantity),
             Times.Once);
     }
 
     public void VerifyAddAsync(IEnumerable<ItemToShoppingListAddition> itemsToAdd, Func<Times> times)
     {
         Verify(m => m.AddAsync(
-                itemsToAdd,
-                It.IsAny<CancellationToken>()),
+                itemsToAdd),
             times);
     }
 }

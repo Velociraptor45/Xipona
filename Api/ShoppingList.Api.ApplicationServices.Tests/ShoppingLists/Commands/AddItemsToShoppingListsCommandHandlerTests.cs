@@ -22,7 +22,7 @@ public class AddItemsToShoppingListsCommandHandlerTests : CommandHandlerTestsBas
 
         public override AddItemsToShoppingListsCommandHandler CreateSut()
         {
-            return new(_serviceMock.Object, TransactionGeneratorMock.Object);
+            return new(_ => _serviceMock.Object, TransactionGeneratorMock.Object);
         }
 
         public override void Setup()

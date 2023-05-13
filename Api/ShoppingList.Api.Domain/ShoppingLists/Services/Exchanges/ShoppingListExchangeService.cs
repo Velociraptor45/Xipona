@@ -12,15 +12,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Exchanges
 public class ShoppingListExchangeService : IShoppingListExchangeService
 {
     private readonly IShoppingListRepository _shoppingListRepository;
-    private readonly IAddItemToShoppingListService _addItemToShoppingListService;
+    private readonly Func<CancellationToken, IAddItemToShoppingListService> _addItemToShoppingListServiceDelegate;
     private readonly ILogger<ShoppingListExchangeService> _logger;
 
     public ShoppingListExchangeService(IShoppingListRepository shoppingListRepository,
-        IAddItemToShoppingListService addItemToShoppingListService,
+        Func<CancellationToken, IAddItemToShoppingListService> addItemToShoppingListServiceDelegate,
         ILogger<ShoppingListExchangeService> logger)
     {
         _shoppingListRepository = shoppingListRepository;
-        _addItemToShoppingListService = addItemToShoppingListService;
+        _addItemToShoppingListServiceDelegate = addItemToShoppingListServiceDelegate;
         _logger = logger;
     }
 
@@ -39,6 +39,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
     private async Task ExchangeItemWithoutTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
         IItem newItem, CancellationToken cancellationToken)
     {
+        var addItemToShoppingListService = _addItemToShoppingListServiceDelegate(cancellationToken);
         foreach (var list in shoppingLists)
         {
             IShoppingListItem oldListItem = list.Items
@@ -51,8 +52,8 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
             if (newItem.IsAvailableInStore(list.StoreId))
             {
                 var sectionId = newItem.GetDefaultSectionIdForStore(list.StoreId);
-                await _addItemToShoppingListService.AddItemAsync(list, newItem.Id, sectionId,
-                    oldListItem.Quantity, cancellationToken);
+                await addItemToShoppingListService.AddItemAsync(list, newItem.Id, sectionId,
+                    oldListItem.Quantity);
 
                 if (oldListItem.IsInBasket)
                     list.PutItemInBasket(newItem.Id);
@@ -65,6 +66,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
     private async Task ExchangeItemWithTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
         IItem newItem, CancellationToken cancellationToken)
     {
+        var addItemToShoppingListService = _addItemToShoppingListServiceDelegate(cancellationToken);
         foreach (var list in shoppingLists)
         {
             var oldListItems = list.Items
@@ -84,8 +86,8 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
 
                 var sectionId = itemType.GetDefaultSectionIdForStore(list.StoreId);
 
-                await _addItemToShoppingListService.AddItemWithTypeAsync(list, newItem, itemType.Id,
-                    sectionId, oldListItem.Quantity, cancellationToken);
+                await addItemToShoppingListService.AddItemWithTypeAsync(list, newItem, itemType.Id,
+                    sectionId, oldListItem.Quantity);
 
                 if (oldListItem.IsInBasket)
                     list.PutItemInBasket(newItem.Id, itemType.Id);

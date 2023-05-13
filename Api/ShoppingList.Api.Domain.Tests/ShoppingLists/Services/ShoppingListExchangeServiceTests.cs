@@ -1048,7 +1048,7 @@ public class ShoppingListExchangeServiceTests
         {
             return new ShoppingListExchangeService(
                 ShoppingListRepositoryMock.Object,
-                AddItemToShoppingListServiceMock.Object,
+                _ => AddItemToShoppingListServiceMock.Object,
                 _logger);
         }
     }
