@@ -31,4 +31,9 @@ public class ShoppingListItem : IShoppingListItem
     {
         return new ShoppingListItem(Id, TypeId, IsInBasket, quantity);
     }
+
+    public IShoppingListItem AddQuantity(QuantityInBasket quantity)
+    {
+        return new ShoppingListItem(Id, TypeId, IsInBasket, Quantity + quantity);
+    }
 }

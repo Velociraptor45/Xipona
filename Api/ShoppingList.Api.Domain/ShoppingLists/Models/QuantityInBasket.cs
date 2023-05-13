@@ -18,4 +18,24 @@ public record struct QuantityInBasket
     }
 
     public float Value { get; }
+
+    public static QuantityInBasket operator +(QuantityInBasket a, QuantityInBasket b)
+    {
+        return new QuantityInBasket(a.Value + b.Value);
+    }
+
+    public static QuantityInBasket operator -(QuantityInBasket a, QuantityInBasket b)
+    {
+        return new QuantityInBasket(a.Value - b.Value);
+    }
+
+    public static QuantityInBasket operator *(QuantityInBasket a, QuantityInBasket b)
+    {
+        return new QuantityInBasket(a.Value * b.Value);
+    }
+
+    public static QuantityInBasket operator /(QuantityInBasket a, QuantityInBasket b)
+    {
+        return new QuantityInBasket(a.Value / b.Value);
+    }
 }

@@ -1,4 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
+﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models.Factories;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 
@@ -39,6 +41,13 @@ public static class StoreMother
         return builder
             .WithIsDeleted(false)
             .WithSections(sections);
+    }
+
+    public static StoreBuilder Section(ISection section)
+    {
+        return new StoreBuilder()
+            .WithIsDeleted(false)
+            .WithSections(new Sections(section.ToMonoList(), new SectionFactoryMock(MockBehavior.Strict).Object));
     }
 
     public static StoreBuilder Deleted(StoreBuilder? builder = null)

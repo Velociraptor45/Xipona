@@ -51,10 +51,11 @@ public class ShoppingListSectionMock : Mock<IShoppingListSection>
             .Returns(Object.RemoveItemsInBasket());
     }
 
-    public void VerifyAddItemOnce(IShoppingListItem item)
+    public void VerifyAddItemOnce(IShoppingListItem item, bool throwIfAlreadyPresent = true)
     {
         Verify(i => i.AddItem(
-                It.Is<IShoppingListItem>(itm => itm == item)),
+                It.Is<IShoppingListItem>(itm => itm == item),
+                throwIfAlreadyPresent),
             Times.Once);
     }
 

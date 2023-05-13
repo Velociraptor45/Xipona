@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
@@ -42,5 +43,11 @@ public static class ShoppingListSectionMother
     {
         return new ShoppingListSectionBuilder()
             .WithItems(items);
+    }
+
+    public static ShoppingListSectionBuilder Item(ItemId itemId, ItemTypeId? itemTypeId)
+    {
+        return new ShoppingListSectionBuilder()
+            .WithItem(new ShoppingListItemBuilder().WithId(itemId).WithTypeId(itemTypeId).Create());
     }
 }

@@ -71,9 +71,9 @@ public class ShoppingListMock : Mock<IShoppingList>
         Setup(m => m.AddSection(section));
     }
 
-    public void SetupAddItem(IShoppingListItem item, SectionId sectionId)
+    public void SetupAddItem(IShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true)
     {
-        Setup(m => m.AddItem(item, sectionId));
+        Setup(m => m.AddItem(item, sectionId, throwIfAlreadyPresent));
     }
 
     #endregion Setup methods
@@ -121,9 +121,9 @@ public class ShoppingListMock : Mock<IShoppingList>
         Verify(i => i.RemoveFromBasket(itemId, itemTypeId), Times.Once);
     }
 
-    public void VerifyAddItemOnce(IShoppingListItem listItem, SectionId sectionId)
+    public void VerifyAddItemOnce(IShoppingListItem listItem, SectionId sectionId, bool throwIfAlreadyPresent = true)
     {
-        Verify(i => i.AddItem(listItem, sectionId),
+        Verify(i => i.AddItem(listItem, sectionId, throwIfAlreadyPresent),
             Times.Once);
     }
 
@@ -131,7 +131,8 @@ public class ShoppingListMock : Mock<IShoppingList>
     {
         Verify(i => i.AddItem(
                 It.IsAny<IShoppingListItem>(),
-                It.IsAny<SectionId>()),
+                It.IsAny<SectionId>(),
+                It.IsAny<bool>()),
             Times.Never);
     }
 

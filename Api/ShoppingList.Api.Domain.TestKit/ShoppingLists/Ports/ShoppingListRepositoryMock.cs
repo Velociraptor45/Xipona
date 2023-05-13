@@ -35,6 +35,14 @@ public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
             .ReturnsAsync(returnValue);
     }
 
+    public void SetupFindActiveByAsync(IEnumerable<StoreId> storeIds, IEnumerable<IShoppingList> returnValue)
+    {
+        Setup(i => i.FindActiveByAsync(
+                storeIds,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(returnValue);
+    }
+
     public void SetupFindByAsync(ShoppingListId shoppingListId, IShoppingList? returnValue)
     {
         Setup(instance => instance.FindByAsync(
