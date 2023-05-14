@@ -16,11 +16,12 @@ public abstract class ToDomainConverterBase<TSource, TDest, TConverter> where TC
         Customize(builder);
         var contract = builder.Create();
 
-        var mapper = new MapperConfiguration(cfg =>
+        var config = new MapperConfiguration(cfg =>
         {
             AddMapping(cfg);
             AddAdditionalMapping(cfg);
-        }).CreateMapper();
+        });
+        var mapper = config.CreateMapper();
 
         mapper.ConfigurationProvider.AssertConfigurationIsValid();
 
