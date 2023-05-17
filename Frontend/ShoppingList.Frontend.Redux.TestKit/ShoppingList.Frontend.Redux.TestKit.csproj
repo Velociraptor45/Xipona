@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="5.1.1" />
     <PackageReference Include="Moq.Contrib.InOrder" Version="1.0.1" />
   </ItemGroup>
 
