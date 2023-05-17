@@ -173,7 +173,10 @@ public static class AddToShoppingListReducer
             if (!itemAmountsForOneServing.TryGetValue((item.ItemId, item.ItemTypeId), out var quantity))
                 continue;
 
-            yield return item with { Quantity = (float)Math.Ceiling(quantity * numberOfServings) };
+            var result = quantity * numberOfServings;
+            var resultWithTwoDecimalPlaces = Math.Round(result, 2, MidpointRounding.ToNegativeInfinity);
+
+            yield return item with { Quantity = (float)Math.Ceiling(resultWithTwoDecimalPlaces) };
         }
     }
 }
