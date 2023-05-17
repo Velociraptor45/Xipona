@@ -80,7 +80,7 @@ public class QuantityInBasketTests
     public void Ctor_WithZero_ShouldThrow()
     {
         // Act
-        Action action = () => new QuantityInBasket(0f);
+        Action action = () => _ = new QuantityInBasket(0f);
 
         // Assert
         action.Should().ThrowDomainException(ErrorReasonCode.InvalidQuantityInBasket);
@@ -90,7 +90,7 @@ public class QuantityInBasketTests
     public void Ctor_WithNegative_ShouldThrow()
     {
         // Act
-        Action action = () => new QuantityInBasket(-1f);
+        Action action = () => _ = new QuantityInBasket(-1f);
 
         // Assert
         action.Should().ThrowDomainException(ErrorReasonCode.InvalidQuantityInBasket);
@@ -100,7 +100,7 @@ public class QuantityInBasketTests
     public void Ctor_WithPositive_ShouldNotThrow()
     {
         // Act
-        Action action = () => new QuantityInBasket(1f);
+        Action action = () => _ = new QuantityInBasket(1f);
 
         // Assert
         action.Should().NotThrow();
@@ -110,7 +110,7 @@ public class QuantityInBasketTests
     public void Ctor_WithoutParameter_ShouldThrow()
     {
         // Act
-        Action action = () => new QuantityInBasket();
+        Action action = () => _ = new QuantityInBasket();
 
         // Assert
         action.Should().Throw<NotSupportedException>();
