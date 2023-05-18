@@ -7,13 +7,14 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Comma
 public class AddItemWithTypeToShoppingListCommandHandler
     : ICommandHandler<AddItemWithTypeToShoppingListCommand, bool>
 {
-    private readonly IAddItemToShoppingListService _addItemToShoppingListService;
+    private readonly Func<CancellationToken, IAddItemToShoppingListService> _addItemToShoppingListServiceDelegate;
     private readonly ITransactionGenerator _transactionGenerator;
 
-    public AddItemWithTypeToShoppingListCommandHandler(IAddItemToShoppingListService addItemToShoppingListService,
+    public AddItemWithTypeToShoppingListCommandHandler(
+        Func<CancellationToken, IAddItemToShoppingListService> addItemToShoppingListServiceDelegate,
         ITransactionGenerator transactionGenerator)
     {
-        _addItemToShoppingListService = addItemToShoppingListService;
+        _addItemToShoppingListServiceDelegate = addItemToShoppingListServiceDelegate;
         _transactionGenerator = transactionGenerator;
     }
 
@@ -22,8 +23,9 @@ public class AddItemWithTypeToShoppingListCommandHandler
     {
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
-        await _addItemToShoppingListService.AddItemWithTypeToShoppingListAsync(command.ShoppingListId, command.ItemId,
-            command.ItemTypeId, command.SectionId, command.Quantity, cancellationToken);
+        var service = _addItemToShoppingListServiceDelegate(cancellationToken);
+        await service.AddItemWithTypeAsync(command.ShoppingListId, command.ItemId,
+            command.ItemTypeId, command.SectionId, command.Quantity);
 
         await transaction.CommitAsync(cancellationToken);
 

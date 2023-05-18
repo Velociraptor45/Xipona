@@ -9,9 +9,12 @@ public interface IRecipe
 {
     RecipeId Id { get; }
     RecipeName Name { get; }
+    NumberOfServings NumberOfServings { get; }
     IReadOnlyCollection<IIngredient> Ingredients { get; }
     IReadOnlyCollection<IPreparationStep> PreparationSteps { get; }
     IReadOnlyCollection<RecipeTagId> Tags { get; }
+
     Task ModifyAsync(RecipeModification modification, IValidator validator);
+
     void RemoveDefaultItem(ItemId defaultItemId);
 }

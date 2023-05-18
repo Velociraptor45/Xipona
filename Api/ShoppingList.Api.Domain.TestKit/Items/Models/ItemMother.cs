@@ -10,12 +10,7 @@ public static class ItemMother
     {
         builder ??= new ItemBuilder();
 
-        return builder
-            .WithIsDeleted(false)
-            .WithIsTemporary(false)
-            .WithoutTemporaryId()
-            .WithoutUpdatedOn()
-            .WithoutPredecessorId()
+        return EnrichAsActiveWithoutPredecessor(builder)
             .AsItem();
     }
 
@@ -23,15 +18,20 @@ public static class ItemMother
     {
         builder ??= new ItemBuilder();
 
-        var types = ItemTypeMother.Initial().WithIsDeleted(false).CreateMany(3);
+        var types = ItemTypeMother.Initial().CreateMany(3);
 
-        return builder
-            .WithIsDeleted(false)
-            .WithIsTemporary(false)
-            .WithoutTemporaryId()
-            .WithoutUpdatedOn()
-            .WithoutPredecessorId()
+        return EnrichAsActiveWithoutPredecessor(builder)
             .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object));
+    }
+
+    public static ItemBuilder InitialWithType(IItemType itemType)
+    {
+        var types = new ItemTypes(
+            itemType.ToMonoList(),
+            new ItemTypeFactoryMock(MockBehavior.Strict).Object);
+
+        return EnrichAsActiveWithoutPredecessor(new ItemBuilder())
+            .WithTypes(types);
     }
 
     public static ItemBuilder InitialTemporary(ItemBuilder? builder = null)
@@ -53,13 +53,8 @@ public static class ItemMother
     {
         builder ??= new ItemBuilder();
 
-        return builder
-            .WithIsDeleted(false)
-            .WithIsTemporary(false)
-            .WithoutTemporaryId()
+        return EnrichAsActiveWithoutPredecessor(builder)
             .WithoutManufacturerId()
-            .WithoutUpdatedOn()
-            .WithoutPredecessorId()
             .AsItem();
     }
 
@@ -70,5 +65,15 @@ public static class ItemMother
         return builder
             .WithIsDeleted(true)
             .AsItem();
+    }
+
+    private static ItemBuilder EnrichAsActiveWithoutPredecessor(ItemBuilder builder)
+    {
+        return builder
+            .WithIsDeleted(false)
+            .WithIsTemporary(false)
+            .WithoutTemporaryId()
+            .WithoutUpdatedOn()
+            .WithoutPredecessorId();
     }
 }

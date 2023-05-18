@@ -6,6 +6,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 
 public class ItemNotFoundReason : IReason
 {
+    public ItemNotFoundReason(IEnumerable<ItemId> itemIds)
+    {
+        Message = $"Items '{string.Join(", ", itemIds.Select(i => i.Value))}' not found.";
+    }
+
     public ItemNotFoundReason(ItemId id)
     {
         Message = $"Item {id.Value} not found.";

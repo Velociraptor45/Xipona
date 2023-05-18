@@ -29,7 +29,7 @@ public class ItemAvailabilityReadModelConversionService : IItemAvailabilityReadM
             {
                 foreach (IItemType type in item.ItemTypes)
                 {
-                    availabilities.Add((item.Id, type.Id), item.ItemTypes.SelectMany(t => t.Availabilities));
+                    availabilities.Add((item.Id, type.Id), type.Availabilities);
                 }
             }
             else

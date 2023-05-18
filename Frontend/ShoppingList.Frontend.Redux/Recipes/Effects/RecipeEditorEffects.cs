@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
@@ -123,5 +124,59 @@ public sealed class RecipeEditorEffects
         }
 
         dispatcher.Dispatch(new CreateNewRecipeTagFinishedAction(newTag));
+    }
+
+    [EffectMethod(typeof(LoadAddToShoppingListAction))]
+    public async Task HandleLoadAddToShoppingListAction(IDispatcher dispatcher)
+    {
+        if (_state.Value.Editor.Recipe is null)
+            return;
+
+        IEnumerable<AddToShoppingListItem> results;
+        try
+        {
+            results = await _client.GetItemAmountsForOneServingAsync(_state.Value.Editor.Recipe.Id);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading item amounts for one serving failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading item amounts for one serving failed", e.Message));
+            return;
+        }
+
+        dispatcher.Dispatch(new LoadAddToShoppingListFinishedAction(results.ToList()));
+    }
+
+    [EffectMethod(typeof(AddItemsToShoppingListAction))]
+    public async Task HandleAddItemsToShoppingListAction(IDispatcher dispatcher)
+    {
+        if (_state.Value.Editor.AddToShoppingList is null)
+            return;
+
+        dispatcher.Dispatch(new AddItemsToShoppingListStartedAction());
+        try
+        {
+            var itemsToAdd = _state.Value.Editor.AddToShoppingList.Items.Where(i => i.AddToShoppingList);
+            await _client.AddItemsToShoppingListsAsync(itemsToAdd);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Adding items to shopping list failed", e));
+            dispatcher.Dispatch(new AddItemsToShoppingListFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Adding items to shopping list failed", e.Message));
+            dispatcher.Dispatch(new AddItemsToShoppingListFinishedAction());
+            return;
+        }
+
+        dispatcher.Dispatch(new AddItemsToShoppingListFinishedAction());
+        dispatcher.Dispatch(new AddToShoppingListModalClosedAction());
     }
 }

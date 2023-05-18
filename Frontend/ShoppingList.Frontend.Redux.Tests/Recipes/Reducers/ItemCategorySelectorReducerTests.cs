@@ -303,6 +303,22 @@ public class ItemCategorySelectorReducerTests
         }
 
         [Fact]
+        public void OnSelectedItemCategoryChanged_WithSettingSameItemCategoryId_ShouldNotChangeItemCategory()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategorySelectorReducer.OnSelectedItemCategoryChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
         public void OnSelectedItemCategoryChanged_WithInvalidIngredient_ShouldNotChangeItemCategory()
         {
             // Arrange
@@ -396,7 +412,11 @@ public class ItemCategorySelectorReducerTests
                             ingredients.First().ItemCategorySelector.ItemCategories.First()
                         },
                         Input = string.Empty
-                    }
+                    },
+                    DefaultItemId = null,
+                    DefaultItemTypeId = null,
+                    DefaultStoreId = null,
+                    AddToShoppingListByDefault = null
                 };
 
                 ExpectedState = ExpectedState with

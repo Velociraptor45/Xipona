@@ -15,6 +15,11 @@ public class StoreNotFoundReason : IReason
         Message = $"No store for section {sectionId.Value} found.";
     }
 
+    public StoreNotFoundReason(IEnumerable<StoreId> storeIds)
+    {
+        Message = $"No store found for store ids {string.Join(", ", storeIds.Select(x => x.Value))}.";
+    }
+
     public string Message { get; }
 
     public ErrorReasonCode ErrorCode => ErrorReasonCode.StoreNotFound;

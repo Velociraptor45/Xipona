@@ -41,4 +41,10 @@ public class RecipeEntityBuilder : TestBuilderBase<Recipe>
         FillPropertyWith(p => p.Tags, tags);
         return this;
     }
+
+    public RecipeEntityBuilder WithNumberOfServings(int numberOfServings)
+    {
+        FillPropertyWith(p => p.NumberOfServings, numberOfServings);
+        return this;
+    }
 }

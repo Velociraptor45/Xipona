@@ -22,10 +22,11 @@ using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Queries.GetAll;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
@@ -56,6 +57,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddItemToShoppingListContract = ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
 using IngredientQuantityType = ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States.IngredientQuantityType;
 using ItemStore = ProjectHermes.ShoppingList.Frontend.Redux.Items.States.ItemStore;
 using ShoppingListStore = ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListStore;
@@ -408,5 +410,17 @@ public class ApiClient : IApiClient
         return results is null
             ? Enumerable.Empty<RecipeSearchResult>()
             : _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
+    }
+
+    public async Task<IEnumerable<AddToShoppingListItem>> GetItemAmountsForOneServingAsync(Guid recipeId)
+    {
+        var result = await _client.GetItemAmountsForOneServingAsync(recipeId);
+        return _converters.ToDomain<ItemAmountForOneServingContract, AddToShoppingListItem>(result.Items);
+    }
+
+    public async Task AddItemsToShoppingListsAsync(IEnumerable<AddToShoppingListItem> items)
+    {
+        var contract = _converters.ToContract<IEnumerable<AddToShoppingListItem>, AddItemsToShoppingListsContract>(items);
+        await _client.AddItemsToShoppingListsAsync(contract);
     }
 }

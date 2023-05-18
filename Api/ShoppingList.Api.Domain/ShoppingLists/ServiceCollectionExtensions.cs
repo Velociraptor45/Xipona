@@ -20,7 +20,16 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IShoppingListSectionFactory, ShoppingListSectionFactory>();
 
         services.AddTransient<IShoppingListExchangeService, ShoppingListExchangeService>();
-        services.AddTransient<IAddItemToShoppingListService, AddItemToShoppingListService>();
+        services.AddTransient<Func<CancellationToken, IAddItemToShoppingListService>>(provider =>
+        {
+            var shoppingListSectionFactory = provider.GetRequiredService<IShoppingListSectionFactory>();
+            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            var itemRepository = provider.GetRequiredService<IItemRepository>();
+            var itemFactory = provider.GetRequiredService<IShoppingListItemFactory>();
+            var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
+            return token => new AddItemToShoppingListService(shoppingListSectionFactory, storeRepository,
+                itemRepository, itemFactory, shoppingListRepository, token);
+        });
 
         services.AddTransient<IShoppingListReadModelConversionService, ShoppingListReadModelConversionService>();
 

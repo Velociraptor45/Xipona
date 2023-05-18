@@ -12,13 +12,16 @@ public class ModifyRecipeContractConverter : IToContractConverter<EditedRecipe, 
     {
         return new ModifyRecipeContract(
             source.Name,
+            source.NumberOfServings,
             source.Ingredients.Select(i => new ModifyIngredientContract(
                 i.Id == Guid.Empty ? null : i.Id,
                 i.ItemCategoryId,
                 i.QuantityTypeId,
                 i.Quantity,
                 i.DefaultItemId,
-                i.DefaultItemTypeId)),
+                i.DefaultItemTypeId,
+                i.DefaultStoreId,
+                i.AddToShoppingListByDefault)),
             source.PreparationSteps.Select(p => new ModifyPreparationStepContract(
                 p.Id == Guid.Empty ? null : p.Id,
                 p.Name,

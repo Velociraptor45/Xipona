@@ -6,13 +6,14 @@ namespace ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Comma
 
 public class AddItemToShoppingListCommandHandler : ICommandHandler<AddItemToShoppingListCommand, bool>
 {
-    private readonly IAddItemToShoppingListService _addItemToShoppingListService;
+    private readonly Func<CancellationToken, IAddItemToShoppingListService> _addItemToShoppingListServiceDelegate;
     private readonly ITransactionGenerator _transactionGenerator;
 
-    public AddItemToShoppingListCommandHandler(IAddItemToShoppingListService addItemToShoppingListService,
+    public AddItemToShoppingListCommandHandler(
+        Func<CancellationToken, IAddItemToShoppingListService> addItemToShoppingListServiceDelegate,
         ITransactionGenerator transactionGenerator)
     {
-        _addItemToShoppingListService = addItemToShoppingListService;
+        _addItemToShoppingListServiceDelegate = addItemToShoppingListServiceDelegate;
         _transactionGenerator = transactionGenerator;
     }
 
@@ -20,8 +21,9 @@ public class AddItemToShoppingListCommandHandler : ICommandHandler<AddItemToShop
     {
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
-        await _addItemToShoppingListService.AddAsync(command.ShoppingListId, command.ItemId, command.SectionId,
-            command.Quantity, cancellationToken);
+        var service = _addItemToShoppingListServiceDelegate(cancellationToken);
+        await service.AddAsync(command.ShoppingListId, command.ItemId, command.SectionId,
+            command.Quantity);
 
         await transaction.CommitAsync(cancellationToken);
 

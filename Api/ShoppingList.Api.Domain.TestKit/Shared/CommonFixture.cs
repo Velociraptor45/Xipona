@@ -15,12 +15,6 @@ public class CommonFixture
         return fixture;
     }
 
-    public TEnum ChooseRandom<TEnum>() where TEnum : Enum
-    {
-        IEnumerable<TEnum> values = Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
-        return ChooseRandom(values);
-    }
-
     public T ChooseRandom<T>(IEnumerable<T> enumerable)
     {
         if (!enumerable.Any())
@@ -32,66 +26,9 @@ public class CommonFixture
         return list[index];
     }
 
-    public IEnumerable<int> NextUniqueInts(int amount, IEnumerable<int>? exclude = null)
-    {
-        if (amount < 0)
-            throw new ArgumentException($"{nameof(amount)} mustn't be negative.");
-
-        List<int> numbers = new List<int>();
-        List<int> excludedNumbers = exclude?.ToList() ?? new List<int>();
-
-        for (int i = 0; i < amount; i++)
-        {
-            int number;
-            do
-            {
-                number = NextInt();
-            } while (numbers.Contains(number) || excludedNumbers.Contains(number));
-            numbers.Add(number);
-        }
-        return numbers;
-    }
-
     public int NextInt(int minValue, int maxValue)
     {
         return _random.Next(minValue, maxValue);
-    }
-
-    public int NextInt()
-    {
-        return NextInt(1, int.MaxValue);
-    }
-
-    public int NextInt(IEnumerable<int> exclude)
-    {
-        List<int> excludedInts = exclude.ToList();
-        while (true)
-        {
-            var number = NextInt();
-            if (!excludedInts.Contains(number))
-                return number;
-        }
-    }
-
-    public int NextInt(int exclude)
-    {
-        return NextInt(new List<int> { exclude });
-    }
-
-    public bool NextBool()
-    {
-        return _random.NextDouble() < .5f;
-    }
-
-    public float NextFloat()
-    {
-        return (float)_random.NextDouble();
-    }
-
-    public DateTimeOffset NextDate()
-    {
-        var fixture = GetNewFixture();
-        return fixture.Create<DateTimeOffset>();
     }
 
     public IEnumerable<T> RemoveRandom<T>(IEnumerable<T> enumerable, int count)

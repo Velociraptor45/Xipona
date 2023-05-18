@@ -1,9 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
@@ -12,39 +8,6 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Recipes.Models;
 
 public class IngredientTests
 {
-    public class Ctor
-    {
-        public static IEnumerable<object?[]> GetValidItemIdCombinationTestData()
-        {
-            yield return new object?[] { ItemId.New, ItemTypeId.New };
-            yield return new object?[] { ItemId.New, null };
-            yield return new object?[] { null, null };
-        }
-
-        [Fact]
-        public void Ctor_WithInvalidItemIdCombination_ShouldThrow()
-        {
-            // Act
-            var func = () => new Ingredient(IngredientId.New, ItemCategoryId.New, IngredientQuantityType.Fluid,
-                new IngredientQuantity(1), null, ItemTypeId.New);
-
-            // Assert
-            func.Should().ThrowDomainException(ErrorReasonCode.InvalidItemIdCombination);
-        }
-
-        [Theory]
-        [MemberData(nameof(GetValidItemIdCombinationTestData))]
-        public void Ctor_WithValidItemIdCombination_ShouldThrow(ItemId? itemId, ItemTypeId? itemTypeId)
-        {
-            // Act
-            var func = () => new Ingredient(IngredientId.New, ItemCategoryId.New, IngredientQuantityType.Fluid,
-                new IngredientQuantity(1), itemId, itemTypeId);
-
-            // Assert
-            func.Should().NotThrow();
-        }
-    }
-
     public class Modify
     {
         private readonly ModifyFixture _fixture;
@@ -159,8 +122,7 @@ public class IngredientTests
 
                 ExpectedResult = new IngredientBuilder()
                     .WithId(Id.Value)
-                    .WithoutDefaultItemId()
-                    .WithoutDefaultItemTypeId()
+                    .WithoutShoppingListProperties()
                     .Create();
             }
 
@@ -173,8 +135,7 @@ public class IngredientTests
                     ExpectedResult.ItemCategoryId,
                     ExpectedResult.QuantityType,
                     ExpectedResult.Quantity,
-                    ExpectedResult.DefaultItemId,
-                    ExpectedResult.DefaultItemTypeId);
+                    ExpectedResult.ShoppingListProperties);
             }
 
             public void SetupItemCategoryValidationSuccess()
@@ -187,9 +148,10 @@ public class IngredientTests
             public void SetupItemValidationSuccess()
             {
                 TestPropertyNotSetException.ThrowIfNull(Modification);
-                TestPropertyNotSetException.ThrowIfNull(Modification.DefaultItemId);
+                TestPropertyNotSetException.ThrowIfNull(Modification.ShoppingListProperties);
 
-                ValidatorMock.SetupValidateAsync(Modification.DefaultItemId.Value, Modification.DefaultItemTypeId);
+                ValidatorMock.SetupValidateAsync(Modification.ShoppingListProperties.DefaultItemId,
+                    Modification.ShoppingListProperties.DefaultItemTypeId);
             }
 
             public void SetupItemCategoryValidationFailure()
@@ -205,11 +167,12 @@ public class IngredientTests
             public void SetupItemValidationFailure()
             {
                 TestPropertyNotSetException.ThrowIfNull(Modification);
-                TestPropertyNotSetException.ThrowIfNull(Modification.DefaultItemId);
+                TestPropertyNotSetException.ThrowIfNull(Modification.ShoppingListProperties);
 
                 ExpectedException = new InvalidOperationException("injected item");
 
-                ValidatorMock.SetupValidateAsyncAnd(Modification.DefaultItemId.Value, Modification.DefaultItemTypeId)
+                ValidatorMock.SetupValidateAsyncAnd(Modification.ShoppingListProperties.DefaultItemId,
+                        Modification.ShoppingListProperties.DefaultItemTypeId)
                     .Throws(ExpectedException);
             }
         }

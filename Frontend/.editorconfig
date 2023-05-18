@@ -258,6 +258,9 @@ dotnet_style_namespace_match_folder = true:suggestion
 
 ###### Analyzers ######
 
+# SYSLIB1045: Convert to 'GeneratedRegexAttribute'.
+dotnet_diagnostic.SYSLIB1045.severity = none
+
 # S4457: Parameter validation in "async"/"await" methods should be wrapped
 dotnet_diagnostic.S4457.severity = none
 

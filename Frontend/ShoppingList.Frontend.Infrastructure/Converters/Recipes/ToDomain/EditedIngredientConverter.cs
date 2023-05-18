@@ -19,6 +19,8 @@ public class EditedIngredientConverter : IToDomainConverter<IngredientContract, 
             source.Quantity,
             source.DefaultItemId,
             source.DefaultItemTypeId,
+            source.DefaultStoreId,
+            source.AddToShoppingListByDefault,
             new ItemCategorySelector(
                 new List<ItemCategorySearchResult>(0),
                 string.Empty),

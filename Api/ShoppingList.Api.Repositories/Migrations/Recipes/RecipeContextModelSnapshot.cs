@@ -24,10 +24,16 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Recipes
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
 
+                    b.Property<bool?>("AddToShoppingListByDefault")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<Guid?>("DefaultItemId")
                         .HasColumnType("char(36)");
 
                     b.Property<Guid?>("DefaultItemTypeId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("DefaultStoreId")
                         .HasColumnType("char(36)");
 
                     b.Property<Guid>("ItemCategoryId")
@@ -79,6 +85,9 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Recipes
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("NumberOfServings")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("RowVersion")
                         .IsConcurrencyToken()

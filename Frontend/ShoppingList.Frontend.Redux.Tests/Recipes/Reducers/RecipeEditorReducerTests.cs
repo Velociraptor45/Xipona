@@ -55,6 +55,7 @@ public class RecipeEditorReducerTests
                         Recipe = new EditedRecipe(
                             Guid.Empty,
                             string.Empty,
+                            1,
                             new List<EditedIngredient>(0),
                             new SortedSet<EditedPreparationStep>(),
                             new List<Guid>(0)),
@@ -609,6 +610,100 @@ public class RecipeEditorReducerTests
             public void SetupActionForRecipeNull()
             {
                 Action = new DomainTestBuilder<CreateNewRecipeTagFinishedAction>().Create();
+            }
+        }
+    }
+
+    public class OnRecipeNumberOfServingsChanged
+    {
+        private readonly OnRecipeNumberOfServingsChangedFixture _fixture;
+
+        public OnRecipeNumberOfServingsChanged()
+        {
+            _fixture = new OnRecipeNumberOfServingsChangedFixture();
+        }
+
+        [Fact]
+        public void OnRecipeNumberOfServingsChanged_WithValidData_ShouldSetNumberOfServings()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = RecipeEditorReducer.OnRecipeNumberOfServingsChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnRecipeNumberOfServingsChanged_WithRecipeNull_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithRecipeNull();
+            _fixture.SetupExpectedStateWithRecipeNull();
+            _fixture.SetupActionForRecipeNull();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = RecipeEditorReducer.OnRecipeNumberOfServingsChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnRecipeNumberOfServingsChangedFixture : RecipeEditorReducerFixture
+        {
+            public RecipeNumberOfServingsChangedAction? Action { get; private set; }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            NumberOfServings = new DomainTestBuilder<int>().Create()
+                        }
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithRecipeNull()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithRecipeNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new RecipeNumberOfServingsChangedAction(ExpectedState.Editor.Recipe!.NumberOfServings);
+            }
+
+            public void SetupActionForRecipeNull()
+            {
+                Action = new DomainTestBuilder<RecipeNumberOfServingsChangedAction>().Create();
             }
         }
     }
