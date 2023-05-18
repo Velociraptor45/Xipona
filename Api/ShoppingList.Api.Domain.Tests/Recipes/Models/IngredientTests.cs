@@ -254,6 +254,27 @@ public class IngredientTests
         {
             // Arrange
             _fixture.SetupId();
+            _fixture.SetupDefaultItemId();
+            _fixture.SetupNotMatchingNewItem();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedResultAsOriginal(sut);
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = sut.ChangeDefaultItem(_fixture.NewItem.PredecessorId!.Value, _fixture.NewItem);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public void ChangeDefaultItem_WithNoShoppingListProperties_ShouldReturnOriginal()
+        {
+            // Arrange
+            _fixture.SetupId();
+            _fixture.SetupShoppingListPropertiesNull();
             _fixture.SetupNotMatchingNewItem();
             var sut = _fixture.CreateSut();
             _fixture.SetupExpectedResultAsOriginal(sut);
@@ -378,6 +399,7 @@ public class IngredientTests
         protected IngredientId? Id;
         protected ItemId? DefaultItemId;
         protected ItemTypeId? DefaultItemTypeId;
+        private bool _noShoppingListProperties = false;
 
         public void SetupId()
         {
@@ -394,6 +416,11 @@ public class IngredientTests
             DefaultItemTypeId = ItemTypeId.New;
         }
 
+        public void SetupShoppingListPropertiesNull()
+        {
+            _noShoppingListProperties = true;
+        }
+
         public Ingredient CreateSut()
         {
             var builder = new IngredientBuilder();
@@ -401,7 +428,11 @@ public class IngredientTests
             if (Id is not null)
                 builder.WithId(Id.Value);
 
-            if (DefaultItemId is not null)
+            if (_noShoppingListProperties)
+            {
+                builder.WithoutShoppingListProperties();
+            }
+            else if (DefaultItemId is not null)
             {
                 var shoppingListProperties = new IngredientShoppingListPropertiesBuilder()
                     .WithDefaultItemId(DefaultItemId.Value)

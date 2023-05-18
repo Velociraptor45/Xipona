@@ -49,7 +49,7 @@ public class Ingredient : IIngredient
 
     public IIngredient ChangeDefaultItem(ItemId oldItemId, IItem newItem)
     {
-        if (DefaultItemId != oldItemId)
+        if (ShoppingListProperties is null || DefaultItemId != oldItemId)
             return this;
 
         if (DefaultItemTypeId is null)
@@ -73,7 +73,7 @@ public class Ingredient : IIngredient
             ItemCategoryId,
             QuantityType,
             Quantity,
-            new IngredientShoppingListProperties(newItem.Id, itemType.Id, ShoppingListProperties.DefaultStoreId,
+            new IngredientShoppingListProperties(newItem.Id, itemType!.Id, ShoppingListProperties.DefaultStoreId,
                 ShoppingListProperties.AddToShoppingListByDefault));
     }
 }
