@@ -184,7 +184,7 @@ public class IngredientTests
 
     public class ChangeDefaultItem
     {
-        private ChangeDefaultItemFixture _fixture = new();
+        private readonly ChangeDefaultItemFixture _fixture = new();
 
         [Fact]
         public void ChangeDefaultItem_WithNoType_ShouldUpdateItemId()
