@@ -46,4 +46,34 @@ public class Ingredient : IIngredient
             Quantity,
             null);
     }
+
+    public IIngredient ChangeDefaultItem(ItemId oldItemId, IItem newItem)
+    {
+        if (DefaultItemId != oldItemId)
+            return this;
+
+        if (DefaultItemTypeId is null)
+        {
+            return new Ingredient(
+                IngredientId.New,
+                ItemCategoryId,
+                QuantityType,
+                Quantity,
+                new IngredientShoppingListProperties(newItem.Id, null, ShoppingListProperties.DefaultStoreId,
+                    ShoppingListProperties.AddToShoppingListByDefault));
+        }
+
+        if (!newItem.TryGetTypeWithPredecessor(DefaultItemTypeId.Value, out var itemType))
+        {
+            return RemoveDefaultItem();
+        }
+
+        return new Ingredient(
+            IngredientId.New,
+            ItemCategoryId,
+            QuantityType,
+            Quantity,
+            new IngredientShoppingListProperties(newItem.Id, itemType.Id, ShoppingListProperties.DefaultStoreId,
+                ShoppingListProperties.AddToShoppingListByDefault));
+    }
 }
