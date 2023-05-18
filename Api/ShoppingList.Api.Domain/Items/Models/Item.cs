@@ -235,7 +235,7 @@ public class Item : AggregateRoot, IItem
         if (HasItemTypes)
             throw new DomainException(new CannotUpdateItemWithTypesAsItemReason(update.OldId));
         if (!update.Availabilities.Any())
-            throw new DomainException(new CannotUpdateItemWithoutAvailabilities());
+            throw new DomainException(new CannotUpdateItemWithoutAvailabilitiesReason());
 
         var itemCategoryId = update.ItemCategoryId;
         var manufacturerId = update.ManufacturerId;

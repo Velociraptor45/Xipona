@@ -2,9 +2,9 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 
-public class CannotUpdateItemWithoutAvailabilities : IReason
+public class CannotUpdateItemWithoutAvailabilitiesReason : IReason
 {
-    public CannotUpdateItemWithoutAvailabilities()
+    public CannotUpdateItemWithoutAvailabilitiesReason()
     {
         Message = "Cannot update item without availabilities";
     }
