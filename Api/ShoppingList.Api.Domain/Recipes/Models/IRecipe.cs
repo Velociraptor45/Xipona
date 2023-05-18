@@ -17,4 +17,6 @@ public interface IRecipe
     Task ModifyAsync(RecipeModification modification, IValidator validator);
 
     void RemoveDefaultItem(ItemId defaultItemId);
+
+    void ModifyIngredientsAfterItemUpdate(ItemId oldItemId, IItem newItem);
 }

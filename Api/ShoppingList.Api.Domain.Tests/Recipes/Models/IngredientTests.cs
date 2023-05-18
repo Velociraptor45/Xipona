@@ -1,5 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+﻿using Force.DeepCloner;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
@@ -178,13 +182,243 @@ public class IngredientTests
         }
     }
 
+    public class ChangeDefaultItem
+    {
+        private readonly ChangeDefaultItemFixture _fixture = new();
+
+        [Fact]
+        public void ChangeDefaultItem_WithNoType_ShouldUpdateItemId()
+        {
+            // Arrange
+            _fixture.SetupId();
+            _fixture.SetupDefaultItemId();
+            _fixture.SetupNewItem();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedResult(sut);
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = sut.ChangeDefaultItem(_fixture.NewItem.PredecessorId!.Value, _fixture.NewItem);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt.Excluding(info => info.Path == "Id"));
+        }
+
+        [Fact]
+        public void ChangeDefaultItem_WithType_ShouldUpdateItemAndItemTypeId()
+        {
+            // Arrange
+            _fixture.SetupId();
+            _fixture.SetupDefaultItemId();
+            _fixture.SetupDefaultItemTypeId();
+            _fixture.SetupNewTypeId();
+            _fixture.SetupNewItemWithTypes();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedResultWithType(sut);
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = sut.ChangeDefaultItem(_fixture.NewItem.PredecessorId!.Value, _fixture.NewItem);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt.Excluding(info => info.Path == "Id"));
+        }
+
+        [Fact]
+        public void ChangeDefaultItem_WithTypeRemoved_ShouldRemoveShoppingListProperties()
+        {
+            // Arrange
+            _fixture.SetupId();
+            _fixture.SetupDefaultItemId();
+            _fixture.SetupDefaultItemTypeId();
+            _fixture.SetupNewItemWithRemovedType();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedResultWithRemovedType(sut);
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = sut.ChangeDefaultItem(_fixture.NewItem.PredecessorId!.Value, _fixture.NewItem);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt.Excluding(info => info.Path == "Id"));
+        }
+
+        [Fact]
+        public void ChangeDefaultItem_WithNewItemNotMatching_ShouldReturnOriginal()
+        {
+            // Arrange
+            _fixture.SetupId();
+            _fixture.SetupDefaultItemId();
+            _fixture.SetupNotMatchingNewItem();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedResultAsOriginal(sut);
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = sut.ChangeDefaultItem(_fixture.NewItem.PredecessorId!.Value, _fixture.NewItem);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public void ChangeDefaultItem_WithNoShoppingListProperties_ShouldReturnOriginal()
+        {
+            // Arrange
+            _fixture.SetupId();
+            _fixture.SetupShoppingListPropertiesNull();
+            _fixture.SetupNotMatchingNewItem();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedResultAsOriginal(sut);
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = sut.ChangeDefaultItem(_fixture.NewItem.PredecessorId!.Value, _fixture.NewItem);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class ChangeDefaultItemFixture : IngredientFixture
+        {
+            private ItemTypeId? _newTypeId;
+            public Item? NewItem { get; private set; }
+            public Ingredient? ExpectedResult { get; private set; }
+
+            public void SetupNewItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(DefaultItemId);
+
+                NewItem = ItemMother.Initial().WithPredecessorId(DefaultItemId.Value).Create();
+            }
+
+            public void SetupNotMatchingNewItem()
+            {
+                NewItem = ItemMother.Initial().WithPredecessorId(ItemId.New).Create();
+            }
+
+            public void SetupNewItemWithTypes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(DefaultItemId);
+                TestPropertyNotSetException.ThrowIfNull(DefaultItemTypeId);
+                TestPropertyNotSetException.ThrowIfNull(_newTypeId);
+
+                var types = new List<IItemType>
+                {
+                    ItemTypeMother.Initial().Create(),
+                    ItemTypeMother.Initial().WithId(_newTypeId.Value).WithPredecessorId(DefaultItemTypeId.Value).Create(),
+                    ItemTypeMother.Initial().Create()
+                };
+
+                NewItem = ItemMother.InitialWithTypes()
+                    .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
+                    .WithPredecessorId(DefaultItemId.Value)
+                    .Create();
+            }
+
+            public void SetupNewItemWithRemovedType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(DefaultItemId);
+
+                var types = new List<IItemType>
+                {
+                    ItemTypeMother.Initial().Create(),
+                    ItemTypeMother.Initial().Create(),
+                    ItemTypeMother.Initial().Create()
+                };
+
+                NewItem = ItemMother.InitialWithTypes()
+                    .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
+                    .WithPredecessorId(DefaultItemId.Value)
+                    .Create();
+            }
+
+            public void SetupNewTypeId()
+            {
+                _newTypeId = ItemTypeId.New;
+            }
+
+            public void SetupExpectedResult(IIngredient sut)
+            {
+                TestPropertyNotSetException.ThrowIfNull(NewItem);
+
+                ExpectedResult = new Ingredient(
+                    IngredientId.New,
+                    sut.ItemCategoryId,
+                    sut.QuantityType,
+                    sut.Quantity,
+                    new IngredientShoppingListProperties(
+                        NewItem.Id, null, sut.ShoppingListProperties!.DefaultStoreId,
+                        sut.ShoppingListProperties!.AddToShoppingListByDefault));
+            }
+
+            public void SetupExpectedResultWithType(IIngredient sut)
+            {
+                TestPropertyNotSetException.ThrowIfNull(NewItem);
+                TestPropertyNotSetException.ThrowIfNull(_newTypeId);
+
+                ExpectedResult = new Ingredient(
+                    IngredientId.New,
+                    sut.ItemCategoryId,
+                    sut.QuantityType,
+                    sut.Quantity,
+                    new IngredientShoppingListProperties(
+                        NewItem.Id, _newTypeId.Value, sut.ShoppingListProperties!.DefaultStoreId,
+                        sut.ShoppingListProperties!.AddToShoppingListByDefault));
+            }
+
+            public void SetupExpectedResultWithRemovedType(IIngredient sut)
+            {
+                ExpectedResult = new Ingredient(
+                    IngredientId.New,
+                    sut.ItemCategoryId,
+                    sut.QuantityType,
+                    sut.Quantity,
+                    null);
+            }
+
+            public void SetupExpectedResultAsOriginal(Ingredient sut)
+            {
+                ExpectedResult = sut.DeepClone();
+            }
+        }
+    }
+
     public abstract class IngredientFixture
     {
         protected IngredientId? Id;
+        protected ItemId? DefaultItemId;
+        protected ItemTypeId? DefaultItemTypeId;
+        private bool _noShoppingListProperties = false;
 
         public void SetupId()
         {
             Id = IngredientId.New;
+        }
+
+        public void SetupDefaultItemId()
+        {
+            DefaultItemId = ItemId.New;
+        }
+
+        public void SetupDefaultItemTypeId()
+        {
+            DefaultItemTypeId = ItemTypeId.New;
+        }
+
+        public void SetupShoppingListPropertiesNull()
+        {
+            _noShoppingListProperties = true;
         }
 
         public Ingredient CreateSut()
@@ -193,6 +427,19 @@ public class IngredientTests
 
             if (Id is not null)
                 builder.WithId(Id.Value);
+
+            if (_noShoppingListProperties)
+            {
+                builder.WithoutShoppingListProperties();
+            }
+            else if (DefaultItemId is not null)
+            {
+                var shoppingListProperties = new IngredientShoppingListPropertiesBuilder()
+                    .WithDefaultItemId(DefaultItemId.Value)
+                    .WithDefaultItemTypeId(DefaultItemTypeId)
+                    .Create();
+                builder.WithShoppingListProperties(shoppingListProperties);
+            }
 
             return builder.Create();
         }

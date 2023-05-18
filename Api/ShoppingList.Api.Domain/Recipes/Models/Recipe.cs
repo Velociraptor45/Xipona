@@ -43,4 +43,9 @@ public class Recipe : AggregateRoot, IRecipe
     {
         _ingredients.RemoveDefaultItem(defaultItemId);
     }
+
+    public void ModifyIngredientsAfterItemUpdate(ItemId oldItemId, IItem newItem)
+    {
+        _ingredients.ModifyAfterItemUpdate(oldItemId, newItem);
+    }
 }

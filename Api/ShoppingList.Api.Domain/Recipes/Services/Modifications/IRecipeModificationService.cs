@@ -7,4 +7,6 @@ public interface IRecipeModificationService
     Task ModifyAsync(RecipeModification modification);
 
     Task RemoveDefaultItemAsync(ItemId itemId);
+
+    Task ModifyIngredientsAfterItemUpdateAsync(ItemId oldItemId, IItem newItem);
 }

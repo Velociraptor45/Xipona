@@ -18,4 +18,6 @@ public interface IIngredient
     Task<IIngredient> ModifyAsync(IngredientModification modification, IValidator validator);
 
     IIngredient RemoveDefaultItem();
+
+    IIngredient ChangeDefaultItem(ItemId oldItemId, IItem newItem);
 }

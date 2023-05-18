@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
@@ -19,5 +20,25 @@ public class RecipeMock : Mock<IRecipe>
     public void VerifyModifyAsync(RecipeModification modification, IValidator validator, Func<Times> times)
     {
         Verify(m => m.ModifyAsync(modification, validator), times);
+    }
+
+    public void SetupModifyIngredientsAfterItemUpdate(ItemId oldItemId, IItem newItem)
+    {
+        Setup(m => m.ModifyIngredientsAfterItemUpdate(oldItemId, newItem));
+    }
+
+    public void VerifyModifyIngredientsAfterItemUpdate(ItemId oldItemId, IItem newItem, Func<Times> times)
+    {
+        Verify(m => m.ModifyIngredientsAfterItemUpdate(oldItemId, newItem), times);
+    }
+
+    public void SetupRemoveDefaultItem(ItemId itemId)
+    {
+        Setup(m => m.RemoveDefaultItem(itemId));
+    }
+
+    public void VerifyRemoveDefaultItem(ItemId itemId, Func<Times> times)
+    {
+        Verify(m => m.RemoveDefaultItem(itemId), times);
     }
 }

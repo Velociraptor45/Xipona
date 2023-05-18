@@ -102,4 +102,13 @@ public class Ingredients : IEnumerable<IIngredient>
             _ingredients[ingredient.Id] = ingredient.RemoveDefaultItem();
         }
     }
+
+    public void ModifyAfterItemUpdate(ItemId oldItemId, IItem newItem)
+    {
+        var ingredientsWithItem = _ingredients.Values.Where(i => i.DefaultItemId == oldItemId);
+        foreach (var ingredient in ingredientsWithItem)
+        {
+            _ingredients[ingredient.Id] = ingredient.ChangeDefaultItem(oldItemId, newItem);
+        }
+    }
 }
