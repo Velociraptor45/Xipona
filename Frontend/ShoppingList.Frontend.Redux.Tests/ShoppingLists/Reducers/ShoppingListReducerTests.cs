@@ -181,6 +181,7 @@ public class ShoppingListReducerTests
             // Arrange
             _fixture.SetupInitialState();
             _fixture.SetupAction();
+            _fixture.SetupExpectedState();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
@@ -199,7 +200,26 @@ public class ShoppingListReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    SelectedStoreId = Guid.NewGuid()
+                    SelectedStoreId = Guid.NewGuid(),
+                    SearchBar = ExpectedState.SearchBar with
+                    {
+                        Input = new DomainTestBuilder<string>().Create(),
+                        IsActive = true,
+                        Results = new DomainTestBuilder<SearchItemForShoppingListResult>().CreateMany(2).ToList()
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    SearchBar = ExpectedState.SearchBar with
+                    {
+                        Input = string.Empty,
+                        IsActive = false,
+                        Results = new List<SearchItemForShoppingListResult>()
+                    }
                 };
             }
 
