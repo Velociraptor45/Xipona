@@ -10,9 +10,10 @@ public class ItemTypeReadRepositoryMock : Mock<IItemTypeReadRepository>
     {
     }
 
-    public void SetupFindActiveByAsync(string name, StoreId storeId, IEnumerable<(ItemId, ItemTypeId)> returnValue)
+    public void SetupFindActiveByAsync(string name, StoreId storeId, int? limit, IEnumerable<ItemTypeId> excludedItemTypeIds,
+        IEnumerable<(ItemId, ItemTypeId)> returnValue)
     {
-        Setup(m => m.FindActiveByAsync(name, storeId, It.IsAny<CancellationToken>()))
+        Setup(m => m.FindActiveByAsync(name, storeId, excludedItemTypeIds, limit, It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);
     }
 }

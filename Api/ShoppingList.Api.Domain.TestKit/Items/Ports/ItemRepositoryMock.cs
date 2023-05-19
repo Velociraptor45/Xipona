@@ -52,9 +52,10 @@ public class ItemRepositoryMock : Mock<IItemRepository>
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindActiveByAsync(string name, StoreId storeId, IEnumerable<IItem> returnValue)
+    public void SetupFindActiveByAsync(string name, StoreId storeId, IEnumerable<ItemId> excludedItemIds, int? limit,
+        IEnumerable<IItem> returnValue)
     {
-        Setup(m => m.FindActiveByAsync(name, storeId, It.IsAny<CancellationToken>()))
+        Setup(m => m.FindActiveByAsync(name, storeId, excludedItemIds, limit, It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);
     }
 

@@ -493,7 +493,7 @@ public class ItemSearchServiceTests
             public void SetupFindingItems()
             {
                 TestPropertyNotSetException.ThrowIfNull(_items);
-                ItemRepositoryMock.SetupFindActiveByAsync(Name, StoreId, _items);
+                ItemRepositoryMock.SetupFindActiveByAsync(Name, StoreId, TODO, TODO, _items);
             }
 
             public void SetupFindingNoItemsWithMatchingItemCategory()
@@ -503,7 +503,7 @@ public class ItemSearchServiceTests
 
             public void SetupFindingNoItems()
             {
-                ItemRepositoryMock.SetupFindActiveByAsync(Name, StoreId, Enumerable.Empty<IItem>());
+                ItemRepositoryMock.SetupFindActiveByAsync(Name, StoreId, TODO, TODO, Enumerable.Empty<IItem>());
             }
 
             public void SetupFindingItemsFromTypeMapping()
@@ -612,14 +612,14 @@ public class ItemSearchServiceTests
 
             public void SetupFindingNoItemTypeMapping()
             {
-                ItemTypeReadRepositoryMock.SetupFindActiveByAsync(Name, StoreId,
+                ItemTypeReadRepositoryMock.SetupFindActiveByAsync(Name, StoreId, TODO, TODO,
                     Enumerable.Empty<(ItemId, ItemTypeId)>());
             }
 
             public void SetupFindingItemTypeMapping()
             {
                 TestPropertyNotSetException.ThrowIfNull(_itemTypeMapping);
-                ItemTypeReadRepositoryMock.SetupFindActiveByAsync(Name, StoreId, _itemTypeMapping);
+                ItemTypeReadRepositoryMock.SetupFindActiveByAsync(Name, StoreId, TODO, TODO, _itemTypeMapping);
             }
 
             public void SetupItemTypeMapping()

@@ -17,8 +17,6 @@ public interface IItemRepository
 
     Task<IEnumerable<IItem>> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken);
 
-    Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId, CancellationToken cancellationToken);
-
     Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, CancellationToken cancellationToken);
 
     Task<IEnumerable<IItem>> FindActiveByAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);
@@ -37,4 +35,7 @@ public interface IItemRepository
     Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken);
 
     Task<IItem> StoreAsync(IItem item, CancellationToken cancellationToken);
+
+    Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId,
+        IEnumerable<ItemId> excludedItemIds, int? limit, CancellationToken cancellationToken);
 }

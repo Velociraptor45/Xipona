@@ -94,15 +94,22 @@ public class ItemRepository : IItemRepository
     }
 
     public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId,
-        CancellationToken cancellationToken)
+        IEnumerable<ItemId> excludedItemIds, int? limit, CancellationToken cancellationToken)
     {
-        var entities = await GetItemQuery()
+        var excludedRawItemIds = excludedItemIds.Select(id => id.Value).ToList();
+        var query = GetItemQuery()
             .Where(item =>
                 !item.Deleted
                 && !item.IsTemporary
+                && !excludedRawItemIds.Contains(item.Id)
                 && item.Name.Contains(searchInput)
                 && (item.AvailableAt.Any(map => map.StoreId == storeId)
-                    || item.ItemTypes.Any(t => !t.IsDeleted && t.AvailableAt.Any(av => av.StoreId == storeId))))
+                    || item.ItemTypes.Any(t => !t.IsDeleted && t.AvailableAt.Any(av => av.StoreId == storeId))));
+
+        if (limit.HasValue)
+            query = query.Take(limit.Value);
+
+        var entities = await query
             .ToListAsync(cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
