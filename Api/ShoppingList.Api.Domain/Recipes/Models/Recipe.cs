@@ -12,17 +12,20 @@ public class Recipe : AggregateRoot, IRecipe
     private readonly PreparationSteps _preparationSteps;
     private readonly RecipeTags _tags;
 
-    public Recipe(RecipeId id, RecipeName name, Ingredients ingredients, PreparationSteps preparationSteps, RecipeTags tags)
+    public Recipe(RecipeId id, RecipeName name, NumberOfServings numberOfServings, Ingredients ingredients,
+        PreparationSteps preparationSteps, RecipeTags tags)
     {
         _ingredients = ingredients;
         _preparationSteps = preparationSteps;
         _tags = tags;
         Id = id;
         Name = name;
+        NumberOfServings = numberOfServings;
     }
 
     public RecipeId Id { get; }
     public RecipeName Name { get; private set; }
+    public NumberOfServings NumberOfServings { get; private set; }
     public IReadOnlyCollection<IIngredient> Ingredients => _ingredients.AsReadOnly();
     public IReadOnlyCollection<IPreparationStep> PreparationSteps => _preparationSteps.AsReadOnly();
     public IReadOnlyCollection<RecipeTagId> Tags => _tags.AsReadOnly();
@@ -30,6 +33,7 @@ public class Recipe : AggregateRoot, IRecipe
     public async Task ModifyAsync(RecipeModification modification, IValidator validator)
     {
         Name = modification.Name;
+        NumberOfServings = modification.NumberOfServings;
         await _ingredients.ModifyManyAsync(modification.IngredientModifications, validator);
         _preparationSteps.ModifyMany(modification.PreparationStepModifications);
         await _tags.ModifyAsync(validator, modification.RecipeTagIds);
@@ -38,5 +42,10 @@ public class Recipe : AggregateRoot, IRecipe
     public void RemoveDefaultItem(ItemId defaultItemId)
     {
         _ingredients.RemoveDefaultItem(defaultItemId);
+    }
+
+    public void ModifyIngredientsAfterItemUpdate(ItemId oldItemId, IItem newItem)
+    {
+        _ingredients.ModifyAfterItemUpdate(oldItemId, newItem);
     }
 }

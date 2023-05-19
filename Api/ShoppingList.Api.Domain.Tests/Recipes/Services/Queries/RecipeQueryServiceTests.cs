@@ -6,8 +6,10 @@ using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using Xunit.Abstractions;
 
@@ -256,6 +258,8 @@ public class RecipeQueryServiceTests
     public abstract class RecipeQueryServiceFixture
     {
         protected readonly RecipeRepositoryMock RecipeRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
+        protected readonly StoreRepositoryMock StoreRepositoryMock = new(MockBehavior.Strict);
         private readonly ILogger<RecipeQueryService> _logger;
 
         protected RecipeQueryServiceFixture(ITestOutputHelper output)
@@ -265,7 +269,8 @@ public class RecipeQueryServiceTests
 
         public RecipeQueryService CreateSut()
         {
-            return new RecipeQueryService(_ => RecipeRepositoryMock.Object, _logger, default);
+            return new RecipeQueryService(_ => RecipeRepositoryMock.Object, ItemRepositoryMock.Object,
+                StoreRepositoryMock.Object, new QuantityTranslationService(), _logger, default);
         }
     }
 }

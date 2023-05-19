@@ -1,5 +1,6 @@
 ﻿using Moq.Contrib.InOrder;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
@@ -28,7 +29,7 @@ public class RecipeEditorEffectsTests
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-            
+
             // Act
             await _fixture.CreateSut().HandleLoadRecipeForEditing(_fixture.Action, _fixture.DispatcherMock.Object);
 
@@ -68,12 +69,12 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupGettingRecipeByIdThrowsHttpRequestException();
                 _fixture.SetupDispatchingErrorAction();
             });
-            
+
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
             // Act
             await _fixture.CreateSut().HandleLoadRecipeForEditing(_fixture.Action, _fixture.DispatcherMock.Object);
-            
+
             // Assert
             queue.VerifyOrder();
         }
@@ -82,9 +83,7 @@ public class RecipeEditorEffectsTests
         {
             private EditedRecipe? _recipe;
 
-
             public LoadRecipeForEditingAction? Action { get; private set; }
-
 
             public void SetupGettingRecipeById()
             {
@@ -154,7 +153,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
             });
-            
+
             // Act
             await _fixture.CreateSut().HandleModifyRecipeAction(_fixture.DispatcherMock.Object);
 
@@ -199,7 +198,7 @@ public class RecipeEditorEffectsTests
 
             // Act
             await _fixture.CreateSut().HandleModifyRecipeAction(_fixture.DispatcherMock.Object);
-            
+
             // Assert
             queue.VerifyOrder();
         }
@@ -290,7 +289,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
             });
-            
+
             // Act
             await _fixture.CreateSut().HandleCreateRecipeAction(_fixture.DispatcherMock.Object);
 
@@ -335,7 +334,7 @@ public class RecipeEditorEffectsTests
 
             // Act
             await _fixture.CreateSut().HandleCreateRecipeAction(_fixture.DispatcherMock.Object);
-            
+
             // Assert
             queue.VerifyOrder();
         }
@@ -442,7 +441,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupCreatingRecipeTag();
                 _fixture.SetupDispatchingFinishedAction();
             });
-            
+
             // Act
             await _fixture.CreateSut().HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
 
@@ -483,7 +482,7 @@ public class RecipeEditorEffectsTests
 
             // Act
             await _fixture.CreateSut().HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
-            
+
             // Assert
             queue.VerifyOrder();
         }
@@ -553,6 +552,334 @@ public class RecipeEditorEffectsTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipeTag);
                 SetupDispatchingAction(new CreateNewRecipeTagFinishedAction(_recipeTag));
+            }
+        }
+    }
+
+    public class HandleLoadAddToShoppingListAction
+    {
+        private readonly HandleLoadAddToShoppingListActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleLoadAddToShoppingListAction_WithRecipeNull_ShouldDoNothing()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupRecipeNull();
+            });
+
+            // Act
+            await _fixture.CreateSut().HandleLoadAddToShoppingListAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadAddToShoppingListAction_WithApiCallSuccessful_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupRecipeTagInput();
+                _fixture.SetupState();
+                _fixture.SetupGettingItemAmounts();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+
+            // Act
+            await _fixture.CreateSut().HandleLoadAddToShoppingListAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadAddToShoppingListAction_WithWithApiException_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupRecipeTagInput();
+                _fixture.SetupState();
+                _fixture.SetupGettingItemAmountsThrowsApiException();
+                _fixture.SetupDispatchingApiExceptionAction();
+            });
+
+            // Act
+            await _fixture.CreateSut().HandleLoadAddToShoppingListAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadAddToShoppingListAction_WithWithHttpRequestException_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupRecipeTagInput();
+                _fixture.SetupState();
+                _fixture.SetupGettingItemAmountsThrowsHttpRequestException();
+                _fixture.SetupDispatchingErrorAction();
+            });
+
+            // Act
+            await _fixture.CreateSut().HandleLoadAddToShoppingListAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleLoadAddToShoppingListActionFixture : RecipeEditorEffectsFixture
+        {
+            private Guid? _recipeId;
+            private IReadOnlyCollection<AddToShoppingListItem>? _itemAmounts;
+
+            public void SetupGettingItemAmounts()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipeId);
+
+                _itemAmounts = new DomainTestBuilder<AddToShoppingListItem>().CreateMany(3).ToList();
+                ApiClientMock.SetupGetItemAmountsForOneServingAsync(_recipeId.Value, _itemAmounts);
+            }
+
+            public void SetupRecipeTagInput()
+            {
+                _recipeId = Guid.NewGuid();
+            }
+
+            public void SetupRecipeNull()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupGettingItemAmountsThrowsApiException()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipeId);
+                ApiClientMock.SetupGetItemAmountsForOneServingAsyncThrowing(
+                    _recipeId.Value,
+                    new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupGettingItemAmountsThrowsHttpRequestException()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipeId);
+                ApiClientMock.SetupGetItemAmountsForOneServingAsyncThrowing(
+                    _recipeId.Value,
+                    new DomainTestBuilder<HttpRequestException>().Create());
+            }
+
+            public void SetupState()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipeId);
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Recipe = State.Editor.Recipe! with
+                        {
+                            Id = _recipeId.Value
+                        }
+                    }
+                };
+            }
+
+            public void SetupDispatchingApiExceptionAction()
+            {
+                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+            }
+
+            public void SetupDispatchingErrorAction()
+            {
+                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
+            }
+
+            public void SetupDispatchingFinishedAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_itemAmounts);
+                SetupDispatchingAction(new LoadAddToShoppingListFinishedAction(_itemAmounts));
+            }
+        }
+    }
+
+    public class HandleAddItemsToShoppingListAction
+    {
+        private readonly HandleAddItemsToShoppingListActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleAddItemsToShoppingListAction_WithApiCallSuccessful_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupItems();
+                _fixture.SetupState();
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupAddingToShoppingList();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingCloseAction();
+            });
+
+            // Act
+            await _fixture.CreateSut().HandleAddItemsToShoppingListAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleAddItemsToShoppingListAction_WithAddToShoppingListNull_ShouldDoNothing()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupStateWithAddToShoppingListNull();
+            });
+
+            // Act
+            await _fixture.CreateSut().HandleAddItemsToShoppingListAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleAddItemsToShoppingListAction_WithWithApiException_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupItems();
+                _fixture.SetupState();
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupAddingToShoppingListThrowsApiException();
+                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+
+            // Act
+            await _fixture.CreateSut().HandleAddItemsToShoppingListAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleAddItemsToShoppingListAction_WithWithHttpRequestException_ShouldDispatchCorrectActions()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupItems();
+                _fixture.SetupState();
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupAddingToShoppingListThrowsHttpRequestException();
+                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+
+            // Act
+            await _fixture.CreateSut().HandleAddItemsToShoppingListAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleAddItemsToShoppingListActionFixture : RecipeEditorEffectsFixture
+        {
+            private IReadOnlyCollection<AddToShoppingListItem>? _items;
+
+            public void SetupAddingToShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_items);
+                ApiClientMock.SetupAddItemsToShoppingListsAsync(_items.Take(2));
+            }
+
+            public void SetupItems()
+            {
+                _items = new List<AddToShoppingListItem>
+                {
+                    new DomainTestBuilder<AddToShoppingListItem>().Create() with { AddToShoppingList = true },
+                    new DomainTestBuilder<AddToShoppingListItem>().Create() with { AddToShoppingList = true },
+                    new DomainTestBuilder<AddToShoppingListItem>().Create() with { AddToShoppingList = false },
+                };
+            }
+
+            public void SetupAddingToShoppingListThrowsApiException()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_items);
+                ApiClientMock.SetupAddItemsToShoppingListsAsyncThrowing(
+                    _items.Take(2),
+                    new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupAddingToShoppingListThrowsHttpRequestException()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_items);
+                ApiClientMock.SetupAddItemsToShoppingListsAsyncThrowing(
+                    _items.Take(2),
+                    new DomainTestBuilder<HttpRequestException>().Create());
+            }
+
+            public void SetupState()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_items);
+
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        AddToShoppingList = State.Editor.AddToShoppingList! with
+                        {
+                            Items = _items
+                        }
+                    }
+                };
+            }
+
+            public void SetupStateWithAddToShoppingListNull()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        AddToShoppingList = null
+                    }
+                };
+            }
+
+            public void SetupDispatchingApiExceptionAction()
+            {
+                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+            }
+
+            public void SetupDispatchingErrorAction()
+            {
+                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
+            }
+
+            public void SetupDispatchingStartedAction()
+            {
+                SetupDispatchingAction<AddItemsToShoppingListStartedAction>();
+            }
+
+            public void SetupDispatchingFinishedAction()
+            {
+                SetupDispatchingAction<AddItemsToShoppingListFinishedAction>();
+            }
+
+            public void SetupDispatchingCloseAction()
+            {
+                SetupDispatchingAction<AddToShoppingListModalClosedAction>();
             }
         }
     }

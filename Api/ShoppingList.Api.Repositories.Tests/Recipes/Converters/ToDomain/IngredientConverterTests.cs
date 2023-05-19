@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Converters.ToDomain;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Recipes.Entities;
@@ -37,7 +38,11 @@ public class IngredientConverterTests : ToDomainConverterTestBase<Ingredient, II
             .ForCtorParam(nameof(IIngredient.ItemCategoryId).LowerFirstChar(), opt => opt.MapFrom(src => new ItemCategoryId(src.ItemCategoryId)))
             .ForCtorParam(nameof(IIngredient.QuantityType).LowerFirstChar(), opt => opt.MapFrom(src => src.QuantityType.ToEnum<IngredientQuantityType>()))
             .ForCtorParam(nameof(IIngredient.Quantity).LowerFirstChar(), opt => opt.MapFrom(src => new IngredientQuantity(src.Quantity)))
-            .ForCtorParam(nameof(IIngredient.DefaultItemId).LowerFirstChar(), opt => opt.MapFrom(src => new ItemId(src.DefaultItemId!.Value)))
-            .ForCtorParam(nameof(IIngredient.DefaultItemTypeId).LowerFirstChar(), opt => opt.MapFrom(src => new ItemTypeId(src.DefaultItemTypeId!.Value)));
+            .ForCtorParam(nameof(IIngredient.ShoppingListProperties).LowerFirstChar(),
+                opt => opt.MapFrom(src => new IngredientShoppingListProperties(
+                        new ItemId(src.DefaultItemId!.Value),
+                        new ItemTypeId(src.DefaultItemTypeId!.Value),
+                        new StoreId(src.DefaultStoreId!.Value),
+                        src.AddToShoppingListByDefault!.Value)));
     }
 }

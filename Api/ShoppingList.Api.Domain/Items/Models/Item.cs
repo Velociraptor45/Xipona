@@ -37,6 +37,9 @@ public class Item : AggregateRoot, IItem
         PredecessorId = predecessorId;
         _itemTypes = null;
         _availabilities = availabilities.ToList();
+
+        if (!_availabilities.Any())
+            throw new DomainException(new CannotCreateItemWithoutAvailabilitiesReason());
     }
 
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment,
@@ -112,6 +115,9 @@ public class Item : AggregateRoot, IItem
         ItemCategoryId = itemChange.ItemCategoryId;
         ManufacturerId = itemChange.ManufacturerId;
         _availabilities = availabilities.ToList();
+
+        if (!_availabilities.Any())
+            throw new DomainException(new CannotModifyItemWithoutAvailabilitiesReason());
     }
 
     public async Task ModifyAsync(ItemWithTypesModification modification, IValidator validator)
@@ -228,6 +234,8 @@ public class Item : AggregateRoot, IItem
             throw new DomainException(new TemporaryItemNotUpdateableReason(update.OldId));
         if (HasItemTypes)
             throw new DomainException(new CannotUpdateItemWithTypesAsItemReason(update.OldId));
+        if (!update.Availabilities.Any())
+            throw new DomainException(new CannotUpdateItemWithoutAvailabilitiesReason());
 
         var itemCategoryId = update.ItemCategoryId;
         var manufacturerId = update.ManufacturerId;

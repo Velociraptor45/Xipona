@@ -12,6 +12,7 @@ public static class RecipeEditorReducer
         var recipe = new EditedRecipe(
             Guid.Empty,
             string.Empty,
+            1,
             new List<EditedIngredient>(0),
             new SortedSet<EditedPreparationStep>(),
             new List<Guid>(0));
@@ -131,6 +132,25 @@ public static class RecipeEditorReducer
                 Recipe = state.Editor.Recipe with
                 {
                     RecipeTagIds = recipeTagIds
+                }
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static RecipeState OnRecipeNumberOfServingsChanged(RecipeState state,
+        RecipeNumberOfServingsChangedAction action)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Recipe = state.Editor.Recipe with
+                {
+                    NumberOfServings = action.NumberOfServings
                 }
             }
         };

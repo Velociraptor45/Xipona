@@ -11,7 +11,7 @@ public interface IShoppingList
     IReadOnlyCollection<IShoppingListSection> Sections { get; }
     public IReadOnlyCollection<IShoppingListItem> Items { get; }
 
-    void AddItem(IShoppingListItem item, SectionId sectionId);
+    void AddItem(IShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true);
 
     void RemoveItem(ItemId itemId);
 

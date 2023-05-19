@@ -19,6 +19,8 @@ public class Recipe
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public Guid Id { get; set; }
 
+    public int NumberOfServings { get; set; }
+
     [Required]
     public string Name { get; set; }
 

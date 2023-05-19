@@ -78,10 +78,21 @@
         margin-top: 5px;
         margin-left: 62px;
     }
+
+    .recipe-editor-top-row:nth-child(4) {
+        order: 5;
+        flex-basis: 100%;
+        margin-top: 5px;
+        margin-left: 62px;
+    }
 }
 
 .recipe-editor-top-row-parent {
     flex-wrap: wrap;
+}
+
+.recipe-editor-top-row-number-of-servings {
+    margin-left: 16px;
 }
 
 .recipe-editor-view-name {

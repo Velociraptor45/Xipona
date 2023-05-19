@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
@@ -11,77 +12,99 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
     {
     }
 
-    public void SetupAddItemToShoppingList(IShoppingList shoppingList,
+    public void SetupAddItemAsync(IShoppingList shoppingList,
         ItemId itemId, SectionId? sectionId, QuantityInBasket quantity)
     {
-        Setup(m => m.AddItemToShoppingListAsync(
+        Setup(m => m.AddItemAsync(
                 shoppingList,
                 itemId,
                 sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()))
+                quantity))
             .Returns(Task.CompletedTask);
     }
 
-    public void SetupAddItemToShoppingList(IShoppingList shoppingList,
-        TemporaryItemId temporaryItemId, SectionId? sectionId, QuantityInBasket quantity)
-    {
-        Setup(m => m.AddItemToShoppingListAsync(
-                shoppingList,
-                temporaryItemId,
-                sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
-    }
-
-    public void SetupAddItemWithTypeToShoppingList(IShoppingList shoppingList, IItem item,
+    public void SetupAddItemWithTypeAsync(IShoppingList shoppingList, IItem item,
         ItemTypeId typeId, SectionId? sectionId, QuantityInBasket quantity)
     {
-        Setup(m => m.AddItemWithTypeToShoppingList(
+        Setup(m => m.AddItemWithTypeAsync(
                 shoppingList,
                 item,
                 typeId,
                 sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()))
+                quantity))
             .Returns(Task.CompletedTask);
     }
 
-    public void VerifyAddItemWithTypeToShoppingList(IShoppingList shoppingList, IItem item,
+    public void SetupAddItemWithTypeAsync(ShoppingListId shoppingListId, ItemId itemId,
+        ItemTypeId typeId, SectionId? sectionId, QuantityInBasket quantity)
+    {
+        Setup(m => m.AddItemWithTypeAsync(
+                shoppingListId,
+                itemId,
+                typeId,
+                sectionId,
+                quantity))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupAddAsync(IEnumerable<ItemToShoppingListAddition> itemsToAdd)
+    {
+        Setup(m => m.AddAsync(
+                itemsToAdd))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupAddAsync(ShoppingListId shoppingListId, OfflineTolerantItemId itemId, SectionId? sectionId,
+        QuantityInBasket quantity)
+    {
+        Setup(m => m.AddAsync(shoppingListId, itemId, sectionId, quantity))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void VerifyAddItemWithTypeAsync(IShoppingList shoppingList, IItem item,
         ItemTypeId typeId, SectionId? sectionId, QuantityInBasket quantity, Func<Times> times)
     {
-        Verify(m => m.AddItemWithTypeToShoppingList(
+        Verify(m => m.AddItemWithTypeAsync(
                 shoppingList,
                 item,
                 typeId,
                 sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()),
+                quantity),
             times);
     }
 
-    public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
+    public void VerifyAddItemWithTypeAsync(ShoppingListId shoppingListId, ItemId itemId,
+        ItemTypeId typeId, SectionId? sectionId, QuantityInBasket quantity, Func<Times> times)
+    {
+        Verify(m => m.AddItemWithTypeAsync(
+                shoppingListId,
+                itemId,
+                typeId,
+                sectionId,
+                quantity),
+            times);
+    }
+
+    public void VerifyAddItemAsyncOnce(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
         QuantityInBasket quantity)
     {
-        Verify(i => i.AddItemToShoppingListAsync(
+        Verify(i => i.AddItemAsync(
                 shoppingList,
                 itemId,
                 sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()),
+                quantity),
             Times.Once);
     }
 
-    public void VerifyAddItemToShoppingListOnce(IShoppingList shoppingList, TemporaryItemId temporaryItemId,
-        SectionId? sectionId, QuantityInBasket quantity)
+    public void VerifyAddAsync(IEnumerable<ItemToShoppingListAddition> itemsToAdd, Func<Times> times)
     {
-        Verify(i => i.AddItemToShoppingListAsync(
-                shoppingList,
-                temporaryItemId,
-                sectionId,
-                quantity,
-                It.IsAny<CancellationToken>()),
-            Times.Once);
+        Verify(m => m.AddAsync(itemsToAdd), times);
+    }
+
+    public void VerifyAddAsync(ShoppingListId shoppingListId, OfflineTolerantItemId itemId, SectionId? sectionId,
+        QuantityInBasket quantity, Func<Times> times)
+    {
+        Verify(m => m.AddAsync(shoppingListId, itemId, sectionId, quantity),
+            times);
     }
 }

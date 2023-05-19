@@ -38,17 +38,19 @@ public class RecipeFactory : IRecipeFactory
         return new Recipe(
             RecipeId.New,
             creation.Name,
+            creation.NumberOfServings,
             new Ingredients(ingredients, _ingredientFactory),
             new PreparationSteps(preparationSteps, _preparationStepFactory),
             new RecipeTags(creation.RecipeTagIds));
     }
 
-    public IRecipe Create(RecipeId id, RecipeName name, IEnumerable<IIngredient> ingredients,
+    public IRecipe Create(RecipeId id, RecipeName name, NumberOfServings numberOfServings, IEnumerable<IIngredient> ingredients,
         IEnumerable<IPreparationStep> steps, IEnumerable<RecipeTagId> recipeTagIds)
     {
         return new Recipe(
             id,
             name,
+            numberOfServings,
             new Ingredients(ingredients, _ingredientFactory),
             new PreparationSteps(steps, _preparationStepFactory),
             new RecipeTags(recipeTagIds));

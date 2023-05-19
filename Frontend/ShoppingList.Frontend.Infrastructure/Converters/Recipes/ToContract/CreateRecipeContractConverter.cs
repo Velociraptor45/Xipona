@@ -11,12 +11,15 @@ public class CreateRecipeContractConverter : IToContractConverter<EditedRecipe, 
     {
         return new CreateRecipeContract(
             source.Name,
+            source.NumberOfServings,
             source.Ingredients.Select(i => new CreateIngredientContract(
                 i.ItemCategoryId,
                 i.QuantityTypeId,
                 i.Quantity,
                 i.DefaultItemId,
-                i.DefaultItemTypeId)),
+                i.DefaultItemTypeId,
+                i.DefaultStoreId,
+                i.AddToShoppingListByDefault)),
             source.PreparationSteps.Select(p => new CreatePreparationStepContract(
                 p.Name,
                 p.SortingIndex)),

@@ -10,4 +10,6 @@ public interface IRecipeQueryService
     Task<IEnumerable<RecipeSearchResult>> SearchByNameAsync(string searchInput);
 
     Task<IEnumerable<RecipeSearchResult>> SearchByTagIdsAsync(IEnumerable<RecipeTagId> tagIds);
+
+    Task<IEnumerable<ItemAmountForOneServing>> GetItemAmountsForOneServingAsync(RecipeId recipeId);
 }

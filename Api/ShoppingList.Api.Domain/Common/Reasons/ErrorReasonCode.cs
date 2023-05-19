@@ -54,4 +54,12 @@ public enum ErrorReasonCode
     CannotModifyDeletedItemType = 51,
     ModelOutOfDate = 52,
     InvalidRecipeTagIds = 53,
+    DefaultIngredientItemHasToHaveDefaultStore = 54,
+    CannotCreateItemWithoutAvailabilities = 55,
+    CannotUpdateItemWithoutAvailabilities = 56,
+    CannotModifyItemWithoutAvailabilities = 57,
+    CannotCreateItemTypeWithoutAvailabilities = 58,
+    CannotUpdateItemTypeWithoutAvailabilities = 59,
+    CannotModifyItemTypeWithoutAvailabilities = 60,
+    NumberOfServingsMustBeAtLeastOne = 61,
 }

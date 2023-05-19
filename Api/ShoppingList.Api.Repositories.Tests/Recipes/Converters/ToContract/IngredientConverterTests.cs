@@ -24,6 +24,8 @@ public class IngredientConverterTests : ToContractConverterTestBase<(RecipeId, I
             .ForMember(dest => dest.QuantityType, opt => opt.MapFrom(src => src.Item2.QuantityType.ToInt()))
             .ForMember(dest => dest.DefaultItemId, opt => opt.MapFrom(src => src.Item2.DefaultItemId!.Value))
             .ForMember(dest => dest.DefaultItemTypeId, opt => opt.MapFrom(src => src.Item2.DefaultItemTypeId!.Value))
+            .ForMember(dest => dest.DefaultStoreId, opt => opt.MapFrom(src => src.Item2.ShoppingListProperties!.DefaultStoreId.Value))
+            .ForMember(dest => dest.AddToShoppingListByDefault, opt => opt.MapFrom(src => src.Item2.ShoppingListProperties!.AddToShoppingListByDefault))
             .ForMember(dest => dest.Recipe, opt => opt.Ignore());
     }
 }

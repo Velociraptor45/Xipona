@@ -42,4 +42,15 @@ public class RecipeModificationService : IRecipeModificationService
             await _recipeRepository.StoreAsync(recipe);
         }
     }
+
+    public async Task ModifyIngredientsAfterItemUpdateAsync(ItemId oldItemId, IItem newItem)
+    {
+        var recipes = await _recipeRepository.FindByAsync(oldItemId);
+
+        foreach (var recipe in recipes)
+        {
+            recipe.ModifyIngredientsAfterItemUpdate(oldItemId, newItem);
+            await _recipeRepository.StoreAsync(recipe);
+        }
+    }
 }

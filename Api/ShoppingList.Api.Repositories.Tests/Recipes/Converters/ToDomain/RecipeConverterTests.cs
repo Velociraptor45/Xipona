@@ -42,6 +42,7 @@ public class RecipeConverterTests : ToDomainConverterTestBase<Recipe, IRecipe, R
         cfg.CreateMap<Recipe, Domain.Recipes.Models.Recipe>()
             .ForCtorParam(nameof(IRecipe.Id).LowerFirstChar(), opt => opt.MapFrom(src => new RecipeId(src.Id)))
             .ForCtorParam(nameof(IRecipe.Name).LowerFirstChar(), opt => opt.MapFrom(src => src.Name))
+            .ForCtorParam(nameof(IRecipe.NumberOfServings).LowerFirstChar(), opt => opt.MapFrom(src => new NumberOfServings(src.NumberOfServings)))
             .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
             .ForCtorParam(nameof(IRecipe.Ingredients).LowerFirstChar(),
                 opt => opt.MapFrom((src, ctx) =>

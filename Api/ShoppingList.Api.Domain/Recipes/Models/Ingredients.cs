@@ -45,8 +45,7 @@ public class Ingredients : IEnumerable<IIngredient>
         foreach (var modification in ingredientsToCreate)
         {
             var newIngredient = await _ingredientFactory.CreateNewAsync(modification.ItemCategoryId,
-                modification.QuantityType, modification.Quantity, modification.DefaultItemId,
-                modification.DefaultItemTypeId);
+                modification.QuantityType, modification.Quantity, modification.ShoppingListProperties);
             newIngredients.Add(newIngredient);
         }
 
@@ -101,6 +100,15 @@ public class Ingredients : IEnumerable<IIngredient>
         foreach (var ingredient in ingredientsWithItem)
         {
             _ingredients[ingredient.Id] = ingredient.RemoveDefaultItem();
+        }
+    }
+
+    public void ModifyAfterItemUpdate(ItemId oldItemId, IItem newItem)
+    {
+        var ingredientsWithItem = _ingredients.Values.Where(i => i.DefaultItemId == oldItemId);
+        foreach (var ingredient in ingredientsWithItem)
+        {
+            _ingredients[ingredient.Id] = ingredient.ChangeDefaultItem(oldItemId, newItem);
         }
     }
 }

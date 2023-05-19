@@ -35,6 +35,7 @@ public class RecipeFactoryTests
             var result = sut.Create(
                 _fixture.ExpectedResult.Id,
                 _fixture.ExpectedResult.Name,
+                _fixture.ExpectedResult.NumberOfServings,
                 _fixture.ExpectedResult.Ingredients,
                 _fixture.ExpectedResult.PreparationSteps,
                 _fixture.ExpectedResult.Tags);
@@ -122,12 +123,12 @@ public class RecipeFactoryTests
 
                 Creation = new RecipeCreation(
                     ExpectedResult.Name,
+                    ExpectedResult.NumberOfServings,
                     ExpectedResult.Ingredients.Select(i => new IngredientCreation(
                         i.ItemCategoryId,
                         i.QuantityType,
                         i.Quantity,
-                        i.DefaultItemId,
-                        i.DefaultItemTypeId)),
+                        i.ShoppingListProperties)),
                     ExpectedResult.PreparationSteps.Select(p => new PreparationStepCreation(
                         p.Instruction,
                         p.SortingIndex)),

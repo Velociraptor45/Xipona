@@ -5,6 +5,7 @@
 @using Fluxor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.Editor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients
@@ -29,6 +30,7 @@
                 </div>
                 <div class="recipe-editor-top-row">
                     <MultiSelect
+                        Class="min-w-100"
                         TItem="RecipeTag"
                         TValue="Guid"
                         DataSource="@State.Value.RecipeTags"
@@ -43,6 +45,14 @@
                         OnDropdownClosed="OnRecipeTagsDropdownClosed"
                         CanAddItem="true">
                     </MultiSelect>
+                </div>
+                <div class="recipe-editor-top-row recipe-editor-top-row-number-of-servings">
+                    <AntDesign.InputNumber Value="@State.Value.Editor.Recipe.NumberOfServings"
+                                           TValue="int"
+                                           Step="1"
+                                           Min="1"
+                                           OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
+                    <span>People</span>
                 </div>
                 <Button Class="recipe-editor-top-row d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
                     <Icon Type="edit"></Icon>
@@ -114,9 +124,19 @@
                         <span class="recipe-editor-view-tag">@tag</span>
                     }
                 </div>
-                <Button Class="recipe-editor-top-row d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
-                    <Icon Type="edit"></Icon>
-                </Button>
+                <div class="align-self-center recipe-editor-top-row recipe-editor-top-row-number-of-servings">
+                    <span>@State.Value.Editor.Recipe.NumberOfServings</span>
+                    <span>People</span>
+                </div>
+                <div class="recipe-editor-top-row d-flex ml-auto">
+                    <Button Class="d-flex align-items-center mr-2"
+                            OnClick="OnAddToShoppingListButtonClicked">
+                        <Icon Type="shopping-cart" Theme="outline" />
+                    </Button>
+                    <Button Class="recipe-editor-top-row d-flex align-items-center" OnClick="@OnToggleEditModeButtonClicked">
+                        <Icon Type="edit"></Icon>
+                    </Button>
+                </div>
             </div>
             <div class="recipe-editor-view-main">
                 <div class="recipe-editor-view-content">
@@ -145,6 +165,7 @@
         }
     }
 </div>
+<AddToShoppingListModal></AddToShoppingListModal>
 
 @code {
     [Parameter] public Guid RecipeId { get; set; }
@@ -191,7 +212,7 @@
     {
         Dispatcher.Dispatch(new IngredientAddedAction());
     }
-    
+
     private void OnAddPreparationStepButtonClicked()
     {
         Dispatcher.Dispatch(new PreparationStepAddedAction());
@@ -235,5 +256,15 @@
     private void OnRecipeTagsDropdownClosed()
     {
         Dispatcher.Dispatch(new RecipeTagsDropdownClosedAction());
+    }
+
+    private void OnNumberOfServingsChanged(int servings)
+    {
+        Dispatcher.Dispatch(new RecipeNumberOfServingsChangedAction(servings));
+    }
+
+    private void OnAddToShoppingListButtonClicked()
+    {
+        Dispatcher.Dispatch(new LoadAddToShoppingListAction());
     }
 }

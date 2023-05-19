@@ -37,8 +37,7 @@ public class IngredientFactoryTests
                 _fixture.ExpectedResult.ItemCategoryId,
                 _fixture.ExpectedResult.QuantityType,
                 _fixture.ExpectedResult.Quantity,
-                _fixture.ExpectedResult.DefaultItemId,
-                _fixture.ExpectedResult.DefaultItemTypeId);
+                _fixture.ExpectedResult.ShoppingListProperties);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedResult);
@@ -142,8 +141,7 @@ public class IngredientFactoryTests
                 Creation = new IngredientCreation(ExpectedResult.ItemCategoryId,
                     ExpectedResult.QuantityType,
                     ExpectedResult.Quantity,
-                    ExpectedResult.DefaultItemId,
-                    ExpectedResult.DefaultItemTypeId);
+                    ExpectedResult.ShoppingListProperties);
             }
 
             public void SetupItemCategoryValidationSuccessful()
@@ -155,9 +153,9 @@ public class IngredientFactoryTests
             public void SetupItemValidationSuccessful()
             {
                 TestPropertyNotSetException.ThrowIfNull(Creation);
-                TestPropertyNotSetException.ThrowIfNull(Creation.DefaultItemId);
+                TestPropertyNotSetException.ThrowIfNull(Creation.ShoppingListProperties);
 
-                ValidatorMock.SetupValidateAsync(Creation.DefaultItemId.Value, Creation.DefaultItemTypeId);
+                ValidatorMock.SetupValidateAsync(Creation.ShoppingListProperties.DefaultItemId, Creation.ShoppingListProperties.DefaultItemTypeId);
             }
 
             public void SetupItemCategoryValidationFailed()
@@ -171,10 +169,10 @@ public class IngredientFactoryTests
             public void SetupItemValidationFailed()
             {
                 TestPropertyNotSetException.ThrowIfNull(Creation);
-                TestPropertyNotSetException.ThrowIfNull(Creation.DefaultItemId);
+                TestPropertyNotSetException.ThrowIfNull(Creation.ShoppingListProperties);
 
-                ExpectedException = new DomainException(new ItemNotFoundReason(Creation.DefaultItemId.Value));
-                ValidatorMock.SetupValidateAsyncAnd(Creation.DefaultItemId.Value, Creation.DefaultItemTypeId)
+                ExpectedException = new DomainException(new ItemNotFoundReason(Creation.ShoppingListProperties.DefaultItemId));
+                ValidatorMock.SetupValidateAsyncAnd(Creation.ShoppingListProperties.DefaultItemId, Creation.ShoppingListProperties.DefaultItemTypeId)
                     .ThrowsAsync(ExpectedException);
             }
         }

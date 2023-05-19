@@ -39,6 +39,8 @@ public class RecipeFeatureState : Feature<RecipeState>
             new RecipeEditor(
                 null,
                 string.Empty,
-                false));
+                false,
+                false,
+                null));
     }
 }
