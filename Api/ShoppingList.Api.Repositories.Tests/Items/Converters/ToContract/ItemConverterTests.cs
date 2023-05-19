@@ -9,7 +9,7 @@ using ItemType = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.Item
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Items.Converters.ToContract;
 
-public class ItemConverterTests : ToContractConverterBase<Item, Repositories.Items.Entities.Item, ItemConverter>
+public class ItemConverterTests : ToContractConverterTestBase<Item, Repositories.Items.Entities.Item, ItemConverter>
 {
     protected override ItemConverter CreateSut()
     {

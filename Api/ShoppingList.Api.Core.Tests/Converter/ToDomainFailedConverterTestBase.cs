@@ -5,7 +5,7 @@ using System;
 
 namespace ProjectHermes.ShoppingList.Api.Core.Tests.Converter;
 
-public abstract class ToDomainFailedConverterBase<TSource, TDest, TConverter, TException>
+public abstract class ToDomainFailedConverterTestBase<TSource, TDest, TConverter, TException>
     where TConverter : IToDomainConverter<TSource, TDest>
     where TException : Exception
 {

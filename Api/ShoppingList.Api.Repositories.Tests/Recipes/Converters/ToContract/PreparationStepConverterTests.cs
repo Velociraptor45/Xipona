@@ -7,7 +7,7 @@ using PreparationStep = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Enti
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Recipes.Converters.ToContract;
 
 public class PreparationStepConverterTests
-    : ToContractConverterBase<(RecipeId, IPreparationStep), PreparationStep, PreparationStepConverter>
+    : ToContractConverterTestBase<(RecipeId, IPreparationStep), PreparationStep, PreparationStepConverter>
 {
     protected override PreparationStepConverter CreateSut()
     {

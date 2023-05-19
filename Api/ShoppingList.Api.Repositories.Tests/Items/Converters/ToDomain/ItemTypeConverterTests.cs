@@ -12,7 +12,7 @@ using ItemType = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.Item
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Items.Converters.ToDomain;
 
-public class ItemTypeConverterTests : ToDomainConverterBase<ItemType, IItemType, ItemTypeConverter>
+public class ItemTypeConverterTests : ToDomainConverterTestBase<ItemType, IItemType, ItemTypeConverter>
 {
     public override ItemTypeConverter CreateSut()
     {

@@ -6,7 +6,7 @@ using Section = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Sect
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Stores.Converters.ToContract;
 
-public class SectionConverterTests : ToContractConverterBase<(StoreId, ISection), Section, SectionConverter>
+public class SectionConverterTests : ToContractConverterTestBase<(StoreId, ISection), Section, SectionConverter>
 {
     protected override SectionConverter CreateSut()
     {

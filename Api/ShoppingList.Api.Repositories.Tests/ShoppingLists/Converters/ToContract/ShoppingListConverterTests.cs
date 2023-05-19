@@ -8,7 +8,7 @@ using System;
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.ShoppingLists.Converters.ToContract;
 
 public class ShoppingListConverterTests
-    : ToContractConverterBase<Domain.ShoppingLists.Models.ShoppingList, Repositories.ShoppingLists.Entities.ShoppingList, ShoppingListConverter>
+    : ToContractConverterTestBase<Domain.ShoppingLists.Models.ShoppingList, Repositories.ShoppingLists.Entities.ShoppingList, ShoppingListConverter>
 {
     protected override ShoppingListConverter CreateSut()
     {

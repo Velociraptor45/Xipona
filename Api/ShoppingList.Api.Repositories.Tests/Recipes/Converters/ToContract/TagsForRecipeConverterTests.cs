@@ -7,7 +7,7 @@ using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Recipes.Converters.ToContract;
 
-public class TagsForRecipeConverterTests : ToContractConverterBase<(RecipeId, RecipeTagId), TagsForRecipe, TagsForRecipeConverter>
+public class TagsForRecipeConverterTests : ToContractConverterTestBase<(RecipeId, RecipeTagId), TagsForRecipe, TagsForRecipeConverter>
 {
     protected override TagsForRecipeConverter CreateSut()
     {

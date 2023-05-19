@@ -11,7 +11,7 @@ using ProjectHermes.ShoppingList.Api.TestTools.Extensions;
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.ShoppingLists.Converters.ToDomain;
 
 public class ShoppingListItemConverterTests
-    : ToDomainConverterBase<ItemsOnList, IShoppingListItem, ShoppingListItemConverter>
+    : ToDomainConverterTestBase<ItemsOnList, IShoppingListItem, ShoppingListItemConverter>
 {
     public override ShoppingListItemConverter CreateSut()
     {

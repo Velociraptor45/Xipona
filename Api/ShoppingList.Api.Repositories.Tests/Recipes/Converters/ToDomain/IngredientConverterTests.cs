@@ -13,7 +13,7 @@ using Ingredient = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Recipes.Converters.ToDomain;
 
-public class IngredientConverterTests : ToDomainConverterBase<Ingredient, IIngredient, IngredientConverter>
+public class IngredientConverterTests : ToDomainConverterTestBase<Ingredient, IIngredient, IngredientConverter>
 {
     public override IngredientConverter CreateSut()
     {

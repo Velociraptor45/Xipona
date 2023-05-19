@@ -7,7 +7,7 @@ using ItemCategory = ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.ItemCategories.Converters.ToContract;
 
-public class ItemCategoryConverterTests : ToContractConverterBase<IItemCategory, ItemCategory, ItemCategoryConverter>
+public class ItemCategoryConverterTests : ToContractConverterTestBase<IItemCategory, ItemCategory, ItemCategoryConverter>
 {
     protected override ItemCategoryConverter CreateSut()
     {

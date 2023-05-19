@@ -10,7 +10,7 @@ using ProjectHermes.ShoppingList.Api.TestTools.Extensions;
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.ShoppingLists.Converters.ToDomain;
 
 public class ShoppingListConverterTests
-    : ToDomainConverterBase<Repositories.ShoppingLists.Entities.ShoppingList, IShoppingList, ShoppingListConverter>
+    : ToDomainConverterTestBase<Repositories.ShoppingLists.Entities.ShoppingList, IShoppingList, ShoppingListConverter>
 {
     public override ShoppingListConverter CreateSut()
     {

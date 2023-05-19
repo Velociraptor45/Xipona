@@ -241,7 +241,7 @@ public class ItemConverterTests
         }
     }
 
-    public abstract class ItemConverterTestsBase : ToDomainConverterBase<Item, IItem, ItemConverter>
+    public abstract class ItemConverterTestsBase : ToDomainConverterTestBase<Item, IItem, ItemConverter>
     {
         public override ItemConverter CreateSut()
         {
@@ -257,7 +257,7 @@ public class ItemConverterTests
         }
     }
 
-    public abstract class ItemFailedConverterTestsBase<TException> : ToDomainFailedConverterBase<Item, IItem, ItemConverter, TException>
+    public abstract class ItemFailedConverterTestsBase<TException> : ToDomainFailedConverterTestBase<Item, IItem, ItemConverter, TException>
         where TException : Exception
     {
         public override ItemConverter CreateSut()

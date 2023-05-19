@@ -8,7 +8,7 @@ using Manufacturer = ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.E
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Manufacturers.Converters.ToDomain;
 
-public class ManufacturerConverterTests : ToDomainConverterBase<Manufacturer, IManufacturer, ManufacturerConverter>
+public class ManufacturerConverterTests : ToDomainConverterTestBase<Manufacturer, IManufacturer, ManufacturerConverter>
 {
     public override ManufacturerConverter CreateSut()
     {

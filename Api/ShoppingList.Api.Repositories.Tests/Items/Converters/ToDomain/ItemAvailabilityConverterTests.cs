@@ -9,7 +9,7 @@ using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Items.Converters.ToDomain;
 
-public class ItemAvailabilityConverterTests : ToDomainConverterBase<AvailableAt, IItemAvailability, ItemAvailabilityConverter>
+public class ItemAvailabilityConverterTests : ToDomainConverterTestBase<AvailableAt, IItemAvailability, ItemAvailabilityConverter>
 {
     public override ItemAvailabilityConverter CreateSut()
     {

@@ -9,7 +9,7 @@ using Store = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Store;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Stores.Converters.ToDomain;
 
-public class StoreConverterTests : ToDomainConverterBase<Store, IStore, StoreConverter>
+public class StoreConverterTests : ToDomainConverterTestBase<Store, IStore, StoreConverter>
 {
     protected override Store CreateSource()
     {

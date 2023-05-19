@@ -8,7 +8,7 @@ using RecipeTag = ProjectHermes.ShoppingList.Api.Repositories.RecipeTags.Entitie
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.RecipeTags.Converter.ToDomain;
 
-public class RecipeTagConverterTests : ToDomainConverterBase<RecipeTag, IRecipeTag, RecipeTagConverter>
+public class RecipeTagConverterTests : ToDomainConverterTestBase<RecipeTag, IRecipeTag, RecipeTagConverter>
 {
     public override RecipeTagConverter CreateSut()
     {

@@ -12,7 +12,7 @@ using Recipe = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Reci
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Recipes.Converters.ToDomain;
 
-public class RecipeConverterTests : ToDomainConverterBase<Recipe, IRecipe, RecipeConverter>
+public class RecipeConverterTests : ToDomainConverterTestBase<Recipe, IRecipe, RecipeConverter>
 {
     public override RecipeConverter CreateSut()
     {

@@ -7,7 +7,7 @@ using RecipeTag = ProjectHermes.ShoppingList.Api.Repositories.RecipeTags.Entitie
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.RecipeTags.Converter.ToContract;
 
-public class RecipeTagConverterTests : ToContractConverterBase<IRecipeTag, RecipeTag, RecipeTagConverter>
+public class RecipeTagConverterTests : ToContractConverterTestBase<IRecipeTag, RecipeTag, RecipeTagConverter>
 {
     protected override RecipeTagConverter CreateSut()
     {

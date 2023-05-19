@@ -7,7 +7,7 @@ using Ingredient = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Recipes.Converters.ToContract;
 
-public class IngredientConverterTests : ToContractConverterBase<(RecipeId, IIngredient), Ingredient, IngredientConverter>
+public class IngredientConverterTests : ToContractConverterTestBase<(RecipeId, IIngredient), Ingredient, IngredientConverter>
 {
     protected override IngredientConverter CreateSut()
     {

@@ -8,7 +8,7 @@ using Store = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Store;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Stores.Converters.ToContract;
 
-public class StoreConverterTests : ToContractConverterBase<IStore, Store, StoreConverter>
+public class StoreConverterTests : ToContractConverterTestBase<IStore, Store, StoreConverter>
 {
     protected override StoreConverter CreateSut()
     {

@@ -8,7 +8,7 @@ using Section = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Sect
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Stores.Converters.ToDomain;
 
-public class SectionConverterTests : ToDomainConverterBase<Section, ISection, SectionConverter>
+public class SectionConverterTests : ToDomainConverterTestBase<Section, ISection, SectionConverter>
 {
     protected override Section CreateSource()
     {
