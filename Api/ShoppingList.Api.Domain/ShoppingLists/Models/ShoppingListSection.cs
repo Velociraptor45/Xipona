@@ -65,17 +65,17 @@ public class ShoppingListSection : IShoppingListSection
     {
         var items = new Dictionary<(ItemId, ItemTypeId?), IShoppingListItem>(_shoppingListItems);
 
-        var itemAlreadyPresent = items.ContainsKey((item.Id, null));
+        var itemAlreadyPresent = items.ContainsKey((item.Id, item.TypeId));
         if (itemAlreadyPresent)
         {
             if (throwIfAlreadyPresent)
                 throw new DomainException(new ItemAlreadyInSectionReason(item.Id, Id));
 
-            items[(item.Id, null)] = items[(item.Id, null)].AddQuantity(item.Quantity);
+            items[(item.Id, item.TypeId)] = items[(item.Id, item.TypeId)].AddQuantity(item.Quantity);
         }
         else
         {
-            items.Add((item.Id, null), item);
+            items.Add((item.Id, item.TypeId), item);
         }
 
         return new ShoppingListSection(Id, items.Values);
