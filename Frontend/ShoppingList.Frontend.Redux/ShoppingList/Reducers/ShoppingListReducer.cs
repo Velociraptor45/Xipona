@@ -35,7 +35,16 @@ public static class ShoppingListReducer
     public static ShoppingListState OnSelectedStoreChanged(ShoppingListState state,
         SelectedStoreChangedAction action)
     {
-        return state with { SelectedStoreId = action.StoreId };
+        return state with
+        {
+            SelectedStoreId = action.StoreId,
+            SearchBar = state.SearchBar with
+            {
+                Input = string.Empty,
+                IsActive = false,
+                Results = new List<SearchItemForShoppingListResult>()
+            }
+        };
     }
 
     [ReducerMethod]
