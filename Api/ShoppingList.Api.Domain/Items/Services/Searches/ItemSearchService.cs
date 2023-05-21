@@ -119,30 +119,25 @@ public class ItemSearchService : IItemSearchService
         var store = await LoadStoreAsync(storeId);
         var nameTrimmed = name.Trim();
 
-        var itemsWithItemCategory = (await LoadItemsForCategory(nameTrimmed, storeId)).ToList();
-
-        if (itemsWithItemCategory.Count >= MaxSearchResults)
-            return await _itemSearchReadModelConversionService.ConvertAsync(itemsWithItemCategory.Take(MaxSearchResults),
-                store, _cancellationToken);
-
         var listItemIds = await LoadItemIdsOnShoppingList(storeId);
 
-        var itemsResultLimit = MaxSearchResults - itemsWithItemCategory.Count;
-        var items = (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, listItemIds.ItemIds, itemsResultLimit,
+        var items = (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, listItemIds.ItemIds, MaxSearchResults,
             _cancellationToken)).ToList();
+        var itemCategoryResultLimit = MaxSearchResults - GetResultCount(items, storeId);
+        var itemsWithItemCategory = (await LoadItemsForCategory(nameTrimmed, storeId, itemCategoryResultLimit)).ToList();
         var searchResultItemGroups = items
             .Union(itemsWithItemCategory)
             .DistinctBy(item => item.Id)
             .ToLookup(i => i.HasItemTypes);
 
         // items without types
-        var searchResultItems = searchResultItemGroups[false].Take(MaxSearchResults);
+        var searchResultItems = searchResultItemGroups[false];
         var itemReadModels = (await _itemSearchReadModelConversionService.ConvertAsync(
             searchResultItems, store, _cancellationToken))
             .ToList();
 
         if (itemReadModels.Count >= MaxSearchResults)
-            return itemReadModels;
+            return itemReadModels.Take(MaxSearchResults);
 
         // items with types
         var searchResultItemsWithTypes = searchResultItemGroups[true];
@@ -232,9 +227,12 @@ public class ItemSearchService : IItemSearchService
         return result;
     }
 
-    private async Task<IEnumerable<IItem>> LoadItemsForCategory(string name, StoreId storeId)
+    private async Task<IEnumerable<IItem>> LoadItemsForCategory(string name, StoreId storeId, int limit)
     {
-        var categoryIds = (await _itemCategoryRepository.FindByAsync(name, false, _cancellationToken))
+        if (limit <= 0)
+            return Enumerable.Empty<IItem>();
+
+        var categoryIds = (await _itemCategoryRepository.FindByAsync(name, false, limit, _cancellationToken))
             .Select(c => c.Id)
             .ToList();
 
@@ -276,5 +274,11 @@ public class ItemSearchService : IItemSearchService
         return store;
     }
 
-    private record ShoppingListItemIds(IReadOnlyCollection<ItemId> ItemIds, IReadOnlyCollection<(ItemId ItemId, ItemTypeId TypeId)> ItemTypeIds);
+    private int GetResultCount(IList<IItem> items, StoreId storeId)
+    {
+        return items.Sum(i => i.HasItemTypes ? i.GetTypesFor(storeId).Count : 1);
+    }
+
+    private record ShoppingListItemIds(IReadOnlyCollection<ItemId> ItemIds,
+        IReadOnlyCollection<(ItemId ItemId, ItemTypeId TypeId)> ItemTypeIds);
 }

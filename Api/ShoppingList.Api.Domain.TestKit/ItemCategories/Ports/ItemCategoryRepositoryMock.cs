@@ -52,9 +52,9 @@ public class ItemCategoryRepositoryMock : Mock<IItemCategoryRepository>
         Verify(m => m.StoreAsync(itemCategory, It.IsAny<CancellationToken>()), times);
     }
 
-    public void SetupFindByAsync(string searchInput, bool includeDeleted, IEnumerable<IItemCategory> returnValue)
+    public void SetupFindByAsync(string searchInput, bool includeDeleted, int? limit, IEnumerable<IItemCategory> returnValue)
     {
-        Setup(m => m.FindByAsync(searchInput, includeDeleted, It.IsAny<CancellationToken>()))
+        Setup(m => m.FindByAsync(searchInput, includeDeleted, limit, It.IsAny<CancellationToken>()))
             .ReturnsAsync(returnValue);
     }
 }

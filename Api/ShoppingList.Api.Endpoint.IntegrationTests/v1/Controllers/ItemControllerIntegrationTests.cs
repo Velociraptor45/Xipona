@@ -90,7 +90,7 @@ public class ItemControllerIntegrationTests
         }
 
         [Fact]
-        public async Task SearchItemsForShoppingListAsync_WithItemMatchingCategory_ShouldReturnEmptyList()
+        public async Task SearchItemsForShoppingListAsync_WithItemMatchingCategory_ShouldReturnResults()
         {
             // Arrange
             _fixture.SetupStore();
@@ -112,6 +112,57 @@ public class ItemControllerIntegrationTests
 
             var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value).ToList();
             contract.Should().HaveCount(1);
+        }
+
+        [Fact]
+        public async Task SearchItemsForShoppingListAsync_WithItemWithTypesMatchingCategory_ShouldReturnResults()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupItemWithTypeForCategory();
+            _fixture.SetupEmptyShoppingList();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+
+            var okResult = (OkObjectResult)result;
+            okResult.Value.Should().NotBeNull();
+            okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
+
+            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value).ToList();
+            contract.Should().HaveCount(3); // three item types
+        }
+
+        [Fact]
+        public async Task SearchItemsForShoppingListAsync_WithItemWithTypesMatchingCategoryExceedingLimit_ShouldReturnLimitedResults()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupItemWithTypeForCategoryExceedingLimit();
+            _fixture.SetupEmptyShoppingList();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+
+            var okResult = (OkObjectResult)result;
+            okResult.Value.Should().NotBeNull();
+            okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
+
+            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value).ToList();
+            contract.Should().HaveCount(20);
+            contract.Should().OnlyContain(c => c.TypeId != null);
         }
 
         [Fact]
@@ -342,6 +393,42 @@ public class ItemControllerIntegrationTests
                         .CreateMany(1)
                         .ToList();
                 }
+            }
+
+            public void SetupItemWithTypeForCategory()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var category = new ItemCategoryEntityBuilder()
+                    .WithName(SearchInput)
+                    .WithDeleted(false)
+                    .Create();
+                var item = ItemEntityMother.InitialWithTypesForStore(StoreId, _store.Sections.First().Id)
+                    .WithItemCategoryId(category.Id)
+                    .WithoutManufacturerId()
+                    .Create();
+
+                _items.Add(item);
+                _itemCategories.Add(category);
+            }
+
+            public void SetupItemWithTypeForCategoryExceedingLimit()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var category = new ItemCategoryEntityBuilder()
+                    .WithName(SearchInput)
+                    .WithDeleted(false)
+                    .Create();
+                var items = Enumerable.Range(0, 7)
+                    .Select(_ => ItemEntityMother.InitialWithTypesForStore(StoreId, _store.Sections.First().Id)
+                        .WithItemCategoryId(category.Id)
+                        .WithoutManufacturerId()
+                        .Create())
+                    .ToList();
+
+                _items.AddRange(items);
+                _itemCategories.Add(category);
             }
 
             public void SetupExpectedResultForItemAndTypeNameMatch()
