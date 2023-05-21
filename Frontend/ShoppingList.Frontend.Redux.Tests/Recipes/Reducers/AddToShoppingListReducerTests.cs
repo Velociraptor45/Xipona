@@ -283,7 +283,8 @@ public class AddToShoppingListReducerTests
                                 .Select(i => i with
                                 {
                                     Quantity = (float)Math.Ceiling(
-                                        amountForOneServing[(i.ItemId, i.ItemTypeId)] * Action.NumberOfServings)
+                                        Math.Round(
+                                            amountForOneServing[(i.ItemId, i.ItemTypeId)] * Action.NumberOfServings, 2, MidpointRounding.ToNegativeInfinity))
                                 })
                                 .ToList()
                         }
