@@ -119,30 +119,18 @@ public class ItemSearchService : IItemSearchService
         var store = await LoadStoreAsync(storeId);
         var nameTrimmed = name.Trim();
 
-        var categoryIds = (await _itemCategoryRepository.FindByAsync(nameTrimmed, false, _cancellationToken))
-            .Select(c => c.Id)
-            .ToList();
-
-        var itemsWithItemCategory = categoryIds.Any()
-            ? (await _itemRepository.FindActiveByAsync(categoryIds, storeId, _cancellationToken)).ToList()
-            : new List<IItem>();
+        var itemsWithItemCategory = (await LoadItemsForCategory(nameTrimmed, storeId)).ToList();
 
         if (itemsWithItemCategory.Count >= MaxSearchResults)
             return await _itemSearchReadModelConversionService.ConvertAsync(itemsWithItemCategory.Take(MaxSearchResults),
                 store, _cancellationToken);
 
-        IShoppingList shoppingList = await LoadShoppingListAsync(storeId);
-        var itemIdsOnShoppingListGroups = shoppingList.Items
-            .Select(item => (item.Id, item.TypeId))
-            .ToLookup(tuple => tuple.TypeId == null);
-        var itemIdsOnShoppingList = itemIdsOnShoppingListGroups[true].Select(tuple => tuple.Id).ToList();
-        var itemIdsWithTypeIdOnShoppingList = itemIdsOnShoppingListGroups[false]
-            .Select(t => (t.Id, TypeId: t.TypeId!.Value))
-            .ToList();
+        var listItemIds = await LoadItemIdsOnShoppingList(storeId);
 
         var itemsResultLimit = MaxSearchResults - itemsWithItemCategory.Count;
-        var searchResultItemGroups =
-            (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, itemIdsOnShoppingList, itemsResultLimit, _cancellationToken))
+        var items = (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, listItemIds.ItemIds, itemsResultLimit,
+            _cancellationToken)).ToList();
+        var searchResultItemGroups = items
             .Union(itemsWithItemCategory)
             .DistinctBy(item => item.Id)
             .ToLookup(i => i.HasItemTypes);
@@ -159,7 +147,7 @@ public class ItemSearchService : IItemSearchService
         // items with types
         var searchResultItemsWithTypes = searchResultItemGroups[true];
         var itemsWithTypeNotOnShoppingList = GetMatchingItemsWithTypeIds(storeId,
-                searchResultItemsWithTypes, itemIdsWithTypeIdOnShoppingList)
+                searchResultItemsWithTypes, listItemIds.ItemTypeIds)
             .ToList();
 
         var itemsWithTypesReadModels = (await _itemSearchReadModelConversionService.ConvertAsync(
@@ -172,7 +160,7 @@ public class ItemSearchService : IItemSearchService
         var typesResultLimit = MaxSearchResults - itemReadModels.Count - itemsWithTypesReadModels.Count;
         var itemsWithMatchingItemTypes = await GetItemsWithMatchingItemTypeIdsAsync(nameTrimmed, storeId,
             searchResultItemsWithTypes.Select(i => i.Id),
-            itemIdsWithTypeIdOnShoppingList.Select(m => m.TypeId),
+            listItemIds.ItemTypeIds.Select(m => m.TypeId),
             typesResultLimit);
         itemsWithTypeNotOnShoppingList.AddRange(itemsWithMatchingItemTypes);
 
@@ -244,6 +232,31 @@ public class ItemSearchService : IItemSearchService
         return result;
     }
 
+    private async Task<IEnumerable<IItem>> LoadItemsForCategory(string name, StoreId storeId)
+    {
+        var categoryIds = (await _itemCategoryRepository.FindByAsync(name, false, _cancellationToken))
+            .Select(c => c.Id)
+            .ToList();
+
+        return categoryIds.Any()
+            ? (await _itemRepository.FindActiveByAsync(categoryIds, storeId, _cancellationToken)).ToList()
+            : new List<IItem>();
+    }
+
+    private async Task<ShoppingListItemIds> LoadItemIdsOnShoppingList(StoreId storeId)
+    {
+        IShoppingList shoppingList = await LoadShoppingListAsync(storeId);
+        var itemIdsOnShoppingListGroups = shoppingList.Items
+            .Select(item => (item.Id, item.TypeId))
+            .ToLookup(tuple => tuple.TypeId == null);
+        var itemIdsOnShoppingList = itemIdsOnShoppingListGroups[true].Select(tuple => tuple.Id).ToList();
+        var itemIdsWithTypeIdOnShoppingList = itemIdsOnShoppingListGroups[false]
+            .Select(t => (t.Id, TypeId: t.TypeId!.Value))
+            .ToList();
+
+        return new ShoppingListItemIds(itemIdsOnShoppingList, itemIdsWithTypeIdOnShoppingList);
+    }
+
     private async Task<IShoppingList> LoadShoppingListAsync(StoreId storeId)
     {
         IShoppingList? shoppingList = await _shoppingListRepository
@@ -262,4 +275,6 @@ public class ItemSearchService : IItemSearchService
 
         return store;
     }
+
+    private record ShoppingListItemIds(IReadOnlyCollection<ItemId> ItemIds, IReadOnlyCollection<(ItemId ItemId, ItemTypeId TypeId)> ItemTypeIds);
 }
