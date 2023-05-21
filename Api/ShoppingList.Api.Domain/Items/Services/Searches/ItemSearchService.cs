@@ -19,7 +19,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Services.Searches;
 
 public class ItemSearchService : IItemSearchService
 {
-    private const int MaxSearchResults = 20;
+    private const int _maxSearchResults = 20;
 
     private readonly IItemRepository _itemRepository;
     private readonly IShoppingListRepository _shoppingListRepository;
@@ -121,9 +121,9 @@ public class ItemSearchService : IItemSearchService
 
         var listItemIds = await LoadItemIdsOnShoppingList(storeId);
 
-        var items = (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, listItemIds.ItemIds, MaxSearchResults,
+        var items = (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, listItemIds.ItemIds, _maxSearchResults,
             _cancellationToken)).ToList();
-        var itemCategoryResultLimit = MaxSearchResults - GetResultCount(items, storeId);
+        var itemCategoryResultLimit = _maxSearchResults - GetResultCount(items, storeId);
         var itemsWithItemCategory = (await LoadItemsForCategory(nameTrimmed, storeId, itemCategoryResultLimit)).ToList();
         var searchResultItemGroups = items
             .Union(itemsWithItemCategory)
@@ -136,11 +136,11 @@ public class ItemSearchService : IItemSearchService
             searchResultItems, store, _cancellationToken))
             .ToList();
 
-        if (itemReadModels.Count >= MaxSearchResults)
-            return itemReadModels.Take(MaxSearchResults);
+        if (itemReadModels.Count >= _maxSearchResults)
+            return itemReadModels.Take(_maxSearchResults);
 
         // items with types
-        var searchResultItemsWithTypes = searchResultItemGroups[true];
+        var searchResultItemsWithTypes = searchResultItemGroups[true].ToList();
         var itemsWithTypeNotOnShoppingList = GetMatchingItemsWithTypeIds(storeId,
                 searchResultItemsWithTypes, listItemIds.ItemTypeIds)
             .ToList();
@@ -148,18 +148,18 @@ public class ItemSearchService : IItemSearchService
         var itemsWithTypesReadModels = (await _itemSearchReadModelConversionService.ConvertAsync(
             itemsWithTypeNotOnShoppingList, store, _cancellationToken)).ToList();
 
-        if (itemReadModels.Count + itemsWithTypesReadModels.Count >= MaxSearchResults)
-            return itemReadModels.Union(itemsWithTypesReadModels).Take(MaxSearchResults);
+        if (itemReadModels.Count + itemsWithTypesReadModels.Count >= _maxSearchResults)
+            return itemReadModels.Union(itemsWithTypesReadModels).Take(_maxSearchResults);
 
         // types
-        var typesResultLimit = MaxSearchResults - itemReadModels.Count - itemsWithTypesReadModels.Count;
+        var typesResultLimit = _maxSearchResults - itemReadModels.Count - itemsWithTypesReadModels.Count;
         var itemsWithMatchingItemTypes = await GetItemsWithMatchingItemTypeIdsAsync(nameTrimmed, storeId,
             searchResultItemsWithTypes.Select(i => i.Id),
             listItemIds.ItemTypeIds.Select(m => m.TypeId),
             typesResultLimit);
         itemsWithTypeNotOnShoppingList.AddRange(itemsWithMatchingItemTypes);
 
-        return itemsWithTypesReadModels.Union(itemReadModels).Take(MaxSearchResults);
+        return itemsWithTypesReadModels.Union(itemReadModels).Take(_maxSearchResults);
     }
 
     private static IEnumerable<ItemWithMatchingItemTypeIds> GetMatchingItemsWithTypeIds(StoreId storeId,
@@ -279,6 +279,6 @@ public class ItemSearchService : IItemSearchService
         return items.Sum(i => i.HasItemTypes ? i.GetTypesFor(storeId).Count : 1);
     }
 
-    private record ShoppingListItemIds(IReadOnlyCollection<ItemId> ItemIds,
+    private sealed record ShoppingListItemIds(IReadOnlyCollection<ItemId> ItemIds,
         IReadOnlyCollection<(ItemId ItemId, ItemTypeId TypeId)> ItemTypeIds);
 }
