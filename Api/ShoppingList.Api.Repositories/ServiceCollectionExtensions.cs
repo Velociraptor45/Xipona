@@ -82,7 +82,11 @@ public static class ServiceCollectionExtensions
                 ct);
         });
         services.AddTransient<IItemRepository, ItemRepository>();
-        services.AddTransient<IItemTypeReadRepository, ItemTypeReadRepository>();
+        services.AddTransient<Func<CancellationToken, IItemTypeReadRepository>>(provider =>
+        {
+            return ct => new ItemTypeReadRepository(provider.GetRequiredService<ItemContext>(), ct);
+        });
+
         services.AddTransient<Func<CancellationToken, IItemCategoryRepository>>(provider =>
         {
             var context = provider.GetRequiredService<ItemCategoryContext>();

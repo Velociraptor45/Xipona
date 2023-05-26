@@ -35,7 +35,7 @@ public class ItemSearchService : IItemSearchService
         IItemRepository itemRepository,
         Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
         Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        IItemTypeReadRepository itemTypeReadRepository,
+        Func<CancellationToken, IItemTypeReadRepository> itemTypeReadRepositoryDelegate,
         Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
         Func<CancellationToken, IItemSearchReadModelConversionService> itemSearchReadModelConversionServiceDelegate,
         Func<CancellationToken, IValidator> validatorDelegate,
@@ -45,7 +45,7 @@ public class ItemSearchService : IItemSearchService
         _itemRepository = itemRepository;
         _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
         _storeRepository = storeRepositoryDelegate(cancellationToken);
-        _itemTypeReadRepository = itemTypeReadRepository;
+        _itemTypeReadRepository = itemTypeReadRepositoryDelegate(cancellationToken);
         _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
         _itemSearchReadModelConversionService = itemSearchReadModelConversionServiceDelegate(cancellationToken);
         _validator = validatorDelegate(cancellationToken);
@@ -202,7 +202,7 @@ public class ItemSearchService : IItemSearchService
     {
         var itemTypeIdMappings =
             (await _itemTypeReadRepository.FindActiveByAsync(name, storeId, itemsWithTypesAlreadyFound,
-                itemTypeIdsOnShoppingList, limit, _cancellationToken))
+                itemTypeIdsOnShoppingList, limit))
             .ToList();
         if (!itemTypeIdMappings.Any())
             return Enumerable.Empty<ItemWithMatchingItemTypeIds>();

@@ -424,7 +424,7 @@ public class ItemSearchServiceTests
                 ItemRepositoryMock.Object,
                 _ => ShoppingListRepositoryMock.Object,
                 _ => StoreRepositoryMock.Object,
-                ItemTypeReadRepositoryMock.Object,
+                _ => ItemTypeReadRepositoryMock.Object,
                 _ => ItemCategoryRepositoryMock.Object,
                 _ => ConversionServiceMock.Object,
                 _ => ValidatorMock.Object,

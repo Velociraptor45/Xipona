@@ -9,15 +9,17 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Items.Adapters;
 public class ItemTypeReadRepository : IItemTypeReadRepository
 {
     private readonly ItemContext _dbContext;
+    private readonly CancellationToken _cancellationToken;
 
-    public ItemTypeReadRepository(ItemContext dbContext)
+    public ItemTypeReadRepository(ItemContext dbContext, CancellationToken cancellationToken)
     {
         _dbContext = dbContext;
+        _cancellationToken = cancellationToken;
     }
 
     public async Task<IEnumerable<(ItemId, ItemTypeId)>> FindActiveByAsync(string name, StoreId storeId,
         IEnumerable<ItemId> excludedItemIds,
-        IEnumerable<ItemTypeId> excludedItemTypeIds, int? limit, CancellationToken cancellationToken)
+        IEnumerable<ItemTypeId> excludedItemTypeIds, int? limit)
     {
         var excludedRawItemTypeIds = excludedItemTypeIds.Select(id => id.Value).ToList();
 
@@ -34,7 +36,7 @@ public class ItemTypeReadRepository : IItemTypeReadRepository
         if (limit.HasValue)
             query = query.Take(limit.Value);
 
-        var entries = await query.ToListAsync(cancellationToken);
+        var entries = await query.ToListAsync(_cancellationToken);
 
         return entries.Select(type => (new ItemId(type.ItemId), new ItemTypeId(type.Id)));
     }

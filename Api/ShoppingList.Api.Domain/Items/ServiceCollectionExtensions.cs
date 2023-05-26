@@ -91,7 +91,7 @@ public static class ServiceCollectionExtensions
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             var shoppingListRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IShoppingListRepository>>();
             var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
-            var itemTypeReadRepository = provider.GetRequiredService<IItemTypeReadRepository>();
+            var itemTypeReadRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemTypeReadRepository>>();
             var itemCategoryRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>();
             var conversionServiceDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IItemSearchReadModelConversionService>>();
@@ -100,7 +100,7 @@ public static class ServiceCollectionExtensions
                 Func<CancellationToken, IItemAvailabilityReadModelConversionService>>();
 
             return cancellationToken => new ItemSearchService(itemRepository, shoppingListRepositoryDelegate,
-                storeRepositoryDelegate, itemTypeReadRepository, itemCategoryRepositoryDelegate, conversionServiceDelegate,
+                storeRepositoryDelegate, itemTypeReadRepositoryDelegate, itemCategoryRepositoryDelegate, conversionServiceDelegate,
                 validatorDelegate, availabilityConverterDelegate, cancellationToken);
         });
 
