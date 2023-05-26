@@ -1323,7 +1323,7 @@ public class ShoppingListModificationServiceTests
         {
             return new ShoppingListModificationService(
                 _ => ShoppingListRepositoryMock.Object,
-                ItemRepositoryMock.Object,
+                _ => ItemRepositoryMock.Object,
                 _ => StoreRepositoryMock.Object,
                 ShoppingListSectionFactoryMock.Object,
                 default);

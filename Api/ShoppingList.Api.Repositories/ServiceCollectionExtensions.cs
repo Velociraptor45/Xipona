@@ -3,9 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MySqlConnector;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
@@ -81,7 +83,16 @@ public static class ServiceCollectionExtensions
                 provider.GetRequiredService<ILogger<ShoppingListRepository>>(),
                 ct);
         });
-        services.AddTransient<IItemRepository, ItemRepository>();
+        services.AddTransient<Func<CancellationToken, IItemRepository>>(provider =>
+        {
+            return ct => new ItemRepository(
+                provider.GetRequiredService<ItemContext>(),
+                provider.GetRequiredService<IToDomainConverter<Items.Entities.Item, IItem>>(),
+                provider.GetRequiredService<IToEntityConverter<IItem, Items.Entities.Item>>(),
+                provider.GetRequiredService<Func<CancellationToken, IDomainEventDispatcher>>(),
+                provider.GetRequiredService<ILogger<ItemRepository>>(),
+                ct);
+        });
         services.AddTransient<Func<CancellationToken, IItemTypeReadRepository>>(provider =>
         {
             return ct => new ItemTypeReadRepository(provider.GetRequiredService<ItemContext>(), ct);

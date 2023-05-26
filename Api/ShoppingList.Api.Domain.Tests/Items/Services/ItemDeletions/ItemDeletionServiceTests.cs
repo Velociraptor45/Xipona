@@ -131,7 +131,7 @@ public class ItemDeletionServiceTests
         public ItemDeletionService CreateSut()
         {
             return new ItemDeletionService(
-                ItemRepositoryMock.Object,
+                _ => ItemRepositoryMock.Object,
                 default);
         }
     }

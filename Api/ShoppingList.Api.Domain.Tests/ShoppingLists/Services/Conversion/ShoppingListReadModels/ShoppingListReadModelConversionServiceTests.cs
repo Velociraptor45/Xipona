@@ -28,7 +28,7 @@ public class ShoppingListReadModelConversionServiceTests
 
         var service = new ShoppingListReadModelConversionService(
             _ => storeRepositoryMock.Object,
-            itemRepositoryMock.Object,
+            _ => itemRepositoryMock.Object,
             _ => itemCategoryRepositoryMock.Object,
             _ => manufacturerRepositoryMock.Object,
             default);

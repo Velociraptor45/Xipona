@@ -20,34 +20,34 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     private readonly IItemRepository _itemRepository;
     private readonly IShoppingListItemFactory _shoppingListItemFactory;
     private readonly IShoppingListRepository _shoppingListRepository;
-    private readonly CancellationToken _cancellationToken;
 
     public AddItemToShoppingListService(
         IShoppingListSectionFactory shoppingListSectionFactory,
         Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        IItemRepository itemRepository,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         IShoppingListItemFactory shoppingListItemFactory,
         Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
         CancellationToken cancellationToken)
     {
         _shoppingListSectionFactory = shoppingListSectionFactory;
         _storeRepository = storeRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepository;
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
         _shoppingListItemFactory = shoppingListItemFactory;
         _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
-        _cancellationToken = cancellationToken;
     }
 
     public async Task AddAsync(IEnumerable<ItemToShoppingListAddition> itemsToAdd)
     {
-        var storeIds = itemsToAdd.Select(x => x.StoreId).Distinct().ToList();
+        var itemsToAddList = itemsToAdd.ToList();
+
+        var storeIds = itemsToAddList.Select(x => x.StoreId).Distinct().ToList();
         var shoppingLists = (await _shoppingListRepository.FindActiveByAsync(storeIds))
             .ToDictionary(list => list.StoreId);
         if (storeIds.Count != shoppingLists.Count)
             throw new DomainException(new StoreNotFoundReason(storeIds.Except(shoppingLists.Select(x => x.Key))));
 
-        var itemIds = itemsToAdd.Select(x => x.ItemId).Distinct().ToList();
-        var items = (await _itemRepository.FindActiveByAsync(itemIds, _cancellationToken))
+        var itemIds = itemsToAddList.Select(x => x.ItemId).Distinct().ToList();
+        var items = (await _itemRepository.FindActiveByAsync(itemIds))
             .ToDictionary(i => i.Id);
 
         if (itemIds.Count != items.Count)
@@ -58,7 +58,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         if (stores.Count != storeIds.Count)
             throw new DomainException(new StoreNotFoundReason(storeIds.Except(stores.Select(x => x.Key))));
 
-        foreach (var itemToAdd in itemsToAdd)
+        foreach (var itemToAdd in itemsToAddList)
         {
             var shoppingList = shoppingLists[itemToAdd.StoreId];
             var item = items[itemToAdd.ItemId];
@@ -86,8 +86,6 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
 
         var item = await LoadItemAsync(itemId);
         await AddItemAsync(list, item, null, sectionId, quantity);
-
-        _cancellationToken.ThrowIfCancellationRequested();
 
         await _shoppingListRepository.StoreAsync(list);
     }
@@ -150,8 +148,6 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
 
         sectionId ??= availability.DefaultSectionId;
 
-        _cancellationToken.ThrowIfCancellationRequested();
-
         IShoppingListItem shoppingListItem = CreateShoppingListItem(item.Id, itemTypeId, quantity);
         await AddItemAsync(shoppingList, shoppingListItem, store, sectionId.Value, throwIfItemAlreadyOnShoppingList);
     }
@@ -166,8 +162,6 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
 
         sectionId ??= availability.DefaultSectionId;
 
-        _cancellationToken.ThrowIfCancellationRequested();
-
         IShoppingListItem shoppingListItem = CreateShoppingListItem(item.Id, null, quantity);
         await AddItemAsync(shoppingList, shoppingListItem, store, sectionId.Value, throwIfItemAlreadyOnShoppingList);
     }
@@ -181,8 +175,6 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
 
         if (!store.ContainsSection(sectionId))
             throw new DomainException(new SectionInStoreNotFoundReason(sectionId, store.Id));
-
-        _cancellationToken.ThrowIfCancellationRequested();
 
         if (shoppingList.Sections.All(s => s.Id != sectionId))
         {
@@ -206,7 +198,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
 
     private async Task<IItem> LoadItemAsync(ItemId itemId)
     {
-        IItem? item = await _itemRepository.FindActiveByAsync(itemId, _cancellationToken);
+        IItem? item = await _itemRepository.FindActiveByAsync(itemId);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(itemId));
 
@@ -219,7 +211,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
             return await LoadItemAsync(new ItemId(offlineTolerantItemId.ActualId!.Value));
 
         IItem? item = await _itemRepository.FindActiveByAsync(
-            new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value), _cancellationToken);
+            new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value));
 
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value)));

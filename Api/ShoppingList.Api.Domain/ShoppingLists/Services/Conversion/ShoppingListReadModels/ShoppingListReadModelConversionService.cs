@@ -22,28 +22,26 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
 {
     private readonly IStoreRepository _storeRepository;
     private readonly IItemRepository _itemRepository;
-    private readonly CancellationToken _cancellationToken;
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IManufacturerRepository _manufacturerRepository;
 
     public ShoppingListReadModelConversionService(
         Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        IItemRepository itemRepository,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
         Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
         CancellationToken cancellationToken)
     {
         _storeRepository = storeRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepository;
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
         _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
         _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
-        _cancellationToken = cancellationToken;
     }
 
     public async Task<ShoppingListReadModel> ConvertAsync(IShoppingList shoppingList)
     {
         var itemIds = shoppingList.Items.Select(i => i.Id);
-        var itemsDict = (await _itemRepository.FindByAsync(itemIds, _cancellationToken))
+        var itemsDict = (await _itemRepository.FindByAsync(itemIds))
             .ToDictionary(i => i.Id);
 
         var itemCategoryIds = itemsDict.Values.Where(i => i.ItemCategoryId != null)

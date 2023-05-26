@@ -421,7 +421,7 @@ public class ItemSearchServiceTests
         public ItemSearchService CreateSut()
         {
             return new ItemSearchService(
-                ItemRepositoryMock.Object,
+                _ => ItemRepositoryMock.Object,
                 _ => ShoppingListRepositoryMock.Object,
                 _ => StoreRepositoryMock.Object,
                 _ => ItemTypeReadRepositoryMock.Object,

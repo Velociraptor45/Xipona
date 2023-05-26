@@ -19,20 +19,18 @@ public class ShoppingListModificationService : IShoppingListModificationService
     private readonly IItemRepository _itemRepository;
     private readonly IStoreRepository _storeRepository;
     private readonly IShoppingListSectionFactory _shoppingListSectionFactory;
-    private readonly CancellationToken _cancellationToken;
 
     public ShoppingListModificationService(
         Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
-        IItemRepository itemRepository,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         IShoppingListSectionFactory shoppingListSectionFactory,
         CancellationToken cancellationToken)
     {
         _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepository;
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
         _storeRepository = storeRepositoryDelegate(cancellationToken);
         _shoppingListSectionFactory = shoppingListSectionFactory;
-        _cancellationToken = cancellationToken;
     }
 
     public async Task ChangeItemQuantityAsync(ShoppingListId shoppingListId,
@@ -53,7 +51,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
                 throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
 
             var temporaryId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
-            var item = await _itemRepository.FindActiveByAsync(temporaryId, _cancellationToken);
+            var item = await _itemRepository.FindActiveByAsync(temporaryId);
 
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryId));
@@ -62,8 +60,6 @@ public class ShoppingListModificationService : IShoppingListModificationService
         }
 
         list.ChangeItemQuantity(itemId, itemTypeId, quantity);
-
-        _cancellationToken.ThrowIfCancellationRequested();
 
         await _shoppingListRepository.StoreAsync(list);
     }
@@ -74,8 +70,6 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
         foreach (var list in listsWithItem)
         {
-            _cancellationToken.ThrowIfCancellationRequested();
-
             list.RemoveItemAndItsTypes(itemId);
 
             await _shoppingListRepository.StoreAsync(list);
@@ -89,14 +83,12 @@ public class ShoppingListModificationService : IShoppingListModificationService
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
 
-        _cancellationToken.ThrowIfCancellationRequested();
-
         IItem? item;
         if (offlineTolerantItemId.IsActualId)
         {
             ItemId itemId = new ItemId(offlineTolerantItemId.ActualId!.Value);
 
-            item = await _itemRepository.FindActiveByAsync(itemId, _cancellationToken);
+            item = await _itemRepository.FindActiveByAsync(itemId);
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(itemId));
         }
@@ -107,21 +99,17 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
             TemporaryItemId itemId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
 
-            item = await _itemRepository.FindActiveByAsync(itemId, _cancellationToken);
+            item = await _itemRepository.FindActiveByAsync(itemId);
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(itemId));
         }
-
-        _cancellationToken.ThrowIfCancellationRequested();
 
         list.RemoveItem(item.Id, itemTypeId);
         if (item.IsTemporary)
         {
             item.Delete();
-            await _itemRepository.StoreAsync(item, _cancellationToken);
+            await _itemRepository.StoreAsync(item);
         }
-
-        _cancellationToken.ThrowIfCancellationRequested();
 
         await _shoppingListRepository.StoreAsync(list);
     }
@@ -144,7 +132,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
                 throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
 
             var temporaryId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
-            IItem? item = await _itemRepository.FindActiveByAsync(temporaryId, _cancellationToken);
+            IItem? item = await _itemRepository.FindActiveByAsync(temporaryId);
 
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryId));
@@ -175,7 +163,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
                 throw new DomainException(new TemporaryItemCannotHaveTypeIdReason());
 
             var temporaryId = new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value);
-            IItem? item = await _itemRepository.FindActiveByAsync(temporaryId, _cancellationToken);
+            IItem? item = await _itemRepository.FindActiveByAsync(temporaryId);
 
             if (item == null)
                 throw new DomainException(new ItemNotFoundReason(temporaryId));
@@ -184,8 +172,6 @@ public class ShoppingListModificationService : IShoppingListModificationService
         }
 
         shoppingList.PutItemInBasket(itemId, itemTypeId);
-
-        _cancellationToken.ThrowIfCancellationRequested();
 
         await _shoppingListRepository.StoreAsync(shoppingList);
     }
@@ -196,11 +182,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
         if (shoppingList == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
 
-        _cancellationToken.ThrowIfCancellationRequested();
-
         IShoppingList nextShoppingList = shoppingList.Finish(completionDate);
-
-        _cancellationToken.ThrowIfCancellationRequested();
 
         await _shoppingListRepository.StoreAsync(shoppingList);
         await _shoppingListRepository.StoreAsync(nextShoppingList);
@@ -221,7 +203,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
             return;
 
         var itemIds = section.Items.Select(i => i.Id);
-        var items = (await _itemRepository.FindActiveByAsync(itemIds, _cancellationToken)).ToDictionary(i => i.Id);
+        var items = (await _itemRepository.FindActiveByAsync(itemIds)).ToDictionary(i => i.Id);
 
         foreach (var listItem in section.Items)
         {

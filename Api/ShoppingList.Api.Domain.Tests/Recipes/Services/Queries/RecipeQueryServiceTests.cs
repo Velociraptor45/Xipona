@@ -269,7 +269,7 @@ public class RecipeQueryServiceTests
 
         public RecipeQueryService CreateSut()
         {
-            return new RecipeQueryService(_ => RecipeRepositoryMock.Object, ItemRepositoryMock.Object,
+            return new RecipeQueryService(_ => RecipeRepositoryMock.Object, _ => ItemRepositoryMock.Object,
                 _ => StoreRepositoryMock.Object, new QuantityTranslationService(), _logger, default);
         }
     }

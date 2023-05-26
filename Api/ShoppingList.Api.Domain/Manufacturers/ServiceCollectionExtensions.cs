@@ -42,9 +42,9 @@ public static class ServiceCollectionExtensions
         {
             var manufacturerRepositoryDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IManufacturerRepository>>();
-            var itemRepository = provider.GetRequiredService<IItemRepository>();
+            var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
             return cancellationToken =>
-                new ManufacturerDeletionService(manufacturerRepositoryDelegate, itemRepository, cancellationToken);
+                new ManufacturerDeletionService(manufacturerRepositoryDelegate, itemRepositoryDelegate, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IManufacturerModificationService>>(provider =>

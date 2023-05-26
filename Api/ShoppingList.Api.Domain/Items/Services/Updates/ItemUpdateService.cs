@@ -13,47 +13,45 @@ public class ItemUpdateService : IItemUpdateService
     private readonly IItemRepository _itemRepository;
     private readonly IDateTimeService _dateTimeService;
     private readonly IValidator _validator;
-    private readonly CancellationToken _cancellationToken;
 
     public ItemUpdateService(
-        IItemRepository itemRepository,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         Func<CancellationToken, IValidator> validatorDelegate,
         IDateTimeService dateTimeService,
         CancellationToken cancellationToken)
     {
-        _itemRepository = itemRepository;
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
         _dateTimeService = dateTimeService;
         _validator = validatorDelegate(cancellationToken);
-        _cancellationToken = cancellationToken;
     }
 
     public async Task UpdateAsync(ItemWithTypesUpdate update)
     {
-        var oldItem = await _itemRepository.FindActiveByAsync(update.OldId, _cancellationToken);
+        var oldItem = await _itemRepository.FindActiveByAsync(update.OldId);
         if (oldItem == null)
             throw new DomainException(new ItemNotFoundReason(update.OldId));
 
         var updatedItem = await oldItem.UpdateAsync(update, _validator, _dateTimeService);
 
-        await _itemRepository.StoreAsync(updatedItem, _cancellationToken);
-        await _itemRepository.StoreAsync(oldItem, _cancellationToken);
+        await _itemRepository.StoreAsync(updatedItem);
+        await _itemRepository.StoreAsync(oldItem);
     }
 
     public async Task UpdateAsync(ItemUpdate update)
     {
-        IItem? oldItem = await _itemRepository.FindActiveByAsync(update.OldId, _cancellationToken);
+        IItem? oldItem = await _itemRepository.FindActiveByAsync(update.OldId);
         if (oldItem == null)
             throw new DomainException(new ItemNotFoundReason(update.OldId));
 
         var updatedItem = await oldItem.UpdateAsync(update, _validator, _dateTimeService);
 
-        await _itemRepository.StoreAsync(updatedItem, _cancellationToken);
-        await _itemRepository.StoreAsync(oldItem, _cancellationToken);
+        await _itemRepository.StoreAsync(updatedItem);
+        await _itemRepository.StoreAsync(oldItem);
     }
 
     public async Task UpdateAsync(ItemId itemId, ItemTypeId? itemTypeId, StoreId storeId, Price price)
     {
-        IItem? oldItem = await _itemRepository.FindActiveByAsync(itemId, _cancellationToken);
+        IItem? oldItem = await _itemRepository.FindActiveByAsync(itemId);
         if (oldItem == null)
             throw new DomainException(new ItemNotFoundReason(itemId));
         if (oldItem.IsTemporary)
@@ -61,7 +59,7 @@ public class ItemUpdateService : IItemUpdateService
 
         IItem updatedItem = oldItem.Update(storeId, itemTypeId, price, _dateTimeService);
 
-        await _itemRepository.StoreAsync(updatedItem, _cancellationToken);
-        await _itemRepository.StoreAsync(oldItem, _cancellationToken);
+        await _itemRepository.StoreAsync(updatedItem);
+        await _itemRepository.StoreAsync(oldItem);
     }
 }

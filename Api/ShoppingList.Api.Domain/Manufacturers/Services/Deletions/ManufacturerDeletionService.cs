@@ -8,16 +8,14 @@ public class ManufacturerDeletionService : IManufacturerDeletionService
 {
     private readonly IManufacturerRepository _manufacturerRepository;
     private readonly IItemRepository _itemRepository;
-    private readonly CancellationToken _cancellationToken;
 
     public ManufacturerDeletionService(
         Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
-        IItemRepository itemRepository,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         CancellationToken cancellationToken)
     {
         _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepository;
-        _cancellationToken = cancellationToken;
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
     }
 
     public async Task DeleteAsync(ManufacturerId manufacturerId)
@@ -26,12 +24,12 @@ public class ManufacturerDeletionService : IManufacturerDeletionService
         if (manufacturer == null)
             return;
 
-        var items = await _itemRepository.FindByAsync(manufacturerId, _cancellationToken);
+        var items = await _itemRepository.FindByAsync(manufacturerId);
 
         foreach (var item in items)
         {
             item.RemoveManufacturer();
-            await _itemRepository.StoreAsync(item, _cancellationToken);
+            await _itemRepository.StoreAsync(item);
         }
 
         manufacturer.Delete();

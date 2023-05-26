@@ -10,25 +10,21 @@ public class ItemQueryService : IItemQueryService
 {
     private readonly IItemRepository _itemRepository;
     private readonly IItemReadModelConversionService _itemReadModelConversionService;
-    private readonly CancellationToken _cancellationToken;
 
     public ItemQueryService(
-        IItemRepository itemRepository,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         Func<CancellationToken, IItemReadModelConversionService> itemReadModelConversionServiceDelegate,
         CancellationToken cancellationToken)
     {
-        _itemRepository = itemRepository;
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
         _itemReadModelConversionService = itemReadModelConversionServiceDelegate(cancellationToken);
-        _cancellationToken = cancellationToken;
     }
 
     public async Task<ItemReadModel> GetAsync(ItemId itemId)
     {
-        var item = await _itemRepository.FindActiveByAsync(itemId, _cancellationToken);
+        var item = await _itemRepository.FindActiveByAsync(itemId);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(itemId));
-
-        _cancellationToken.ThrowIfCancellationRequested();
 
         return await _itemReadModelConversionService.ConvertAsync(item);
     }

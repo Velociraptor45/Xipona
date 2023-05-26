@@ -14,20 +14,18 @@ public class ItemCreationService : IItemCreationService
     private readonly IValidator _validator;
     private readonly IItemFactory _itemFactory;
     private readonly IItemReadModelConversionService _conversionService;
-    private readonly CancellationToken _cancellationToken;
 
     public ItemCreationService(
-        IItemRepository itemRepository,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         Func<CancellationToken, IValidator> validatorDelegate,
         IItemFactory itemFactory,
         Func<CancellationToken, IItemReadModelConversionService> conversionServiceDelegate,
         CancellationToken cancellationToken)
     {
-        _itemRepository = itemRepository;
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
         _itemFactory = itemFactory;
         _conversionService = conversionServiceDelegate(cancellationToken);
         _validator = validatorDelegate(cancellationToken);
-        _cancellationToken = cancellationToken;
     }
 
     public async Task<ItemReadModel> CreateAsync(ItemCreation creation)
@@ -42,21 +40,19 @@ public class ItemCreationService : IItemCreationService
             await _validator.ValidateAsync(manufacturerId.Value);
         }
 
-        _cancellationToken.ThrowIfCancellationRequested();
-
         var availabilities = creation.Availabilities;
         await _validator.ValidateAsync(availabilities);
 
         var item = _itemFactory.Create(creation);
 
-        var storedItem = await _itemRepository.StoreAsync(item, _cancellationToken);
+        var storedItem = await _itemRepository.StoreAsync(item);
 
         return await _conversionService.ConvertAsync(storedItem);
     }
 
     public async Task<ItemReadModel> CreateItemWithTypesAsync(IItem item)
     {
-        var storedItem = await _itemRepository.StoreAsync(item, _cancellationToken);
+        var storedItem = await _itemRepository.StoreAsync(item);
 
         return await _conversionService.ConvertAsync(storedItem);
     }
@@ -68,7 +64,7 @@ public class ItemCreationService : IItemCreationService
 
         var item = _itemFactory.Create(creation);
 
-        var storedItem = await _itemRepository.StoreAsync(item, _cancellationToken);
+        var storedItem = await _itemRepository.StoreAsync(item);
 
         return await _conversionService.ConvertAsync(storedItem);
     }

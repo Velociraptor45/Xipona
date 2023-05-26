@@ -23,22 +23,20 @@ public class RecipeQueryService : IRecipeQueryService
     private readonly IStoreRepository _storeRepository;
     private readonly IQuantityTranslationService _quantityTranslationService;
     private readonly ILogger<RecipeQueryService> _logger;
-    private readonly CancellationToken _cancellationToken;
 
     public RecipeQueryService(
         Func<CancellationToken, IRecipeRepository> recipeRepositoryDelegate,
-        IItemRepository itemRepository,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         IQuantityTranslationService quantityTranslationService,
         ILogger<RecipeQueryService> logger,
         CancellationToken cancellationToken)
     {
         _recipeRepository = recipeRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepository;
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
         _storeRepository = storeRepositoryDelegate(cancellationToken);
         _quantityTranslationService = quantityTranslationService;
         _logger = logger;
-        _cancellationToken = cancellationToken;
     }
 
     public async Task<IRecipe> GetAsync(RecipeId id)
@@ -77,7 +75,7 @@ public class RecipeQueryService : IRecipeQueryService
     {
         var recipe = await GetAsync(recipeId);
         var itemIds = recipe.Ingredients.Select(i => i.DefaultItemId).Where(i => i is not null).Cast<ItemId>().ToList();
-        var items = (await _itemRepository.FindByAsync(itemIds, _cancellationToken)).ToDictionary(i => i.Id);
+        var items = (await _itemRepository.FindByAsync(itemIds)).ToDictionary(i => i.Id);
         var storeIds = items.Values
             .Where(i => !i.HasItemTypes)
             .SelectMany(i => i.Availabilities)

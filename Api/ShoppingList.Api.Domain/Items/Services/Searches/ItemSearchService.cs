@@ -29,10 +29,9 @@ public class ItemSearchService : IItemSearchService
     private readonly IItemSearchReadModelConversionService _itemSearchReadModelConversionService;
     private readonly IValidator _validator;
     private readonly IItemAvailabilityReadModelConversionService _availabilityConverter;
-    private readonly CancellationToken _cancellationToken;
 
     public ItemSearchService(
-        IItemRepository itemRepository,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
         Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         Func<CancellationToken, IItemTypeReadRepository> itemTypeReadRepositoryDelegate,
@@ -42,7 +41,7 @@ public class ItemSearchService : IItemSearchService
         Func<CancellationToken, IItemAvailabilityReadModelConversionService> availabilityConverterDelegate,
         CancellationToken cancellationToken)
     {
-        _itemRepository = itemRepository;
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
         _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
         _storeRepository = storeRepositoryDelegate(cancellationToken);
         _itemTypeReadRepository = itemTypeReadRepositoryDelegate(cancellationToken);
@@ -50,14 +49,13 @@ public class ItemSearchService : IItemSearchService
         _itemSearchReadModelConversionService = itemSearchReadModelConversionServiceDelegate(cancellationToken);
         _validator = validatorDelegate(cancellationToken);
         _availabilityConverter = availabilityConverterDelegate(cancellationToken);
-        _cancellationToken = cancellationToken;
     }
 
     public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(IEnumerable<StoreId> storeIds,
         IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds)
     {
         var items = await _itemRepository.FindPermanentByAsync(storeIds, itemCategoriesIds,
-            manufacturerIds, _cancellationToken);
+            manufacturerIds);
 
         return items
             .Where(model => !model.IsDeleted)
@@ -69,7 +67,7 @@ public class ItemSearchService : IItemSearchService
         if (string.IsNullOrWhiteSpace(searchInput))
             return Enumerable.Empty<SearchItemResultReadModel>();
 
-        var items = await _itemRepository.FindActiveByAsync(searchInput, _cancellationToken);
+        var items = await _itemRepository.FindActiveByAsync(searchInput);
         return items.Select(i => new SearchItemResultReadModel(i.Id, i.Name));
     }
 
@@ -77,7 +75,7 @@ public class ItemSearchService : IItemSearchService
     {
         await _validator.ValidateAsync(itemCategoryId);
 
-        var items = (await _itemRepository.FindActiveByAsync(itemCategoryId, _cancellationToken))
+        var items = (await _itemRepository.FindActiveByAsync(itemCategoryId))
             .ToList();
         var itemsLookup = items.ToLookup(i => i.HasItemTypes);
 
@@ -121,8 +119,7 @@ public class ItemSearchService : IItemSearchService
 
         var listItemIds = await LoadItemIdsOnShoppingList(storeId);
 
-        var items = (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, listItemIds.ItemIds, _maxSearchResults,
-            _cancellationToken)).ToList();
+        var items = (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, listItemIds.ItemIds, _maxSearchResults)).ToList();
         var itemCategoryResultLimit = _maxSearchResults - GetResultCount(items, storeId);
         var itemsWithItemCategory = (await LoadItemsForCategory(nameTrimmed, storeId, itemCategoryResultLimit)).ToList();
         var searchResultItemGroups = items
@@ -212,7 +209,7 @@ public class ItemSearchService : IItemSearchService
             .ToList();
 
         var itemIds = itemTypeIdGroups.Select(group => group.Key);
-        var itemsDict = (await _itemRepository.FindActiveByAsync(itemIds, _cancellationToken))
+        var itemsDict = (await _itemRepository.FindActiveByAsync(itemIds))
             .ToDictionary(i => i.Id);
 
         var result = new List<ItemWithMatchingItemTypeIds>();
@@ -237,7 +234,7 @@ public class ItemSearchService : IItemSearchService
             .ToList();
 
         return categoryIds.Any()
-            ? (await _itemRepository.FindActiveByAsync(categoryIds, storeId, _cancellationToken)).ToList()
+            ? (await _itemRepository.FindActiveByAsync(categoryIds, storeId)).ToList()
             : new List<IItem>();
     }
 
