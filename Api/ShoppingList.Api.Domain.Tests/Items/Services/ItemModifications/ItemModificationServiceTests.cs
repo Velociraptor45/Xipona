@@ -916,10 +916,10 @@ public class ItemModificationServiceTests
         public ItemModificationService CreateSut()
         {
             return new ItemModificationService(
-                ItemRepositoryMock.Object,
+                _ => ItemRepositoryMock.Object,
                 _ => ValidatorMock.Object,
-                ShoppingListRepositoryMock.Object,
-                StoreRepositoryMock.Object,
+                _ => ShoppingListRepositoryMock.Object,
+                _ => StoreRepositoryMock.Object,
                 default);
         }
     }

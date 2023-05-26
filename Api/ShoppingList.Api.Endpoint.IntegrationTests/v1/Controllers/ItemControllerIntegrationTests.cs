@@ -1494,22 +1494,22 @@ public class ItemControllerIntegrationTests
 
         private IItemRepository CreateItemRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<IItemRepository>();
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IItemRepository>>()(default);
         }
 
         private IManufacturerRepository CreateManufacturerRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<IManufacturerRepository>();
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(default);
         }
 
         private IItemCategoryRepository CreateItemCategoryRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<IItemCategoryRepository>();
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>()(default);
         }
 
         private IStoreRepository CreateStoreRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<IStoreRepository>();
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IStoreRepository>>()(default);
         }
 
         protected async Task StoreAsync(IItem? item = null, IManufacturer? manufacturer = null,
@@ -1523,16 +1523,16 @@ public class ItemControllerIntegrationTests
             var storeRepository = CreateStoreRepository(scope);
 
             if (itemCategory is not null)
-                await itemCategoryRepository.StoreAsync(itemCategory, default);
+                await itemCategoryRepository.StoreAsync(itemCategory);
             if (manufacturer is not null)
-                await manufacturerRepository.StoreAsync(manufacturer, default);
+                await manufacturerRepository.StoreAsync(manufacturer);
             if (item is not null)
-                await itemRepository.StoreAsync(item, default);
+                await itemRepository.StoreAsync(item);
             if (stores is not null)
             {
                 foreach (var store in stores)
                 {
-                    await storeRepository.StoreAsync(store, default);
+                    await storeRepository.StoreAsync(store);
                 }
             }
 

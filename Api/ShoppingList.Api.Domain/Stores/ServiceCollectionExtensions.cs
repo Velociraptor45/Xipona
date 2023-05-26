@@ -22,31 +22,31 @@ public static class ServiceCollectionExtensions
         // services
         services.AddTransient<Func<CancellationToken, IStoreCreationService>>(provider =>
         {
-            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
             var storeFactory = provider.GetRequiredService<IStoreFactory>();
             var shoppingListFactory = provider.GetRequiredService<IShoppingListFactory>();
-            var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
+            var shoppingListRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IShoppingListRepository>>();
             return cancellationToken =>
-                new StoreCreationService(storeRepository, storeFactory, shoppingListFactory, shoppingListRepository,
-                    cancellationToken);
+                new StoreCreationService(storeRepositoryDelegate, storeFactory, shoppingListFactory,
+                    shoppingListRepositoryDelegate, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IStoreModificationService>>(provider =>
         {
-            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
             var itemModificationServiceDelegate =
                 provider.GetRequiredService<Func<CancellationToken, IItemModificationService>>();
             var shoppingListModificationServiceDelegate =
                 provider.GetRequiredService<Func<CancellationToken, IShoppingListModificationService>>();
             return cancellationToken =>
-                new StoreModificationService(storeRepository, itemModificationServiceDelegate,
+                new StoreModificationService(storeRepositoryDelegate, itemModificationServiceDelegate,
                     shoppingListModificationServiceDelegate, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IStoreQueryService>>(provider =>
         {
-            var storeRepository = provider.GetRequiredService<IStoreRepository>();
-            return cancellationToken => new StoreQueryService(storeRepository, cancellationToken);
+            var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
+            return cancellationToken => new StoreQueryService(storeRepositoryDelegate, cancellationToken);
         });
     }
 }

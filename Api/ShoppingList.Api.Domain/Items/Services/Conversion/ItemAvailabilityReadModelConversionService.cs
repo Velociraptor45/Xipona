@@ -9,14 +9,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion;
 public class ItemAvailabilityReadModelConversionService : IItemAvailabilityReadModelConversionService
 {
     private readonly IStoreRepository _storeRepository;
-    private readonly CancellationToken _cancellationToken;
 
     public ItemAvailabilityReadModelConversionService(
-        IStoreRepository storeRepository,
+        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         CancellationToken cancellationToken)
     {
-        _storeRepository = storeRepository;
-        _cancellationToken = cancellationToken;
+        _storeRepository = storeRepositoryDelegate(cancellationToken);
     }
 
     public async Task<IDictionary<(ItemId, ItemTypeId?), IEnumerable<ItemAvailabilityReadModel>>> ConvertAsync(
@@ -51,7 +49,7 @@ public class ItemAvailabilityReadModelConversionService : IItemAvailabilityReadM
             .Distinct()
             .ToList();
 
-        var stores = (await _storeRepository.FindActiveByAsync(storeIds, _cancellationToken)).ToDictionary(s => s.Id);
+        var stores = (await _storeRepository.FindActiveByAsync(storeIds)).ToDictionary(s => s.Id);
 
         var missingStoreIds = storeIds.Except(stores.Select(s => s.Value.Id)).ToList();
         if (missingStoreIds.Any())

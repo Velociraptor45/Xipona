@@ -564,9 +564,9 @@ public class ItemCategoryDeletionServiceTests
         public ItemCategoryDeletionService CreateSut()
         {
             return new ItemCategoryDeletionService(
-                ItemCategoryRepositoryMock.Object,
-                ItemRepositoryMock.Object,
-                ShoppingListRepositoryMock.Object,
+                _ => ItemCategoryRepositoryMock.Object,
+                _ => ItemRepositoryMock.Object,
+                _ => ShoppingListRepositoryMock.Object,
                 default);
         }
     }

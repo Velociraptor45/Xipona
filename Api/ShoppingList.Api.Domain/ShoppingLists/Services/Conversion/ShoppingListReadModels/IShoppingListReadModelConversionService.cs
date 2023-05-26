@@ -5,5 +5,5 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversio
 
 public interface IShoppingListReadModelConversionService
 {
-    Task<ShoppingListReadModel> ConvertAsync(IShoppingList shoppingList, CancellationToken cancellationToken);
+    Task<ShoppingListReadModel> ConvertAsync(IShoppingList shoppingList);
 }

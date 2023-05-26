@@ -114,7 +114,7 @@ public class ManufacturerModificationServiceTests
 
         public ManufacturerModificationService CreateSut()
         {
-            return new ManufacturerModificationService(_manufacturerRepositoryMock.Object, default);
+            return new ManufacturerModificationService(_ => _manufacturerRepositoryMock.Object, default);
         }
 
         public void SetupManufacturerMock()

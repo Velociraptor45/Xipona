@@ -265,7 +265,7 @@ public class TemporaryItemServiceTests
         public TemporaryItemService CreateSut()
         {
             return new TemporaryItemService(
-                ItemRepositoryMock.Object,
+                _ => ItemRepositoryMock.Object,
                 _ => ValidatorMock.Object,
                 default);
         }

@@ -1322,9 +1322,9 @@ public class ShoppingListModificationServiceTests
         public ShoppingListModificationService CreateSut()
         {
             return new ShoppingListModificationService(
-                ShoppingListRepositoryMock.Object,
-                ItemRepositoryMock.Object,
-                StoreRepositoryMock.Object,
+                _ => ShoppingListRepositoryMock.Object,
+                _ => ItemRepositoryMock.Object,
+                _ => StoreRepositoryMock.Object,
                 ShoppingListSectionFactoryMock.Object,
                 default);
         }

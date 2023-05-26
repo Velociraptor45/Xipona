@@ -29,35 +29,33 @@ public class ItemSearchService : IItemSearchService
     private readonly IItemSearchReadModelConversionService _itemSearchReadModelConversionService;
     private readonly IValidator _validator;
     private readonly IItemAvailabilityReadModelConversionService _availabilityConverter;
-    private readonly CancellationToken _cancellationToken;
 
     public ItemSearchService(
-        IItemRepository itemRepository,
-        IShoppingListRepository shoppingListRepository,
-        IStoreRepository storeRepository,
-        IItemTypeReadRepository itemTypeReadRepository,
-        IItemCategoryRepository itemCategoryRepository,
-        IItemSearchReadModelConversionService itemSearchReadModelConversionService,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
+        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
+        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
+        Func<CancellationToken, IItemTypeReadRepository> itemTypeReadRepositoryDelegate,
+        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
+        Func<CancellationToken, IItemSearchReadModelConversionService> itemSearchReadModelConversionServiceDelegate,
         Func<CancellationToken, IValidator> validatorDelegate,
         Func<CancellationToken, IItemAvailabilityReadModelConversionService> availabilityConverterDelegate,
         CancellationToken cancellationToken)
     {
-        _itemRepository = itemRepository;
-        _shoppingListRepository = shoppingListRepository;
-        _storeRepository = storeRepository;
-        _itemTypeReadRepository = itemTypeReadRepository;
-        _itemCategoryRepository = itemCategoryRepository;
-        _itemSearchReadModelConversionService = itemSearchReadModelConversionService;
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
+        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
+        _storeRepository = storeRepositoryDelegate(cancellationToken);
+        _itemTypeReadRepository = itemTypeReadRepositoryDelegate(cancellationToken);
+        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
+        _itemSearchReadModelConversionService = itemSearchReadModelConversionServiceDelegate(cancellationToken);
         _validator = validatorDelegate(cancellationToken);
         _availabilityConverter = availabilityConverterDelegate(cancellationToken);
-        _cancellationToken = cancellationToken;
     }
 
     public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(IEnumerable<StoreId> storeIds,
         IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds)
     {
         var items = await _itemRepository.FindPermanentByAsync(storeIds, itemCategoriesIds,
-            manufacturerIds, _cancellationToken);
+            manufacturerIds);
 
         return items
             .Where(model => !model.IsDeleted)
@@ -69,7 +67,7 @@ public class ItemSearchService : IItemSearchService
         if (string.IsNullOrWhiteSpace(searchInput))
             return Enumerable.Empty<SearchItemResultReadModel>();
 
-        var items = await _itemRepository.FindActiveByAsync(searchInput, _cancellationToken);
+        var items = await _itemRepository.FindActiveByAsync(searchInput);
         return items.Select(i => new SearchItemResultReadModel(i.Id, i.Name));
     }
 
@@ -77,7 +75,7 @@ public class ItemSearchService : IItemSearchService
     {
         await _validator.ValidateAsync(itemCategoryId);
 
-        var items = (await _itemRepository.FindActiveByAsync(itemCategoryId, _cancellationToken))
+        var items = (await _itemRepository.FindActiveByAsync(itemCategoryId))
             .ToList();
         var itemsLookup = items.ToLookup(i => i.HasItemTypes);
 
@@ -121,8 +119,7 @@ public class ItemSearchService : IItemSearchService
 
         var listItemIds = await LoadItemIdsOnShoppingList(storeId);
 
-        var items = (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, listItemIds.ItemIds, _maxSearchResults,
-            _cancellationToken)).ToList();
+        var items = (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, listItemIds.ItemIds, _maxSearchResults)).ToList();
         var itemCategoryResultLimit = _maxSearchResults - GetResultCount(items, storeId);
         var itemsWithItemCategory = (await LoadItemsForCategory(nameTrimmed, storeId, itemCategoryResultLimit)).ToList();
         var searchResultItemGroups = items
@@ -133,7 +130,7 @@ public class ItemSearchService : IItemSearchService
         // items without types
         var searchResultItems = searchResultItemGroups[false];
         var itemReadModels = (await _itemSearchReadModelConversionService.ConvertAsync(
-            searchResultItems, store, _cancellationToken))
+            searchResultItems, store))
             .ToList();
 
         if (itemReadModels.Count >= _maxSearchResults)
@@ -146,7 +143,7 @@ public class ItemSearchService : IItemSearchService
             .ToList();
 
         var itemsWithTypesReadModels = (await _itemSearchReadModelConversionService.ConvertAsync(
-            itemsWithTypeNotOnShoppingList, store, _cancellationToken)).ToList();
+            itemsWithTypeNotOnShoppingList, store)).ToList();
 
         if (itemReadModels.Count + itemsWithTypesReadModels.Count >= _maxSearchResults)
             return itemReadModels.Union(itemsWithTypesReadModels).Take(_maxSearchResults);
@@ -202,7 +199,7 @@ public class ItemSearchService : IItemSearchService
     {
         var itemTypeIdMappings =
             (await _itemTypeReadRepository.FindActiveByAsync(name, storeId, itemsWithTypesAlreadyFound,
-                itemTypeIdsOnShoppingList, limit, _cancellationToken))
+                itemTypeIdsOnShoppingList, limit))
             .ToList();
         if (!itemTypeIdMappings.Any())
             return Enumerable.Empty<ItemWithMatchingItemTypeIds>();
@@ -212,7 +209,7 @@ public class ItemSearchService : IItemSearchService
             .ToList();
 
         var itemIds = itemTypeIdGroups.Select(group => group.Key);
-        var itemsDict = (await _itemRepository.FindActiveByAsync(itemIds, _cancellationToken))
+        var itemsDict = (await _itemRepository.FindActiveByAsync(itemIds))
             .ToDictionary(i => i.Id);
 
         var result = new List<ItemWithMatchingItemTypeIds>();
@@ -232,12 +229,12 @@ public class ItemSearchService : IItemSearchService
         if (limit <= 0)
             return Enumerable.Empty<IItem>();
 
-        var categoryIds = (await _itemCategoryRepository.FindByAsync(name, false, limit, _cancellationToken))
+        var categoryIds = (await _itemCategoryRepository.FindByAsync(name, false, limit))
             .Select(c => c.Id)
             .ToList();
 
         return categoryIds.Any()
-            ? (await _itemRepository.FindActiveByAsync(categoryIds, storeId, _cancellationToken)).ToList()
+            ? (await _itemRepository.FindActiveByAsync(categoryIds, storeId)).ToList()
             : new List<IItem>();
     }
 
@@ -258,7 +255,7 @@ public class ItemSearchService : IItemSearchService
     private async Task<IShoppingList> LoadShoppingListAsync(StoreId storeId)
     {
         IShoppingList? shoppingList = await _shoppingListRepository
-            .FindActiveByAsync(storeId, _cancellationToken);
+            .FindActiveByAsync(storeId);
         if (shoppingList is null)
             throw new DomainException(new ShoppingListNotFoundReason(storeId));
 
@@ -267,7 +264,7 @@ public class ItemSearchService : IItemSearchService
 
     private async Task<IStore> LoadStoreAsync(StoreId storeId)
     {
-        var store = await _storeRepository.FindActiveByAsync(storeId, _cancellationToken);
+        var store = await _storeRepository.FindActiveByAsync(storeId);
         if (store == null)
             throw new DomainException(new StoreNotFoundReason(storeId));
 

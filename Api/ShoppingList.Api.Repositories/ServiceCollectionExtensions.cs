@@ -3,16 +3,22 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MySqlConnector;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Repositories.Common.Transactions;
 using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Adapters;
@@ -68,12 +74,58 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<RecipeContext>(SetDbConnection);
         services.AddDbContext<RecipeTagContext>(SetDbConnection);
 
-        services.AddTransient<IShoppingListRepository, ShoppingListRepository>();
-        services.AddTransient<IItemRepository, ItemRepository>();
-        services.AddTransient<IItemTypeReadRepository, ItemTypeReadRepository>();
-        services.AddTransient<IItemCategoryRepository, ItemCategoryRepository>();
-        services.AddTransient<IManufacturerRepository, ManufacturerRepository>();
-        services.AddTransient<IStoreRepository, StoreRepository>();
+        services.AddTransient<Func<CancellationToken, IShoppingListRepository>>(provider =>
+        {
+            return ct => new ShoppingListRepository(
+                provider.GetRequiredService<ShoppingListContext>(),
+                provider.GetRequiredService<IToDomainConverter<ShoppingLists.Entities.ShoppingList, IShoppingList>>(),
+                provider.GetRequiredService<IToEntityConverter<IShoppingList, ShoppingLists.Entities.ShoppingList>>(),
+                provider.GetRequiredService<ILogger<ShoppingListRepository>>(),
+                ct);
+        });
+        services.AddTransient<Func<CancellationToken, IItemRepository>>(provider =>
+        {
+            return ct => new ItemRepository(
+                provider.GetRequiredService<ItemContext>(),
+                provider.GetRequiredService<IToDomainConverter<Items.Entities.Item, IItem>>(),
+                provider.GetRequiredService<IToEntityConverter<IItem, Items.Entities.Item>>(),
+                provider.GetRequiredService<Func<CancellationToken, IDomainEventDispatcher>>(),
+                provider.GetRequiredService<ILogger<ItemRepository>>(),
+                ct);
+        });
+        services.AddTransient<Func<CancellationToken, IItemTypeReadRepository>>(provider =>
+        {
+            return ct => new ItemTypeReadRepository(provider.GetRequiredService<ItemContext>(), ct);
+        });
+
+        services.AddTransient<Func<CancellationToken, IItemCategoryRepository>>(provider =>
+        {
+            var context = provider.GetRequiredService<ItemCategoryContext>();
+            var toDomainConverter = provider
+                .GetRequiredService<IToDomainConverter<ItemCategories.Entities.ItemCategory, IItemCategory>>();
+            var toEntityConverter = provider
+                .GetRequiredService<IToEntityConverter<IItemCategory, ItemCategories.Entities.ItemCategory>>();
+            var logger = provider.GetRequiredService<ILogger<ItemCategoryRepository>>();
+            return ct => new ItemCategoryRepository(context, toDomainConverter, toEntityConverter, logger, ct);
+        });
+        services.AddTransient<Func<CancellationToken, IManufacturerRepository>>(provider =>
+        {
+            return ct => new ManufacturerRepository(
+                provider.GetRequiredService<ManufacturerContext>(),
+                provider.GetRequiredService<IToDomainConverter<Manufacturers.Entities.Manufacturer, IManufacturer>>(),
+                provider.GetRequiredService<IToEntityConverter<IManufacturer, Manufacturers.Entities.Manufacturer>>(),
+                provider.GetRequiredService<ILogger<ManufacturerRepository>>(),
+                ct);
+        });
+        services.AddTransient<Func<CancellationToken, IStoreRepository>>(provider =>
+        {
+            return ct => new StoreRepository(
+                provider.GetRequiredService<StoreContext>(),
+                provider.GetRequiredService<IToDomainConverter<Stores.Entities.Store, IStore>>(),
+                provider.GetRequiredService<IToEntityConverter<IStore, Stores.Entities.Store>>(),
+                provider.GetRequiredService<ILogger<StoreRepository>>(),
+                ct);
+        });
         services.AddTransient<Func<CancellationToken, IRecipeRepository>>(provider =>
         {
             var context = provider.GetRequiredService<RecipeContext>();

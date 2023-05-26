@@ -29,7 +29,7 @@ public class ManufacturerValidationServiceTests
         TestPropertyNotSetException.ThrowIfNull(_fixture.Manufacturer);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(_fixture.Manufacturer.Id, default);
+        Func<Task> function = async () => await service.ValidateAsync(_fixture.Manufacturer.Id);
 
         // Assert
         using (new AssertionScope())
@@ -50,7 +50,7 @@ public class ManufacturerValidationServiceTests
         TestPropertyNotSetException.ThrowIfNull(_fixture.Manufacturer);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(_fixture.Manufacturer.Id, default);
+        Func<Task> function = async () => await service.ValidateAsync(_fixture.Manufacturer.Id);
 
         // Assert
         using (new AssertionScope())
@@ -72,7 +72,7 @@ public class ManufacturerValidationServiceTests
 
         public ManufacturerValidationService CreateSut()
         {
-            return new ManufacturerValidationService(ManufacturerRepositoryMock.Object);
+            return new ManufacturerValidationService(_ => ManufacturerRepositoryMock.Object, default);
         }
 
         public void SetupManufacturer()

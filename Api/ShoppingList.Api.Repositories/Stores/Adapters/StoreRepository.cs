@@ -7,59 +7,53 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
+using Store = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Store;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Stores.Adapters;
 
 public class StoreRepository : IStoreRepository
 {
     private readonly StoreContext _dbContext;
-    private readonly IToDomainConverter<Entities.Store, IStore> _toDomainConverter;
-    private readonly IToEntityConverter<IStore, Entities.Store> _toEntityConverter;
+    private readonly IToDomainConverter<Store, IStore> _toDomainConverter;
+    private readonly IToEntityConverter<IStore, Store> _toEntityConverter;
     private readonly ILogger<StoreRepository> _logger;
+    private readonly CancellationToken _cancellationToken;
 
     public StoreRepository(StoreContext dbContext,
-        IToDomainConverter<Entities.Store, IStore> toDomainConverter,
-        IToEntityConverter<IStore, Entities.Store> toEntityConverter,
-        ILogger<StoreRepository> logger)
+        IToDomainConverter<Store, IStore> toDomainConverter,
+        IToEntityConverter<IStore, Store> toEntityConverter,
+        ILogger<StoreRepository> logger,
+        CancellationToken cancellationToken)
     {
         _dbContext = dbContext;
         _toDomainConverter = toDomainConverter;
         _toEntityConverter = toEntityConverter;
         _logger = logger;
+        _cancellationToken = cancellationToken;
     }
 
-    public async Task<IStore?> FindByAsync(StoreId id, CancellationToken cancellationToken)
+    public async Task<IStore?> FindByAsync(StoreId id)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var entity = await GetStoreQuery()
-            .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .FirstOrDefaultAsync(store => store.Id == id, _cancellationToken);
 
         return entity == null ? null : _toDomainConverter.ToDomain(entity);
     }
 
-    public async Task<IEnumerable<IStore>> GetActiveAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<IStore>> GetActiveAsync()
     {
         var storeEntities = await GetStoreQuery()
             .Where(store => !store.Deleted)
-            .ToListAsync(cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .ToListAsync(_cancellationToken);
 
         return _toDomainConverter.ToDomain(storeEntities);
     }
 
-    public async Task<IStore?> FindActiveByAsync(SectionId sectionId, CancellationToken cancellationToken)
+    public async Task<IStore?> FindActiveByAsync(SectionId sectionId)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var entity = await GetStoreQuery()
             .Where(store => !store.Deleted)
-            .FirstOrDefaultAsync(store => store.Sections.Any(s => s.Id == sectionId), cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .FirstOrDefaultAsync(store => store.Sections.Any(s => s.Id == sectionId), _cancellationToken);
 
         if (entity == null)
             return null;
@@ -67,15 +61,11 @@ public class StoreRepository : IStoreRepository
         return _toDomainConverter.ToDomain(entity);
     }
 
-    public async Task<IStore?> FindActiveByAsync(StoreId id, CancellationToken cancellationToken)
+    public async Task<IStore?> FindActiveByAsync(StoreId id)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var entity = await GetStoreQuery()
             .Where(store => !store.Deleted)
-            .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .FirstOrDefaultAsync(store => store.Id == id, _cancellationToken);
 
         if (entity == null)
             return null;
@@ -83,32 +73,25 @@ public class StoreRepository : IStoreRepository
         return _toDomainConverter.ToDomain(entity);
     }
 
-    public async Task<IEnumerable<IStore>> FindActiveByAsync(IEnumerable<StoreId> ids,
-        CancellationToken cancellationToken)
+    public async Task<IEnumerable<IStore>> FindActiveByAsync(IEnumerable<StoreId> ids)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var idsList = ids.Select(id => id.Value).ToList();
 
         var query = GetStoreQuery()
             .Where(store => !store.Deleted && idsList.Contains(store.Id));
 
-        var entities = await query.ToListAsync(cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+        var entities = await query.ToListAsync(_cancellationToken);
 
         return _toDomainConverter.ToDomain(entities);
     }
 
-    public async Task<IStore> StoreAsync(IStore store, CancellationToken cancellationToken)
+    public async Task<IStore> StoreAsync(IStore store)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var existingEntity = await FindTrackedEntityById(store.Id, cancellationToken);
+        var existingEntity = await FindTrackedEntityById(store.Id);
 
         if (existingEntity is null)
         {
-            return await StoreAsNew(store, cancellationToken);
+            return await StoreAsNew(store);
         }
 
         var updatedEntity = _toEntityConverter.ToEntity(store);
@@ -123,7 +106,7 @@ public class StoreRepository : IStoreRepository
 
         try
         {
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(_cancellationToken);
         }
         catch (DbUpdateConcurrencyException ex)
         {
@@ -136,7 +119,7 @@ public class StoreRepository : IStoreRepository
 
     #region private methods
 
-    private void AddOrUpdateSections(Entities.Store existingStore, Entities.Store updatedStore)
+    private void AddOrUpdateSections(Store existingStore, Store updatedStore)
     {
         foreach (var updatedSection in updatedStore.Sections)
         {
@@ -154,7 +137,7 @@ public class StoreRepository : IStoreRepository
         }
     }
 
-    private void DeleteSections(Entities.Store existingStore, Entities.Store updatedStore)
+    private void DeleteSections(Store existingStore, Store updatedStore)
     {
         var deletedSections = existingStore.Sections
             .Where(t => updatedStore.Sections.All(s => s.Id != t.Id))
@@ -166,7 +149,7 @@ public class StoreRepository : IStoreRepository
         }
     }
 
-    private async Task<IStore> StoreAsNew(IStore store, CancellationToken cancellationToken)
+    private async Task<IStore> StoreAsNew(IStore store)
     {
         var entity = _toEntityConverter.ToEntity(store);
         _dbContext.Entry(entity).State = EntityState.Added;
@@ -176,19 +159,19 @@ public class StoreRepository : IStoreRepository
             _dbContext.Entry(section).State = EntityState.Added;
         }
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.SaveChangesAsync(_cancellationToken);
 
         return _toDomainConverter.ToDomain(entity);
     }
 
-    private async Task<Entities.Store?> FindTrackedEntityById(Guid id, CancellationToken cancellationToken)
+    private async Task<Store?> FindTrackedEntityById(Guid id)
     {
         return await _dbContext.Stores
             .Include(s => s.Sections)
-            .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(store => store.Id == id, _cancellationToken);
     }
 
-    private IQueryable<Entities.Store> GetStoreQuery()
+    private IQueryable<Store> GetStoreQuery()
     {
         return _dbContext.Stores.AsNoTracking()
             .Include(s => s.Sections);

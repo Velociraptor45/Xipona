@@ -12,22 +12,20 @@ public class ManufacturerValidationServiceMock : Mock<IManufacturerValidationSer
     public void VerifyValidateAsyncOnce(ManufacturerId manufacturerId)
     {
         Verify(i => i.ValidateAsync(
-                manufacturerId,
-                It.IsAny<CancellationToken>()),
+                manufacturerId),
             Times.Once);
     }
 
     public void VerifyValidateAsyncNever()
     {
         Verify(i => i.ValidateAsync(
-                It.IsAny<ManufacturerId>(),
-                It.IsAny<CancellationToken>()),
+                It.IsAny<ManufacturerId>()),
             Times.Never);
     }
 
     public void SetupValidateAsync(ManufacturerId manufacturerId)
     {
-        Setup(m => m.ValidateAsync(manufacturerId, It.IsAny<CancellationToken>()))
+        Setup(m => m.ValidateAsync(manufacturerId))
             .Returns(Task.CompletedTask);
     }
 }

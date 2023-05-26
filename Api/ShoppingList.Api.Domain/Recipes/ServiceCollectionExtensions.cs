@@ -45,11 +45,11 @@ internal static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IRecipeQueryService>>(provider =>
         {
             var repository = provider.GetRequiredService<Func<CancellationToken, IRecipeRepository>>();
-            var itemRepository = provider.GetRequiredService<IItemRepository>();
-            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
+            var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
             var translationService = provider.GetRequiredService<IQuantityTranslationService>();
             var logger = provider.GetRequiredService<ILogger<RecipeQueryService>>();
-            return cancellationToken => new RecipeQueryService(repository, itemRepository, storeRepository,
+            return cancellationToken => new RecipeQueryService(repository, itemRepositoryDelegate, storeRepositoryDelegate,
                 translationService, logger, cancellationToken);
         });
         services.AddTransient<Func<CancellationToken, IRecipeModificationService>>(provider =>
