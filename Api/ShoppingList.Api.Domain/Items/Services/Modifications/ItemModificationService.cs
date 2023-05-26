@@ -22,12 +22,12 @@ public class ItemModificationService : IItemModificationService
     public ItemModificationService(IItemRepository itemRepository,
         Func<CancellationToken, IValidator> validatorDelegate,
         IShoppingListRepository shoppingListRepository,
-        IStoreRepository storeRepository,
+        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
         _shoppingListRepository = shoppingListRepository;
-        _storeRepository = storeRepository;
+        _storeRepository = storeRepositoryDelegate(cancellationToken);
         _validator = validatorDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
     }
@@ -115,7 +115,7 @@ public class ItemModificationService : IItemModificationService
 
     public async Task TransferToSectionAsync(SectionId oldSectionId, SectionId newSectionId)
     {
-        var store = await _storeRepository.FindActiveByAsync(oldSectionId, _cancellationToken);
+        var store = await _storeRepository.FindActiveByAsync(oldSectionId);
         if (store is null)
             throw new DomainException(new StoreNotFoundReason(oldSectionId));
         if (!store.ContainsSection(newSectionId))

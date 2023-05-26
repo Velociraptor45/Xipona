@@ -28,14 +28,14 @@ public class RecipeQueryService : IRecipeQueryService
     public RecipeQueryService(
         Func<CancellationToken, IRecipeRepository> recipeRepositoryDelegate,
         IItemRepository itemRepository,
-        IStoreRepository storeRepository,
+        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         IQuantityTranslationService quantityTranslationService,
         ILogger<RecipeQueryService> logger,
         CancellationToken cancellationToken)
     {
         _recipeRepository = recipeRepositoryDelegate(cancellationToken);
         _itemRepository = itemRepository;
-        _storeRepository = storeRepository;
+        _storeRepository = storeRepositoryDelegate(cancellationToken);
         _quantityTranslationService = quantityTranslationService;
         _logger = logger;
         _cancellationToken = cancellationToken;
@@ -85,7 +85,7 @@ public class RecipeQueryService : IRecipeQueryService
             .Select(a => a.StoreId)
             .Distinct()
             .ToList();
-        var stores = (await _storeRepository.FindActiveByAsync(storeIds, _cancellationToken)).ToDictionary(s => s.Id);
+        var stores = (await _storeRepository.FindActiveByAsync(storeIds)).ToDictionary(s => s.Id);
 
         return recipe.Ingredients
             .Where(i => i.DefaultItemId is not null)

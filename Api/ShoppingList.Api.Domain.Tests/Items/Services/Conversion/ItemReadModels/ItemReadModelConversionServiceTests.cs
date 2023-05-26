@@ -243,7 +243,7 @@ public class ItemReadModelConversionServiceTests
             return new ItemReadModelConversionService(
                 _ => _itemCategoryRepositoryMock.Object,
                 _ => _manufacturerRepositoryMock.Object,
-                _storeRepositoryMock.Object,
+                _ => _storeRepositoryMock.Object,
                 default);
         }
 

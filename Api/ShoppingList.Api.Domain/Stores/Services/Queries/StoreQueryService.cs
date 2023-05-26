@@ -8,17 +8,17 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
 public class StoreQueryService : IStoreQueryService
 {
     private readonly IStoreRepository _storeRepository;
-    private readonly CancellationToken _cancellationToken;
 
-    public StoreQueryService(IStoreRepository storeRepository, CancellationToken cancellationToken)
+    public StoreQueryService(
+        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
+        CancellationToken cancellationToken)
     {
-        _storeRepository = storeRepository;
-        _cancellationToken = cancellationToken;
+        _storeRepository = storeRepositoryDelegate(cancellationToken);
     }
 
     public async Task<IStore> GetActiveAsync(StoreId storeId)
     {
-        var store = await _storeRepository.FindActiveByAsync(storeId, _cancellationToken);
+        var store = await _storeRepository.FindActiveByAsync(storeId);
 
         if (store is null)
             throw new DomainException(new StoreNotFoundReason(storeId));
@@ -28,6 +28,6 @@ public class StoreQueryService : IStoreQueryService
 
     public async Task<IEnumerable<IStore>> GetActiveAsync()
     {
-        return await _storeRepository.GetActiveAsync(_cancellationToken);
+        return await _storeRepository.GetActiveAsync();
     }
 }

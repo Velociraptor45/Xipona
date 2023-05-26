@@ -919,7 +919,7 @@ public class ItemModificationServiceTests
                 ItemRepositoryMock.Object,
                 _ => ValidatorMock.Object,
                 ShoppingListRepositoryMock.Object,
-                StoreRepositoryMock.Object,
+                _ => StoreRepositoryMock.Object,
                 default);
         }
     }

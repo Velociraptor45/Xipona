@@ -1509,7 +1509,7 @@ public class ItemControllerIntegrationTests
 
         private IStoreRepository CreateStoreRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<IStoreRepository>();
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IStoreRepository>>()(default);
         }
 
         protected async Task StoreAsync(IItem? item = null, IManufacturer? manufacturer = null,
@@ -1532,7 +1532,7 @@ public class ItemControllerIntegrationTests
             {
                 foreach (var store in stores)
                 {
-                    await storeRepository.StoreAsync(store, default);
+                    await storeRepository.StoreAsync(store);
                 }
             }
 

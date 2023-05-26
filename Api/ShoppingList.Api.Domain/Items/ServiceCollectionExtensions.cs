@@ -29,7 +29,12 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IItemFactory, ItemFactory>();
         services.AddTransient<IItemAvailabilityFactory, ItemAvailabilityFactory>();
 
-        services.AddTransient<IAvailabilityValidationService, AvailabilityValidationService>();
+        services.AddTransient<Func<CancellationToken, IAvailabilityValidationService>>(provider =>
+        {
+            return ct => new AvailabilityValidationService(
+                provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>(),
+                ct);
+        });
 
         services.AddTransient<Func<CancellationToken, IItemValidationService>>(provider =>
         {
@@ -49,15 +54,15 @@ public static class ServiceCollectionExtensions
             return ct => new ItemReadModelConversionService(
                 provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>(),
                 provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>(),
-                provider.GetRequiredService<IStoreRepository>(),
+                provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>(),
                 ct);
         });
 
         services.AddTransient<Func<CancellationToken, IItemAvailabilityReadModelConversionService>>(provider =>
         {
-            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
             return cancellationToken =>
-                new ItemAvailabilityReadModelConversionService(storeRepository, cancellationToken);
+                new ItemAvailabilityReadModelConversionService(storeRepositoryDelegate, cancellationToken);
         });
 
         services.AddTransient<IItemTypeFactory, ItemTypeFactory>();
@@ -66,10 +71,10 @@ public static class ServiceCollectionExtensions
         {
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
-            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
             var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
             return cancellationToken => new ItemModificationService(itemRepository, validatorDelegate,
-                shoppingListRepository, storeRepository, cancellationToken);
+                shoppingListRepository, storeRepositoryDelegate, cancellationToken);
         });
         services.AddTransient<Func<CancellationToken, IItemUpdateService>>(provider =>
         {
@@ -85,7 +90,7 @@ public static class ServiceCollectionExtensions
         {
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
-            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
             var itemTypeReadRepository = provider.GetRequiredService<IItemTypeReadRepository>();
             var itemCategoryRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>();
             var conversionServiceDelegate = provider
@@ -95,7 +100,7 @@ public static class ServiceCollectionExtensions
                 Func<CancellationToken, IItemAvailabilityReadModelConversionService>>();
 
             return cancellationToken => new ItemSearchService(itemRepository, shoppingListRepository,
-                storeRepository, itemTypeReadRepository, itemCategoryRepositoryDelegate, conversionServiceDelegate,
+                storeRepositoryDelegate, itemTypeReadRepository, itemCategoryRepositoryDelegate, conversionServiceDelegate,
                 validatorDelegate, availabilityConverterDelegate, cancellationToken);
         });
 

@@ -26,12 +26,14 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IManufacturerRepository _manufacturerRepository;
 
-    public ShoppingListReadModelConversionService(IStoreRepository storeRepository, IItemRepository itemRepository,
+    public ShoppingListReadModelConversionService(
+        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
+        IItemRepository itemRepository,
         Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
         Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
         CancellationToken cancellationToken)
     {
-        _storeRepository = storeRepository;
+        _storeRepository = storeRepositoryDelegate(cancellationToken);
         _itemRepository = itemRepository;
         _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
         _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
@@ -54,7 +56,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
         var manufacturersDict = (await _manufacturerRepository.FindByAsync(manufacturerIds))
             .ToDictionary(man => man.Id);
 
-        IStore? store = await _storeRepository.FindByAsync(shoppingList.StoreId, _cancellationToken);
+        IStore? store = await _storeRepository.FindByAsync(shoppingList.StoreId);
         if (store is null)
             throw new DomainException(new StoreNotFoundReason(shoppingList.StoreId));
 

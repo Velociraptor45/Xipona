@@ -15,6 +15,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Repositories.Common.Transactions;
 using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Adapters;
@@ -92,7 +93,15 @@ public static class ServiceCollectionExtensions
                 provider.GetRequiredService<ILogger<ManufacturerRepository>>(),
                 ct);
         });
-        services.AddTransient<IStoreRepository, StoreRepository>();
+        services.AddTransient<Func<CancellationToken, IStoreRepository>>(provider =>
+        {
+            return ct => new StoreRepository(
+                provider.GetRequiredService<StoreContext>(),
+                provider.GetRequiredService<IToDomainConverter<Stores.Entities.Store, IStore>>(),
+                provider.GetRequiredService<IToEntityConverter<IStore, Stores.Entities.Store>>(),
+                provider.GetRequiredService<ILogger<StoreRepository>>(),
+                ct);
+        });
         services.AddTransient<Func<CancellationToken, IRecipeRepository>>(provider =>
         {
             var context = provider.GetRequiredService<RecipeContext>();

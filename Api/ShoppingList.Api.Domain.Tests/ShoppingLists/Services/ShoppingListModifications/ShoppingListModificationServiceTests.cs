@@ -1324,7 +1324,7 @@ public class ShoppingListModificationServiceTests
             return new ShoppingListModificationService(
                 ShoppingListRepositoryMock.Object,
                 ItemRepositoryMock.Object,
-                StoreRepositoryMock.Object,
+                _ => StoreRepositoryMock.Object,
                 ShoppingListSectionFactoryMock.Object,
                 default);
         }

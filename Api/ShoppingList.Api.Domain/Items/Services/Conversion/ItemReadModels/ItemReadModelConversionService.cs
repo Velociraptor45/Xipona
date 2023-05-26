@@ -20,17 +20,16 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IManufacturerRepository _manufacturerRepository;
     private readonly IStoreRepository _storeRepository;
-    private readonly CancellationToken _cancellationToken;
 
     public ItemReadModelConversionService(
         Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate, IStoreRepository storeRepository,
+        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
+        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         CancellationToken cancellationToken)
     {
         _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
         _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
-        _storeRepository = storeRepository;
-        _cancellationToken = cancellationToken;
+        _storeRepository = storeRepositoryDelegate(cancellationToken);
     }
 
     public async Task<ItemReadModel> ConvertAsync(IItem item)
@@ -54,7 +53,7 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
         var storeIds = item.Availabilities.Select(av => av.StoreId).ToList();
         storeIds.AddRange(item.ItemTypes.SelectMany(t => t.Availabilities.Select(av => av.StoreId)));
         storeIds = storeIds.Distinct().ToList();
-        var storeDict = (await _storeRepository.FindActiveByAsync(storeIds, _cancellationToken))
+        var storeDict = (await _storeRepository.FindActiveByAsync(storeIds))
             .ToDictionary(store => store.Id);
 
         return ToReadModel(item, itemCategory, manufacturer, storeDict);

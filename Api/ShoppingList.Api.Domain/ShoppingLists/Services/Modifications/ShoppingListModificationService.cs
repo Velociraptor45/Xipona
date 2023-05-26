@@ -24,13 +24,13 @@ public class ShoppingListModificationService : IShoppingListModificationService
     public ShoppingListModificationService(
         IShoppingListRepository shoppingListRepository,
         IItemRepository itemRepository,
-        IStoreRepository storeRepository,
+        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         IShoppingListSectionFactory shoppingListSectionFactory,
         CancellationToken cancellationToken)
     {
         _shoppingListRepository = shoppingListRepository;
         _itemRepository = itemRepository;
-        _storeRepository = storeRepository;
+        _storeRepository = storeRepositoryDelegate(cancellationToken);
         _shoppingListSectionFactory = shoppingListSectionFactory;
         _cancellationToken = cancellationToken;
     }
@@ -208,7 +208,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
     public async Task RemoveSectionAsync(SectionId sectionId)
     {
-        var store = await _storeRepository.FindActiveByAsync(sectionId, _cancellationToken);
+        var store = await _storeRepository.FindActiveByAsync(sectionId);
         if (store is null)
             throw new DomainException(new StoreNotFoundReason(sectionId));
 

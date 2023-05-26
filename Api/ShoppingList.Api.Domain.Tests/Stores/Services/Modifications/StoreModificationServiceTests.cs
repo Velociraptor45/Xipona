@@ -156,7 +156,7 @@ public class StoreModificationServiceTests
         public StoreModificationService CreateSut()
         {
             return new StoreModificationService(
-                _storeRepositoryMock.Object,
+                _ => _storeRepositoryMock.Object,
                 _ => ItemModificationServiceMock.Object,
                 _ => ShoppingListModificationServiceMock.Object,
                 default);

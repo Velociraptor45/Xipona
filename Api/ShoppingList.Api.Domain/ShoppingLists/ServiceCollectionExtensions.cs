@@ -25,18 +25,18 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IAddItemToShoppingListService>>(provider =>
         {
             var shoppingListSectionFactory = provider.GetRequiredService<IShoppingListSectionFactory>();
-            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             var itemFactory = provider.GetRequiredService<IShoppingListItemFactory>();
             var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
-            return token => new AddItemToShoppingListService(shoppingListSectionFactory, storeRepository,
+            return token => new AddItemToShoppingListService(shoppingListSectionFactory, storeRepositoryDelegate,
                 itemRepository, itemFactory, shoppingListRepository, token);
         });
 
         services.AddTransient<Func<CancellationToken, IShoppingListReadModelConversionService>>(provider =>
         {
             return ct => new ShoppingListReadModelConversionService(
-                provider.GetRequiredService<IStoreRepository>(),
+                provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>(),
                 provider.GetRequiredService<IItemRepository>(),
                 provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>(),
                 provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>(),
@@ -48,10 +48,10 @@ public static class ServiceCollectionExtensions
         {
             var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
             var itemRepository = provider.GetRequiredService<IItemRepository>();
-            var storeRepository = provider.GetRequiredService<IStoreRepository>();
+            var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
             var shoppingListSectionFactory = provider.GetRequiredService<IShoppingListSectionFactory>();
             return cancellationToken =>
-                new ShoppingListModificationService(shoppingListRepository, itemRepository, storeRepository,
+                new ShoppingListModificationService(shoppingListRepository, itemRepository, storeRepositoryDelegate,
                     shoppingListSectionFactory, cancellationToken);
         });
 

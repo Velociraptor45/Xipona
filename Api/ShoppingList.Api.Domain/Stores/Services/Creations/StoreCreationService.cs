@@ -15,13 +15,13 @@ public class StoreCreationService : IStoreCreationService
     private readonly CancellationToken _cancellationToken;
 
     public StoreCreationService(
-        IStoreRepository storeRepository,
+        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         IStoreFactory storeFactory,
         IShoppingListFactory shoppingListFactory,
         IShoppingListRepository shoppingListRepository,
         CancellationToken cancellationToken)
     {
-        _storeRepository = storeRepository;
+        _storeRepository = storeRepositoryDelegate(cancellationToken);
         _storeFactory = storeFactory;
         _shoppingListFactory = shoppingListFactory;
         _shoppingListRepository = shoppingListRepository;
@@ -34,7 +34,7 @@ public class StoreCreationService : IStoreCreationService
 
         IStore store = _storeFactory.CreateNew(creation);
 
-        store = await _storeRepository.StoreAsync(store, _cancellationToken);
+        store = await _storeRepository.StoreAsync(store);
 
         _cancellationToken.ThrowIfCancellationRequested();
 

@@ -27,7 +27,7 @@ public class ShoppingListReadModelConversionServiceTests
         var manufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
 
         var service = new ShoppingListReadModelConversionService(
-            storeRepositoryMock.Object,
+            _ => storeRepositoryMock.Object,
             itemRepositoryMock.Object,
             _ => itemCategoryRepositoryMock.Object,
             _ => manufacturerRepositoryMock.Object,

@@ -11,12 +11,13 @@ public class AvailabilityValidationService : IAvailabilityValidationService
 {
     private readonly IStoreRepository _storeRepository;
 
-    public AvailabilityValidationService(IStoreRepository storeRepository)
+    public AvailabilityValidationService(Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
+        CancellationToken cancellationToken)
     {
-        _storeRepository = storeRepository;
+        _storeRepository = storeRepositoryDelegate(cancellationToken);
     }
 
-    public async Task ValidateAsync(IEnumerable<IItemAvailability> availabilities, CancellationToken cancellationToken)
+    public async Task ValidateAsync(IEnumerable<IItemAvailability> availabilities)
     {
         var availabilitiesList = availabilities.ToList();
 
@@ -24,7 +25,7 @@ public class AvailabilityValidationService : IAvailabilityValidationService
         if (!storeIds.SequenceEqual(storeIds.Distinct()))
             throw new DomainException(new MultipleAvailabilitiesForStoreReason());
 
-        var storesDict = (await _storeRepository.FindActiveByAsync(storeIds, cancellationToken))
+        var storesDict = (await _storeRepository.FindActiveByAsync(storeIds))
             .ToDictionary(s => s.Id);
 
         foreach (var availability in availabilitiesList)
