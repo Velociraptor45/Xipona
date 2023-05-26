@@ -1,4 +1,6 @@
-﻿namespace ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
+﻿using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
+
+namespace ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
 
 public static class ItemEntityMother
 {
@@ -42,5 +44,30 @@ public static class ItemEntityMother
             .WithoutPredecessor()
             .WithEmptyAvailableAt()
             .WithItemTypes(types);
+    }
+
+    public static ItemEntityBuilder InitialWithTypesForStore(Guid storeId, Guid sectionId)
+    {
+        var types = Enumerable.Range(0, 3)
+            .Select(_ => ItemTypeEntityMother.Initial().WithAvailableAt(CreateAvailabilities()).Create())
+            .ToList();
+
+        return new ItemEntityBuilder()
+            .WithDeleted(false)
+            .WithIsTemporary(false)
+            .WithoutCreatedFrom()
+            .WithoutPredecessorId()
+            .WithoutPredecessor()
+            .WithEmptyAvailableAt()
+            .WithItemTypes(types);
+
+        IList<ItemTypeAvailableAt> CreateAvailabilities()
+        {
+            return ItemTypeAvailableAtEntityMother
+                .InitialForStore(storeId)
+                .WithDefaultSectionId(sectionId)
+                .CreateMany(1)
+                .ToList();
+        }
     }
 }

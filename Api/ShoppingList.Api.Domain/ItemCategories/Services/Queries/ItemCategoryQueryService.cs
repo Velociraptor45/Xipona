@@ -24,7 +24,7 @@ public class ItemCategoryQueryService : IItemCategoryQueryService
             return Enumerable.Empty<ItemCategorySearchResultReadModel>();
 
         var itemCategoryModels =
-            await _itemCategoryRepository.FindByAsync(searchInput, includeDeleted, _cancellationToken);
+            await _itemCategoryRepository.FindByAsync(searchInput, includeDeleted, null, _cancellationToken);
 
         _cancellationToken.ThrowIfCancellationRequested();
 

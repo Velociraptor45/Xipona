@@ -19,6 +19,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Services.Searches;
 
 public class ItemSearchService : IItemSearchService
 {
+    private const int _maxSearchResults = 20;
+
     private readonly IItemRepository _itemRepository;
     private readonly IShoppingListRepository _shoppingListRepository;
     private readonly IStoreRepository _storeRepository;
@@ -117,50 +119,47 @@ public class ItemSearchService : IItemSearchService
         var store = await LoadStoreAsync(storeId);
         var nameTrimmed = name.Trim();
 
-        var categoryIds = (await _itemCategoryRepository.FindByAsync(nameTrimmed, false, _cancellationToken))
-            .Select(c => c.Id)
-            .ToList();
+        var listItemIds = await LoadItemIdsOnShoppingList(storeId);
 
-        var itemsWithItemCategory = categoryIds.Any()
-            ? await _itemRepository.FindActiveByAsync(categoryIds, storeId, _cancellationToken)
-            : Enumerable.Empty<Item>();
-
-        var searchResultItemGroups = (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, _cancellationToken))
+        var items = (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, listItemIds.ItemIds, _maxSearchResults,
+            _cancellationToken)).ToList();
+        var itemCategoryResultLimit = _maxSearchResults - GetResultCount(items, storeId);
+        var itemsWithItemCategory = (await LoadItemsForCategory(nameTrimmed, storeId, itemCategoryResultLimit)).ToList();
+        var searchResultItemGroups = items
             .Union(itemsWithItemCategory)
             .DistinctBy(item => item.Id)
             .ToLookup(i => i.HasItemTypes);
-        IShoppingList shoppingList = await LoadShoppingListAsync(storeId);
-
-        var itemIdsOnShoppingListGroups = shoppingList.Items
-            .Select(item => (item.Id, item.TypeId))
-            .ToLookup(tuple => tuple.TypeId == null);
 
         // items without types
-        var searchResultItemsWithoutTypes = searchResultItemGroups[false];
-        var itemsWithoutTypesOnShoppingList = itemIdsOnShoppingListGroups[true].Select(tuple => tuple.Id);
-        var itemsWithoutTypesNotOnShoppingList = searchResultItemsWithoutTypes
-            .Where(item => !itemsWithoutTypesOnShoppingList.Contains(item.Id));
-
-        var itemWithoutTypesReadModels = await _itemSearchReadModelConversionService.ConvertAsync(
-            itemsWithoutTypesNotOnShoppingList, store, _cancellationToken);
-
-        // items with types
-        var searchResultItemsWithTypesDict = searchResultItemGroups[true].ToDictionary(g => g.Id);
-        var itemIdsWithTypeIdOnShoppingListGroups = itemIdsOnShoppingListGroups[false]
-            .Select(t => (t.Id, TypeId: t.TypeId!.Value)).ToList();
-        var itemsWithTypeNotOnShoppingList = GetMatchingItemsWithTypeIds(storeId,
-                searchResultItemsWithTypesDict.Values, itemIdsWithTypeIdOnShoppingListGroups)
+        var searchResultItems = searchResultItemGroups[false];
+        var itemReadModels = (await _itemSearchReadModelConversionService.ConvertAsync(
+            searchResultItems, store, _cancellationToken))
             .ToList();
 
+        if (itemReadModels.Count >= _maxSearchResults)
+            return itemReadModels.Take(_maxSearchResults);
+
+        // items with types
+        var searchResultItemsWithTypes = searchResultItemGroups[true].ToList();
+        var itemsWithTypeNotOnShoppingList = GetMatchingItemsWithTypeIds(storeId,
+                searchResultItemsWithTypes, listItemIds.ItemTypeIds)
+            .ToList();
+
+        var itemsWithTypesReadModels = (await _itemSearchReadModelConversionService.ConvertAsync(
+            itemsWithTypeNotOnShoppingList, store, _cancellationToken)).ToList();
+
+        if (itemReadModels.Count + itemsWithTypesReadModels.Count >= _maxSearchResults)
+            return itemReadModels.Union(itemsWithTypesReadModels).Take(_maxSearchResults);
+
         // types
+        var typesResultLimit = _maxSearchResults - itemReadModels.Count - itemsWithTypesReadModels.Count;
         var itemsWithMatchingItemTypes = await GetItemsWithMatchingItemTypeIdsAsync(nameTrimmed, storeId,
-            searchResultItemsWithTypesDict, itemIdsWithTypeIdOnShoppingListGroups.Select(m => m.TypeId));
+            searchResultItemsWithTypes.Select(i => i.Id),
+            listItemIds.ItemTypeIds.Select(m => m.TypeId),
+            typesResultLimit);
         itemsWithTypeNotOnShoppingList.AddRange(itemsWithMatchingItemTypes);
 
-        var itemsWithTypesReadModels = await _itemSearchReadModelConversionService.ConvertAsync(
-            itemsWithTypeNotOnShoppingList, store, _cancellationToken);
-
-        return itemsWithTypesReadModels.Union(itemWithoutTypesReadModels);
+        return itemsWithTypesReadModels.Union(itemReadModels).Take(_maxSearchResults);
     }
 
     private static IEnumerable<ItemWithMatchingItemTypeIds> GetMatchingItemsWithTypeIds(StoreId storeId,
@@ -198,20 +197,18 @@ public class ItemSearchService : IItemSearchService
     }
 
     private async Task<IEnumerable<ItemWithMatchingItemTypeIds>> GetItemsWithMatchingItemTypeIdsAsync(
-        string name, StoreId storeId, Dictionary<ItemId, IItem> searchResultItemsWithTypesDict,
-        IEnumerable<ItemTypeId> itemTypeIdsOnShoppingList)
+        string name, StoreId storeId, IEnumerable<ItemId> itemsWithTypesAlreadyFound,
+        IEnumerable<ItemTypeId> itemTypeIdsOnShoppingList, int limit)
     {
-        var itemTypeIdsOnShoppingListDict = itemTypeIdsOnShoppingList.ToHashSet();
         var itemTypeIdMappings =
-            (await _itemTypeReadRepository.FindActiveByAsync(name, storeId, _cancellationToken)).ToList();
+            (await _itemTypeReadRepository.FindActiveByAsync(name, storeId, itemsWithTypesAlreadyFound,
+                itemTypeIdsOnShoppingList, limit, _cancellationToken))
+            .ToList();
         if (!itemTypeIdMappings.Any())
             return Enumerable.Empty<ItemWithMatchingItemTypeIds>();
 
         var itemTypeIdGroups = itemTypeIdMappings
-            .Where(mapping => !itemTypeIdsOnShoppingListDict.Contains(mapping.Item2))
             .GroupBy(mapping => mapping.Item1, mapping => mapping.Item2)
-            // de-duplication => sort out all items that were already considered
-            .Where(group => !searchResultItemsWithTypesDict.ContainsKey(group.Key))
             .ToList();
 
         var itemIds = itemTypeIdGroups.Select(group => group.Key);
@@ -228,6 +225,34 @@ public class ItemSearchService : IItemSearchService
         }
 
         return result;
+    }
+
+    private async Task<IEnumerable<IItem>> LoadItemsForCategory(string name, StoreId storeId, int limit)
+    {
+        if (limit <= 0)
+            return Enumerable.Empty<IItem>();
+
+        var categoryIds = (await _itemCategoryRepository.FindByAsync(name, false, limit, _cancellationToken))
+            .Select(c => c.Id)
+            .ToList();
+
+        return categoryIds.Any()
+            ? (await _itemRepository.FindActiveByAsync(categoryIds, storeId, _cancellationToken)).ToList()
+            : new List<IItem>();
+    }
+
+    private async Task<ShoppingListItemIds> LoadItemIdsOnShoppingList(StoreId storeId)
+    {
+        IShoppingList shoppingList = await LoadShoppingListAsync(storeId);
+        var itemIdsOnShoppingListGroups = shoppingList.Items
+            .Select(item => (item.Id, item.TypeId))
+            .ToLookup(tuple => tuple.TypeId == null);
+        var itemIdsOnShoppingList = itemIdsOnShoppingListGroups[true].Select(tuple => tuple.Id).ToList();
+        var itemIdsWithTypeIdOnShoppingList = itemIdsOnShoppingListGroups[false]
+            .Select(t => (t.Id, TypeId: t.TypeId!.Value))
+            .ToList();
+
+        return new ShoppingListItemIds(itemIdsOnShoppingList, itemIdsWithTypeIdOnShoppingList);
     }
 
     private async Task<IShoppingList> LoadShoppingListAsync(StoreId storeId)
@@ -248,4 +273,12 @@ public class ItemSearchService : IItemSearchService
 
         return store;
     }
+
+    private int GetResultCount(IList<IItem> items, StoreId storeId)
+    {
+        return items.Sum(i => i.HasItemTypes ? i.GetTypesFor(storeId).Count : 1);
+    }
+
+    private sealed record ShoppingListItemIds(IReadOnlyCollection<ItemId> ItemIds,
+        IReadOnlyCollection<(ItemId ItemId, ItemTypeId TypeId)> ItemTypeIds);
 }

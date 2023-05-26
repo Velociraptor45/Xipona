@@ -5,7 +5,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 public interface IItemCategoryRepository
 {
     Task<IEnumerable<IItemCategory>> FindByAsync(string searchInput, bool includeDeleted,
-        CancellationToken cancellationToken);
+        int? limit, CancellationToken cancellationToken);
 
     Task<IItemCategory?> FindByAsync(ItemCategoryId id, CancellationToken cancellationToken);
 

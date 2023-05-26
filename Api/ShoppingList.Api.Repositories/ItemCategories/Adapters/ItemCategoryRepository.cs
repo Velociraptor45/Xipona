@@ -29,13 +29,16 @@ public class ItemCategoryRepository : IItemCategoryRepository
     }
 
     public async Task<IEnumerable<IItemCategory>> FindByAsync(string searchInput, bool includeDeleted,
-        CancellationToken cancellationToken)
+        int? limit, CancellationToken cancellationToken)
     {
         var query = _dbContext.ItemCategories.AsNoTracking()
             .Where(category => category.Name.Contains(searchInput));
 
         if (!includeDeleted)
             query = query.Where(category => !category.Deleted);
+
+        if (limit.HasValue)
+            query = query.Take(limit.Value);
 
         cancellationToken.ThrowIfCancellationRequested();
 
