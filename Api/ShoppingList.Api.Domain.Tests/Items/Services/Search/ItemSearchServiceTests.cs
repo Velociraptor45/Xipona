@@ -422,7 +422,7 @@ public class ItemSearchServiceTests
         {
             return new ItemSearchService(
                 ItemRepositoryMock.Object,
-                ShoppingListRepositoryMock.Object,
+                _ => ShoppingListRepositoryMock.Object,
                 _ => StoreRepositoryMock.Object,
                 ItemTypeReadRepositoryMock.Object,
                 _ => ItemCategoryRepositoryMock.Object,

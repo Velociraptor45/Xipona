@@ -25,10 +25,10 @@ public static class ServiceCollectionExtensions
             var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
             var storeFactory = provider.GetRequiredService<IStoreFactory>();
             var shoppingListFactory = provider.GetRequiredService<IShoppingListFactory>();
-            var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
+            var shoppingListRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IShoppingListRepository>>();
             return cancellationToken =>
                 new StoreCreationService(storeRepositoryDelegate, storeFactory, shoppingListFactory,
-                    shoppingListRepository, cancellationToken);
+                    shoppingListRepositoryDelegate, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IStoreModificationService>>(provider =>

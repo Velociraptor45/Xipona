@@ -1104,7 +1104,7 @@ public class AddItemToShoppingListServiceTests
                 _ => StoreRepositoryMock.Object,
                 ItemRepositoryMock.Object,
                 ShoppingListItemFactoryMock.Object,
-                ShoppingListRepositoryMock.Object,
+                _ => ShoppingListRepositoryMock.Object,
                 default);
         }
 

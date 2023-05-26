@@ -44,9 +44,9 @@ public static class ServiceCollectionExtensions
             var itemCategoryRepositoryDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>();
             var itemRepository = provider.GetRequiredService<IItemRepository>();
-            var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
+            var shoppingListRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IShoppingListRepository>>();
             return cancellationToken => new ItemCategoryDeletionService(itemCategoryRepositoryDelegate, itemRepository,
-                shoppingListRepository, cancellationToken);
+                shoppingListRepositoryDelegate, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IItemCategoryModificationService>>(provider =>

@@ -22,13 +22,13 @@ public class ShoppingListModificationService : IShoppingListModificationService
     private readonly CancellationToken _cancellationToken;
 
     public ShoppingListModificationService(
-        IShoppingListRepository shoppingListRepository,
+        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
         IItemRepository itemRepository,
         Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         IShoppingListSectionFactory shoppingListSectionFactory,
         CancellationToken cancellationToken)
     {
-        _shoppingListRepository = shoppingListRepository;
+        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
         _itemRepository = itemRepository;
         _storeRepository = storeRepositoryDelegate(cancellationToken);
         _shoppingListSectionFactory = shoppingListSectionFactory;
@@ -38,7 +38,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
     public async Task ChangeItemQuantityAsync(ShoppingListId shoppingListId,
         OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId, QuantityInBasket quantity)
     {
-        var list = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
+        var list = await _shoppingListRepository.FindByAsync(shoppingListId);
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
 
@@ -65,12 +65,12 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+        await _shoppingListRepository.StoreAsync(list);
     }
 
     public async Task RemoveItemAndItsTypesFromCurrentListAsync(ItemId itemId)
     {
-        var listsWithItem = (await _shoppingListRepository.FindActiveByAsync(itemId, _cancellationToken)).ToList();
+        var listsWithItem = (await _shoppingListRepository.FindActiveByAsync(itemId)).ToList();
 
         foreach (var list in listsWithItem)
         {
@@ -78,14 +78,14 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
             list.RemoveItemAndItsTypes(itemId);
 
-            await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+            await _shoppingListRepository.StoreAsync(list);
         }
     }
 
     public async Task RemoveItemAsync(ShoppingListId shoppingListId, OfflineTolerantItemId offlineTolerantItemId,
         ItemTypeId? itemTypeId)
     {
-        var list = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
+        var list = await _shoppingListRepository.FindByAsync(shoppingListId);
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
 
@@ -123,13 +123,13 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+        await _shoppingListRepository.StoreAsync(list);
     }
 
     public async Task RemoveItemFromBasketAsync(ShoppingListId shoppingListId,
         OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId)
     {
-        var list = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
+        var list = await _shoppingListRepository.FindByAsync(shoppingListId);
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
 
@@ -154,13 +154,13 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
         list.RemoveFromBasket(itemId, itemTypeId);
 
-        await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+        await _shoppingListRepository.StoreAsync(list);
     }
 
     public async Task PutItemInBasketAsync(ShoppingListId shoppingListId,
         OfflineTolerantItemId offlineTolerantItemId, ItemTypeId? itemTypeId)
     {
-        var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
+        var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId);
         if (shoppingList == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
 
@@ -187,12 +187,12 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        await _shoppingListRepository.StoreAsync(shoppingList, _cancellationToken);
+        await _shoppingListRepository.StoreAsync(shoppingList);
     }
 
     public async Task FinishAsync(ShoppingListId shoppingListId, DateTimeOffset completionDate)
     {
-        var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
+        var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId);
         if (shoppingList == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
 
@@ -202,8 +202,8 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        await _shoppingListRepository.StoreAsync(shoppingList, _cancellationToken);
-        await _shoppingListRepository.StoreAsync(nextShoppingList, _cancellationToken);
+        await _shoppingListRepository.StoreAsync(shoppingList);
+        await _shoppingListRepository.StoreAsync(nextShoppingList);
     }
 
     public async Task RemoveSectionAsync(SectionId sectionId)
@@ -212,7 +212,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
         if (store is null)
             throw new DomainException(new StoreNotFoundReason(sectionId));
 
-        var shoppingList = await _shoppingListRepository.FindActiveByAsync(store.Id, _cancellationToken);
+        var shoppingList = await _shoppingListRepository.FindActiveByAsync(store.Id);
         if (shoppingList is null)
             throw new DomainException(new ShoppingListNotFoundReason(store.Id));
 
@@ -241,6 +241,6 @@ public class ShoppingListModificationService : IShoppingListModificationService
             shoppingList.TransferItem(defaultSectionId, listItem.Id, listItem.TypeId);
         }
 
-        await _shoppingListRepository.StoreAsync(shoppingList, _cancellationToken);
+        await _shoppingListRepository.StoreAsync(shoppingList);
     }
 }

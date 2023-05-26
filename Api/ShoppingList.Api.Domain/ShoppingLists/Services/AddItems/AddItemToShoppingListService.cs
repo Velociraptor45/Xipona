@@ -27,21 +27,21 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         IItemRepository itemRepository,
         IShoppingListItemFactory shoppingListItemFactory,
-        IShoppingListRepository shoppingListRepository,
+        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
         CancellationToken cancellationToken)
     {
         _shoppingListSectionFactory = shoppingListSectionFactory;
         _storeRepository = storeRepositoryDelegate(cancellationToken);
         _itemRepository = itemRepository;
         _shoppingListItemFactory = shoppingListItemFactory;
-        _shoppingListRepository = shoppingListRepository;
+        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
     }
 
     public async Task AddAsync(IEnumerable<ItemToShoppingListAddition> itemsToAdd)
     {
         var storeIds = itemsToAdd.Select(x => x.StoreId).Distinct().ToList();
-        var shoppingLists = (await _shoppingListRepository.FindActiveByAsync(storeIds, _cancellationToken))
+        var shoppingLists = (await _shoppingListRepository.FindActiveByAsync(storeIds))
             .ToDictionary(list => list.StoreId);
         if (storeIds.Count != shoppingLists.Count)
             throw new DomainException(new StoreNotFoundReason(storeIds.Except(shoppingLists.Select(x => x.Key))));
@@ -73,14 +73,14 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
                     itemToAdd.Quantity, false);
             }
 
-            await _shoppingListRepository.StoreAsync(shoppingList, _cancellationToken);
+            await _shoppingListRepository.StoreAsync(shoppingList);
         }
     }
 
     public async Task AddAsync(ShoppingListId shoppingListId, OfflineTolerantItemId itemId, SectionId? sectionId,
         QuantityInBasket quantity)
     {
-        var list = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
+        var list = await _shoppingListRepository.FindByAsync(shoppingListId);
         if (list == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
 
@@ -89,7 +89,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+        await _shoppingListRepository.StoreAsync(list);
     }
 
     public async Task AddItemWithTypeAsync(ShoppingListId shoppingListId, ItemId itemId, ItemTypeId itemTypeId,
@@ -100,7 +100,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
 
         await AddItemAsync(shoppingList, item, itemTypeId, null, sectionId, quantity);
 
-        await _shoppingListRepository.StoreAsync(shoppingList, _cancellationToken);
+        await _shoppingListRepository.StoreAsync(shoppingList);
     }
 
     public async Task AddItemWithTypeAsync(IShoppingList shoppingList, IItem item,
@@ -108,7 +108,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     {
         await AddItemAsync(shoppingList, item, itemTypeId, null, sectionId, quantity);
 
-        await _shoppingListRepository.StoreAsync(shoppingList, _cancellationToken);
+        await _shoppingListRepository.StoreAsync(shoppingList);
     }
 
     public async Task AddItemAsync(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId,
@@ -197,7 +197,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
 
     private async Task<IShoppingList> LoadShoppingListAsync(ShoppingListId shoppingListId)
     {
-        var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId, _cancellationToken);
+        var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId);
         if (shoppingList is null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
 

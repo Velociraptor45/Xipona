@@ -15,12 +15,12 @@ public class ItemCategoryDeletionService : IItemCategoryDeletionService
     public ItemCategoryDeletionService(
         Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
         IItemRepository itemRepository,
-        IShoppingListRepository shoppingListRepository,
+        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
         CancellationToken cancellationToken)
     {
         _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
         _itemRepository = itemRepository;
-        _shoppingListRepository = shoppingListRepository;
+        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
     }
 
@@ -37,7 +37,7 @@ public class ItemCategoryDeletionService : IItemCategoryDeletionService
 
         foreach (var item in items)
         {
-            var lists = await _shoppingListRepository.FindActiveByAsync(item.Id, _cancellationToken);
+            var lists = await _shoppingListRepository.FindActiveByAsync(item.Id);
             foreach (var list in lists)
             {
                 if (item.HasItemTypes)
@@ -52,7 +52,7 @@ public class ItemCategoryDeletionService : IItemCategoryDeletionService
                     list.RemoveItem(item.Id);
                 }
 
-                await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+                await _shoppingListRepository.StoreAsync(list);
             }
             item.Delete();
             await _itemRepository.StoreAsync(item, _cancellationToken);

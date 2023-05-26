@@ -918,7 +918,7 @@ public class ItemModificationServiceTests
             return new ItemModificationService(
                 ItemRepositoryMock.Object,
                 _ => ValidatorMock.Object,
-                ShoppingListRepositoryMock.Object,
+                _ => ShoppingListRepositoryMock.Object,
                 _ => StoreRepositoryMock.Object,
                 default);
         }

@@ -33,7 +33,7 @@ public class ItemSearchService : IItemSearchService
 
     public ItemSearchService(
         IItemRepository itemRepository,
-        IShoppingListRepository shoppingListRepository,
+        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
         Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         IItemTypeReadRepository itemTypeReadRepository,
         Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
@@ -43,7 +43,7 @@ public class ItemSearchService : IItemSearchService
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
-        _shoppingListRepository = shoppingListRepository;
+        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
         _storeRepository = storeRepositoryDelegate(cancellationToken);
         _itemTypeReadRepository = itemTypeReadRepository;
         _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
@@ -258,7 +258,7 @@ public class ItemSearchService : IItemSearchService
     private async Task<IShoppingList> LoadShoppingListAsync(StoreId storeId)
     {
         IShoppingList? shoppingList = await _shoppingListRepository
-            .FindActiveByAsync(storeId, _cancellationToken);
+            .FindActiveByAsync(storeId);
         if (shoppingList is null)
             throw new DomainException(new ShoppingListNotFoundReason(storeId));
 

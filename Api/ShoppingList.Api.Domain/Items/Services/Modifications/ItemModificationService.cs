@@ -21,12 +21,12 @@ public class ItemModificationService : IItemModificationService
 
     public ItemModificationService(IItemRepository itemRepository,
         Func<CancellationToken, IValidator> validatorDelegate,
-        IShoppingListRepository shoppingListRepository,
+        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
         Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
-        _shoppingListRepository = shoppingListRepository;
+        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
         _storeRepository = storeRepositoryDelegate(cancellationToken);
         _validator = validatorDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
@@ -53,7 +53,7 @@ public class ItemModificationService : IItemModificationService
 
             // only remove item type from shopping list if it's not available anymore in respective store
             var availableStoreIds = type.Availabilities.Select(av => av.StoreId).ToList();
-            var listsToRemoveItemFrom = (await _shoppingListRepository.FindByAsync(type.Id, _cancellationToken))
+            var listsToRemoveItemFrom = (await _shoppingListRepository.FindByAsync(type.Id))
                 .Where(list => availableStoreIds.All(storeId => list.StoreId != storeId));
             await RemoveItemTypeFromShoppingList(listsToRemoveItemFrom, item, type);
         }
@@ -61,7 +61,7 @@ public class ItemModificationService : IItemModificationService
         foreach (var type in itemTypesBefore.Values)
         {
             // remove all types from shopping lists that don't exist anymore
-            var listsToRemoveItemFrom = await _shoppingListRepository.FindByAsync(type.Id, _cancellationToken);
+            var listsToRemoveItemFrom = await _shoppingListRepository.FindByAsync(type.Id);
             await RemoveItemTypeFromShoppingList(listsToRemoveItemFrom, item, type);
         }
 
@@ -99,7 +99,7 @@ public class ItemModificationService : IItemModificationService
         item.Modify(modification, availabilities);
 
         var availableAtStoreIds = item.Availabilities.Select(av => av.StoreId);
-        var shoppingListsWithItem = (await _shoppingListRepository.FindByAsync(item.Id, _cancellationToken))
+        var shoppingListsWithItem = (await _shoppingListRepository.FindByAsync(item.Id))
             .Where(list => availableAtStoreIds.All(storeId => storeId != list.StoreId))
             .ToList();
 
@@ -109,7 +109,7 @@ public class ItemModificationService : IItemModificationService
             _cancellationToken.ThrowIfCancellationRequested();
             // remove items from all shopping lists where item is not available anymore
             list.RemoveItem(item.Id);
-            await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+            await _shoppingListRepository.StoreAsync(list);
         }
     }
 
@@ -136,7 +136,7 @@ public class ItemModificationService : IItemModificationService
         foreach (var list in lists)
         {
             list.RemoveItem(item.Id, itemType.Id);
-            await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+            await _shoppingListRepository.StoreAsync(list);
         }
     }
 }

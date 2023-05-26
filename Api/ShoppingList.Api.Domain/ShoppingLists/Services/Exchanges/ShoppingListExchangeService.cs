@@ -15,11 +15,13 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
     private readonly Func<CancellationToken, IAddItemToShoppingListService> _addItemToShoppingListServiceDelegate;
     private readonly ILogger<ShoppingListExchangeService> _logger;
 
-    public ShoppingListExchangeService(IShoppingListRepository shoppingListRepository,
+    public ShoppingListExchangeService(
+        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
         Func<CancellationToken, IAddItemToShoppingListService> addItemToShoppingListServiceDelegate,
-        ILogger<ShoppingListExchangeService> logger)
+        ILogger<ShoppingListExchangeService> logger,
+        CancellationToken cancellationToken)
     {
-        _shoppingListRepository = shoppingListRepository;
+        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
         _addItemToShoppingListServiceDelegate = addItemToShoppingListServiceDelegate;
         _logger = logger;
     }
@@ -27,7 +29,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
     public async Task ExchangeItemAsync(ItemId oldItemId, IItem newItem, CancellationToken cancellationToken)
     {
         var shoppingListsWithOldItem = (await _shoppingListRepository
-                .FindActiveByAsync(oldItemId, cancellationToken))
+                .FindActiveByAsync(oldItemId))
             .ToList();
 
         if (newItem.HasItemTypes)
@@ -59,7 +61,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
                     list.PutItemInBasket(newItem.Id);
             }
 
-            await _shoppingListRepository.StoreAsync(list, cancellationToken);
+            await _shoppingListRepository.StoreAsync(list);
         }
     }
 
@@ -93,7 +95,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
                     list.PutItemInBasket(newItem.Id, itemType.Id);
             }
 
-            await _shoppingListRepository.StoreAsync(list, cancellationToken);
+            await _shoppingListRepository.StoreAsync(list);
         }
     }
 }

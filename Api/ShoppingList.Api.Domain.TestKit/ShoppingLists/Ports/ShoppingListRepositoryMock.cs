@@ -14,46 +14,41 @@ public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
     public void SetupFindActiveByAsync(ItemId itemId, IEnumerable<IShoppingList> returnValue)
     {
         Setup(i => i.FindActiveByAsync(
-                It.Is<ItemId>(id => id == itemId),
-                It.IsAny<CancellationToken>()))
+                It.Is<ItemId>(id => id == itemId)))
             .Returns(Task.FromResult(returnValue));
     }
 
     public void SetupFindActiveByAsync(IEnumerable<IShoppingList> returnValue)
     {
         Setup(i => i.FindActiveByAsync(
-                It.IsAny<ItemId>(),
-                It.IsAny<CancellationToken>()))
+                It.IsAny<ItemId>()))
             .ReturnsAsync(returnValue);
     }
 
     public void SetupFindActiveByAsync(StoreId storeId, IShoppingList? returnValue)
     {
         Setup(i => i.FindActiveByAsync(
-                It.Is<StoreId>(id => id == storeId),
-                It.IsAny<CancellationToken>()))
+                It.Is<StoreId>(id => id == storeId)))
             .ReturnsAsync(returnValue);
     }
 
     public void SetupFindActiveByAsync(IEnumerable<StoreId> storeIds, IEnumerable<IShoppingList> returnValue)
     {
         Setup(i => i.FindActiveByAsync(
-                storeIds,
-                It.IsAny<CancellationToken>()))
+                storeIds))
             .ReturnsAsync(returnValue);
     }
 
     public void SetupFindByAsync(ShoppingListId shoppingListId, IShoppingList? returnValue)
     {
         Setup(instance => instance.FindByAsync(
-                It.Is<ShoppingListId>(id => id == shoppingListId),
-                It.IsAny<CancellationToken>()))
+                It.Is<ShoppingListId>(id => id == shoppingListId)))
             .ReturnsAsync(returnValue);
     }
 
     public void SetupFindByAsync(ItemTypeId itemTypeId, IEnumerable<IShoppingList> returnValue)
     {
-        Setup(m => m.FindByAsync(itemTypeId, It.IsAny<CancellationToken>()))
+        Setup(m => m.FindByAsync(itemTypeId))
             .ReturnsAsync(returnValue);
     }
 
@@ -61,8 +56,7 @@ public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
     {
         Verify(
             i => i.StoreAsync(
-                It.Is<IShoppingList>(list => list == shoppingList),
-                It.IsAny<CancellationToken>()),
+                It.Is<IShoppingList>(list => list == shoppingList)),
             Times.Once);
     }
 
@@ -70,8 +64,7 @@ public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
     {
         Verify(
             i => i.StoreAsync(
-                It.IsAny<IShoppingList>(),
-                It.IsAny<CancellationToken>()),
+                It.IsAny<IShoppingList>()),
             Times.Never);
     }
 
@@ -79,14 +72,13 @@ public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
     {
         Verify(
             i => i.StoreAsync(
-                shoppingList,
-                It.IsAny<CancellationToken>()),
+                shoppingList),
             times);
     }
 
     public void SetupStoreAsync(IShoppingList shoppingList)
     {
-        Setup(m => m.StoreAsync(shoppingList, It.IsAny<CancellationToken>()))
+        Setup(m => m.StoreAsync(shoppingList))
             .Returns(Task.CompletedTask);
     }
 }
