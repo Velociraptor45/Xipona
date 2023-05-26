@@ -20,29 +20,33 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IManufacturerRepository _manufacturerRepository;
     private readonly IStoreRepository _storeRepository;
+    private readonly CancellationToken _cancellationToken;
 
-    public ItemReadModelConversionService(IItemCategoryRepository itemCategoryRepository,
-        IManufacturerRepository manufacturerRepository, IStoreRepository storeRepository)
+    public ItemReadModelConversionService(
+        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
+        IManufacturerRepository manufacturerRepository, IStoreRepository storeRepository,
+        CancellationToken cancellationToken)
     {
-        _itemCategoryRepository = itemCategoryRepository;
+        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
         _manufacturerRepository = manufacturerRepository;
         _storeRepository = storeRepository;
+        _cancellationToken = cancellationToken;
     }
 
-    public async Task<ItemReadModel> ConvertAsync(IItem item, CancellationToken cancellationToken)
+    public async Task<ItemReadModel> ConvertAsync(IItem item)
     {
         IItemCategory? itemCategory = null;
         IManufacturer? manufacturer = null;
 
         if (item.ItemCategoryId != null)
         {
-            itemCategory = await _itemCategoryRepository.FindByAsync(item.ItemCategoryId.Value, cancellationToken);
+            itemCategory = await _itemCategoryRepository.FindByAsync(item.ItemCategoryId.Value);
             if (itemCategory == null)
                 throw new DomainException(new ItemCategoryNotFoundReason(item.ItemCategoryId.Value));
         }
         if (item.ManufacturerId != null)
         {
-            manufacturer = await _manufacturerRepository.FindByAsync(item.ManufacturerId.Value, cancellationToken);
+            manufacturer = await _manufacturerRepository.FindByAsync(item.ManufacturerId.Value, _cancellationToken);
             if (manufacturer == null)
                 throw new DomainException(new ManufacturerNotFoundReason(item.ManufacturerId.Value));
         }
@@ -50,7 +54,7 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
         var storeIds = item.Availabilities.Select(av => av.StoreId).ToList();
         storeIds.AddRange(item.ItemTypes.SelectMany(t => t.Availabilities.Select(av => av.StoreId)));
         storeIds = storeIds.Distinct().ToList();
-        var storeDict = (await _storeRepository.FindActiveByAsync(storeIds, cancellationToken))
+        var storeDict = (await _storeRepository.FindActiveByAsync(storeIds, _cancellationToken))
             .ToDictionary(store => store.Id);
 
         return ToReadModel(item, itemCategory, manufacturer, storeDict);

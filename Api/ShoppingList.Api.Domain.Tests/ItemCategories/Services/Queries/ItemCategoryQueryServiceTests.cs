@@ -95,7 +95,7 @@ public class ItemCategoryQueryServiceTests
 
         public ItemCategoryQueryService CreateSut()
         {
-            return new ItemCategoryQueryService(_itemCategoryRepositoryMock.Object, default);
+            return new ItemCategoryQueryService(_ => _itemCategoryRepositoryMock.Object, default);
         }
 
         public void SetupFindingActiveItemCategory(ItemCategoryId itemCategoryId, IItemCategory itemCategory)

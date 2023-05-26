@@ -13,12 +13,12 @@ public class ItemCategoryDeletionService : IItemCategoryDeletionService
     private readonly CancellationToken _cancellationToken;
 
     public ItemCategoryDeletionService(
-        IItemCategoryRepository itemCategoryRepository,
+        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
         IItemRepository itemRepository,
         IShoppingListRepository shoppingListRepository,
         CancellationToken cancellationToken)
     {
-        _itemCategoryRepository = itemCategoryRepository;
+        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
         _itemRepository = itemRepository;
         _shoppingListRepository = shoppingListRepository;
         _cancellationToken = cancellationToken;
@@ -26,7 +26,7 @@ public class ItemCategoryDeletionService : IItemCategoryDeletionService
 
     public async Task DeleteAsync(ItemCategoryId itemCategoryId)
     {
-        var category = await _itemCategoryRepository.FindActiveByAsync(itemCategoryId, _cancellationToken);
+        var category = await _itemCategoryRepository.FindActiveByAsync(itemCategoryId);
         if (category == null)
             return;
 
@@ -57,6 +57,6 @@ public class ItemCategoryDeletionService : IItemCategoryDeletionService
             item.Delete();
             await _itemRepository.StoreAsync(item, _cancellationToken);
         }
-        await _itemCategoryRepository.StoreAsync(category, _cancellationToken);
+        await _itemCategoryRepository.StoreAsync(category);
     }
 }

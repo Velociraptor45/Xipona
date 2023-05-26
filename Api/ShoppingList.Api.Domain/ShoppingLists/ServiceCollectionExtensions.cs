@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
@@ -31,7 +33,16 @@ public static class ServiceCollectionExtensions
                 itemRepository, itemFactory, shoppingListRepository, token);
         });
 
-        services.AddTransient<IShoppingListReadModelConversionService, ShoppingListReadModelConversionService>();
+        services.AddTransient<Func<CancellationToken, IShoppingListReadModelConversionService>>(provider =>
+        {
+            return ct => new ShoppingListReadModelConversionService(
+                provider.GetRequiredService<IStoreRepository>(),
+                provider.GetRequiredService<IItemRepository>(),
+                provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>(),
+                provider.GetRequiredService<IManufacturerRepository>(),
+                ct
+            );
+        });
 
         services.AddTransient<Func<CancellationToken, IShoppingListModificationService>>(provider =>
         {
@@ -47,9 +58,10 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IShoppingListQueryService>>(provider =>
         {
             var shoppingListRepository = provider.GetRequiredService<IShoppingListRepository>();
-            var conversionService = provider.GetRequiredService<IShoppingListReadModelConversionService>();
+            var conversionServiceDelegate = provider
+                .GetRequiredService<Func<CancellationToken, IShoppingListReadModelConversionService>>();
             return cancellationToken =>
-                new ShoppingListQueryService(shoppingListRepository, conversionService, cancellationToken);
+                new ShoppingListQueryService(shoppingListRepository, conversionServiceDelegate, cancellationToken);
         });
     }
 }

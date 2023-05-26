@@ -29,8 +29,9 @@ public class ShoppingListReadModelConversionServiceTests
         var service = new ShoppingListReadModelConversionService(
             storeRepositoryMock.Object,
             itemRepositoryMock.Object,
-            itemCategoryRepositoryMock.Object,
-            manufacturerRepositoryMock.Object);
+            _ => itemCategoryRepositoryMock.Object,
+            manufacturerRepositoryMock.Object,
+            default);
 
         storeRepositoryMock.SetupFindByAsync(store.Id, store);
         itemRepositoryMock.SetupFindByAsync(items.Select(i => i.Id), items);

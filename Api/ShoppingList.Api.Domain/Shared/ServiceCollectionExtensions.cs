@@ -14,13 +14,14 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IValidator>>(provider =>
         {
             var availabilityValidationService = provider.GetRequiredService<IAvailabilityValidationService>();
-            var itemCategoryValidationService = provider.GetRequiredService<IItemCategoryValidationService>();
+            var itemCategoryValidationServiceDelegate = provider
+                .GetRequiredService<Func<CancellationToken, IItemCategoryValidationService>>();
             var manufacturerValidationService = provider.GetRequiredService<IManufacturerValidationService>();
             var itemValidationService = provider.GetRequiredService<Func<CancellationToken, IItemValidationService>>();
             var recipeTagValidationService = provider.GetRequiredService<Func<CancellationToken, IRecipeTagValidationService>>();
             return cancellationToken => new Validator(
                 availabilityValidationService,
-                itemCategoryValidationService,
+                itemCategoryValidationServiceDelegate,
                 manufacturerValidationService,
                 itemValidationService,
                 recipeTagValidationService,

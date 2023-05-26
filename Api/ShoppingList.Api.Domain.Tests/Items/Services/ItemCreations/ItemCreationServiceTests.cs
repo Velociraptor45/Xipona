@@ -561,7 +561,7 @@ public class ItemCreationServiceTests
                 ItemRepositoryMock.Object,
                 _ => ValidatorMock.Object,
                 ItemFactoryMock.Object,
-                ConversionServiceMock.Object,
+                _ => ConversionServiceMock.Object,
                 default);
         }
     }

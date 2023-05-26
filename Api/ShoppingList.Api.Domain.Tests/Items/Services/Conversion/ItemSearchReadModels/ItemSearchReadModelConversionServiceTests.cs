@@ -47,7 +47,7 @@ public class ItemSearchReadModelConversionServiceTests
         TestPropertyNotSetException.ThrowIfNull(_fixture.Store);
 
         // Act
-        var result = await service.ConvertAsync(_fixture.Items, _fixture.Store, default);
+        var result = await service.ConvertAsync(_fixture.Items, _fixture.Store);
 
         // Assert
         var expected = _fixture.CreateSimpleReadModels();
@@ -76,7 +76,7 @@ public class ItemSearchReadModelConversionServiceTests
         TestPropertyNotSetException.ThrowIfNull(_fixture.Store);
 
         // Act
-        var result = await service.ConvertAsync(_fixture.Items, _fixture.Store, default);
+        var result = await service.ConvertAsync(_fixture.Items, _fixture.Store);
 
         // Assert
         var expected = _fixture.CreateSimpleReadModels();
@@ -105,7 +105,7 @@ public class ItemSearchReadModelConversionServiceTests
         TestPropertyNotSetException.ThrowIfNull(_fixture.Store);
 
         // Act
-        var result = await service.ConvertAsync(_fixture.Items, _fixture.Store, default);
+        var result = await service.ConvertAsync(_fixture.Items, _fixture.Store);
 
         // Assert
         var expected = _fixture.CreateSimpleReadModels();
@@ -134,7 +134,7 @@ public class ItemSearchReadModelConversionServiceTests
         TestPropertyNotSetException.ThrowIfNull(_fixture.Store);
 
         // Act
-        var result = await service.ConvertAsync(_fixture.Items, _fixture.Store, default);
+        var result = await service.ConvertAsync(_fixture.Items, _fixture.Store);
 
         // Assert
         var expected = _fixture.CreateSimpleReadModels();
@@ -164,8 +164,8 @@ public class ItemSearchReadModelConversionServiceTests
 
         public ItemSearchReadModelConversionService CreateSut()
         {
-            return new ItemSearchReadModelConversionService(_itemCategoryRepositoryMock.Object,
-                _manufacturerRepositoryMock.Object);
+            return new ItemSearchReadModelConversionService(_ => _itemCategoryRepositoryMock.Object,
+                _manufacturerRepositoryMock.Object, default);
         }
 
         public void SetupStore()

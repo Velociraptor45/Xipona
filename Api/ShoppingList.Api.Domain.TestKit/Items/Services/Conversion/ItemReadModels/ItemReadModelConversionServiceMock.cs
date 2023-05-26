@@ -12,7 +12,7 @@ public class ItemReadModelConversionServiceMock : Mock<IItemReadModelConversionS
 
     public void SetupConvertAsync(IItem item, ItemReadModel returnValue)
     {
-        Setup(m => m.ConvertAsync(item, It.IsAny<CancellationToken>()))
+        Setup(m => m.ConvertAsync(item))
             .ReturnsAsync(returnValue);
     }
 }

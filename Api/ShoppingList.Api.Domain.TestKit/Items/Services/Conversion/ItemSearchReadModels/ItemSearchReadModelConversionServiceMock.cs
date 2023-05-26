@@ -17,8 +17,7 @@ public class ItemSearchReadModelConversionServiceMock : Mock<IItemSearchReadMode
     {
         Setup(m => m.ConvertAsync(
                 It.Is<IEnumerable<IItem>>(i => i.IsEquivalentTo(items)),
-                store,
-                It.IsAny<CancellationToken>()))
+                store))
             .ReturnsAsync(returnValue);
     }
 
@@ -27,8 +26,7 @@ public class ItemSearchReadModelConversionServiceMock : Mock<IItemSearchReadMode
     {
         Setup(m => m.ConvertAsync(
                 It.Is<IEnumerable<ItemWithMatchingItemTypeIds>>(maps => maps.IsEquivalentTo(mappings)),
-                store,
-                It.IsAny<CancellationToken>()))
+                store))
             .ReturnsAsync(returnValue);
     }
 }

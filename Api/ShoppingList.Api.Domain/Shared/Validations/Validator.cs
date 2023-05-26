@@ -19,14 +19,14 @@ public class Validator : IValidator
     private readonly CancellationToken _cancellationToken;
 
     public Validator(IAvailabilityValidationService availabilityValidationService,
-        IItemCategoryValidationService itemCategoryValidationService,
+        Func<CancellationToken, IItemCategoryValidationService> itemCategoryValidationService,
         IManufacturerValidationService manufacturerValidationService,
         Func<CancellationToken, IItemValidationService> itemValidationServiceDelegate,
         Func<CancellationToken, IRecipeTagValidationService> recipeTagValidationServiceDelegate,
         CancellationToken cancellationToken)
     {
         _availabilityValidationService = availabilityValidationService;
-        _itemCategoryValidationService = itemCategoryValidationService;
+        _itemCategoryValidationService = itemCategoryValidationService(cancellationToken);
         _manufacturerValidationService = manufacturerValidationService;
         _itemValidationService = itemValidationServiceDelegate(cancellationToken);
         _recipeTagValidationService = recipeTagValidationServiceDelegate(cancellationToken);
@@ -40,7 +40,7 @@ public class Validator : IValidator
 
     public async Task ValidateAsync(ItemCategoryId itemCategoryId)
     {
-        await _itemCategoryValidationService.ValidateAsync(itemCategoryId, _cancellationToken);
+        await _itemCategoryValidationService.ValidateAsync(itemCategoryId);
     }
 
     public async Task ValidateAsync(ManufacturerId manufacturerId)

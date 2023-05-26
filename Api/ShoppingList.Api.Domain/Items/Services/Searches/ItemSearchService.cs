@@ -36,8 +36,8 @@ public class ItemSearchService : IItemSearchService
         IShoppingListRepository shoppingListRepository,
         IStoreRepository storeRepository,
         IItemTypeReadRepository itemTypeReadRepository,
-        IItemCategoryRepository itemCategoryRepository,
-        IItemSearchReadModelConversionService itemSearchReadModelConversionService,
+        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
+        Func<CancellationToken, IItemSearchReadModelConversionService> itemSearchReadModelConversionServiceDelegate,
         Func<CancellationToken, IValidator> validatorDelegate,
         Func<CancellationToken, IItemAvailabilityReadModelConversionService> availabilityConverterDelegate,
         CancellationToken cancellationToken)
@@ -46,8 +46,8 @@ public class ItemSearchService : IItemSearchService
         _shoppingListRepository = shoppingListRepository;
         _storeRepository = storeRepository;
         _itemTypeReadRepository = itemTypeReadRepository;
-        _itemCategoryRepository = itemCategoryRepository;
-        _itemSearchReadModelConversionService = itemSearchReadModelConversionService;
+        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
+        _itemSearchReadModelConversionService = itemSearchReadModelConversionServiceDelegate(cancellationToken);
         _validator = validatorDelegate(cancellationToken);
         _availabilityConverter = availabilityConverterDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
@@ -133,7 +133,7 @@ public class ItemSearchService : IItemSearchService
         // items without types
         var searchResultItems = searchResultItemGroups[false];
         var itemReadModels = (await _itemSearchReadModelConversionService.ConvertAsync(
-            searchResultItems, store, _cancellationToken))
+            searchResultItems, store))
             .ToList();
 
         if (itemReadModels.Count >= _maxSearchResults)
@@ -146,7 +146,7 @@ public class ItemSearchService : IItemSearchService
             .ToList();
 
         var itemsWithTypesReadModels = (await _itemSearchReadModelConversionService.ConvertAsync(
-            itemsWithTypeNotOnShoppingList, store, _cancellationToken)).ToList();
+            itemsWithTypeNotOnShoppingList, store)).ToList();
 
         if (itemReadModels.Count + itemsWithTypesReadModels.Count >= _maxSearchResults)
             return itemReadModels.Union(itemsWithTypesReadModels).Take(_maxSearchResults);
@@ -232,7 +232,7 @@ public class ItemSearchService : IItemSearchService
         if (limit <= 0)
             return Enumerable.Empty<IItem>();
 
-        var categoryIds = (await _itemCategoryRepository.FindByAsync(name, false, limit, _cancellationToken))
+        var categoryIds = (await _itemCategoryRepository.FindByAsync(name, false, limit))
             .Select(c => c.Id)
             .ToList();
 

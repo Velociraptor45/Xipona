@@ -14,24 +14,22 @@ public class ItemQueryService : IItemQueryService
 
     public ItemQueryService(
         IItemRepository itemRepository,
-        IItemReadModelConversionService itemReadModelConversionService,
+        Func<CancellationToken, IItemReadModelConversionService> itemReadModelConversionServiceDelegate,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
-        _itemReadModelConversionService = itemReadModelConversionService;
+        _itemReadModelConversionService = itemReadModelConversionServiceDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
     }
 
     public async Task<ItemReadModel> GetAsync(ItemId itemId)
     {
-        _cancellationToken.ThrowIfCancellationRequested();
-
         var item = await _itemRepository.FindActiveByAsync(itemId, _cancellationToken);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(itemId));
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        return await _itemReadModelConversionService.ConvertAsync(item, _cancellationToken);
+        return await _itemReadModelConversionService.ConvertAsync(item);
     }
 }

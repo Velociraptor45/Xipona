@@ -20,12 +20,12 @@ public class ItemCreationService : IItemCreationService
         IItemRepository itemRepository,
         Func<CancellationToken, IValidator> validatorDelegate,
         IItemFactory itemFactory,
-        IItemReadModelConversionService conversionService,
+        Func<CancellationToken, IItemReadModelConversionService> conversionServiceDelegate,
         CancellationToken cancellationToken)
     {
         _itemRepository = itemRepository;
         _itemFactory = itemFactory;
-        _conversionService = conversionService;
+        _conversionService = conversionServiceDelegate(cancellationToken);
         _validator = validatorDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
     }
@@ -51,14 +51,14 @@ public class ItemCreationService : IItemCreationService
 
         var storedItem = await _itemRepository.StoreAsync(item, _cancellationToken);
 
-        return await _conversionService.ConvertAsync(storedItem, _cancellationToken);
+        return await _conversionService.ConvertAsync(storedItem);
     }
 
     public async Task<ItemReadModel> CreateItemWithTypesAsync(IItem item)
     {
         var storedItem = await _itemRepository.StoreAsync(item, _cancellationToken);
 
-        return await _conversionService.ConvertAsync(storedItem, _cancellationToken);
+        return await _conversionService.ConvertAsync(storedItem);
     }
 
     public async Task<ItemReadModel> CreateTemporaryAsync(TemporaryItemCreation creation)
@@ -70,6 +70,6 @@ public class ItemCreationService : IItemCreationService
 
         var storedItem = await _itemRepository.StoreAsync(item, _cancellationToken);
 
-        return await _conversionService.ConvertAsync(storedItem, _cancellationToken);
+        return await _conversionService.ConvertAsync(storedItem);
     }
 }

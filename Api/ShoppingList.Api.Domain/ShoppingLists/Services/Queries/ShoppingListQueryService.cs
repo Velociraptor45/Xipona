@@ -14,11 +14,11 @@ public class ShoppingListQueryService : IShoppingListQueryService
 
     public ShoppingListQueryService(
         IShoppingListRepository shoppingListRepository,
-        IShoppingListReadModelConversionService shoppingListReadModelConversionService,
+        Func<CancellationToken, IShoppingListReadModelConversionService> shoppingListReadModelConversionServiceDelegate,
         CancellationToken cancellationToken)
     {
         _shoppingListRepository = shoppingListRepository;
-        _shoppingListReadModelConversionService = shoppingListReadModelConversionService;
+        _shoppingListReadModelConversionService = shoppingListReadModelConversionServiceDelegate(cancellationToken);
         _cancellationToken = cancellationToken;
     }
 

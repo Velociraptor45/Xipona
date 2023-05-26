@@ -1504,7 +1504,7 @@ public class ItemControllerIntegrationTests
 
         private IItemCategoryRepository CreateItemCategoryRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<IItemCategoryRepository>();
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>()(default);
         }
 
         private IStoreRepository CreateStoreRepository(IServiceScope scope)
@@ -1523,7 +1523,7 @@ public class ItemControllerIntegrationTests
             var storeRepository = CreateStoreRepository(scope);
 
             if (itemCategory is not null)
-                await itemCategoryRepository.StoreAsync(itemCategory, default);
+                await itemCategoryRepository.StoreAsync(itemCategory);
             if (manufacturer is not null)
                 await manufacturerRepository.StoreAsync(manufacturer, default);
             if (item is not null)

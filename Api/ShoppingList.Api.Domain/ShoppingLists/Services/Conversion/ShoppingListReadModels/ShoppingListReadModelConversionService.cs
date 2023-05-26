@@ -26,11 +26,12 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
     private readonly IManufacturerRepository _manufacturerRepository;
 
     public ShoppingListReadModelConversionService(IStoreRepository storeRepository, IItemRepository itemRepository,
-        IItemCategoryRepository itemCategoryRepository, IManufacturerRepository manufacturerRepository)
+        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
+        IManufacturerRepository manufacturerRepository, CancellationToken cancellationToken)
     {
         _storeRepository = storeRepository;
         _itemRepository = itemRepository;
-        _itemCategoryRepository = itemCategoryRepository;
+        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
         _manufacturerRepository = manufacturerRepository;
     }
 
@@ -42,7 +43,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
 
         var itemCategoryIds = itemsDict.Values.Where(i => i.ItemCategoryId != null)
             .Select(i => i.ItemCategoryId!.Value);
-        var itemCategoriesDict = (await _itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
+        var itemCategoriesDict = (await _itemCategoryRepository.FindByAsync(itemCategoryIds))
             .ToDictionary(cat => cat.Id);
 
         var manufacturerIds = itemsDict.Values.Where(i => i.ManufacturerId != null)

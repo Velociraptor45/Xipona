@@ -42,7 +42,7 @@ public class ItemReadModelConversionServiceTests
         TestPropertyNotSetException.ThrowIfNull(local.Item);
 
         // Act
-        Func<Task<ItemReadModel>> function = async () => await service.ConvertAsync(local.Item, default);
+        Func<Task<ItemReadModel>> function = async () => await service.ConvertAsync(local.Item);
 
         // Assert
         using (new AssertionScope())
@@ -68,7 +68,7 @@ public class ItemReadModelConversionServiceTests
         TestPropertyNotSetException.ThrowIfNull(local.Item);
 
         // Act
-        Func<Task<ItemReadModel>> function = async () => await service.ConvertAsync(local.Item, default);
+        Func<Task<ItemReadModel>> function = async () => await service.ConvertAsync(local.Item);
 
         // Assert
         using (new AssertionScope())
@@ -93,7 +93,7 @@ public class ItemReadModelConversionServiceTests
         TestPropertyNotSetException.ThrowIfNull(local.Item);
 
         // Act
-        var result = await service.ConvertAsync(local.Item, default);
+        var result = await service.ConvertAsync(local.Item);
 
         // Assert
         var expected = local.CreateSimpleReadModel();
@@ -120,7 +120,7 @@ public class ItemReadModelConversionServiceTests
         TestPropertyNotSetException.ThrowIfNull(local.Item);
 
         // Act
-        var result = await service.ConvertAsync(local.Item, default);
+        var result = await service.ConvertAsync(local.Item);
 
         // Assert
         var expected = local.CreateSimpleReadModel();
@@ -145,7 +145,7 @@ public class ItemReadModelConversionServiceTests
         TestPropertyNotSetException.ThrowIfNull(local.Item);
 
         // Act
-        var result = await service.ConvertAsync(local.Item, default);
+        var result = await service.ConvertAsync(local.Item);
 
         // Assert
         var expected = local.CreateSimpleReadModel();
@@ -175,7 +175,7 @@ public class ItemReadModelConversionServiceTests
         TestPropertyNotSetException.ThrowIfNull(local.Item);
 
         // Act
-        var result = await service.ConvertAsync(local.Item, default);
+        var result = await service.ConvertAsync(local.Item);
 
         // Assert
         var expected = local.CreateSimpleReadModel();
@@ -205,7 +205,7 @@ public class ItemReadModelConversionServiceTests
         TestPropertyNotSetException.ThrowIfNull(local.Item);
 
         // Act
-        var result = await service.ConvertAsync(local.Item, default);
+        var result = await service.ConvertAsync(local.Item);
 
         // Assert
         var expected = local.CreateSimpleReadModelWithDeletedType();
@@ -241,9 +241,10 @@ public class ItemReadModelConversionServiceTests
         public ItemReadModelConversionService CreateService()
         {
             return new ItemReadModelConversionService(
-                _itemCategoryRepositoryMock.Object,
+                _ => _itemCategoryRepositoryMock.Object,
                 _manufacturerRepositoryMock.Object,
-                _storeRepositoryMock.Object);
+                _storeRepositoryMock.Object,
+                default);
         }
 
         public void SetupItem()

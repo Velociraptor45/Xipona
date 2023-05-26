@@ -17,21 +17,25 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
 {
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IManufacturerRepository _manufacturerRepository;
+    private readonly CancellationToken _cancellationToken;
 
-    public ItemSearchReadModelConversionService(IItemCategoryRepository itemCategoryRepository,
-        IManufacturerRepository manufacturerRepository)
+    public ItemSearchReadModelConversionService(
+        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
+        IManufacturerRepository manufacturerRepository,
+        CancellationToken cancellationToken)
     {
-        _itemCategoryRepository = itemCategoryRepository;
+        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
         _manufacturerRepository = manufacturerRepository;
+        _cancellationToken = cancellationToken;
     }
 
     public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(IEnumerable<IItem> items,
-        IStore store, CancellationToken cancellationToken)
+        IStore store)
     {
         var itemsList = items.ToList();
 
-        var itemCategoryDict = await GetItemCategories(itemsList, cancellationToken);
-        var manufacturerDict = await GetManufacturers(itemsList, cancellationToken);
+        var itemCategoryDict = await GetItemCategories(itemsList);
+        var manufacturerDict = await GetManufacturers(itemsList);
 
         return itemsList
             .Select(item =>
@@ -64,14 +68,13 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
     }
 
     public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(
-        IEnumerable<ItemWithMatchingItemTypeIds> itemTypes, IStore store,
-        CancellationToken cancellationToken)
+        IEnumerable<ItemWithMatchingItemTypeIds> itemTypes, IStore store)
     {
         var itemTypesList = itemTypes.ToList();
         var itemsList = itemTypesList.Select(t => t.Item).ToList();
 
-        var itemCategoryDict = await GetItemCategories(itemsList, cancellationToken);
-        var manufacturerDict = await GetManufacturers(itemsList, cancellationToken);
+        var itemCategoryDict = await GetItemCategories(itemsList);
+        var manufacturerDict = await GetManufacturers(itemsList);
 
         return itemTypesList.SelectMany(tuple =>
         {
@@ -109,25 +112,23 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
         });
     }
 
-    private async Task<Dictionary<ManufacturerId, IManufacturer>> GetManufacturers(IEnumerable<IItem> items,
-        CancellationToken cancellationToken)
+    private async Task<Dictionary<ManufacturerId, IManufacturer>> GetManufacturers(IEnumerable<IItem> items)
     {
         var manufacturerIds = items
             .Where(i => i.ManufacturerId != null)
             .Select(i => i.ManufacturerId!.Value)
             .Distinct();
-        return (await _manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
+        return (await _manufacturerRepository.FindByAsync(manufacturerIds, _cancellationToken))
             .ToDictionary(m => m.Id);
     }
 
-    private async Task<Dictionary<ItemCategoryId, IItemCategory>> GetItemCategories(IEnumerable<IItem> items,
-        CancellationToken cancellationToken)
+    private async Task<Dictionary<ItemCategoryId, IItemCategory>> GetItemCategories(IEnumerable<IItem> items)
     {
         var itemCategoryIds = items
             .Where(i => i.ItemCategoryId != null)
             .Select(i => i.ItemCategoryId!.Value)
             .Distinct();
-        return (await _itemCategoryRepository.FindByAsync(itemCategoryIds, cancellationToken))
+        return (await _itemCategoryRepository.FindByAsync(itemCategoryIds))
             .ToDictionary(i => i.Id);
     }
 }

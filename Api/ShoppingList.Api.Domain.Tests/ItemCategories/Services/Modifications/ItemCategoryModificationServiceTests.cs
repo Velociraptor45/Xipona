@@ -75,7 +75,7 @@ public class ItemCategoryModificationServiceTests
 
         public ItemCategoryModificationService CreateSut()
         {
-            return new ItemCategoryModificationService(_itemCategoryRepositoryMock.Object, default);
+            return new ItemCategoryModificationService(_ => _itemCategoryRepositoryMock.Object, default);
         }
 
         public void SetupModification()
