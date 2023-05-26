@@ -14,6 +14,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
     private readonly IShoppingListRepository _shoppingListRepository;
     private readonly Func<CancellationToken, IAddItemToShoppingListService> _addItemToShoppingListServiceDelegate;
     private readonly ILogger<ShoppingListExchangeService> _logger;
+    private readonly CancellationToken _cancellationToken;
 
     public ShoppingListExchangeService(
         Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
@@ -24,24 +25,25 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
         _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
         _addItemToShoppingListServiceDelegate = addItemToShoppingListServiceDelegate;
         _logger = logger;
+        _cancellationToken = cancellationToken;
     }
 
-    public async Task ExchangeItemAsync(ItemId oldItemId, IItem newItem, CancellationToken cancellationToken)
+    public async Task ExchangeItemAsync(ItemId oldItemId, IItem newItem)
     {
         var shoppingListsWithOldItem = (await _shoppingListRepository
                 .FindActiveByAsync(oldItemId))
             .ToList();
 
         if (newItem.HasItemTypes)
-            await ExchangeItemWithTypesAsync(shoppingListsWithOldItem, oldItemId, newItem, cancellationToken);
+            await ExchangeItemWithTypesAsync(shoppingListsWithOldItem, oldItemId, newItem);
         else
-            await ExchangeItemWithoutTypesAsync(shoppingListsWithOldItem, oldItemId, newItem, cancellationToken);
+            await ExchangeItemWithoutTypesAsync(shoppingListsWithOldItem, oldItemId, newItem);
     }
 
     private async Task ExchangeItemWithoutTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
-        IItem newItem, CancellationToken cancellationToken)
+        IItem newItem)
     {
-        var addItemToShoppingListService = _addItemToShoppingListServiceDelegate(cancellationToken);
+        var addItemToShoppingListService = _addItemToShoppingListServiceDelegate(_cancellationToken);
         foreach (var list in shoppingLists)
         {
             IShoppingListItem oldListItem = list.Items
@@ -66,9 +68,9 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
     }
 
     private async Task ExchangeItemWithTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
-        IItem newItem, CancellationToken cancellationToken)
+        IItem newItem)
     {
-        var addItemToShoppingListService = _addItemToShoppingListServiceDelegate(cancellationToken);
+        var addItemToShoppingListService = _addItemToShoppingListServiceDelegate(_cancellationToken);
         foreach (var list in shoppingLists)
         {
             var oldListItems = list.Items
