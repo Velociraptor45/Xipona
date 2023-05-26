@@ -16,13 +16,14 @@ public static class ServiceCollectionExtensions
             var availabilityValidationService = provider.GetRequiredService<IAvailabilityValidationService>();
             var itemCategoryValidationServiceDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IItemCategoryValidationService>>();
-            var manufacturerValidationService = provider.GetRequiredService<IManufacturerValidationService>();
+            var manufacturerValidationServiceDelegate = provider
+                .GetRequiredService<Func<CancellationToken, IManufacturerValidationService>>();
             var itemValidationService = provider.GetRequiredService<Func<CancellationToken, IItemValidationService>>();
             var recipeTagValidationService = provider.GetRequiredService<Func<CancellationToken, IRecipeTagValidationService>>();
             return cancellationToken => new Validator(
                 availabilityValidationService,
                 itemCategoryValidationServiceDelegate,
-                manufacturerValidationService,
+                manufacturerValidationServiceDelegate,
                 itemValidationService,
                 recipeTagValidationService,
                 cancellationToken);

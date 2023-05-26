@@ -30,6 +30,6 @@ public class ShoppingListQueryService : IShoppingListQueryService
 
         _cancellationToken.ThrowIfCancellationRequested();
 
-        return await _shoppingListReadModelConversionService.ConvertAsync(shoppingList, _cancellationToken);
+        return await _shoppingListReadModelConversionService.ConvertAsync(shoppingList);
     }
 }

@@ -15,35 +15,44 @@ public static class ServiceCollectionExtensions
     internal static void AddManufacturers(this IServiceCollection services)
     {
         services.AddTransient<IManufacturerFactory, ManufacturerFactory>();
-        services.AddTransient<IManufacturerValidationService, ManufacturerValidationService>();
+        services.AddTransient<Func<CancellationToken, IManufacturerValidationService>>(provider =>
+        {
+            return ct => new ManufacturerValidationService(
+                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>(),
+                ct);
+        });
 
         services.AddTransient<Func<CancellationToken, IManufacturerCreationService>>(provider =>
         {
-            var manufacturerRepository = provider.GetRequiredService<IManufacturerRepository>();
+            var manufacturerRepositoryDelegate = provider
+                .GetRequiredService<Func<CancellationToken, IManufacturerRepository>>();
             var manufacturerFactory = provider.GetRequiredService<IManufacturerFactory>();
-            return cancellationToken => new ManufacturerCreationService(manufacturerRepository, manufacturerFactory,
+            return cancellationToken => new ManufacturerCreationService(manufacturerRepositoryDelegate, manufacturerFactory,
                 cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IManufacturerQueryService>>(provider =>
         {
-            var manufacturerRepository = provider.GetRequiredService<IManufacturerRepository>();
-            return cancellationToken => new ManufacturerQueryService(manufacturerRepository, cancellationToken);
+            var manufacturerRepositoryDelegate = provider
+                .GetRequiredService<Func<CancellationToken, IManufacturerRepository>>();
+            return cancellationToken => new ManufacturerQueryService(manufacturerRepositoryDelegate, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IManufacturerDeletionService>>(provider =>
         {
-            var manufacturerRepository = provider.GetRequiredService<IManufacturerRepository>();
+            var manufacturerRepositoryDelegate = provider
+                .GetRequiredService<Func<CancellationToken, IManufacturerRepository>>();
             var itemRepository = provider.GetRequiredService<IItemRepository>();
             return cancellationToken =>
-                new ManufacturerDeletionService(manufacturerRepository, itemRepository, cancellationToken);
+                new ManufacturerDeletionService(manufacturerRepositoryDelegate, itemRepository, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IManufacturerModificationService>>(provider =>
         {
-            var manufacturerRepository = provider.GetRequiredService<IManufacturerRepository>();
+            var manufacturerRepositoryDelegate = provider
+                .GetRequiredService<Func<CancellationToken, IManufacturerRepository>>();
             return cancellationToken =>
-                new ManufacturerModificationService(manufacturerRepository, cancellationToken);
+                new ManufacturerModificationService(manufacturerRepositoryDelegate, cancellationToken);
         });
     }
 }

@@ -11,18 +11,18 @@ public class ManufacturerDeletionService : IManufacturerDeletionService
     private readonly CancellationToken _cancellationToken;
 
     public ManufacturerDeletionService(
-        IManufacturerRepository manufacturerRepository,
+        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
         IItemRepository itemRepository,
         CancellationToken cancellationToken)
     {
-        _manufacturerRepository = manufacturerRepository;
+        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
         _itemRepository = itemRepository;
         _cancellationToken = cancellationToken;
     }
 
     public async Task DeleteAsync(ManufacturerId manufacturerId)
     {
-        var manufacturer = await _manufacturerRepository.FindActiveByAsync(manufacturerId, _cancellationToken);
+        var manufacturer = await _manufacturerRepository.FindActiveByAsync(manufacturerId);
         if (manufacturer == null)
             return;
 
@@ -36,6 +36,6 @@ public class ManufacturerDeletionService : IManufacturerDeletionService
 
         manufacturer.Delete();
 
-        await _manufacturerRepository.StoreAsync(manufacturer, _cancellationToken);
+        await _manufacturerRepository.StoreAsync(manufacturer);
     }
 }

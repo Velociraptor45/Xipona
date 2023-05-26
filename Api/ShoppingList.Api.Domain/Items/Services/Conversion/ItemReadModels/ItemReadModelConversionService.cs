@@ -24,11 +24,11 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
 
     public ItemReadModelConversionService(
         Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        IManufacturerRepository manufacturerRepository, IStoreRepository storeRepository,
+        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate, IStoreRepository storeRepository,
         CancellationToken cancellationToken)
     {
         _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
-        _manufacturerRepository = manufacturerRepository;
+        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
         _storeRepository = storeRepository;
         _cancellationToken = cancellationToken;
     }
@@ -46,7 +46,7 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
         }
         if (item.ManufacturerId != null)
         {
-            manufacturer = await _manufacturerRepository.FindByAsync(item.ManufacturerId.Value, _cancellationToken);
+            manufacturer = await _manufacturerRepository.FindByAsync(item.ManufacturerId.Value);
             if (manufacturer == null)
                 throw new DomainException(new ManufacturerNotFoundReason(item.ManufacturerId.Value));
         }

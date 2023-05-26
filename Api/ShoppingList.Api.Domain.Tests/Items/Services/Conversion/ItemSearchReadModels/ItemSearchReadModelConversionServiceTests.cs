@@ -165,7 +165,7 @@ public class ItemSearchReadModelConversionServiceTests
         public ItemSearchReadModelConversionService CreateSut()
         {
             return new ItemSearchReadModelConversionService(_ => _itemCategoryRepositoryMock.Object,
-                _manufacturerRepositoryMock.Object, default);
+                _ => _manufacturerRepositoryMock.Object, default);
         }
 
         public void SetupStore()

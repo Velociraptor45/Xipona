@@ -14,6 +14,7 @@ using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Contexts;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+using System;
 using Xunit;
 using Item = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.Item;
 using Manufacturer = ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Entities.Manufacturer;
@@ -137,7 +138,7 @@ public class ManufacturerControllerIntegrationTests
                     .WithId(ManufacturerId.Value)
                     .Create();
 
-                await manufacturerRepository.StoreAsync(manufacturer, default);
+                await manufacturerRepository.StoreAsync(manufacturer);
 
                 // items
                 var itemRepository = CreateItemRepository(SetupScope);
@@ -204,7 +205,7 @@ public class ManufacturerControllerIntegrationTests
 
         protected IManufacturerRepository CreateManufacturerRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<IManufacturerRepository>();
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(default);
         }
 
         protected IItemRepository CreateItemRepository(IServiceScope scope)

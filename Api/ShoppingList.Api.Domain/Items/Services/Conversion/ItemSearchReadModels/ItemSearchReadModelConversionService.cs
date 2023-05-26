@@ -17,16 +17,14 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
 {
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IManufacturerRepository _manufacturerRepository;
-    private readonly CancellationToken _cancellationToken;
 
     public ItemSearchReadModelConversionService(
         Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        IManufacturerRepository manufacturerRepository,
+        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
         CancellationToken cancellationToken)
     {
         _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
-        _manufacturerRepository = manufacturerRepository;
-        _cancellationToken = cancellationToken;
+        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
     }
 
     public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(IEnumerable<IItem> items,
@@ -118,7 +116,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
             .Where(i => i.ManufacturerId != null)
             .Select(i => i.ManufacturerId!.Value)
             .Distinct();
-        return (await _manufacturerRepository.FindByAsync(manufacturerIds, _cancellationToken))
+        return (await _manufacturerRepository.FindByAsync(manufacturerIds))
             .ToDictionary(m => m.Id);
     }
 

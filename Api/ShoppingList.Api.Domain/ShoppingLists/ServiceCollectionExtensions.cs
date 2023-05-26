@@ -39,7 +39,7 @@ public static class ServiceCollectionExtensions
                 provider.GetRequiredService<IStoreRepository>(),
                 provider.GetRequiredService<IItemRepository>(),
                 provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>(),
-                provider.GetRequiredService<IManufacturerRepository>(),
+                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>(),
                 ct
             );
         });

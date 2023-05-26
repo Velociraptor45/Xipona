@@ -41,14 +41,14 @@ public static class ServiceCollectionExtensions
         {
             return ct => new ItemSearchReadModelConversionService(
                 provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>(),
-                provider.GetRequiredService<IManufacturerRepository>(),
+                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>(),
                 ct);
         });
         services.AddTransient<Func<CancellationToken, IItemReadModelConversionService>>(provider =>
         {
             return ct => new ItemReadModelConversionService(
                 provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>(),
-                provider.GetRequiredService<IManufacturerRepository>(),
+                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>(),
                 provider.GetRequiredService<IStoreRepository>(),
                 ct);
         });

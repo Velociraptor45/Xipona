@@ -22,23 +22,26 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
 {
     private readonly IStoreRepository _storeRepository;
     private readonly IItemRepository _itemRepository;
+    private readonly CancellationToken _cancellationToken;
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IManufacturerRepository _manufacturerRepository;
 
     public ShoppingListReadModelConversionService(IStoreRepository storeRepository, IItemRepository itemRepository,
         Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        IManufacturerRepository manufacturerRepository, CancellationToken cancellationToken)
+        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
+        CancellationToken cancellationToken)
     {
         _storeRepository = storeRepository;
         _itemRepository = itemRepository;
         _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
-        _manufacturerRepository = manufacturerRepository;
+        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
+        _cancellationToken = cancellationToken;
     }
 
-    public async Task<ShoppingListReadModel> ConvertAsync(IShoppingList shoppingList, CancellationToken cancellationToken)
+    public async Task<ShoppingListReadModel> ConvertAsync(IShoppingList shoppingList)
     {
         var itemIds = shoppingList.Items.Select(i => i.Id);
-        var itemsDict = (await _itemRepository.FindByAsync(itemIds, cancellationToken))
+        var itemsDict = (await _itemRepository.FindByAsync(itemIds, _cancellationToken))
             .ToDictionary(i => i.Id);
 
         var itemCategoryIds = itemsDict.Values.Where(i => i.ItemCategoryId != null)
@@ -48,10 +51,10 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
 
         var manufacturerIds = itemsDict.Values.Where(i => i.ManufacturerId != null)
             .Select(i => i.ManufacturerId!.Value);
-        var manufacturersDict = (await _manufacturerRepository.FindByAsync(manufacturerIds, cancellationToken))
+        var manufacturersDict = (await _manufacturerRepository.FindByAsync(manufacturerIds))
             .ToDictionary(man => man.Id);
 
-        IStore? store = await _storeRepository.FindByAsync(shoppingList.StoreId, cancellationToken);
+        IStore? store = await _storeRepository.FindByAsync(shoppingList.StoreId, _cancellationToken);
         if (store is null)
             throw new DomainException(new StoreNotFoundReason(shoppingList.StoreId));
 
