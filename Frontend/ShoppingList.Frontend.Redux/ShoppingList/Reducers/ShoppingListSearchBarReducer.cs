@@ -27,6 +27,18 @@ public static class ShoppingListSearchBarReducer
         };
     }
 
+    [ReducerMethod(typeof(SearchItemForShoppingListAction))]
+    public static ShoppingListState OnSearchItemForShoppingList(ShoppingListState state)
+    {
+        return state with
+        {
+            SearchBar = state.SearchBar with
+            {
+                Results = new List<SearchItemForShoppingListResult>()
+            }
+        };
+    }
+
     [ReducerMethod]
     public static ShoppingListState OnSearchItemForShoppingListFinished(ShoppingListState state,
         SearchItemForShoppingListFinishedAction action)
