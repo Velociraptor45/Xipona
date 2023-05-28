@@ -1,21 +1,20 @@
-﻿using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
-using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests;
-using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using System;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.RequestSenders;
 
-public class CreateTemporaryItemRequestSender : IRequestSender
+public class AddTemporaryItemToShoppingListRequestSender : IRequestSender
 {
-    public Type RequestType => typeof(CreateTemporaryItemRequest);
+    public Type RequestType => typeof(AddTemporaryItemToShoppingListRequest);
 
     public async Task SendAsync(IApiClient client, IApiRequest request)
     {
         if (request.GetType() != RequestType)
             throw new ArgumentException($"Request is not type of {RequestType.Name}", nameof(request));
 
-        await client.CreateTemporaryItem((CreateTemporaryItemRequest)request);
+        await client.AddTemporaryItemToShoppingListAsync((AddTemporaryItemToShoppingListRequest)request);
     }
 }

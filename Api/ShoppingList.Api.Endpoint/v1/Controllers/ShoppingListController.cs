@@ -126,7 +126,7 @@ public class ShoppingListController : ControllerBase
         return Ok();
     }
 
-    [HttpPost]
+    [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]

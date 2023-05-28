@@ -61,7 +61,7 @@ public class ShoppingListSearchBarEffectsTests
         }
 
         [Fact]
-        public async Task HandleItemForShoppingListSearchInputChangedAction_WithRepeatedInvokation_ShouldDispatchAction()
+        public async Task HandleItemForShoppingListSearchInputChangedAction_WithRepeatedInvocation_ShouldDispatchAction()
         {
             // Arrange
             _fixture.SetupAction();
@@ -345,7 +345,7 @@ public class ShoppingListSearchBarEffectsTests
 
                 Action = new ItemForShoppingListSearchResultSelectedAction(
                     new SearchItemForShoppingListResult(
-                        _expectedRequestWithoutType.ItemId.ActualId!.Value,
+                        _expectedRequestWithoutType.ItemId,
                         null,
                         "",
                         0,
@@ -401,12 +401,6 @@ public class ShoppingListSearchBarEffectsTests
             {
                 _expectedChangeAction = new SelectedStoreChangedAction(State.SelectedStoreId);
                 SetupDispatchingAction(_expectedChangeAction);
-            }
-
-            public void VerifyNotDispatchingChangeAction()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_expectedChangeAction);
-                VerifyNotDispatchingAction<SelectedStoreChangedAction>();
             }
         }
     }
