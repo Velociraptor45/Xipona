@@ -113,6 +113,12 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         QuantityInBasket quantity)
     {
         IItem item = await LoadItemAsync(itemId);
+        await AddItemAsync(shoppingList, item, sectionId, quantity);
+    }
+
+    public async Task AddItemAsync(IShoppingList shoppingList, IItem item, SectionId? sectionId,
+        QuantityInBasket quantity)
+    {
         await AddItemAsync(shoppingList, item, null, sectionId, quantity);
     }
 

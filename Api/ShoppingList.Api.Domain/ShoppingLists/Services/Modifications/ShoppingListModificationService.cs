@@ -1,11 +1,13 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
@@ -19,18 +21,24 @@ public class ShoppingListModificationService : IShoppingListModificationService
     private readonly IItemRepository _itemRepository;
     private readonly IStoreRepository _storeRepository;
     private readonly IShoppingListSectionFactory _shoppingListSectionFactory;
+    private readonly IItemFactory _itemFactory;
+    private readonly IAddItemToShoppingListService _addItemToShoppingListService;
 
     public ShoppingListModificationService(
+        Func<CancellationToken, IAddItemToShoppingListService> addItemToShoppingListServiceDelegate,
         Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
         Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         IShoppingListSectionFactory shoppingListSectionFactory,
+        IItemFactory itemFactory,
         CancellationToken cancellationToken)
     {
+        _addItemToShoppingListService = addItemToShoppingListServiceDelegate(cancellationToken);
         _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
         _itemRepository = itemRepositoryDelegate(cancellationToken);
         _storeRepository = storeRepositoryDelegate(cancellationToken);
         _shoppingListSectionFactory = shoppingListSectionFactory;
+        _itemFactory = itemFactory;
     }
 
     public async Task ChangeItemQuantityAsync(ShoppingListId shoppingListId,
@@ -74,6 +82,21 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
             await _shoppingListRepository.StoreAsync(list);
         }
+    }
+
+    public async Task AddTemporaryItemAsync(ShoppingListId shoppingListId, ItemName itemName, QuantityType quantityType,
+        QuantityInBasket quantity, Price price, SectionId sectionId, TemporaryItemId temporaryItemId)
+    {
+        var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId);
+        if (shoppingList is null)
+            throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
+
+        var item = _itemFactory.CreateTemporary(itemName, quantityType, shoppingList.StoreId, price, sectionId,
+            temporaryItemId);
+        await _itemRepository.StoreAsync(item);
+
+        await _addItemToShoppingListService.AddItemAsync(shoppingList, item, sectionId, quantity);
+        await _shoppingListRepository.StoreAsync(shoppingList);
     }
 
     public async Task RemoveItemAsync(ShoppingListId shoppingListId, OfflineTolerantItemId offlineTolerantItemId,

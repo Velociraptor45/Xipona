@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 
@@ -85,6 +86,34 @@ public class ItemFactory : IItemFactory
             null,
             model.Availability.ToMonoList(),
             new TemporaryItemId(model.ClientSideId),
+            null,
+            null);
+    }
+
+    public IItem CreateTemporary(ItemName name, QuantityType quantityType, StoreId storeId, Price price,
+        SectionId defaultSectionId, TemporaryItemId temporaryItemId)
+    {
+        var itemQuantity = quantityType switch
+        {
+            QuantityType.Weight => new ItemQuantity(quantityType, null),
+            QuantityType.Unit => new ItemQuantity(quantityType, new ItemQuantityInPacket(new Quantity(1), QuantityTypeInPacket.Unit)),
+            _ => throw new ArgumentOutOfRangeException($"QuantityType {quantityType} is not supported for temporary items.")
+        };
+
+        return new Item(
+            ItemId.New,
+            name,
+            false,
+            Comment.Empty,
+            true,
+            itemQuantity,
+            null,
+            null,
+            new List<IItemAvailability>
+            {
+                new ItemAvailability(storeId, price, defaultSectionId)
+            },
+            temporaryItemId,
             null,
             null);
     }

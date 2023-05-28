@@ -9,6 +9,8 @@ public interface IAddItemToShoppingListService
 {
     Task AddItemAsync(IShoppingList shoppingList, ItemId itemId, SectionId? sectionId, QuantityInBasket quantity);
 
+    Task AddItemAsync(IShoppingList shoppingList, IItem item, SectionId? sectionId, QuantityInBasket quantity);
+
     Task AddItemWithTypeAsync(ShoppingListId shoppingListId, ItemId itemId, ItemTypeId itemTypeId,
         SectionId? sectionId, QuantityInBasket quantity);
 

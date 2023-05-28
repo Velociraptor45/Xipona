@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 
@@ -21,4 +22,7 @@ public interface IItemFactory
 
     IItem CreateNew(ItemName name, Comment comment, ItemQuantity itemQuantity, ItemCategoryId itemCategoryId,
         ManufacturerId? manufacturerId, ItemId? predecessorId, IEnumerable<IItemType> itemTypes);
+
+    IItem CreateTemporary(ItemName name, QuantityType quantityType, StoreId storeId, Price price,
+        SectionId defaultSectionId, TemporaryItemId temporaryItemId);
 }

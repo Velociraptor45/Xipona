@@ -309,7 +309,7 @@ public class ItemController : ControllerBase
     [ProducesResponseType(typeof(ItemContract), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("temporary")]
-    public async Task<IActionResult> CreateTemporaryItemAsync([FromBody] CreateTemporaryItemContract contract,
+    public async Task<IActionResult> CreateTemporaryItemAsync([FromBody] CreateTemporaryItemContract contract, // todo remove entirely
         CancellationToken cancellationToken = default)
     {
         var model = _converters.ToDomain<CreateTemporaryItemContract, TemporaryItemCreation>(contract);
