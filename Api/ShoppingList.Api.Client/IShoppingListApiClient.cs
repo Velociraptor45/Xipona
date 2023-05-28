@@ -3,7 +3,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
@@ -105,10 +104,6 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Post("items/with-types")]
         Task CreateItemWithTypesAsync([Body] CreateItemWithTypesContract contract,
-            CancellationToken cancellationToken = default);
-
-        [Post("items/temporary")]
-        Task CreateTemporaryItemAsync([Body] CreateTemporaryItemContract contract,
             CancellationToken cancellationToken = default);
 
         [Get("items/{id}")]

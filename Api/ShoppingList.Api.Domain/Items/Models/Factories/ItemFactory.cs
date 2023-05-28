@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -69,23 +68,6 @@ public class ItemFactory : IItemFactory
             itemCreation.ManufacturerId,
             itemCreation.Availabilities,
             null,
-            null,
-            null);
-    }
-
-    public IItem Create(TemporaryItemCreation model)
-    {
-        return new Item(
-            ItemId.New,
-            model.Name,
-            false,
-            Comment.Empty,
-            true,
-            new ItemQuantity(QuantityType.Unit, new ItemQuantityInPacket(new Quantity(1), QuantityTypeInPacket.Unit)),
-            null,
-            null,
-            model.Availability.ToMonoList(),
-            new TemporaryItemId(model.ClientSideId),
             null,
             null);
     }

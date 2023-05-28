@@ -5,7 +5,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
@@ -214,12 +213,6 @@ namespace ProjectHermes.ShoppingList.Api.Client
         public async Task<ItemContract> GetAsync(Guid id, CancellationToken cancellationToken = default)
         {
             return await _apiClient.GetAsync(id, cancellationToken);
-        }
-
-        public async Task CreateTemporaryItemAsync(CreateTemporaryItemContract contract,
-            CancellationToken cancellationToken = default)
-        {
-            await _apiClient.CreateTemporaryItemAsync(contract, cancellationToken);
         }
 
         public async Task MakeTemporaryItemPermanentAsync(Guid id, MakeTemporaryItemPermanentContract contract,

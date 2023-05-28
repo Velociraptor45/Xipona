@@ -9,8 +9,6 @@ public interface IItemFactory
 {
     IItem Create(ItemCreation itemCreation);
 
-    IItem Create(TemporaryItemCreation model);
-
     IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
         ItemId? predecessorId, IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId,
