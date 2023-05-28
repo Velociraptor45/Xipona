@@ -49,13 +49,19 @@ public static class TemporaryItemCreatorReducer
     [ReducerMethod(typeof(OpenTemporaryItemCreatorAction))]
     public static ShoppingListState OnOpenTemporaryItemCreator(ShoppingListState state)
     {
+        if (state.SelectedStore is null)
+            return state;
+
+        var defaultSection = state.SelectedStore.Sections.FirstOrDefault(s => s.IsDefaultSection);
+
         return state with
         {
             TemporaryItemCreator = state.TemporaryItemCreator with
             {
                 ItemName = state.SearchBar.Input,
                 IsOpen = true,
-                IsSaving = false
+                IsSaving = false,
+                Section = defaultSection ?? state.SelectedStore.Sections.First()
             }
         };
     }
