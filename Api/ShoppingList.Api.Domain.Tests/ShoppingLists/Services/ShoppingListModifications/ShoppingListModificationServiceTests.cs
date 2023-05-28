@@ -10,6 +10,7 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
@@ -1268,7 +1269,7 @@ public class ShoppingListModificationServiceTests
         private sealed class RemoveSectionAsyncFixture : ShoppingListModificationServiceFixture
         {
             private StoreMock? _storeMock;
-            public SectionId? SectionId { get; set; }
+            public SectionId? SectionId { get; private set; }
 
             public void SetupSectionId()
             {
@@ -1306,26 +1307,32 @@ public class ShoppingListModificationServiceTests
 
     private abstract class ShoppingListModificationServiceFixture
     {
+        protected readonly AddItemToShoppingListServiceMock AddItemToShoppingListServiceMock;
         protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
         protected readonly ItemRepositoryMock ItemRepositoryMock;
         protected readonly StoreRepositoryMock StoreRepositoryMock;
         protected readonly ShoppingListSectionFactoryMock ShoppingListSectionFactoryMock;
+        protected readonly ItemFactoryMock ItemFactoryMock;
 
         protected ShoppingListModificationServiceFixture()
         {
+            AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(MockBehavior.Strict);
             ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
             ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
             StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
             ShoppingListSectionFactoryMock = new ShoppingListSectionFactoryMock(MockBehavior.Strict);
+            ItemFactoryMock = new ItemFactoryMock(MockBehavior.Strict);
         }
 
         public ShoppingListModificationService CreateSut()
         {
             return new ShoppingListModificationService(
+                _ => AddItemToShoppingListServiceMock.Object,
                 _ => ShoppingListRepositoryMock.Object,
                 _ => ItemRepositoryMock.Object,
                 _ => StoreRepositoryMock.Object,
                 ShoppingListSectionFactoryMock.Object,
+                ItemFactoryMock.Object,
                 default);
         }
     }

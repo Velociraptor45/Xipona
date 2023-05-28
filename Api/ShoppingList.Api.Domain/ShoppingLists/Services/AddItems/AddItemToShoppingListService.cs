@@ -6,7 +6,6 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
@@ -77,7 +76,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         }
     }
 
-    public async Task AddAsync(ShoppingListId shoppingListId, OfflineTolerantItemId itemId, SectionId? sectionId,
+    public async Task AddAsync(ShoppingListId shoppingListId, ItemId itemId, SectionId? sectionId,
         QuantityInBasket quantity)
     {
         var list = await _shoppingListRepository.FindByAsync(shoppingListId);
@@ -207,20 +206,6 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         IItem? item = await _itemRepository.FindActiveByAsync(itemId);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(itemId));
-
-        return item;
-    }
-
-    private async Task<IItem> LoadItemAsync(OfflineTolerantItemId offlineTolerantItemId)
-    {
-        if (offlineTolerantItemId.IsActualId)
-            return await LoadItemAsync(new ItemId(offlineTolerantItemId.ActualId!.Value));
-
-        IItem? item = await _itemRepository.FindActiveByAsync(
-            new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value));
-
-        if (item == null)
-            throw new DomainException(new ItemNotFoundReason(new TemporaryItemId(offlineTolerantItemId.OfflineId!.Value)));
 
         return item;
     }

@@ -161,26 +161,15 @@ public class ShoppingListController : ControllerBase
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/items")]
     public async Task<IActionResult> AddItemToShoppingListAsync([FromRoute] Guid id,
-        [FromBody] AddItemToShoppingListContract contract, CancellationToken cancellationToken = default) // todo remove offline id
+        [FromBody] AddItemToShoppingListContract contract, CancellationToken cancellationToken = default)
     {
-        OfflineTolerantItemId itemId;
-        try
-        {
-            itemId = _converters.ToDomain<ItemIdContract, OfflineTolerantItemId>(contract.ItemId);
-        }
-        catch (ArgumentException)
-        {
-            return BadRequest("No item id was specified.");
-        }
-
         var command = new AddItemToShoppingListCommand(
             new ShoppingListId(id),
-            itemId,
+            new ItemId(contract.ItemId),
             contract.SectionId.HasValue ? new SectionId(contract.SectionId.Value) : null,
             new QuantityInBasket(contract.Quantity));
 
