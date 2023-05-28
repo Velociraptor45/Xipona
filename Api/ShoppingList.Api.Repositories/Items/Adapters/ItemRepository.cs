@@ -21,54 +21,51 @@ public class ItemRepository : IItemRepository
 {
     private readonly ItemContext _dbContext;
     private readonly IToDomainConverter<Item, IItem> _toModelConverter;
-    private readonly IToContractConverter<IItem, Item> _toEntityConverter;
-    private readonly Func<CancellationToken, IDomainEventDispatcher> _domainEventDispatcherDelegate;
+    private readonly IToContractConverter<IItem, Item> _toContractConverter;
+    private readonly IDomainEventDispatcher _domainEventDispatcher;
     private readonly ILogger<ItemRepository> _logger;
+    private readonly CancellationToken _cancellationToken;
 
-    public ItemRepository(ItemContext dbContext, IToDomainConverter<Item, IItem> toModelConverter,
-        IToContractConverter<IItem, Item> toEntityConverter,
+    public ItemRepository(ItemContext dbContext,
+        IToDomainConverter<Item, IItem> toModelConverter,
+        IToContractConverter<IItem, Item> toContractConverter,
         Func<CancellationToken, IDomainEventDispatcher> domainEventDispatcherDelegate,
-        ILogger<ItemRepository> logger)
+        ILogger<ItemRepository> logger,
+        CancellationToken cancellationToken)
     {
         _dbContext = dbContext;
         _toModelConverter = toModelConverter;
-        _toEntityConverter = toEntityConverter;
-        _domainEventDispatcherDelegate = domainEventDispatcherDelegate;
+        _toContractConverter = toContractConverter;
+        _domainEventDispatcher = domainEventDispatcherDelegate(cancellationToken);
         _logger = logger;
+        _cancellationToken = cancellationToken;
     }
 
     #region public methods
 
-    public async Task<IEnumerable<IItem>> FindByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken)
+    public async Task<IEnumerable<IItem>> FindByAsync(IEnumerable<ItemId> itemIds)
     {
         var idList = itemIds.Select(id => id.Value).ToList();
 
         var entities = await GetItemQuery()
             .Where(item => idList.Contains(item.Id))
-            .ToListAsync(cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IItem>> FindByAsync(ManufacturerId manufacturerId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<IItem>> FindByAsync(ManufacturerId manufacturerId)
     {
         var entities = await GetItemQuery()
             .Where(i => i.ManufacturerId == manufacturerId.Value)
-            .ToListAsync(cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(entities);
     }
 
     public async Task<IEnumerable<IItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
-        IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
-        CancellationToken cancellationToken)
+        IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var storeIdLists = storeIds.Select(id => id.Value).ToList();
         var itemCategoryIdLists = itemCategoriesIds.Select(id => id.Value).ToList();
         var manufacturerIdLists = manufacturerIds.Select(id => id.Value).ToList();
@@ -80,7 +77,7 @@ public class ItemRepository : IItemRepository
                 && itemCategoryIdLists.Contains(item.ItemCategoryId!.Value)
                 && ((!item.ManufacturerId.HasValue && !manufacturerIdLists.Any())
                     || manufacturerIdLists.Contains(item.ManufacturerId!.Value)))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(_cancellationToken);
 
         // filtering by store
         var filteredResultByStore = result
@@ -88,49 +85,45 @@ public class ItemRepository : IItemRepository
                            || storeIdLists.Intersect(item.AvailableAt.Select(av => av.StoreId)).Any())
             .ToList();
 
-        cancellationToken.ThrowIfCancellationRequested();
-
         return _toModelConverter.ToDomain(filteredResultByStore);
     }
 
     public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId,
-        CancellationToken cancellationToken)
+        IEnumerable<ItemId> excludedItemIds, int? limit)
     {
-        var entities = await GetItemQuery()
+        var excludedRawItemIds = excludedItemIds.Select(id => id.Value).ToList();
+        var query = GetItemQuery()
             .Where(item =>
                 !item.Deleted
                 && !item.IsTemporary
+                && !excludedRawItemIds.Contains(item.Id)
                 && item.Name.Contains(searchInput)
                 && (item.AvailableAt.Any(map => map.StoreId == storeId)
-                    || item.ItemTypes.Any(t => !t.IsDeleted && t.AvailableAt.Any(av => av.StoreId == storeId))))
-            .ToListAsync(cancellationToken);
+                    || item.ItemTypes.Any(t => !t.IsDeleted && t.AvailableAt.Any(av => av.StoreId == storeId))));
 
-        cancellationToken.ThrowIfCancellationRequested();
+        if (limit.HasValue)
+            query = query.Take(limit.Value);
+
+        var entities = await query.ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IItem>> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(StoreId storeId)
     {
         var entities = await GetItemQuery()
             .Where(item => !item.Deleted && item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId) != null)
-            .ToListAsync(cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IItem?> FindActiveByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken)
+    public async Task<IItem?> FindActiveByAsync(TemporaryItemId temporaryItemId)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var itemEntity = await GetItemQuery()
             .FirstOrDefaultAsync(item =>
                     !item.Deleted && item.CreatedFrom.HasValue && item.CreatedFrom == temporaryItemId,
-                cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+                _cancellationToken);
 
         if (itemEntity == null)
             return null;
@@ -138,40 +131,33 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(itemEntity);
     }
 
-    public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, CancellationToken cancellationToken)
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput)
     {
         var entities = await GetItemQuery()
             .Where(item =>
                 !item.Deleted
                 && !item.IsTemporary
                 && item.Name.Contains(searchInput))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IItem>> FindActiveByAsync(ItemCategoryId itemCategoryId,
-        CancellationToken cancellationToken)
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(ItemCategoryId itemCategoryId)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var entities = await GetItemQuery()
             .Where(item => item.ItemCategoryId.HasValue
                            && item.ItemCategoryId == itemCategoryId
                            && !item.Deleted)
-            .ToListAsync(cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IItem?> FindActiveByAsync(ItemId itemId, CancellationToken cancellationToken)
+    public async Task<IItem?> FindActiveByAsync(ItemId itemId)
     {
         var itemEntity = await GetItemQuery()
-            .FirstOrDefaultAsync(item => !item.Deleted && item.Id == itemId, cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .FirstOrDefaultAsync(item => !item.Deleted && item.Id == itemId, _cancellationToken);
 
         if (itemEntity == null)
             return null;
@@ -179,11 +165,8 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(itemEntity);
     }
 
-    public async Task<IItem?> FindActiveByAsync(ItemId itemId, ItemTypeId? itemTypeId,
-        CancellationToken cancellationToken)
+    public async Task<IItem?> FindActiveByAsync(ItemId itemId, ItemTypeId? itemTypeId)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var query = GetItemQuery()
             .Where(item => item.ItemCategoryId.HasValue
                            && item.Id == itemId
@@ -194,50 +177,41 @@ public class ItemRepository : IItemRepository
         else
             query = query.Where(i => i.ItemTypes.Any(t => t.Id == itemTypeId.Value));
 
-        var entity = await query.FirstOrDefaultAsync(cancellationToken);
+        var entity = await query.FirstOrDefaultAsync(_cancellationToken);
 
         if (entity is null)
             return null;
 
-        cancellationToken.ThrowIfCancellationRequested();
-
         return _toModelConverter.ToDomain(entity);
     }
 
-    public async Task<IEnumerable<IItem>> FindActiveByAsync(SectionId sectionId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(SectionId sectionId)
     {
         var items = await GetItemQuery()
             .Where(item => !item.Deleted
                            && (item.AvailableAt.Any(av => av.DefaultSectionId == sectionId)
                                || item.ItemTypes.Any(t =>
                                    t.AvailableAt.Any(av => av.DefaultSectionId == sectionId))))
-            .ToListAsync(cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(items);
     }
 
-    public async Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemId> itemIds,
-        CancellationToken cancellationToken)
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemId> itemIds)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var rawItemIds = itemIds.Select(id => id.Value).ToArray();
 
         var items = await GetItemQuery()
             .Where(item => item.ItemCategoryId.HasValue
                            && rawItemIds.Contains(item.Id)
                            && !item.Deleted)
-            .ToListAsync(cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(items);
     }
 
     public async Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemCategoryId> itemCategoryIds,
-        StoreId storeId, CancellationToken cancellationToken)
+        StoreId storeId)
     {
         var rawItemCategoryIds = itemCategoryIds.Select(id => id.Value).ToArray();
         var items = await GetItemQuery()
@@ -246,29 +220,27 @@ public class ItemRepository : IItemRepository
                            && !item.Deleted
                            && (item.AvailableAt.Any(av => av.StoreId == storeId)
                                || item.ItemTypes.Any(t => !t.IsDeleted && t.AvailableAt.Any(av => av.StoreId == storeId))))
-            .ToListAsync(cancellationToken);
-        cancellationToken.ThrowIfCancellationRequested();
+            .ToListAsync(_cancellationToken);
+
         return _toModelConverter.ToDomain(items);
     }
 
-    public async Task<IItem> StoreAsync(IItem item, CancellationToken cancellationToken)
+    public async Task<IItem> StoreAsync(IItem item)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var existingEntity = await FindTrackedEntityBy(item.Id);
 
         Guid entityIdToLoad;
         if (existingEntity == null)
         {
-            var newEntity = _toEntityConverter.ToContract(item);
+            var newEntity = _toContractConverter.ToContract(item);
             _dbContext.Add(newEntity);
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(_cancellationToken);
             entityIdToLoad = newEntity.Id;
         }
         else
         {
-            var updatedEntity = _toEntityConverter.ToContract(item);
+            var updatedEntity = _toContractConverter.ToContract(item);
             updatedEntity.Id = existingEntity.Id;
 
             var existingRowVersion = existingEntity.RowVersion;
@@ -284,7 +256,7 @@ public class ItemRepository : IItemRepository
 
             try
             {
-                await _dbContext.SaveChangesAsync(cancellationToken);
+                await _dbContext.SaveChangesAsync(_cancellationToken);
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -294,8 +266,7 @@ public class ItemRepository : IItemRepository
             entityIdToLoad = updatedEntity.Id;
         }
 
-        var dispatcher = _domainEventDispatcherDelegate(cancellationToken);
-        await ((AggregateRoot)item).DispatchDomainEvents(dispatcher);
+        await ((AggregateRoot)item).DispatchDomainEvents(_domainEventDispatcher);
 
         var e = GetItemQuery().First(i => i.Id == entityIdToLoad);
         return _toModelConverter.ToDomain(e);
@@ -320,7 +291,7 @@ public class ItemRepository : IItemRepository
             .Include(item => item.AvailableAt)
             .Include(item => item.ItemTypes)
             .ThenInclude(itemType => itemType.AvailableAt)
-            .FirstOrDefaultAsync(i => i.Id == id);
+            .FirstOrDefaultAsync(i => i.Id == id, _cancellationToken);
     }
 
     private void UpdateOrAddAvailabilities(Item existing, Item updated)

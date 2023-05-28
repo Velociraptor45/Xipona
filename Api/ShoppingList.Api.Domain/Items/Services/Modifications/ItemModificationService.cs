@@ -17,24 +17,22 @@ public class ItemModificationService : IItemModificationService
     private readonly IShoppingListRepository _shoppingListRepository;
     private readonly IStoreRepository _storeRepository;
     private readonly IValidator _validator;
-    private readonly CancellationToken _cancellationToken;
 
-    public ItemModificationService(IItemRepository itemRepository,
+    public ItemModificationService(Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         Func<CancellationToken, IValidator> validatorDelegate,
-        IShoppingListRepository shoppingListRepository,
-        IStoreRepository storeRepository,
+        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
+        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
         CancellationToken cancellationToken)
     {
-        _itemRepository = itemRepository;
-        _shoppingListRepository = shoppingListRepository;
-        _storeRepository = storeRepository;
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
+        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
+        _storeRepository = storeRepositoryDelegate(cancellationToken);
         _validator = validatorDelegate(cancellationToken);
-        _cancellationToken = cancellationToken;
     }
 
     public async Task ModifyItemWithTypesAsync(ItemWithTypesModification modification)
     {
-        var item = await _itemRepository.FindActiveByAsync(modification.Id, _cancellationToken);
+        var item = await _itemRepository.FindActiveByAsync(modification.Id);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(modification.Id));
         if (!item.HasItemTypes)
@@ -53,7 +51,7 @@ public class ItemModificationService : IItemModificationService
 
             // only remove item type from shopping list if it's not available anymore in respective store
             var availableStoreIds = type.Availabilities.Select(av => av.StoreId).ToList();
-            var listsToRemoveItemFrom = (await _shoppingListRepository.FindByAsync(type.Id, _cancellationToken))
+            var listsToRemoveItemFrom = (await _shoppingListRepository.FindByAsync(type.Id))
                 .Where(list => availableStoreIds.All(storeId => list.StoreId != storeId));
             await RemoveItemTypeFromShoppingList(listsToRemoveItemFrom, item, type);
         }
@@ -61,16 +59,16 @@ public class ItemModificationService : IItemModificationService
         foreach (var type in itemTypesBefore.Values)
         {
             // remove all types from shopping lists that don't exist anymore
-            var listsToRemoveItemFrom = await _shoppingListRepository.FindByAsync(type.Id, _cancellationToken);
+            var listsToRemoveItemFrom = await _shoppingListRepository.FindByAsync(type.Id);
             await RemoveItemTypeFromShoppingList(listsToRemoveItemFrom, item, type);
         }
 
-        await _itemRepository.StoreAsync(item, _cancellationToken);
+        await _itemRepository.StoreAsync(item);
     }
 
     public async Task Modify(ItemModification modification)
     {
-        var item = await _itemRepository.FindActiveByAsync(modification.Id, _cancellationToken);
+        var item = await _itemRepository.FindActiveByAsync(modification.Id);
 
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(modification.Id));
@@ -82,51 +80,44 @@ public class ItemModificationService : IItemModificationService
 
         await _validator.ValidateAsync(itemCategoryId);
 
-        _cancellationToken.ThrowIfCancellationRequested();
-
         if (manufacturerId != null)
         {
             await _validator.ValidateAsync(manufacturerId.Value);
         }
 
-        _cancellationToken.ThrowIfCancellationRequested();
-
         var availabilities = modification.Availabilities;
         await _validator.ValidateAsync(availabilities);
-
-        _cancellationToken.ThrowIfCancellationRequested();
 
         item.Modify(modification, availabilities);
 
         var availableAtStoreIds = item.Availabilities.Select(av => av.StoreId);
-        var shoppingListsWithItem = (await _shoppingListRepository.FindByAsync(item.Id, _cancellationToken))
+        var shoppingListsWithItem = (await _shoppingListRepository.FindByAsync(item.Id))
             .Where(list => availableAtStoreIds.All(storeId => storeId != list.StoreId))
             .ToList();
 
-        await _itemRepository.StoreAsync(item, _cancellationToken);
+        await _itemRepository.StoreAsync(item);
         foreach (var list in shoppingListsWithItem)
         {
-            _cancellationToken.ThrowIfCancellationRequested();
             // remove items from all shopping lists where item is not available anymore
             list.RemoveItem(item.Id);
-            await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+            await _shoppingListRepository.StoreAsync(list);
         }
     }
 
     public async Task TransferToSectionAsync(SectionId oldSectionId, SectionId newSectionId)
     {
-        var store = await _storeRepository.FindActiveByAsync(oldSectionId, _cancellationToken);
+        var store = await _storeRepository.FindActiveByAsync(oldSectionId);
         if (store is null)
             throw new DomainException(new StoreNotFoundReason(oldSectionId));
         if (!store.ContainsSection(newSectionId))
             throw new DomainException(new OldAndNewSectionNotInSameStoreReason(oldSectionId, newSectionId));
 
-        var items = await _itemRepository.FindActiveByAsync(oldSectionId, _cancellationToken);
+        var items = await _itemRepository.FindActiveByAsync(oldSectionId);
 
         foreach (var item in items)
         {
             item.TransferToDefaultSection(oldSectionId, newSectionId);
-            await _itemRepository.StoreAsync(item, _cancellationToken);
+            await _itemRepository.StoreAsync(item);
         }
     }
 
@@ -136,7 +127,7 @@ public class ItemModificationService : IItemModificationService
         foreach (var list in lists)
         {
             list.RemoveItem(item.Id, itemType.Id);
-            await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+            await _shoppingListRepository.StoreAsync(list);
         }
     }
 }

@@ -831,7 +831,7 @@ public class StoreControllerIntegrationTests
 
         protected IStoreRepository CreateStoreRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<IStoreRepository>();
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IStoreRepository>>()(default);
         }
 
         public async Task<IEnumerable<Repositories.Stores.Entities.Store>> LoadAllStoresAsync()
@@ -874,7 +874,7 @@ public class StoreControllerIntegrationTests
 
             using (await CreateTransactionAsync(scope))
             {
-                return (await repo.GetActiveAsync(default)).ToList();
+                return (await repo.GetActiveAsync()).ToList();
             }
         }
 

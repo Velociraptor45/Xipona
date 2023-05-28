@@ -11,12 +11,12 @@ public class ShoppingListExchangeServiceMock : Mock<IShoppingListExchangeService
 
     public void SetupExchangeItemAsync(ItemId oldItemId, IItem newItem)
     {
-        Setup(m => m.ExchangeItemAsync(oldItemId, newItem, It.IsAny<CancellationToken>()))
+        Setup(m => m.ExchangeItemAsync(oldItemId, newItem))
             .Returns(Task.CompletedTask);
     }
 
     public void VerifyExchangeItemAsync(ItemId oldItemId, IItem newItem, Func<Times> times)
     {
-        Verify(m => m.ExchangeItemAsync(oldItemId, newItem, It.IsAny<CancellationToken>()), times);
+        Verify(m => m.ExchangeItemAsync(oldItemId, newItem), times);
     }
 }

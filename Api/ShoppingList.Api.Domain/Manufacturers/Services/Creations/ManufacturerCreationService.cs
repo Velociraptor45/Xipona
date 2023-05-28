@@ -8,21 +8,19 @@ public class ManufacturerCreationService : IManufacturerCreationService
 {
     private readonly IManufacturerRepository _manufacturerRepository;
     private readonly IManufacturerFactory _manufacturerFactory;
-    private readonly CancellationToken _cancellationToken;
 
     public ManufacturerCreationService(
-        IManufacturerRepository manufacturerRepository,
+        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
         IManufacturerFactory manufacturerFactory,
         CancellationToken cancellationToken)
     {
-        _manufacturerRepository = manufacturerRepository;
+        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
         _manufacturerFactory = manufacturerFactory;
-        _cancellationToken = cancellationToken;
     }
 
     public async Task<IManufacturer> CreateAsync(ManufacturerName name)
     {
         var model = _manufacturerFactory.Create(ManufacturerId.New, name, false);
-        return await _manufacturerRepository.StoreAsync(model, _cancellationToken);
+        return await _manufacturerRepository.StoreAsync(model);
     }
 }

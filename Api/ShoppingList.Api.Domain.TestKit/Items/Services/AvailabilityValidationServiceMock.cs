@@ -13,16 +13,14 @@ public class AvailabilityValidationServiceMock : Mock<IAvailabilityValidationSer
     public void VerifyValidateOnce(IEnumerable<IItemAvailability> availabilities)
     {
         Verify(i => i.ValidateAsync(
-                availabilities,
-                It.IsAny<CancellationToken>()),
+                availabilities),
             Times.Once);
     }
 
     public void SetupValidateAsync(IEnumerable<IItemAvailability> availabilities)
     {
         Setup(m => m.ValidateAsync(
-                It.Is<IEnumerable<IItemAvailability>>(avs => avs.IsEquivalentTo(availabilities)),
-                It.IsAny<CancellationToken>()))
+                It.Is<IEnumerable<IItemAvailability>>(avs => avs.IsEquivalentTo(availabilities))))
             .Returns(Task.CompletedTask);
     }
 }

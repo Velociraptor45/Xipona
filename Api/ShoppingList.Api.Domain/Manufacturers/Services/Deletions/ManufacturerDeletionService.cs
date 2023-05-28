@@ -8,34 +8,32 @@ public class ManufacturerDeletionService : IManufacturerDeletionService
 {
     private readonly IManufacturerRepository _manufacturerRepository;
     private readonly IItemRepository _itemRepository;
-    private readonly CancellationToken _cancellationToken;
 
     public ManufacturerDeletionService(
-        IManufacturerRepository manufacturerRepository,
-        IItemRepository itemRepository,
+        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         CancellationToken cancellationToken)
     {
-        _manufacturerRepository = manufacturerRepository;
-        _itemRepository = itemRepository;
-        _cancellationToken = cancellationToken;
+        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
     }
 
     public async Task DeleteAsync(ManufacturerId manufacturerId)
     {
-        var manufacturer = await _manufacturerRepository.FindActiveByAsync(manufacturerId, _cancellationToken);
+        var manufacturer = await _manufacturerRepository.FindActiveByAsync(manufacturerId);
         if (manufacturer == null)
             return;
 
-        var items = await _itemRepository.FindByAsync(manufacturerId, _cancellationToken);
+        var items = await _itemRepository.FindByAsync(manufacturerId);
 
         foreach (var item in items)
         {
             item.RemoveManufacturer();
-            await _itemRepository.StoreAsync(item, _cancellationToken);
+            await _itemRepository.StoreAsync(item);
         }
 
         manufacturer.Delete();
 
-        await _manufacturerRepository.StoreAsync(manufacturer, _cancellationToken);
+        await _manufacturerRepository.StoreAsync(manufacturer);
     }
 }

@@ -12,14 +12,13 @@ public class ItemCategoryValidationServiceMock : Mock<IItemCategoryValidationSer
     public void VerifyValidateAsyncOnce(ItemCategoryId itemCategoryId)
     {
         Verify(i => i.ValidateAsync(
-                itemCategoryId,
-                It.IsAny<CancellationToken>()),
+                itemCategoryId),
             Times.Once);
     }
 
     public void SetupValidateAsync(ItemCategoryId itemCategoryId)
     {
-        Setup(m => m.ValidateAsync(itemCategoryId, It.IsAny<CancellationToken>()))
+        Setup(m => m.ValidateAsync(itemCategoryId))
             .Returns(Task.CompletedTask);
     }
 }

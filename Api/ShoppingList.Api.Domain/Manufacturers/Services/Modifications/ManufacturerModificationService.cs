@@ -7,24 +7,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Modificat
 public class ManufacturerModificationService : IManufacturerModificationService
 {
     private readonly IManufacturerRepository _manufacturerRepository;
-    private readonly CancellationToken _cancellationToken;
 
     public ManufacturerModificationService(
-        IManufacturerRepository manufacturerRepository,
+        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
         CancellationToken cancellationToken)
     {
-        _manufacturerRepository = manufacturerRepository;
-        _cancellationToken = cancellationToken;
+        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
     }
 
     public async Task ModifyAsync(ManufacturerModification modification)
     {
-        var manufacturer = await _manufacturerRepository.FindActiveByAsync(modification.Id, _cancellationToken);
+        var manufacturer = await _manufacturerRepository.FindActiveByAsync(modification.Id);
         if (manufacturer is null)
             throw new DomainException(new ManufacturerNotFoundReason(modification.Id));
 
         manufacturer.Modify(modification);
 
-        await _manufacturerRepository.StoreAsync(manufacturer, _cancellationToken);
+        await _manufacturerRepository.StoreAsync(manufacturer);
     }
 }

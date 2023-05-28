@@ -13,15 +13,18 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<Func<CancellationToken, IValidator>>(provider =>
         {
-            var availabilityValidationService = provider.GetRequiredService<IAvailabilityValidationService>();
-            var itemCategoryValidationService = provider.GetRequiredService<IItemCategoryValidationService>();
-            var manufacturerValidationService = provider.GetRequiredService<IManufacturerValidationService>();
+            var availabilityValidationServiceDelegate = provider
+                .GetRequiredService<Func<CancellationToken, IAvailabilityValidationService>>();
+            var itemCategoryValidationServiceDelegate = provider
+                .GetRequiredService<Func<CancellationToken, IItemCategoryValidationService>>();
+            var manufacturerValidationServiceDelegate = provider
+                .GetRequiredService<Func<CancellationToken, IManufacturerValidationService>>();
             var itemValidationService = provider.GetRequiredService<Func<CancellationToken, IItemValidationService>>();
             var recipeTagValidationService = provider.GetRequiredService<Func<CancellationToken, IRecipeTagValidationService>>();
             return cancellationToken => new Validator(
-                availabilityValidationService,
-                itemCategoryValidationService,
-                manufacturerValidationService,
+                availabilityValidationServiceDelegate,
+                itemCategoryValidationServiceDelegate,
+                manufacturerValidationServiceDelegate,
                 itemValidationService,
                 recipeTagValidationService,
                 cancellationToken);

@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.ShoppingList.Api.Contracts.Common;
-using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
@@ -14,6 +11,7 @@ using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Contexts;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+using System;
 using Xunit;
 using Item = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.Item;
 using Manufacturer = ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Entities.Manufacturer;
@@ -93,7 +91,6 @@ public class ManufacturerControllerIntegrationTests
         {
             // Arrange
             _fixture.SetupManufacturerId();
-            _fixture.SetupExpectedFotFoundContract();
             await _fixture.PrepareDatabaseForManufacturerNotExistingAsync();
             var sut = _fixture.CreateSut();
 
@@ -111,7 +108,6 @@ public class ManufacturerControllerIntegrationTests
             }
 
             public Models.ManufacturerId? ManufacturerId { get; private set; }
-            public ErrorContract? ExpectedNotFoundContract { get; private set; }
 
             public void SetupManufacturerId()
             {
@@ -137,7 +133,7 @@ public class ManufacturerControllerIntegrationTests
                     .WithId(ManufacturerId.Value)
                     .Create();
 
-                await manufacturerRepository.StoreAsync(manufacturer, default);
+                await manufacturerRepository.StoreAsync(manufacturer);
 
                 // items
                 var itemRepository = CreateItemRepository(SetupScope);
@@ -154,19 +150,10 @@ public class ManufacturerControllerIntegrationTests
 
                 foreach (var item in items)
                 {
-                    await itemRepository.StoreAsync(item, default);
+                    await itemRepository.StoreAsync(item);
                 }
 
                 await transaction.CommitAsync(default);
-            }
-
-            public void SetupExpectedFotFoundContract()
-            {
-                TestPropertyNotSetException.ThrowIfNull(ManufacturerId);
-
-                ExpectedNotFoundContract = new ErrorContract(
-                    $"Manufacturer {ManufacturerId.Value.Value} not found.",
-                    ErrorReasonCode.ManufacturerNotFound.ToInt());
             }
         }
     }
@@ -204,12 +191,12 @@ public class ManufacturerControllerIntegrationTests
 
         protected IManufacturerRepository CreateManufacturerRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<IManufacturerRepository>();
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(default);
         }
 
         protected IItemRepository CreateItemRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<IItemRepository>();
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IItemRepository>>()(default);
         }
 
         public async Task<IList<Manufacturer>> LoadPersistedManufacturersAsync()

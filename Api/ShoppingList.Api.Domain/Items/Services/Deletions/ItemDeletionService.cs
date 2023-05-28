@@ -6,23 +6,21 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Services.Deletions;
 public class ItemDeletionService : IItemDeletionService
 {
     private readonly IItemRepository _itemRepository;
-    private readonly CancellationToken _cancellationToken;
 
     public ItemDeletionService(
-        IItemRepository itemRepository,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         CancellationToken cancellationToken)
     {
-        _itemRepository = itemRepository;
-        _cancellationToken = cancellationToken;
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
     }
 
     public async Task DeleteAsync(ItemId itemId)
     {
-        var item = await _itemRepository.FindActiveByAsync(itemId, _cancellationToken);
+        var item = await _itemRepository.FindActiveByAsync(itemId);
         if (item == null)
             return;
 
         item.Delete();
-        await _itemRepository.StoreAsync(item, _cancellationToken);
+        await _itemRepository.StoreAsync(item);
     }
 }

@@ -175,6 +175,55 @@ public class ShoppingListSearchBarReducerTests
         }
     }
 
+    public class OnSearchItemForShoppingList
+    {
+        private readonly OnSearchItemForShoppingListFixture _fixture;
+
+        public OnSearchItemForShoppingList()
+        {
+            _fixture = new OnSearchItemForShoppingListFixture();
+        }
+
+        [Fact]
+        public void OnSearchItemForShoppingList_WithValidData_ShouldClearSearchResults()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ShoppingListSearchBarReducer.OnSearchItemForShoppingList(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSearchItemForShoppingListFixture : ShoppingListSearchBarReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    SearchBar = ExpectedState.SearchBar with
+                    {
+                        Results = new DomainTestBuilder<SearchItemForShoppingListResult>().CreateMany(2).ToList()
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    SearchBar = ExpectedState.SearchBar with
+                    {
+                        Results = new List<SearchItemForShoppingListResult>()
+                    },
+                };
+            }
+        }
+    }
+
     public class OnSearchItemForShoppingListFinished
     {
         private readonly OnSearchItemForShoppingListFinishedFixture _fixture;
