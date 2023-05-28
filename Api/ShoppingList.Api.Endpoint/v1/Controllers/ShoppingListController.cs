@@ -131,7 +131,7 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{id:guid}/items")]
+    [Route("{id:guid}/items/temporary")]
     public async Task<IActionResult> AddTemporaryItemToShoppingListAsync([FromRoute] Guid id,
         [FromBody] AddTemporaryItemToShoppingListContract contract, CancellationToken cancellationToken = default)
     {

@@ -28,6 +28,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Queries.GetAll;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
@@ -85,6 +86,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
             RemoveItemFromShoppingListContract contract, CancellationToken cancellationToken = default)
         {
             await _apiClient.RemoveItemFromShoppingListAsync(id, contract, cancellationToken);
+        }
+
+        public async Task AddTemporaryItemToShoppingListAsync(Guid id, AddTemporaryItemToShoppingListContract contract,
+            CancellationToken cancellationToken = default)
+        {
+            await _apiClient.AddTemporaryItemToShoppingListAsync(id, contract, cancellationToken);
         }
 
         public async Task AddItemToShoppingListAsync(Guid id, AddItemToShoppingListContract contract,
