@@ -1,19 +1,238 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Frontend.TestTools.Extensions;
+using RestEase;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.ShoppingLists.Effects;
 
 public class ShoppingListEffectsTests
 {
+    public class HandleLoadQuantityTypesAction
+    {
+        private readonly HandleLoadQuantityTypesActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesAction_WithSuccessfulRequest_ShouldDispatchFinishedAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupExpectedQuantityTypes();
+                _fixture.SetupGettingQuantityTypes();
+                _fixture.SetupDispatchingLoadFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesAction_WithWithApiException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupGettingQuantityTypesThrowsApiException();
+                _fixture.SetupDispatchingApiExceptionAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesAction_WithWithHttpException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupGettingQuantityTypesThrowsHttpRequestException();
+                _fixture.SetupDispatchingErrorAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleLoadQuantityTypesActionFixture : ShoppingListEffectsFixture
+        {
+            private IReadOnlyCollection<QuantityType>? _expectedQuantityTypes;
+            private LoadQuantityTypesFinishedAction? _expectedLoadFinishedAction;
+
+            public void SetupExpectedQuantityTypes()
+            {
+                _expectedQuantityTypes = new DomainTestBuilder<QuantityType>().CreateMany(2).ToList();
+            }
+
+            public void SetupGettingQuantityTypes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedQuantityTypes);
+                ApiClientMock.SetupGetAllQuantityTypesAsync(_expectedQuantityTypes);
+            }
+
+            public void SetupGettingQuantityTypesThrowsApiException()
+            {
+                ApiClientMock.SetupGetAllQuantityTypesAsyncThrowing(
+                    new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupGettingQuantityTypesThrowsHttpRequestException()
+            {
+                ApiClientMock.SetupGetAllQuantityTypesAsyncThrowing(
+                    new DomainTestBuilder<HttpRequestException>().Create());
+            }
+
+            public void SetupDispatchingLoadFinishedAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedQuantityTypes);
+
+                _expectedLoadFinishedAction = new LoadQuantityTypesFinishedAction(_expectedQuantityTypes);
+                SetupDispatchingAction(_expectedLoadFinishedAction);
+            }
+
+            public void SetupDispatchingApiExceptionAction()
+            {
+                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+            }
+
+            public void SetupDispatchingErrorAction()
+            {
+                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
+            }
+        }
+    }
+
+    public class HandleLoadQuantityTypesInPacketAction
+    {
+        private readonly HandleLoadQuantityTypesInPacketActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesInPacketAction_WithSuccessfulRequest_ShouldDispatchFinishedAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupExpectedQuantityTypesInPacket();
+                _fixture.SetupGettingQuantityTypesInPacket();
+                _fixture.SetupDispatchingLoadFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesInPacketAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesInPacketAction_WithWithApiException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupGettingQuantityTypesInPacketThrowsApiException();
+                _fixture.SetupDispatchingApiExceptionAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesInPacketAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesInPacketAction_WithWithHttpException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupGettingQuantityTypesInPacketThrowsHttpRequestException();
+                _fixture.SetupDispatchingErrorAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesInPacketAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleLoadQuantityTypesInPacketActionFixture : ShoppingListEffectsFixture
+        {
+            private IReadOnlyCollection<QuantityTypeInPacket>? _expectedQuantityTypesInPacket;
+            private LoadQuantityTypesInPacketFinishedAction? _expectedLoadFinishedAction;
+
+            public void SetupExpectedQuantityTypesInPacket()
+            {
+                _expectedQuantityTypesInPacket = new DomainTestBuilder<QuantityTypeInPacket>().CreateMany(2).ToList();
+            }
+
+            public void SetupGettingQuantityTypesInPacket()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedQuantityTypesInPacket);
+                ApiClientMock.SetupGetAllQuantityTypesInPacketAsync(_expectedQuantityTypesInPacket);
+            }
+
+            public void SetupGettingQuantityTypesInPacketThrowsApiException()
+            {
+                ApiClientMock.SetupGetAllQuantityTypesInPacketAsyncThrowing(
+                    new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupGettingQuantityTypesInPacketThrowsHttpRequestException()
+            {
+                ApiClientMock.SetupGetAllQuantityTypesInPacketAsyncThrowing(
+                    new DomainTestBuilder<HttpRequestException>().Create());
+            }
+
+            public void SetupDispatchingLoadFinishedAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedQuantityTypesInPacket);
+
+                _expectedLoadFinishedAction = new LoadQuantityTypesInPacketFinishedAction(_expectedQuantityTypesInPacket);
+                SetupDispatchingAction(_expectedLoadFinishedAction);
+            }
+
+            public void SetupDispatchingApiExceptionAction()
+            {
+                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+            }
+
+            public void SetupDispatchingErrorAction()
+            {
+                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
+            }
+        }
+    }
+
     public class HandleLoadAllActiveStoresAction
     {
         private readonly HandleLoadAllActiveStoresActionFixture _fixture = new();
@@ -117,6 +336,209 @@ public class ShoppingListEffectsTests
 
                 ExpectedLoadFinishedAction = new LoadAllActiveStoresFinishedAction(ExpectedStoresForShoppingList);
                 SetupDispatchingAction(ExpectedLoadFinishedAction);
+            }
+        }
+    }
+
+    public class HandleSelectedStoreChangedAction
+    {
+        private readonly HandleSelectedStoreChangedActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleSelectedStoreChangedAction_WithValidStoreId_ShouldDispatchFinishedAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupAction();
+                _fixture.SetupExpectedShoppingList();
+                _fixture.SetupGettingQuantityTypesInPacket();
+                _fixture.SetupDispatchingLoadFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await sut.HandleSelectedStoreChangedAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleSelectedStoreChangedAction_WithWithApiException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupAction();
+                _fixture.SetupGettingQuantityTypesInPacketThrowsApiException();
+                _fixture.SetupDispatchingApiExceptionAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await sut.HandleSelectedStoreChangedAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleSelectedStoreChangedAction_WithWithHttpException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupAction();
+                _fixture.SetupGettingQuantityTypesInPacketThrowsHttpRequestException();
+                _fixture.SetupDispatchingErrorAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await sut.HandleSelectedStoreChangedAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleSelectedStoreChangedActionFixture : ShoppingListEffectsFixture
+        {
+            private Guid _storeId = Guid.NewGuid();
+            private ShoppingListModel? _expectedShoppingList;
+            private LoadShoppingListFinishedAction? _expectedLoadFinishedAction;
+
+            public SelectedStoreChangedAction? Action { get; private set; }
+
+            public void SetupExpectedShoppingList()
+            {
+                _expectedShoppingList = new DomainTestBuilder<ShoppingListModel>().Create();
+            }
+
+            public void SetupGettingQuantityTypesInPacket()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedShoppingList);
+                ApiClientMock.SetupGetActiveShoppingListByStoreIdAsync(_storeId, _expectedShoppingList);
+            }
+
+            public void SetupGettingQuantityTypesInPacketThrowsApiException()
+            {
+                ApiClientMock.SetupGetActiveShoppingListByStoreIdAsyncThrowing(_storeId,
+                    new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupGettingQuantityTypesInPacketThrowsHttpRequestException()
+            {
+                ApiClientMock.SetupGetActiveShoppingListByStoreIdAsyncThrowing(_storeId,
+                    new DomainTestBuilder<HttpRequestException>().Create());
+            }
+
+            public void SetupDispatchingLoadFinishedAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedShoppingList);
+
+                _expectedLoadFinishedAction = new LoadShoppingListFinishedAction(_expectedShoppingList);
+                SetupDispatchingAction(_expectedLoadFinishedAction);
+            }
+
+            public void SetupAction()
+            {
+                Action = new SelectedStoreChangedAction(_storeId);
+            }
+
+            public void SetupDispatchingApiExceptionAction()
+            {
+                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+            }
+
+            public void SetupDispatchingErrorAction()
+            {
+                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
+            }
+        }
+    }
+
+    public class HandleSaveTemporaryItemAction
+    {
+        private readonly HandleSaveTemporaryItemActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleSaveTemporaryItemAction_WithSuccessfulEnqueue_ShouldDispatchFinishedAndCloseAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupStateReturningState();
+                _fixture.SetupItem();
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupEnqueuingRequest();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingCloseAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSaveTemporaryItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleSaveTemporaryItemActionFixture : ShoppingListEffectsFixture
+        {
+            private SaveTemporaryItemFinishedAction? _expectedFinishedAction;
+            private ShoppingListItem? _item;
+
+            public void SetupItem()
+            {
+                _item = new ShoppingListItem(
+                    ShoppingListItemId.FromOfflineId(Guid.NewGuid()),
+                    TypeId: null,
+                    State.TemporaryItemCreator.ItemName,
+                    IsTemporary: true,
+                    State.TemporaryItemCreator.Price,
+                    new QuantityType(0, "", 1, "€", "x", 1),
+                    QuantityInPacket: 1,
+                    new QuantityTypeInPacket(0, "", ""),
+                    ItemCategory: "",
+                    Manufacturer: "",
+                    IsInBasket: false,
+                    Quantity: 1,
+                    false);
+            }
+
+            public void SetupEnqueuingRequest()
+            {
+                var request = new AddTemporaryItemToShoppingListRequest(
+                    Guid.NewGuid(), State.ShoppingList!.Id, State.TemporaryItemCreator.ItemName, 0, 1,
+                    State.TemporaryItemCreator.Price, State.TemporaryItemCreator.Section!.Id, Guid.NewGuid());
+
+                CommandQueueMock.SetupEnqueue(req => req.IsRequestEquivalentTo(request, new List<string> { "TemporaryId" }));
+            }
+
+            public void SetupDispatchingStartedAction()
+            {
+                SetupDispatchingAction<SaveTemporaryItemStartedAction>();
+            }
+
+            public void SetupDispatchingFinishedAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+
+                _expectedFinishedAction = new SaveTemporaryItemFinishedAction(_item, State.TemporaryItemCreator.Section!);
+                SetupDispatchingAction<SaveTemporaryItemFinishedAction>(
+                    action => action.IsEquivalentTo(_expectedFinishedAction, new List<string> { "Item.Id.OfflineId.Value" }));
+            }
+
+            public void SetupDispatchingCloseAction()
+            {
+                SetupDispatchingAnyAction<CloseTemporaryItemCreatorAction>();
             }
         }
     }
