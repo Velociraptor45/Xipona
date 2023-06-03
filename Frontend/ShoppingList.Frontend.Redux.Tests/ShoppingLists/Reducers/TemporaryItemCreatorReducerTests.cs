@@ -141,7 +141,7 @@ public class TemporaryItemCreatorReducerTests
 
             public void SetupAction()
             {
-                ChangeAction = new TemporaryItemSelectedSectionChangedAction(ExpectedState.TemporaryItemCreator.Section);
+                ChangeAction = new TemporaryItemSelectedSectionChangedAction(ExpectedState.TemporaryItemCreator.Section!);
             }
 
             public void SetupInitialState()
@@ -480,7 +480,7 @@ public class TemporaryItemCreatorReducerTests
 
             public void SetupAction()
             {
-                var section = ExpectedState.ShoppingList.Sections.Last();
+                var section = ExpectedState.ShoppingList!.Sections.Last();
                 var storeSection = new DomainTestBuilder<ShoppingListStoreSection>().Create() with
                 {
                     Id = section.Id,
