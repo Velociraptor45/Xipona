@@ -225,7 +225,7 @@ public class ItemTests
             var func = async () => await sut.ModifyAsync(_fixture.Modification!, _fixture.ValidatorMock.Object);
 
             // Assert
-            func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.CannotModifyDeletedItem);
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.CannotModifyDeletedItem);
         }
 
         private class ModifyAsyncFixture : ItemFixture
@@ -1424,7 +1424,7 @@ public class ItemTests
         protected readonly ItemBuilder Builder = new();
         protected readonly ItemTypeFactoryMock ItemTypeFactoryMock = new(MockBehavior.Strict);
 
-        public ItemFixture()
+        protected ItemFixture()
         {
             Builder.WithIsDeleted(false);
         }
