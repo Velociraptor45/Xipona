@@ -61,6 +61,7 @@ public static class TemporaryItemCreatorReducer
                 ItemName = state.SearchBar.Input,
                 IsOpen = true,
                 IsSaving = false,
+                Price = ShoppingListFeatureState.InitialTemporaryItemPrice,
                 Section = defaultSection ?? state.SelectedStore.Sections.First()
             }
         };
