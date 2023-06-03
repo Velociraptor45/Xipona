@@ -67,4 +67,5 @@ public enum ErrorReasonCode
     CannotRemoveManufacturerFromDeletedItem = 65,
     CannotModifyDeletedItem = 66,
     CannotMakeDeletedItemPermanent = 67,
+    CannotModifyDeletedManufacturer = 68,
 }
