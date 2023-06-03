@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Extensions;
 
@@ -300,5 +301,38 @@ public class ApiClientMock : Mock<IApiClient>
     public void SetupGetItemAmountsForOneServingAsyncThrowing(Guid recipeId, Exception ex)
     {
         this.SetupInOrder(m => m.GetItemAmountsForOneServingAsync(recipeId)).ThrowsAsync(ex);
+    }
+
+    public void SetupGetAllQuantityTypesAsync(IEnumerable<QuantityType> returnValue)
+    {
+        this.SetupInOrder(m => m.GetAllQuantityTypesAsync())
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetAllQuantityTypesAsyncThrowing(Exception ex)
+    {
+        this.SetupInOrder(m => m.GetAllQuantityTypesAsync()).ThrowsAsync(ex);
+    }
+
+    public void SetupGetAllQuantityTypesInPacketAsync(IEnumerable<QuantityTypeInPacket> returnValue)
+    {
+        this.SetupInOrder(m => m.GetAllQuantityTypesInPacketAsync())
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetAllQuantityTypesInPacketAsyncThrowing(Exception ex)
+    {
+        this.SetupInOrder(m => m.GetAllQuantityTypesInPacketAsync()).ThrowsAsync(ex);
+    }
+
+    public void SetupGetActiveShoppingListByStoreIdAsync(Guid storeId, ShoppingListModel returnValue)
+    {
+        this.SetupInOrder(m => m.GetActiveShoppingListByStoreIdAsync(storeId))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetActiveShoppingListByStoreIdAsyncThrowing(Guid storeId, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetActiveShoppingListByStoreIdAsync(storeId)).ThrowsAsync(ex);
     }
 }

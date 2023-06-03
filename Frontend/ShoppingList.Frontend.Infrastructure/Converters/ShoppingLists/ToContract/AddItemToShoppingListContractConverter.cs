@@ -7,17 +7,10 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
     public class AddItemToShoppingListContractConverter :
         IToContractConverter<AddItemToShoppingListRequest, AddItemToShoppingListContract>
     {
-        private readonly ItemIdContractConverter _itemIdConverter;
-
-        public AddItemToShoppingListContractConverter()
-        {
-            _itemIdConverter = new ItemIdContractConverter();
-        }
-
         public AddItemToShoppingListContract ToContract(AddItemToShoppingListRequest request)
         {
             return new AddItemToShoppingListContract(
-                _itemIdConverter.ToContract(request.ItemId),
+                request.ItemId,
                 request.SectionId,
                 request.Quantity);
         }

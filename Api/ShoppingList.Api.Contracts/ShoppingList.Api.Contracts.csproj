@@ -6,7 +6,7 @@
     <RootNamespace>ProjectHermes.ShoppingList.Api.Contracts</RootNamespace>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Title>ProjectHermes ShoppingList Api Contracts</Title>
-    <Version>0.10.0-alpha.9</Version>
+    <Version>0.10.0-alpha.10</Version>
     <Authors>Velociraptor45</Authors>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Velociraptor45/ProjectHermes-ShoppingList</RepositoryUrl>

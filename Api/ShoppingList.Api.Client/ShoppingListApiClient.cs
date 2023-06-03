@@ -5,7 +5,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
@@ -28,6 +27,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Queries.GetAll;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
@@ -85,6 +85,12 @@ namespace ProjectHermes.ShoppingList.Api.Client
             RemoveItemFromShoppingListContract contract, CancellationToken cancellationToken = default)
         {
             await _apiClient.RemoveItemFromShoppingListAsync(id, contract, cancellationToken);
+        }
+
+        public async Task AddTemporaryItemToShoppingListAsync(Guid id, AddTemporaryItemToShoppingListContract contract,
+            CancellationToken cancellationToken = default)
+        {
+            await _apiClient.AddTemporaryItemToShoppingListAsync(id, contract, cancellationToken);
         }
 
         public async Task AddItemToShoppingListAsync(Guid id, AddItemToShoppingListContract contract,
@@ -207,12 +213,6 @@ namespace ProjectHermes.ShoppingList.Api.Client
         public async Task<ItemContract> GetAsync(Guid id, CancellationToken cancellationToken = default)
         {
             return await _apiClient.GetAsync(id, cancellationToken);
-        }
-
-        public async Task CreateTemporaryItemAsync(CreateTemporaryItemContract contract,
-            CancellationToken cancellationToken = default)
-        {
-            await _apiClient.CreateTemporaryItemAsync(contract, cancellationToken);
         }
 
         public async Task MakeTemporaryItemPermanentAsync(Guid id, MakeTemporaryItemPermanentContract contract,

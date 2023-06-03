@@ -19,6 +19,12 @@ public abstract class EffectsFixtureBase
             .SetupInOrder(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(action))));
     }
 
+    protected void SetupDispatchingAction<TAction>(Func<TAction, bool> match)
+    {
+        DispatcherMock
+            .SetupInOrder(m => m.Dispatch(It.Is<TAction>(a => match(a))));
+    }
+
     protected void SetupDispatchingAnyAction<TAction>()
     {
         DispatcherMock.SetupInOrder(m => m.Dispatch(It.IsAny<TAction>()));

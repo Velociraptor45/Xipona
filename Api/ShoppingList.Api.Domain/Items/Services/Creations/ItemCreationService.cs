@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion.ItemReadModels;
@@ -52,18 +51,6 @@ public class ItemCreationService : IItemCreationService
 
     public async Task<ItemReadModel> CreateItemWithTypesAsync(IItem item)
     {
-        var storedItem = await _itemRepository.StoreAsync(item);
-
-        return await _conversionService.ConvertAsync(storedItem);
-    }
-
-    public async Task<ItemReadModel> CreateTemporaryAsync(TemporaryItemCreation creation)
-    {
-        var availability = creation.Availability;
-        await _validator.ValidateAsync(availability.ToMonoList());
-
-        var item = _itemFactory.Create(creation);
-
         var storedItem = await _itemRepository.StoreAsync(item);
 
         return await _conversionService.ConvertAsync(storedItem);

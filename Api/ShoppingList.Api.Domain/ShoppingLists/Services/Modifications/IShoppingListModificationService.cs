@@ -24,4 +24,7 @@ public interface IShoppingListModificationService
     Task RemoveSectionAsync(SectionId sectionId);
 
     Task RemoveItemAndItsTypesFromCurrentListAsync(ItemId itemId);
+
+    Task AddTemporaryItemAsync(ShoppingListId shoppingListId, ItemName itemName, QuantityType quantityType,
+        QuantityInBasket quantity, Price price, SectionId sectionId, TemporaryItemId temporaryItemId);
 }

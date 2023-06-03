@@ -122,7 +122,6 @@ public class ShoppingListEffects
     {
         dispatcher.Dispatch(new SaveTemporaryItemStartedAction());
 
-        // todo merge these requests (#333)
         var quantityType = new QuantityType(0, "", 1, "€", "x", 1);
         var quantityTypeInPacket = new QuantityTypeInPacket(0, "", "");
         var offlineId = ShoppingListItemId.FromOfflineId(Guid.NewGuid());
@@ -141,21 +140,16 @@ public class ShoppingListEffects
             Quantity: 1,
             false);
 
-        var createRequest = new CreateTemporaryItemRequest(
-            Guid.NewGuid(),
-            item.Id.OfflineId!.Value,
-            item.Name,
-            _state.Value.SelectedStoreId,
-            item.PricePerQuantity,
-            _state.Value.TemporaryItemCreator.Section!.Id);
-        var addRequest = new AddItemToShoppingListRequest(
+        var addRequest = new AddTemporaryItemToShoppingListRequest(
             Guid.NewGuid(),
             _state.Value.ShoppingList!.Id,
-            item.Id,
-            1,
-            null);
+            item.Name,
+            item.QuantityType.Id,
+            item.Quantity,
+            item.PricePerQuantity,
+            _state.Value.TemporaryItemCreator.Section!.Id,
+            item.Id.OfflineId!.Value);
 
-        await _commandQueue.Enqueue(createRequest);
         await _commandQueue.Enqueue(addRequest);
 
         dispatcher.Dispatch(new SaveTemporaryItemFinishedAction(item, _state.Value.TemporaryItemCreator.Section));

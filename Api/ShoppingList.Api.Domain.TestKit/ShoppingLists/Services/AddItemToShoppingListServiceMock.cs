@@ -1,7 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
-using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
@@ -54,7 +53,7 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
             .Returns(Task.CompletedTask);
     }
 
-    public void SetupAddAsync(ShoppingListId shoppingListId, OfflineTolerantItemId itemId, SectionId? sectionId,
+    public void SetupAddAsync(ShoppingListId shoppingListId, ItemId itemId, SectionId? sectionId,
         QuantityInBasket quantity)
     {
         Setup(m => m.AddAsync(shoppingListId, itemId, sectionId, quantity))
@@ -101,10 +100,9 @@ public class AddItemToShoppingListServiceMock : Mock<IAddItemToShoppingListServi
         Verify(m => m.AddAsync(itemsToAdd), times);
     }
 
-    public void VerifyAddAsync(ShoppingListId shoppingListId, OfflineTolerantItemId itemId, SectionId? sectionId,
+    public void VerifyAddAsync(ShoppingListId shoppingListId, ItemId itemId, SectionId? sectionId,
         QuantityInBasket quantity, Func<Times> times)
     {
-        Verify(m => m.AddAsync(shoppingListId, itemId, sectionId, quantity),
-            times);
+        Verify(m => m.AddAsync(shoppingListId, itemId, sectionId, quantity), times);
     }
 }

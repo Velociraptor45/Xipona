@@ -151,4 +151,15 @@ public class ItemEntityBuilder : TestBuilder<Item>
     {
         return WithAvailableAt(new List<AvailableAt>());
     }
+
+    public ItemEntityBuilder WithUpdatedOn(DateTimeOffset? updatedOn)
+    {
+        FillPropertyWith(p => p.UpdatedOn, updatedOn);
+        return this;
+    }
+
+    public ItemEntityBuilder WithoutUpdatedOn()
+    {
+        return WithUpdatedOn(null);
+    }
 }

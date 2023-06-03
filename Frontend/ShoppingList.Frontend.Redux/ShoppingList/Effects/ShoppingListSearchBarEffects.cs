@@ -96,7 +96,7 @@ public sealed class ShoppingListSearchBarEffects : IDisposable
                 var request = new AddItemToShoppingListRequest(
                     Guid.NewGuid(),
                     _state.Value.ShoppingList!.Id,
-                    ShoppingListItemId.FromActualId(action.Result.ItemId),
+                    action.Result.ItemId,
                     action.Result.DefaultQuantity,
                     action.Result.DefaultSectionId);
                 await _client.AddItemToShoppingListAsync(request);
