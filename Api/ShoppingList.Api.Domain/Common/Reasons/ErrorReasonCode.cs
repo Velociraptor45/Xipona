@@ -68,4 +68,6 @@ public enum ErrorReasonCode
     CannotModifyDeletedItem = 66,
     CannotMakeDeletedItemPermanent = 67,
     CannotModifyDeletedManufacturer = 68,
+    CannotModifyDeletedStore = 69,
+    CannotModifyDeletedSection = 70,
 }
