@@ -62,4 +62,9 @@ public enum ErrorReasonCode
     CannotModifyItemTypeWithoutAvailabilities = 60,
     NumberOfServingsMustBeAtLeastOne = 61,
     CannotModifyDeletedItemCategory = 62,
+    CannotTransferDeletedItem = 63,
+    CannotUpdateDeletedItem = 64,
+    CannotRemoveManufacturerFromDeletedItem = 65,
+    CannotModifyDeletedItem = 66,
+    CannotMakeDeletedItemPermanent = 67,
 }

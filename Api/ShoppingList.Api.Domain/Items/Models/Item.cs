@@ -98,6 +98,9 @@ public class Item : AggregateRoot, IItem
 
     public void MakePermanent(PermanentItem permanentItem, IEnumerable<IItemAvailability> availabilities)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotMakeDeletedItemPermanentReason(Id));
+
         Name = permanentItem.Name;
         Comment = permanentItem.Comment;
         ItemQuantity = permanentItem.ItemQuantity;
@@ -109,6 +112,9 @@ public class Item : AggregateRoot, IItem
 
     public void Modify(ItemModification itemChange, IEnumerable<IItemAvailability> availabilities)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotModifyDeletedItemReason(Id));
+
         Name = itemChange.Name;
         Comment = itemChange.Comment;
         ItemQuantity = itemChange.ItemQuantity;
@@ -122,6 +128,9 @@ public class Item : AggregateRoot, IItem
 
     public async Task ModifyAsync(ItemWithTypesModification modification, IValidator validator)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotModifyDeletedItemReason(Id));
+
         if (!HasItemTypes)
             throw new DomainException(new CannotModifyItemAsItemWithTypesReason(Id));
 
@@ -190,12 +199,18 @@ public class Item : AggregateRoot, IItem
 
     public void RemoveManufacturer()
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotRemoveManufacturerFromDeletedItemReason(Id));
+
         ManufacturerId = null;
     }
 
     public async Task<IItem> UpdateAsync(ItemWithTypesUpdate update, IValidator validator,
         IDateTimeService dateTimeService)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotUpdateDeletedItemReason(Id));
+
         if (!HasItemTypes)
             throw new DomainException(new CannotUpdateItemAsItemWithTypesReason(update.OldId));
 
@@ -230,6 +245,9 @@ public class Item : AggregateRoot, IItem
 
     public async Task<IItem> UpdateAsync(ItemUpdate update, IValidator validator, IDateTimeService dateTimeService)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotUpdateDeletedItemReason(Id));
+
         if (IsTemporary)
             throw new DomainException(new TemporaryItemNotUpdateableReason(update.OldId));
         if (HasItemTypes)
@@ -273,6 +291,9 @@ public class Item : AggregateRoot, IItem
 
     public IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotUpdateDeletedItemReason(Id));
+
         IItem newItem;
         if (HasItemTypes)
         {
@@ -303,6 +324,9 @@ public class Item : AggregateRoot, IItem
 
     public void TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotTransferDeletedItemReason(Id));
+
         if (HasItemTypes)
         {
             _itemTypes!.TransferToDefaultSection(oldSectionId, newSectionId);

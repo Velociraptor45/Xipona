@@ -24,7 +24,7 @@ public class ManufacturerDeletionService : IManufacturerDeletionService
         if (manufacturer == null)
             return;
 
-        var items = await _itemRepository.FindByAsync(manufacturerId);
+        var items = await _itemRepository.FindActiveByAsync(manufacturerId);
 
         foreach (var item in items)
         {

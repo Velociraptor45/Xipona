@@ -54,15 +54,6 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IItem>> FindByAsync(ManufacturerId manufacturerId)
-    {
-        var entities = await GetItemQuery()
-            .Where(i => i.ManufacturerId == manufacturerId.Value)
-            .ToListAsync(_cancellationToken);
-
-        return _toModelConverter.ToDomain(entities);
-    }
-
     public async Task<IEnumerable<IItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
         IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds)
     {
@@ -86,6 +77,15 @@ public class ItemRepository : IItemRepository
             .ToList();
 
         return _toModelConverter.ToDomain(filteredResultByStore);
+    }
+
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(ManufacturerId manufacturerId)
+    {
+        var entities = await GetItemQuery()
+            .Where(i => i.ManufacturerId == manufacturerId.Value && !i.Deleted)
+            .ToListAsync(_cancellationToken);
+
+        return _toModelConverter.ToDomain(entities);
     }
 
     public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId,
