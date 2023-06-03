@@ -61,4 +61,5 @@ public enum ErrorReasonCode
     CannotUpdateItemTypeWithoutAvailabilities = 59,
     CannotModifyItemTypeWithoutAvailabilities = 60,
     NumberOfServingsMustBeAtLeastOne = 61,
+    CannotModifyDeletedItemCategory = 62,
 }

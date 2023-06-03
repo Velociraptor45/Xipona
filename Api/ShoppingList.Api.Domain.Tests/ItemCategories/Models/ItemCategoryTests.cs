@@ -1,6 +1,8 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
@@ -59,6 +61,23 @@ public class ItemCategoryTests
             sut.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
+        [Fact]
+        public void Modify_WithDeleted_ShouldThrow()
+        {
+            // Arrange
+            _fixture.SetupModification();
+            _fixture.SetupDeleted();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
+            // Act
+            var func = () => sut.Modify(_fixture.Modification);
+
+            // Assert
+            func.Should().ThrowDomainException(ErrorReasonCode.CannotModifyDeletedItemCategory);
+        }
+
         private class ModifyFixture : ItemCategoryFixture
         {
             public ItemCategoryModification? Modification { get; set; }
@@ -80,9 +99,21 @@ public class ItemCategoryTests
 
     private abstract class ItemCategoryFixture
     {
+        private ItemCategoryBuilder _itemCategoryBuilder = new();
+
+        public ItemCategoryFixture()
+        {
+            _itemCategoryBuilder.WithIsDeleted(false);
+        }
+
+        public void SetupDeleted()
+        {
+            _itemCategoryBuilder = _itemCategoryBuilder.WithIsDeleted(true);
+        }
+
         public ItemCategory CreateSut()
         {
-            return new ItemCategoryBuilder().Create();
+            return _itemCategoryBuilder.Create();
         }
     }
 }
