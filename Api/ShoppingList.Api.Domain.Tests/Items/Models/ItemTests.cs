@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+﻿using Force.DeepCloner;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.TestKit.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
@@ -1424,6 +1425,26 @@ public class ItemTests
         private readonly RemoveAvailabilitiesForFixture _fixture = new();
 
         [Fact]
+        public void RemoveAvailabilitiesFor_WithItemDeleted_WithMultipleAvailabilities_WithOneForStore_ShouldNotChangeItem()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupDeleted();
+            _fixture.SetupMultipleWithOneAvailableAtStore();
+            var sut = _fixture.CreateSut();
+            var expectedItem = sut.DeepClone();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value);
+
+            // Assert
+            sut.Should().BeEquivalentTo(expectedItem);
+            sut.DomainEvents.Should().BeEmpty();
+        }
+
+        [Fact]
         public void RemoveAvailabilitiesFor_WithMultipleAvailabilities_WithOneForStore_ShouldDeleteAvailabilityAndPublishEvent()
         {
             // Arrange
@@ -1446,6 +1467,25 @@ public class ItemTests
             sut.DomainEvents.First().Should().BeOfType<ItemAvailabilityDeletedDomainEvent>();
             var domainEvent = sut.DomainEvents.First() as ItemAvailabilityDeletedDomainEvent;
             domainEvent.Should().BeEquivalentTo(_fixture.ExpectedItemAvailabilityDeletedDomainEvent);
+        }
+
+        [Fact]
+        public void RemoveAvailabilitiesFor_WithMultipleAvailabilities_WithNoneForStore_ShouldNotChangeItem()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupMultipleWithoutAvailableAtStore();
+            var sut = _fixture.CreateSut();
+            var expectedItem = sut.DeepClone();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value);
+
+            // Assert
+            sut.Should().BeEquivalentTo(expectedItem);
+            sut.DomainEvents.Should().BeEmpty();
         }
 
         [Fact]
@@ -1530,6 +1570,25 @@ public class ItemTests
         }
 
         [Fact]
+        public void RemoveAvailabilitiesFor_WithMultipleTypes_WithoutAvailabilityForStore_ShouldNotChangeItem()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupMultipleTypesWithoutAvailableAtStore();
+            var sut = _fixture.CreateSut();
+            var expectedItem = sut.DeepClone();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value);
+
+            // Assert
+            sut.Should().BeEquivalentTo(expectedItem);
+            sut.DomainEvents.Should().BeEmpty();
+        }
+
+        [Fact]
         public void RemoveAvailabilitiesFor_WithMultipleTypes_WithMultipleAvailabilities_WithOneForStore_ShouldDeleteAvailabilityAndPublishEvent()
         {
             // Arrange
@@ -1600,6 +1659,20 @@ public class ItemTests
                 ExpectedItemTypeDeletedDomainEvent = new ItemTypeDeletedDomainEvent(itemTypes.First().Id) { ItemId = Id };
             }
 
+            public void SetupMultipleTypesWithoutAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var availability = ItemAvailabilityMother.ForStore(StoreId.Value).Create();
+
+                var itemTypes = new List<IItemType>{
+                    ItemTypeMother.Initial().Create(),
+                    ItemTypeMother.Initial().Create(),
+                };
+
+                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+            }
+
             public void SetupMultipleTypesWithOneNotOnlyAvailableAtStore()
             {
                 TestPropertyNotSetException.ThrowIfNull(StoreId);
@@ -1652,6 +1725,19 @@ public class ItemTests
                 ExpectedItemAvailabilities = new List<ItemAvailability> { availabilities.Last() };
                 ExpectedItemAvailabilityDeletedDomainEvent =
                     new ItemAvailabilityDeletedDomainEvent(availabilities.First()) { ItemId = Id };
+            }
+
+            public void SetupMultipleWithoutAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var availabilities = new List<ItemAvailability>
+                {
+                    ItemAvailabilityMother.Initial().Create(),
+                    ItemAvailabilityMother.Initial().Create()
+                };
+
+                Builder.AsItem().WithAvailabilities(availabilities);
             }
         }
     }

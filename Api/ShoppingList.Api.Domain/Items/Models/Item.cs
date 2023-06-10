@@ -354,6 +354,9 @@ public class Item : AggregateRoot, IItem
 
     public void RemoveAvailabilitiesFor(StoreId storeId)
     {
+        if (IsDeleted)
+            return;
+
         if (HasItemTypes)
         {
             if (_itemTypes!.Count() == 1
