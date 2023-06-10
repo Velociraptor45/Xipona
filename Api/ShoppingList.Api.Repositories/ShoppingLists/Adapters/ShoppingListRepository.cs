@@ -115,6 +115,15 @@ public class ShoppingListRepository : IShoppingListRepository
         return _toDomainConverter.ToDomain(entities);
     }
 
+    public async Task DeleteAsync(ShoppingListId id)
+    {
+        var entity = await FindEntityByIdAsync(id);
+        if (entity == null)
+            return;
+
+        _dbContext.ShoppingLists.Remove(entity);
+    }
+
     #endregion public methods
 
     #region private methods

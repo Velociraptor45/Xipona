@@ -15,7 +15,7 @@ public class ItemUpdatedDomainEventHandlerTests
 
     private sealed class ItemUpdatedDomainEventHandlerFixture : DomainEventHandlerBaseFixture
     {
-        private RecipeModificationServiceMock _recipeModificationServiceMock = new(MockBehavior.Strict);
+        private readonly RecipeModificationServiceMock _recipeModificationServiceMock = new(MockBehavior.Strict);
 
         public override ItemUpdatedDomainEventHandler CreateSut()
         {
