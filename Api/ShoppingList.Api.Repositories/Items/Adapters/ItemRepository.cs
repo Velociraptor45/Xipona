@@ -112,7 +112,9 @@ public class ItemRepository : IItemRepository
     public async Task<IEnumerable<IItem>> FindActiveByAsync(StoreId storeId)
     {
         var entities = await GetItemQuery()
-            .Where(item => !item.Deleted && item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId) != null)
+            .Where(item => !item.Deleted
+                           && (item.AvailableAt.Any(av => av.StoreId == storeId)
+                               || item.ItemTypes.Any(t => !t.IsDeleted && t.AvailableAt.Any(av => av.StoreId == storeId))))
             .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(entities);

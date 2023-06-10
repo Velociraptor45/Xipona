@@ -56,4 +56,6 @@ public interface IItem
     IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService);
 
     void TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId);
+
+    void RemoveAvailabilitiesFor(StoreId storeId);
 }

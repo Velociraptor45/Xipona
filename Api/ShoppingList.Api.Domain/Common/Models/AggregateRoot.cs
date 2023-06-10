@@ -20,6 +20,14 @@ public abstract class AggregateRoot
         return domainEvent;
     }
 
+    protected void PublishDomainEvents(IEnumerable<IDomainEvent> domainEvents)
+    {
+        foreach (var domainEvent in domainEvents)
+        {
+            PublishDomainEvent(domainEvent);
+        }
+    }
+
     public async Task DispatchDomainEvents(IDomainEventDispatcher dispatcher)
     {
         foreach (var domainEvent in _domainEvents)

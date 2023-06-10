@@ -351,4 +351,37 @@ public class Item : AggregateRoot, IItem
                 _availabilities[i] = availability.TransferToDefaultSection(newSectionId);
         }
     }
+
+    public void RemoveAvailabilitiesFor(StoreId storeId)
+    {
+        if (HasItemTypes)
+        {
+            if (_itemTypes!.Count() == 1
+               && _itemTypes!.First().Availabilities.Count == 1
+               && _itemTypes!.First().IsAvailableAt(storeId))
+            {
+                Delete();
+                return;
+            }
+
+            _itemTypes.RemoveAvailabilitiesFor(storeId, out var domainEventsToPublish);
+            PublishDomainEvents(domainEventsToPublish);
+            return;
+        }
+
+        var availabilities = _availabilities.Where(av => av.StoreId != storeId).ToList();
+        if (availabilities.Count == _availabilities.Count)
+            return;
+
+        if (availabilities.Any())
+        {
+            var availabilitiesToRemove = _availabilities.Where(av => av.StoreId == storeId);
+            _availabilities = availabilities;
+            PublishDomainEvents(availabilitiesToRemove.Select(av => new ItemAvailabilityDeletedDomainEvent(av)));
+        }
+        else
+        {
+            Delete();
+        }
+    }
 }
