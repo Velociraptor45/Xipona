@@ -367,7 +367,7 @@ public class Item : AggregateRoot, IItem
                 return;
             }
 
-            _itemTypes.RemoveAvailabilitiesFor(storeId, out var domainEventsToPublish);
+            _itemTypes!.RemoveAvailabilitiesFor(storeId, out var domainEventsToPublish);
             PublishDomainEvents(domainEventsToPublish);
             return;
         }
