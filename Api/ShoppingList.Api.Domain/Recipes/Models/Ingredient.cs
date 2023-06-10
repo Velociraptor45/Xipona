@@ -1,5 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
@@ -74,6 +76,27 @@ public class Ingredient : IIngredient
             QuantityType,
             Quantity,
             new IngredientShoppingListProperties(newItem.Id, itemType!.Id, ShoppingListProperties.DefaultStoreId,
+                ShoppingListProperties.AddToShoppingListByDefault));
+    }
+
+    public IIngredient ChangeDefaultStore(IItem item)
+    {
+        if (ShoppingListProperties is null)
+            throw new DomainException(new CannotChangeStoreOfIngredientWithoutShoppingListPropertiesReason(Id));
+
+        var availability = DefaultItemTypeId is null
+            ? item.Availabilities.First()
+            : item.ItemTypes.First(t => t.Id == DefaultItemTypeId.Value).Availabilities.First();
+
+        return new Ingredient(
+            Id,
+            ItemCategoryId,
+            QuantityType,
+            Quantity,
+            new IngredientShoppingListProperties(
+                DefaultItemId!.Value,
+                DefaultItemTypeId,
+                availability.StoreId,
                 ShoppingListProperties.AddToShoppingListByDefault));
     }
 }

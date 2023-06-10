@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 
@@ -19,4 +20,6 @@ public interface IRecipe
     void RemoveDefaultItem(ItemId defaultItemId);
 
     void ModifyIngredientsAfterItemUpdate(ItemId oldItemId, IItem newItem);
+    void ModifyIngredientsAfterAvailabilityWasDeleted(ItemId itemId, ItemTypeId? itemTypeId, IItem item,
+        StoreId deletedAvailabilityStoreId);
 }

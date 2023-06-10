@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Ports;
@@ -298,12 +299,14 @@ public class RecipeModificationServiceTests
     private abstract class RecipeModificationServiceFixture
     {
         protected readonly RecipeRepositoryMock RecipeRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
         protected readonly ValidatorMock ValidatorMock = new(MockBehavior.Strict);
 
         public RecipeModificationService CreateSut()
         {
             return new RecipeModificationService(
                 _ => RecipeRepositoryMock.Object,
+                _ => ItemRepositoryMock.Object,
                 _ => ValidatorMock.Object,
                 default);
         }

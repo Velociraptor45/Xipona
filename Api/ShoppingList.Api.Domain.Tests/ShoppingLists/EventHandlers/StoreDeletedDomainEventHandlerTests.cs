@@ -33,7 +33,7 @@ public class StoreDeletedDomainEventHandlerTests
         public override void VerifyCallingService()
         {
             TestPropertyNotSetException.ThrowIfNull(DomainEvent);
-            _shoppingListDeletionServiceMock.VerifyHardDeleteForStoreAsync(DomainEvent.StoreId, Times.Once());
+            _shoppingListDeletionServiceMock.VerifyHardDeleteForStoreAsync(DomainEvent.StoreId, Times.Once);
         }
     }
 }

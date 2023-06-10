@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 
@@ -16,4 +17,7 @@ public interface IRecipeRepository
     Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId);
 
     Task<IEnumerable<IRecipe>> FindByContainingAllAsync(IEnumerable<RecipeTagId> recipeTagIds);
+
+    Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId, ItemTypeId? defaultItemTypeId, 
+        StoreId defaultStoreId);
 }

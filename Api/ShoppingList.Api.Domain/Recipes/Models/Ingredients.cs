@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 
@@ -109,6 +110,20 @@ public class Ingredients : IEnumerable<IIngredient>
         foreach (var ingredient in ingredientsWithItem)
         {
             _ingredients[ingredient.Id] = ingredient.ChangeDefaultItem(oldItemId, newItem);
+        }
+    }
+
+    public void ModifyAfterAvailabilityWasDeleted(ItemId itemId, ItemTypeId? itemTypeId, IItem item,
+        StoreId deletedAvailabilityStoreId)
+    {
+        var ingredientsWithItem = _ingredients.Values
+            .Where(i => i.DefaultItemId == itemId
+                        && i.DefaultItemTypeId == itemTypeId
+                        && i.ShoppingListProperties?.DefaultStoreId == deletedAvailabilityStoreId);
+
+        foreach (var ingredient in ingredientsWithItem)
+        {
+            _ingredients[ingredient.Id] = ingredient.ChangeDefaultStore(item);
         }
     }
 }

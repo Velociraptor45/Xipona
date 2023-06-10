@@ -15,7 +15,7 @@ public class ShoppingListDeletionServiceMock : Mock<IShoppingListDeletionService
             .Returns(Task.CompletedTask);
     }
 
-    public void VerifyHardDeleteForStoreAsync(StoreId storeId, Times times)
+    public void VerifyHardDeleteForStoreAsync(StoreId storeId, Func<Times> times)
     {
         Verify(x => x.HardDeleteForStoreAsync(storeId), times);
     }
