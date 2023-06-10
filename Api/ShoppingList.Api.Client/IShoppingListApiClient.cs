@@ -188,6 +188,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task ModifyStoreAsync([Body] ModifyStoreContract modifyStoreContract,
             CancellationToken cancellationToken = default);
 
+        [Delete("stores/{id}")]
+        Task DeleteStoreAsync([Path] Guid id, CancellationToken cancellationToken = default);
+
         #endregion StoreController
 
         #region ManufacturerController
