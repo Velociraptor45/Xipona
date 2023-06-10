@@ -27,14 +27,14 @@ public class ItemUpdatedDomainEventHandlerTests
             TestPropertyNotSetException.ThrowIfNull(DomainEvent);
 
             _recipeModificationServiceMock.SetupModifyIngredientsAfterItemUpdateAsync(
-                DomainEvent.OldItemId, DomainEvent.NewItem);
+                DomainEvent.ItemId, DomainEvent.NewItem);
         }
 
         public override void VerifyCallingService()
         {
             TestPropertyNotSetException.ThrowIfNull(DomainEvent);
             _recipeModificationServiceMock.VerifyModifyIngredientsAfterItemUpdateAsync(
-                DomainEvent!.OldItemId, DomainEvent.NewItem, Times.Once);
+                DomainEvent!.ItemId, DomainEvent.NewItem, Times.Once);
         }
     }
 }

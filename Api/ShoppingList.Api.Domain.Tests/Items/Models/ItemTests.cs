@@ -59,7 +59,7 @@ public class ItemTests
         // Assert
         var aggregateRootItem = (AggregateRoot)item;
         aggregateRootItem.DomainEvents.Should().HaveCount(1);
-        aggregateRootItem.DomainEvents.First().Should().BeEquivalentTo(new ItemDeletedDomainEvent(item.Id));
+        aggregateRootItem.DomainEvents.First().Should().BeEquivalentTo(new ItemDeletedDomainEvent { ItemId = item.Id });
     }
 
     [Fact]

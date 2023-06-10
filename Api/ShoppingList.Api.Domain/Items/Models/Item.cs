@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Services;
+﻿using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
+using ProjectHermes.ShoppingList.Api.Core.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
@@ -82,13 +83,23 @@ public class Item : AggregateRoot, IItem
     public IReadOnlyCollection<IItemAvailability> Availabilities => _availabilities.AsReadOnly();
     public bool HasItemTypes => _itemTypes?.Any() ?? false;
 
+    protected override IDomainEvent OnBeforeAddingDomainEvent(IDomainEvent domainEvent)
+    {
+        if (domainEvent is ItemDomainEvent itemDomainEvent)
+        {
+            return itemDomainEvent with { ItemId = Id };
+        }
+
+        return domainEvent;
+    }
+
     public void Delete()
     {
         if (IsDeleted)
             return;
 
         IsDeleted = true;
-        PublishDomainEvent(new ItemDeletedDomainEvent(Id));
+        PublishDomainEvent(new ItemDeletedDomainEvent());
     }
 
     public bool IsAvailableInStore(StoreId storeId)
@@ -236,7 +247,7 @@ public class Item : AggregateRoot, IItem
             null,
             Id);
 
-        PublishDomainEvent(new ItemUpdatedDomainEvent(Id, updatedItem));
+        PublishDomainEvent(new ItemUpdatedDomainEvent(updatedItem));
         Delete();
         UpdatedOn = dateTimeService.UtcNow;
 
@@ -282,7 +293,7 @@ public class Item : AggregateRoot, IItem
             null,
             Id);
 
-        PublishDomainEvent(new ItemUpdatedDomainEvent(Id, newItem));
+        PublishDomainEvent(new ItemUpdatedDomainEvent(newItem));
         Delete();
         UpdatedOn = dateTimeService.UtcNow;
 
@@ -315,7 +326,7 @@ public class Item : AggregateRoot, IItem
                 ManufacturerId, availabilities, TemporaryId, null, Id);
         }
 
-        PublishDomainEvent(new ItemUpdatedDomainEvent(Id, newItem));
+        PublishDomainEvent(new ItemUpdatedDomainEvent(newItem));
         Delete();
         UpdatedOn = dateTimeService.UtcNow;
 
