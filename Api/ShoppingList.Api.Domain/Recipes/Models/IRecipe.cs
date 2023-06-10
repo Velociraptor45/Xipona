@@ -17,9 +17,10 @@ public interface IRecipe
 
     Task ModifyAsync(RecipeModification modification, IValidator validator);
 
-    void RemoveDefaultItem(ItemId defaultItemId);
+    void RemoveDefaultItem(ItemId defaultItemId, ItemTypeId? itemTypeId);
 
     void ModifyIngredientsAfterItemUpdate(ItemId oldItemId, IItem newItem);
+
     void ModifyIngredientsAfterAvailabilityWasDeleted(ItemId itemId, ItemTypeId? itemTypeId, IItem item,
         StoreId deletedAvailabilityStoreId);
 }

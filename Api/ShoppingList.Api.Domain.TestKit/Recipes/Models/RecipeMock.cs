@@ -32,13 +32,13 @@ public class RecipeMock : Mock<IRecipe>
         Verify(m => m.ModifyIngredientsAfterItemUpdate(oldItemId, newItem), times);
     }
 
-    public void SetupRemoveDefaultItem(ItemId itemId)
+    public void SetupRemoveDefaultItem(ItemId itemId, ItemTypeId? itemTypeId)
     {
-        Setup(m => m.RemoveDefaultItem(itemId));
+        Setup(m => m.RemoveDefaultItem(itemId, itemTypeId));
     }
 
-    public void VerifyRemoveDefaultItem(ItemId itemId, Func<Times> times)
+    public void VerifyRemoveDefaultItem(ItemId itemId, ItemTypeId? itemTypeId, Func<Times> times)
     {
-        Verify(m => m.RemoveDefaultItem(itemId), times);
+        Verify(m => m.RemoveDefaultItem(itemId, itemTypeId), times);
     }
 }

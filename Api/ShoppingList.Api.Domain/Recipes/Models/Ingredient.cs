@@ -42,7 +42,7 @@ public class Ingredient : IIngredient
     public IIngredient RemoveDefaultItem()
     {
         return new Ingredient(
-            IngredientId.New,
+            Id,
             ItemCategoryId,
             QuantityType,
             Quantity,
@@ -57,7 +57,7 @@ public class Ingredient : IIngredient
         if (DefaultItemTypeId is null)
         {
             return new Ingredient(
-                IngredientId.New,
+                Id,
                 ItemCategoryId,
                 QuantityType,
                 Quantity,
@@ -71,7 +71,7 @@ public class Ingredient : IIngredient
         }
 
         return new Ingredient(
-            IngredientId.New,
+            Id,
             ItemCategoryId,
             QuantityType,
             Quantity,

@@ -44,4 +44,15 @@ public class RecipeModificationServiceMock : Mock<IRecipeModificationService>
     {
         Verify(m => m.ModifyIngredientsAfterAvailabilityWasDeletedAsync(itemId, itemTypeId, storeId), times);
     }
+
+    public void SetupRemoveDefaultItemAsync(ItemId itemId, ItemTypeId itemTypeId)
+    {
+        Setup(m => m.RemoveDefaultItemAsync(itemId, itemTypeId))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void VerifyRemoveDefaultItemAsync(ItemId itemId, ItemTypeId itemTypeId, Func<Times> times)
+    {
+        Verify(m => m.RemoveDefaultItemAsync(itemId, itemTypeId), times);
+    }
 }

@@ -28,6 +28,7 @@ public class ItemTypeAvailabilityDeletedDomainEventHandler : IDomainEventHandler
         await service.ModifyIngredientsAfterAvailabilityWasDeletedAsync(domainEvent.ItemId, domainEvent.ItemTypeId,
             domainEvent.Availability.StoreId);
 
-        _logger.LogDebug(() => $"Finished handling {nameof(ItemTypeAvailabilityDeletedDomainEvent)} for item '{domainEvent.ItemId.Value}' and type '{domainEvent.ItemTypeId.Value}' for recipes");
+        _logger.LogDebug(
+            () => $"Finished handling {nameof(ItemTypeAvailabilityDeletedDomainEvent)} for item '{domainEvent.ItemId.Value}' and type '{domainEvent.ItemTypeId.Value}' for recipes");
     }
 }

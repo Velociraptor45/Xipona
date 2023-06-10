@@ -38,13 +38,13 @@ public class RecipeModificationService : IRecipeModificationService
         await _recipeRepository.StoreAsync(recipe);
     }
 
-    public async Task RemoveDefaultItemAsync(ItemId itemId)
+    public async Task RemoveDefaultItemAsync(ItemId itemId, ItemTypeId? itemTypeId)
     {
         var recipes = await _recipeRepository.FindByAsync(itemId);
 
         foreach (var recipe in recipes)
         {
-            recipe.RemoveDefaultItem(itemId);
+            recipe.RemoveDefaultItem(itemId, itemTypeId);
             await _recipeRepository.StoreAsync(recipe);
         }
     }

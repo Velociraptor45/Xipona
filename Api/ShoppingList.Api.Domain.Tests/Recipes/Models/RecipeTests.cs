@@ -12,6 +12,200 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Recipes.Models;
 
 public class RecipeTests
 {
+    public class RemoveDefaultItem
+    {
+        private readonly RemoveDefaultItemFixture _fixture = new();
+
+        [Fact]
+        public void RemoveDefaultItem_WithItemType_ShouldRemoveDefaultItem()
+        {
+            // Arrange
+            _fixture.SetupItemTypeId();
+            _fixture.SetupIngredientWithItemType();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedIngredients);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+
+            // Act
+            sut.RemoveDefaultItem(_fixture.ItemId, _fixture.ItemTypeId);
+
+            // Assert
+            sut.Ingredients.Should().BeEquivalentTo(_fixture.ExpectedIngredients);
+        }
+
+        [Fact]
+        public void RemoveDefaultItem_WithItemType_WithTwoItemTypesOfSameItem_ShouldRemoveDefaultItemOfOneIngredient()
+        {
+            // Arrange
+            _fixture.SetupItemTypeId();
+            _fixture.SetupIngredientWithTwoItemTypesOfSameItem();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedIngredients);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+
+            // Act
+            sut.RemoveDefaultItem(_fixture.ItemId, _fixture.ItemTypeId);
+
+            // Assert
+            sut.Ingredients.Should().BeEquivalentTo(_fixture.ExpectedIngredients);
+        }
+
+        [Fact]
+        public void RemoveDefaultItem_WithoutItemType_WithIngredientWithoutItemType_ShouldRemoveDefaultItem()
+        {
+            // Arrange
+            _fixture.SetupIngredientWithoutItemType();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedIngredients);
+
+            // Act
+            sut.RemoveDefaultItem(_fixture.ItemId, null);
+
+            // Assert
+            sut.Ingredients.Should().BeEquivalentTo(_fixture.ExpectedIngredients);
+        }
+
+        [Fact]
+        public void RemoveDefaultItem_WithoutItemType_WithIngredientWithItemType_ShouldRemoveDefaultItem()
+        {
+            // Arrange
+            _fixture.SetupIngredientWithRandomItemType();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedIngredients);
+
+            // Act
+            sut.RemoveDefaultItem(_fixture.ItemId, null);
+
+            // Assert
+            sut.Ingredients.Should().BeEquivalentTo(_fixture.ExpectedIngredients);
+        }
+
+        private sealed class RemoveDefaultItemFixture : RecipeFixture
+        {
+            public ItemId ItemId { get; } = ItemId.New;
+            public ItemTypeId? ItemTypeId { get; private set; }
+            public IReadOnlyCollection<Ingredient>? ExpectedIngredients { get; private set; }
+
+            public void SetupItemTypeId()
+            {
+                ItemTypeId = Domain.Items.Models.ItemTypeId.New;
+            }
+
+            public void SetupIngredientWithoutItemType()
+            {
+                var shoppingListProperties1 = new IngredientShoppingListPropertiesBuilder()
+                    .WithDefaultItemId(ItemId)
+                    .WithoutDefaultItemTypeId()
+                    .Create();
+
+                var shoppingListProperties2 = new IngredientShoppingListPropertiesBuilder()
+                    .WithoutDefaultItemTypeId()
+                    .Create();
+
+                var ingredients = new List<Ingredient>
+                {
+                    new IngredientBuilder().WithShoppingListProperties(shoppingListProperties1).Create(),
+                    new IngredientBuilder().WithShoppingListProperties(shoppingListProperties2).Create(),
+                };
+
+                RecipeBuilder.WithIngredients(new Ingredients(ingredients,
+                    new IngredientFactoryMock(MockBehavior.Strict).Object));
+
+                ExpectedIngredients = new List<Ingredient>
+                {
+                    RemoveShoppingListProperties(ingredients.First()),
+                    ingredients.Last()
+                };
+            }
+
+            public void SetupIngredientWithItemType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemTypeId);
+
+                var shoppingListProperties = new IngredientShoppingListPropertiesBuilder()
+                    .WithDefaultItemId(ItemId)
+                    .WithDefaultItemTypeId(ItemTypeId)
+                    .Create();
+
+                var ingredients = new List<Ingredient>
+                {
+                    new IngredientBuilder().WithShoppingListProperties(shoppingListProperties).Create(),
+                    new IngredientBuilder().Create(),
+                };
+                RecipeBuilder.WithIngredients(new Ingredients(ingredients,
+                    new IngredientFactoryMock(MockBehavior.Strict).Object));
+
+                ExpectedIngredients = new List<Ingredient>
+                {
+                    RemoveShoppingListProperties(ingredients.First()),
+                    ingredients.Last()
+                };
+            }
+
+            public void SetupIngredientWithRandomItemType()
+            {
+                var shoppingListProperties = new IngredientShoppingListPropertiesBuilder()
+                    .WithDefaultItemId(ItemId)
+                    .Create();
+
+                var ingredients = new List<Ingredient>
+                {
+                    new IngredientBuilder().WithShoppingListProperties(shoppingListProperties).Create(),
+                    new IngredientBuilder().Create(),
+                };
+                RecipeBuilder.WithIngredients(new Ingredients(ingredients,
+                    new IngredientFactoryMock(MockBehavior.Strict).Object));
+
+                ExpectedIngredients = new List<Ingredient>
+                {
+                    RemoveShoppingListProperties(ingredients.First()),
+                    ingredients.Last()
+                };
+            }
+
+            public void SetupIngredientWithTwoItemTypesOfSameItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemTypeId);
+
+                var shoppingListProperties1 = new IngredientShoppingListPropertiesBuilder()
+                    .WithDefaultItemId(ItemId)
+                    .WithDefaultItemTypeId(ItemTypeId)
+                    .Create();
+                var shoppingListProperties2 = new IngredientShoppingListPropertiesBuilder()
+                    .WithDefaultItemId(ItemId)
+                    .Create();
+
+                var ingredients = new List<Ingredient>
+                {
+                    new IngredientBuilder().WithShoppingListProperties(shoppingListProperties1).Create(),
+                    new IngredientBuilder().WithShoppingListProperties(shoppingListProperties2).Create(),
+                };
+                RecipeBuilder.WithIngredients(new Ingredients(ingredients,
+                    new IngredientFactoryMock(MockBehavior.Strict).Object));
+
+                ExpectedIngredients = new List<Ingredient>
+                {
+                    RemoveShoppingListProperties(ingredients.First()),
+                    ingredients.Last()
+                };
+            }
+
+            private Ingredient RemoveShoppingListProperties(Ingredient ingredient)
+            {
+                return new Ingredient(
+                    ingredient.Id,
+                    ingredient.ItemCategoryId,
+                    ingredient.QuantityType,
+                    ingredient.Quantity,
+                    null);
+            }
+        }
+    }
+
     public class ModifyIngredientsAfterAvailabilityWasDeleted
     {
         private readonly ModifyIngredientsAfterAvailabilityWasDeletedFixture _fixture = new();

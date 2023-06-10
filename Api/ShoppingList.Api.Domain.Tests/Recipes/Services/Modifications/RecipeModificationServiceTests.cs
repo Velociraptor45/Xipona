@@ -152,9 +152,10 @@ public class RecipeModificationServiceTests
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
 
             // Act
-            await sut.RemoveDefaultItemAsync(_fixture.ItemId.Value);
+            await sut.RemoveDefaultItemAsync(_fixture.ItemId.Value, _fixture.ItemTypeId);
 
             // Assert
             _fixture.VerifyModifyingRecipes();
@@ -165,18 +166,21 @@ public class RecipeModificationServiceTests
         {
             private IReadOnlyCollection<RecipeMock>? _recipeMocks;
             public ItemId? ItemId { get; private set; }
+            public ItemTypeId? ItemTypeId { get; private set; }
 
             public void SetupParameters()
             {
                 ItemId = Domain.Items.Models.ItemId.New;
+                ItemTypeId = Domain.Items.Models.ItemTypeId.New;
             }
 
             public void SetupModifyingRecipes()
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipeMocks);
                 TestPropertyNotSetException.ThrowIfNull(ItemId);
+                TestPropertyNotSetException.ThrowIfNull(ItemTypeId);
 
-                _recipeMocks.ToList().ForEach(m => m.SetupRemoveDefaultItem(ItemId.Value));
+                _recipeMocks.ToList().ForEach(m => m.SetupRemoveDefaultItem(ItemId.Value, ItemTypeId.Value));
             }
 
             public void SetupFindingRecipes()
@@ -201,9 +205,10 @@ public class RecipeModificationServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipeMocks);
                 TestPropertyNotSetException.ThrowIfNull(ItemId);
+                TestPropertyNotSetException.ThrowIfNull(ItemTypeId);
 
                 _recipeMocks.ToList()
-                    .ForEach(m => m.VerifyRemoveDefaultItem(ItemId.Value, Times.Once));
+                    .ForEach(m => m.VerifyRemoveDefaultItem(ItemId.Value, ItemTypeId.Value, Times.Once));
             }
 
             public void VerifyStoringRecipes()

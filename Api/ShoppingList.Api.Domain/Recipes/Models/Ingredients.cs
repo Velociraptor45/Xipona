@@ -95,9 +95,11 @@ public class Ingredients : IEnumerable<IIngredient>
         _ingredients.Add(ingredient.Id, ingredient);
     }
 
-    public void RemoveDefaultItem(ItemId defaultItemId)
+    public void RemoveDefaultItem(ItemId defaultItemId, ItemTypeId? itemTypeId)
     {
-        var ingredientsWithItem = _ingredients.Values.Where(i => i.DefaultItemId == defaultItemId);
+        var ingredientsWithItem = _ingredients.Values
+            .Where(i => i.DefaultItemId == defaultItemId
+                        && (itemTypeId is null || i.DefaultItemTypeId == itemTypeId));
         foreach (var ingredient in ingredientsWithItem)
         {
             _ingredients[ingredient.Id] = ingredient.RemoveDefaultItem();

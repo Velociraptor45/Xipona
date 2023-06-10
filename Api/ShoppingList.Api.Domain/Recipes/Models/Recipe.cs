@@ -40,9 +40,9 @@ public class Recipe : AggregateRoot, IRecipe
         await _tags.ModifyAsync(validator, modification.RecipeTagIds);
     }
 
-    public void RemoveDefaultItem(ItemId defaultItemId)
+    public void RemoveDefaultItem(ItemId defaultItemId, ItemTypeId? itemTypeId)
     {
-        _ingredients.RemoveDefaultItem(defaultItemId);
+        _ingredients.RemoveDefaultItem(defaultItemId, itemTypeId);
     }
 
     public void ModifyIngredientsAfterItemUpdate(ItemId oldItemId, IItem newItem)
