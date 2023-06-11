@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Reducers;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
@@ -157,6 +158,56 @@ public class TemporaryItemCreatorReducerTests
         }
     }
 
+    public class OnTemporaryItemSelectedQuantityTypeChanged
+    {
+        private readonly OnTemporaryItemSelectedQuantityTypeChangedFixture _fixture;
+
+        public OnTemporaryItemSelectedQuantityTypeChanged()
+        {
+            _fixture = new OnTemporaryItemSelectedQuantityTypeChangedFixture();
+        }
+
+        [Fact]
+        public void OnTemporaryItemSelectedQuantityTypeChanged_WithValidQuantityTypeId_ShouldUpdateSelectedQuantityTypeId()
+        {
+            // Arrange
+            _fixture.SetupAction();
+            _fixture.SetupInitialState();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ChangeAction);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.InitialState);
+
+            // Act
+            var result = TemporaryItemCreatorReducer.OnTemporaryItemSelectedQuantityTypeChanged(_fixture.InitialState,
+                _fixture.ChangeAction);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnTemporaryItemSelectedQuantityTypeChangedFixture : TemporaryItemCreatorReducerFixture
+        {
+            public TemporaryItemSelectedQuantityTypeChangedAction? ChangeAction { get; private set; }
+
+            public void SetupAction()
+            {
+                ChangeAction = new TemporaryItemSelectedQuantityTypeChangedAction(
+                    ExpectedState.TemporaryItemCreator.SelectedQuantityTypeId);
+            }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    TemporaryItemCreator = ExpectedState.TemporaryItemCreator with
+                    {
+                        SelectedQuantityTypeId = new DomainTestBuilder<int>().Create()
+                    }
+                };
+            }
+        }
+    }
+
     public class OnOpenTemporaryItemCreator
     {
         private readonly OnOpenTemporaryItemCreatorFixture _fixture;
@@ -167,10 +218,24 @@ public class TemporaryItemCreatorReducerTests
         }
 
         [Fact]
-        public void OnOpenTemporaryItemCreator_WithValidSections_ShouldInitializeItemCreator()
+        public void OnOpenTemporaryItemCreator_WithValidSectionsAndQuantityTypes_ShouldInitializeItemCreator()
         {
             // Arrange
             _fixture.SetupExpectedState();
+            _fixture.SetupInitialState();
+
+            // Act
+            var result = TemporaryItemCreatorReducer.OnOpenTemporaryItemCreator(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnOpenTemporaryItemCreator_WithNoQuantityTypes_ShouldSetSelectedQuantityTypeTo0()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithNoQuantityTypes();
             _fixture.SetupInitialState();
 
             // Act
@@ -225,7 +290,8 @@ public class TemporaryItemCreatorReducerTests
                         IsOpen = false,
                         IsSaving = true,
                         Price = new DomainTestBuilder<float>().Create(),
-                        Section = new DomainTestBuilder<ShoppingListStoreSection>().Create()
+                        Section = new DomainTestBuilder<ShoppingListStoreSection>().Create(),
+                        SelectedQuantityTypeId = new DomainTestBuilder<int>().Create()
                     }
                 };
             }
@@ -238,9 +304,11 @@ public class TemporaryItemCreatorReducerTests
                     new DomainTestBuilder<ShoppingListStoreSection>().Create() with { IsDefaultSection = true },
                 };
                 var store = new DomainTestBuilder<ShoppingListStore>().Create() with { Sections = sections };
+                var quantityTypes = new DomainTestBuilder<QuantityType>().CreateMany(2).ToList();
 
                 ExpectedState = ExpectedState with
                 {
+                    QuantityTypes = quantityTypes,
                     Stores = ExpectedState.Stores with
                     {
                         Stores = new List<ShoppingListStore>
@@ -255,7 +323,40 @@ public class TemporaryItemCreatorReducerTests
                         IsOpen = true,
                         IsSaving = false,
                         Price = 1f,
-                        Section = sections.Last()
+                        Section = sections.Last(),
+                        SelectedQuantityTypeId = quantityTypes.First().Id
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithNoQuantityTypes()
+            {
+                var sections = new List<ShoppingListStoreSection>
+                {
+                    new DomainTestBuilder<ShoppingListStoreSection>().Create() with { IsDefaultSection = false },
+                    new DomainTestBuilder<ShoppingListStoreSection>().Create() with { IsDefaultSection = true },
+                };
+                var store = new DomainTestBuilder<ShoppingListStore>().Create() with { Sections = sections };
+
+                ExpectedState = ExpectedState with
+                {
+                    QuantityTypes = new List<QuantityType>(),
+                    Stores = ExpectedState.Stores with
+                    {
+                        Stores = new List<ShoppingListStore>
+                        {
+                            store
+                        }
+                    },
+                    SelectedStoreId = store.Id,
+                    TemporaryItemCreator = ExpectedState.TemporaryItemCreator with
+                    {
+                        ItemName = ExpectedState.SearchBar.Input,
+                        IsOpen = true,
+                        IsSaving = false,
+                        Price = 1f,
+                        Section = sections.Last(),
+                        SelectedQuantityTypeId = 0
                     }
                 };
             }
@@ -268,9 +369,11 @@ public class TemporaryItemCreatorReducerTests
                     new DomainTestBuilder<ShoppingListStoreSection>().Create() with { IsDefaultSection = false },
                 };
                 var store = new DomainTestBuilder<ShoppingListStore>().Create() with { Sections = sections };
+                var quantityTypes = new DomainTestBuilder<QuantityType>().CreateMany(2).ToList();
 
                 ExpectedState = ExpectedState with
                 {
+                    QuantityTypes = quantityTypes,
                     Stores = ExpectedState.Stores with
                     {
                         Stores = new List<ShoppingListStore>
@@ -285,7 +388,8 @@ public class TemporaryItemCreatorReducerTests
                         IsOpen = true,
                         IsSaving = false,
                         Price = 1f,
-                        Section = sections.First()
+                        Section = sections.First(),
+                        SelectedQuantityTypeId = quantityTypes.First().Id
                     }
                 };
             }

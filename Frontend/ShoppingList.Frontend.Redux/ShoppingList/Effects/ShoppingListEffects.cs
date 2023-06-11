@@ -16,6 +16,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
 
 public class ShoppingListEffects
 {
+    private const int _quantityTypeUnitId = 0;
     private readonly IApiClient _client;
     private readonly ICommandQueue _commandQueue;
     private readonly IState<ShoppingListState> _state;
@@ -122,8 +123,13 @@ public class ShoppingListEffects
     {
         dispatcher.Dispatch(new SaveTemporaryItemStartedAction());
 
-        var quantityType = new QuantityType(0, "", 1, "€", "x", 1);
-        var quantityTypeInPacket = new QuantityTypeInPacket(0, "", "");
+        var selectedQuantityTypeId = _state.Value.TemporaryItemCreator.SelectedQuantityTypeId;
+        var quantityType = _state.Value.QuantityTypes.First(t => t.Id == selectedQuantityTypeId);
+        var quantityTypeInPacket = selectedQuantityTypeId == _quantityTypeUnitId
+            ? _state.Value.QuantityTypesInPacket.First()
+            : null;
+        var quantityInPacket = selectedQuantityTypeId == _quantityTypeUnitId ? 1f : (float?)null;
+
         var offlineId = ShoppingListItemId.FromOfflineId(Guid.NewGuid());
         var item = new ShoppingListItem(
             offlineId,
@@ -132,12 +138,12 @@ public class ShoppingListEffects
             IsTemporary: true,
             _state.Value.TemporaryItemCreator.Price,
             quantityType,
-            QuantityInPacket: 1,
+            QuantityInPacket: quantityInPacket,
             quantityTypeInPacket,
             ItemCategory: "",
             Manufacturer: "",
             IsInBasket: false,
-            Quantity: 1,
+            Quantity: quantityType.DefaultQuantity,
             false);
 
         var addRequest = new AddTemporaryItemToShoppingListRequest(

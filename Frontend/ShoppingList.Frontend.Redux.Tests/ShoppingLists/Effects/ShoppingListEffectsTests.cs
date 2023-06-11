@@ -469,13 +469,37 @@ public class ShoppingListEffectsTests
         private readonly HandleSaveTemporaryItemActionFixture _fixture = new();
 
         [Fact]
-        public async Task HandleSaveTemporaryItemAction_WithSuccessfulEnqueue_ShouldDispatchFinishedAndCloseAction()
+        public async Task HandleSaveTemporaryItemAction_WithUnit_WithSuccessfulEnqueue_ShouldDispatchFinishedAndCloseAction()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
-                _fixture.SetupStateReturningState();
-                _fixture.SetupItem();
+                _fixture.SetupQuantityType();
+                _fixture.SetupQuantityTypeUnitInTemporaryItemCreator();
+                _fixture.SetupItemForQuantityTypeUnit();
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupEnqueuingRequest();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingCloseAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSaveTemporaryItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleSaveTemporaryItemAction_WithWeight_WithSuccessfulEnqueue_ShouldDispatchFinishedAndCloseAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupQuantityType();
+                _fixture.SetupQuantityTypeWeightInTemporaryItemCreator();
+                _fixture.SetupItemForQuantityTypeWeight();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupEnqueuingRequest();
                 _fixture.SetupDispatchingFinishedAction();
@@ -494,8 +518,46 @@ public class ShoppingListEffectsTests
         {
             private SaveTemporaryItemFinishedAction? _expectedFinishedAction;
             private ShoppingListItem? _item;
+            private QuantityType? _quantityType;
 
-            public void SetupItem()
+            public void SetupQuantityType()
+            {
+                State = State with
+                {
+                    QuantityTypes = new List<QuantityType>
+                    {
+                        new DomainTestBuilder<QuantityType>().Create(),
+                        new DomainTestBuilder<QuantityType>().Create() with { Id = 1 },
+                        new DomainTestBuilder<QuantityType>().Create() with { Id = 0 },
+                    }
+                };
+            }
+
+            public void SetupQuantityTypeUnitInTemporaryItemCreator()
+            {
+                _quantityType = State.QuantityTypes.Last();
+                State = State with
+                {
+                    TemporaryItemCreator = State.TemporaryItemCreator with
+                    {
+                        SelectedQuantityTypeId = _quantityType.Id
+                    }
+                };
+            }
+
+            public void SetupQuantityTypeWeightInTemporaryItemCreator()
+            {
+                _quantityType = State.QuantityTypes.ElementAt(1);
+                State = State with
+                {
+                    TemporaryItemCreator = State.TemporaryItemCreator with
+                    {
+                        SelectedQuantityTypeId = _quantityType.Id
+                    }
+                };
+            }
+
+            public void SetupItemForQuantityTypeUnit()
             {
                 _item = new ShoppingListItem(
                     ShoppingListItemId.FromOfflineId(Guid.NewGuid()),
@@ -503,21 +565,46 @@ public class ShoppingListEffectsTests
                     State.TemporaryItemCreator.ItemName,
                     IsTemporary: true,
                     State.TemporaryItemCreator.Price,
-                    new QuantityType(0, "", 1, "€", "x", 1),
+                    _quantityType,
                     QuantityInPacket: 1,
-                    new QuantityTypeInPacket(0, "", ""),
+                    State.QuantityTypesInPacket.First(),
                     ItemCategory: "",
                     Manufacturer: "",
                     IsInBasket: false,
-                    Quantity: 1,
+                    Quantity: _quantityType.DefaultQuantity,
+                    false);
+            }
+
+            public void SetupItemForQuantityTypeWeight()
+            {
+                _item = new ShoppingListItem(
+                    ShoppingListItemId.FromOfflineId(Guid.NewGuid()),
+                    TypeId: null,
+                    State.TemporaryItemCreator.ItemName,
+                    IsTemporary: true,
+                    State.TemporaryItemCreator.Price,
+                    _quantityType,
+                    QuantityInPacket: null,
+                    QuantityInPacketType: null,
+                    ItemCategory: "",
+                    Manufacturer: "",
+                    IsInBasket: false,
+                    Quantity: _quantityType.DefaultQuantity,
                     false);
             }
 
             public void SetupEnqueuingRequest()
             {
+                TestPropertyNotSetException.ThrowIfNull(_quantityType);
+
                 var request = new AddTemporaryItemToShoppingListRequest(
-                    Guid.NewGuid(), State.ShoppingList!.Id, State.TemporaryItemCreator.ItemName, 0, 1,
-                    State.TemporaryItemCreator.Price, State.TemporaryItemCreator.Section!.Id, Guid.NewGuid());
+                    Guid.NewGuid(),
+                    State.ShoppingList!.Id,
+                    State.TemporaryItemCreator.ItemName,
+                    _quantityType.Id,
+                    _quantityType.DefaultQuantity,
+                    State.TemporaryItemCreator.Price,
+                    State.TemporaryItemCreator.Section!.Id, Guid.NewGuid());
 
                 CommandQueueMock.SetupEnqueue(req => req.IsRequestEquivalentTo(request, new List<string> { "TemporaryId" }));
             }
@@ -803,6 +890,7 @@ public class ShoppingListEffectsTests
     {
         public ShoppingListEffects CreateSut()
         {
+            SetupStateReturningState();
             return new ShoppingListEffects(ApiClientMock.Object, CommandQueueMock.Object, ShoppingListStateMock.Object);
         }
     }
