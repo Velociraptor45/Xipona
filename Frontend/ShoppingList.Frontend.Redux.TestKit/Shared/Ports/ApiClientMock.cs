@@ -7,6 +7,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Extensions;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
@@ -334,5 +335,45 @@ public class ApiClientMock : Mock<IApiClient>
     public void SetupGetActiveShoppingListByStoreIdAsyncThrowing(Guid storeId, Exception ex)
     {
         this.SetupInOrder(m => m.GetActiveShoppingListByStoreIdAsync(storeId)).ThrowsAsync(ex);
+    }
+
+    public void SetupGetStoreByIdAsync(Guid storeId, EditedStore returnValue)
+    {
+        this.SetupInOrder(m => m.GetStoreByIdAsync(storeId)).ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetStoreByIdAsyncThrowing(Guid storeId, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetStoreByIdAsync(storeId)).ThrowsAsync(ex);
+    }
+
+    public void SetupCreateStoreAsync(EditedStore store)
+    {
+        this.SetupInOrder(m => m.CreateStoreAsync(store)).Returns(Task.CompletedTask);
+    }
+
+    public void SetupCreateStoreAsyncThrowing(EditedStore store, Exception ex)
+    {
+        this.SetupInOrder(m => m.CreateStoreAsync(store)).ThrowsAsync(ex);
+    }
+
+    public void SetupModifyStoreAsync(EditedStore store)
+    {
+        this.SetupInOrder(m => m.ModifyStoreAsync(store)).Returns(Task.CompletedTask);
+    }
+
+    public void SetupModifyStoreAsyncThrowing(EditedStore store, Exception ex)
+    {
+        this.SetupInOrder(m => m.ModifyStoreAsync(store)).ThrowsAsync(ex);
+    }
+
+    public void SetupDeleteStoreAsync(Guid storeId)
+    {
+        this.SetupInOrder(m => m.DeleteStoreAsync(storeId)).Returns(Task.CompletedTask);
+    }
+
+    public void SetupDeleteStoreAsyncThrowing(Guid storeId, Exception ex)
+    {
+        this.SetupInOrder(m => m.DeleteStoreAsync(storeId)).ThrowsAsync(ex);
     }
 }

@@ -30,7 +30,7 @@ public class StoreEditorEffects
     }
 
     [EffectMethod]
-    public async Task HandleLoadStoreForEditing(LoadStoreForEditingAction action, IDispatcher dispatcher)
+    public async Task HandleLoadStoreForEditingAction(LoadStoreForEditingAction action, IDispatcher dispatcher)
     {
         EditedStore result;
         try
@@ -54,11 +54,11 @@ public class StoreEditorEffects
     [EffectMethod(typeof(SaveStoreAction))]
     public async Task HandleSaveStoreAction(IDispatcher dispatcher)
     {
-        dispatcher.Dispatch(new SaveStoreStartedAction());
-
         var store = _state.Value.Editor.Store;
         if (store is null)
             return;
+
+        dispatcher.Dispatch(new SaveStoreStartedAction());
 
         if (store.Id == Guid.Empty)
         {
