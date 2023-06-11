@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
@@ -297,6 +298,120 @@ public class RecipeModificationServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipeMocks);
                 _recipeMocks.ToList().ForEach(m => RecipeRepositoryMock.VerifyStoreAsync(m.Object, Times.Once));
+            }
+        }
+    }
+
+    public class ModifyIngredientsAfterAvailabilityWasDeletedAsync
+    {
+        private readonly ModifyIngredientsAfterAvailabilityWasDeletedAsyncFixture _fixture = new();
+
+        [Fact]
+        public async Task ModifyIngredientsAfterAvailabilityWasDeletedAsync_WithFindingItem_ShouldModifyRecipes()
+        {
+            // Arrange
+            _fixture.SetupFindingRecipes();
+            _fixture.SetupFindingItem();
+            _fixture.SetupModifyingRecipes();
+            _fixture.SetupStoringRecipes();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.ModifyIngredientsAfterAvailabilityWasDeletedAsync(_fixture.ItemId, _fixture.ItemTypeId,
+                _fixture.StoreId);
+
+            // Assert
+            _fixture.VerifyModifyingRecipes();
+            _fixture.VerifyStoringRecipes();
+        }
+
+        [Fact]
+        public async Task ModifyIngredientsAfterAvailabilityWasDeletedAsync_WithNotFindingItem_ShouldThrow()
+        {
+            // Arrange
+            _fixture.SetupFindingRecipes();
+            _fixture.SetupNotFindingItem();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var func = async () => await sut.ModifyIngredientsAfterAvailabilityWasDeletedAsync(_fixture.ItemId,
+                _fixture.ItemTypeId, _fixture.StoreId);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemNotFound);
+        }
+
+        private sealed class ModifyIngredientsAfterAvailabilityWasDeletedAsyncFixture : RecipeModificationServiceFixture
+        {
+            private IReadOnlyCollection<RecipeMock>? _recipeMocks;
+            private Item? _item;
+
+            public ItemId ItemId { get; } = ItemId.New;
+            public ItemTypeId? ItemTypeId { get; } = Domain.Items.Models.ItemTypeId.New;
+            public StoreId StoreId { get; } = StoreId.New;
+
+            public void SetupFindingRecipes()
+            {
+                _recipeMocks = new List<RecipeMock>
+                {
+                    new(MockBehavior.Strict),
+                    new(MockBehavior.Strict),
+                };
+
+                RecipeRepositoryMock.SetupFindByAsync(ItemId, ItemTypeId, StoreId, _recipeMocks.Select(m => m.Object));
+            }
+
+            public void SetupFindingItem()
+            {
+                _item = ItemMother.Initial().Create();
+                ItemRepositoryMock.SetupFindActiveByAsync(ItemId, _item);
+            }
+
+            public void SetupNotFindingItem()
+            {
+                ItemRepositoryMock.SetupFindActiveByAsync(ItemId, null);
+            }
+
+            public void SetupModifyingRecipes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipeMocks);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+
+                foreach (var recipeMock in _recipeMocks)
+                {
+                    recipeMock.SetupModifyIngredientsAfterAvailabilityWasDeleted(ItemId, ItemTypeId, _item, StoreId);
+                }
+            }
+
+            public void SetupStoringRecipes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipeMocks);
+
+                foreach (var recipeMock in _recipeMocks)
+                {
+                    RecipeRepositoryMock.SetupStoreAsync(recipeMock.Object, recipeMock.Object);
+                }
+            }
+
+            public void VerifyModifyingRecipes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipeMocks);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+
+                foreach (var recipeMock in _recipeMocks)
+                {
+                    recipeMock.VerifyModifyIngredientsAfterAvailabilityWasDeleted(ItemId, ItemTypeId, _item, StoreId, Times.Once);
+                }
+            }
+
+            public void VerifyStoringRecipes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipeMocks);
+
+                foreach (var recipeMock in _recipeMocks)
+                {
+                    RecipeRepositoryMock.VerifyStoreAsync(recipeMock.Object, Times.Once);
+                }
             }
         }
     }
