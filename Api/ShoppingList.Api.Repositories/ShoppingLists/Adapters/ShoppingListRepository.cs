@@ -122,6 +122,7 @@ public class ShoppingListRepository : IShoppingListRepository
             return;
 
         _dbContext.ShoppingLists.Remove(entity);
+        await _dbContext.SaveChangesAsync(_cancellationToken);
     }
 
     #endregion public methods
