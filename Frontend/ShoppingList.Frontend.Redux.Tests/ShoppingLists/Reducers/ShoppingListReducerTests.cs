@@ -11,6 +11,71 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.ShoppingLists.Reducers
 
 public class ShoppingListReducerTests
 {
+    public class OnShoppingListEntered
+    {
+        private readonly OnShoppingListEnteredFixture _fixture;
+
+        public OnShoppingListEntered()
+        {
+            _fixture = new OnShoppingListEnteredFixture();
+        }
+
+        [Fact]
+        public void OnShoppingListEntered_WithValidData_ShouldResetState()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ShoppingListReducer.OnShoppingListEntered(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnShoppingListEnteredFixture : ShoppingListReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    QuantityTypes = new DomainTestBuilder<QuantityType>().CreateMany(2).ToList(),
+                    QuantityTypesInPacket = new DomainTestBuilder<QuantityTypeInPacket>().CreateMany(2).ToList(),
+                    Stores = new AllActiveStores(new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList()),
+                    SelectedStoreId = Guid.NewGuid(),
+                    ItemsInBasketVisible = false,
+                    EditModeActive = true,
+                    ShoppingList = new DomainTestBuilder<ShoppingListModel>().Create(),
+                    SearchBar = new DomainTestBuilder<SearchBar>().Create()
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    QuantityTypes = new List<QuantityType>(),
+                    QuantityTypesInPacket = new List<QuantityTypeInPacket>(),
+                    Stores = ExpectedState.Stores with
+                    {
+                        Stores = new List<ShoppingListStore>()
+                    },
+                    SelectedStoreId = Guid.Empty,
+                    ItemsInBasketVisible = true,
+                    EditModeActive = false,
+                    ShoppingList = null,
+                    SearchBar = ExpectedState.SearchBar with
+                    {
+                        Input = string.Empty,
+                        IsActive = false,
+                        Results = new List<SearchItemForShoppingListResult>()
+                    }
+                };
+            }
+        }
+    }
+
     public class OnLoadQuantityTypesFinished
     {
         private readonly OnLoadQuantityTypesFinishedFixture _fixture;

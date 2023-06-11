@@ -87,13 +87,14 @@
 }
 
 @code{
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
+        Dispatcher.Dispatch(new ShoppingListEnteredAction());
         Dispatcher.Dispatch(new LoadQuantityTypesAction());
         Dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
         Dispatcher.Dispatch(new LoadAllActiveStoresAction());
 
-        await base.OnInitializedAsync();
+        base.OnInitialized();
     }
     
     #region Callbacks
