@@ -128,7 +128,7 @@ public class StoreController : ControllerBase
 
         var contract = _converters.ToContract<IStore, StoreContract>(model);
 
-        return CreatedAtAction(nameof(GetStoreByIdAsync), contract);
+        return CreatedAtAction(nameof(GetStoreByIdAsync), new { id = contract.Id }, contract);
     }
 
     [HttpPut]
