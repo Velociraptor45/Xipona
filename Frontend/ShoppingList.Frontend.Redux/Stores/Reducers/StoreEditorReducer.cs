@@ -11,6 +11,11 @@ public static class StoreEditorReducer
     [ReducerMethod(typeof(SetNewStoreAction))]
     public static StoreState OnSetNewStore(StoreState state)
     {
+        var sections = new List<EditedSection>
+        {
+            new(Guid.NewGuid(), Guid.Empty, "Default", true, 0)
+        };
+
         return state with
         {
             Editor = state.Editor with
@@ -18,7 +23,7 @@ public static class StoreEditorReducer
                 Store = new EditedStore(
                     Guid.Empty,
                     string.Empty,
-                    new SortedSet<EditedSection>())
+                    new SortedSet<EditedSection>(sections, new SortingIndexComparer()))
             }
         };
     }
