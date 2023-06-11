@@ -16,8 +16,7 @@ public interface IRecipeRepository
 
     Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId);
 
-    Task<IEnumerable<IRecipe>> FindByContainingAllAsync(IEnumerable<RecipeTagId> recipeTagIds);
+    Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId, ItemTypeId? defaultItemTypeId, StoreId defaultStoreId);
 
-    Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId, ItemTypeId? defaultItemTypeId,
-        StoreId defaultStoreId);
+    Task<IEnumerable<IRecipe>> FindByContainingAllAsync(IEnumerable<RecipeTagId> recipeTagIds);
 }
