@@ -266,3 +266,6 @@ dotnet_diagnostic.S4457.severity = none
 
 # CS8625: Cannot convert null literal to non-nullable reference type.
 dotnet_diagnostic.CS8625.severity = error
+
+# S2094: Classes should not be empty
+dotnet_diagnostic.S2094.severity = none

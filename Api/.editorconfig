@@ -296,3 +296,6 @@ dotnet_diagnostic.CS8618.severity = error
 
 # CS8762: Parameter must have a non-null value when exiting
 dotnet_diagnostic.CS8762.severity = error
+
+# S2094: Classes should not be empty
+dotnet_diagnostic.S2094.severity = none
