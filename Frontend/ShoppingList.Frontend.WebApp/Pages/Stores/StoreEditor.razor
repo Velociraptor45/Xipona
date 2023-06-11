@@ -20,11 +20,14 @@
             <div class="mx-3">
                 <Input TValue="string" Value="@State.Value.Editor.Store.Name" OnChange="OnNameChanged"/>
             </div>
-            <div class="ml-auto">
-                <Button OnClick="@OnDeleteButtonClicked">
-                    Delete
-                </Button>
-            </div>
+            @if (State.Value.Editor.Store.Id != Guid.Empty)
+            {
+                <div class="ml-auto">
+                    <Button Danger="true" OnClick="@OnDeleteButtonClicked">
+                        Delete
+                    </Button>
+                </div>
+            }
         </div>
 
         <Sections></Sections>
@@ -40,17 +43,19 @@
             }
         </div>
     </div>
-}
 
-<Modal Title="Delete Store"
-       Visible="@State.Value.Editor.IsShowingDeletionNotice"
-       OnCancel="@OnDeleteModalCancelClicked"
-       OnOk="@OnDeleteModalOkClicked">
-    <div>
-        Deleting a store will also remove any availability of items in this store. 
-        Items that are only available in this store will be deleted.
-    </div>
-</Modal>
+    <Modal Title="Delete Store"
+           Visible="@State.Value.Editor.IsShowingDeletionNotice"
+           OnCancel="@OnDeleteModalCancelClicked"
+           OnOk="@OnDeleteModalOkClicked"
+           OkText="@($"Delete {State.Value.Editor.Store.Name}")"
+           CancelText="@("Cancel")">
+        <div>
+            Deleting a store will also remove any availability of items in this store. 
+            Items that are only available in this store will be deleted.
+        </div>
+    </Modal>
+}
 
 @code {
     [Parameter] public Guid StoreId { get; set; }
