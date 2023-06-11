@@ -274,7 +274,7 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         public async Task DeleteStoreAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            await _apiClient.DeleteItemAsync(id, cancellationToken);
+            await _apiClient.DeleteStoreAsync(id, cancellationToken);
         }
 
         #endregion StoreController
