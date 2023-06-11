@@ -17,6 +17,6 @@ public class ItemDeletedDomainEventHandler : IDomainEventHandler<ItemDeletedDoma
     public async Task HandleAsync(ItemDeletedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         var service = _recipeModificationServiceDelegate(cancellationToken);
-        await service.RemoveDefaultItemAsync(domainEvent.ItemId);
+        await service.RemoveDefaultItemAsync(domainEvent.ItemId, null);
     }
 }

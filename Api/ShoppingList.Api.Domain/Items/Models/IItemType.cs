@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
+﻿using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -29,5 +30,7 @@ public interface IItemType
 
     IItemType TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId);
 
-    IItemType Delete();
+    IItemType Delete(out IDomainEvent domainEventToPublish);
+
+    IItemType RemoveAvailabilitiesFor(StoreId storeId, out IEnumerable<IDomainEvent> domainEventsToPublish);
 }

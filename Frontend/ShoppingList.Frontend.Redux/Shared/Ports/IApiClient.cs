@@ -119,4 +119,6 @@ public interface IApiClient
     Task AddItemsToShoppingListsAsync(IEnumerable<AddToShoppingListItem> items);
 
     Task AddTemporaryItemToShoppingListAsync(AddTemporaryItemToShoppingListRequest request);
+
+    Task DeleteStoreAsync(Guid storeId);
 }

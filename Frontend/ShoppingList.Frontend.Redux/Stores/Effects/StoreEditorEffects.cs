@@ -30,7 +30,7 @@ public class StoreEditorEffects
     }
 
     [EffectMethod]
-    public async Task HandleLoadStoreForEditing(LoadStoreForEditingAction action, IDispatcher dispatcher)
+    public async Task HandleLoadStoreForEditingAction(LoadStoreForEditingAction action, IDispatcher dispatcher)
     {
         EditedStore result;
         try
@@ -54,11 +54,11 @@ public class StoreEditorEffects
     [EffectMethod(typeof(SaveStoreAction))]
     public async Task HandleSaveStoreAction(IDispatcher dispatcher)
     {
-        dispatcher.Dispatch(new SaveStoreStartedAction());
-
         var store = _state.Value.Editor.Store;
         if (store is null)
             return;
+
+        dispatcher.Dispatch(new SaveStoreStartedAction());
 
         if (store.Id == Guid.Empty)
         {
@@ -100,6 +100,32 @@ public class StoreEditorEffects
         }
 
         dispatcher.Dispatch(new SaveStoreFinishedAction());
+        dispatcher.Dispatch(new LeaveStoreEditorAction());
+    }
+
+    [EffectMethod(typeof(DeleteStoreConfirmedAction))]
+    public async Task HandleDeleteStoreConfirmedAction(IDispatcher dispatcher)
+    {
+        var store = _state.Value.Editor.Store;
+        if (store is null)
+            return;
+
+        try
+        {
+            await _client.DeleteStoreAsync(store.Id);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Deleting store failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Deleting store failed", e.Message));
+            return;
+        }
+
+        dispatcher.Dispatch(new DeleteStoreFinishedAction());
         dispatcher.Dispatch(new LeaveStoreEditorAction());
     }
 }

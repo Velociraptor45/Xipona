@@ -46,17 +46,13 @@
 </div>
 
 @code {
-    //[Parameter] public StoresState State { get; set; }
-
     private void OnDefaultSectionChanged(EditedSection section)
     {
-        //State.EditedStore.ChangeDefaultSection(section.Id.FrontendId);
         Dispatcher.Dispatch(new DefaultSectionChangedAction(section.Key));
     }
 
     private void OnAddSectionButtonClicked()
     {
-        //State.EditedStore.AddSection();
         Dispatcher.Dispatch(new SectionAddedAction());
     }
 

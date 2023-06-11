@@ -6,6 +6,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Deletions;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Queries;
 
@@ -47,6 +48,12 @@ public static class ServiceCollectionExtensions
         {
             var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
             return cancellationToken => new StoreQueryService(storeRepositoryDelegate, cancellationToken);
+        });
+
+        services.AddTransient<Func<CancellationToken, IStoreDeletionService>>(provider =>
+        {
+            var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
+            return cancellationToken => new StoreDeletionService(storeRepositoryDelegate, cancellationToken);
         });
     }
 }

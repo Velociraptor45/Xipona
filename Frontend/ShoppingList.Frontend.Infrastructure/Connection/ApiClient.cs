@@ -423,4 +423,9 @@ public class ApiClient : IApiClient
         var contract = _converters.ToContract<IEnumerable<AddToShoppingListItem>, AddItemsToShoppingListsContract>(items);
         await _client.AddItemsToShoppingListsAsync(contract);
     }
+
+    public async Task DeleteStoreAsync(Guid storeId)
+    {
+        await _client.DeleteStoreAsync(storeId);
+    }
 }

@@ -19,4 +19,5 @@ public interface IShoppingListRepository
     Task<IEnumerable<IShoppingList>> FindByAsync(ItemId itemId);
 
     Task StoreAsync(IShoppingList shoppingList);
+    Task DeleteAsync(ShoppingListId id);
 }

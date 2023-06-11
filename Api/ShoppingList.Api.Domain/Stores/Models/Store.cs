@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.DomainEvents;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
 
@@ -21,7 +22,7 @@ public class Store : AggregateRoot, IStore
 
     public StoreId Id { get; }
     public StoreName Name { get; private set; }
-    public bool IsDeleted { get; }
+    public bool IsDeleted { get; private set; }
     public IReadOnlyCollection<ISection> Sections => _sections.AsReadOnly();
 
     public ISection GetDefaultSection()
@@ -50,5 +51,14 @@ public class Store : AggregateRoot, IStore
             throw new DomainException(new CannotModifyDeletedStoreReason(Id));
 
         await _sections.ModifyManyAsync(sectionModifications, itemModificationService, shoppingListModificationService);
+    }
+
+    public void Delete()
+    {
+        if (IsDeleted)
+            return;
+
+        IsDeleted = true;
+        PublishDomainEvent(new StoreDeletedDomainEvent(Id));
     }
 }

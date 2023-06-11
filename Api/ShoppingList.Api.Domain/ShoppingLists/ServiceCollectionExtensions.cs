@@ -8,6 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.AddItems;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
+using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Deletions;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Exchanges;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Queries;
@@ -79,6 +80,15 @@ public static class ServiceCollectionExtensions
                 .GetRequiredService<Func<CancellationToken, IShoppingListReadModelConversionService>>();
             return cancellationToken => new ShoppingListQueryService(shoppingListRepositoryDelegate,
                 conversionServiceDelegate, cancellationToken);
+        });
+
+        services.AddTransient<Func<CancellationToken, IShoppingListDeletionService>>(provider =>
+        {
+            var shoppingListRepositoryDelegate = provider
+                .GetRequiredService<Func<CancellationToken, IShoppingListRepository>>();
+            var logger = provider.GetRequiredService<ILogger<ShoppingListDeletionService>>();
+            return cancellationToken => new ShoppingListDeletionService(shoppingListRepositoryDelegate, logger,
+                cancellationToken);
         });
     }
 }

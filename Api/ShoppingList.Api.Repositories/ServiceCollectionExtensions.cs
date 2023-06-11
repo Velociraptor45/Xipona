@@ -123,6 +123,7 @@ public static class ServiceCollectionExtensions
                 provider.GetRequiredService<StoreContext>(),
                 provider.GetRequiredService<IToDomainConverter<Stores.Entities.Store, IStore>>(),
                 provider.GetRequiredService<IToEntityConverter<IStore, Stores.Entities.Store>>(),
+                provider.GetRequiredService<Func<CancellationToken, IDomainEventDispatcher>>(),
                 provider.GetRequiredService<ILogger<StoreRepository>>(),
                 ct);
         });

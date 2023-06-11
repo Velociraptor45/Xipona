@@ -1,4 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Items.DomainEvents;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
@@ -142,13 +144,40 @@ public class ItemType : IItemType
             IsDeleted);
     }
 
-    public IItemType Delete()
+    public IItemType Delete(out IDomainEvent domainEventToPublish)
     {
+        domainEventToPublish = new ItemTypeDeletedDomainEvent(Id);
         return new ItemType(
             Id,
             Name,
             Availabilities,
             PredecessorId,
             true);
+    }
+
+    public IItemType RemoveAvailabilitiesFor(StoreId storeId, out IEnumerable<IDomainEvent> domainEventsToPublish)
+    {
+        var availabilities = Availabilities.Where(av => av.StoreId != storeId).ToList();
+        if (availabilities.Count == Availabilities.Count)
+        {
+            domainEventsToPublish = Enumerable.Empty<IDomainEvent>();
+            return this;
+        }
+
+        if (availabilities.Any())
+        {
+            var availabilitiesToRemove = Availabilities.Where(av => av.StoreId == storeId);
+            domainEventsToPublish = availabilitiesToRemove.Select(av => new ItemTypeAvailabilityDeletedDomainEvent(Id, av));
+            return new ItemType(
+                Id,
+                Name,
+                availabilities,
+                PredecessorId,
+                IsDeleted);
+        }
+
+        var deletedType = Delete(out var deletedDomainEvent);
+        domainEventsToPublish = new List<IDomainEvent> { deletedDomainEvent };
+        return deletedType;
     }
 }

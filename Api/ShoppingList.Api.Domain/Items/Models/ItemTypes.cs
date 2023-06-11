@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
@@ -107,7 +108,7 @@ public class ItemTypes : IEnumerable<IItemType>
         if (!_itemTypes.TryGetValue(id, out var type))
             return;
 
-        _itemTypes[id] = type.Delete();
+        _itemTypes[id] = type.Delete(out var _);
     }
 
     private async Task ModifyAsync(ItemTypeModification modification, IValidator validator)
@@ -156,5 +157,23 @@ public class ItemTypes : IEnumerable<IItemType>
 
             _itemTypes[itemType.Id] = itemType.TransferToDefaultSection(oldSectionId, newSectionId);
         }
+    }
+
+    public void RemoveAvailabilitiesFor(StoreId storeId, out IEnumerable<IDomainEvent> domainEventsToPublish)
+    {
+        var domainEvents = new List<IDomainEvent>();
+
+        var itemTypes = _itemTypes.Values.Where(t => t.IsAvailableAt(storeId)).ToList();
+
+        foreach (var type in itemTypes)
+        {
+            if (!type.IsAvailableAt(storeId))
+                continue;
+
+            _itemTypes[type.Id] = type.RemoveAvailabilitiesFor(storeId, out IEnumerable<IDomainEvent> eventsToPublish);
+            domainEvents.AddRange(eventsToPublish);
+        }
+
+        domainEventsToPublish = domainEvents;
     }
 }

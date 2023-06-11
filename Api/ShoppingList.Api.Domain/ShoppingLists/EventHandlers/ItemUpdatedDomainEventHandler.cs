@@ -17,6 +17,6 @@ public class ItemUpdatedDomainEventHandler : IDomainEventHandler<ItemUpdatedDoma
     public async Task HandleAsync(ItemUpdatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         var service = _shoppingListExchangeServiceDelegate(cancellationToken);
-        await service.ExchangeItemAsync(domainEvent.OldItemId, domainEvent.NewItem);
+        await service.ExchangeItemAsync(domainEvent.ItemId, domainEvent.NewItem);
     }
 }

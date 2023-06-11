@@ -121,6 +121,17 @@ public class ItemModificationService : IItemModificationService
         }
     }
 
+    public async Task RemoveAvailabilitiesForAsync(StoreId storeId)
+    {
+        var items = await _itemRepository.FindActiveByAsync(storeId);
+
+        foreach (var item in items)
+        {
+            item.RemoveAvailabilitiesFor(storeId);
+            await _itemRepository.StoreAsync(item);
+        }
+    }
+
     private async Task RemoveItemTypeFromShoppingList(IEnumerable<IShoppingList> lists, IItem item,
         IItemType itemType)
     {

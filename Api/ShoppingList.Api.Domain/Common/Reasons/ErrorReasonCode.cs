@@ -70,4 +70,5 @@ public enum ErrorReasonCode
     CannotModifyDeletedManufacturer = 68,
     CannotModifyDeletedStore = 69,
     CannotModifyDeletedSection = 70,
+    CannotChangeStoreOfIngredientWithoutShoppingListProperties = 71,
 }

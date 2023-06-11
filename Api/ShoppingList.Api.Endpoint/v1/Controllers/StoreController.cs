@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.CreateStore;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.DeleteStore;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Commands.ModifyStore;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.GetActiveStoresForItem;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Stores.Queries.GetActiveStoresForShopping;
@@ -127,7 +128,7 @@ public class StoreController : ControllerBase
 
         var contract = _converters.ToContract<IStore, StoreContract>(model);
 
-        return CreatedAtAction(nameof(GetStoreByIdAsync), contract);
+        return CreatedAtAction(nameof(GetStoreByIdAsync), new { id = contract.Id }, contract);
     }
 
     [HttpPut]
@@ -139,6 +140,31 @@ public class StoreController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         var command = _converters.ToDomain<ModifyStoreContract, ModifyStoreCommand>(modifyStoreContract);
+
+        try
+        {
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.StoreNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+
+        return Ok();
+    }
+
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}")]
+    public async Task<IActionResult> DeleteStoreAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var command = new DeleteStoreCommand(new StoreId(id));
 
         try
         {

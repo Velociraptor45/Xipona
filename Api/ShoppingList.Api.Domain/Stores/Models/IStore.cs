@@ -20,4 +20,6 @@ public interface IStore
     Task ModifySectionsAsync(IEnumerable<SectionModification> sectionModifications,
         IItemModificationService itemModificationService,
         IShoppingListModificationService shoppingListModificationService);
+
+    void Delete();
 }

@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 
@@ -39,13 +40,19 @@ public class Recipe : AggregateRoot, IRecipe
         await _tags.ModifyAsync(validator, modification.RecipeTagIds);
     }
 
-    public void RemoveDefaultItem(ItemId defaultItemId)
+    public void RemoveDefaultItem(ItemId defaultItemId, ItemTypeId? itemTypeId)
     {
-        _ingredients.RemoveDefaultItem(defaultItemId);
+        _ingredients.RemoveDefaultItem(defaultItemId, itemTypeId);
     }
 
     public void ModifyIngredientsAfterItemUpdate(ItemId oldItemId, IItem newItem)
     {
         _ingredients.ModifyAfterItemUpdate(oldItemId, newItem);
+    }
+
+    public void ModifyIngredientsAfterAvailabilityWasDeleted(ItemId itemId, ItemTypeId? itemTypeId, IItem item,
+        StoreId deletedAvailabilityStoreId)
+    {
+        _ingredients.ModifyAfterAvailabilityWasDeleted(itemId, itemTypeId, item, deletedAvailabilityStoreId);
     }
 }

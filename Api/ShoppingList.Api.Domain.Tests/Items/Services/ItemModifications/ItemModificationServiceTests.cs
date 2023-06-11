@@ -898,6 +898,94 @@ public class ItemModificationServiceTests
         }
     }
 
+    public class RemoveAvailabilitiesForAsync
+    {
+        private readonly RemoveAvailabilitiesForAsyncFixture _fixture = new();
+
+        [Fact]
+        public async Task RemoveAvailabilitiesForAsync_WithValidData_ShouldRemoveAvailabilities()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupFindingItems();
+            _fixture.SetupRemovingAvailabilities();
+            _fixture.SetupStoringItems();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.RemoveAvailabilitiesForAsync(_fixture.StoreId!.Value);
+
+            // Assert
+            _fixture.VerifyRemovingAvailabilities();
+            _fixture.VerifyStoringItems();
+        }
+
+        public sealed class RemoveAvailabilitiesForAsyncFixture : ItemModificationServiceFixture
+        {
+            private IReadOnlyCollection<ItemMock>? _itemMocks;
+            public StoreId? StoreId { get; private set; }
+
+            public void SetupStoreId()
+            {
+                StoreId = Domain.Stores.Models.StoreId.New;
+            }
+
+            public void SetupFindingItems()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                _itemMocks = new List<ItemMock>()
+                {
+                    new(ItemMother.Initial().Create(), MockBehavior.Strict),
+                    new(ItemMother.Initial().Create(), MockBehavior.Strict)
+                };
+                ItemRepositoryMock.SetupFindActiveByAsync(StoreId.Value, _itemMocks.Select(m => m.Object));
+            }
+
+            public void SetupRemovingAvailabilities()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_itemMocks);
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                foreach (var itemMock in _itemMocks)
+                {
+                    itemMock.SetupRemoveAvailabilitiesFor(StoreId.Value);
+                }
+            }
+
+            public void SetupStoringItems()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_itemMocks);
+
+                foreach (var itemMock in _itemMocks)
+                {
+                    ItemRepositoryMock.SetupStoreAsync(itemMock.Object, itemMock.Object);
+                }
+            }
+
+            public void VerifyRemovingAvailabilities()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_itemMocks);
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                foreach (var itemMock in _itemMocks)
+                {
+                    itemMock.VerifyRemoveAvailabilitiesFor(StoreId.Value, Times.Once);
+                }
+            }
+
+            public void VerifyStoringItems()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_itemMocks);
+
+                foreach (var itemMock in _itemMocks)
+                {
+                    ItemRepositoryMock.VerifyStoreAsync(itemMock.Object, Times.Once);
+                }
+            }
+        }
+    }
+
     public abstract class ItemModificationServiceFixture
     {
         protected readonly ItemRepositoryMock ItemRepositoryMock;

@@ -5,7 +5,7 @@
     <RootNamespace>ProjectHermes.ShoppingList.Api.Client</RootNamespace>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Title>ProjectHermes ShoppingList Api Client</Title>
-    <Version>0.10.0-alpha.10</Version>
+    <Version>0.10.0-alpha.12</Version>
     <Authors>Velociraptor45</Authors>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Velociraptor45/ProjectHermes-ShoppingList</RepositoryUrl>

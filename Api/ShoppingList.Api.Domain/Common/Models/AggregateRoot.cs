@@ -11,7 +11,21 @@ public abstract class AggregateRoot
 
     protected void PublishDomainEvent(IDomainEvent domainEvent)
     {
-        _domainEvents.Add(domainEvent);
+        var transformedDomainEvent = OnBeforeAddingDomainEvent(domainEvent);
+        _domainEvents.Add(transformedDomainEvent);
+    }
+
+    protected virtual IDomainEvent OnBeforeAddingDomainEvent(IDomainEvent domainEvent)
+    {
+        return domainEvent;
+    }
+
+    protected void PublishDomainEvents(IEnumerable<IDomainEvent> domainEvents)
+    {
+        foreach (var domainEvent in domainEvents)
+        {
+            PublishDomainEvent(domainEvent);
+        }
     }
 
     public async Task DispatchDomainEvents(IDomainEventDispatcher dispatcher)
