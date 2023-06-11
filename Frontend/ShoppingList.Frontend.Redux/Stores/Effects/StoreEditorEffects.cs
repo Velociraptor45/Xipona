@@ -102,4 +102,30 @@ public class StoreEditorEffects
         dispatcher.Dispatch(new SaveStoreFinishedAction());
         dispatcher.Dispatch(new LeaveStoreEditorAction());
     }
+
+    [EffectMethod(typeof(DeleteStoreConfirmedAction))]
+    public async Task HandleDeleteStoreConfirmedAction(IDispatcher dispatcher)
+    {
+        var store = _state.Value.Editor.Store;
+        if (store is null)
+            return;
+
+        try
+        {
+            await _client.DeleteStoreAsync(store.Id);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Deleting store failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Deleting store failed", e.Message));
+            return;
+        }
+
+        dispatcher.Dispatch(new DeleteStoreFinishedAction());
+        dispatcher.Dispatch(new LeaveStoreEditorAction());
+    }
 }

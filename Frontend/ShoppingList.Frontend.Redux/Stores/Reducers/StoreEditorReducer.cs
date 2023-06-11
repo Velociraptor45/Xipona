@@ -241,4 +241,40 @@ public static class StoreEditorReducer
             }
         };
     }
+
+    [ReducerMethod(typeof(DeleteStoreButtonClickedAction))]
+    public static StoreState OnDeleteStoreButtonClicked(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsShowingDeletionNotice = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(DeleteStoreAbortedAction))]
+    public static StoreState OnDeleteStoreAborted(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsShowingDeletionNotice = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(DeleteStoreFinishedAction))]
+    public static StoreState OnDeleteStoreFinished(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsShowingDeletionNotice = false
+            }
+        };
+    }
 }

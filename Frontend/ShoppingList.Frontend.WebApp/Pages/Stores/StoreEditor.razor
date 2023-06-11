@@ -14,11 +14,16 @@
 {
     <div class="px-2">
         <div class="d-flex">
-            <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClickedAsync">
+            <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
                 <Icon Type="arrow-left"></Icon>
             </Button>
             <div class="mx-3">
                 <Input TValue="string" Value="@State.Value.Editor.Store.Name" OnChange="OnNameChanged"/>
+            </div>
+            <div class="ml-auto">
+                <Button OnClick="@OnDeleteButtonClicked">
+                    Delete
+                </Button>
             </div>
         </div>
 
@@ -27,15 +32,25 @@
         <div class="d-flex justify-content-end mt-2">
             @if (State.Value.Editor.Store.Id == Guid.Empty)
             {
-                <Button @onclick="@OnSaveButtonClickedAsync" Loading="State.Value.Editor.IsSaving">Create</Button>
+                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving">Create</Button>
             }
             else
             {
-                <Button @onclick="@OnSaveButtonClickedAsync" Loading="State.Value.Editor.IsSaving">Save</Button>
+                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving">Save</Button>
             }
         </div>
     </div>
 }
+
+<Modal Title="Delete Store"
+       Visible="@State.Value.Editor.IsShowingDeletionNotice"
+       OnCancel="@OnDeleteModalCancelClicked"
+       OnOk="@OnDeleteModalOkClicked">
+    <div>
+        Deleting a store will also remove any availability of items in this store. 
+        Items that are only available in this store will be deleted.
+    </div>
+</Modal>
 
 @code {
     [Parameter] public Guid StoreId { get; set; }
@@ -50,7 +65,7 @@
             Dispatcher.Dispatch(new LoadStoreForEditingAction(StoreId));
     }
 
-    private void OnBackButtonClickedAsync()
+    private void OnBackButtonClicked()
     {
         Dispatcher.Dispatch(new LeaveStoreEditorAction());
     }
@@ -60,8 +75,23 @@
         Dispatcher.Dispatch(new StoreNameChangedAction(name ?? string.Empty));
     }
     
-    private void OnSaveButtonClickedAsync()
+    private void OnSaveButtonClicked()
     {
         Dispatcher.Dispatch(new SaveStoreAction());
+    }
+
+    private void OnDeleteButtonClicked()
+    {
+        Dispatcher.Dispatch(new DeleteStoreButtonClickedAction());
+    }
+
+    private void OnDeleteModalCancelClicked()
+    {
+        Dispatcher.Dispatch(new DeleteStoreAbortedAction());
+    }
+
+    private void OnDeleteModalOkClicked()
+    {
+        Dispatcher.Dispatch(new DeleteStoreConfirmedAction());
     }
 }
