@@ -298,31 +298,31 @@ public class ShoppingListEffectsTests
 
         private sealed class HandleLoadAllActiveStoresActionFixture : ShoppingListEffectsFixture
         {
-            public IReadOnlyCollection<ShoppingListStore>? ExpectedStoresForShoppingList { get; private set; }
-            public LoadAllActiveStoresFinishedAction? ExpectedLoadFinishedAction { get; private set; }
-            public SelectedStoreChangedAction? ExpectedStoreChangeAction { get; private set; }
+            private IReadOnlyCollection<ShoppingListStore>? _expectedStoresForShoppingList;
+            private LoadAllActiveStoresFinishedAction? _expectedLoadFinishedAction;
+            private SelectedStoreChangedAction? _expectedStoreChangeAction;
 
             public void SetupExpectedStoresEmpty()
             {
-                ExpectedStoresForShoppingList = new List<ShoppingListStore>();
+                _expectedStoresForShoppingList = new List<ShoppingListStore>();
             }
 
             public void SetupExpectedStores()
             {
-                ExpectedStoresForShoppingList = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList();
+                _expectedStoresForShoppingList = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList();
             }
 
             public void SetupFindingStoresForShoppingList()
             {
-                TestPropertyNotSetException.ThrowIfNull(ExpectedStoresForShoppingList);
-                ApiClientMock.SetupGetAllActiveStoresForShoppingListAsync(ExpectedStoresForShoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_expectedStoresForShoppingList);
+                ApiClientMock.SetupGetAllActiveStoresForShoppingListAsync(_expectedStoresForShoppingList);
             }
 
             public void SetupDispatchingChangeAction()
             {
-                TestPropertyNotSetException.ThrowIfNull(ExpectedStoresForShoppingList);
-                ExpectedStoreChangeAction = new SelectedStoreChangedAction(ExpectedStoresForShoppingList.First().Id);
-                SetupDispatchingAction(ExpectedStoreChangeAction);
+                TestPropertyNotSetException.ThrowIfNull(_expectedStoresForShoppingList);
+                _expectedStoreChangeAction = new SelectedStoreChangedAction(_expectedStoresForShoppingList.First().Id);
+                SetupDispatchingAction(_expectedStoreChangeAction);
             }
 
             public void VerifyNotDispatchingChangeAction()
@@ -332,10 +332,10 @@ public class ShoppingListEffectsTests
 
             public void SetupDispatchingLoadFinishedAction()
             {
-                TestPropertyNotSetException.ThrowIfNull(ExpectedStoresForShoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_expectedStoresForShoppingList);
 
-                ExpectedLoadFinishedAction = new LoadAllActiveStoresFinishedAction(ExpectedStoresForShoppingList);
-                SetupDispatchingAction(ExpectedLoadFinishedAction);
+                _expectedLoadFinishedAction = new LoadAllActiveStoresFinishedAction(_expectedStoresForShoppingList);
+                SetupDispatchingAction(_expectedLoadFinishedAction);
             }
         }
     }
@@ -410,7 +410,7 @@ public class ShoppingListEffectsTests
 
         private sealed class HandleSelectedStoreChangedActionFixture : ShoppingListEffectsFixture
         {
-            private Guid _storeId = Guid.NewGuid();
+            private readonly Guid _storeId = Guid.NewGuid();
             private ShoppingListModel? _expectedShoppingList;
             private LoadShoppingListFinishedAction? _expectedLoadFinishedAction;
 
@@ -469,13 +469,37 @@ public class ShoppingListEffectsTests
         private readonly HandleSaveTemporaryItemActionFixture _fixture = new();
 
         [Fact]
-        public async Task HandleSaveTemporaryItemAction_WithSuccessfulEnqueue_ShouldDispatchFinishedAndCloseAction()
+        public async Task HandleSaveTemporaryItemAction_WithUnit_WithSuccessfulEnqueue_ShouldDispatchFinishedAndCloseAction()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
-                _fixture.SetupStateReturningState();
-                _fixture.SetupItem();
+                _fixture.SetupQuantityType();
+                _fixture.SetupQuantityTypeUnitInTemporaryItemCreator();
+                _fixture.SetupItemForQuantityTypeUnit();
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupEnqueuingRequest();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingCloseAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSaveTemporaryItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleSaveTemporaryItemAction_WithWeight_WithSuccessfulEnqueue_ShouldDispatchFinishedAndCloseAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupQuantityType();
+                _fixture.SetupQuantityTypeWeightInTemporaryItemCreator();
+                _fixture.SetupItemForQuantityTypeWeight();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupEnqueuingRequest();
                 _fixture.SetupDispatchingFinishedAction();
@@ -494,30 +518,97 @@ public class ShoppingListEffectsTests
         {
             private SaveTemporaryItemFinishedAction? _expectedFinishedAction;
             private ShoppingListItem? _item;
+            private QuantityType? _quantityType;
 
-            public void SetupItem()
+            public void SetupQuantityType()
             {
+                State = State with
+                {
+                    QuantityTypes = new List<QuantityType>
+                    {
+                        new DomainTestBuilder<QuantityType>().Create(),
+                        new DomainTestBuilder<QuantityType>().Create() with { Id = 1 },
+                        new DomainTestBuilder<QuantityType>().Create() with { Id = 0 },
+                    }
+                };
+            }
+
+            public void SetupQuantityTypeUnitInTemporaryItemCreator()
+            {
+                _quantityType = State.QuantityTypes.Last();
+                State = State with
+                {
+                    TemporaryItemCreator = State.TemporaryItemCreator with
+                    {
+                        SelectedQuantityTypeId = _quantityType.Id
+                    }
+                };
+            }
+
+            public void SetupQuantityTypeWeightInTemporaryItemCreator()
+            {
+                _quantityType = State.QuantityTypes.ElementAt(1);
+                State = State with
+                {
+                    TemporaryItemCreator = State.TemporaryItemCreator with
+                    {
+                        SelectedQuantityTypeId = _quantityType.Id
+                    }
+                };
+            }
+
+            public void SetupItemForQuantityTypeUnit()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_quantityType);
+
                 _item = new ShoppingListItem(
                     ShoppingListItemId.FromOfflineId(Guid.NewGuid()),
                     TypeId: null,
                     State.TemporaryItemCreator.ItemName,
                     IsTemporary: true,
                     State.TemporaryItemCreator.Price,
-                    new QuantityType(0, "", 1, "€", "x", 1),
+                    _quantityType,
                     QuantityInPacket: 1,
-                    new QuantityTypeInPacket(0, "", ""),
+                    State.QuantityTypesInPacket.First(),
                     ItemCategory: "",
                     Manufacturer: "",
                     IsInBasket: false,
-                    Quantity: 1,
+                    Quantity: _quantityType.DefaultQuantity,
+                    false);
+            }
+
+            public void SetupItemForQuantityTypeWeight()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_quantityType);
+
+                _item = new ShoppingListItem(
+                    ShoppingListItemId.FromOfflineId(Guid.NewGuid()),
+                    TypeId: null,
+                    State.TemporaryItemCreator.ItemName,
+                    IsTemporary: true,
+                    State.TemporaryItemCreator.Price,
+                    _quantityType,
+                    QuantityInPacket: null,
+                    QuantityInPacketType: null,
+                    ItemCategory: "",
+                    Manufacturer: "",
+                    IsInBasket: false,
+                    Quantity: _quantityType.DefaultQuantity,
                     false);
             }
 
             public void SetupEnqueuingRequest()
             {
+                TestPropertyNotSetException.ThrowIfNull(_quantityType);
+
                 var request = new AddTemporaryItemToShoppingListRequest(
-                    Guid.NewGuid(), State.ShoppingList!.Id, State.TemporaryItemCreator.ItemName, 0, 1,
-                    State.TemporaryItemCreator.Price, State.TemporaryItemCreator.Section!.Id, Guid.NewGuid());
+                    Guid.NewGuid(),
+                    State.ShoppingList!.Id,
+                    State.TemporaryItemCreator.ItemName,
+                    _quantityType.Id,
+                    _quantityType.DefaultQuantity,
+                    State.TemporaryItemCreator.Price,
+                    State.TemporaryItemCreator.Section!.Id, Guid.NewGuid());
 
                 CommandQueueMock.SetupEnqueue(req => req.IsRequestEquivalentTo(request, new List<string> { "TemporaryId" }));
             }
@@ -606,8 +697,8 @@ public class ShoppingListEffectsTests
 
         private sealed class HandleSavePriceUpdateActionFixture : ShoppingListEffectsFixture
         {
-            public UpdateItemPriceRequest? ExpectedRequest { get; private set; }
-            public SavePriceUpdateFinishedAction? ExpectedFinishAction { get; private set; }
+            private UpdateItemPriceRequest? _expectedRequest;
+            private SavePriceUpdateFinishedAction? _expectedFinishAction;
 
             public void SetupPriceUpdateForAllTypes()
             {
@@ -641,7 +732,7 @@ public class ShoppingListEffectsTests
 
             public void SetupExpectedRequestForAllTypes()
             {
-                ExpectedRequest = new UpdateItemPriceRequest(
+                _expectedRequest = new UpdateItemPriceRequest(
                     State.PriceUpdate.Item!.Id.ActualId!.Value,
                     null,
                     State.SelectedStoreId,
@@ -650,7 +741,7 @@ public class ShoppingListEffectsTests
 
             public void SetupExpectedRequestForOneType()
             {
-                ExpectedRequest = new UpdateItemPriceRequest(
+                _expectedRequest = new UpdateItemPriceRequest(
                     State.PriceUpdate.Item!.Id.ActualId!.Value,
                     State.PriceUpdate.Item.TypeId,
                     State.SelectedStoreId,
@@ -669,32 +760,32 @@ public class ShoppingListEffectsTests
 
             public void SetupDispatchingFinishActionForAllTypes()
             {
-                ExpectedFinishAction = new SavePriceUpdateFinishedAction(
+                _expectedFinishAction = new SavePriceUpdateFinishedAction(
                     State.PriceUpdate.Item!.Id.ActualId!.Value,
                     null,
                     State.PriceUpdate.Price);
-                SetupDispatchingAction(ExpectedFinishAction);
+                SetupDispatchingAction(_expectedFinishAction);
             }
 
             public void SetupDispatchingFinishActionForOneType()
             {
-                ExpectedFinishAction = new SavePriceUpdateFinishedAction(
+                _expectedFinishAction = new SavePriceUpdateFinishedAction(
                     State.PriceUpdate.Item!.Id.ActualId!.Value,
                     State.PriceUpdate.Item.TypeId,
                     State.PriceUpdate.Price);
-                SetupDispatchingAction(ExpectedFinishAction);
+                SetupDispatchingAction(_expectedFinishAction);
             }
 
             public void SetupCallingEndpoint()
             {
-                TestPropertyNotSetException.ThrowIfNull(ExpectedRequest);
-                ApiClientMock.SetupUpdateItemPriceAsync(ExpectedRequest);
+                TestPropertyNotSetException.ThrowIfNull(_expectedRequest);
+                ApiClientMock.SetupUpdateItemPriceAsync(_expectedRequest);
             }
 
             public void VerifyCallingEndpoint()
             {
-                TestPropertyNotSetException.ThrowIfNull(ExpectedRequest);
-                ApiClientMock.VerifyUpdateItemPriceAsync(ExpectedRequest, Times.Once);
+                TestPropertyNotSetException.ThrowIfNull(_expectedRequest);
+                ApiClientMock.VerifyUpdateItemPriceAsync(_expectedRequest, Times.Once);
             }
         }
     }
@@ -724,7 +815,7 @@ public class ShoppingListEffectsTests
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
-                _fixture.SetupExpectedFinisheRequest(expectedFinishedAt);
+                _fixture.SetupExpectedFinishRequest(expectedFinishedAt);
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupFinishingList();
                 _fixture.SetupDispatchingFinishAction();
@@ -744,25 +835,25 @@ public class ShoppingListEffectsTests
 
         private sealed class HandleFinishShoppingListActionFixture : ShoppingListEffectsFixture
         {
-            public FinishListRequest? ExpectedFinisheRequest { get; private set; }
-            public SelectedStoreChangedAction? ExpectedStoreChangeAction { get; private set; }
+            private FinishListRequest? _expectedFinishRequest;
+            private SelectedStoreChangedAction? _expectedStoreChangeAction;
 
-            public void SetupExpectedFinisheRequest(DateTimeOffset? expectedFinishDate)
+            public void SetupExpectedFinishRequest(DateTimeOffset? expectedFinishDate)
             {
-                ExpectedFinisheRequest = new DomainTestBuilder<FinishListRequest>()
+                _expectedFinishRequest = new DomainTestBuilder<FinishListRequest>()
                     .FillConstructorWith("finishedAt", expectedFinishDate)
                     .Create();
                 State = State with
                 {
                     ShoppingList = State.ShoppingList! with
                     {
-                        Id = ExpectedFinisheRequest.ShoppingListId
+                        Id = _expectedFinishRequest.ShoppingListId
                     },
                     Summary = State.Summary with
                     {
                         FinishedAt = new DateTime(
-                            ExpectedFinisheRequest.FinishedAt!.Value.DateTime
-                                .Add(-ExpectedFinisheRequest.FinishedAt.Value.Offset)
+                            _expectedFinishRequest.FinishedAt!.Value.DateTime
+                                .Add(-_expectedFinishRequest.FinishedAt.Value.Offset)
                                 .Ticks,
                             DateTimeKind.Utc)
                     }
@@ -781,20 +872,20 @@ public class ShoppingListEffectsTests
 
             public void SetupDispatchingStoreChangeAction()
             {
-                ExpectedStoreChangeAction = new SelectedStoreChangedAction(State.SelectedStoreId);
-                SetupDispatchingAction(ExpectedStoreChangeAction);
+                _expectedStoreChangeAction = new SelectedStoreChangedAction(State.SelectedStoreId);
+                SetupDispatchingAction(_expectedStoreChangeAction);
             }
 
             public void SetupFinishingList()
             {
-                TestPropertyNotSetException.ThrowIfNull(ExpectedFinisheRequest);
-                ApiClientMock.SetupFinishListAsync(ExpectedFinisheRequest);
+                TestPropertyNotSetException.ThrowIfNull(_expectedFinishRequest);
+                ApiClientMock.SetupFinishListAsync(_expectedFinishRequest);
             }
 
             public void VerifyFinishingList()
             {
-                TestPropertyNotSetException.ThrowIfNull(ExpectedFinisheRequest);
-                ApiClientMock.VerifyFinishListAsync(ExpectedFinisheRequest, Times.Once);
+                TestPropertyNotSetException.ThrowIfNull(_expectedFinishRequest);
+                ApiClientMock.VerifyFinishListAsync(_expectedFinishRequest, Times.Once);
             }
         }
     }
@@ -803,6 +894,7 @@ public class ShoppingListEffectsTests
     {
         public ShoppingListEffects CreateSut()
         {
+            SetupStateReturningState();
             return new ShoppingListEffects(ApiClientMock.Object, CommandQueueMock.Object, ShoppingListStateMock.Object);
         }
     }

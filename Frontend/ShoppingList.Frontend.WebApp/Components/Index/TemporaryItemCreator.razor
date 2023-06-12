@@ -1,6 +1,7 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
 
@@ -34,11 +35,21 @@
                             IgnoreItemChanges="false"
                             Value="@(State.Value.TemporaryItemCreator.Section?.Id ?? Guid.Empty)">
                     </Select>
-                    <div class="d-flex pl-2 align-items-center">
-                        <div class="price-input">
+                    <div class="d-flex pl-4 align-items-center">
+                        <div class="price-input mr-1">
                             <Input TValue="float" Value="@State.Value.TemporaryItemCreator.Price" ValueChanged="OnPriceChanged"></Input>
                         </div>
-                        <div>€</div>
+                        <div>
+                            <Select TItem="QuantityType"
+                                    TItemValue="int"
+                                    ValueName="@nameof(QuantityType.Id)"
+                                    LabelName="@nameof(QuantityType.PriceLabel)"
+                                    DataSource="@State.Value.QuantityTypes"
+                                    OnSelectedItemChanged="OnSelectedQuantityTypeIdChanged"
+                                    AllowClear="false"
+                                    Value="@State.Value.TemporaryItemCreator.SelectedQuantityTypeId">
+                            </Select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -75,6 +86,11 @@
     private void OnAddButtonClicked()
     {
         Dispatcher.Dispatch(new SaveTemporaryItemAction());
+    }
+
+    private void OnSelectedQuantityTypeIdChanged(QuantityType quantityType)
+    {
+        Dispatcher.Dispatch(new TemporaryItemSelectedQuantityTypeChangedAction(quantityType.Id));
     }
 
     private RenderFragment GetFooter()

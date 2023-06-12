@@ -46,6 +46,19 @@ public static class TemporaryItemCreatorReducer
         };
     }
 
+    [ReducerMethod]
+    public static ShoppingListState OnTemporaryItemSelectedQuantityTypeChanged(ShoppingListState state,
+        TemporaryItemSelectedQuantityTypeChangedAction action)
+    {
+        return state with
+        {
+            TemporaryItemCreator = state.TemporaryItemCreator with
+            {
+                SelectedQuantityTypeId = action.QuantityTypeId
+            }
+        };
+    }
+
     [ReducerMethod(typeof(OpenTemporaryItemCreatorAction))]
     public static ShoppingListState OnOpenTemporaryItemCreator(ShoppingListState state)
     {
@@ -62,7 +75,8 @@ public static class TemporaryItemCreatorReducer
                 IsOpen = true,
                 IsSaving = false,
                 Price = ShoppingListFeatureState.InitialTemporaryItemPrice,
-                Section = defaultSection ?? state.SelectedStore.Sections.First()
+                Section = defaultSection ?? state.SelectedStore.Sections.First(),
+                SelectedQuantityTypeId = state.QuantityTypes.FirstOrDefault()?.Id ?? 0
             }
         };
     }
