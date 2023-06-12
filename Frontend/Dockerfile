@@ -1,5 +1,5 @@
 ################## BUILD ##################
-FROM mcr.microsoft.com/dotnet/sdk:7.0-bullseye-slim-amd64 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0-bullseye-slim AS build
 WORKDIR /src
 COPY . .
 RUN dotnet restore "ShoppingList.Frontend.WebApp/ShoppingList.Frontend.WebApp.csproj"
