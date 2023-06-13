@@ -2,9 +2,9 @@ version: "3.7"
 
 services:  
   Database:
-    image: jsurf/rpi-mariadb
+    image: mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: <insert-your-root-pwd-here>
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/dev-ph-shoppinglist-db-root-pwd
       MYSQL_DATABASE: dev-shoppinglist
     ports:
       - "15906:3306"
@@ -12,6 +12,8 @@ services:
       - dev-ph-shoppinglist
     volumes:
       - dev-ph-shoppinglist-database:/var/lib/mysql
+    secrets:
+      - dev-ph-shoppinglist-db-root-pwd
 
   Api:
     image: velocir4ptor/ph-shoppinglist-api:0.9.1-arm32v7
@@ -64,5 +66,7 @@ networks:
     name: dev-ph-shoppinglist
 
 secrets:
- dev-ph-shoppinglist-db-connection-string:
-   external: true
+  dev-ph-shoppinglist-db-connection-string:
+    external: true
+  dev-ph-shoppinglist-db-root-pwd:
+    external: true
